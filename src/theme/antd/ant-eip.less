@@ -1,0 +1,133 @@
+.eip-admin-tabs.ant-tabs {
+  background: #fff !important;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  z-index: 9 !important;
+  position: relative;
+  height: 40px !important;
+}
+.eip-admin-tabs.affixed.head {
+  padding: 0px !important;
+}
+.eip-admin-tabs.ant-tabs .ant-tabs-bar {
+  margin: 0;
+  border-bottom: none;
+}
+.eip-admin-tabs.ant-tabs .ant-tabs-bar .ant-tabs-nav-container {
+  padding: 0 40px;
+  height: 40px;
+}
+.eip-admin-tabs.ant-tabs .ant-tabs-bar .ant-tabs-nav-container .ant-tabs-tab {
+  padding: 0;
+  background: none;
+  height: 40px;
+  line-height: 40px;
+  transition: background 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
+    color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  border-radius: 0;
+  border: none;
+  margin: 0;
+}
+.eip-admin-tabs.ant-tabs
+  .ant-tabs-bar
+  .ant-tabs-nav-container
+  .ant-tabs-tab
+  > div {
+  padding: 0 28px 0 16px;
+}
+.eip-admin-tabs.ant-tabs
+  .ant-tabs-bar
+  .ant-tabs-nav-container
+  .ant-tabs-tab
+  > div.ant-tabs-tab-unclosable {
+  padding-right: 16px;
+}
+
+.eip-admin-tabs.ant-tabs
+  .ant-tabs-bar
+  .ant-tabs-nav-container
+  .ant-tabs-tab:before {
+  display: none;
+}
+.eip-admin-tabs.ant-tabs
+  .ant-tabs-bar
+  .ant-tabs-nav-container
+  .ant-tabs-tab-active {
+  background: rgba(24, 144, 255, 0.08);
+}
+.eip-admin-tabs.ant-tabs
+  .ant-tabs-bar
+  .ant-tabs-nav-container
+  .ant-tabs-tab-next,
+.eip-admin-tabs.ant-tabs
+  .ant-tabs-bar
+  .ant-tabs-nav-container
+  .ant-tabs-tab-prev {
+  transition: color 0.3s cubic-bezier(0.645, 0.045, 0.355, 1),
+    opacity 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+  width: 40px;
+  pointer-events: auto;
+  line-height: 1;
+  opacity: 1;
+}
+.eip-admin-tabs.ant-tabs
+  .ant-tabs-bar
+  .ant-tabs-nav-container
+  .ant-tabs-tab-next
+  .anticon,
+.eip-admin-tabs.ant-tabs
+  .ant-tabs-bar
+  .ant-tabs-nav-container
+  .ant-tabs-tab-prev
+  .anticon {
+  font-size: 14px;
+}
+.eip-admin-tabs.ant-tabs
+  .ant-tabs-bar
+  .ant-tabs-nav-container
+  .ant-tabs-ink-bar {
+  display: none !important;
+}
+.eip-admin-tabs.ant-tabs .ant-tabs-bar + div,
+.eip-admin-tabs.ant-tabs .ant-tabs-content,
+.eip-admin-tabs.ant-tabs .ant-tabs-content + div,
+.eip-admin-tabs.ant-tabs:after,
+.eip-admin-tabs.ant-tabs:before {
+  display: none;
+}
+.eip-admin-tabs.ant-tabs .ant-tabs-nav-container,
+.eip-admin-tabs.ant-tabs .ant-tabs-nav-wrap {
+  margin-bottom: 0;
+}
+.eip-admin-tabs.ant-tabs .eip-admin-tabs-drop {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  cursor: pointer;
+}
+.eip-admin-tabs.ant-tabs .eip-admin-tabs-drop .anticon {
+  font-size: 14px;
+}
+@media screen and (max-width: 768px) {
+  .eip-admin-tabs {
+    left: 0 !important;
+  }
+}
+
+.eip-admin-collapse .ant-menu-inline-collapsed > .ant-menu-item,
+.eip-admin-collapse
+.ant-menu-inline-collapsed
+  > .ant-menu-submenu
+  > .ant-menu-submenu-title {
+  padding: 0 16px !important;
+}
+
+.eip-admin-collapse, .eip-admin-collapse .ant-menu-inline-collapsed {
+  width: 48px;
+}
+.eip-admin-card-list{
+  min-height: calc(100vh - 96px);
+}
+body{
+  background-color:#f0f2f5 !important;
+}
