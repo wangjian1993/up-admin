@@ -46,12 +46,14 @@ module.exports = {
     //   }
     // }
   },
+
   pluginOptions: {
     'style-resources-loader': {
       preProcessor: 'less',
       patterns: [path.resolve(__dirname, "./src/theme/theme.less")],
     }
   },
+
   configureWebpack: config => {
     config.entry.app = ["babel-polyfill", "whatwg-fetch", "./src/main.js"];
     config.performance = {
@@ -82,6 +84,7 @@ module.exports = {
       config.externals = assetsCDN.externals
     }
   },
+
   chainWebpack: config => {
     // 生产环境下关闭css压缩的 colormin 项，因为此项优化与主题色替换功能冲突
     if (isProd) {
@@ -100,18 +103,68 @@ module.exports = {
       })
     }
   },
+
   css: {
     loaderOptions: {
       less: {
         lessOptions: {
-          modifyVars: modifyVars(),
+          modifyVars: {
+            'primary-color': '#13c2c2',
+            'primary-1': '#e6fffb',
+            'primary-2': '#b5f5ec',
+            'primary-3': '#87e8de',
+            'primary-4': '#5cdbd3',
+            'primary-5': '#36cfc9',
+            'primary-6': '#13c2c2',
+            'primary-7': '#08979c',
+            'primary-8': '#006d75',
+            'primary-9': '#00474f',
+            'primary-10': '#002329',
+            'info-color': '#13c2c2',
+            'success-color': '#52c41a',
+            'warning-color': '#faad14',
+            'error-color': '#f5222f',
+            'alert-info-bg-color': '#e6fffb',
+            'alert-info-border-color': '#87e8de',
+            'alert-success-bg-color': '#f6ffed',
+            'alert-success-border-color': '#b7eb8f',
+            'alert-warning-bg-color': '#fffbe6',
+            'alert-warning-border-color': '#ffe58f',
+            'alert-error-bg-color': '#fff1f0',
+            'alert-error-border-color': '#ffa19e',
+            'processing-color': '#13c2c2',
+            'menu-dark-submenu-bg': '#010e0e',
+            'layout-header-background': '#032121',
+            'layout-trigger-background': '#053434',
+            'btn-danger-bg': '#ff4d52',
+            'btn-danger-border': '#ff4d52',
+            'layout-body-background': '#f0f2f5',
+            'body-background': '#fff',
+            'component-background': '#fff',
+            'heading-color': 'rgba(0, 0, 0, 0.85)',
+            'text-color': 'rgba(0, 0, 0, 0.65)',
+            'text-color-inverse': '#fff',
+            'text-color-secondary': 'rgba(0, 0, 0, 0.45)',
+            'shadow-color': 'rgba(0, 0, 0, 0.15)',
+            'border-color-split': '#f0f0f0',
+            'background-color-light': '#fafafa',
+            'background-color-base': '#f5f5f5',
+            'table-selected-row-bg': '#fafafa',
+            'table-expanded-row-bg': '#fbfbfb',
+            'checkbox-check-color': '#fff',
+            'disabled-color': 'rgba(0, 0, 0, 0.25)',
+            'menu-dark-color': 'rgba(254, 254, 254, 0.65)',
+            'menu-dark-highlight-color': '#fefefe',
+            'menu-dark-arrow-color': '#fefefe',
+            'btn-primary-color': '#fff'
+          },
           javascriptEnabled: true
         }
       }
     }
   },
-  publicPath: process.env.VUE_APP_PUBLIC_PATH,
-  outputDir: 'dist',
+
+  publicPath: './',
   assetsDir: 'static',
   productionSourceMap: false
 }

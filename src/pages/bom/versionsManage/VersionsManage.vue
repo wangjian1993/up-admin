@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-07 10:19:01
- * @LastEditTime: 2021-07-07 17:18:56
+ * @LastEditTime: 2021-07-08 17:09:04
  * @LastEditors: max
  * @Description: 版本管理
  * @FilePath: /mb-admin/src/pages/bom/versionsManage/VersionsManage.vue
@@ -16,8 +16,42 @@
         :tab="key"
       ></a-tab-pane
     ></a-tabs>
-    <div>
-      <a-table
+    <div class="table-content">
+      <advance-table
+        :columns="columns"
+        :data-source="dataSource"
+        :loading="isLoading"
+        rowKey="id"
+        :format-conditions="true"
+        @reset="onReset"
+        @refresh="onRefresh"
+        :pagination="{
+          showTotal: (total, range) =>
+            `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
+        }"
+      >
+        <template slot="status" slot-scope="{ record }">
+          <a-tag color="green" v-if="record.check_status == 1">已审核</a-tag>
+          <a-tag color="red" v-else>待审核</a-tag>
+        </template>
+        <template slot="action" slot-scope="{ record }">
+          <div>
+            <a
+              style="margin-right: 8px"
+              v-if="record.check_status == 0"
+              @click="audit(record.id)"
+            >
+              <a-icon type="check-circle" />
+              审核
+            </a>
+            <a style="margin-right: 8px" @click="showDrawer(record)">
+              <a-icon type="snippets" />
+              详情
+            </a>
+          </div>
+        </template>
+      </advance-table>
+      <!-- <a-table
         :columns="columns"
         :data-source="dataSource"
         size="small"
@@ -43,7 +77,7 @@
             </a>
           </div>
         </template>
-      </a-table>
+      </a-table> -->
     </div>
     <a-drawer
       width="800"
@@ -51,22 +85,38 @@
       :closable="false"
       :visible="visible"
       @close="onClose"
-       :destroyOnClose="true"
+      :destroyOnClose="true"
     >
       <a-descriptions>
-        <a-descriptions-item label="公司标识">{{detailItem.company_sign}}</a-descriptions-item>
-        <a-descriptions-item label="版本号">{{detailItem.version_code}}</a-descriptions-item>
-        <a-descriptions-item label="添加人">{{detailItem.adder}}</a-descriptions-item>
+        <a-descriptions-item label="公司标识">{{
+          detailItem.company_sign
+        }}</a-descriptions-item>
+        <a-descriptions-item label="版本号">{{
+          detailItem.version_code
+        }}</a-descriptions-item>
+        <a-descriptions-item label="添加人">{{
+          detailItem.adder
+        }}</a-descriptions-item>
         <a-descriptions-item label="审核状态">
-           <a-tag color="green" v-if="detailItem.check_status == 1">已审核</a-tag>
-            <a-tag color="red" v-else>待审核</a-tag>
+          <a-tag color="green" v-if="detailItem.check_status == 1"
+            >已审核</a-tag
+          >
+          <a-tag color="red" v-else>待审核</a-tag>
         </a-descriptions-item>
-        <a-descriptions-item label="添加时间">{{detailItem.add_time}}</a-descriptions-item>
+        <a-descriptions-item label="添加时间">{{
+          detailItem.add_time
+        }}</a-descriptions-item>
       </a-descriptions>
       <a-table :columns="columns1" :data-source="detailList">
-        <span slot="is_required" slot-scope="text, record">{{record.is_required == 0?'否':'是'}}</span>
-         <span slot="is_use" slot-scope="text, record">{{record.is_use == 0?'否':'是'}}</span>
-          <span slot="is_readonly" slot-scope="text, record">{{record.is_readonly == 0?'否':'是'}}</span>
+        <span slot="is_required" slot-scope="text, record">{{
+          record.is_required == 0 ? "否" : "是"
+        }}</span>
+        <span slot="is_use" slot-scope="text, record">{{
+          record.is_use == 0 ? "否" : "是"
+        }}</span>
+        <span slot="is_readonly" slot-scope="text, record">{{
+          record.is_readonly == 0 ? "否" : "是"
+        }}</span>
       </a-table>
     </a-drawer>
   </div>
@@ -78,6 +128,7 @@ import {
   setVersionsAudit,
   getVersionsDetail,
 } from "@/services/bom.js";
+import AdvanceTable from "@/components/table/advance/AdvanceTable";
 const columns = [
   {
     title: "ID",
@@ -115,7 +166,7 @@ const columns = [
     dataIndex: "action",
     align: "center",
     scopedSlots: { customRender: "action" },
-  }
+  },
 ];
 const columns1 = [
   {
@@ -146,7 +197,7 @@ const columns1 = [
     title: "是否只读",
     dataIndex: "is_readonly",
     align: "center",
-     scopedSlots: { customRender: "is_readonly" },
+    scopedSlots: { customRender: "is_readonly" },
   },
   {
     title: "提示描述",
@@ -204,7 +255,7 @@ export default {
       tabType: "ONE",
       data,
       columns1,
-      detailItem:[]
+      detailItem: [],
     };
   },
   created() {
@@ -257,7 +308,7 @@ export default {
         act: "get_version_detail",
         id: item.id,
       };
-      this.detailItem =item;
+      this.detailItem = item;
       getVersionsDetail(param).then((res) => {
         if (res.data.code == 1) {
           this.detailList = res.data.data;
@@ -305,8 +356,15 @@ export default {
         return item;
       }
     },
+    onRefresh(conditions) {
+      console.log("刷新=====", conditions);
+      this.getVersionsManage();
+    },
+    onReset(conditions) {
+      console.log("peizhi=====", conditions);
+    },
   },
-  components: {},
+  components: { AdvanceTable },
 };
 </script>
 
@@ -314,5 +372,8 @@ export default {
 .content {
   background-color: @base-bg-color;
   padding: 0px;
+}
+.table-content {
+  min-height: 200px;
 }
 </style>

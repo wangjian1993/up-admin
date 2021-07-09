@@ -8,7 +8,7 @@
 					</template>
 					<slot v-else-if="$slots.title" name="title"></slot>
 					<template v-else>
-						高级表格
+						
 					</template>
 				</div>
 				<div class="search">
@@ -98,7 +98,7 @@ export default {
 	data() {
 		return {
 			id: `${new Date().getTime()}-${Math.floor(Math.random() * 10)}`,
-			sSize: this.size || 'default',
+			sSize: this.size || 'small',
 			fullScreen: false,
 			conditions: {}
 		};
@@ -122,6 +122,7 @@ export default {
 	},
 	methods: {
 		refresh() {
+			console.log("shuaxin=====")
 			this.$emit('refresh', this.conditions);
 		},
 		onSearchChange(conditions, searchOptions) {

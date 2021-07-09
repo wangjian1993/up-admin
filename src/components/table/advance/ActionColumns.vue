@@ -12,7 +12,7 @@
               {{col.title}}:
             </template>
             <slot v-else-if="col.slots && col.slots.title" :name="col.slots.title"></slot>
-            <template slot="actions">
+            <!-- <template slot="actions">
               <a-tooltip title="固定在列头" :mouseEnterDelay="0.5" :get-popup-container="() => $refs.root">
                 <a-icon :class="['left', {active: col.fixed === 'left'}]" @click="fixColumn('left', col)" type="vertical-align-top" />
               </a-tooltip>
@@ -22,7 +22,7 @@
               <a-tooltip title="添加搜索" :mouseEnterDelay="0.5" :get-popup-container="() => $refs.root">
                 <a-icon :class="{active: col.searchAble}" @click="setSearch(col)" type="search" />
               </a-tooltip>
-            </template>
+            </template> -->
           </a-list-item>
         </a-list>
         <a-icon class="action" type="setting" />
