@@ -1,3 +1,11 @@
+<!--
+ * @Author: max
+ * @Date: 2021-07-08 09:23:52
+ * @LastEditTime: 2021-07-10 10:17:37
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/App.vue
+-->
 <template>
   <a-config-provider :locale="locale" :get-popup-container="popContainer">
     <router-view/>

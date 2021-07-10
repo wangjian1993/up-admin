@@ -1,6 +1,14 @@
+<!--
+ * @Author: max
+ * @Date: 2021-07-08 09:23:52
+ * @LastEditTime: 2021-07-10 10:32:18
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/bom/components/Details.vue
+-->
 <template>
 	<div>
-		<a-card class="card" title="搜索结果" :bordered="false">
+		<a-card class="card" title="搜索结果" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '0px 24px',minHeight:'30px'}">
 			<a-descriptions title="">
 				<a-descriptions-item label="产品品号">Zhou Maomao</a-descriptions-item>
 				<a-descriptions-item label="产品大类"><a-input placeholder="" type="text" /></a-descriptions-item>
@@ -9,7 +17,7 @@
 				<a-descriptions-item label="产品规格">empty</a-descriptions-item>
 			</a-descriptions>
 		</a-card>
-		<a-card class="card" title="物料成本" :bordered="false">
+		<a-card class="card" title="物料成本" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px',minHeight:'30px'}">
 			<div id="input-box">
 				<a-row>
 					<a-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12" :xxl="12" v-for="(item, index) in inputList" :key="index">
@@ -22,7 +30,7 @@
 				</a-row>
 			</div>
 		</a-card>
-		<a-card class="card" title="物料" :bordered="false">
+		<a-card class="card" title="物料" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px',minHeight:'30px'}">
 			<a-form layout="horizontal">
 				<div>
 					<a-row>
@@ -61,7 +69,7 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .input-item {
 	display: flex;
 	align-items: center;
@@ -75,5 +83,14 @@ export default {
 	.input-text {
 		padding-left: 5px;
 	}
+}
+.ant-card-body{
+	padding: 0;
+}
+.ant-card-head-title{
+	padding:0;
+}
+.ant-form-item{
+	margin-bottom:0;
 }
 </style>

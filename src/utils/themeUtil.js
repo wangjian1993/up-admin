@@ -28,9 +28,10 @@ function changeThemeColor(newColor, $theme) {
 function modifyVars(color) {
   let _color = color || theme.color
   const palettes = getAntdColors(_color, theme.mode)
+  console.log(palettes)
   const menuColors = getMenuColors(_color, theme.mode)
   const {success, warning, error} = getFunctionalColors(theme.mode)
-  const primary = palettes[5]
+  const primary = palettes[1]
   return {
     'primary-color': primary,
     'primary-1': palettes[0],
