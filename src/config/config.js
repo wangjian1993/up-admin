@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-07-10 15:49:28
+ * @LastEditTime: 2021-07-14 09:23:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/config/config.js
@@ -10,7 +10,7 @@
 module.exports = {
   theme: {
     color:'#3eaf7c',
-    mode: 'light',
+    mode: 'dark',
   },
   multiPage: true,
   animate: {
