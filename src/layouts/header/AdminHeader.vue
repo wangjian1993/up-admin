@@ -70,7 +70,7 @@ export default {
 		menuWidth() {
 			const { layout } = this;
 			const headWidth = layout === 'head' ? '100% - 200px' : '100%';
-			const extraWidth = '290px';
+			const extraWidth = '300px';
 			return `calc(${headWidth} - ${extraWidth})`;
 		}
 	},

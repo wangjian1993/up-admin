@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-07-14 09:08:44
+ * @LastEditTime: 2021-07-20 15:03:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/api.js
@@ -17,6 +17,6 @@ module.exports = {
   ROUTES: `${BASE_URL_MOCK}/routes`,
   GOODS: `${BASE_URL_MOCK}/goods`,
   GOODS_COLUMNS: `${BASE_URL_MOCK}/columns`,
-  MB_CLOUD:`${BASE_URL}/workflow/upshine/bom_cost/bom_cost_api.php`,
-  UP_ADMIN:'http://192.168.0.126:9000/api/demo/b'
+  MB_CLOUD:`${BASE_URL}/workflow/upshine/bom_cost/`,
+  UP_ADMIN:'http://192.168.1.245:6688/api/base'
 }

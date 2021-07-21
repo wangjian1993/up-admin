@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-07-10 10:12:44
+ * @LastEditTime: 2021-07-19 10:38:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/bom/cost/issue/BomIssue.vue
@@ -15,6 +15,8 @@
         placeholder="请输入产品品号"
         size="large"
         enterButton="搜索"
+        @search="onSearch"
+        :disabled="searchDisabled"
       />
     </div>
   </div>
@@ -22,11 +24,19 @@
 
 <script>
 export default {
+  props:['searchDisabled'],
   data() {
-    return {};
+    return {
+     
+    };
   },
   created() {
     console.log(this.inputList);
+  },
+  methods: {
+    onSearch(value) {
+      this.$emit('onSearch',value)
+    },
   },
   components: {},
 };

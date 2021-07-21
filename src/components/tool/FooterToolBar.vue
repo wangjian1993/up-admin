@@ -1,9 +1,9 @@
 <template>
   <div class="toolbar">
-    <div style="float: left">
+    <div>
       <slot name="extra"></slot>
     </div>
-    <div style="float: right">
+    <div>
       <slot></slot>
     </div>
   </div>
@@ -25,6 +25,10 @@ export default {
     background: @base-bg-color;
     border-top: 1px solid @border-color-split;
     padding: 12px 24px;
+    padding-left: 180px;
     z-index: 9;
+    display: flex;
+    align-items: center;
+    justify-content:space-between;
   }
 </style>

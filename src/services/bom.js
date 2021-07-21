@@ -1,3 +1,11 @@
+/*
+ * @Author: max
+ * @Date: 2021-07-08 09:23:52
+ * @LastEditTime: 2021-07-20 17:15:09
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/services/bom.js
+ */
 import {
 	MB_CLOUD
 } from '@/services/api'
@@ -14,7 +22,7 @@ import qs from 'qs';
 export async function getBomBaseConfig() {
 	var data = new FormData();
 	data.append('act', 'get_base');
-	return request(MB_CLOUD, METHOD.POST, data, false)
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, data)
 }
 /**
  * 设置费用项
@@ -23,7 +31,7 @@ export async function getBomBaseConfig() {
  */
 export async function setBomBaseConfig(parma) {
 	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}`, METHOD.POST, parmas, false, {
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
@@ -36,7 +44,7 @@ export async function setBomBaseConfig(parma) {
  */
 export async function setVersionsConfig(parma) {
 	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}`, METHOD.POST, parmas, false, {
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
@@ -49,7 +57,7 @@ export async function setVersionsConfig(parma) {
  */
 export async function getVersionsManage(parma) {
 	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}`, METHOD.POST, parmas, false, {
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
@@ -62,7 +70,7 @@ export async function getVersionsManage(parma) {
  */
 export async function setVersionsAudit(parma) {
 	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}`, METHOD.POST, parmas, false, {
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
@@ -75,11 +83,45 @@ export async function setVersionsAudit(parma) {
  */
 export async function getVersionsDetail(parma) {
 	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}`, METHOD.POST, parmas, false, {
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
 	})
+}
+export async function getCompanyBomCost(parma) {
+	let parmas = qs.stringify(parma)
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		}
+	})
+}
+/**
+ * @description: 获取bom费用
+ * @param {*} parma
+ * @return {*}
+ */
+export async function getBomSerchList(parma) {
+	let parmas = qs.stringify(parma)
+	return request(`${MB_CLOUD}/e10_api.php`, METHOD.POST, parmas, {
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		}
+	},false)
+}
+/**
+ * @description: 发布bom信息
+ * @param {*} parma
+ * @return {*}
+ */
+export async function bomForm(parma) {
+	let parmas = qs.stringify(parma)
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		}
+	},false)
 }
 export default {
 	getBomBaseConfig,
@@ -87,5 +129,8 @@ export default {
 	getVersionsManage,
 	setVersionsConfig,
 	setVersionsAudit,
-	getVersionsDetail
+	getVersionsDetail,
+	getBomSerchList,
+	getCompanyBomCost,
+	bomForm
 }

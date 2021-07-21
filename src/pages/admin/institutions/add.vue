@@ -1,3 +1,11 @@
+<!--
+ * @Author: max
+ * @Date: 2021-06-22 17:03:37
+ * @LastEditTime: 2021-07-21 09:47:37
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/admin/institutions/add.vue
+-->
 <template>
 	<a-card class="card" :bordered="false" :bodyStyle="{ padding: '15px' }">
 		<div class="">
@@ -5,12 +13,12 @@
 				<div class="">
 					<a-row>
 						<a-col :md="8" :sm="24">
-							<a-form-item label="产品品号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1 }">
+							<a-form-item label="机构编码" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1 }">
 								<a-input placeholder="请输入" v-decorator="['username', { rules: [{ required: true, message: 'Please input your name' }] }]" />
 							</a-form-item>
 						</a-col>
 						<a-col :md="8" :sm="24">
-							<a-form-item label="需求公司" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1 }">
+							<a-form-item label="管理员邮箱" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1 }">
 								<a-select placeholder="请选择">
 									<a-select-option value="1">关闭</a-select-option>
 									<a-select-option value="2">运行中</a-select-option>
@@ -18,7 +26,7 @@
 							</a-form-item>
 						</a-col>
 						<a-col :md="8" :sm="24">
-							<a-form-item label="生产工厂" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1 }">
+							<a-form-item label="公司中文名" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1 }">
 								<a-input placeholder="请输入" v-decorator="['username', { rules: [{ required: true, message: 'Please input your name' }] }]" />
 							</a-form-item>
 						</a-col>

@@ -1,13 +1,13 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-07-07 16:16:24
+ * @LastEditTime: 2021-07-20 16:10:15
  * @LastEditors: max
  * @Description: 
- * @FilePath: /mb-admin/src/services/user.js
+ * @FilePath: /up-admin/src/services/user.js
  */
-import {LOGIN, ROUTES} from '@/services/api'
-import {request, METHOD, removeAuthorization} from '@/utils/request'
+import {ROUTES,UP_ADMIN} from '@/services/api';
+import {request, METHOD, removeAuthorization} from '@/utils/request';
 
 /**
  * 登录服务
@@ -16,10 +16,10 @@ import {request, METHOD, removeAuthorization} from '@/utils/request'
  * @returns {Promise<AxiosResponse<T>>}
  */
 export async function login(name, password) {
-  return request(LOGIN, METHOD.POST, {
-    name: name,
-    password: password
-  },true)
+  return request(`${UP_ADMIN}/user/uservalidate`, METHOD.POST, {
+    userName: name,
+    userPwd: password
+  },false)
 }
 
 export async function getRoutesConfig() {

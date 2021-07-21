@@ -2,11 +2,12 @@ import axios from 'axios'
 import Cookie from 'js-cookie'
 
 // 跨域认证信息 header 名
-const xsrfHeaderName = 'Authorization';
-const notToken = 'notToken';
+const xsrfHeaderName = 'Token';
+axios.defaults.timeout = 5000;
+axios.defaults.withCredentials = true;
+axios.defaults.xsrfHeaderName = xsrfHeaderName;
+axios.defaults.xsrfCookieName = xsrfHeaderName;
 
-axios.defaults.timeout = 5000
-axios.defaults.withCredentials = true
 
 // 认证类型
 const AUTH_TYPE = {
@@ -30,11 +31,7 @@ const METHOD = {
  * @param params 请求参数
  * @returns {Promise<AxiosResponse<T>>}
  */
-async function request(url, method, params, isToken = true, config) {
-	if (!isToken) {
-		console.log("没有");
-		setAuthorization("", AUTH_TYPE.BASIC);
-	}
+async function request(url, method, params, config) {
 	switch (method) {
 		case METHOD.GET:
 			return axios.get(url, {
@@ -59,9 +56,7 @@ async function request(url, method, params, isToken = true, config) {
 function setAuthorization(auth, authType = AUTH_TYPE.BEARER) {
 	switch (authType) {
 		case AUTH_TYPE.BEARER:
-			axios.defaults.xsrfHeaderName = xsrfHeaderName
-			axios.defaults.xsrfCookieName = xsrfHeaderName
-			Cookie.set(xsrfHeaderName, 'Bearer ' + auth.token, {
+			Cookie.set(xsrfHeaderName, auth.token, {
 				expires: auth.expireAt
 			})
 			break
@@ -69,9 +64,6 @@ function setAuthorization(auth, authType = AUTH_TYPE.BEARER) {
 		case AUTH_TYPE.AUTH1:
 		case AUTH_TYPE.AUTH2:
 		default:
-			Cookie.set(notToken, "", {
-				expires: auth.expireAt
-			})
 			break
 	}
 }
