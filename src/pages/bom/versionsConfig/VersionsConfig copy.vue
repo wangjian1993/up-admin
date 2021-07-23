@@ -104,7 +104,7 @@ export default {
 	methods: {
 		getBomBaseConfig() {
 			getBomBaseConfig('get_base').then(res => {
-				if (res.data.code == 1) {
+				if (res.data.success) {
 					this.list = res.data.data;
 					this.isLoading = false;
 					this.list.forEach(item => {

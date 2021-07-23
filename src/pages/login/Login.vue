@@ -143,7 +143,7 @@ export default {
         const { userId } = loginRes.data;
         console.log(loginRes.data);
         this.setUser(userId);
-        var inFifteenMinutes = new Date(new Date().getTime() + 30 * 60 * 1000);
+        var inFifteenMinutes = new Date(new Date().getTime() + 4 * 60 * 60 * 1000);
         setAuthorization({ token: res.headers.token, expireAt: inFifteenMinutes });
         this.$router.push("/home/workplace");
         this.$message.success(this.timeFix().CN + "，欢迎回来!", 3);

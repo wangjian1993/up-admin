@@ -154,7 +154,7 @@ const options = {
               children: [
                 {
                   path: "organization-list",
-                  name: "组织列表",
+                  name: "组织维度",
                   component: () =>
                     import(
                       /* webpackChunkName: 'organization' */

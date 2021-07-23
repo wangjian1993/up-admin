@@ -1,3 +1,11 @@
+/*
+ * @Author: max
+ * @Date: 2021-07-08 09:23:52
+ * @LastEditTime: 2021-07-22 11:12:18
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/utils/axios-interceptors.js
+ */
 import Cookie from 'js-cookie'
 // 401拦截
 const resp401 = {
@@ -9,8 +17,9 @@ const resp401 = {
    */
   onFulfilled(response, options) {
     const {message} = options
-    if (response.code === 401) {
-      message.error('无此权限')
+    console.log(response);
+    if (response.status === 401) {
+      message.error('token失效,请重新登陆!')
     }
     return response
   },

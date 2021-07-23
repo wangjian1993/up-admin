@@ -83,7 +83,7 @@ export default {
 		getBomBaseConfig() {
 			getBomBaseConfig('get_base').then(res => {
 				console.log(res.data.code);
-				if (res.data.code == 1) {
+				if (res.data.success) {
 					this.list = res.data.data;
 					this.isLoading = false;
 				}
@@ -101,7 +101,7 @@ export default {
 			let param = this.form;
 			param.is_required = this.form.is_required ? 1 : 0;
 			setBomBaseConfig(param).then(res => {
-				if (res.data.code == 1) {
+				if (res.data.success) {
 					this.getBomBaseConfig();
 					this.visible = false;
 					this.$message.success('添加成功!');

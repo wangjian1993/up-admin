@@ -14,9 +14,13 @@
           prop="EnterCode"
           :labelCol="{ span: 6 }"
         >
-          <a-select v-model="form.EnterCode" placeholder="选择机构">
-            <a-select-option value="shanghai">
-              Zone one
+          <a-select v-model="form.EnterCode" placeholder="选择机构" @change="enterTypeOption">
+            <a-select-option
+              v-for="(item, index) in selectList"
+              :key="index"
+              :value="item.EnterTypeCode"
+            >
+              {{ item.EnterTypeCode }}
             </a-select-option>
           </a-select>
         </a-form-model-item>
@@ -62,7 +66,7 @@
           :labelCol="{ span: 6 }"
         >
           <a-input
-            v-model="form.name"
+            v-model="form.EnterShortName"
             @blur="
               () => {
                 $refs.name.onFieldBlur();
@@ -83,7 +87,7 @@
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="公司简称(英文)" :labelCol="{ span: 6 }">
-          <a-input v-model="form.name" />
+          <a-input v-model="form.EnterShortEnName" />
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
@@ -117,10 +121,10 @@
           :labelCol="{ span: 6 }"
         >
           <a-input
-            v-model="form.name"
+            v-model="form.EnterTypeName"
             @blur="
               () => {
-                $refs.name.onFieldBlur();
+                $refs.EnterTypeName.onFieldBlur();
               }
             "
           />
@@ -166,12 +170,14 @@
   </a-form-model>
 </template>
 <script>
+import { getInstitutionList } from "@/services/admin.js";
 export default {
   data() {
     return {
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
       other: "",
+      selectList: [],
       form: {
         OAId: "",
         EnterCode: "",
@@ -214,10 +220,32 @@ export default {
             trigger: "blur",
           },
         ],
+        EnterTypeName:[
+          {
+            required: true,
+            message: "请选择机构类型",
+            trigger: "blur",
+          },
+        ]
       },
     };
   },
+  created() {
+    this.getInstitutionList();
+  },
   methods: {
+    //获取机构类型
+    getInstitutionList() {
+      let parmas = {
+        pageindex: 1,
+        pagesize: 100,
+      };
+      getInstitutionList(parmas).then((res) => {
+        if (res.data.success) {
+          this.selectList = res.data.data.list;
+        }
+      });
+    },
     onSubmit() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
@@ -227,6 +255,14 @@ export default {
           return false;
         }
       });
+    },
+    enterTypeOption(value){
+      console.log(value);
+       this.selectList.filter((item)=>{
+         if(item.EnterTypeCode == value){
+           this.form.EnterTypeName = item.EnterTypeName
+         }
+       })
     },
     resetForm() {
       this.$refs.ruleForm.resetFields();

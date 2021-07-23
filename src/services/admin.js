@@ -66,7 +66,7 @@ export async function delEnterType(params) {
 	return request(`${UP_ADMIN}/enter/add`, METHOD.POST,params)
 }
 /**
- * @description: 获取机构列表
+ * @description: 更新机构列表
  * @param {*} params
  * @return {*}
  */
@@ -74,13 +74,32 @@ export async function delEnterType(params) {
 	return request(`${UP_ADMIN}/enter/update`, METHOD.POST,params)
 }
 /**
- * @description: 获取机构列表
+ * @description: 删除机构列表
  * @param {*} params
  * @return {*}
  */
  export async function deleteEnterList(params) {
 	return request(`${UP_ADMIN}/enter/delete`, METHOD.POST,params)
 }
+
+// 组织列表
+/**
+ * @description: 获取组织列表
+ * @param {*} params
+ * @return {*}
+ */
+ export async function getOrganizationList(params) {
+	return request(`${UP_ADMIN}/orgdimension/getall`, METHOD.GET,params)
+}
+/**
+ * @description: 添加组织
+ * @param {*} params
+ * @return {*}
+ */
+ export async function orgdimensionAction(params,action) {
+	return request(`${UP_ADMIN}/orgdimension/${action}`, METHOD.POST,params)
+}
+
 export default {
 	getInstitutionList,
 	getEnterList,
@@ -89,5 +108,7 @@ export default {
 	delEnterType,
 	addEnterList,
 	updateEnterList,
-	deleteEnterList
+	deleteEnterList,
+	getOrganizationList,
+	orgdimensionAction
 }

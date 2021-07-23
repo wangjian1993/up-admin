@@ -216,7 +216,7 @@ export default {
      */
     getBomBaseConfig() {
       getBomBaseConfig("get_base").then((res) => {
-        if (res.data.code == 1) {
+        if (res.data.success) {
           // this.list = res.data.data;
           this.isLoading = false;
           const defaultObj = {
@@ -275,7 +275,7 @@ export default {
       });
       console.log(param);
       setVersionsConfig(param).then((res) => {
-        if (res.data.code == 1) {
+        if (res.data.success) {
           this.$message.success("添加成功");
           // this.list = res.data.data;
           // this.isLoading = false;
