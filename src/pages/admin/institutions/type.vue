@@ -32,7 +32,7 @@
 						</div>
 						<span style="float: right; margin-top: 3px;">
 							<a-button type="primary" @click="search">查询</a-button>
-							<a-button style="margin-left: 8px" @click="getInstitutionList">重置</a-button>
+							<a-button style="margin-left: 8px" @click="reset">重置</a-button>
 						</span>
 					</a-form>
 				</a-col>
@@ -44,6 +44,8 @@
 					<a-form-model-item ref="EnterTypeCode" label="类型编号" prop="EnterTypeCode">
 						<a-input
 							v-model="typeForm.EnterTypeCode"
+							:disabled="isEdit"
+							placeholder="请输入类型编号"
 							@blur="
 								() => {
 									$refs.EnterTypeCode.onFieldBlur();
@@ -54,6 +56,7 @@
 					<a-form-model-item ref="EnterTypeName" label="类型名称" prop="EnterTypeName">
 						<a-input
 							v-model="typeForm.EnterTypeName"
+							placeholder="请输入类型名称"
 							@blur="
 								() => {
 									$refs.EnterTypeName.onFieldBlur();
@@ -61,19 +64,13 @@
 							"
 						/>
 					</a-form-model-item>
-					<a-form-model-item ref="EnterTypeDesc" label="描述" prop="EnterTypeDesc">
-						<a-input
-							v-model="typeForm.EnterTypeDesc"
-							@blur="
-								() => {
-									$refs.EnterTypeDesc.onFieldBlur();
-								}
-							"
-						/>
+					<a-form-model-item ref="EnterTypeDesc" label="描述">
+						<a-textarea v-model="typeForm.EnterTypeDesc" placeholder="请输入类型描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
 					</a-form-model-item>
 					<a-form-model-item ref="IndexUrl" label="首页URL" prop="IndexUrl">
 						<a-input
 							v-model="typeForm.IndexUrl"
+							placeholder="请输入首页URL"
 							@blur="
 								() => {
 									$refs.IndexUrl.onFieldBlur();
@@ -82,13 +79,13 @@
 						/>
 					</a-form-model-item>
 					<a-form-model-item ref="Enable" label="是否启用">
-						<a-radio-group :value="typeForm.Enable" button-style="solid" @change="enableChange">
+						<a-radio-group :value="typeForm.Enable" default-value="Y" button-style="solid" @change="enableChange">
 							<a-radio-button value="N">否</a-radio-button>
 							<a-radio-button value="Y">是</a-radio-button>
 						</a-radio-group>
 					</a-form-model-item>
 					<a-form-model-item ref="IsDefualt" label="是否默认">
-						<a-radio-group :value="typeForm.IsDefualt" button-style="solid" @change="defualtChange">
+						<a-radio-group :value="typeForm.IsDefualt" default-value="Y" button-style="solid" @change="defualtChange">
 							<a-radio-button value="N">否</a-radio-button>
 							<a-radio-button value="Y">是</a-radio-button>
 						</a-radio-group>
@@ -152,8 +149,7 @@
 		<div>
 			<a-drawer width="400" placement="right" :closable="false" :visible="isDrawer" @close="onClose">
 				<a-descriptions title="机构类型详情" :column="1">
-					<a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
-					<a-descriptions-item label="类型id">{{ drawerItem.EnterTypeId }}</a-descriptions-item>
+					<!-- <a-descriptions-item label="类型id">{{ drawerItem.EnterTypeId }}</a-descriptions-item> -->
 					<a-descriptions-item label="类型编码">{{ drawerItem.EnterTypeCode }}</a-descriptions-item>
 					<a-descriptions-item label="类型名称">{{ drawerItem.EnterTypeName }}</a-descriptions-item>
 					<a-descriptions-item label="是否启动">
@@ -171,6 +167,7 @@
 					<a-descriptions-item label="首页URL">{{ drawerItem.IndexUrl }}</a-descriptions-item>
 					<a-descriptions-item label="描述">{{ drawerItem.EnterTypeDesc }}</a-descriptions-item>
 					<a-descriptions-item label="添加人">{{ drawerItem.UserCreated }}</a-descriptions-item>
+					<a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
 				</a-descriptions>
 			</a-drawer>
 		</div>
@@ -226,6 +223,7 @@ const columns = [
 	}
 ];
 import { getInstitutionList, addEnterType, editEnterType, delEnterType } from '@/services/admin.js';
+import { renderStripe } from '@/utils/stripe.js';
 export default {
 	data() {
 		return {
@@ -258,8 +256,8 @@ export default {
 				EnterTypeName: '',
 				EnterTypeDesc: '',
 				IndexUrl: '',
-				Enable: 'N',
-				IsDefualt: 'N'
+				Enable: 'Y',
+				IsDefualt: 'Y'
 			},
 			rules: {
 				EnterTypeCode: [
@@ -293,6 +291,9 @@ export default {
 			}
 		};
 	},
+	updated() {
+		renderStripe();
+	},
 	computed: {
 		hasSelected() {
 			return this.selectedRowKeys.length > 0;
@@ -319,6 +320,11 @@ export default {
 		//多选
 		onSelectChange(selectedRowKeys) {
 			this.selectedRowKeys = selectedRowKeys;
+		},
+		//重置搜索
+		reset() {
+			this.getInstitutionList();
+			this.searchForm.resetFields();
 		},
 		//关键词搜索
 		search() {
@@ -372,8 +378,8 @@ export default {
 				EnterTypeName: '',
 				EnterTypeDesc: '',
 				IndexUrl: '',
-				Enable: 'N',
-				IsDefualt: 'N'
+				Enable: 'Y',
+				IsDefualt: 'Y'
 			};
 		},
 		//关闭对话框

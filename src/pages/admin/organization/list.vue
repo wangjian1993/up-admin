@@ -17,7 +17,7 @@
 					<a-form layout="horizontal" :form="searchForm">
 						<div>
 							<a-col :md="18" :sm="24">
-								<a-form-item label="组织编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
+								<a-form-item label="维度编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
 									<a-input
 										placeholder="请输入"
 										v-decorator="[
@@ -32,7 +32,7 @@
 						</div>
 						<span style="float: right; margin-top: 3px;">
 							<a-button type="primary" @click="search">查询</a-button>
-							<a-button style="margin-left: 8px" @click="getOrganizationList">重置</a-button>
+							<a-button style="margin-left: 8px" @click="reset">重置</a-button>
 						</span>
 					</a-form>
 				</a-col>
@@ -44,6 +44,7 @@
 					<a-form-model-item ref="OrgDimensionName" label="维度名称" prop="OrgDimensionName">
 						<a-input
 							v-model="form.OrgDimensionName"
+							placeholder="请输入维度名称"
 							@blur="
 								() => {
 									$refs.OrgDimensionName.onFieldBlur();
@@ -54,6 +55,7 @@
 					<a-form-model-item ref="OrgDimensionCode" label="编码" prop="OrgDimensionCode">
 						<a-input
 							v-model="form.OrgDimensionCode"
+							placeholder="请输入维度编码"
 							@blur="
 								() => {
 									$refs.OrgDimensionCode.onFieldBlur();
@@ -64,6 +66,7 @@
 					<a-form-model-item ref="SortNo" label="排序" prop="SortNo">
 						<a-input
 							v-model="form.SortNo"
+							placeholder="请输入维度排序"
 							@blur="
 								() => {
 									$refs.SortNo.onFieldBlur();
@@ -77,7 +80,7 @@
 							<a-radio-button value="Y">是</a-radio-button>
 						</a-radio-group>
 					</a-form-model-item>
-					<a-form-model-item ref="Enable" label="是否启动">
+					<a-form-model-item ref="Enable" label="是否启用">
 						<a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
 							<a-radio-button value="N">否</a-radio-button>
 							<a-radio-button value="Y">是</a-radio-button>
@@ -156,7 +159,7 @@
 							<a-tag color="red" v-else>否</a-tag>
 						</div>
 					</a-descriptions-item>
-					<a-descriptions-item label="启动">
+					<a-descriptions-item label="启用">
 						<div>
 							<a-tag color="green" v-if="drawerItem.Enable == 'Y'">是</a-tag>
 							<a-tag color="red" v-else>否</a-tag>
@@ -309,6 +312,11 @@ export default {
 		//多选
 		onSelectChange(selectedRowKeys) {
 			this.selectedRowKeys = selectedRowKeys;
+		},
+		//重置搜索
+		reset() {
+			this.getOrganizationList();
+			this.searchForm.resetFields();
 		},
 		//关键词搜索
 		search() {

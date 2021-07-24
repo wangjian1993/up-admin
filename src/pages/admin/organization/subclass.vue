@@ -1,27 +1,24 @@
 <template>
 	<div>
 		<a-row>
-			<a-col style="padding: 0 5px" :span="3">
-				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-					<a-input-search placeholder="input search text" style="width: 110px" />
-					<div class="left-list">
-						<p><span>组织1</span></p>
-						<p><span>组织2</span></p>
-						<p><span>组织3</span></p>
-					</div>
+			<a-col style="padding: 0 5px" :span="6">
+				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '5px', padding: '10px' }">
+					<p>组织选择</p>
+					<a-tree :tree-data="treeList" :replaceFields="replaceFields" show-icon default-expand-all :default-selected-keys="[treeList[0].Id]">
+					</a-tree>
+				</a-card>
+				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '5px', padding: '10px' }">
+					<p>组织维度选择</p>
+					<a-tree @select="leverClick" :default-selected-keys="[orgList[0].Id]" :tree-data="orgList" :replaceFields="replaceFields1"></a-tree>
 				</a-card>
 			</a-col>
-			<a-col :span="15">
+			<a-col :span="18">
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
 					<div>
-						<a-space size="small">
-							<a-button type="primary" size="small" @click="addSubclass">新建</a-button>
-							<a-button size="small">新建</a-button>
-							<a-button type="dashed" size="small">新建</a-button>
-						</a-space>
+						<a-space size="small"><a-button type="primary" size="small" @click="addSubclass">新建</a-button></a-space>
 					</div>
 					<div>
-						<a-table
+						<!-- <a-table
 							:columns="columns"
 							:data-source="tabData"
 							size="small"
@@ -30,85 +27,57 @@
 								onSelectAll: onSelectAll,
 								onSelect: onSelect
 							}"
-						/>
+						/> -->
 					</div>
 					<div>
-						<a-modal v-model="visible" title="添加子用户名" @ok="handleOk">
-							<a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" @submit="handleSubmit">
-								<a-form-item label="用户组名称">
+						<a-modal :title="title" :visible="visible" @ok="handleOk" @cancel="handleCancel">
+							<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+								<a-form-model-item ref="OrgName" label="用户组名称" prop="OrgName">
 									<a-input
-										v-decorator="[
-											'note',
-											{
-												rules: [
-													{
-														required: true,
-														message: 'Please input your note!'
-													}
-												]
+										v-model="form.OrgName"
+										placeholder="请输入用户组名称"
+										@blur="
+											() => {
+												$refs.OrgName.onFieldBlur();
 											}
-										]"
+										"
 									/>
-								</a-form-item>
-								<a-form-item label="编码">
+								</a-form-model-item>
+								<a-form-model-item ref="OrgCode" label="编码" prop="OrgCode">
 									<a-input
-										v-decorator="[
-											'note',
-											{
-												rules: [
-													{
-														required: true,
-														message: 'Please input your note!'
-													}
-												]
+										v-model="form.OrgCode"
+										placeholder="请输入用户组编码"
+										@blur="
+											() => {
+												$refs.OrgCode.onFieldBlur();
 											}
-										]"
+										"
 									/>
-								</a-form-item>
-								<a-form-item label="所属等级">
-									<a-select
-										v-decorator="[
-											'gender',
-											{
-												rules: [
-													{
-														required: true,
-														message: 'Please select your gender!'
-													}
-												]
+								</a-form-model-item>
+								<a-form-model-item ref="OrgDesc" label="描述">
+									<a-textarea v-model="form.OrgDesc" placeholder="请输入用户组描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
+								</a-form-model-item>
+								<!-- <a-form-model-item ref="OrgCode" label="编码" prop="OrgCode">
+									<a-input
+										v-model="form.OrgCode"
+										placeholder="请输入用户组编码"
+										text="number"
+										@blur="
+											() => {
+												$refs.OrgCode.onFieldBlur();
 											}
-										]"
-										placeholder="Select a option and change input text above"
-										@change="handleSelectChange"
-									>
-										<a-select-option value="male">male</a-select-option>
-										<a-select-option value="female">female</a-select-option>
-									</a-select>
-								</a-form-item>
-							</a-form>
+										"
+									/>
+								</a-form-model-item> -->
+								<a-form-model-item ref="Enable" label="是否启用">
+									<a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
+										<a-radio-button value="N">否</a-radio-button>
+										<a-radio-button value="Y">是</a-radio-button>
+									</a-radio-group>
+								</a-form-model-item>
+							</a-form-model>
 						</a-modal>
 					</div>
-				</a-card>
-			</a-col>
-			<a-col style="padding: 0 5px" :span="6">
-				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-					<a-tabs default-active-key="1" size="small">
-						<a-tab-pane key="1" tab="用户关系">
-							<div>
-								<a-space size="small">
-									<a-button type="primary" size="small">新建</a-button>
-									<a-button size="small">新建</a-button>
-									<a-button type="dashed" size="small">新建</a-button>
-								</a-space>
-							</div>
-							<div class="list-tab">
-								<p>组内用户</p>
-								<p>组负责人</p>
-								<p>上下级</p>
-							</div>
-						</a-tab-pane>
-						<a-tab-pane key="2" tab="组关系" force-render>Content of Tab Pane 2</a-tab-pane>
-					</a-tabs>
 				</a-card>
 			</a-col>
 		</a-row>
@@ -116,99 +85,134 @@
 </template>
 
 <script>
+import { getEnterTree, getOrganizationList, getOrginfo } from '@/services/admin.js';
 export default {
 	data() {
 		return {
+			treeList: [],
+			orgList: [],
+			replaceFields: {
+				title: 'EnterName',
+				key: 'Id'
+			},
+			replaceFields1: {
+				title: 'OrgDimensionName',
+				key: 'OrgDimensionId'
+			},
+			title: '添加机构类型',
+			loading: false,
 			selectedRowKeys: [],
-			columns: [
-				{
-					title: 'Name',
-					dataIndex: 'name',
-					key: 'name'
-				},
-				{
-					title: 'Age',
-					dataIndex: 'age',
-					key: 'age',
-					width: '12%'
-				},
-				{
-					title: 'Address',
-					dataIndex: 'address',
-					width: '30%',
-					key: 'address'
-				}
-			],
-
-			tabData: [
-				{
-					key: 1,
-					name: 'John Brown sr.',
-					age: 60,
-					address: 'New York No. 1 Lake Park',
-					children: [
-						{
-							key: 11,
-							name: 'John Brown',
-							age: 42,
-							address: 'New York No. 2 Lake Park'
-						},
-						{
-							key: 12,
-							name: 'John Brown jr.',
-							age: 30,
-							address: 'New York No. 3 Lake Park',
-							children: [
-								{
-									key: 121,
-									name: 'Jimmy Brown',
-									age: 16,
-									address: 'New York No. 3 Lake Park'
-								}
-							]
-						},
-						{
-							key: 13,
-							name: 'Jim Green sr.',
-							age: 72,
-							address: 'London No. 1 Lake Park',
-							children: [
-								{
-									key: 131,
-									name: 'Jim Green',
-									age: 42,
-									address: 'London No. 2 Lake Park',
-									children: [
-										{
-											key: 1311,
-											name: 'Jim Green jr.',
-											age: 25,
-											address: 'London No. 3 Lake Park'
-										},
-										{
-											key: 1312,
-											name: 'Jimmy Green sr.',
-											age: 18,
-											address: 'London No. 4 Lake Park'
-										}
-									]
-								}
-							]
-						}
-					]
-				},
-				{
-					key: 2,
-					name: 'Joe Black',
-					age: 32,
-					address: 'Sidney No. 1 Lake Park'
-				}
-			],
 			expandRowByClick: false,
-			visible: false
+			visible: false,
+			labelCol: { span: 6 },
+			wrapperCol: { span: 14 },
+			dimsensionId: null,
+			enterid: null,
+			defaultEnterid: null,
+			pagination: {
+				current: 1,
+				total: 0,
+				pageSize: 10, //每页中显示10条数据
+				showSizeChanger: true,
+				showLessItems: true,
+				showQuickJumper: true,
+				pageSizeOptions: ['10', '20', '50', '100'], //每页中显示的数据
+				showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`
+			},
+			searcValue: '',
+			form: {
+				OrgCode: '',
+				OrgName: '',
+				OrgDesc: '',
+				SuperiorId: '',
+				Enable: 'Y',
+				OrgLevelId: '',
+				OrgDimensionId: '',
+				EnterId: ''
+			},
+			rules: {
+				OrgCode: [
+					{
+						required: true,
+						message: '请输入用户组编码',
+						trigger: 'blur'
+					}
+				],
+				OrgName: [
+					{
+						required: true,
+						message: '请输入用户组名称',
+						trigger: 'blur'
+					}
+				]
+			}
 		};
 	},
+	created() {
+		this.getTreeList();
+		this.getOrganizationList();
+	},
 	methods: {
+		getTreeList() {
+			getEnterTree().then(res => {
+				if (res.data.success) {
+					console.log(res);
+					this.treeList = res.data.data;
+					this.defaultEnterid = this.treeList[0].Id;
+				}
+			});
+		},
+		//获取机构类型列表
+		getOrganizationList() {
+			let parmas = {
+				pageindex: 1,
+				pagesize: 100
+			};
+			getOrganizationList(parmas).then(res => {
+				if (res.data.success) {
+					this.orgList = res.data.data.list;
+					this.getOrginfo();
+				}
+			});
+		},
+		//获取组织列表
+		getOrginfo() {
+			if (this.enterid == null) {
+				this.$message.warning('请选择组织');
+				return;
+			}
+			if (this.dimsensionId == null) {
+				this.$message.warning('请选择组织维度');
+				return;
+			}
+			let parmas = {
+				pageindex: this.pagination.current,
+				pagesize: this.pagination.pageSize,
+				dimsensionId: this.dimsensionId,
+				enterid: this.enterid
+			};
+			getOrginfo(parmas).then(res => {
+				if (res.data.success) {
+					this.orgList = res.data.data.list;
+				}
+			});
+		},
+		enableChange(value) {
+			this.form.Enable = value.target.value;
+		},
+		//关闭对话框
+		handleCancel() {
+			this.visible = false;
+		},
+		leverClick(value) {
+			console.log(value);
+			this.dimsensionId = value[0];
+		},
+		treeClick(value) {
+			console.log(value);
+			this.enterid = value[0];
+		},
+
 		handleOk() {},
 		addSubclass() {
 			this.visible = !this.visible;

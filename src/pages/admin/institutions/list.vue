@@ -20,7 +20,7 @@
 							<a-col :md="10" :sm="24">
 								<a-form-item label="机构类型编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
 									<!-- <a-input placeholder="请输入" v-decorator="['entertype']" /> -->
-									<a-select v-model="form.EnterTypeName" placeholder="选择机构" @change="enterTypeOption">
+									<a-select placeholder="选择机构" v-decorator="['entertype']">
 										<a-select-option v-for="(item, index) in selectList" :key="index" :value="item.EnterTypeName">{{ item.EnterTypeName }}</a-select-option>
 									</a-select>
 								</a-form-item>
@@ -33,7 +33,7 @@
 						</div>
 						<span style="float: right; margin-top: 3px;">
 							<a-button type="primary" @click="search">查询</a-button>
-							<a-button style="margin-left: 8px" @click="getEnterList">重置</a-button>
+							<a-button style="margin-left: 8px" @click="reset">重置</a-button>
 						</span>
 					</a-form>
 				</a-col>
@@ -48,6 +48,7 @@
 							<a-form-model-item ref="EnterCode" label="机构编码" prop="EnterCode" :labelCol="{ span: 6 }">
 								<a-input
 									v-model="form.EnterCode"
+									placeholder="请输入机构编码"
 									@blur="
 										() => {
 											$refs.EnterCode.onFieldBlur();
@@ -60,6 +61,7 @@
 							<a-form-model-item ref="EnterEMail" label="管理员邮箱" prop="EnterEMail" :labelCol="{ span: 6 }">
 								<a-input
 									v-model="form.EnterEMail"
+									placeholder="请输入管理员邮箱"
 									@blur="
 										() => {
 											$refs.EnterEMail.onFieldBlur();
@@ -69,9 +71,10 @@
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item ref="EnterName" label="公司中文名" prop="EnterName" :labelCol="{ span: 6 }">
+							<a-form-model-item ref="EnterName" label="机构中文名" prop="EnterName" :labelCol="{ span: 6 }">
 								<a-input
 									v-model="form.EnterName"
+									placeholder="请输入机构中文名"
 									@blur="
 										() => {
 											$refs.EnterEMail.onFieldBlur();
@@ -81,37 +84,39 @@
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="公司简称(中文)" :labelCol="{ span: 6 }">
-								<a-input
-									v-model="form.EnterShortName"							
-								/>
+							<a-form-model-item label="机构简称(中文)" :labelCol="{ span: 6 }">
+								<a-input v-model="form.EnterShortName" placeholder="请输入机构简称(中文)" />
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="公司英文名" :labelCol="{ span: 6 }"><a-input v-model="form.EnterEnName" /></a-form-model-item>
+							<a-form-model-item label="机构英文名" :labelCol="{ span: 6 }"><a-input v-model="form.EnterEnName" placeholder="请输入机构英文名" /></a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="上级机构"  prop="SuperiorEnterId" :labelCol="{ span: 6 }">
-								<a-select v-model="form.SuperiorEnterName" placeholder="选择机构" @change="enterOption">
+							<a-form-model-item label="上级机构" prop="SuperiorEnterId" :labelCol="{ span: 6 }">
+								<a-select v-model="form.SuperiorEnterName" :disabled="isEdit" placeholder="请选择上级机构" @change="enterOption">
 									<a-select-option v-for="(item, index) in data" :key="index" :value="item.EnterName">{{ item.EnterName }}</a-select-option>
 								</a-select>
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="公司简称(英文)" :labelCol="{ span: 6 }"><a-input v-model="form.EnterShortEnName" /></a-form-model-item>
+							<a-form-model-item label="机构简称(英文)" :labelCol="{ span: 6 }">
+								<a-input v-model="form.EnterShortEnName" placeholder="请输入机构简称(英文)" />
+							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="公司域名" :labelCol="{ span: 6 }"><a-input v-model="form.EnterUrl" /></a-form-model-item>
+							<a-form-model-item label="机构域名" :labelCol="{ span: 6 }"><a-input v-model="form.EnterUrl" placeholder="请输入机构域名" /></a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="公司法人" :labelCol="{ span: 6 }"><a-input v-model="form.EnterCorporate" /></a-form-model-item>
+							<a-form-model-item label="机构法人" :labelCol="{ span: 6 }"><a-input v-model="form.EnterCorporate" placeholder="请输入机构法人" /></a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="营业执照编码" :labelCol="{ span: 6 }"><a-input v-model="form.EnterLicense" /></a-form-model-item>
+							<a-form-model-item label="营业执照编码" :labelCol="{ span: 6 }">
+								<a-input v-model="form.EnterLicense" placeholder="请输入营业执照编码" />
+							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="公司描述" :labelCol="{ span: 6 }">
-								<a-textarea v-model="form.EnterDesc" placeholder="Controlled autosize" :auto-size="{ minRows: 3, maxRows: 5 }" />
+							<a-form-model-item label="机构描述" :labelCol="{ span: 6 }">
+								<a-textarea v-model="form.EnterDesc" placeholder="请输入机构描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
@@ -122,7 +127,7 @@
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item ref="Enable" label="是否默认" :labelCol="{ span: 6 }">
+							<a-form-model-item ref="Enable" label="是否启用" :labelCol="{ span: 6 }">
 								<a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
 									<a-radio-button value="N">否</a-radio-button>
 									<a-radio-button value="Y">是</a-radio-button>
@@ -130,16 +135,20 @@
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="联系人" :labelCol="{ span: 6 }"><a-input v-model="form.EnterContacts" /></a-form-model-item>
+							<a-form-model-item label="联系人" :labelCol="{ span: 6 }"><a-input v-model="form.EnterContacts" placeholder="请输入联系人" /></a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="联系电话" :labelCol="{ span: 6 }"><a-input v-model="form.EnterPhone" /></a-form-model-item>
+							<a-form-model-item label="联系电话" :labelCol="{ span: 6 }"><a-input v-model="form.EnterPhone" placeholder="请输入联系电话" /></a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="地址" :labelCol="{ span: 6 }"><a-input v-model="form.EnterAddr" /></a-form-model-item>
+							<a-form-model-item label="传真" :labelCol="{ span: 6 }"><a-input v-model="form.EnterFax" placeholder="请输入联系传真" /></a-form-model-item>
 						</a-col>
-						<a-col :span="12">
-							<a-form-model-item label="传真" :labelCol="{ span: 6 }"><a-input v-model="form.EnterFax" /></a-form-model-item>
+					</a-row>
+					<a-row>
+						<a-col :span="24">
+							<a-form-model-item label="地址" :labelCol="{ span: 3 }">
+								<a-textarea v-model="form.EnterAddr" placeholder="请输入联系地址" :auto-size="{ minRows: 3, maxRows: 5 }" />
+							</a-form-model-item>
 						</a-col>
 					</a-row>
 				</a-form-model>
@@ -195,25 +204,23 @@
 		<div>
 			<a-drawer width="700" placement="right" :closable="false" :visible="isDrawer" @close="onClose">
 				<a-descriptions title="机构列表详情" :column="2">
-					<a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
-					<a-descriptions-item label="类型id">{{ drawerItem.EnterId }}</a-descriptions-item>
+					<a-descriptions-item label="机构中文名">{{ drawerItem.EnterName }}</a-descriptions-item>
 					<a-descriptions-item label="管理员邮箱">{{ drawerItem.EnterEMail }}</a-descriptions-item>
-					<a-descriptions-item label="公司中文名">{{ drawerItem.EnterName }}</a-descriptions-item>
-					<a-descriptions-item label="公司英文名">{{ drawerItem.EnterEnName }}</a-descriptions-item>
-					<a-descriptions-item label="公司中文名(简称)">{{ drawerItem.EnterShortName }}</a-descriptions-item>
-					<a-descriptions-item label="公司英文名(简称)">{{ drawerItem.EnterShortEnName }}</a-descriptions-item>
+					<a-descriptions-item label="机构英文名">{{ drawerItem.EnterEnName }}</a-descriptions-item>
+					<a-descriptions-item label="机构中文名(简称)">{{ drawerItem.EnterShortName }}</a-descriptions-item>
+					<a-descriptions-item label="机构英文名(简称)">{{ drawerItem.EnterShortEnName }}</a-descriptions-item>
 					<a-descriptions-item label="营业执照编码">{{ drawerItem.EnterLicense }}</a-descriptions-item>
-					<a-descriptions-item label="上级机构">{{ drawerItem.SuperiorEnterId }}</a-descriptions-item>
-					<a-descriptions-item label="公司域名">{{ drawerItem.EnterUrl }}</a-descriptions-item>
-					<a-descriptions-item label="公司法人">{{ drawerItem.EnterCorporate }}</a-descriptions-item>
-					<a-descriptions-item label="公司描述">{{ drawerItem.EnterDesc }}</a-descriptions-item>
+					<a-descriptions-item label="上级机构">{{ drawerItem.SuperiorEnterName }}</a-descriptions-item>
+					<a-descriptions-item label="机构域名">{{ drawerItem.EnterUrl }}</a-descriptions-item>
+					<a-descriptions-item label="机构法人">{{ drawerItem.EnterCorporate }}</a-descriptions-item>
+					<a-descriptions-item label="机构描述">{{ drawerItem.EnterDesc }}</a-descriptions-item>
 					<a-descriptions-item label="联系人">{{ drawerItem.EnterContacts }}</a-descriptions-item>
 					<a-descriptions-item label="联系电话">{{ drawerItem.EnterPhone }}</a-descriptions-item>
 					<a-descriptions-item label="地址">{{ drawerItem.EnterAddr }}</a-descriptions-item>
 					<a-descriptions-item label="传真">{{ drawerItem.EnterFax }}</a-descriptions-item>
 					<a-descriptions-item label="机构编码">{{ drawerItem.EnterTypeCode }}</a-descriptions-item>
 					<a-descriptions-item label="机构类型">{{ drawerItem.EnterTypeName }}</a-descriptions-item>
-					<a-descriptions-item label="状态">
+					<a-descriptions-item label="是否启用">
 						<div>
 							<a-tag color="green" v-if="drawerItem.Enable == 'Y'">是</a-tag>
 							<a-tag color="red" v-else>否</a-tag>
@@ -221,6 +228,7 @@
 					</a-descriptions-item>
 					<a-descriptions-item label="描述">{{ drawerItem.EnterTypeDesc }}</a-descriptions-item>
 					<a-descriptions-item label="添加人">{{ drawerItem.UserCreated }}</a-descriptions-item>
+					<a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
 				</a-descriptions>
 			</a-drawer>
 		</div>
@@ -234,7 +242,7 @@ const columns = [
 		align: 'center'
 	},
 	{
-		title: '公司中文名',
+		title: '机构中文名',
 		dataIndex: 'EnterName',
 		scopedSlots: { customRender: 'name' },
 		align: 'center'
@@ -258,9 +266,21 @@ const columns = [
 		align: 'center'
 	},
 	{
+		title: '上级机构名称',
+		dataIndex: 'SuperiorEnterName',
+		scopedSlots: { customRender: 'SuperiorEnterName' },
+		align: 'center'
+	},
+	{
 		title: '创建时间',
 		dataIndex: 'DateTimeCreated',
 		scopedSlots: { customRender: 'address' },
+		align: 'center'
+	},
+	{
+		title: '创建人',
+		dataIndex: 'UserCreated',
+		scopedSlots: { customRender: 'UserCreated' },
 		align: 'center'
 	},
 	{
@@ -270,6 +290,7 @@ const columns = [
 	}
 ];
 import { getEnterList, addEnterList, updateEnterList, deleteEnterList, getInstitutionList } from '@/services/admin.js';
+import { renderStripe } from '@/utils/stripe.js';
 export default {
 	data() {
 		return {
@@ -316,7 +337,7 @@ export default {
 				EnterPhone: '',
 				EnterAddr: '',
 				SuperiorEnterId: '',
-				SuperiorEnterName:"",
+				SuperiorEnterName: '',
 				Enable: 'Y'
 			},
 			rules: {
@@ -351,12 +372,15 @@ export default {
 				EnterName: [
 					{
 						required: true,
-						message: '请输入公司中文名',
+						message: '请输入机构中文名',
 						trigger: 'blur'
 					}
 				]
 			}
 		};
+	},
+	updated() {
+		renderStripe();
 	},
 	computed: {
 		hasSelected() {
@@ -394,7 +418,7 @@ export default {
 		},
 		//设置上级机构
 		enterOption(value) {
-			this.form.SuperiorEnterName =value
+			this.form.SuperiorEnterName = value;
 			this.data.filter(item => {
 				if (item.EnterName == value) {
 					this.form.SuperiorEnterId = item.SuperiorEnterId;
@@ -409,9 +433,14 @@ export default {
 					this.form.EnterTypeName = item.EnterTypeName;
 					this.form.EnterTypeId = item.EnterTypeId;
 					this.form.EnterTypeCode = item.EnterTypeCode;
-					console.log(this.form)
+					console.log(this.form);
 				}
 			});
+		},
+		//重置搜索
+		reset() {
+			this.getEnterList();
+			this.searchForm.resetFields();
 		},
 		//搜索
 		search() {
@@ -483,7 +512,7 @@ export default {
 				EnterPhone: '',
 				EnterAddr: '',
 				SuperiorEnterId: '',
-				SuperiorEnterName:'',
+				SuperiorEnterName: '',
 				Enable: 'Y'
 			};
 		},
@@ -521,7 +550,7 @@ export default {
 							EnterPhone: this.form.EnterPhone,
 							EnterAddr: this.form.EnterAddr,
 							SuperiorEnterId: this.form.SuperiorEnterId,
-							SuperiorEnterName:this.form.SuperiorEnterName,
+							SuperiorEnterName: this.form.SuperiorEnterName,
 							Enable: this.form.Enable
 						};
 						updateEnterList(editForm).then(res => {

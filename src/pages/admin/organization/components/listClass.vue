@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<a-modal v-model="visible" :title="classItem.OrgDimensionName + '-等级管理'" :footer="null" @cancel="close" centered :width="700">
+		<a-modal v-model="visible" :title="classItem.OrgDimensionName + '-等级管理'" :footer="null" @cancel="close" centered :width="800">
 			<div>
 				<div class="search-box">
 					<a-row>
@@ -34,7 +34,7 @@
 								</div>
 								<span style="float: right; margin-top: 3px;">
 									<a-button type="primary" @click="search">查询</a-button>
-									<a-button style="margin-left: 8px" @click="getList">重置</a-button>
+									<a-button style="margin-left: 8px" @click="reset">重置</a-button>
 								</span>
 							</a-form>
 						</a-col>
@@ -143,13 +143,19 @@ const columns = [
 		align: 'center'
 	},
 	{
-		title: '关系名',
+		title: '组织等级编号',
+		dataIndex: 'OrgLevelCode',
+		scopedSlots: { customRender: 'OrgLevelCode' },
+		align: 'center'
+	},
+	{
+		title: '组织等级名称',
 		dataIndex: 'OrgLevelName',
 		scopedSlots: { customRender: 'OrgLevelName' },
 		align: 'center'
 	},
 	{
-		title: '关联业务主键',
+		title: '组织维度',
 		dataIndex: 'OrgDimensionName',
 		scopedSlots: { customRender: 'OrgDimensionName' },
 		align: 'center'
@@ -266,6 +272,10 @@ export default {
 		//多选
 		onSelectChange(selectedRowKeys) {
 			this.selectedRowKeys = selectedRowKeys;
+		},
+		reset() {
+			this.getList();
+			this.searchForm.resetFields();
 		},
 		//关键词搜索
 		search() {
