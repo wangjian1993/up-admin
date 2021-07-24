@@ -37,12 +37,13 @@ export default {
 			this.$router.push({ path: 'user/setting' });
 		},
 		logout() {
-			this.$confirm({
+			let selt =this;
+			selt.$confirm({
 				title: '退出登录',
 				content: '确定要退出登录吗?',
 				onOk() {
 					logout();
-					this.$router.push('/login');
+					selt.$router.push('/login');
 				},
 				onCancel() {}
 			});

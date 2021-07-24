@@ -174,9 +174,7 @@
 			</a-drawer>
 		</div>
 		<!-- 等级管理 -->
-		<div v-if="isListClass">
-			<list-class></list-class>
-		</div>
+		<div v-if="isListClass"><list-class @closeModal="closeModal" :classItem="classItem"></list-class></div>
 	</a-card>
 </template>
 <script>
@@ -223,7 +221,7 @@ const columns = [
 	}
 ];
 import { getOrganizationList, orgdimensionAction } from '@/services/admin.js';
-import ListClass from "./components/listClass.vue"
+import ListClass from './components/listClass.vue';
 export default {
 	data() {
 		return {
@@ -236,10 +234,11 @@ export default {
 			isDrawer: false,
 			selectedRowKeys: [], // Check here to configure the default column
 			visible: false,
-			isListClass:false,
+			isListClass: false,
 			drawerItem: [],
 			labelCol: { span: 6 },
 			wrapperCol: { span: 14 },
+			classItem: [],
 			pagination: {
 				current: 1,
 				total: 0,
@@ -457,12 +456,15 @@ export default {
 			this.getOrganizationList();
 		},
 		//等级管理
-		cluster(item){
-			console.log(item);
-			this.isListClass =true;
+		cluster(item) {
+			this.classItem = item;
+			this.isListClass = true;
+		},
+		closeModal() {
+			this.isListClass = false;
 		}
 	},
-	components:{ListClass}
+	components: { ListClass }
 };
 </script>
 <style lang="less">

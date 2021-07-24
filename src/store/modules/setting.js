@@ -54,8 +54,6 @@ export default {
       state.isMobile = isMobile
     },
     setTheme (state, theme) {
-      console.log("theme",theme);
-      localStorage.setItem("primary-color",theme.color)
       state.theme = theme
     },
     setLayout (state, layout) {

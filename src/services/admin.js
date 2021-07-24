@@ -100,6 +100,25 @@ export async function delEnterType(params) {
 	return request(`${UP_ADMIN}/orgdimension/${action}`, METHOD.POST,params)
 }
 
+// 组织等级
+/**
+ * @description: 获取组织等级
+ * @param {*} params
+ * @return {*}
+ */
+ export async function getOrgLevelList(params) {
+	return request(`${UP_ADMIN}/orglevel/getall`, METHOD.GET,params)
+}
+/**
+ * @description: 组织等级
+ * @param {*} params
+ * @return {*}
+ */
+ export async function orgLevelAction(params,action) {
+	return request(`${UP_ADMIN}/orglevel/${action}`, METHOD.POST,params)
+}
+
+
 export default {
 	getInstitutionList,
 	getEnterList,
@@ -110,5 +129,7 @@ export default {
 	updateEnterList,
 	deleteEnterList,
 	getOrganizationList,
-	orgdimensionAction
+	orgdimensionAction,
+	getOrgLevelList,
+	orgLevelAction
 }

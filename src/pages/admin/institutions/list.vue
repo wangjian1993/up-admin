@@ -19,7 +19,10 @@
 						<div>
 							<a-col :md="10" :sm="24">
 								<a-form-item label="机构类型编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
-									<a-input placeholder="请输入" v-decorator="['entertype']" />
+									<!-- <a-input placeholder="请输入" v-decorator="['entertype']" /> -->
+									<a-select v-model="form.EnterTypeName" placeholder="选择机构" @change="enterTypeOption">
+										<a-select-option v-for="(item, index) in selectList" :key="index" :value="item.EnterTypeName">{{ item.EnterTypeName }}</a-select-option>
+									</a-select>
 								</a-form-item>
 							</a-col>
 							<a-col :md="10" :sm="24">
@@ -43,9 +46,6 @@
 					<a-row>
 						<a-col :span="12">
 							<a-form-model-item ref="EnterCode" label="机构编码" prop="EnterCode" :labelCol="{ span: 6 }">
-								<!-- <a-select v-model="form.EnterCode" placeholder="选择机构" @change="enterTypeOption">
-									<a-select-option v-for="(item, index) in selectList" :key="index" :value="item.EnterTypeCode">{{ item.EnterTypeCode }}</a-select-option>
-								</a-select> -->
 								<a-input
 									v-model="form.EnterCode"
 									@blur="
@@ -81,14 +81,9 @@
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="公司简称(中文)" prop="region" :labelCol="{ span: 6 }">
+							<a-form-model-item label="公司简称(中文)" :labelCol="{ span: 6 }">
 								<a-input
-									v-model="form.EnterShortName"
-									@blur="
-										() => {
-											$refs.name.onFieldBlur();
-										}
-									"
+									v-model="form.EnterShortName"							
 								/>
 							</a-form-model-item>
 						</a-col>
@@ -96,7 +91,11 @@
 							<a-form-model-item label="公司英文名" :labelCol="{ span: 6 }"><a-input v-model="form.EnterEnName" /></a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="上级机构" :labelCol="{ span: 6 }"><a-input v-model="form.SuperiorEnterId" /></a-form-model-item>
+							<a-form-model-item label="上级机构"  prop="SuperiorEnterId" :labelCol="{ span: 6 }">
+								<a-select v-model="form.SuperiorEnterName" placeholder="选择机构" @change="enterOption">
+									<a-select-option v-for="(item, index) in data" :key="index" :value="item.EnterName">{{ item.EnterName }}</a-select-option>
+								</a-select>
+							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
 							<a-form-model-item label="公司简称(英文)" :labelCol="{ span: 6 }"><a-input v-model="form.EnterShortEnName" /></a-form-model-item>
@@ -116,7 +115,11 @@
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="机构类型" :labelCol="{ span: 6 }"><a-input v-model="form.EnterTypeName" disabled /></a-form-model-item>
+							<a-form-model-item label="机构类型" prop="EnterTypeName" :labelCol="{ span: 6 }">
+								<a-select v-model="form.EnterTypeName" placeholder="选择机构" @change="enterTypeOption">
+									<a-select-option v-for="(item, index) in selectList" :key="index" :value="item.EnterTypeName">{{ item.EnterTypeName }}</a-select-option>
+								</a-select>
+							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
 							<a-form-model-item ref="Enable" label="是否默认" :labelCol="{ span: 6 }">
@@ -313,6 +316,7 @@ export default {
 				EnterPhone: '',
 				EnterAddr: '',
 				SuperiorEnterId: '',
+				SuperiorEnterName:"",
 				Enable: 'Y'
 			},
 			rules: {
@@ -330,10 +334,10 @@ export default {
 						trigger: 'blur'
 					}
 				],
-				EnterName: [
+				SuperiorEnterId: [
 					{
 						required: true,
-						message: '请输入公司中文名',
+						message: '请选择上级机构',
 						trigger: 'blur'
 					}
 				],
@@ -341,6 +345,13 @@ export default {
 					{
 						required: true,
 						message: '请选择机构类型',
+						trigger: 'blur'
+					}
+				],
+				EnterName: [
+					{
+						required: true,
+						message: '请输入公司中文名',
 						trigger: 'blur'
 					}
 				]
@@ -354,6 +365,7 @@ export default {
 	},
 	created() {
 		this.getEnterList();
+		this.getInstitutionList();
 	},
 	methods: {
 		//设置是否默认
@@ -380,14 +392,24 @@ export default {
 				}
 			});
 		},
-		//设置机构名称
+		//设置上级机构
+		enterOption(value) {
+			this.form.SuperiorEnterName =value
+			this.data.filter(item => {
+				if (item.EnterName == value) {
+					this.form.SuperiorEnterId = item.SuperiorEnterId;
+					// this.form.SuperiorEnterName =item.SuperiorEnterName
+				}
+			});
+		},
+		//设置机构类型
 		enterTypeOption(value) {
-			console.log(value);
 			this.selectList.filter(item => {
-				if (item.EnterTypeCode == value) {
+				if (item.EnterTypeName == value) {
 					this.form.EnterTypeName = item.EnterTypeName;
 					this.form.EnterTypeId = item.EnterTypeId;
-					this.form.EnterTypeCode =item.EnterTypeCode
+					this.form.EnterTypeCode = item.EnterTypeCode;
+					console.log(this.form)
 				}
 			});
 		},
@@ -437,7 +459,6 @@ export default {
 		},
 		//打开对话框
 		add() {
-			this.getInstitutionList();
 			this.defaultForm();
 			this.isEdit = false;
 			this.title = '添加机构';
@@ -462,6 +483,7 @@ export default {
 				EnterPhone: '',
 				EnterAddr: '',
 				SuperiorEnterId: '',
+				SuperiorEnterName:'',
 				Enable: 'Y'
 			};
 		},
@@ -499,6 +521,7 @@ export default {
 							EnterPhone: this.form.EnterPhone,
 							EnterAddr: this.form.EnterAddr,
 							SuperiorEnterId: this.form.SuperiorEnterId,
+							SuperiorEnterName:this.form.SuperiorEnterName,
 							Enable: this.form.Enable
 						};
 						updateEnterList(editForm).then(res => {
