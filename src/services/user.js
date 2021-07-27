@@ -6,7 +6,7 @@
  * @Description: 
  * @FilePath: /up-admin/src/services/user.js
  */
-import {ROUTES,UP_ADMIN} from '@/services/api';
+import {ROUTES} from '@/services/api';
 import {request, METHOD, removeAuthorization} from '@/utils/request';
 
 /**
@@ -16,7 +16,7 @@ import {request, METHOD, removeAuthorization} from '@/utils/request';
  * @returns {Promise<AxiosResponse<T>>}
  */
 export async function login(name, password) {
-  return request(`${UP_ADMIN}/user/uservalidate`, METHOD.POST, {
+  return request(`http://192.168.1.245:6688/api/auth/user/uservalidate`, METHOD.POST, {
     userName: name,
     userPwd: password
   },false)

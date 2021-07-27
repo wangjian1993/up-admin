@@ -432,7 +432,6 @@ export default {
 					});
 					orgdimensionAction(params, 'delete').then(res => {
 						if (res.data.success) {
-							self.$message.success('删除成功!');
 							self.selectedRowKeys = [];
 							self.$message.success('删除成功!');
 							self.getOrganizationList();

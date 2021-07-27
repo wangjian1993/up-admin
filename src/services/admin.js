@@ -135,6 +135,34 @@ export async function getEnterTree(params) {
 export async function getOrginfo(params) {
 	return request(`${UP_ADMIN}/orginfo/getall`, METHOD.GET, params)
 }
+
+/**
+ * @description:获取组织树形结构数据
+ * @param {*} params
+ * @return {*}
+ */
+export async function orginfoAction(params,action) {
+	return request(`${UP_ADMIN}/orginfo/${action}`, METHOD.POST, params)
+}
+
+
+/**
+ * @description:获取用户列表
+ * @param {*} params
+ * @return {*}
+ */
+export async function getUserList(params) {
+	return request(`${UP_ADMIN}/usertype/getall`, METHOD.GET, params)
+}
+
+/**
+ * @description:用户操作
+ * @param {*} params
+ * @return {*}
+ */
+export async function userAction(params,action) {
+	return request(`${UP_ADMIN}/usertype/${action}`, METHOD.POST, params)
+}
 export default {
 	getInstitutionList,
 	getEnterList,
@@ -149,5 +177,8 @@ export default {
 	getOrgLevelList,
 	orgLevelAction,
 	getEnterTree,
-	getOrginfo
+	getOrginfo,
+	orginfoAction,
+	getUserList,
+	userAction
 }

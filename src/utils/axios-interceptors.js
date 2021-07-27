@@ -19,7 +19,7 @@ const resp401 = {
 		const {
 			message
 		} = options
-		console.log(response);
+		// console.log(response);
 		if (response.status === 401) {
 			message.error('token失效,请重新登陆!')
 		}

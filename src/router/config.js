@@ -181,7 +181,7 @@ const options = {
               component: BlankView,
               children: [
                 {
-                  path: "organization-list",
+                  path: "user-list",
                   name: "用户列表",
                   component: () =>
                     import(

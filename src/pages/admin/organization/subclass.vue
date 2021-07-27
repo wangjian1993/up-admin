@@ -4,30 +4,59 @@
 			<a-col style="padding: 0 5px" :span="6">
 				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '5px', padding: '10px' }">
 					<p>组织选择</p>
-					<a-tree :tree-data="treeList" :replaceFields="replaceFields" show-icon default-expand-all :default-selected-keys="[treeList[0].Id]">
-					</a-tree>
+					<a-tree @select="treeClick" :tree-data="treeList" :replaceFields="replaceFields" default-expand-all :default-selected-keys="enterValue"></a-tree>
 				</a-card>
 				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '5px', padding: '10px' }">
 					<p>组织维度选择</p>
-					<a-tree @select="leverClick" :default-selected-keys="[orgList[0].Id]" :tree-data="orgList" :replaceFields="replaceFields1"></a-tree>
+					<a-tree @select="leverClick" :default-selected-keys="leverValue" :tree-data="orgList" :replaceFields="replaceFields1">{{ orgList }}</a-tree>
 				</a-card>
 			</a-col>
 			<a-col :span="18">
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
 					<div>
-						<a-space size="small"><a-button type="primary" size="small" @click="addSubclass">新建</a-button></a-space>
+						<a-button @click="addSubclass" type="primary" icon="form">添加</a-button>
+						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+						<span style="margin-left: 8px">
+							<template v-if="hasSelected">
+								{{ `共选中 ${selectedRowKeys.length} 条` }}
+							</template>
+						</span>
 					</div>
 					<div>
-						<!-- <a-table
+						<a-table
 							:columns="columns"
 							:data-source="tabData"
+							:pagination="pagination"
 							size="small"
 							:row-selection="{
 								selectedRowKeys: selectedRowKeys,
-								onSelectAll: onSelectAll,
-								onSelect: onSelect
+								onChange: onSelectChange
 							}"
-						/> -->
+						>
+							<template slot="index" slot-scope="text, record, index">
+								<div>
+									<span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+								</div>
+							</template>
+							<template slot="action" slot-scope="text, record">
+								<div>
+									<a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
+										<a style="margin-right: 8px">
+											<a-icon type="delete" />
+											删除
+										</a>
+									</a-popconfirm>
+									<a style="margin-right: 8px" @click="edit(record)">
+										<a-icon type="edit" />
+										编辑
+									</a>
+									<a style="margin-right: 8px" @click="addSubclass(record, 'sub')">
+										<a-icon type="profile" />
+										新增子组
+									</a>
+								</div>
+							</template>
+						</a-table>
 					</div>
 					<div>
 						<a-modal :title="title" :visible="visible" @ok="handleOk" @cancel="handleCancel">
@@ -47,6 +76,7 @@
 									<a-input
 										v-model="form.OrgCode"
 										placeholder="请输入用户组编码"
+										:disabled="isEdit"
 										@blur="
 											() => {
 												$refs.OrgCode.onFieldBlur();
@@ -54,21 +84,15 @@
 										"
 									/>
 								</a-form-model-item>
+								<a-form-model-item ref="SuperiorId" label="上级组织" v-if="subType"><a-input v-model="subItem.OrgName" disabled /></a-form-model-item>
 								<a-form-model-item ref="OrgDesc" label="描述">
 									<a-textarea v-model="form.OrgDesc" placeholder="请输入用户组描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
 								</a-form-model-item>
-								<!-- <a-form-model-item ref="OrgCode" label="编码" prop="OrgCode">
-									<a-input
-										v-model="form.OrgCode"
-										placeholder="请输入用户组编码"
-										text="number"
-										@blur="
-											() => {
-												$refs.OrgCode.onFieldBlur();
-											}
-										"
-									/>
-								</a-form-model-item> -->
+								<a-form-model-item ref="OrgLevelId" label="所属等级指" prop="OrgLevelId">
+									<a-select placeholder="选择组织等级" v-model="form.OrgLevelId" allowClear v-decorator="['OrgLevelId']">
+										<a-select-option v-for="(item, index) in LevelList" :key="index" :value="item.OrgLevelId">{{ item.OrgLevelName }}</a-select-option>
+									</a-select>
+								</a-form-model-item>
 								<a-form-model-item ref="Enable" label="是否启用">
 									<a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
 										<a-radio-button value="N">否</a-radio-button>
@@ -85,19 +109,59 @@
 </template>
 
 <script>
-import { getEnterTree, getOrganizationList, getOrginfo } from '@/services/admin.js';
+import { getEnterTree, getOrganizationList, getOrginfo, orginfoAction, getOrgLevelList } from '@/services/admin.js';
+const columns = [
+	{
+		title: '序号',
+		scopedSlots: { customRender: 'index' },
+		align: 'center'
+	},
+	{
+		title: '组名',
+		dataIndex: 'OrgName',
+		scopedSlots: { customRender: 'OrgName' },
+		align: 'center'
+	},
+	{
+		title: '组key',
+		dataIndex: 'OrgCode',
+		scopedSlots: { customRender: 'OrgCode' },
+		align: 'center'
+	},
+	{
+		title: '等级',
+		dataIndex: 'OrgLevelName',
+		scopedSlots: { customRender: 'OrgLevelName' },
+		align: 'center'
+	},
+	{
+		title: '操作',
+		scopedSlots: { customRender: 'action' },
+		align: 'center'
+	}
+];
 export default {
 	data() {
 		return {
+			tabData: [],
 			treeList: [],
+			LevelList: [],
+			columns,
 			orgList: [],
 			replaceFields: {
 				title: 'EnterName',
-				key: 'Id'
+				key: 'Id',
+				value: 'Id'
+			},
+			fieldNames: {
+				label: 'OrgDimensionName',
+				value: 'OrgDimensionId',
+				children: 'children'
 			},
 			replaceFields1: {
 				title: 'OrgDimensionName',
-				key: 'OrgDimensionId'
+				key: 'OrgDimensionId',
+				value: 'OrgDimensionId'
 			},
 			title: '添加机构类型',
 			loading: false,
@@ -109,6 +173,11 @@ export default {
 			dimsensionId: null,
 			enterid: null,
 			defaultEnterid: null,
+			enterValue: [],
+			leverValue: [],
+			subType: false,
+			isEdit: false,
+			subItem: [],
 			pagination: {
 				current: 1,
 				total: 0,
@@ -148,17 +217,30 @@ export default {
 			}
 		};
 	},
-	created() {
-		this.getTreeList();
-		this.getOrganizationList();
+	computed: {
+		hasSelected() {
+			return this.selectedRowKeys.length > 0;
+		}
+	},
+	async created() {
+		await this.getTreeList();
 	},
 	methods: {
+		orgChange(value) {
+			this.LevelList = [];
+			this.getList(value);
+		},
+		//多选
+		onSelectChange(selectedRowKeys) {
+			this.selectedRowKeys = selectedRowKeys;
+		},
 		getTreeList() {
 			getEnterTree().then(res => {
 				if (res.data.success) {
-					console.log(res);
 					this.treeList = res.data.data;
-					this.defaultEnterid = this.treeList[0].Id;
+					this.enterValue.push(this.treeList[0].Id);
+					this.enterid = this.treeList[0].Id;
+					this.getOrganizationList();
 				}
 			});
 		},
@@ -171,20 +253,28 @@ export default {
 			getOrganizationList(parmas).then(res => {
 				if (res.data.success) {
 					this.orgList = res.data.data.list;
+					this.leverValue.push(this.orgList[0].OrgDimensionId);
+					this.dimsensionId = this.orgList[0].OrgDimensionId;
+					this.getList(this.dimsensionId);
 					this.getOrginfo();
+				}
+			});
+		},
+		getList(id) {
+			console.log(id);
+			let parmas = {
+				pageindex: 1,
+				pagesize: 100,
+				dimsensionId: id
+			};
+			getOrgLevelList(parmas).then(res => {
+				if (res.data.success) {
+					this.LevelList = res.data.data.list;
 				}
 			});
 		},
 		//获取组织列表
 		getOrginfo() {
-			if (this.enterid == null) {
-				this.$message.warning('请选择组织');
-				return;
-			}
-			if (this.dimsensionId == null) {
-				this.$message.warning('请选择组织维度');
-				return;
-			}
 			let parmas = {
 				pageindex: this.pagination.current,
 				pagesize: this.pagination.pageSize,
@@ -193,9 +283,15 @@ export default {
 			};
 			getOrginfo(parmas).then(res => {
 				if (res.data.success) {
-					this.orgList = res.data.data.list;
+					this.tabData = res.data.data.list;
+					const pagination = { ...this.pagination };
+					pagination.total = res.data.data.recordsTotal;
+					this.pagination = pagination;
 				}
 			});
+		},
+		loadData(selectedOptions) {
+			console.log(selectedOptions);
 		},
 		enableChange(value) {
 			this.form.Enable = value.target.value;
@@ -205,150 +301,136 @@ export default {
 			this.visible = false;
 		},
 		leverClick(value) {
-			console.log(value);
 			this.dimsensionId = value[0];
+			this.getOrginfo();
+			this.getList(value[0]);
+			console.log('等级选择');
 		},
 		treeClick(value) {
-			console.log(value);
+			console.log('组织选择');
 			this.enterid = value[0];
+			this.getOrginfo();
 		},
-
-		handleOk() {},
-		addSubclass() {
+		defaultForm() {
+			this.form = {
+				OrgCode: '',
+				OrgName: '',
+				OrgDesc: '',
+				SuperiorId: '',
+				Enable: 'Y',
+				OrgLevelId: '',
+				OrgDimensionId: '',
+				EnterId: ''
+			};
+		},
+		edit(item) {
+			this.visible = true;
+			this.isEdit = true;
+			this.title = '编辑组织';
+			this.form = item;
+		},
+		handleOk() {
+			this.$refs.ruleForm.validate(valid => {
+				if (valid) {
+					if (this.isEdit) {
+						let editForm = {
+							OrgId: this.form.OrgId,
+							OrgName: this.form.OrgName,
+							OrgDesc: this.form.OrgName,
+							Enable: this.form.Enable,
+							OrgLevelId: this.form.OrgLevelId
+						};
+						orginfoAction(editForm, 'update').then(res => {
+							if (res.data.success) {
+								this.$message.success('编辑成功!');
+								this.defaultForm();
+								this.visible = false;
+								this.getOrginfo();
+							} else {
+								this.$message.warning(res.data.message.content);
+							}
+						});
+					} else {
+						let parma = {
+							OrgCode: this.form.OrgCode,
+							OrgName: this.form.OrgName,
+							OrgDesc: this.form.OrgDesc,
+							SuperiorId: this.subItem.OrgId || '',
+							Enable: this.form.Enable,
+							OrgLevelId: this.form.OrgLevelId,
+							OrgDimensionId: this.dimsensionId,
+							EnterId: this.enterid
+						};
+						orginfoAction(parma, 'add').then(res => {
+							if (res.data.success) {
+								this.$message.success('添加成功!');
+								this.getOrginfo();
+								this.defaultForm();
+								this.visible = false;
+							} else {
+								this.$message.warning(res.data.message.content);
+							}
+						});
+					}
+				}
+			});
+		},
+		addSubclass(item, type) {
+			this.defaultForm();
+			this.subItem = [];
+			this.isEdit = false;
+			this.subType = false;
 			this.visible = !this.visible;
-		},
-		onSelectAll(selected) {
-			if (selected) {
-				const tabData = this.tabData;
-				const arr = [];
-				setVal(tabData, arr);
-				this.selectedRowKeys = arr;
-			} else {
-				this.selectedRowKeys = [];
-			}
-			function setVal(list, arr) {
-				list.forEach(v => {
-					arr.push(v.key);
-					if (v.children) {
-						setVal(v.children, arr);
-					}
-				});
+			if (type == 'sub') {
+				this.subItem = item;
+				this.subType = true;
+				console.log(this.subItem);
 			}
 		},
-		onSelect(record, selected) {
-			const set = new Set(this.selectedRowKeys);
-			const tabData = this.tabData;
-			const key = record.key;
-			if (selected) {
-				set.add(key);
-				record.children && setChildCheck(record.children);
-				setParentCheck(key);
-			} else {
-				set.delete(key);
-				record.children && setChildUncheck(record.children);
-				setParentUncheck(key);
-			}
-			this.selectedRowKeys = Array.from(set);
-			// 设置父级选择
-			function setParentCheck(key) {
-				let parent = getParent(key);
-				if (parent) {
-					set.add(parent.key);
-					setParentCheck(parent.key);
+		//单个删除
+		onDelete(item) {
+			let parmas = [];
+			parmas.push(item.OrgId);
+			orginfoAction(parmas, 'delete').then(res => {
+				if (res.data.success) {
+					this.$message.success('删除成功!');
+					this.getOrginfo();
+				} else {
+					this.$message.warning(res.data.message.content);
 				}
-			}
-			// 设置父级取消，如果父级的子集有选择，则不取消
-			function setParentUncheck(key) {
-				let childHasCheck = false,
-					parent = getParent(key);
-				if (parent) {
-					let childlist = parent.children;
-					childlist.forEach(function(v) {
-						if (set.has(v.key)) childHasCheck = true;
+			});
+		},
+		//分页
+		handleTableChange(pagination) {
+			this.pagination.current = pagination.current;
+			this.pagination.pageSize = pagination.pageSize;
+			this.getOrginfo();
+		},
+		allDel() {
+			let self = this;
+			self.$confirm({
+				title: '确定要删除选中内容',
+				onOk() {
+					const params = [];
+					self.selectedRowKeys.forEach(item => {
+						params.push(self.tabData[item].OrgId);
 					});
-					if (!childHasCheck) {
-						set.delete(parent.key);
-						setParentUncheck(parent.key);
-					}
-				}
-			}
-			// 获取当前对象的父级
-			function getParent(key) {
-				for (let i = 0; i < tabData.length; i++) {
-					if (tabData[i].key === key) {
-						return null;
-					}
-				}
-				return _getParent(tabData);
-				function _getParent(list) {
-					let childlist,
-						isExist = false;
-					for (let i = 0; i < list.length; i++) {
-						if ((childlist = list[i].children)) {
-							childlist.forEach(function(v) {
-								if (v.key === key) isExist = true;
-							});
-							if (isExist) {
-								return list[i];
-							}
-							if (_getParent(childlist)) {
-								return _getParent(childlist);
-							}
+					orginfoAction(params, 'delete').then(res => {
+						if (res.data.success) {
+							self.selectedRowKeys = [];
+							self.$message.success('删除成功!');
+							self.getOrginfo();
+						} else {
+							self.$message.warning(res.data.message.content);
 						}
-					}
-				}
-			}
-			// 设置child全选
-			function setChildCheck(list) {
-				list.forEach(function(v) {
-					set.add(v.key);
-					v.children && setChildCheck(v.children);
-				});
-			}
-			// 设置child取消
-			function setChildUncheck(list) {
-				list.forEach(function(v) {
-					set.delete(v.key);
-					v.children && setChildUncheck(v.children);
-				});
-			}
+					});
+				},
+				onCancel() {}
+			});
 		}
 	},
 	components: {}
 };
 </script>
 
-<style lang="less">
-.left-list {
-	padding: 10px 20px;
-	text-align: center;
-	p {
-		font-size: 12px;
-		color: @title-color;
-		span {
-			padding-left: 10px;
-			&:hover {
-				color: @primary-color;
-				// background: @theme-color;
-				cursor: pointer;
-			}
-		}
-	}
-}
-.list-tab {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	margin-top: 10px;
-	p {
-		height: 30px;
-		line-height: 30px;
-		color: @title-color;
-		font-size: 12px;
-		&:hover {
-			color: @primary-color;
-			cursor: pointer;
-		}
-	}
-}
-</style>
+<style lang="less"></style>
