@@ -285,7 +285,7 @@ export default {
         act: "get_version_list",
       };
       getVersionsManage(param).then((res) => {
-        if (res.data.code == 1) {
+        if (res.data.success) {
           var keyArr = Object.keys(res.data.data);
           if (this.tabType == "ONE") {
             this.tabType = keyArr[0];
@@ -310,7 +310,7 @@ export default {
       };
       this.detailItem = item;
       getVersionsDetail(param).then((res) => {
-        if (res.data.code == 1) {
+        if (res.data.success) {
           this.detailList = res.data.data;
         }
       });
@@ -329,7 +329,7 @@ export default {
         id: id,
       };
       setVersionsAudit(param).then((res) => {
-        if (res.data.code == 1) {
+        if (res.data.success) {
           this.$message.success("操作成功");
           this.getVersionsManage();
         }

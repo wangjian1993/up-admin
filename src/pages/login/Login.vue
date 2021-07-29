@@ -26,7 +26,7 @@
 				<a-form-item>
 					<a-input
 						size="large"
-						placeholder="123456"
+						placeholder="14789632"
 						autocomplete="autocomplete"
 						type="password"
 						v-decorator="[

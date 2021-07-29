@@ -21,30 +21,12 @@ import {
 export async function getInstitutionList(params) {
 	return request(`${UP_ADMIN}/entertype/getlist`, METHOD.GET, params)
 }
-
-/**
- * @description: 添加机构类型
- * @param {*} params
- * @return {*}
- */
 export async function addEnterType(params) {
 	return request(`${UP_ADMIN}/entertype/add`, METHOD.POST, params)
 }
-
-/**
- * @description: 修改机构类型
- * @param {*} params
- * @return {*}
- */
 export async function editEnterType(params) {
 	return request(`${UP_ADMIN}/entertype/update`, METHOD.POST, params)
 }
-
-/**
- * @description: 删除机构类型
- * @param {*} params
- * @return {*}
- */
 export async function delEnterType(params) {
 	return request(`${UP_ADMIN}/entertype/delete`, METHOD.POST, params)
 }
@@ -57,27 +39,12 @@ export async function delEnterType(params) {
 export async function getEnterList(params) {
 	return request(`${UP_ADMIN}/enter/getlist`, METHOD.GET, params)
 }
-/**
- * @description: 获取机构列表
- * @param {*} params
- * @return {*}
- */
 export async function addEnterList(params) {
 	return request(`${UP_ADMIN}/enter/add`, METHOD.POST, params)
 }
-/**
- * @description: 更新机构列表
- * @param {*} params
- * @return {*}
- */
 export async function updateEnterList(params) {
 	return request(`${UP_ADMIN}/enter/update`, METHOD.POST, params)
 }
-/**
- * @description: 删除机构列表
- * @param {*} params
- * @return {*}
- */
 export async function deleteEnterList(params) {
 	return request(`${UP_ADMIN}/enter/delete`, METHOD.POST, params)
 }
@@ -91,11 +58,6 @@ export async function deleteEnterList(params) {
 export async function getOrganizationList(params) {
 	return request(`${UP_ADMIN}/orgdimension/getall`, METHOD.GET, params)
 }
-/**
- * @description: 添加组织
- * @param {*} params
- * @return {*}
- */
 export async function orgdimensionAction(params, action) {
 	return request(`${UP_ADMIN}/orgdimension/${action}`, METHOD.POST, params)
 }
@@ -109,11 +71,6 @@ export async function orgdimensionAction(params, action) {
 export async function getOrgLevelList(params) {
 	return request(`${UP_ADMIN}/orglevel/getall`, METHOD.GET, params)
 }
-/**
- * @description: 组织等级
- * @param {*} params
- * @return {*}
- */
 export async function orgLevelAction(params, action) {
 	return request(`${UP_ADMIN}/orglevel/${action}`, METHOD.POST, params)
 }
@@ -135,33 +92,63 @@ export async function getEnterTree(params) {
 export async function getOrginfo(params) {
 	return request(`${UP_ADMIN}/orginfo/getall`, METHOD.GET, params)
 }
-
-/**
- * @description:获取组织树形结构数据
- * @param {*} params
- * @return {*}
- */
-export async function orginfoAction(params,action) {
+export async function orginfoAction(params, action) {
 	return request(`${UP_ADMIN}/orginfo/${action}`, METHOD.POST, params)
 }
-
+export async function getOrgUser(params) {
+	return request(`${UP_ADMIN}/orginfo/getusers`, METHOD.GET, params)
+}
 
 /**
  * @description:获取用户列表
  * @param {*} params
  * @return {*}
  */
-export async function getUserList(params) {
+export async function getUserTypeList(params) {
 	return request(`${UP_ADMIN}/usertype/getall`, METHOD.GET, params)
 }
+export async function userTypeAction(params, action) {
+	return request(`${UP_ADMIN}/usertype/${action}`, METHOD.POST, params)
+}
+
 
 /**
- * @description:用户操作
+ * @description:用户列表
  * @param {*} params
  * @return {*}
  */
-export async function userAction(params,action) {
-	return request(`${UP_ADMIN}/usertype/${action}`, METHOD.POST, params)
+export async function getUserList(params) {
+	return request(`${UP_ADMIN}/user/getall`, METHOD.GET, params)
+}
+export async function getUserRoles(params) {
+	return request(`${UP_ADMIN}/user/getroles`, METHOD.GET, params)
+}
+export async function userAction(params, action) {
+	return request(`${UP_ADMIN}/user/${action}`, METHOD.POST, params)
+}
+
+/**
+ * @description:应用管理
+ * @param {*} params
+ * @return {*}
+ */
+export async function getAppTypeList(params) {
+	return request(`${UP_ADMIN}/apptype/getall`, METHOD.GET, params)
+}
+export async function appTypeAction(params, action) {
+	return request(`${UP_ADMIN}/apptype/${action}`, METHOD.POST, params)
+}
+
+/**
+ * @description:应用列表
+ * @param {*} params
+ * @return {*}
+ */
+export async function getAppInfoList(params) {
+	return request(`${UP_ADMIN}/appinfo/getall`, METHOD.GET, params)
+}
+export async function appInfoAction(params, action) {
+	return request(`${UP_ADMIN}/appinfo/${action}`, METHOD.POST, params)
 }
 export default {
 	getInstitutionList,
@@ -179,6 +166,14 @@ export default {
 	getEnterTree,
 	getOrginfo,
 	orginfoAction,
+	getUserTypeList,
+	userTypeAction,
+	userAction,
+	getUserRoles,
+	getAppTypeList,
+	appTypeAction,
 	getUserList,
-	userAction
+	getAppInfoList,
+	appInfoAction,
+	getOrgUser
 }

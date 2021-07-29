@@ -2,17 +2,17 @@
 	<div>
 		<a-row>
 			<a-col style="padding: 0 5px" :span="6">
-				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '5px', padding: '10px' }">
+				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 0px', padding: '5px' }">
 					<p>组织选择</p>
 					<a-tree @select="treeClick" :tree-data="treeList" :replaceFields="replaceFields" default-expand-all :default-selected-keys="enterValue"></a-tree>
 				</a-card>
-				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '5px', padding: '10px' }">
+				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '5px', padding: '5px' }">
 					<p>组织维度选择</p>
 					<a-tree @select="leverClick" :default-selected-keys="leverValue" :tree-data="orgList" :replaceFields="replaceFields1">{{ orgList }}</a-tree>
 				</a-card>
 			</a-col>
-			<a-col :span="18">
-				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+			<a-col :span="12" style="padding: 0 0px">
+				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px', margin: '0 5px' }">
 					<div>
 						<a-button @click="addSubclass" type="primary" icon="form">添加</a-button>
 						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
@@ -53,6 +53,10 @@
 									<a style="margin-right: 8px" @click="addSubclass(record, 'sub')">
 										<a-icon type="profile" />
 										新增子组
+									</a>
+									<a style="margin-right: 8px" @click="relationship(record)">
+										<a-icon type="team" />
+										用户关系
 									</a>
 								</div>
 							</template>
@@ -104,12 +108,14 @@
 					</div>
 				</a-card>
 			</a-col>
+			<a-col style="padding: 0 5px" :span="6"><user-list v-if="orgIdFlag" :orgId="orgId"></user-list></a-col>
 		</a-row>
 	</div>
 </template>
 
 <script>
 import { getEnterTree, getOrganizationList, getOrginfo, orginfoAction, getOrgLevelList } from '@/services/admin.js';
+import UserList from './components/user-list.vue';
 const columns = [
 	{
 		title: '序号',
@@ -151,7 +157,8 @@ export default {
 			replaceFields: {
 				title: 'EnterName',
 				key: 'Id',
-				value: 'Id'
+				value: 'Id',
+				children: 'SubTreeModel'
 			},
 			fieldNames: {
 				label: 'OrgDimensionName',
@@ -178,6 +185,9 @@ export default {
 			subType: false,
 			isEdit: false,
 			subItem: [],
+			isRelationship: false,
+			orgId: null,
+			orgIdFlag: false,
 			pagination: {
 				current: 1,
 				total: 0,
@@ -226,6 +236,9 @@ export default {
 		await this.getTreeList();
 	},
 	methods: {
+		relationship() {
+			this.isRelationship = true;
+		},
 		orgChange(value) {
 			this.LevelList = [];
 			this.getList(value);
@@ -261,7 +274,6 @@ export default {
 			});
 		},
 		getList(id) {
-			console.log(id);
 			let parmas = {
 				pageindex: 1,
 				pagesize: 100,
@@ -287,6 +299,8 @@ export default {
 					const pagination = { ...this.pagination };
 					pagination.total = res.data.data.recordsTotal;
 					this.pagination = pagination;
+					this.orgId = this.tabData[0].OrgId;
+					this.orgIdFlag = true;
 				}
 			});
 		},
@@ -429,8 +443,37 @@ export default {
 			});
 		}
 	},
-	components: {}
+	components: { UserList }
 };
 </script>
 
-<style lang="less"></style>
+<style lang="less">
+.left-list {
+	padding: 10px 20px;
+	text-align: center;
+	p {
+		font-size: 12px;
+		color: @title-color;
+		span {
+			padding-left: 10px;
+			&:hover {
+				color: @primary-color;
+				// background: @theme-color;
+				cursor: pointer;
+			}
+		}
+	}
+}
+.list-tab {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 10px;
+	p {
+		height: 30px;
+		line-height: 30px;
+		color: @title-color;
+		font-size: 14px;
+	}
+}
+</style>

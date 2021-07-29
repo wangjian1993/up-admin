@@ -1,41 +1,43 @@
 <template>
 	<div class="content">
 		<div :class="advanced ? 'search' : null">
-			<a-form layout="horizontal">
+			<a-form layout="horizontal" :form="form">
 				<div :class="advanced ? null : 'fold'">
 					<a-row>
 						<a-col :md="6" :sm="24">
 							<a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-								<a-select placeholder="请选择">
-									<a-select-option value="1">10w</a-select-option>
-									<a-select-option value="2">50w</a-select-option>
+								<a-select placeholder="请选择产品大类" v-decorator="['one_sort']">
+									<a-select-option v-for="(item, index) in productHeadingList" :value="item.one_sort" :key="index">{{ item.one_sort }}</a-select-option>
 								</a-select>
 							</a-form-item>
 						</a-col>
 						<a-col :md="6" :sm="24">
 							<a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-								<a-select placeholder="请选择">
-									<a-select-option value="1">10w</a-select-option>
-									<a-select-option value="2">50w</a-select-option>
+								<a-select placeholder="请选择产品型号" v-decorator="['two_sort']">
+									<a-select-option v-for="(item, index) in productModelList" :value="item.one_sort" :key="index">{{ item.one_sort }}</a-select-option>
 								</a-select>
 							</a-form-item>
 						</a-col>
 						<a-col :md="6" :sm="24">
-							<a-form-item label="产品品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }"><a-input placeholder="请输入" /></a-form-item>
+							<a-form-item label="产品品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+								<a-input placeholder="请输入" v-decorator="['item_code']" />
+							</a-form-item>
 						</a-col>
 						<a-col :md="6" :sm="24">
-							<a-form-item label="产品品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }"><a-input placeholder="请输入" /></a-form-item>
+							<a-form-item label="产品品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+								<a-input placeholder="请输入" v-decorator="['item_name']" />
+							</a-form-item>
 						</a-col>
 					</a-row>
 					<a-row v-if="advanced">
 						<a-col :md="6" :sm="24">
 							<a-form-item label="更新日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-								<a-date-picker style="width: 100%" placeholder="请输入更新日期" />
+								<a-date-picker style="width: 100%" placeholder="请输入更新日期" v-decorator="['date_range']" />
 							</a-form-item>
 						</a-col>
 						<a-col :md="6" :sm="24">
 							<a-form-item label="审核状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-								<a-select placeholder="请选择">
+								<a-select placeholder="请选择" v-decorator="['check_status']">
 									<a-select-option value="1">关闭</a-select-option>
 									<a-select-option value="2">运行中</a-select-option>
 								</a-select>
@@ -44,7 +46,7 @@
 					</a-row>
 				</div>
 				<span style="float: right; margin-top: 3px;">
-					<a-button type="primary">查询</a-button>
+					<a-button type="primary" @click="query">查询</a-button>
 					<a-button style="margin-left: 8px">重置</a-button>
 					<a @click="toggleAdvanced" style="margin-left: 8px">
 						{{ advanced ? '收起' : '展开' }}
@@ -84,6 +86,7 @@
 
 <script>
 import StandardTable from '@/components/table/StandardTable';
+import { getProductModel } from '@/services/bom.js';
 const columns = [
 	{
 		title: '序号',
@@ -152,13 +155,54 @@ export default {
 			columns: columns,
 			dataSource: dataSource,
 			selectedRows: false,
-			pagination: false
+			pagination: false,
+			productModelList: [],
+			productHeadingList: [],
+			form: this.$form.createForm(this)
 		};
 	},
 	authorize: {
 		deleteRecord: 'delete'
 	},
+	created() {
+		this.getProductModel();
+	},
 	methods: {
+		//获取产品大类
+		getProductModel() {
+			let parmas = {
+				act: 'get_bom_one_sort'
+			};
+			getProductModel(parmas).then(res => {
+				if (res.data.success) {
+					this.productHeadingList = res.data.data;
+				}
+			});
+			let parmas1 = {
+				act: 'get_bom_two_sort'
+			};
+			getProductModel(parmas1).then(res => {
+				if (res.data.success) {
+					this.productModelList = res.data.data;
+				}
+			});
+		},
+		query() {
+			this.form.validateFields((err, values) => {
+				if (!err) {
+					console.log('Received values of form: ', values);
+					let parmas = {
+						act: 'query_bom_cb_version',
+						...values
+					};
+					getProductModel(parmas).then(res => {
+						if (res.data.success) {
+							// this.productHeadingList = res.data.data;
+						}
+					});
+				}
+			});
+		},
 		deleteRecord(key) {
 			this.dataSource = this.dataSource.filter(item => item.key !== key);
 			this.selectedRows = this.selectedRows.filter(item => item.key !== key);
@@ -166,37 +210,9 @@ export default {
 		toggleAdvanced() {
 			this.advanced = !this.advanced;
 		},
-		remove() {
-			this.dataSource = this.dataSource.filter(item => this.selectedRows.findIndex(row => row.key === item.key) === -1);
-			this.selectedRows = [];
-		},
-		onClear() {
-			this.$message.info('您清空了勾选的所有行');
-		},
-		onStatusTitleClick() {
-			this.$message.info('你点击了状态栏表头');
-		},
-		onChange() {
-			this.$message.info('表格状态改变了');
-		},
-		onSelectChange() {
-			this.$message.info('选中行改变了');
-		},
-		addNew() {
-			this.dataSource.unshift({
-				key: this.dataSource.length,
-				no: 'NO ' + this.dataSource.length,
-				description: '这是一段描述',
-				callNo: Math.floor(Math.random() * 1000),
-				status: Math.floor(Math.random() * 10) % 4,
-				updatedAt: '2018-07-26'
-			});
-		},
-		handleMenuClick(e) {
-			if (e.key === 'delete') {
-				this.remove();
-			}
-		}
+		onChange() {},
+		onSelectChange() {},
+		onClear() {}
 	}
 };
 </script>

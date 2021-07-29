@@ -123,6 +123,15 @@ export async function bomForm(parma) {
 		}
 	},false)
 }
+
+/**
+ * @description: 获取产品大类型号
+ * @param {*} parma
+ * @return {*}
+ */
+export async function getProductModel(parma) {
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parma,false)
+}
 export default {
 	getBomBaseConfig,
 	setBomBaseConfig,
@@ -132,5 +141,6 @@ export default {
 	getVersionsDetail,
 	getBomSerchList,
 	getCompanyBomCost,
-	bomForm
+	bomForm,
+	getProductModel
 }

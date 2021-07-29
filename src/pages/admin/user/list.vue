@@ -1,152 +1,163 @@
 <template>
-	<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-		<div class="search-box">
-			<a-row>
-				<a-col :span="12">
+	<div>
+		<a-row>
+			<a-col style="padding: 0 5px" :span="6">
+				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 5px', padding: '5px' }">
+					<p>组织选择</p>
+					<a-tree
+						@select="treeClick"
+						:tree-data="treeList"
+						auto-expand-parent
+						:replaceFields="replaceFields"
+						:default-expand-all="true"
+						:default-selected-keys="enterValue"
+					></a-tree>
+				</a-card>
+			</a-col>
+			<a-col style="padding: 0 0px" :span="18">
+				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
 					<div>
-						<a-button @click="add" type="primary" icon="form">添加</a-button>
-						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-						<span style="margin-left: 8px">
-							<template v-if="hasSelected">
-								{{ `共选中 ${selectedRowKeys.length} 条` }}
-							</template>
-						</span>
+						<a-form layout="horizontal" :form="searchForm">
+							<a-row>
+								<a-col :md="6" :sm="24">
+									<a-form-item label="用户类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+										<a-select placeholder="请选择用户类型" v-decorator="['UserTypeId']">
+											<a-select-option v-for="(item, index) in usetTypeList" :key="index" :value="item.UserTypeId">{{ item.UserTypeName }}</a-select-option>
+										</a-select>
+									</a-form-item>
+								</a-col>
+								<a-col :md="6" :sm="24">
+									<a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+										<a-select placeholder="请选择用户状态" v-decorator="['enable']">
+											<a-select-option value="Y">启用</a-select-option>
+											<a-select-option value="N">禁止</a-select-option>
+										</a-select>
+									</a-form-item>
+								</a-col>
+								<a-col :md="8" :sm="24">
+									<a-form-item label="用户账号/姓名" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }"><a-input v-decorator="['key']" /></a-form-item>
+								</a-col>
+								<a-col :md="4" :sm="24">
+									<a-button type="primary" @click="search">查询</a-button>
+									<a-button style="margin-left: 8px">重置</a-button>
+								</a-col>
+							</a-row>
+						</a-form>
 					</div>
-				</a-col>
-				<a-col :span="12">
-					<a-form layout="horizontal" :form="searchForm">
-						<div>
-							<a-col :md="18" :sm="24">
-								<a-form-item label="机构类型编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
-									<a-input
-										placeholder="请输入"
-										v-decorator="[
-											'searcValue',
-											{
-												rules: [{ required: true, message: '机构类型编码/名称!' }]
-											}
-										]"
-									/>
-								</a-form-item>
+					<div class="search-box">
+						<a-row>
+							<a-col :span="12">
+								<div>
+									<a-button @click="add" type="primary" icon="form">添加</a-button>
+									<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+									<span style="margin-left: 8px">
+										<template v-if="hasSelected">
+											{{ `共选中 ${selectedRowKeys.length} 条` }}
+										</template>
+									</span>
+								</div>
 							</a-col>
-						</div>
-						<span style="float: right; margin-top: 3px;">
-							<a-button type="primary" @click="search">查询</a-button>
-							<a-button style="margin-left: 8px" @click="reset">重置</a-button>
-						</span>
-					</a-form>
-				</a-col>
-			</a-row>
-		</div>
-		<div>
-			<a-modal :title="title" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
-				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-					<a-form-model-item ref="UserTypeCode" label="用户编号" prop="UserTypeCode">
-						<a-input
-							v-model="form.UserTypeCode"
-							:disabled="isEdit"
-							placeholder="请输入用户编号"
-							@blur="
-								() => {
-									$refs.UserTypeCode.onFieldBlur();
-								}
-							"
-						/>
-					</a-form-model-item>
-					<a-form-model-item ref="UserTypeName" label="类型名称" prop="UserTypeName">
-						<a-input
-							v-model="form.UserTypeName"
-							placeholder="请输入用户名称"
-							@blur="
-								() => {
-									$refs.UserTypeName.onFieldBlur();
-								}
-							"
-						/>
-					</a-form-model-item>
-					<a-form-model-item ref="UserTypeDesc" label="描述">
-						<a-textarea v-model="form.UserTypeDesc" placeholder="请输入用户描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
-					</a-form-model-item>
-					<a-form-model-item ref="Enable" label="是否启用">
-						<a-radio-group :value="form.Enable" default-value="Y" button-style="solid" @change="enableChange">
-							<a-radio-button value="N">否</a-radio-button>
-							<a-radio-button value="Y">是</a-radio-button>
-						</a-radio-group>
-					</a-form-model-item>
-				</a-form-model>
-			</a-modal>
-		</div>
-		<!-- 列表 -->
-		<div class="tab">
-			<a-table
-				:columns="columns"
-				:data-source="data"
-				size="small"
-				:pagination="pagination"
-				@change="handleTableChange"
-				:rowKey="tableDatas => data.EnterTypeId"
-				:row-selection="{
-					selectedRowKeys: selectedRowKeys,
-					onChange: onSelectChange
-				}"
-				bordered
-			>
-				<template slot="index" slot-scope="text, record, index">
-					<div>
-						<span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+						</a-row>
 					</div>
-				</template>
-				<template slot="enable" slot-scope="record">
-					<div>
-						<a-tag color="green" v-if="record == 'Y'">是</a-tag>
-						<a-tag color="red" v-else>否</a-tag>
+					<!-- 列表 -->
+					<div class="tab">
+						<a-table
+							:columns="columns"
+							:data-source="data"
+							size="small"
+							:loading="tableLoading"
+							:pagination="pagination"
+							@change="handleTableChange"
+							:rowKey="tableDatas => data.EnterTypeId"
+							:row-selection="{
+								selectedRowKeys: selectedRowKeys,
+								onChange: onSelectChange
+							}"
+							bordered
+						>
+							<template slot="index" slot-scope="text, record, index">
+								<div>
+									<span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+								</div>
+							</template>
+							<template slot="Enable" slot-scope="record">
+								<div>
+									<a-tag color="green" v-if="record == 'Y'">是</a-tag>
+									<a-tag color="red" v-else>否</a-tag>
+								</div>
+							</template>
+							<template slot="IsLocked" slot-scope="record">
+								<div>
+									<a-tag color="green" v-if="record == 'Y'">是</a-tag>
+									<a-tag color="red" v-else>否</a-tag>
+								</div>
+							</template>
+							<template slot="action" slot-scope="text, record">
+								<div>
+									<a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
+										<a style="margin-right: 8px">
+											<a-icon type="delete" />
+											删除
+										</a>
+									</a-popconfirm>
+									<a style="margin-right: 8px" @click="edit(record)">
+										<a-icon type="edit" />
+										编辑
+									</a>
+									<a style="margin-right: 8px" @click="detail(record)">
+										<a-icon type="profile" />
+										查看
+									</a>
+									<a-dropdown :trigger="['click']">
+										<a class="ant-dropdown-link">
+											更多
+											<a-icon type="down" />
+										</a>
+										<a-menu slot="overlay">
+											<a-menu-item key="0" @click="moreClick('enableuser', record)">状态</a-menu-item>
+											<a-menu-item key="1" @click="moreClick('lockuser', record)">锁定</a-menu-item>
+											<a-menu-item key="3" @click="moreClick('resetuserpwd', record)">重置密码</a-menu-item>
+										</a-menu>
+									</a-dropdown>
+								</div>
+							</template>
+						</a-table>
 					</div>
-				</template>
-				<template slot="defualt" slot-scope="record">
+					<!-- 查看详情 -->
 					<div>
-						<a-tag color="green" v-if="record == 'Y'">是</a-tag>
-						<a-tag color="red" v-else>否</a-tag>
+						<a-drawer width="400" placement="right" :closable="false" :visible="isDrawer" @close="onClose">
+							<a-descriptions title="用户详情" :column="1">
+								<a-descriptions-item label="用户头像">{{ drawerItem.Photo }}</a-descriptions-item>
+								<a-descriptions-item label="用户账号">{{ drawerItem.UserLoginId }}</a-descriptions-item>
+								<a-descriptions-item label="用户名称">{{ drawerItem.UserName }}</a-descriptions-item>
+								<a-descriptions-item label="企业微信">{{ drawerItem.EnterWechatAccount }}</a-descriptions-item>
+								<a-descriptions-item label="用户类型">{{ drawerItem.UserTypeName }}</a-descriptions-item>
+								<a-descriptions-item label="出生日期">{{ drawerItem.Birthday }}</a-descriptions-item>
+								<a-descriptions-item label="入职日期">{{ drawerItem.EntryDate }}</a-descriptions-item>
+								<a-descriptions-item label="性别">{{ drawerItem.Gender == 'M' ? '男' : '女' }}</a-descriptions-item>
+								<a-descriptions-item label="邮箱">{{ drawerItem.Email }}</a-descriptions-item>
+								<a-descriptions-item label="手机">{{ drawerItem.MobilePhone }}</a-descriptions-item>
+								<a-descriptions-item label="地址">{{ drawerItem.Address }}</a-descriptions-item>
+								<a-descriptions-item label="状态">
+									<div>
+										<a-tag color="green" v-if="drawerItem.Enable == 'Y'">是</a-tag>
+										<a-tag color="red" v-else>否</a-tag>
+									</div>
+								</a-descriptions-item>
+								<a-descriptions-item label="锁定转态">
+									<div>
+										<a-tag color="green" v-if="drawerItem.IsLocked == 'Y'">是</a-tag>
+										<a-tag color="red" v-else>否</a-tag>
+									</div>
+								</a-descriptions-item>
+							</a-descriptions>
+						</a-drawer>
 					</div>
-				</template>
-				<template slot="action" slot-scope="text, record">
-					<div>
-						<a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
-							<a style="margin-right: 8px">
-								<a-icon type="delete" />
-								删除
-							</a>
-						</a-popconfirm>
-						<a style="margin-right: 8px" @click="edit(record)">
-							<a-icon type="edit" />
-							编辑
-						</a>
-						<a style="margin-right: 8px" @click="detail(record)">
-							<a-icon type="profile" />
-							查看
-						</a>
-					</div>
-				</template>
-			</a-table>
-		</div>
-		<!-- 查看详情 -->
-		<div>
-			<a-drawer width="400" placement="right" :closable="false" :visible="isDrawer" @close="onClose">
-				<a-descriptions title="用户类型详情" :column="1">
-					<a-descriptions-item label="用户编码">{{ drawerItem.UserTypeCode }}</a-descriptions-item>
-					<a-descriptions-item label="用户名称">{{ drawerItem.UserTypeName }}</a-descriptions-item>
-					<a-descriptions-item label="是否启用">
-						<div>
-							<a-tag color="green" v-if="drawerItem.Enable == 'Y'">是</a-tag>
-							<a-tag color="red" v-else>否</a-tag>
-						</div>
-					</a-descriptions-item>
-					<a-descriptions-item label="描述">{{ drawerItem.UserTypeDesc }}</a-descriptions-item>
-					<a-descriptions-item label="添加人">{{ drawerItem.UserCreated }}</a-descriptions-item>
-					<a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
-				</a-descriptions>
-			</a-drawer>
-		</div>
-	</a-card>
+				</a-card>
+			</a-col>
+		</a-row>
+		<add-user v-if="addModal" :editItem="editItem" :modalType="modalType" @cloneModal="cloneModal" @succeed="succeed" :enterValue="enterValue"></add-user>
+	</div>
 </template>
 <script>
 const columns = [
@@ -156,21 +167,39 @@ const columns = [
 		align: 'center'
 	},
 	{
-		title: '用户编码',
-		dataIndex: 'UserTypeCode',
-		scopedSlots: { customRender: 'UserTypeCode' },
+		title: '用户账号',
+		dataIndex: 'UserLoginId',
+		scopedSlots: { customRender: 'UserLoginId' },
 		align: 'center'
 	},
 	{
 		title: '用户名称',
+		dataIndex: 'UserName',
+		scopedSlots: { customRender: 'UserName' },
+		align: 'center'
+	},
+	{
+		title: '用户类型',
 		dataIndex: 'UserTypeName',
 		scopedSlots: { customRender: 'UserTypeName' },
 		align: 'center'
 	},
 	{
-		title: '描述',
-		dataIndex: 'UserTypeDesc',
-		scopedSlots: { customRender: 'UserTypeDesc' },
+		title: '企业微信',
+		dataIndex: 'EnterWechatAccount',
+		scopedSlots: { customRender: 'EnterWechatAccount' },
+		align: 'center'
+	},
+	{
+		title: '状态',
+		dataIndex: 'Enable',
+		scopedSlots: { customRender: 'Enable' },
+		align: 'center'
+	},
+	{
+		title: '锁定状态',
+		dataIndex: 'IsLocked',
+		scopedSlots: { customRender: 'IsLocked' },
 		align: 'center'
 	},
 	{
@@ -179,23 +208,36 @@ const columns = [
 		align: 'center'
 	}
 ];
-import { getUserList, userAction } from '@/services/admin.js';
+import { getUserList, userAction, getEnterTree, getUserTypeList } from '@/services/admin.js';
 import { renderStripe } from '@/utils/stripe.js';
+import addUser from './components/add-user.vue';
 export default {
 	data() {
 		return {
 			data: [],
+			advanced: true,
 			columns,
 			isEdit: false,
 			editForm: [],
-			title: '添加机构类型',
+			title: '添加用户',
 			loading: false,
 			isDrawer: false,
 			selectedRowKeys: [], // Check here to configure the default column
 			visible: false,
+			addModal: false,
+			tableLoading: true,
 			drawerItem: [],
 			labelCol: { span: 6 },
 			wrapperCol: { span: 14 },
+			replaceFields: {
+				title: 'EnterName',
+				key: 'Id',
+				value: 'Id',
+				children: 'SubTreeModel'
+			},
+			enterValue: [],
+			treeList: [],
+			enterId: '',
 			pagination: {
 				current: 1,
 				total: 0,
@@ -208,28 +250,9 @@ export default {
 			},
 			searcValue: '',
 			searchForm: this.$form.createForm(this),
-			form: {
-				UserTypeCode: '',
-				UserTypeName: '',
-				UserTypeDesc: '',
-				Enable: 'Y'
-			},
-			rules: {
-				UserTypeCode: [
-					{
-						required: true,
-						message: '请输入用户编码',
-						trigger: 'blur'
-					}
-				],
-				UserTypeName: [
-					{
-						required: true,
-						message: '请输入用户名称',
-						trigger: 'blur'
-					}
-				]
-			}
+			usetTypeList: [],
+			editItem:[],
+			modalType:""
 		};
 	},
 	updated() {
@@ -241,14 +264,40 @@ export default {
 		}
 	},
 	created() {
-		this.getUserList();
+		this.getTreeList();
+		this.getUsetType();
 	},
 	methods: {
-		enableChange(value) {
-			this.form.Enable = value.target.value;
+		//获取用户类型
+		getUsetType() {
+			let parmas = {
+				pageindex: 1,
+				pagesize: 50
+			};
+			getUserTypeList(parmas).then(res => {
+				if (res.data.success) {
+					this.usetTypeList = res.data.data.list;
+				}
+			});
 		},
-		defualtChange(value) {
-			this.form.IsDefualt = value.target.value;
+		toggleAdvanced() {
+			console.log('1111');
+			this.advanced = !this.advanced;
+		},
+		getTreeList() {
+			getEnterTree().then(res => {
+				if (res.data.success) {
+					this.treeList = res.data.data;
+					this.enterValue.push(this.treeList[0].Id);
+					this.enterId = this.treeList[0].Id;
+					this.getUserList();
+				}
+			});
+		},
+		treeClick(value) {
+			this.tableLoading = true;
+			this.enterId = value[0];
+			this.getUserList();
 		},
 		//查看详情
 		detail(item) {
@@ -272,12 +321,16 @@ export default {
 			this.searchForm.validateFields((err, values) => {
 				if (!err) {
 					console.log('Received values of form: ', values);
+					console.log(values);
 					this.data = [];
 					this.pagination.total = 0;
 					let parmas = {
 						pageindex: this.pagination.current,
 						pagesize: this.pagination.pageSize,
-						keyword: values.searcValue
+						keyword: values.key,
+						enterid: this.enterId,
+						enable: values.enable,
+						UserTypeId: values.values
 					};
 					getUserList(parmas).then(res => {
 						if (res.data.success) {
@@ -287,7 +340,6 @@ export default {
 							this.pagination = pagination;
 						}
 					});
-					// do something
 				}
 			});
 		},
@@ -295,10 +347,12 @@ export default {
 		getUserList() {
 			let parmas = {
 				pageindex: this.pagination.current,
-				pagesize: this.pagination.pageSize
+				pagesize: this.pagination.pageSize,
+				enterid: this.enterId
 			};
 			getUserList(parmas).then(res => {
 				if (res.data.success) {
+					this.tableLoading = false;
 					this.data = res.data.data.list;
 					const pagination = { ...this.pagination };
 					pagination.total = res.data.data.recordsTotal;
@@ -306,32 +360,27 @@ export default {
 				}
 			});
 		},
+		//提交成功
+		succeed() {
+			this.addModal = false;
+			this.getUserList();
+		},
 		//打开对话框
 		add() {
-			this.defaultForm();
-			this.isEdit = false;
-			this.title = '添加机构类型';
-			this.visible = true;
+			this.addModal = true;
+			this.modalType ='add'
 		},
-		defaultForm() {
-			this.form = {
-				EnterTypeCode: '',
-				EnterTypeName: '',
-				EnterTypeDesc: '',
-				IndexUrl: '',
-				Enable: 'Y',
-				IsDefualt: 'Y'
-			};
+		cloneModal() {
+			this.addModal = false;
 		},
 		//关闭对话框
 		handleCancel() {
 			this.visible = false;
 		},
 		edit(item) {
-			this.visible = true;
-			this.isEdit = true;
-			this.title = '编辑机构类型';
-			this.form = item;
+			this.addModal = true;
+			this.editItem =item;
+			this.modalType='edit'
 		},
 		handleOk() {
 			this.$refs.ruleForm.validate(valid => {
@@ -376,7 +425,7 @@ export default {
 				onOk() {
 					const params = [];
 					self.selectedRowKeys.forEach(item => {
-						params.push(self.data[item].UserTypeId);
+						params.push(self.data[item].UserId);
 					});
 					userAction(params, 'delete').then(res => {
 						if (res.data.success) {
@@ -394,7 +443,7 @@ export default {
 		//单个删除
 		onDelete(item) {
 			let parmas = [];
-			parmas.push(item.UserTypeId);
+			parmas.push(item.UserId);
 			userAction(parmas, 'delete').then(res => {
 				if (res.data.success) {
 					this.$message.success('删除成功!');
@@ -408,12 +457,55 @@ export default {
 			this.pagination.current = pagination.current;
 			this.pagination.pageSize = pagination.pageSize;
 			this.getUserList();
+		},
+		//更多操作
+		moreClick(e, item) {
+			var params = {};
+			if (e == 'enableuser') {
+				params = {
+					UserId: item.UserId,
+					Enable: item.Enable == 'Y' ? 'N' : 'Y'
+				};
+			}
+			if (e == 'lockuser') {
+				params = {
+					UserId: item.UserId,
+					IsLocked: item.IsLocked == 'Y' ? 'N' : 'Y'
+				};
+			}
+			if (e == 'resetuserpwd') {
+				params = [item.UserId];
+			}
+			userAction(params,e).then(res => {
+				if (res.data.success) {
+					this.$message.success('操作成功!');
+					this.getUserList();
+				} else {
+					this.$message.warning(res.data.message.content);
+				}
+			});
 		}
-	}
+	},
+	components: { addUser }
 };
 </script>
 <style lang="less">
 .ant-form-item {
 	margin-bottom: 5px;
+}
+.search {
+	margin-bottom: 54px;
+}
+.fold {
+	width: calc(100% - 216px);
+	display: inline-block;
+}
+.operator {
+	margin-bottom: 18px;
+}
+@media screen and (max-width: 900px) {
+	.fold {
+		width: 100%;
+	}
 }
 </style>
