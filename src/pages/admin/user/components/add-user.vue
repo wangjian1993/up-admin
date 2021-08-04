@@ -35,7 +35,7 @@
 								</a-form-model-item>
 							</a-col>
 							<a-col :span="12">
-								<a-form-model-item ref="UserName" label="姓名" prop="UserName">
+								<a-form-model-item ref="UserName" has-feedback  label="姓名" prop="UserName">
 									<a-input
 										v-model="form.UserName"
 										allowClear
@@ -49,7 +49,7 @@
 								</a-form-model-item>
 							</a-col>
 							<a-col :span="12">
-								<a-form-model-item ref="UserLoginId" label="账号" prop="UserLoginId">
+								<a-form-model-item ref="UserLoginId" has-feedback  label="账号" prop="UserLoginId">
 									<a-input
 										v-model="form.UserLoginId"
 										placeholder="请输入用户账号"
@@ -69,7 +69,7 @@
 								</a-form-model-item>
 							</a-col>
 							<a-col :span="12">
-								<a-form-model-item ref="UserTypeId" label="用户类型" prop="UserTypeId">
+								<a-form-model-item ref="UserTypeId" has-feedback  label="用户类型" prop="UserTypeId">
 									<a-select v-model="form.UserTypeId" placeholder="请选择用户类型">
 										<a-select-option v-for="item in usetTypeList" :key="item.UserTypeId" :value="item.UserTypeId">{{ item.UserTypeName }}</a-select-option>
 									</a-select>

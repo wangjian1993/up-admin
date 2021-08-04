@@ -42,7 +42,7 @@
 		<div>
 			<a-modal :title="isEdit ? '编辑应用类型' : '添加应用类型'" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
 				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-					<a-form-model-item ref="AppTypeName" label="应用名称" prop="AppTypeName">
+					<a-form-model-item ref="AppTypeName" has-feedback label="应用名称" prop="AppTypeName">
 						<a-input
 							v-model="form.AppTypeName"
 							allowClear
@@ -54,9 +54,10 @@
 							"
 						/>
 					</a-form-model-item>
-					<a-form-model-item ref="AppTypeCode" label="编码" prop="AppTypeCode">
+					<a-form-model-item ref="AppTypeCode" has-feedback label="编码" prop="AppTypeCode">
 						<a-input
 							v-model="form.AppTypeCode"
+							allowClear
 							placeholder="请输入应用编码"
 							:disabled="isEdit"
 							@blur="

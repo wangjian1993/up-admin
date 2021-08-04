@@ -42,7 +42,7 @@
 		<div>
 			<a-modal :title="title" :visible="visible" @ok="handleOk" @cancel="handleCancel">
 				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-					<a-form-model-item ref="OrgDimensionName" label="维度名称" prop="OrgDimensionName">
+					<a-form-model-item ref="OrgDimensionName" has-feedback label="维度名称" prop="OrgDimensionName">
 						<a-input
 							v-model="form.OrgDimensionName"
 							placeholder="请输入维度名称"
@@ -54,7 +54,7 @@
 							"
 						/>
 					</a-form-model-item>
-					<a-form-model-item ref="OrgDimensionCode" label="编码" prop="OrgDimensionCode">
+					<a-form-model-item ref="OrgDimensionCode" has-feedback label="编码" prop="OrgDimensionCode">
 						<a-input
 							v-model="form.OrgDimensionCode"
 							placeholder="请输入维度编码"
@@ -66,7 +66,7 @@
 							"
 						/>
 					</a-form-model-item>
-					<a-form-model-item ref="SortNo" label="排序" prop="SortNo">
+					<a-form-model-item ref="SortNo" has-feedback label="排序" prop="SortNo">
 						<a-input
 							v-model="form.SortNo"
 							placeholder="请输入维度排序"

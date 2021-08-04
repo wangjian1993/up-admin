@@ -66,7 +66,7 @@
 					<div>
 						<a-modal :title="title" :visible="visible" @ok="handleOk" @cancel="handleCancel">
 							<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-								<a-form-model-item ref="OrgName" label="组织名称" prop="OrgName">
+								<a-form-model-item ref="OrgName" has-feedback label="组织名称" prop="OrgName">
 									<a-input
 										v-model="form.OrgName"
 										allowClear
@@ -78,7 +78,7 @@
 										"
 									/>
 								</a-form-model-item>
-								<a-form-model-item ref="OrgCode" label="组织编码" prop="OrgCode">
+								<a-form-model-item ref="OrgCode" has-feedback label="组织编码" prop="OrgCode">
 									<a-input
 										v-model="form.OrgCode"
 										allowClear

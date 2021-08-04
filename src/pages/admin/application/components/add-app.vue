@@ -27,7 +27,7 @@
 								</a-form-model-item>
 							</a-col>
 							<a-col :span="12">
-								<a-form-model-item ref="AppName" label="应用名称" prop="AppName">
+								<a-form-model-item ref="AppName" has-feedback  label="应用名称" prop="AppName">
 									<a-input
 										v-model="form.AppName"
 										placeholder="请输入应用名称"
@@ -41,7 +41,7 @@
 								</a-form-model-item>
 							</a-col>
 							<a-col :span="12">
-								<a-form-model-item ref="AppCode" label="应用编码" prop="AppCode">
+								<a-form-model-item ref="AppCode" has-feedback  label="应用编码" prop="AppCode">
 									<a-input
 										v-model="form.AppCode"
 										placeholder="请输入应用编码"
@@ -55,7 +55,7 @@
 								</a-form-model-item>
 							</a-col>
 							<a-col :span="12">
-								<a-form-model-item ref="AppTypeId" label="应用类型" prop="AppTypeId">
+								<a-form-model-item ref="AppTypeId" has-feedback  label="应用类型" prop="AppTypeId">
 									<a-select v-model="form.AppTypeId" placeholder="请选择用户类型">
 										<a-select-option v-for="item in appTypeList" :key="item.AppTypeId" :value="item.AppTypeId">{{ item.AppTypeName }}</a-select-option>
 									</a-select>
@@ -78,7 +78,7 @@
 								</a-form-model-item>
 							</a-col>
 							<a-col :span="12">
-								<a-form-model-item ref="AppSortNo" label="序号">
+								<a-form-model-item ref="AppSortNo" has-feedback  label="序号">
 									<a-input
 										v-model="form.AppSortNo"
 										type="number"

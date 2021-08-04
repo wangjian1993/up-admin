@@ -42,11 +42,12 @@
 		<div>
 			<a-modal :title="title" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
 				<a-form-model ref="ruleForm" :model="typeForm" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-					<a-form-model-item ref="EnterTypeCode" label="类型编号" prop="EnterTypeCode">
+					<a-form-model-item ref="EnterTypeCode" has-feedback label="类型编号" prop="EnterTypeCode">
 						<a-input
 							v-model="typeForm.EnterTypeCode"
 							:disabled="isEdit"
 							placeholder="请输入类型编号"
+							
 							@blur="
 								() => {
 									$refs.EnterTypeCode.onFieldBlur();
@@ -54,7 +55,7 @@
 							"
 						/>
 					</a-form-model-item>
-					<a-form-model-item ref="EnterTypeName" label="类型名称" prop="EnterTypeName">
+					<a-form-model-item ref="EnterTypeName" has-feedback label="类型名称" prop="EnterTypeName">
 						<a-input
 							v-model="typeForm.EnterTypeName"
 							placeholder="请输入类型名称"
@@ -65,10 +66,10 @@
 							"
 						/>
 					</a-form-model-item>
-					<a-form-model-item ref="EnterTypeDesc" label="描述">
+					<a-form-model-item ref="EnterTypeDesc" label="描述" has-feedback>
 						<a-textarea v-model="typeForm.EnterTypeDesc" placeholder="请输入类型描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
 					</a-form-model-item>
-					<a-form-model-item ref="IndexUrl" label="首页URL" prop="IndexUrl">
+					<a-form-model-item ref="IndexUrl" label="首页URL" prop="IndexUrl" has-feedback>
 						<a-input
 							v-model="typeForm.IndexUrl"
 							placeholder="请输入首页URL"

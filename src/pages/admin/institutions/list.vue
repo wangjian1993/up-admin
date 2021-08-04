@@ -45,9 +45,10 @@
 				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
 					<a-row>
 						<a-col :span="12">
-							<a-form-model-item ref="EnterCode" label="机构编码" prop="EnterCode" :labelCol="{ span: 6 }">
+							<a-form-model-item ref="EnterCode" has-feedback label="机构编码" prop="EnterCode" :labelCol="{ span: 6 }">
 								<a-input
 									v-model="form.EnterCode"
+									allowClear
 									placeholder="请输入机构编码"
 									@blur="
 										() => {
@@ -58,9 +59,10 @@
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item ref="EnterEMail" label="管理员邮箱" prop="EnterEMail" :labelCol="{ span: 6 }">
+							<a-form-model-item ref="EnterEMail" has-feedback label="管理员邮箱" prop="EnterEMail" :labelCol="{ span: 6 }">
 								<a-input
 									v-model="form.EnterEMail"
+									allowClear
 									placeholder="请输入管理员邮箱"
 									@blur="
 										() => {
@@ -71,7 +73,7 @@
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item ref="EnterName" label="机构中文名" prop="EnterName" :labelCol="{ span: 6 }">
+							<a-form-model-item ref="EnterName" has-feedback label="机构中文名" prop="EnterName" :labelCol="{ span: 6 }">
 								<a-input
 									v-model="form.EnterName"
 									allowClear
@@ -121,7 +123,7 @@
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="机构类型" prop="EnterTypeName" :labelCol="{ span: 6 }">
+							<a-form-model-item label="机构类型" has-feedback prop="EnterTypeName" :labelCol="{ span: 6 }">
 								<a-select v-model="form.EnterTypeName" placeholder="选择机构" @change="enterTypeOption">
 									<a-select-option v-for="(item, index) in selectList" :key="index" :value="item.EnterTypeName">{{ item.EnterTypeName }}</a-select-option>
 								</a-select>

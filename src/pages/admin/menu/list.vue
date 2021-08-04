@@ -18,7 +18,7 @@
 						<div>
 							<a-col :md="6" :sm="24">
 								<a-form-item label="菜单编码/名称" :labelCol="{ span: 9 }" :wrapperCol="{ span: 14, offset: 1 }">
-									<a-input placeholder="请输入" v-decorator="['key']" allowClear/>
+									<a-input placeholder="请输入" v-decorator="['key']" allowClear />
 								</a-form-item>
 							</a-col>
 							<a-col :md="6" :sm="24">
@@ -47,14 +47,14 @@
 		<div>
 			<a-modal :title="isEdit ? '编辑菜单' : '添加菜单'" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
 				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-					<a-form-model-item ref="AppId" label="应用" prop="AppId" v-if="!isSub">
+					<a-form-model-item ref="AppId" has-feedback label="应用" prop="AppId" v-if="!isSub">
 						<a-select v-model="form.AppId" placeholder="请选择应用">
 							<a-select-option v-for="item in appData" :key="item.AppId" :value="item.AppId">{{ item.AppName }}</a-select-option>
 						</a-select>
 					</a-form-model-item>
-					<a-form-model-item ref="AppId" label="应用" v-if="isSub && !isEdit"><a-input v-model="subData.AppName" :disabled="isSub" /></a-form-model-item>
+					<a-form-model-item ref="AppId" has-feedback label="应用" v-if="isSub && !isEdit"><a-input v-model="subData.AppName" :disabled="isSub" /></a-form-model-item>
 					<a-form-model-item ref="SuperiorId" label="上级菜单" v-if="isSub && !isEdit"><a-input v-model="subData.ModuleName" :disabled="isSub" /></a-form-model-item>
-					<a-form-model-item ref="ModuleName" label="菜单名称" prop="ModuleName">
+					<a-form-model-item ref="ModuleName" has-feedback label="菜单名称" prop="ModuleName">
 						<a-input
 							v-model="form.ModuleName"
 							placeholder="请输入菜单名称"
@@ -66,7 +66,7 @@
 							"
 						/>
 					</a-form-model-item>
-					<a-form-model-item ref="ModuleCode" label="菜单编码" prop="ModuleCode">
+					<a-form-model-item ref="ModuleCode" has-feedback label="菜单编码" prop="ModuleCode">
 						<a-input
 							v-model="form.ModuleCode"
 							:disabled="isEdit"
@@ -83,13 +83,13 @@
 						<a-input style="width: 200px" disabled v-model="form.ModuleLogo" />
 						<a-button type="primary" @click="iconSelect()">选择</a-button>
 					</a-form-model-item>
-					<a-form-model-item ref="ModuleTypeCode" label="菜单类型" prop="ModuleTypeCode">
+					<a-form-model-item ref="ModuleTypeCode" has-feedback label="菜单类型" prop="ModuleTypeCode">
 						<a-radio-group v-model="form.ModuleTypeCode">
 							<a-radio value="1">菜单</a-radio>
 							<a-radio value="2">按钮</a-radio>
 						</a-radio-group>
 					</a-form-model-item>
-					<a-form-model-item ref="AccessTypeCode" label="访问方式" prop="AccessTypeCode">
+					<a-form-model-item ref="AccessTypeCode" has-feedback label="访问方式" prop="AccessTypeCode">
 						<a-radio-group v-model="form.AccessTypeCode">
 							<a-radio value="1">URL访问</a-radio>
 							<a-radio value="2">功能面板集(标签)</a-radio>
@@ -99,7 +99,7 @@
 							<a-radio value="6">新窗口</a-radio>
 						</a-radio-group>
 					</a-form-model-item>
-					<a-form-model-item ref="ConfigTypeCode" label="配置类型" prop="ConfigTypeCode">
+					<a-form-model-item ref="ConfigTypeCode" has-feedback label="配置类型" prop="ConfigTypeCode">
 						<a-radio-group v-model="form.ConfigTypeCode">
 							<a-radio value="1">Iframe</a-radio>
 							<a-radio value="2">VUE组件</a-radio>

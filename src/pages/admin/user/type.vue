@@ -40,9 +40,9 @@
 			</a-row>
 		</div>
 		<div>
-			<a-modal :title="isEdit?'编辑用户类型':'添加用户类型'" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+			<a-modal :title="isEdit ? '编辑用户类型' : '添加用户类型'" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
 				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-					<a-form-model-item ref="UserTypeCode" label="用户编号" prop="UserTypeCode">
+					<a-form-model-item ref="UserTypeCode" has-feedback label="用户编号" prop="UserTypeCode">
 						<a-input
 							v-model="form.UserTypeCode"
 							:disabled="isEdit"
@@ -55,7 +55,7 @@
 							"
 						/>
 					</a-form-model-item>
-					<a-form-model-item ref="UserTypeName" label="类型名称" prop="UserTypeName">
+					<a-form-model-item ref="UserTypeName" has-feedback label="类型名称" prop="UserTypeName">
 						<a-input
 							v-model="form.UserTypeName"
 							placeholder="请输入用户名称"
@@ -307,7 +307,7 @@ export default {
 					const pagination = { ...this.pagination };
 					pagination.total = res.data.data.recordsTotal;
 					this.pagination = pagination;
-					this.loading =false
+					this.loading = false;
 				}
 			});
 		},

@@ -44,7 +44,7 @@
 				<div>
 					<a-modal title="编辑" :visible="isAddModal" @ok="handleOk" @cancel="handleCancel" centered>
 						<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-							<a-form-model-item ref="OrgLevelCode" label="等级编码" prop="OrgLevelCode">
+							<a-form-model-item ref="OrgLevelCode" has-feedback label="等级编码" prop="OrgLevelCode">
 								<a-input
 									v-model="form.OrgLevelCode"
 									allowClear
@@ -55,7 +55,7 @@
 									"
 								/>
 							</a-form-model-item>
-							<a-form-model-item ref="OrgLevelName" label="名称" prop="OrgLevelName">
+							<a-form-model-item ref="OrgLevelName" has-feedback label="名称" prop="OrgLevelName">
 								<a-input
 									v-model="form.OrgLevelName"
 									allowClear
@@ -66,7 +66,7 @@
 									"
 								/>
 							</a-form-model-item>
-							<a-form-model-item ref="OrgLevelSortNo" label="排序" prop="OrgLevelSortNo">
+							<a-form-model-item ref="OrgLevelSortNo" has-feedback label="排序" prop="OrgLevelSortNo">
 								<a-input
 									v-model="form.OrgLevelSortNo"
 									allowClear

@@ -3,53 +3,59 @@
 		<a-row>
 			<a-col style="padding: 0 5px" :span="5">
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-					<span>机构类型:</span>
+					<span class="card-title">机构类型:</span>
 					<a-select v-model="defaultEnterTypeId" style="width: 200px" @change="enterTypeSelect">
 						<a-select-option :value="item.EnterTypeId" v-for="(item, index) in enterTypeData" :key="index">{{ item.EnterTypeName }}</a-select-option>
 					</a-select>
-					<a-tree
-						@select="enterTreeClick"
-						v-if="enterTreeData.length"
-						:tree-data="enterTreeData"
-						:replaceFields="replaceFields"
-						default-expand-all
-						:default-selected-keys="enterValue"
-					></a-tree>
-					<a-empty v-if="enterTreeData.length == 0" />
+					<div style="padding: 10px 0;">
+						<a-tree
+							@select="enterTreeClick"
+							v-if="enterTreeData.length"
+							:tree-data="enterTreeData"
+							:replaceFields="replaceFields"
+							default-expand-all
+							:default-selected-keys="enterValue"
+						></a-tree>
+						<a-empty v-if="enterTreeData.length == 0" />
+					</div>
 				</a-card>
 			</a-col>
 			<a-col style="padding: 0 5px" :span="5">
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-					<span>组织维度:</span>
-					<a-select v-model="defaultOrgDimensionId" style="width: 200px" @change="orgTypeSelect">
+					<span class="card-title">组织维度:</span>
+					<a-select v-model="defaultOrgDimensionId" style="width: 200px" @change="orgTypeSelect" :disabled="isNotEnter">
 						<a-select-option :value="item.OrgDimensionId" v-for="(item, index) in OrganizationData" :key="index">{{ item.OrgDimensionName }}</a-select-option>
 					</a-select>
-					<a-tree
-						@select="orgTreeClick"
-						v-if="orgTreeData.length"
-						:tree-data="orgTreeData"
-						:replaceFields="replaceFields1"
-						default-expand-all
-						:default-selected-keys="orgValue"
-					></a-tree>
-					<a-empty v-if="orgTreeData.length == 0" />
+					<div style="padding: 10px 0;">
+						<a-tree
+							@select="orgTreeClick"
+							v-if="orgTreeData.length"
+							:tree-data="orgTreeData"
+							:replaceFields="replaceFields1"
+							default-expand-all
+							:default-selected-keys="orgValue"
+						></a-tree>
+						<a-empty v-if="orgTreeData.length == 0" />
+					</div>
 				</a-card>
 			</a-col>
 			<a-col style="padding: 0 5px" :span="5">
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-					<span>应用类型:</span>
-					<a-select v-model="defaultAppTypeId" style="width: 200px" @change="appTypeSelect">
+					<span class="card-title">应用类型:</span>
+					<a-select v-model="defaultAppTypeId" style="width: 200px" @change="appTypeSelect" :disabled="isNotEnter">
 						<a-select-option :value="item.AppTypeId" v-for="(item, index) in appTypeData" :key="index">{{ item.AppTypeName }}</a-select-option>
 					</a-select>
-					<a-tree
-						@select="appTreeClick"
-						v-if="appTreeData.length"
-						:tree-data="appTreeData"
-						:replaceFields="replaceFields2"
-						default-expand-all
-						:default-selected-keys="appValue"
-					></a-tree>
-					<a-empty v-if="appTreeData.length == 0" />
+					<div style="padding: 10px 0;">
+						<a-tree
+							@select="appTreeClick"
+							v-if="appTreeData.length"
+							:tree-data="appTreeData"
+							:replaceFields="replaceFields2"
+							default-expand-all
+							:default-selected-keys="appValue"
+						></a-tree>
+						<a-empty v-if="appTreeData.length == 0" />
+					</div>
 				</a-card>
 			</a-col>
 			<a-col :span="9">
@@ -173,7 +179,8 @@ export default {
 			enterid: 0,
 			orgdimensionid: 0,
 			appTypeId: 0,
-			OrgId: 0
+			OrgId: 0,
+			isNotEnter: false
 		};
 	},
 	watch: {
@@ -221,6 +228,15 @@ export default {
 			getEnterTree(parmas).then(res => {
 				if (res.data.success) {
 					this.enterTreeData = res.data.data;
+					console.log('this.enterTreeData ', this.enterTreeData);
+					//没有机构
+					if (this.enterTreeData.length == 0) {
+						this.orgTreeData = [];
+						this.appTreeData = [];
+						this.isNotEnter = true;
+						return;
+					}
+					this.isNotEnter = false;
 					this.enterValue.push(this.enterTreeData[0].Id);
 					this.enterid = this.enterTreeData[0].Id;
 					console.log('this.enterid===', this.enterid);
@@ -281,7 +297,7 @@ export default {
 			console.log(e);
 		},
 		//机构类型选择
-		enterTypeSelect(e) { 
+		enterTypeSelect(e) {
 			this.defaultEnterTypeId = e;
 			this.getEnterTree();
 		},
@@ -349,5 +365,8 @@ export default {
 			cursor: pointer;
 		}
 	}
+}
+.card-title {
+	padding: 0 10px;
 }
 </style>
