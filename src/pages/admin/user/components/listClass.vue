@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<a-modal v-model="visible" :title="classItem.OrgDimensionName + '-等级选择'" @cancel="close" @ok="handleOk" centered :width="800">
+		<a-modal v-model="visible" :title="classItem.OrgDimensionName + '选择框'" @cancel="close" @ok="handleOk" centered :width="800">
 			<div>
 				<div class="search-box">
 					<a-row>
@@ -11,6 +11,7 @@
 										<a-form-item label="等级编码/名称" :labelCol="{ span: 9 }" :wrapperCol="{ span: 14, offset: 1 }">
 											<a-input
 												placeholder="请输入"
+												allowClear
 												v-decorator="[
 													'searcValue',
 													{
@@ -38,6 +39,8 @@
 						:pagination="pagination"
 						@change="handleTableChange"
 						:rowKey="tableDatas => list.EnterTypeId"
+						:customRow="rowClick"
+						:rowClassName="rowClassName"
 						:row-selection="{
 							type: rowSelectionType,
 							selectedRowKeys: selectedRowKeys,
@@ -77,13 +80,19 @@ const columns = [
 		align: 'center'
 	},
 	{
-		title: '组织等级编号',
-		dataIndex: 'OrgLevelCode',
-		scopedSlots: { customRender: 'OrgLevelCode' },
+		title: '组织名称',
+		dataIndex: 'OrgName',
+		scopedSlots: { customRender: 'OrgName' },
 		align: 'center'
 	},
 	{
-		title: '组织等级名称',
+		title: '组织编码',
+		dataIndex: 'OrgCode',
+		scopedSlots: { customRender: 'OrgCode' },
+		align: 'center'
+	},
+	{
+		title: '等级',
 		dataIndex: 'OrgLevelName',
 		scopedSlots: { customRender: 'OrgLevelName' },
 		align: 'center'
@@ -103,7 +112,7 @@ const columns = [
 ];
 import { getOrginfo } from '@/services/admin.js';
 export default {
-	props: ['classItem','enterValue'],
+	props: ['classItem', 'enterValue'],
 	data() {
 		return {
 			size: 'small',
@@ -125,7 +134,8 @@ export default {
 				showQuickJumper: true,
 				pageSizeOptions: ['10', '20', '50', '100'], //每页中显示的数据
 				showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`
-			}
+			},
+			onOrgId: 0
 		};
 	},
 	created() {
@@ -140,7 +150,7 @@ export default {
 				pageindex: this.pagination.current,
 				pagesize: this.pagination.pageSize,
 				dimsensionId: this.classItem.OrgDimensionId,
-				enterid:this.enterValue[0]
+				enterid: this.enterValue[0]
 			};
 			getOrginfo(parmas).then(res => {
 				if (res.data.success) {
@@ -150,6 +160,27 @@ export default {
 					this.pagination = pagination;
 				}
 			});
+		},
+		//table行点击
+		rowClick(record) {
+			return {
+				on: {
+					dblclick: () => {
+						console.log(record);
+						this.onOrgId = record.OrgId;
+						this.$emit('orgSubSelect',record);
+					}
+				}
+			};
+		},
+		//table行class
+		rowClassName(record) {
+			let className = '';
+			if (record.OrgId == this.onOrgId) {
+				className = 'rowActive';
+				this.is_check = true;
+			}
+			return className;
 		},
 		//查看详情
 		onClose() {
@@ -183,7 +214,7 @@ export default {
 						pageindex: this.pagination.current,
 						pagesize: this.pagination.pageSize,
 						dimsensionId: this.classItem.OrgDimensionId,
-						enterid:this.enterValue[0],
+						enterid: this.enterValue[0],
 						keyword: values.searcValue
 					};
 					getOrginfo(parmas).then(res => {
@@ -213,4 +244,8 @@ export default {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.rowActive {
+	background: #000;
+}
+</style>

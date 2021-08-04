@@ -1,13 +1,12 @@
 <template>
 	<div>
-		<a-modal v-model="visible" title="添加用户"  @cancel="close" centered :width="800">
+		<a-modal v-model="visible" title="添加用户" @cancel="close" :footer="null" centered :width="800">
 			<div>
 				<div class="search-box">
 					<a-row>
 						<a-col :span="9">
 							<div>
-								<a-button @click="add" type="primary" icon="form">添加</a-button>
-								<a-button type="primary" :disabled="!hasSelected" @click="allDel" style="margin-left: 8px">删除</a-button>
+								<a-button type="primary" :disabled="!hasSelected" @click="allAdd" style="margin-left: 8px">添加</a-button>
 								<span style="margin-left: 8px">
 									<template v-if="hasSelected">
 										{{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -19,9 +18,10 @@
 							<a-form layout="horizontal" :form="searchForm">
 								<div>
 									<a-col :md="15" :sm="24">
-										<a-form-item label="等级编码/名称" :labelCol="{ span: 9 }" :wrapperCol="{ span: 14, offset: 1 }">
+										<a-form-item label="用户编码/名称" :labelCol="{ span: 9 }" :wrapperCol="{ span: 14, offset: 1 }">
 											<a-input
 												placeholder="请输入"
+												allowClear
 												v-decorator="[
 													'searcValue',
 													{
@@ -39,48 +39,6 @@
 							</a-form>
 						</a-col>
 					</a-row>
-				</div>
-				<div>
-					<a-modal title="编辑" :visible="isAddModal" @ok="handleOk" @cancel="handleCancel" centered>
-						<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-							<a-form-model-item ref="OrgLevelCode" label="等级编码" prop="OrgLevelCode">
-								<a-input
-									v-model="form.OrgLevelCode"
-									@blur="
-										() => {
-											$refs.OrgLevelCode.onFieldBlur();
-										}
-									"
-								/>
-							</a-form-model-item>
-							<a-form-model-item ref="OrgLevelName" label="名称" prop="OrgLevelName">
-								<a-input
-									v-model="form.OrgLevelName"
-									@blur="
-										() => {
-											$refs.OrgLevelName.onFieldBlur();
-										}
-									"
-								/>
-							</a-form-model-item>
-							<a-form-model-item ref="OrgLevelSortNo" label="排序" prop="OrgLevelSortNo">
-								<a-input
-									v-model="form.OrgLevelSortNo"
-									@blur="
-										() => {
-											$refs.OrgLevelSortNo.onFieldBlur();
-										}
-									"
-								/>
-							</a-form-model-item>
-							<a-form-model-item ref="Enable" label="是否启动">
-								<a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
-									<a-radio-button value="N">否</a-radio-button>
-									<a-radio-button value="Y">是</a-radio-button>
-								</a-radio-group>
-							</a-form-model-item>
-						</a-form-model>
-					</a-modal>
 				</div>
 				<!-- 列表 -->
 				<div class="tab">
@@ -116,15 +74,9 @@
 						</template>
 						<template slot="action" slot-scope="text, record">
 							<div>
-								<a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
-									<a style="margin-right: 8px">
-										<a-icon type="delete" />
-										删除
-									</a>
-								</a-popconfirm>
-								<a style="margin-right: 8px" @click="edit(record)">
-									<a-icon type="edit" />
-									编辑
+								<a style="margin-right: 8px" @click="add(record)">
+									<a-icon type="plus-circle" />
+									添加
 								</a>
 							</div>
 						</template>
@@ -166,9 +118,9 @@ const columns = [
 		align: 'center'
 	}
 ];
-import { getUserList, orgLevelAction } from '@/services/admin.js';
+import { getUserList, addOrgUser } from '@/services/admin.js';
 export default {
-	props: ['classItem', 'orgId'],
+	props: ['classItem', 'orgId', 'enterid'],
 	data() {
 		return {
 			visible: true,
@@ -189,37 +141,8 @@ export default {
 				pageSizeOptions: ['10', '20', '50', '100'], //每页中显示的数据
 				showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`
 			},
-			form: {
-				OrgLevelCode: '',
-				OrgLevelName: '',
-				Enable: 'Y',
-				OrgLevelSortNo: 1,
-				OrgDimensionId: '',
-				EnterId: ''
-			},
-			rules: {
-				OrgLevelCode: [
-					{
-						required: true,
-						message: '请输入等级编码',
-						trigger: 'blur'
-					}
-				],
-				OrgLevelName: [
-					{
-						required: true,
-						message: '请输入等级名称',
-						trigger: 'blur'
-					}
-				],
-				OrgLevelSortNo: [
-					{
-						required: true,
-						message: '请输入等级排序',
-						trigger: 'blur'
-					}
-				]
-			}
+			id: '',
+			enterId: ''
 		};
 	},
 	computed: {
@@ -228,6 +151,8 @@ export default {
 		}
 	},
 	created() {
+		this.id = this.orgId;
+		this.enterId = this.enterid;
 		this.getList(this.orgId);
 	},
 	methods: {
@@ -238,7 +163,8 @@ export default {
 			let parmas = {
 				pageindex: this.pagination.current,
 				pagesize: this.pagination.pageSize,
-				orgid: id
+				orgid: id,
+				enterid: this.enterId
 			};
 			getUserList(parmas).then(res => {
 				if (res.data.success) {
@@ -248,17 +174,6 @@ export default {
 					this.pagination = pagination;
 				}
 			});
-		},
-		enableChange(value) {
-			this.form.Enable = value.target.value;
-		},
-		authChange(value) {
-			this.form.IsPartAuth = value.target.value;
-		},
-		//查看详情
-		detail(item) {
-			this.isDrawer = true;
-			this.drawerItem = item;
 		},
 		onClose() {
 			this.isDrawer = false;
@@ -297,11 +212,47 @@ export default {
 			});
 		},
 		//打开对话框
-		add() {
-			this.defaultForm();
-			this.isEdit = false;
-			this.title = '添加组织';
-			this.isAddModal = true;
+		add(item) {
+			let parmas = {
+				OrgId: this.id,
+				OrgUserInfo: [
+					{
+						UserId: item.UserId
+					}
+				]
+			};
+			addOrgUser(parmas).then(res => {
+				if (res.data.success) {
+					this.$message.success('添加成功!');
+					this.$emit('succeed');
+				}
+			});
+		},
+		allAdd() {
+			let self = this;
+			self.$confirm({
+				title: '确定要添加选中内容',
+				onOk() {
+					let parmas = {
+						OrgId: self.id,
+						OrgUserInfo: []
+					};
+					self.selectedRowKeys.forEach(item => {
+						let obj = {};
+						obj.UserId = self.list[item].UserId;
+						parmas.OrgUserInfo.push(obj);
+					});
+					addOrgUser(parmas).then(res => {
+						if (res.data.success) {
+							self.$message.success('添加成功!');
+							self.$emit('succeed');
+						} else {
+							self.$message.warning(res.data.message.content);
+						}
+					});
+				},
+				onCancel() {}
+			});
 		},
 		defaultForm() {
 			this.form = {
@@ -315,93 +266,6 @@ export default {
 		//关闭对话框
 		handleCancel() {
 			this.isAddModal = false;
-		},
-		edit(item) {
-			this.isAddModal = true;
-			this.isEdit = true;
-			this.title = '编辑组织列表';
-			this.form = item;
-		},
-		handleOk() {
-			this.$refs.ruleForm.validate(valid => {
-				if (valid) {
-					if (this.isEdit) {
-						let parmas = {
-							OrgLevelCode: this.form.OrgLevelCode,
-							OrgLevelName: this.form.OrgLevelName,
-							Enable: this.form.Enable,
-							OrgLevelSortNo: this.form.OrgLevelSortNo,
-							OrgLevelId: this.form.OrgLevelId,
-							EnterId: ''
-						};
-						orgLevelAction(parmas, 'update').then(res => {
-							if (res.data.success) {
-								this.$message.success('编辑成功!');
-								this.defaultForm();
-								this.isAddModal = false;
-								this.getList();
-							} else {
-								this.$message.warning(res.data.message.content);
-							}
-						});
-					} else {
-						let parmas = {
-							OrgLevelCode: this.form.OrgLevelCode,
-							OrgLevelName: this.form.OrgLevelName,
-							Enable: this.form.Enable,
-							OrgLevelSortNo: this.form.OrgLevelSortNo,
-							OrgDimensionId: this.classItem.OrgDimensionId,
-							EnterId: ''
-						};
-						orgLevelAction(parmas, 'add').then(res => {
-							if (res.data.success) {
-								this.$message.success('添加成功!');
-								this.getList();
-								this.defaultForm();
-								this.isAddModal = false;
-							} else {
-								this.$message.warning(res.data.message.content);
-							}
-						});
-					}
-				}
-			});
-		},
-		//多选删除
-		allDel() {
-			let self = this;
-			self.$confirm({
-				title: '确定要删除选中内容',
-				onOk() {
-					const params = [];
-					self.selectedRowKeys.forEach(item => {
-						params.push(self.list[item].OrgLevelId);
-					});
-					orgLevelAction(params, 'delete').then(res => {
-						if (res.data.success) {
-							self.selectedRowKeys = [];
-							self.$message.success('删除成功!');
-							self.getList();
-						} else {
-							self.$message.warning(res.data.message.content);
-						}
-					});
-				},
-				onCancel() {}
-			});
-		},
-		//单个删除
-		onDelete(item) {
-			let parmas = [];
-			parmas.push(item.OrgLevelId);
-			orgLevelAction(parmas, 'delete').then(res => {
-				if (res.data.success) {
-					this.$message.success('删除成功!');
-					this.getList();
-				} else {
-					this.$message.warning(res.data.message.content);
-				}
-			});
 		},
 		//分页
 		handleTableChange(pagination) {

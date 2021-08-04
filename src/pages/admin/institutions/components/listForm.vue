@@ -34,6 +34,7 @@
         >
           <a-input
             v-model="form.EnterEMail"
+			allowClear
             @blur="
               () => {
                 $refs.EnterEMail.onFieldBlur();
@@ -67,6 +68,7 @@
         >
           <a-input
             v-model="form.EnterShortName"
+			allowClear
             @blur="
               () => {
                 $refs.name.onFieldBlur();
@@ -77,32 +79,32 @@
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="公司英文名" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterEnName" />
+          <a-input v-model="form.EnterEnName" allowClear/>
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="上级机构" :labelCol="{ span: 6 }">
-          <a-input v-model="form.SuperiorEnterId" />
+          <a-input v-model="form.SuperiorEnterId" allowClear/>
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="公司简称(英文)" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterShortEnName" />
+          <a-input v-model="form.EnterShortEnName" allowClear/>
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="公司域名" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterUrl" />
+          <a-input v-model="form.EnterUrl" allowClear/>
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="公司法人" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterCorporate" />
+          <a-input v-model="form.EnterCorporate" allowClear/>
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="营业执照编码" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterLicense" />
+          <a-input v-model="form.EnterLicense" allowClear/>
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
@@ -148,22 +150,22 @@
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="联系人" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterContacts" />
+          <a-input v-model="form.EnterContacts" allowClear/>
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="联系电话" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterPhone" />
+          <a-input v-model="form.EnterPhone" allowClear/>
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="地址" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterAddr" />
+          <a-input v-model="form.EnterAddr" allowClear/>
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="传真" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterFax" />
+          <a-input v-model="form.EnterFax" allowClear/>
         </a-form-model-item>
       </a-col>
     </a-row>

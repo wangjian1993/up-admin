@@ -1,6 +1,14 @@
 <template>
 	<div>
-		<a-modal title="Title" :visible="visible" :width="800" centered :confirm-loading="confirmLoading" @ok="handleOk" @cancel="handleCancel">
+		<a-modal
+			:title="modalType == 'edit' ? '编辑用户' : '添加用户'"
+			:visible="visible"
+			:width="800"
+			centered
+			:confirm-loading="confirmLoading"
+			@ok="handleOk"
+			@cancel="handleCancel"
+		>
 			<a-tabs default-active-key="1">
 				<a-tab-pane key="1" tab="基本信息">
 					<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -12,9 +20,11 @@
 										list-type="picture-card"
 										class="avatar-uploader"
 										:show-upload-list="false"
-										action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
 										:before-upload="beforeUpload"
+										action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
 										@change="handleChange"
+										:custom-request="uploadImg"
+										accept="image/png, image/jpeg"
 									>
 										<img v-if="imageUrl" :src="imageUrl" alt="avatar" class="head" />
 										<div v-else>
@@ -28,6 +38,7 @@
 								<a-form-model-item ref="UserName" label="姓名" prop="UserName">
 									<a-input
 										v-model="form.UserName"
+										allowClear
 										placeholder="请输入用户姓名"
 										@blur="
 											() => {
@@ -42,6 +53,7 @@
 									<a-input
 										v-model="form.UserLoginId"
 										placeholder="请输入用户账号"
+										allowClear
 										:disabled="modalType == 'edit'"
 										@blur="
 											() => {
@@ -53,7 +65,7 @@
 							</a-col>
 							<a-col :span="12">
 								<a-form-model-item ref="EnterWechatAccount" label="企业微信">
-									<a-input v-model="form.EnterWechatAccount" placeholder="请输入企业微信" />
+									<a-input v-model="form.EnterWechatAccount" allowClear placeholder="请输入企业微信" />
 								</a-form-model-item>
 							</a-col>
 							<a-col :span="12">
@@ -82,13 +94,15 @@
 								</a-form-model-item>
 							</a-col>
 							<a-col :span="12">
-								<a-form-model-item ref="Email" label="邮箱"><a-input v-model="form.Email" placeholder="请输入邮箱" /></a-form-model-item>
+								<a-form-model-item ref="Email" label="邮箱"><a-input v-model="form.Email" allowClear placeholder="请输入邮箱" /></a-form-model-item>
 							</a-col>
 							<a-col :span="12">
-								<a-form-model-item ref="MobilePhone" label="手机"><a-input v-model="form.MobilePhone" placeholder="请输入手机" /></a-form-model-item>
+								<a-form-model-item ref="MobilePhone" label="手机"><a-input v-model="form.MobilePhone" placeholder="请输入手机" allowClear /></a-form-model-item>
 							</a-col>
-							<a-col :span="12">
-								<a-form-model-item ref="Address" label="地址">
+						</a-row>
+						<a-row>
+							<a-col :span="24">
+								<a-form-model-item ref="Address" label="地址" :labelCol="{ span: 3 }">
 									<a-textarea v-model="form.Address" placeholder="请输入用户地址" :auto-size="{ minRows: 3, maxRows: 5 }" />
 								</a-form-model-item>
 							</a-col>
@@ -98,14 +112,15 @@
 				<a-tab-pane key="2" tab="组织信息">
 					<a-form-model :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
 						<a-form-model-item v-for="item in orgList" :key="item.OrgDimensionId" :label="item.OrgDimensionName">
-							<a-button type="dashed" @click="orgSelect(item)">选择</a-button>
-							<span v-if="item.levelArray">{{ item.levelArray.OrgLevelName }}</span>
+							<a-input v-if="item.levelArray" style="width: 200px" disabled :value="item.levelArray.OrgLevelName" />
+							<a-input v-else style="width: 200px" disabled />
+							<a-button type="primary" @click="orgSelect(item)">选择</a-button>
 						</a-form-model-item>
 					</a-form-model>
 				</a-tab-pane>
 				<a-tab-pane key="3" tab="权限角色">
 					<template>
-						<a-radio-group name="radioGroup" default-value="0" @change="rolesChange">
+						<a-radio-group name="radioGroup" v-model="form.UserInRoleList[0].RoleId" default-value="0" @change="rolesChange">
 							<a-radio :value="item.RoleId" v-for="item in rolesList" :key="item.RoleId">{{ item.RoleName }}</a-radio>
 						</a-radio-group>
 					</template>
@@ -117,7 +132,7 @@
 	</div>
 </template>
 <script>
-import { getUserTypeList, getUserRoles, getOrganizationList, userAction } from '@/services/admin.js';
+import { getUserTypeList, getUserRoles, getOrganizationList, userAction, uploadFile } from '@/services/admin.js';
 import listClass from './listClass.vue';
 function getBase64(img, callback) {
 	const reader = new FileReader();
@@ -149,7 +164,16 @@ export default {
 				MobilePhone: '',
 				Photo: '',
 				UserInOrgList: [],
-				UserInRoleList: []
+				UserInRoleList: [
+					{
+						RoleId: '',
+						RoleCode: '',
+						RoleName: '',
+						RoleDesc: null,
+						AuthLevel: 0,
+						UserId: ''
+					}
+				]
 			},
 			rules: {
 				UserName: [
@@ -181,7 +205,8 @@ export default {
 			rolesDefault: null,
 			orgList: [],
 			imageUrl: '',
-			roleList: []
+			roleList: [],
+			fileData: []
 		};
 	},
 	created() {
@@ -191,7 +216,8 @@ export default {
 		console.log(this.modalType);
 		if (this.modalType == 'edit') {
 			this.form = this.editItem;
-			console.log(this.form);
+			this.imageUrl = this.editItem.PhotoUrl;
+			this.roleList = this.editItem.UserInRoleList;
 		}
 	},
 	methods: {
@@ -220,27 +246,43 @@ export default {
 		enableChange(e) {
 			this.form.Gender = e.target.value;
 		},
-		handleChange(info) {
-			if (info.file.status === 'uploading') {
-				this.loading = true;
-				return;
-			}
-			if (info.file.status === 'done') {
-				// Get this url from response in real world.
-				getBase64(info.file.originFileObj, imageUrl => {
-					this.imageUrl = imageUrl;
-					this.loading = false;
+		uploadImg(info) {
+			getBase64(info.file, imageUrl => {
+				this.imageUrl = imageUrl;
+				console.log(info.file);
+				let typeArray = info.file.type.split('/');
+				let fileType = typeArray[1].toUpperCase();
+				let parmas = {
+					FileName: info.file.name,
+					FileContent: imageUrl,
+					FileSuffix: '.' + fileType
+				};
+				uploadFile(parmas).then(res => {
+					if (res.data.success) {
+						this.$message.success('上传成功!');
+						this.fileData = res.data.data;
+					} else {
+						this.$message.error(`上传失败`);
+					}
 				});
+				this.loading = false;
+			});
+		},
+		handleChange(info) {
+			if (info.file.status === 'error') {
+				this.loading = true;
+				this.$message.error(`上传失败`);
+				return;
 			}
 		},
 		beforeUpload(file) {
 			const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
 			if (!isJpgOrPng) {
-				this.$message.error('You can only upload JPG file!');
+				this.$message.error('请选择jpg或者png格式图片');
 			}
 			const isLt2M = file.size / 1024 / 1024 < 2;
 			if (!isLt2M) {
-				this.$message.error('Image must smaller than 2MB!');
+				this.$message.error('图片太大了.请上传小于2M图片');
 			}
 			return isJpgOrPng && isLt2M;
 		},
@@ -264,6 +306,10 @@ export default {
 			getOrganizationList(parmas).then(res => {
 				if (res.data.success) {
 					this.orgList = res.data.data.list;
+					this.form.UserInOrgList.forEach(item => {
+						console.log(item);
+						this.orgSubSelect(item);
+					});
 				}
 			});
 		},
@@ -282,10 +328,9 @@ export default {
 			this.classItem = item;
 		},
 		orgSubSelect(value) {
-			console.log(value);
-			console.log(this.orgList);
 			this.isListClass = false;
 			this.classItem = [];
+			console.log(this.orgList);
 			this.orgList.filter(item => {
 				console.log(item);
 				if (item.OrgDimensionId == value.OrgDimensionId) {
@@ -294,7 +339,13 @@ export default {
 			});
 		},
 		rolesChange(e) {
-			this.roleList = this.rolesList[e.target.value];
+			console.log(e.target.value);
+			this.rolesList.filter(item => {
+				if (item.RoleId == e.target.value) {
+					this.roleList = item;
+				}
+			});
+			console.log(this.roleList);
 		},
 		showModal() {
 			this.visible = true;
@@ -302,39 +353,79 @@ export default {
 		handleOk() {
 			this.$refs.ruleForm.validate(valid => {
 				if (valid) {
-					console.log('提交=====');
-					let role = [
-						{
-							RoleId: this.roleList.RoleId,
-							RoleCode: this.roleList.RoleCode,
-							RoleName: this.roleList.RoleName
+					if (this.modalType == 'edit') {
+						let role = [
+							{
+								RoleId: this.roleList.RoleId,
+								RoleCode: this.roleList.RoleCode,
+								RoleName: this.roleList.RoleName
+							}
+						];
+						let org = [];
+						this.orgList.forEach(item => {
+							let obj = {
+								OrgId: item.levelArray.OrgId,
+								OrgCode: item.levelArray.OrgCode,
+								OrgName: item.levelArray.OrgName
+							};
+							org.push(obj);
+						});
+						this.form.UserInOrgList = org;
+						this.form.UserInRoleList = role;
+						this.form.EnterId = this.enterValue[0];
+						this.form.Photo = this.fileData.ResourceId || this.form.Photo;
+						this.UserId = this.form.UserId;
+						console.log(this.form);
+						userAction(this.form, 'update').then(res => {
+							if (res.data.success) {
+								this.$message.success('编辑成功!');
+								this.defaultForm();
+								this.$emit('succeed');
+							} else {
+								this.$message.warning(res.data.message.content);
+							}
+						});
+					} else {
+						if (this.roleList.RoleId == '') {
+							this.$message.warning('请选择用户权限角色');
+							return;
 						}
-					];
-					console.log('提交111=====', role);
-					let org = [];
-					this.orgList.forEach(item => {
-						let obj = {
-							OrgId: item.levelArray.OrgId,
-							OrgCode: item.levelArray.OrgCode,
-							OrgName: item.levelArray.OrgName
-						};
-						org.push(obj);
-					});
-					console.log('提交222=====', org);
-					this.form.UserInOrgList = org;
-					this.form.UserInRoleList = role;
-					this.form.EnterId = this.enterValue[0];
-					//this.form.Photo =this.imageUrl;
-					console.log(this.form);
-					userAction(this.form, 'add').then(res => {
-						if (res.data.success) {
-							this.$message.success('添加成功!');
-							this.defaultForm();
-							this.$emit('succeed');
-						} else {
-							this.$message.warning(res.data.message.content);
-						}
-					});
+						// if (this.roleList.RoleId == '') {
+						// 	this.$message.warning('请选择用户权限角色');
+						// 	return;
+						// }
+						let role = [
+							{
+								RoleId: this.roleList.RoleId,
+								RoleCode: this.roleList.RoleCode,
+								RoleName: this.roleList.RoleName
+							}
+						];
+						let org = [];
+						this.orgList.forEach(item => {
+							let obj = {
+								OrgId: item.levelArray.OrgId,
+								OrgCode: item.levelArray.OrgCode,
+								OrgName: item.levelArray.OrgName
+							};
+							org.push(obj);
+						});
+						console.log('提交222=====', org);
+						this.form.UserInOrgList = org;
+						this.form.UserInRoleList = role;
+						this.form.EnterId = this.enterValue[0];
+						this.form.Photo = this.fileData.ResourceId || '';
+						console.log(this.form);
+						userAction(this.form, 'add').then(res => {
+							if (res.data.success) {
+								this.$message.success('添加成功!');
+								this.defaultForm();
+								this.$emit('succeed');
+							} else {
+								this.$message.warning(res.data.message.content);
+							}
+						});
+					}
 				}
 			});
 		},
@@ -355,16 +446,16 @@ export default {
 	min-height: 450px;
 }
 .head {
-	width: 128px;
-	height: 128px;
+	width: 104px;
+	height: 104px;
 }
 .ant-upload.ant-upload-select-picture-card {
-	width: 128px;
-	height: 128px;
+	width: 104px;
+	height: 104px;
 }
 .avatar-uploader > .ant-upload {
-	width: 128px;
-	height: 128px;
+	width: 104px;
+	height: 104px;
 }
 .ant-upload-select-picture-card i {
 	font-size: 32px;

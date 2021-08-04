@@ -15,7 +15,7 @@
 				</a-col>
 			</a-row>
 		</div>
-		<div><all-user v-if="isModal" :orgId="orgId" @closeModal="closeModal"></all-user></div>
+		<div><all-user v-if="isModal" :orgId="orgId" :enterid="enterid" @succeed="getOrgUser" @closeModal="closeModal"></all-user></div>
 		<!-- 列表 -->
 		<div class="tab">
 			<a-table
@@ -52,14 +52,10 @@
 					<div>
 						<a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
 							<a style="margin-right: 8px">
-								<a-icon type="delete" />
+								<a-icon type="close-circle" />
 								移除
 							</a>
 						</a-popconfirm>
-						<a style="margin-right: 8px" @click="edit(record)">
-							<a-icon type="edit" />
-							编辑
-						</a>
 					</div>
 				</template>
 			</a-table>
@@ -104,12 +100,12 @@ const columns = [
 		align: 'center'
 	}
 ];
-import { getUserTypeList, userTypeAction, getOrgUser } from '@/services/admin.js';
+import { getUserTypeList, delOrgUser, getOrgUser } from '@/services/admin.js';
 import { renderStripe } from '@/utils/stripe.js';
 import AllUser from './all-user.vue';
 import paging from '@/config/paging.js';
 export default {
-	props: ['orgId'],
+	props: ['orgId', 'enterid'],
 	data() {
 		return {
 			data: [],
@@ -163,7 +159,9 @@ export default {
 	},
 	created() {
 		this.id = this.orgId;
-		this.getOrgUser(this.orgId);
+		this.data = [];
+		this.getOrgUser();
+		console.log('哈哈哈哈哈===========');
 	},
 	methods: {
 		enableChange(value) {
@@ -233,7 +231,7 @@ export default {
 		add() {
 			this.isModal = true;
 		},
-		closeModal(){
+		closeModal() {
 			this.isModal = false;
 		},
 		defaultForm() {
@@ -250,62 +248,27 @@ export default {
 		handleCancel() {
 			this.visible = false;
 		},
-		edit(item) {
-			this.visible = true;
-			this.isEdit = true;
-			this.title = '编辑机构类型';
-			this.form = item;
-		},
-		handleOk() {
-			this.$refs.ruleForm.validate(valid => {
-				if (valid) {
-					if (this.isEdit) {
-						let editForm = {
-							UserTypeId: this.form.UserTypeId,
-							UserTypeName: this.form.UserTypeName,
-							UserTypeDesc: this.form.UserTypeDesc,
-							Enable: this.form.Enable
-						};
-						userTypeAction(editForm, 'update').then(res => {
-							if (res.data.success) {
-								this.$message.success('编辑成功!');
-								this.defaultForm();
-								this.visible = false;
-								this.getUserTypeList();
-							} else {
-								this.$message.warning(res.data.message.content);
-							}
-						});
-					} else {
-						userTypeAction(this.form, 'add').then(res => {
-							if (res.data.success) {
-								this.$message.success('添加成功!');
-								this.getUserTypeList();
-								this.defaultForm();
-								this.visible = false;
-							} else {
-								this.$message.warning(res.data.message.content);
-							}
-						});
-					}
-				}
-			});
-		},
 		//多选删除
 		allDel() {
 			let self = this;
 			self.$confirm({
 				title: '确定要删除选中内容',
 				onOk() {
-					const params = [];
+					let parmas = {
+						OrgId: self.id,
+						OrgUserInfo: []
+					};
 					self.selectedRowKeys.forEach(item => {
-						params.push(self.data[item].UserTypeId);
+						let obj = {
+							UserId: self.data[item].UserId
+						};
+						parmas.OrgUserInfo.push(obj);
 					});
-					userTypeAction(params, 'delete').then(res => {
+					delOrgUser(parmas, 'delete').then(res => {
 						if (res.data.success) {
 							self.selectedRowKeys = [];
-							self.$message.success('删除成功!');
-							self.getUserTypeList();
+							self.$message.success('移除成功!');
+							self.getOrgUser();
 						} else {
 							self.$message.warning(res.data.message.content);
 						}
@@ -316,12 +279,18 @@ export default {
 		},
 		//单个删除
 		onDelete(item) {
-			let parmas = [];
-			parmas.push(item.UserTypeId);
-			userTypeAction(parmas, 'delete').then(res => {
+			let parmas = {
+				OrgId: this.id,
+				OrgUserInfo: [
+					{
+						UserId: item.UserId
+					}
+				]
+			};
+			delOrgUser(parmas, 'delete').then(res => {
 				if (res.data.success) {
-					this.$message.success('删除成功!');
-					this.getUserTypeList();
+					this.$message.success('移除成功!');
+					this.getOrgUser();
 				} else {
 					this.$message.warning(res.data.message.content);
 				}
@@ -330,7 +299,7 @@ export default {
 		handleTableChange(pagination) {
 			this.pagination.current = pagination.current;
 			this.pagination.pageSize = pagination.pageSize;
-			this.getUserTypeList();
+			this.getOrgUser();
 		}
 	},
 	components: { AllUser }

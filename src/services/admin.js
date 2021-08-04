@@ -98,6 +98,12 @@ export async function orginfoAction(params, action) {
 export async function getOrgUser(params) {
 	return request(`${UP_ADMIN}/orginfo/getusers`, METHOD.GET, params)
 }
+export async function addOrgUser(params) {
+	return request(`${UP_ADMIN}/orginfo/adduser`, METHOD.POST, params)
+}
+export async function delOrgUser(params) {
+	return request(`${UP_ADMIN}/orginfo/removeuser`, METHOD.POST, params)
+}
 
 /**
  * @description:获取用户列表
@@ -150,6 +156,45 @@ export async function getAppInfoList(params) {
 export async function appInfoAction(params, action) {
 	return request(`${UP_ADMIN}/appinfo/${action}`, METHOD.POST, params)
 }
+
+/**
+ * @description:应用列表
+ * @param {*} params
+ * @return {*}
+ */
+export async function uploadFile(params) {
+	return request(`${UP_ADMIN}/upload/img`, METHOD.POST, params)
+}
+
+/**
+ * @description:菜单管理
+ * @param {*} params
+ * @return {*}
+ */
+export async function getMenuList(params) {
+	return request(`${UP_ADMIN}/module/getall`, METHOD.GET, params)
+}
+export async function menuAction(params, action) {
+	return request(`${UP_ADMIN}/module/${action}`, METHOD.POST, params)
+}
+
+
+/**
+ * @description:权限-查询组织树状信息API
+ * @param {*} params
+ * @return {*}
+ */
+export async function getOrgTree(params) {
+	return request(`${UP_ADMIN}/orginfo/getorgtree`, METHOD.GET, params)
+}
+/**
+ * @description:权限-查询应用菜单树形信息API
+ * @param {*} params
+ * @return {*}
+ */
+export async function getAppMdules(params) {
+	return request(`${UP_ADMIN}/module/getappmodules`, METHOD.GET, params)
+}
 export default {
 	getInstitutionList,
 	getEnterList,
@@ -175,5 +220,12 @@ export default {
 	getUserList,
 	getAppInfoList,
 	appInfoAction,
-	getOrgUser
+	getOrgUser,
+	addOrgUser,
+	delOrgUser,
+	uploadFile,
+	getMenuList,
+	menuAction,
+	getOrgTree,
+	getAppMdules
 }

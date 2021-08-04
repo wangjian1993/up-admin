@@ -20,6 +20,7 @@
 								<a-form-item label="维度编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
 									<a-input
 										placeholder="请输入"
+										allowClear
 										v-decorator="[
 											'searcValue',
 											{
@@ -45,6 +46,7 @@
 						<a-input
 							v-model="form.OrgDimensionName"
 							placeholder="请输入维度名称"
+							allowClear
 							@blur="
 								() => {
 									$refs.OrgDimensionName.onFieldBlur();
@@ -56,6 +58,7 @@
 						<a-input
 							v-model="form.OrgDimensionCode"
 							placeholder="请输入维度编码"
+							allowClear
 							@blur="
 								() => {
 									$refs.OrgDimensionCode.onFieldBlur();
@@ -67,6 +70,7 @@
 						<a-input
 							v-model="form.SortNo"
 							placeholder="请输入维度排序"
+							allowClear
 							@blur="
 								() => {
 									$refs.SortNo.onFieldBlur();

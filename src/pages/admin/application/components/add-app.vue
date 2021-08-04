@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<a-modal title="Title" :visible="visible" :width="800" centered :confirm-loading="confirmLoading" @ok="handleOk" @cancel="handleCancel">
+		<a-modal :title="isEdit ? '编辑应用' : '添加应用'" :visible="visible" :width="800" centered :confirm-loading="confirmLoading" @ok="handleOk" @cancel="handleCancel">
 			<a-tabs default-active-key="1">
 				<a-tab-pane key="1" tab="基本信息">
 					<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -12,9 +12,11 @@
 										list-type="picture-card"
 										class="avatar-uploader"
 										:show-upload-list="false"
-										action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
 										:before-upload="beforeUpload"
+										action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
 										@change="handleChange"
+										:custom-request="uploadImg"
+										accept="image/png, image/jpeg"
 									>
 										<img v-if="imageUrl" :src="imageUrl" alt="avatar" class="head" />
 										<div v-else>
@@ -29,6 +31,7 @@
 									<a-input
 										v-model="form.AppName"
 										placeholder="请输入应用名称"
+										allowClear
 										@blur="
 											() => {
 												$refs.AppName.onFieldBlur();
@@ -42,7 +45,7 @@
 									<a-input
 										v-model="form.AppCode"
 										placeholder="请输入应用编码"
-										:disabled="modalType == 'edit'"
+										:disabled="isEdit"
 										@blur="
 											() => {
 												$refs.AppCode.onFieldBlur();
@@ -75,7 +78,18 @@
 								</a-form-model-item>
 							</a-col>
 							<a-col :span="12">
-								<a-form-model-item ref="AppSortNo" label="序号"><a-input v-model="form.AppSortNo" placeholder="序号" /></a-form-model-item>
+								<a-form-model-item ref="AppSortNo" label="序号">
+									<a-input
+										v-model="form.AppSortNo"
+										type="number"
+										placeholder="请输入应用编码"
+										@blur="
+											() => {
+												$refs.AppSortNo.onFieldBlur();
+											}
+										"
+									/>
+								</a-form-model-item>
 							</a-col>
 							<a-col :span="12">
 								<a-form-model-item ref="AppDesc" label="描述">
@@ -135,14 +149,14 @@
 	</div>
 </template>
 <script>
-import { getAppTypeList, appInfoAction } from '@/services/admin.js';
+import { getAppTypeList, appInfoAction, uploadFile } from '@/services/admin.js';
 function getBase64(img, callback) {
 	const reader = new FileReader();
 	reader.addEventListener('load', () => callback(reader.result));
 	reader.readAsDataURL(img);
 }
 export default {
-	props: ['enterValue', 'editItem', 'modalType'],
+	props: ['enterValue', 'editItem', 'modalType', 'isEdit', 'editForm'],
 	data() {
 		return {
 			ModalText: 'Content of the modal',
@@ -151,6 +165,7 @@ export default {
 			loading: false,
 			isListClass: false,
 			classItem: [],
+			fileData: [],
 			form: {
 				AppCode: '',
 				AppName: '',
@@ -160,8 +175,8 @@ export default {
 				AccessTypeCode: '',
 				AppSortNo: 1,
 				ConfigTypeCode: '',
-				IsAuth:1,
-				IsShare:1,
+				IsAuth: 1,
+				IsShare: 1,
 				LayoutTypeCode: '',
 				MouduleParam: '',
 				MouduleUrl: ''
@@ -188,10 +203,10 @@ export default {
 						trigger: 'blur'
 					}
 				],
-				AppLogo: [
+				AppSortNo: [
 					{
 						required: true,
-						message: '请选择应用图标',
+						message: '请输入应用序号',
 						trigger: 'blur'
 					}
 				]
@@ -208,6 +223,10 @@ export default {
 	},
 	created() {
 		this.getAppTypeList();
+		if (this.isEdit) {
+			this.form = this.editForm;
+			this.imageUrl = this.editForm.AppLogoUrl;
+		}
 		// this.getUserRoles();
 		// this.getOrganizationList();
 		// console.log(this.modalType);
@@ -234,6 +253,28 @@ export default {
 				MouduleUrl: ''
 			};
 		},
+		uploadImg(info) {
+			getBase64(info.file, imageUrl => {
+				this.imageUrl = imageUrl;
+				console.log(info.file);
+				let typeArray = info.file.type.split('/');
+				let fileType = typeArray[1].toUpperCase();
+				let parmas = {
+					FileName: info.file.name,
+					FileContent: imageUrl,
+					FileSuffix: '.' + fileType
+				};
+				uploadFile(parmas).then(res => {
+					if (res.data.success) {
+						this.$message.success('上传成功!');
+						this.fileData = res.data.data;
+					} else {
+						this.$message.error(`上传失败`);
+					}
+				});
+				this.loading = false;
+			});
+		},
 		closeModal() {
 			this.isListClass = false;
 		},
@@ -241,26 +282,20 @@ export default {
 			this.form.Gender = e.target.value;
 		},
 		handleChange(info) {
-			if (info.file.status === 'uploading') {
+			if (info.file.status === 'error') {
 				this.loading = true;
+				this.$message.error(`上传失败`);
 				return;
-			}
-			if (info.file.status === 'done') {
-				// Get this url from response in real world.
-				getBase64(info.file.originFileObj, imageUrl => {
-					this.imageUrl = imageUrl;
-					this.loading = false;
-				});
 			}
 		},
 		beforeUpload(file) {
 			const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
 			if (!isJpgOrPng) {
-				this.$message.error('You can only upload JPG file!');
+				this.$message.error('请选择jpg或者png格式图片');
 			}
 			const isLt2M = file.size / 1024 / 1024 < 2;
 			if (!isLt2M) {
-				this.$message.error('Image must smaller than 2MB!');
+				this.$message.error('图片太大了.请上传小于2M图片');
 			}
 			return isJpgOrPng && isLt2M;
 		},
@@ -282,8 +317,6 @@ export default {
 			this.classItem = item;
 		},
 		orgSubSelect(value) {
-			console.log(value);
-			console.log(this.orgList);
 			this.isListClass = false;
 			this.classItem = [];
 			this.orgList.filter(item => {
@@ -302,15 +335,46 @@ export default {
 		handleOk() {
 			this.$refs.ruleForm.validate(valid => {
 				if (valid) {
-					appInfoAction(this.form, 'add').then(res => {
-						if (res.data.success) {
-							this.$message.success('添加成功!');
-							this.defaultForm();
-							this.$emit('succeed');
-						} else {
-							this.$message.warning(res.data.message.content);
-						}
-					});
+					if (this.isEdit) {
+						let params = {
+							AppId: this.form.AppId,
+							AppName: this.form.AppName,
+							AppCode: this.form.AppCode,
+							AppDesc: this.form.AppDesc,
+							AppLogo: this.fileData.ResourceId || this.form.AppLogo,
+							AppTypeId: this.form.AppTypeId,
+							AccessTypeCode: this.form.AccessTypeCode,
+							AppSortNo: this.form.AppSortNo,
+							ConfigTypeCode: this.form.ConfigTypeCode,
+							IsAuth: this.form.IsAuth,
+							IsShare: this.form.IsShare,
+							LayoutTypeCode: this.form.LayoutTypeCode,
+							MouduleParam: this.form.MouduleParam,
+							MouduleUrl: this.form.MouduleUrl
+						};
+						appInfoAction(params, 'update').then(res => {
+							if (res.data.success) {
+								this.$message.success('编辑成功!');
+								this.defaultForm();
+								this.$emit('succeed');
+								this.$emit('cloneModal');
+							} else {
+								this.$message.warning(res.data.message.content);
+							}
+						});
+					} else {
+						this.form.AppLogo = this.fileData.ResourceId || '';
+						appInfoAction(this.form, 'add').then(res => {
+							if (res.data.success) {
+								this.$message.success('添加成功!');
+								this.defaultForm();
+								this.$emit('succeed');
+								this.$emit('cloneModal');
+							} else {
+								this.$message.warning(res.data.message.content);
+							}
+						});
+					}
 				}
 			});
 		},

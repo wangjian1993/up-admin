@@ -17,9 +17,10 @@
 					<a-form layout="horizontal" :form="searchForm">
 						<div>
 							<a-col :md="18" :sm="24">
-								<a-form-item label="应用类型编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
+								<a-form-item label="应用编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
 									<a-input
 										placeholder="请输入"
+										allowClear
 										v-decorator="[
 											'searcValue',
 											{
@@ -38,15 +39,14 @@
 				</a-col>
 			</a-row>
 		</div>
-		<div>
-			<add-app v-if="visible" @cloneModal="cloneModal"></add-app>
-		</div>
+		<div><add-app v-if="visible" @cloneModal="cloneModal" :isEdit="isEdit" :editForm="editForm" @succeed="getAppInfoList"></add-app></div>
 		<!-- 列表 -->
 		<div class="tab">
 			<a-table
 				:columns="columns"
 				:data-source="data"
 				size="small"
+				:loading="loading"
 				:pagination="pagination"
 				@change="handleTableChange"
 				:rowKey="tableDatas => data.EnterTypeId"
@@ -60,6 +60,9 @@
 					<div>
 						<span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
 					</div>
+				</template>
+				<template slot="AppLogo" slot-scope="text, record">
+					<div><a-avatar :src="record.AppLogoUrl" /></div>
 				</template>
 				<template slot="enable" slot-scope="record">
 					<div>
@@ -96,16 +99,36 @@
 		<!-- 查看详情 -->
 		<div>
 			<a-drawer width="400" placement="right" :closable="false" :visible="isDrawer" @close="onClose">
-				<a-descriptions title="应用类型详情" :column="1">
-					<a-descriptions-item label="应用编码">{{ drawerItem.AppTypeCode }}</a-descriptions-item>
-					<a-descriptions-item label="用户名称">{{ drawerItem.AppTypeName }}</a-descriptions-item>
+				<a-descriptions title="应用详情" :column="1">
+					<a-descriptions-item label="应用图标"><a-avatar :src="drawerItem.AppLogoUrl" /></a-descriptions-item>
+					<a-descriptions-item label="应用编码">{{ drawerItem.AppCode }}</a-descriptions-item>
+					<a-descriptions-item label="应用名称">{{ drawerItem.AppName }}</a-descriptions-item>
+					<a-descriptions-item label="应用类型">{{ drawerItem.AppTypeName }}</a-descriptions-item>
+					<a-descriptions-item label="应用序号">{{ drawerItem.AppSortNo }}</a-descriptions-item>
+					<a-descriptions-item label="布局">{{ drawerItem.LayoutTypeCode }}</a-descriptions-item>
+					<a-descriptions-item label="配置类型">{{ drawerItem.ConfigTypeCode }}</a-descriptions-item>
+					<a-descriptions-item label="组件路径">{{ drawerItem.MouduleUrl }}</a-descriptions-item>
+					<a-descriptions-item label="组件参数">{{ drawerItem.MouduleParam }}</a-descriptions-item>
+					<a-descriptions-item label="访问方式">{{ drawerItem.AccessTypeCode }}</a-descriptions-item>
+					<a-descriptions-item label="共享">
+						<div>
+							<a-tag color="green" v-if="drawerItem.IsShare == 'Y'">是</a-tag>
+							<a-tag color="red" v-else>否</a-tag>
+						</div>
+					</a-descriptions-item>
+					<a-descriptions-item label="是否授权">
+						<div>
+							<a-tag color="green" v-if="drawerItem.IsAuth == 'Y'">是</a-tag>
+							<a-tag color="red" v-else>否</a-tag>
+						</div>
+					</a-descriptions-item>
 					<a-descriptions-item label="是否启用">
 						<div>
 							<a-tag color="green" v-if="drawerItem.Enable == 'Y'">是</a-tag>
 							<a-tag color="red" v-else>否</a-tag>
 						</div>
 					</a-descriptions-item>
-					<a-descriptions-item label="描述">{{ drawerItem.AppTypeDesc }}</a-descriptions-item>
+					<a-descriptions-item label="描述">{{ drawerItem.AppDesc }}</a-descriptions-item>
 					<a-descriptions-item label="添加人">{{ drawerItem.UserCreated }}</a-descriptions-item>
 					<a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
 				</a-descriptions>
@@ -122,20 +145,26 @@ const columns = [
 	},
 	{
 		title: '应用名称',
+		dataIndex: 'AppName',
+		scopedSlots: { customRender: 'AppName' },
+		align: 'center'
+	},
+	{
+		title: '编码',
+		dataIndex: 'AppCode',
+		scopedSlots: { customRender: 'AppCode' },
+		align: 'center'
+	},
+	{
+		title: '应用类型',
 		dataIndex: 'AppTypeName',
 		scopedSlots: { customRender: 'AppTypeName' },
 		align: 'center'
 	},
 	{
-		title: '编码',
-		dataIndex: 'AppTypeCode',
-		scopedSlots: { customRender: 'AppTypeCode' },
-		align: 'center'
-	},
-	{
-		title: '描述',
-		dataIndex: 'AppTypeDesc',
-		scopedSlots: { customRender: 'AppTypeDesc' },
+		title: '图标',
+		dataIndex: 'AppLogo',
+		scopedSlots: { customRender: 'AppLogo' },
 		align: 'center'
 	},
 	{
@@ -160,8 +189,8 @@ export default {
 			columns,
 			isEdit: false,
 			editForm: [],
-			title: '添加机构类型',
-			loading: false,
+			title: '添加应用',
+			loading: true,
 			isDrawer: false,
 			selectedRowKeys: [], // Check here to configure the default column
 			visible: false,
@@ -179,29 +208,7 @@ export default {
 				showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`
 			},
 			searcValue: '',
-			searchForm: this.$form.createForm(this),
-			form: {
-				AppTypeCode: '',
-				AppTypeName: '',
-				AppTypeDesc: '',
-				Enable: 'Y'
-			},
-			rules: {
-				AppTypeCode: [
-					{
-						required: true,
-						message: '请输入应用编码',
-						trigger: 'blur'
-					}
-				],
-				AppTypeName: [
-					{
-						required: true,
-						message: '请输入应用名称',
-						trigger: 'blur'
-					}
-				]
-			}
+			searchForm: this.$form.createForm(this)
 		};
 	},
 	updated() {
@@ -272,26 +279,19 @@ export default {
 					const pagination = { ...this.pagination };
 					pagination.total = res.data.data.recordsTotal;
 					this.pagination = pagination;
+					this.loading = false;
 				}
 			});
 		},
-		cloneModal(){
+		cloneModal() {
 			this.visible = false;
 		},
 		//打开对话框
 		add() {
-			this.defaultForm();
+			// this.defaultForm();
 			this.isEdit = false;
-			this.title = '添加机构类型';
+			this.title = '添加应用';
 			this.visible = true;
-		},
-		defaultForm() {
-			this.form = {
-				AppTypeCode: '',
-				AppTypeName: '',
-				AppTypeDesc: '',
-				Enable: 'Y'
-			};
 		},
 		//关闭对话框
 		handleCancel() {
@@ -300,43 +300,8 @@ export default {
 		edit(item) {
 			this.visible = true;
 			this.isEdit = true;
-			this.title = '编辑机构类型';
-			this.form = item;
-		},
-		handleOk() {
-			this.$refs.ruleForm.validate(valid => {
-				if (valid) {
-					if (this.isEdit) {
-						let editForm = {
-							AppTypeId: this.form.AppTypeId,
-							AppTypeName: this.form.AppTypeName,
-							AppTypeDesc: this.form.AppTypeDesc,
-							Enable: this.form.Enable
-						};
-						appInfoAction(editForm, 'update').then(res => {
-							if (res.data.success) {
-								this.$message.success('编辑成功!');
-								this.defaultForm();
-								this.visible = false;
-								this.getAppInfoList();
-							} else {
-								this.$message.warning(res.data.message.content);
-							}
-						});
-					} else {
-						appInfoAction(this.form, 'add').then(res => {
-							if (res.data.success) {
-								this.$message.success('添加成功!');
-								this.getAppInfoList();
-								this.defaultForm();
-								this.visible = false;
-							} else {
-								this.$message.warning(res.data.message.content);
-							}
-						});
-					}
-				}
-			});
+			this.title = '编辑应用';
+			this.editForm = item;
 		},
 		//多选删除
 		allDel() {
@@ -346,7 +311,7 @@ export default {
 				onOk() {
 					const params = [];
 					self.selectedRowKeys.forEach(item => {
-						params.push(self.data[item].AppTypeId);
+						params.push(self.data[item].AppId);
 					});
 					appInfoAction(params, 'delete').then(res => {
 						if (res.data.success) {
@@ -364,7 +329,7 @@ export default {
 		//单个删除
 		onDelete(item) {
 			let parmas = [];
-			parmas.push(item.AppTypeId);
+			parmas.push(item.AppId);
 			appInfoAction(parmas, 'delete').then(res => {
 				if (res.data.success) {
 					this.$message.success('删除成功!');
@@ -380,7 +345,7 @@ export default {
 			this.getAppInfoList();
 		}
 	},
-	components:{AddApp}
+	components: { AddApp }
 };
 </script>
 <style lang="less">

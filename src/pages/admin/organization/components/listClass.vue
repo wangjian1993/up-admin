@@ -22,6 +22,7 @@
 										<a-form-item label="等级编码/名称" :labelCol="{ span: 9 }" :wrapperCol="{ span: 14, offset: 1 }">
 											<a-input
 												placeholder="请输入"
+												allowClear
 												v-decorator="[
 													'searcValue',
 													{
@@ -46,6 +47,7 @@
 							<a-form-model-item ref="OrgLevelCode" label="等级编码" prop="OrgLevelCode">
 								<a-input
 									v-model="form.OrgLevelCode"
+									allowClear
 									@blur="
 										() => {
 											$refs.OrgLevelCode.onFieldBlur();
@@ -56,6 +58,7 @@
 							<a-form-model-item ref="OrgLevelName" label="名称" prop="OrgLevelName">
 								<a-input
 									v-model="form.OrgLevelName"
+									allowClear
 									@blur="
 										() => {
 											$refs.OrgLevelName.onFieldBlur();
@@ -66,6 +69,7 @@
 							<a-form-model-item ref="OrgLevelSortNo" label="排序" prop="OrgLevelSortNo">
 								<a-input
 									v-model="form.OrgLevelSortNo"
+									allowClear
 									@blur="
 										() => {
 											$refs.OrgLevelSortNo.onFieldBlur();

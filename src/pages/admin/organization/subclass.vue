@@ -3,7 +3,7 @@
 		<a-row>
 			<a-col style="padding: 0 5px" :span="6">
 				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 0px', padding: '5px' }">
-					<p>组织选择</p>
+					<p>机构选择</p>
 					<a-tree @select="treeClick" :tree-data="treeList" :replaceFields="replaceFields" default-expand-all :default-selected-keys="enterValue"></a-tree>
 				</a-card>
 				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '5px', padding: '5px' }">
@@ -28,16 +28,17 @@
 							:data-source="tabData"
 							:pagination="pagination"
 							size="small"
+							rowKey="OrgId"
 							:row-selection="{
 								selectedRowKeys: selectedRowKeys,
 								onChange: onSelectChange
 							}"
 						>
-							<template slot="index" slot-scope="text, record, index">
+							<!-- <template slot="index" slot-scope="text, record, index">
 								<div>
 									<span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
 								</div>
-							</template>
+							</template> -->
 							<template slot="action" slot-scope="text, record">
 								<div>
 									<a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
@@ -65,10 +66,11 @@
 					<div>
 						<a-modal :title="title" :visible="visible" @ok="handleOk" @cancel="handleCancel">
 							<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-								<a-form-model-item ref="OrgName" label="用户组名称" prop="OrgName">
+								<a-form-model-item ref="OrgName" label="组织名称" prop="OrgName">
 									<a-input
 										v-model="form.OrgName"
-										placeholder="请输入用户组名称"
+										allowClear
+										placeholder="请输入组织名称"
 										@blur="
 											() => {
 												$refs.OrgName.onFieldBlur();
@@ -76,10 +78,11 @@
 										"
 									/>
 								</a-form-model-item>
-								<a-form-model-item ref="OrgCode" label="编码" prop="OrgCode">
+								<a-form-model-item ref="OrgCode" label="组织编码" prop="OrgCode">
 									<a-input
 										v-model="form.OrgCode"
-										placeholder="请输入用户组编码"
+										allowClear
+										placeholder="请输入组织编码"
 										:disabled="isEdit"
 										@blur="
 											() => {
@@ -108,7 +111,7 @@
 					</div>
 				</a-card>
 			</a-col>
-			<a-col style="padding: 0 5px" :span="6"><user-list v-if="orgIdFlag" :orgId="orgId"></user-list></a-col>
+			<a-col style="padding: 0 5px" :span="6"><user-list ref="userList" v-if="isRelationship" :orgId="orgId" :enterid="enterid"></user-list></a-col>
 		</a-row>
 	</div>
 </template>
@@ -118,20 +121,15 @@ import { getEnterTree, getOrganizationList, getOrginfo, orginfoAction, getOrgLev
 import UserList from './components/user-list.vue';
 const columns = [
 	{
-		title: '序号',
-		scopedSlots: { customRender: 'index' },
-		align: 'center'
-	},
-	{
-		title: '组名',
-		dataIndex: 'OrgName',
-		scopedSlots: { customRender: 'OrgName' },
-		align: 'center'
-	},
-	{
-		title: '组key',
+		title: '组织编码',
 		dataIndex: 'OrgCode',
 		scopedSlots: { customRender: 'OrgCode' },
+		align: 'center'
+	},
+	{
+		title: '组织名称',
+		dataIndex: 'OrgName',
+		scopedSlots: { customRender: 'OrgName' },
 		align: 'center'
 	},
 	{
@@ -170,7 +168,7 @@ export default {
 				key: 'OrgDimensionId',
 				value: 'OrgDimensionId'
 			},
-			title: '添加机构类型',
+			title: '添加组织',
 			loading: false,
 			selectedRowKeys: [],
 			expandRowByClick: false,
@@ -300,7 +298,7 @@ export default {
 					pagination.total = res.data.data.recordsTotal;
 					this.pagination = pagination;
 					this.orgId = this.tabData[0].OrgId;
-					this.orgIdFlag = true;
+					// this.orgIdFlag = true;
 				}
 			});
 		},
@@ -318,12 +316,12 @@ export default {
 			this.dimsensionId = value[0];
 			this.getOrginfo();
 			this.getList(value[0]);
-			console.log('等级选择');
+			this.isRelationship = false;
 		},
 		treeClick(value) {
-			console.log('组织选择');
 			this.enterid = value[0];
 			this.getOrginfo();
+			this.isRelationship = false;
 		},
 		defaultForm() {
 			this.form = {

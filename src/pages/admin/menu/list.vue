@@ -1,274 +1,570 @@
 <template>
-	<div>
-		<a-row>
-			<a-col style="padding: 0 5px" :span="4">
-				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-					<div class="left-list">
-						<p>
-							<a-icon type="android" />
-							<span>组织1</span>
-						</p>
-						<p>
-							<a-icon type="android" />
-							<span>组织2</span>
-						</p>
-						<p>
-							<a-icon type="android" />
-							<span>组织3</span>
-						</p>
-					</div>
-				</a-card>
-			</a-col>
-			<a-col :span="20">
-				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+	<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+		<div class="search-box">
+			<a-row>
+				<a-col :span="6">
 					<div>
-						<a-row type="flex" justify="start">
-							<a-col :span="2"><a-button @click="goAdd()" type="primary" icon="form">添加</a-button></a-col>
-						</a-row>
+						<a-button @click="add" type="primary" icon="form">添加</a-button>
+						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+						<span style="margin-left: 8px">
+							<template v-if="hasSelected">
+								{{ `共选中 ${selectedRowKeys.length} 条` }}
+							</template>
+						</span>
 					</div>
-					<div>
-						<a-table
-							:columns="columns"
-							:data-source="tabData"
-							size="small"
-							:row-selection="{
-								selectedRowKeys: selectedRowKeys,
-								onSelectAll: onSelectAll,
-								onSelect: onSelect
-							}"
+				</a-col>
+				<a-col :span="18">
+					<a-form layout="horizontal" :form="searchForm">
+						<div>
+							<a-col :md="6" :sm="24">
+								<a-form-item label="菜单编码/名称" :labelCol="{ span: 9 }" :wrapperCol="{ span: 14, offset: 1 }">
+									<a-input placeholder="请输入" v-decorator="['key']" allowClear/>
+								</a-form-item>
+							</a-col>
+							<a-col :md="6" :sm="24">
+								<a-form-item label="应用" :labelCol="{ span: 6 }" :wrapperCol="{ span: 14, offset: 1 }">
+									<a-select v-decorator="['AppId']" placeholder="请选择应用" allowClear>
+										<a-select-option v-for="item in appData" :key="item.AppId" :value="item.AppId">{{ item.AppName }}</a-select-option>
+									</a-select>
+								</a-form-item>
+							</a-col>
+							<a-col :md="6" :sm="24">
+								<a-form-item label="应用类型" :labelCol="{ span: 6 }" :wrapperCol="{ span: 14, offset: 1 }">
+									<a-select placeholder="请选择应用类型" v-decorator="['AppTypeId']" allowClear>
+										<a-select-option v-for="item in appTypeData" :key="item.AppTypeId" :value="item.AppTypeId">{{ item.AppTypeName }}</a-select-option>
+									</a-select>
+								</a-form-item>
+							</a-col>
+						</div>
+						<span style="float: right; margin-top: 3px;">
+							<a-button type="primary" @click="search">查询</a-button>
+							<a-button style="margin-left: 8px" @click="reset">重置</a-button>
+						</span>
+					</a-form>
+				</a-col>
+			</a-row>
+		</div>
+		<div>
+			<a-modal :title="isEdit ? '编辑菜单' : '添加菜单'" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+					<a-form-model-item ref="AppId" label="应用" prop="AppId" v-if="!isSub">
+						<a-select v-model="form.AppId" placeholder="请选择应用">
+							<a-select-option v-for="item in appData" :key="item.AppId" :value="item.AppId">{{ item.AppName }}</a-select-option>
+						</a-select>
+					</a-form-model-item>
+					<a-form-model-item ref="AppId" label="应用" v-if="isSub && !isEdit"><a-input v-model="subData.AppName" :disabled="isSub" /></a-form-model-item>
+					<a-form-model-item ref="SuperiorId" label="上级菜单" v-if="isSub && !isEdit"><a-input v-model="subData.ModuleName" :disabled="isSub" /></a-form-model-item>
+					<a-form-model-item ref="ModuleName" label="菜单名称" prop="ModuleName">
+						<a-input
+							v-model="form.ModuleName"
+							placeholder="请输入菜单名称"
+							allowClear
+							@blur="
+								() => {
+									$refs.ModuleName.onFieldBlur();
+								}
+							"
 						/>
+					</a-form-model-item>
+					<a-form-model-item ref="ModuleCode" label="菜单编码" prop="ModuleCode">
+						<a-input
+							v-model="form.ModuleCode"
+							:disabled="isEdit"
+							allowClear
+							placeholder="请输入菜单编码"
+							@blur="
+								() => {
+									$refs.ModuleCode.onFieldBlur();
+								}
+							"
+						/>
+					</a-form-model-item>
+					<a-form-model-item ref="ModuleLogo" label="图标">
+						<a-input style="width: 200px" disabled v-model="form.ModuleLogo" />
+						<a-button type="primary" @click="iconSelect()">选择</a-button>
+					</a-form-model-item>
+					<a-form-model-item ref="ModuleTypeCode" label="菜单类型" prop="ModuleTypeCode">
+						<a-radio-group v-model="form.ModuleTypeCode">
+							<a-radio value="1">菜单</a-radio>
+							<a-radio value="2">按钮</a-radio>
+						</a-radio-group>
+					</a-form-model-item>
+					<a-form-model-item ref="AccessTypeCode" label="访问方式" prop="AccessTypeCode">
+						<a-radio-group v-model="form.AccessTypeCode">
+							<a-radio value="1">URL访问</a-radio>
+							<a-radio value="2">功能面板集(标签)</a-radio>
+							<a-radio value="3">功能面板集(单页)</a-radio>
+							<a-radio value="4">功能面板</a-radio>
+							<a-radio value="5">弹窗</a-radio>
+							<a-radio value="6">新窗口</a-radio>
+						</a-radio-group>
+					</a-form-model-item>
+					<a-form-model-item ref="ConfigTypeCode" label="配置类型" prop="ConfigTypeCode">
+						<a-radio-group v-model="form.ConfigTypeCode">
+							<a-radio value="1">Iframe</a-radio>
+							<a-radio value="2">VUE组件</a-radio>
+						</a-radio-group>
+					</a-form-model-item>
+					<a-form-model-item ref="UserTypeName" label="菜单路径"><a-input v-model="form.ModuleUrl" placeholder="请输入菜单路径" /></a-form-model-item>
+					<a-form-model-item ref="UserTypeName" label="菜单参数"><a-input v-model="form.ModuleParam" placeholder="请输入菜单参数" /></a-form-model-item>
+					<a-form-model-item ref="ModuleDesc" label="描述">
+						<a-textarea v-model="form.ModuleDesc" placeholder="请输入菜单描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
+					</a-form-model-item>
+					<a-form-model-item ref="Enable" label="是否启用">
+						<a-radio-group :value="form.Enable" default-value="Y" button-style="solid" @change="enableChange">
+							<a-radio-button value="N">否</a-radio-button>
+							<a-radio-button value="Y">是</a-radio-button>
+						</a-radio-group>
+					</a-form-model-item>
+				</a-form-model>
+			</a-modal>
+		</div>
+		<app-icon v-if="isIcon" @closeModal="closeModal" @iconClick="iconClick"></app-icon>
+		<!-- 列表 -->
+		<div class="tab">
+			<a-table
+				:columns="columns"
+				:data-source="data"
+				size="small"
+				:loading="loading"
+				:pagination="pagination"
+				@change="handleTableChange"
+				rowKey="ModuleId"
+				:row-selection="{
+					selectedRowKeys: selectedRowKeys,
+					onChange: onSelectChange
+				}"
+				bordered
+			>
+				<template slot="enable" slot-scope="record">
+					<div>
+						<a-tag color="green" v-if="record == 'Y'">是</a-tag>
+						<a-tag color="red" v-else>否</a-tag>
 					</div>
-				</a-card>
-			</a-col>
-		</a-row>
-	</div>
+				</template>
+				<template slot="defualt" slot-scope="record">
+					<div>
+						<a-tag color="green" v-if="record == 'Y'">是</a-tag>
+						<a-tag color="red" v-else>否</a-tag>
+					</div>
+				</template>
+				<template slot="ModuleLogo" slot-scope="text">
+					<div><a-icon :type="text" :style="{ fontSize: '14px' }" /></div>
+				</template>
+				<template slot="action" slot-scope="text, record">
+					<div>
+						<a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
+							<a style="margin-right: 8px">
+								<a-icon type="delete" />
+								删除
+							</a>
+						</a-popconfirm>
+						<a style="margin-right: 8px" @click="edit(record)">
+							<a-icon type="edit" />
+							编辑
+						</a>
+						<a style="margin-right: 8px" @click="submenu(record)">
+							<a-icon type="plus-circle" />
+							添加子菜单
+						</a>
+						<a style="margin-right: 8px" @click="detail(record)">
+							<a-icon type="profile" />
+							查看
+						</a>
+					</div>
+				</template>
+			</a-table>
+		</div>
+		<!-- 查看详情 -->
+		<div>
+			<a-drawer width="400" placement="right" :closable="false" :visible="isDrawer" @close="onClose">
+				<a-descriptions title="菜单详情" :column="1">
+					<a-descriptions-item label="菜单编码">{{ drawerItem.ModuleCode }}</a-descriptions-item>
+					<a-descriptions-item label="菜单名称">{{ drawerItem.ModuleName }}</a-descriptions-item>
+					<a-descriptions-item label="应用">{{ drawerItem.AppName }}</a-descriptions-item>
+					<a-descriptions-item label="图标"><a-icon :type="drawerItem.ModuleLogo" /></a-descriptions-item>
+					<a-descriptions-item label="菜单类型">{{ drawerItem.ModuleTypeName }}</a-descriptions-item>
+					<a-descriptions-item label="访问方式">{{ drawerItem.AccessTypeName }}</a-descriptions-item>
+					<a-descriptions-item label="配置类型">{{ drawerItem.ConfigTypeName }}</a-descriptions-item>
+					<a-descriptions-item label="菜单路径">{{ drawerItem.ModuleUrl }}</a-descriptions-item>
+					<a-descriptions-item label="菜单参数">{{ drawerItem.ModuleParam }}</a-descriptions-item>
+					<a-descriptions-item label="描述">{{ drawerItem.ModuleDesc }}</a-descriptions-item>
+					<a-descriptions-item label="是否启用">
+						<div>
+							<a-tag color="green" v-if="drawerItem.Enable == 'Y'">启用</a-tag>
+							<a-tag color="red" v-else>禁用</a-tag>
+						</div>
+					</a-descriptions-item>
+					<a-descriptions-item label="添加人">{{ drawerItem.UserCreated }}</a-descriptions-item>
+					<a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
+				</a-descriptions>
+			</a-drawer>
+		</div>
+	</a-card>
 </template>
-
 <script>
+const columns = [
+	{
+		title: '菜单名称',
+		dataIndex: 'ModuleName',
+		scopedSlots: { customRender: 'ModuleName' },
+		align: 'center'
+	},
+	{
+		title: '菜单编码',
+		dataIndex: 'ModuleCode',
+		scopedSlots: { customRender: 'ModuleCode' },
+		align: 'center'
+	},
+	{
+		title: '上级菜单',
+		dataIndex: 'SuperiorName',
+		scopedSlots: { customRender: 'SuperiorName' },
+		align: 'center'
+	},
+	{
+		title: '图标',
+		dataIndex: 'ModuleLogo',
+		scopedSlots: { customRender: 'ModuleLogo' },
+		align: 'center'
+	},
+	{
+		title: '操作',
+		scopedSlots: { customRender: 'action' },
+		align: 'center'
+	}
+];
+import { getMenuList, menuAction, getAppInfoList, getAppTypeList } from '@/services/admin.js';
+import { renderStripe } from '@/utils/stripe.js';
+import AppIcon from '@/components/app-icon/AppIcon.vue';
 export default {
+	components: { AppIcon },
 	data() {
 		return {
-			editingKey: '',
-			selectedRowKeys: [],
-			columns: [
-				{
-					title: 'Name',
-					dataIndex: 'name',
-					key: 'name'
-				},
-				{
-					title: 'Age',
-					dataIndex: 'age',
-					key: 'age',
-					width: '12%'
-				},
-				{
-					title: 'Address',
-					dataIndex: 'address',
-					width: '30%',
-					key: 'address'
-				}
-			],
-			
-			tabData: [
-				{
-					key: 1,
-					name: 'John Brown sr.',
-					age: 60,
-					address: 'New York No. 1 Lake Park',
-					children: [
-						{
-							key: 11,
-							name: 'John Brown',
-							age: 42,
-							address: 'New York No. 2 Lake Park'
-						},
-						{
-							key: 12,
-							name: 'John Brown jr.',
-							age: 30,
-							address: 'New York No. 3 Lake Park',
-							children: [
-								{
-									key: 121,
-									name: 'Jimmy Brown',
-									age: 16,
-									address: 'New York No. 3 Lake Park'
-								}
-							]
-						},
-						{
-							key: 13,
-							name: 'Jim Green sr.',
-							age: 72,
-							address: 'London No. 1 Lake Park',
-							children: [
-								{
-									key: 131,
-									name: 'Jim Green',
-									age: 42,
-									address: 'London No. 2 Lake Park',
-									children: [
-										{
-											key: 1311,
-											name: 'Jim Green jr.',
-											age: 25,
-											address: 'London No. 3 Lake Park'
-										},
-										{
-											key: 1312,
-											name: 'Jimmy Green sr.',
-											age: 18,
-											address: 'London No. 4 Lake Park'
-										}
-									]
-								}
-							]
-						}
-					]
-				},
-				{
-					key: 2,
-					name: 'Joe Black',
-					age: 32,
-					address: 'Sidney No. 1 Lake Park'
-				}
-			],
+			data: [],
+			columns,
+			isEdit: false,
+			isSub: false,
+			editForm: [],
+			title: '添加菜单',
+			loading: true,
+			isDrawer: false,
+			selectedRowKeys: [], // Check here to configure the default column
+			visible: false,
+			drawerItem: [],
+			labelCol: { span: 6 },
+			wrapperCol: { span: 14 },
+			isIcon: false,
+			pagination: {
+				current: 1,
+				total: 0,
+				pageSize: 10, //每页中显示10条数据
+				showSizeChanger: true,
+				showLessItems: true,
+				showQuickJumper: true,
+				pageSizeOptions: ['10', '20', '50', '100'], //每页中显示的数据
+				showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`
+			},
+			searcValue: '',
+			searchForm: this.$form.createForm(this),
+			form: {
+				AppId: '',
+				ModuleCode: '',
+				ModuleName: '',
+				ModuleDesc: '',
+				AccessTypeCode: '',
+				ModuleUrl: '',
+				ConfigTypeCode: '',
+				ModuleLogo: '',
+				ModuleParam: '',
+				ModuleTypeCode: '',
+				SuperiorId: '0',
+				SortNo: '1'
+			},
+			appData: [],
+			subData: [],
+			appTypeData: [],
+			rules: {
+				AppId: [
+					{
+						required: true,
+						message: '请选择应用',
+						trigger: 'blur'
+					}
+				],
+				ModuleName: [
+					{
+						required: true,
+						message: '请输入菜单名称',
+						trigger: 'blur'
+					}
+				],
+				ModuleCode: [
+					{
+						required: true,
+						message: '请输入菜单编码',
+						trigger: 'blur'
+					}
+				],
+				ModuleTypeCode: [
+					{
+						required: true,
+						message: '请选择菜单类型',
+						trigger: 'blur'
+					}
+				],
+				AccessTypeCode: [
+					{
+						required: true,
+						message: '请选择访问方式',
+						trigger: 'blur'
+					}
+				],
+				ConfigTypeCode: [
+					{
+						required: true,
+						message: '请选择配置类型',
+						trigger: 'blur'
+					}
+				]
+			}
 		};
 	},
-	methods:{
-		onSelectAll(selected) {
-			if (selected) {
-				const tabData = this.tabData;
-				const arr = [];
-				setVal(tabData, arr);
-				this.selectedRowKeys = arr;
-			} else {
-				this.selectedRowKeys = [];
-			}
-			function setVal(list, arr) {
-				list.forEach(v => {
-					arr.push(v.key);
-					if (v.children) {
-						setVal(v.children, arr);
-					}
-				});
-			}
-		},
-		onSelect(record, selected) {
-			const set = new Set(this.selectedRowKeys);
-			const tabData = this.tabData;
-			const key = record.key;
-			if (selected) {
-				set.add(key);
-				record.children && setChildCheck(record.children);
-				setParentCheck(key);
-			} else {
-				set.delete(key);
-				record.children && setChildUncheck(record.children);
-				setParentUncheck(key);
-			}
-			this.selectedRowKeys = Array.from(set);
-			// 设置父级选择
-			function setParentCheck(key) {
-				let parent = getParent(key);
-				if (parent) {
-					set.add(parent.key);
-					setParentCheck(parent.key);
-				}
-			}
-			// 设置父级取消，如果父级的子集有选择，则不取消
-			function setParentUncheck(key) {
-				let childHasCheck = false,
-					parent = getParent(key);
-				if (parent) {
-					let childlist = parent.children;
-					childlist.forEach(function(v) {
-						if (set.has(v.key)) childHasCheck = true;
-					});
-					if (!childHasCheck) {
-						set.delete(parent.key);
-						setParentUncheck(parent.key);
-					}
-				}
-			}
-			// 获取当前对象的父级
-			function getParent(key) {
-				for (let i = 0; i < tabData.length; i++) {
-					if (tabData[i].key === key) {
-						return null;
-					}
-				}
-				return _getParent(tabData);
-				function _getParent(list) {
-					let childlist,
-						isExist = false;
-					for (let i = 0; i < list.length; i++) {
-						if ((childlist = list[i].children)) {
-							childlist.forEach(function(v) {
-								if (v.key === key) isExist = true;
-							});
-							if (isExist) {
-								return list[i];
-							}
-							if (_getParent(childlist)) {
-								return _getParent(childlist);
-							}
-						}
-					}
-				}
-			}
-			// 设置child全选
-			function setChildCheck(list) {
-				list.forEach(function(v) {
-					set.add(v.key);
-					v.children && setChildCheck(v.children);
-				});
-			}
-			// 设置child取消
-			function setChildUncheck(list) {
-				list.forEach(function(v) {
-					set.delete(v.key);
-					v.children && setChildUncheck(v.children);
-				});
-			}
+	updated() {
+		renderStripe();
+	},
+	computed: {
+		hasSelected() {
+			return this.selectedRowKeys.length > 0;
 		}
 	},
-	components: {}
+	created() {
+		this.getMenuList();
+		this.getAppInfoList();
+	},
+	methods: {
+		iconSelect() {
+			this.isIcon = true;
+		},
+		closeModal() {
+			this.isIcon = false;
+		},
+		iconClick(item) {
+			this.form.ModuleLogo = item;
+			this.isIcon = false;
+		},
+		enableChange(value) {
+			this.form.Enable = value.target.value;
+		},
+		//查看详情
+		detail(item) {
+			this.isDrawer = true;
+			this.drawerItem = item;
+		},
+		onClose() {
+			this.isDrawer = false;
+		},
+		//多选
+		onSelectChange(selectedRowKeys) {
+			this.selectedRowKeys = selectedRowKeys;
+		},
+		//重置搜索
+		reset() {
+			this.getMenuList();
+			this.searchForm.resetFields();
+		},
+		//关键词搜索
+		search() {
+			this.searchForm.validateFields((err, values) => {
+				if (!err) {
+					console.log('Received values of form: ', values);
+					this.data = [];
+					this.pagination.total = 0;
+					let parmas = {
+						pageindex: this.pagination.current,
+						pagesize: this.pagination.pageSize,
+						apptypeid: values.AppTypeId,
+						appid: values.AppId,
+						keyword: values.key
+					};
+					getMenuList(parmas).then(res => {
+						if (res.data.success) {
+							this.data = res.data.data.list;
+							const pagination = { ...this.pagination };
+							pagination.total = res.data.data.recordsTotal;
+							this.pagination = pagination;
+						}
+					});
+					// do something
+				}
+			});
+		},
+		getAppInfoList() {
+			let parmas = {
+				pageindex: 1,
+				pagesize: 50
+			};
+			getAppInfoList(parmas).then(res => {
+				if (res.data.success) {
+					this.appData = res.data.data.list;
+				}
+			});
+
+			getAppTypeList(parmas).then(res => {
+				if (res.data.success) {
+					this.appTypeData = res.data.data.list;
+				}
+			});
+		},
+		//获取机构类型列表
+		getMenuList() {
+			let parmas = {
+				pageindex: this.pagination.current,
+				pagesize: this.pagination.pageSize
+			};
+			getMenuList(parmas).then(res => {
+				if (res.data.success) {
+					this.data = res.data.data.list;
+					const pagination = { ...this.pagination };
+					pagination.total = res.data.data.recordsTotal;
+					this.pagination = pagination;
+					this.loading = false;
+				}
+			});
+		},
+		//打开对话框
+		add() {
+			this.defaultForm();
+			this.isEdit = false;
+			this.title = '添加菜单';
+			this.visible = true;
+			this.isSub = false;
+			this.form.SuperiorId = '0';
+		},
+		submenu(item) {
+			this.defaultForm();
+			this.isEdit = false;
+			this.title = '添加菜单';
+			this.visible = true;
+			this.isSub = true;
+			this.subData = item;
+		},
+		defaultForm() {
+			this.form = {
+				AppId: '',
+				ModuleCode: '',
+				ModuleName: '',
+				ModuleDesc: '',
+				AccessTypeCode: '',
+				ModuleUrl: '',
+				ConfigTypeCode: '',
+				ModuleLogo: '',
+				ModuleParam: '',
+				ModuleTypeCode: '',
+				SuperiorId: '0',
+				SortNo: '1'
+			};
+		},
+		//关闭对话框
+		handleCancel() {
+			this.visible = false;
+		},
+		edit(item) {
+			this.visible = true;
+			this.isEdit = true;
+			this.title = '编辑菜单';
+			this.form = item;
+		},
+		handleOk() {
+			this.$refs.ruleForm.validate(valid => {
+				if (valid) {
+					if (this.isEdit) {
+						let editForm = {
+							UserTypeId: this.form.UserTypeId,
+							UserTypeName: this.form.UserTypeName,
+							UserTypeDesc: this.form.UserTypeDesc,
+							Enable: this.form.Enable
+						};
+						menuAction(editForm, 'update').then(res => {
+							if (res.data.success) {
+								this.$message.success('编辑成功!');
+								this.defaultForm();
+								this.visible = false;
+								this.getMenuList();
+							} else {
+								this.$message.warning(res.data.message.content);
+							}
+						});
+					} else {
+						if (this.isSub) {
+							this.form.SuperiorId = this.subData.ModuleId;
+							this.form.AppId = this.subData.AppId;
+						}
+						menuAction(this.form, 'add').then(res => {
+							if (res.data.success) {
+								this.$message.success('添加成功!');
+								this.getMenuList();
+								this.defaultForm();
+								this.visible = false;
+							} else {
+								this.$message.warning(res.data.message.content);
+							}
+						});
+					}
+				}
+			});
+		},
+		//多选删除
+		allDel() {
+			let self = this;
+			self.$confirm({
+				title: '确定要删除选中内容',
+				onOk() {
+					const params = [];
+					self.selectedRowKeys.forEach(item => {
+						params.push(self.data[item].ModuleId);
+					});
+					menuAction(params, 'delete').then(res => {
+						if (res.data.success) {
+							self.selectedRowKeys = [];
+							self.$message.success('删除成功!');
+							self.getMenuList();
+						} else {
+							self.$message.warning(res.data.message.content);
+						}
+					});
+				},
+				onCancel() {}
+			});
+		},
+		//单个删除
+		onDelete(item) {
+			let parmas = [];
+			parmas.push(item.ModuleId);
+			menuAction(parmas, 'delete').then(res => {
+				if (res.data.success) {
+					this.$message.success('删除成功!');
+					this.getMenuList();
+				} else {
+					this.$message.warning(res.data.message.content);
+				}
+			});
+		},
+		handleTableChange(pagination) {
+			this.pagination.current = pagination.current;
+			this.pagination.pageSize = pagination.pageSize;
+			this.getMenuList();
+		}
+	}
 };
 </script>
-
 <style lang="less">
-.left-list {
-	padding: 10px 20px;
-	text-align: center;
-	p {
-		font-size: 12px;
-		color: @title-color;
-		span {
-			padding-left: 10px;
-			&:hover {
-				color: @primary-color;
-				// background: @theme-color;
-				cursor: pointer;
-			}
-		}
-	}
+.ant-form-item {
+	margin-bottom: 5px;
 }
-.list-tab {
+.iconStyle {
 	display: flex;
-	align-items: center;
 	justify-content: space-between;
-	margin-top: 10px;
-	p {
-		height: 30px;
-		line-height: 30px;
-		color: @title-color;
-		font-size: 12px;
-		&:hover {
-			color: @primary-color;
-			cursor: pointer;
-		}
-	}
+	flex-wrap: wrap;
 }
 </style>

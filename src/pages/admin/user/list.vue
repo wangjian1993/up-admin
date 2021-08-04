@@ -30,16 +30,16 @@
 									<a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
 										<a-select placeholder="请选择用户状态" v-decorator="['enable']">
 											<a-select-option value="Y">启用</a-select-option>
-											<a-select-option value="N">禁止</a-select-option>
+											<a-select-option value="N">禁用</a-select-option>
 										</a-select>
 									</a-form-item>
 								</a-col>
 								<a-col :md="8" :sm="24">
-									<a-form-item label="用户账号/姓名" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }"><a-input v-decorator="['key']" /></a-form-item>
+									<a-form-item label="用户账号/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }"><a-input v-decorator="['key']" allowClear placeholder="请输入用户账号/名称"/></a-form-item>
 								</a-col>
 								<a-col :md="4" :sm="24">
 									<a-button type="primary" @click="search">查询</a-button>
-									<a-button style="margin-left: 8px">重置</a-button>
+									<a-button style="margin-left: 8px" @click="reset">重置</a-button>
 								</a-col>
 							</a-row>
 						</a-form>
@@ -82,14 +82,14 @@
 							</template>
 							<template slot="Enable" slot-scope="record">
 								<div>
-									<a-tag color="green" v-if="record == 'Y'">是</a-tag>
-									<a-tag color="red" v-else>否</a-tag>
+									<a-tag color="green" v-if="record == 'Y'">启用</a-tag>
+									<a-tag color="red" v-else>禁用</a-tag>
 								</div>
 							</template>
 							<template slot="IsLocked" slot-scope="record">
 								<div>
-									<a-tag color="green" v-if="record == 'Y'">是</a-tag>
-									<a-tag color="red" v-else>否</a-tag>
+									<a-tag color="red" v-if="record == 'Y'">已锁定</a-tag>
+									<a-tag color="green" v-else>正常</a-tag>
 								</div>
 							</template>
 							<template slot="action" slot-scope="text, record">
@@ -114,8 +114,8 @@
 											<a-icon type="down" />
 										</a>
 										<a-menu slot="overlay">
-											<a-menu-item key="0" @click="moreClick('enableuser', record)">状态</a-menu-item>
-											<a-menu-item key="1" @click="moreClick('lockuser', record)">锁定</a-menu-item>
+											<a-menu-item key="0" @click="moreClick('enableuser', record)">{{ record.Enable == 'Y' ? '禁用' : '启用' }}</a-menu-item>
+											<a-menu-item key="1" @click="moreClick('lockuser', record)">{{ record.IsLocked == 'Y' ? '解锁' : '锁定' }}</a-menu-item>
 											<a-menu-item key="3" @click="moreClick('resetuserpwd', record)">重置密码</a-menu-item>
 										</a-menu>
 									</a-dropdown>
@@ -127,7 +127,7 @@
 					<div>
 						<a-drawer width="400" placement="right" :closable="false" :visible="isDrawer" @close="onClose">
 							<a-descriptions title="用户详情" :column="1">
-								<a-descriptions-item label="用户头像">{{ drawerItem.Photo }}</a-descriptions-item>
+								<a-descriptions-item label="用户头像"><a-avatar :src="drawerItem.PhotoUrl" /></a-descriptions-item>
 								<a-descriptions-item label="用户账号">{{ drawerItem.UserLoginId }}</a-descriptions-item>
 								<a-descriptions-item label="用户名称">{{ drawerItem.UserName }}</a-descriptions-item>
 								<a-descriptions-item label="企业微信">{{ drawerItem.EnterWechatAccount }}</a-descriptions-item>
@@ -191,6 +191,12 @@ const columns = [
 		align: 'center'
 	},
 	{
+		title: '所属机构',
+		dataIndex: 'EnterName',
+		scopedSlots: { customRender: 'EnterName' },
+		align: 'center'
+	},
+	{
 		title: '状态',
 		dataIndex: 'Enable',
 		scopedSlots: { customRender: 'Enable' },
@@ -251,8 +257,8 @@ export default {
 			searcValue: '',
 			searchForm: this.$form.createForm(this),
 			usetTypeList: [],
-			editItem:[],
-			modalType:""
+			editItem: [],
+			modalType: ''
 		};
 	},
 	updated() {
@@ -330,7 +336,7 @@ export default {
 						keyword: values.key,
 						enterid: this.enterId,
 						enable: values.enable,
-						UserTypeId: values.values
+						UserTypeId: values.UserTypeId
 					};
 					getUserList(parmas).then(res => {
 						if (res.data.success) {
@@ -368,7 +374,7 @@ export default {
 		//打开对话框
 		add() {
 			this.addModal = true;
-			this.modalType ='add'
+			this.modalType = 'add';
 		},
 		cloneModal() {
 			this.addModal = false;
@@ -379,8 +385,8 @@ export default {
 		},
 		edit(item) {
 			this.addModal = true;
-			this.editItem =item;
-			this.modalType='edit'
+			this.editItem = item;
+			this.modalType = 'edit';
 		},
 		handleOk() {
 			this.$refs.ruleForm.validate(valid => {
@@ -476,10 +482,14 @@ export default {
 			if (e == 'resetuserpwd') {
 				params = [item.UserId];
 			}
-			userAction(params,e).then(res => {
+			userAction(params, e).then(res => {
 				if (res.data.success) {
-					this.$message.success('操作成功!');
 					this.getUserList();
+					if (e == 'resetuserpwd') {
+						this.$message.success('密码重置成功!新密码为: ' + res.data.data.NewPwd,10);
+					} else {
+						this.$message.success('操作成功!');
+					}
 				} else {
 					this.$message.warning(res.data.message.content);
 				}

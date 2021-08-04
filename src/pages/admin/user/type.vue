@@ -20,6 +20,7 @@
 								<a-form-item label="用户类型编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
 									<a-input
 										placeholder="请输入"
+										allowClear
 										v-decorator="[
 											'searcValue',
 											{
@@ -45,6 +46,7 @@
 						<a-input
 							v-model="form.UserTypeCode"
 							:disabled="isEdit"
+							allowClear
 							placeholder="请输入用户编号"
 							@blur="
 								() => {
@@ -57,6 +59,7 @@
 						<a-input
 							v-model="form.UserTypeName"
 							placeholder="请输入用户名称"
+							allowClear
 							@blur="
 								() => {
 									$refs.UserTypeName.onFieldBlur();
@@ -82,6 +85,7 @@
 				:columns="columns"
 				:data-source="data"
 				size="small"
+				:loading="loading"
 				:pagination="pagination"
 				@change="handleTableChange"
 				:rowKey="tableDatas => data.EnterTypeId"
@@ -189,7 +193,7 @@ export default {
 			isEdit: false,
 			editForm: [],
 			title: '添加机构类型',
-			loading: false,
+			loading: true,
 			isDrawer: false,
 			selectedRowKeys: [], // Check here to configure the default column
 			visible: false,
@@ -303,6 +307,7 @@ export default {
 					const pagination = { ...this.pagination };
 					pagination.total = res.data.data.recordsTotal;
 					this.pagination = pagination;
+					this.loading =false
 				}
 			});
 		},

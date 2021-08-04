@@ -55,25 +55,31 @@
 				</span>
 			</a-form>
 		</div>
-		<div>
+		<div v-if="isSearch">
 			<standard-table
 				:columns="columns"
 				:dataSource="dataSource"
-				:selectedRows.sync="selectedRows"
+				:loading="isLoading"
 				@clear="onClear"
 				@change="onChange"
 				@selectedRowChange="onSelectChange"
 				:pagination="pagination"
 			>
-				<div slot="description" slot-scope="{ text }">{{ text }}</div>
+				<div slot="check_status" slot-scope="{ text }">
+					<div>
+						<a-tag color="green" v-if="text == 1">已审核</a-tag>
+						<a-tag color="red" v-else>未审核</a-tag>
+					</div>
+				</div>
 				<div slot="action" slot-scope="{ text, record }">
-					<a style="margin-right: 8px">
-						<a-icon type="edit" />
-						编辑
-					</a>
+					<a style="margin-right: 8px" v-if="record.check_status == 0">审核</a>
 					<a @click="deleteRecord(record.key)">
 						<a-icon type="delete" />
 						删除
+					</a>
+					<a @click="detail(record.key)">
+						<a-icon type="bars" />
+						展开明细
 					</a>
 				</div>
 				<template slot="statusTitle">
@@ -90,27 +96,19 @@ import { getProductModel } from '@/services/bom.js';
 const columns = [
 	{
 		title: '序号',
-		dataIndex: 'no'
+		dataIndex: 'id'
 	},
 	{
 		title: '产品品号',
-		dataIndex: 'article'
+		dataIndex: 'item_code'
 	},
 	{
 		title: '产品品名',
-		dataIndex: 'articleName'
+		dataIndex: 'item_name'
 	},
 	{
 		title: '产品规格',
-		dataIndex: 'specification'
-	},
-	{
-		title: '物料成本',
-		dataIndex: 'cost'
-	},
-	{
-		title: '最终成本',
-		dataIndex: 'lastCost'
+		dataIndex: 'item_specification'
 	},
 	{
 		title: '备注',
@@ -118,34 +116,22 @@ const columns = [
 	},
 	{
 		title: '版本',
-		dataIndex: 'versions'
+		dataIndex: 'bom_version'
 	},
 	{
 		title: '添加时间',
-		dataIndex: 'addTime'
+		dataIndex: 'add_time'
+	},
+	{
+		title: '状态',
+		dataIndex: 'check_status',
+		scopedSlots: { customRender: 'check_status' }
 	},
 	{
 		title: '操作',
 		scopedSlots: { customRender: 'action' }
 	}
 ];
-
-const dataSource = [];
-
-for (let i = 0; i < 4; i++) {
-	dataSource.push({
-		key: i,
-		no: i + 1,
-		article: '0-05010322-31001 (ACC)',
-		articleName: 'ACC-DL322A-BK-0100',
-		specification: 'Φ79.4*16.8mm/吸顶安装/黑色RAL9005/带包装/6PCS/牛皮纸盒/12PCS/外箱（配件默认贴公司常规灯具贴纸）',
-		cost: '5.2066',
-		lastCost: '6.7847',
-		remark: '加工费预估',
-		versions: '21.05.26_v1  刘志优 - 已审核',
-		addTime: '21-05-26 09:52'
-	});
-}
 export default {
 	name: 'QueryList',
 	components: { StandardTable },
@@ -153,12 +139,13 @@ export default {
 		return {
 			advanced: true,
 			columns: columns,
-			dataSource: dataSource,
-			selectedRows: false,
+			dataSource: [],
 			pagination: false,
 			productModelList: [],
 			productHeadingList: [],
-			form: this.$form.createForm(this)
+			form: this.$form.createForm(this),
+			isSearch: false,
+			isLoading: true
 		};
 	},
 	authorize: {
@@ -193,15 +180,26 @@ export default {
 					console.log('Received values of form: ', values);
 					let parmas = {
 						act: 'query_bom_cb_version',
-						...values
+						one_sort: 'AL',
+						two_sort: 'AL108',
+						item_code: '1-03009602-012041009',
+						item_name: 'AL108-',
+						date_range: '2021-07-01 - 2021-08-30',
+						check_status: '1'
 					};
 					getProductModel(parmas).then(res => {
 						if (res.data.success) {
-							// this.productHeadingList = res.data.data;
+							this.dataSource = res.data.data;
+							this.isSearch = true;
+							this.isLoading = false;
 						}
 					});
 				}
 			});
+		},
+		detail(item) {
+			console.log("详情===")
+			this.$emit('onSearch', item);
 		},
 		deleteRecord(key) {
 			this.dataSource = this.dataSource.filter(item => item.key !== key);

@@ -20,6 +20,7 @@
 								<a-form-item label="应用类型编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
 									<a-input
 										placeholder="请输入"
+										allowClear
 										v-decorator="[
 											'searcValue',
 											{
@@ -39,11 +40,12 @@
 			</a-row>
 		</div>
 		<div>
-			<a-modal :title="isEdit ? '编辑应用类型' : '添加用户类型'" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+			<a-modal :title="isEdit ? '编辑应用类型' : '添加应用类型'" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
 				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
 					<a-form-model-item ref="AppTypeName" label="应用名称" prop="AppTypeName">
 						<a-input
 							v-model="form.AppTypeName"
+							allowClear
 							placeholder="请输入应用名称"
 							@blur="
 								() => {
@@ -82,6 +84,7 @@
 				:columns="columns"
 				:data-source="data"
 				size="small"
+				:loading="loading"
 				:pagination="pagination"
 				@change="handleTableChange"
 				:rowKey="tableDatas => data.EnterTypeId"
@@ -195,7 +198,7 @@ export default {
 			isEdit: false,
 			editForm: [],
 			title: '添加机构类型',
-			loading: false,
+			loading: true,
 			isDrawer: false,
 			selectedRowKeys: [], // Check here to configure the default column
 			visible: false,
@@ -272,6 +275,7 @@ export default {
 		},
 		//关键词搜索
 		search() {
+			this.loading = true;
 			this.searchForm.validateFields((err, values) => {
 				if (!err) {
 					console.log('Received values of form: ', values);
@@ -288,6 +292,7 @@ export default {
 							const pagination = { ...this.pagination };
 							pagination.total = res.data.data.recordsTotal;
 							this.pagination = pagination;
+							this.loading = false;
 						}
 					});
 					// do something
@@ -306,6 +311,7 @@ export default {
 					const pagination = { ...this.pagination };
 					pagination.total = res.data.data.recordsTotal;
 					this.pagination = pagination;
+					this.loading = false;
 				}
 			});
 		},

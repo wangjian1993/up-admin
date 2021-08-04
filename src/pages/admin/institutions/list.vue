@@ -27,7 +27,7 @@
 							</a-col>
 							<a-col :md="10" :sm="24">
 								<a-form-item label="机构编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
-									<a-input placeholder="请输入" v-decorator="['enter']" />
+									<a-input placeholder="请输入" allowClear v-decorator="['enter']" />
 								</a-form-item>
 							</a-col>
 						</div>
@@ -74,6 +74,7 @@
 							<a-form-model-item ref="EnterName" label="机构中文名" prop="EnterName" :labelCol="{ span: 6 }">
 								<a-input
 									v-model="form.EnterName"
+									allowClear
 									placeholder="请输入机构中文名"
 									@blur="
 										() => {
@@ -85,22 +86,22 @@
 						</a-col>
 						<a-col :span="12">
 							<a-form-model-item label="机构简称(中文)" :labelCol="{ span: 6 }">
-								<a-input v-model="form.EnterShortName" placeholder="请输入机构简称(中文)" />
+								<a-input v-model="form.EnterShortName" allowClear placeholder="请输入机构简称(中文)" />
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
 							<a-form-model-item label="机构英文名" :labelCol="{ span: 6 }"><a-input v-model="form.EnterEnName" placeholder="请输入机构英文名" /></a-form-model-item>
 						</a-col>
 						<a-col :span="12">
-							<a-form-model-item label="上级机构" prop="SuperiorEnterId" :labelCol="{ span: 6 }">
-								<a-select v-model="form.SuperiorEnterName" :disabled="isEdit" placeholder="请选择上级机构" @change="enterOption">
-									<a-select-option v-for="(item, index) in data" :key="index" :value="item.EnterName">{{ item.EnterName }}</a-select-option>
+							<a-form-model-item label="上级机构" :labelCol="{ span: 6 }">
+								<a-select v-model="form.EnterId" :disabled="isEdit" placeholder="请选择上级机构" @change="enterOption">
+									<a-select-option v-for="(item, index) in data" :key="index" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
 								</a-select>
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
 							<a-form-model-item label="机构简称(英文)" :labelCol="{ span: 6 }">
-								<a-input v-model="form.EnterShortEnName" placeholder="请输入机构简称(英文)" />
+								<a-input v-model="form.EnterShortEnName" allowClear placeholder="请输入机构简称(英文)" />
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
@@ -111,7 +112,7 @@
 						</a-col>
 						<a-col :span="12">
 							<a-form-model-item label="营业执照编码" :labelCol="{ span: 6 }">
-								<a-input v-model="form.EnterLicense" placeholder="请输入营业执照编码" />
+								<a-input v-model="form.EnterLicense" allowClear placeholder="请输入营业执照编码" />
 							</a-form-model-item>
 						</a-col>
 						<a-col :span="12">
@@ -202,7 +203,7 @@
 		</div>
 		<!-- 查看详情 -->
 		<div>
-			<a-drawer width="700" placement="right" :closable="false" :visible="isDrawer" @close="onClose">
+			<a-drawer width="700" placement="right" :visible="isDrawer" @close="onClose">
 				<a-descriptions title="机构列表详情" :column="2">
 					<a-descriptions-item label="机构中文名">{{ drawerItem.EnterName }}</a-descriptions-item>
 					<a-descriptions-item label="管理员邮箱">{{ drawerItem.EnterEMail }}</a-descriptions-item>
@@ -336,7 +337,7 @@ export default {
 				EnterContacts: '',
 				EnterPhone: '',
 				EnterAddr: '',
-				SuperiorEnterId: '',
+				EnterId: '',
 				SuperiorEnterName: '',
 				Enable: 'Y'
 			},
@@ -418,10 +419,10 @@ export default {
 		},
 		//设置上级机构
 		enterOption(value) {
-			this.form.SuperiorEnterName = value;
 			this.data.filter(item => {
-				if (item.EnterName == value) {
-					this.form.SuperiorEnterId = item.SuperiorEnterId;
+				if (item.EnterId == value) {
+					this.form.SuperiorEnterId = item.EnterId;
+					this.form.SuperiorEnterName = item.EnterName;
 					// this.form.SuperiorEnterName =item.SuperiorEnterName
 				}
 			});

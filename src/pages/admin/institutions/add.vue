@@ -14,7 +14,7 @@
 					<a-row>
 						<a-col :md="8" :sm="24">
 							<a-form-item label="机构编码" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1 }">
-								<a-input placeholder="请输入" v-decorator="['username', { rules: [{ required: true, message: 'Please input your name' }] }]" />
+								<a-input placeholder="请输入"  allowClear v-decorator="['username', { rules: [{ required: true, message: 'Please input your name' }] }]" />
 							</a-form-item>
 						</a-col>
 						<a-col :md="8" :sm="24">
@@ -27,7 +27,7 @@
 						</a-col>
 						<a-col :md="8" :sm="24">
 							<a-form-item label="公司中文名" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1 }">
-								<a-input placeholder="请输入" v-decorator="['username', { rules: [{ required: true, message: 'Please input your name' }] }]" />
+								<a-input placeholder="请输入" allowClear v-decorator="['username', { rules: [{ required: true, message: 'Please input your name' }] }]" />
 							</a-form-item>
 						</a-col>
 					</a-row>
