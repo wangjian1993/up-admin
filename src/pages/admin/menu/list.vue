@@ -45,7 +45,7 @@
 			</a-row>
 		</div>
 		<div>
-			<a-modal :title="isEdit ? '编辑菜单' : '添加菜单'" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+			<a-modal :title="isEdit ? '编辑菜单' : '添加菜单'"  v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
 				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
 					<a-form-model-item ref="AppId" has-feedback label="应用" prop="AppId" v-if="!isSub">
 						<a-select v-model="form.AppId" placeholder="请选择应用">

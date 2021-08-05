@@ -40,7 +40,7 @@
 			</a-row>
 		</div>
 		<div>
-			<a-modal :title="isEdit ? '编辑用户类型' : '添加用户类型'" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+			<a-modal :title="isEdit ? '编辑用户类型' : '添加用户类型'"  v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
 				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
 					<a-form-model-item ref="UserTypeCode" has-feedback label="用户编号" prop="UserTypeCode">
 						<a-input

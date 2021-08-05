@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<a-modal :title="isEdit ? '编辑应用' : '添加应用'" :visible="visible" :width="800" centered :confirm-loading="confirmLoading" @ok="handleOk" @cancel="handleCancel">
+		<a-modal :title="isEdit ? '编辑应用' : '添加应用'"  v-if="visible" :visible="visible" :width="800" centered :confirm-loading="confirmLoading" @ok="handleOk" @cancel="handleCancel">
 			<a-tabs default-active-key="1">
 				<a-tab-pane key="1" tab="基本信息">
 					<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">

@@ -40,7 +40,7 @@
 			</a-row>
 		</div>
 		<div>
-			<a-modal :title="title" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+			<a-modal :title="title" :visible="visible"  v-if="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
 				<a-form-model ref="ruleForm" :model="typeForm" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
 					<a-form-model-item ref="EnterTypeCode" has-feedback label="类型编号" prop="EnterTypeCode">
 						<a-input

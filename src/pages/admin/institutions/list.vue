@@ -41,7 +41,7 @@
 		</div>
 		<!-- 添加 -->
 		<div>
-			<a-modal :title="title" :visible="visible" @ok="handleOk" @cancel="handleCancel" :width="840">
+			<a-modal :title="title" :visible="visible"  v-if="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel" :width="840">
 				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
 					<a-row>
 						<a-col :span="12">

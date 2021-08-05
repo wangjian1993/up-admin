@@ -227,18 +227,6 @@ const options = {
 							}, ],
 						},
 						{
-							path: "system",
-							name: "系统工具",
-							component: () =>
-								import(
-									/* webpackChunkName: 'system' */
-									"@/pages/admin/system"
-								),
-							meta: {
-								icon: "fund",
-							},
-						},
-						{
 							path: "application",
 							name: "应用管理",
 							meta: {
@@ -262,6 +250,35 @@ const options = {
 										"@/pages/admin/application/appList"
 									),
 							}],
+						},
+						{
+							path: "database",
+							name: "数据字典",
+							component: BlankView,
+							meta: {
+								icon: "database",
+							},
+							children: [{
+								path: "param",
+								name: "快码管理",
+								component: () =>
+									import(
+										/* webpackChunkName: 'database' */
+										"@/pages/admin/database/param"
+									),
+							}],
+						},
+						{
+							path: "system",
+							name: "系统工具",
+							component: () =>
+								import(
+									/* webpackChunkName: 'system' */
+									"@/pages/admin/system"
+								),
+							meta: {
+								icon: "fund",
+							},
 						},
 						{
 							path: "log",
@@ -288,18 +305,6 @@ const options = {
 								import(
 									/* webpackChunkName: 'phone' */
 									"@/pages/dashboard/analysis"
-								),
-							meta: {
-								icon: "fund",
-							},
-						},
-						{
-							path: "database",
-							name: "数据管理",
-							component: () =>
-								import(
-									/* webpackChunkName: 'database' */
-									"@/pages/admin/database"
 								),
 							meta: {
 								icon: "fund",

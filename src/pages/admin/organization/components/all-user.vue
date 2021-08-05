@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<a-modal v-model="visible" title="添加用户" @cancel="close" :footer="null" centered :width="800">
+		<a-modal v-model="visible" title="添加用户"  v-if="visible" destoryOnClose @cancel="close" :footer="null" centered :width="800">
 			<div>
 				<div class="search-box">
 					<a-row>

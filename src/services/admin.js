@@ -195,6 +195,27 @@ export async function getOrgTree(params) {
 export async function getAppMdules(params) {
 	return request(`${UP_ADMIN}/module/getappmodules`, METHOD.GET, params)
 }
+
+/**
+ * @description:权限-查询应用菜单树形信息API
+ * @param {*} params
+ * @return {*}
+ */
+export async function getPermissionList(params) {
+	return request(`${UP_ADMIN}/permission/getdatapermission`, METHOD.GET, params)
+}
+
+/**
+ * @description:数据字典-快码管理
+ * @param {*} params
+ * @return {*}
+ */
+export async function getParamGroupList(params) {
+	return request(`${UP_ADMIN}/paramgroup/getall`, METHOD.GET, params)
+}
+export async function paramGroupAction(params, action) {
+	return request(`${UP_ADMIN}/paramgroup/${action}`, METHOD.POST, params)
+}
 export default {
 	getInstitutionList,
 	getEnterList,
@@ -227,5 +248,8 @@ export default {
 	getMenuList,
 	menuAction,
 	getOrgTree,
-	getAppMdules
+	getAppMdules,
+	getPermissionList,
+	getParamGroupList,
+	paramGroupAction
 }

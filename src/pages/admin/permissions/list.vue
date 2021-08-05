@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<a-row>
+			<!-- 机构类型 -->
 			<a-col style="padding: 0 5px" :span="5">
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
 					<span class="card-title">机构类型:</span>
@@ -20,6 +21,7 @@
 					</div>
 				</a-card>
 			</a-col>
+			<!-- 组织维度 -->
 			<a-col style="padding: 0 5px" :span="5">
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
 					<span class="card-title">组织维度:</span>
@@ -39,6 +41,7 @@
 					</div>
 				</a-card>
 			</a-col>
+			<!-- 应用类型 -->
 			<a-col style="padding: 0 5px" :span="5">
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
 					<span class="card-title">应用类型:</span>
@@ -52,12 +55,38 @@
 							:tree-data="appTreeData"
 							:replaceFields="replaceFields2"
 							default-expand-all
+							checkable
 							:default-selected-keys="appValue"
 						></a-tree>
 						<a-empty v-if="appTreeData.length == 0" />
 					</div>
 				</a-card>
 			</a-col>
+			<!-- 添加 -->
+			<div>
+				<a-modal :title="isEdit ? '编辑权限' : '添加权限'"  v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+					<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+						<a-form-model-item ref="EnterTypeId" has-feedback label="机构类型" prop="EnterTypeId">
+							<a-select v-model="form.EnterTypeId" placeholder="请选择机构类型">
+								<a-select-option v-for="item in enterTypeData" :key="item.EnterTypeId">{{ item.EnterTypeName }}</a-select-option>
+							</a-select>
+						</a-form-model-item>
+						<a-form-model-item ref="EnterId" has-feedback label="机构选择" prop="EnterId">
+							<a-tree-select
+								style="width: 100%"
+								:tree-data="enterTreeData"
+								placeholder="Please select"
+								tree-default-expand-all
+								:replaceFields="replaceFields"
+							></a-tree-select>
+						</a-form-model-item>
+						<a-form-model-item ref="UserTypeDesc" label="描述">
+							<a-textarea v-model="form.UserTypeDesc" placeholder="请输入用户描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
+						</a-form-model-item>
+					</a-form-model>
+				</a-modal>
+			</div>
+			<!-- 列表 -->
 			<a-col :span="9">
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
 					<div>
@@ -66,7 +95,7 @@
 						</a-row>
 					</div>
 					<div>
-						<a-table :columns="columns" :data-source="data" size="small" bordered>
+						<a-table :columns="columns" :data-source="permissionList" size="small" bordered>
 							<template v-for="col in ['name', 'age', 'address']" :slot="col" slot-scope="text, record">
 								<div :key="col">
 									<a-input v-if="record.editable" allowClear style="margin: -5px 0" :value="text" @change="e => handleChange(e.target.value, record.key, col)" />
@@ -98,53 +127,31 @@
 <script>
 const columns = [
 	{
-		title: '类型编码',
-		dataIndex: 'name',
-		width: '25%',
-		scopedSlots: { customRender: 'name' },
+		title: '筛选字段',
+		dataIndex: 'EnterName',
+		scopedSlots: { customRender: 'EnterName' },
 		align: 'center'
 	},
 	{
-		title: '类型名称',
-		dataIndex: 'age',
-		width: '15%',
-		scopedSlots: { customRender: 'age' },
+		title: '比较符',
+		dataIndex: 'Compartor',
+		scopedSlots: { customRender: 'Compartor' },
 		align: 'center'
 	},
 	{
-		title: '是否启用',
-		dataIndex: 'address',
-		width: '40%',
-		scopedSlots: { customRender: 'address' },
-		align: 'center'
-	},
-	{
-		title: '默认',
-		dataIndex: 'operation',
-		scopedSlots: { customRender: 'operation' },
+		title: '字段值',
+		dataIndex: 'EnterName',
+		scopedSlots: { customRender: 'EnterName' },
 		align: 'center'
 	}
 ];
-
-const data = [];
-for (let i = 0; i < 100; i++) {
-	data.push({
-		key: i.toString(),
-		name: `Edrward ${i}`,
-		age: 32,
-		address: `London Park no. ${i}`
-	});
-}
-import { getInstitutionList, getEnterTree, getOrganizationList, getOrgTree, getAppTypeList, getAppMdules } from '@/services/admin.js';
+import { getInstitutionList, getEnterTree, getOrganizationList, getOrgTree, getAppTypeList, getAppMdules, getPermissionList } from '@/services/admin.js';
 export default {
 	data() {
 		return {
-			data,
 			columns,
 			editingKey: '',
-			expandedKeys: ['0-0-0', '0-0-1'],
 			autoExpandParent: true,
-			checkedKeys: ['0-0-0'],
 			selectedKeys: [],
 			enterTypeData: [],
 			OrganizationData: [],
@@ -155,6 +162,10 @@ export default {
 			enterTreeData: [],
 			orgTreeData: [],
 			appTreeData: [],
+			isEdit: false,
+			visible: false,
+			labelCol: { span: 6 },
+			wrapperCol: { span: 14 },
 			replaceFields: {
 				title: 'EnterName',
 				key: 'Id',
@@ -173,6 +184,28 @@ export default {
 				value: 'Id',
 				children: 'children'
 			},
+			form: {
+				EnterTypeId: '30A5E3E37C014F5FAA378DE79E39C596',
+				EnterId: '50D18646C74D4EAA81D086EE0671D6F2',
+				Compartor: '=',
+				OrgId: '054EF08AAEF348DC81C995E2497D02EE'
+			},
+			rules: {
+				UserTypeCode: [
+					{
+						required: true,
+						message: '请输入用户编码',
+						trigger: 'blur'
+					}
+				],
+				UserTypeName: [
+					{
+						required: true,
+						message: '请输入用户名称',
+						trigger: 'blur'
+					}
+				]
+			},
 			enterValue: [],
 			orgValue: [],
 			appValue: [],
@@ -180,7 +213,8 @@ export default {
 			orgdimensionid: 0,
 			appTypeId: 0,
 			OrgId: 0,
-			isNotEnter: false
+			isNotEnter: false,
+			permissionList: []
 		};
 	},
 	watch: {
@@ -261,6 +295,7 @@ export default {
 					this.OrgId = this.orgTreeData[0].OrgId;
 					console.log('this.OrgId===', this.OrgId);
 					this.getAppMdules();
+					this.getPermissionList();
 				}
 			});
 		},
@@ -274,6 +309,17 @@ export default {
 				if (res.data.success) {
 					this.appTreeData = res.data.data;
 					this.appValue.push(this.appTreeData[0].Id);
+				}
+			});
+		},
+		//获取权限列表
+		getPermissionList() {
+			let parmas = {
+				orgid: this.OrgId
+			};
+			getPermissionList(parmas).then(res => {
+				if (res.data.success) {
+					this.permissionList = res.data.data;
 				}
 			});
 		},
@@ -324,9 +370,16 @@ export default {
 			console.log('onCheck', checkedKeys);
 			this.checkedKeys = checkedKeys;
 		},
+		goAdd() {
+			this.visible = true;
+		},
 		onSelect(selectedKeys, info) {
 			console.log('onSelect', info);
 			this.selectedKeys = selectedKeys;
+		},
+		handleOk() {},
+		handleCancel() {
+			this.visible = true;
 		}
 	},
 	components: {}

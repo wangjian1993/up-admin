@@ -40,7 +40,7 @@
 			</a-row>
 		</div>
 		<div>
-			<a-modal :title="isEdit ? '编辑应用类型' : '添加应用类型'" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+			<a-modal :title="isEdit ? '编辑应用类型' : '添加应用类型'"  v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
 				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
 					<a-form-model-item ref="AppTypeName" has-feedback label="应用名称" prop="AppTypeName">
 						<a-input

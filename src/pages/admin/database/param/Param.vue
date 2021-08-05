@@ -17,7 +17,7 @@
 					<a-form layout="horizontal" :form="searchForm">
 						<div>
 							<a-col :md="18" :sm="24">
-								<a-form-item label="维度编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
+								<a-form-item label="快码编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
 									<a-input
 										placeholder="请输入"
 										allowClear
@@ -40,49 +40,35 @@
 			</a-row>
 		</div>
 		<div>
-			<a-modal :title="title" :visible="visible"  v-if="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel">
+			<a-modal :title="isEdit ? '编辑快码' : '添加快码'" v-if="visible" :visible="visible" @ok="handleOk" :destroyOnClose="true" @cancel="handleCancel">
 				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-					<a-form-model-item ref="OrgDimensionName" has-feedback label="维度名称" prop="OrgDimensionName">
+					<a-form-model-item ref="ParamGroupName" has-feedback label="快码名称" prop="ParamGroupName">
 						<a-input
-							v-model="form.OrgDimensionName"
-							placeholder="请输入维度名称"
+							v-model="form.ParamGroupName"
 							allowClear
+							placeholder="请输入快码名称"
 							@blur="
 								() => {
-									$refs.OrgDimensionName.onFieldBlur();
+									$refs.ParamGroupName.onFieldBlur();
 								}
 							"
 						/>
 					</a-form-model-item>
-					<a-form-model-item ref="OrgDimensionCode" has-feedback label="编码" prop="OrgDimensionCode">
+					<a-form-model-item ref="ParamGroupCode" has-feedback label="快码编码" prop="ParamGroupCode">
 						<a-input
-							v-model="form.OrgDimensionCode"
-							placeholder="请输入维度编码"
+							v-model="form.ParamGroupCode"
 							allowClear
+							placeholder="请输入快码编码"
+							:disabled="isEdit"
 							@blur="
 								() => {
-									$refs.OrgDimensionCode.onFieldBlur();
+									$refs.ParamGroupCode.onFieldBlur();
 								}
 							"
 						/>
 					</a-form-model-item>
-					<a-form-model-item ref="SortNo" has-feedback label="排序" prop="SortNo">
-						<a-input
-							v-model="form.SortNo"
-							placeholder="请输入维度排序"
-							allowClear
-							@blur="
-								() => {
-									$refs.SortNo.onFieldBlur();
-								}
-							"
-						/>
-					</a-form-model-item>
-					<a-form-model-item ref="IsPartAuth" label="是否授权">
-						<a-radio-group :value="form.IsPartAuth" button-style="solid" @change="authChange">
-							<a-radio-button value="N">否</a-radio-button>
-							<a-radio-button value="Y">是</a-radio-button>
-						</a-radio-group>
+					<a-form-model-item ref="ParamGroupDesc" label="快码描述">
+						<a-textarea v-model="form.ParamGroupDesc" placeholder="请输入快码描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
 					</a-form-model-item>
 					<a-form-model-item ref="Enable" label="是否启用">
 						<a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
@@ -99,6 +85,7 @@
 				:columns="columns"
 				:data-source="data"
 				size="small"
+				:loading="loading"
 				:pagination="pagination"
 				@change="handleTableChange"
 				:rowKey="tableDatas => data.EnterTypeId"
@@ -119,7 +106,7 @@
 						<a-tag color="red" v-else>否</a-tag>
 					</div>
 				</template>
-				<template slot="IsPartAuth" slot-scope="record">
+				<template slot="defualt" slot-scope="record">
 					<div>
 						<a-tag color="green" v-if="record == 'Y'">是</a-tag>
 						<a-tag color="red" v-else>否</a-tag>
@@ -133,10 +120,6 @@
 								删除
 							</a>
 						</a-popconfirm>
-						<a style="margin-right: 8px" @click="cluster(record)">
-							<a-icon type="cluster" />
-							等级管理
-						</a>
 						<a style="margin-right: 8px" @click="edit(record)">
 							<a-icon type="edit" />
 							编辑
@@ -152,36 +135,21 @@
 		<!-- 查看详情 -->
 		<div>
 			<a-drawer width="400" placement="right" :closable="false" :visible="isDrawer" @close="onClose">
-				<a-descriptions title="机构类型详情" :column="1">
-					<a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
-					<a-descriptions-item label="组织id">{{ drawerItem.OrgDimensionId }}</a-descriptions-item>
-					<a-descriptions-item label="组织编码">{{ drawerItem.OrgDimensionCode }}</a-descriptions-item>
-					<a-descriptions-item label="维度名称">{{ drawerItem.OrgDimensionName }}</a-descriptions-item>
-					<a-descriptions-item label="是否授权">
-						<div>
-							<a-tag color="green" v-if="drawerItem.IsPartAuth == 'Y'">是</a-tag>
-							<a-tag color="red" v-else>否</a-tag>
-						</div>
-					</a-descriptions-item>
-					<a-descriptions-item label="启用">
+				<a-descriptions title="快码详情" :column="1">
+					<a-descriptions-item label="快码编码">{{ drawerItem.ParamGroupCode }}</a-descriptions-item>
+					<a-descriptions-item label="快码名称">{{ drawerItem.ParamGroupName }}</a-descriptions-item>
+					<a-descriptions-item label="是否启用">
 						<div>
 							<a-tag color="green" v-if="drawerItem.Enable == 'Y'">是</a-tag>
 							<a-tag color="red" v-else>否</a-tag>
 						</div>
 					</a-descriptions-item>
-					<a-descriptions-item label="是否删除">
-						<div>
-							<a-tag color="green" v-if="drawerItem.IsDel == 'Y'">是</a-tag>
-							<a-tag color="red" v-else>否</a-tag>
-						</div>
-					</a-descriptions-item>
-					<a-descriptions-item label="排序">{{ drawerItem.SortNo }}</a-descriptions-item>
+					<a-descriptions-item label="描述">{{ drawerItem.ParamGroupDesc }}</a-descriptions-item>
 					<a-descriptions-item label="添加人">{{ drawerItem.UserCreated }}</a-descriptions-item>
+					<a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
 				</a-descriptions>
 			</a-drawer>
 		</div>
-		<!-- 等级管理 -->
-		<div v-if="isListClass"><list-class @closeModal="closeModal" :classItem="classItem"></list-class></div>
 	</a-card>
 </template>
 <script>
@@ -192,21 +160,21 @@ const columns = [
 		align: 'center'
 	},
 	{
-		title: '维度名称',
-		dataIndex: 'OrgDimensionName',
-		scopedSlots: { customRender: 'OrgDimensionName' },
+		title: '快码名称',
+		dataIndex: 'ParamGroupName',
+		scopedSlots: { customRender: 'ParamGroupName' },
 		align: 'center'
 	},
 	{
-		title: '编码',
-		dataIndex: 'OrgDimensionCode',
-		scopedSlots: { customRender: 'OrgDimensionCode' },
+		title: '快码编码',
+		dataIndex: 'ParamGroupCode',
+		scopedSlots: { customRender: 'ParamGroupCode' },
 		align: 'center'
 	},
 	{
-		title: '参与授权',
-		dataIndex: 'IsPartAuth',
-		scopedSlots: { customRender: 'IsPartAuth' },
+		title: '快码描述',
+		dataIndex: 'ParamGroupDesc',
+		scopedSlots: { customRender: 'ParamGroupDesc' },
 		align: 'center'
 	},
 	{
@@ -216,19 +184,13 @@ const columns = [
 		align: 'center'
 	},
 	{
-		title: '排序号',
-		dataIndex: 'SortNo',
-		scopedSlots: { customRender: 'SortNo' },
-		align: 'center'
-	},
-	{
 		title: '操作',
 		scopedSlots: { customRender: 'action' },
 		align: 'center'
 	}
 ];
-import { getOrganizationList, orgdimensionAction } from '@/services/admin.js';
-import ListClass from './components/listClass.vue';
+import { getParamGroupList, paramGroupAction } from '@/services/admin.js';
+import { renderStripe } from '@/utils/stripe.js';
 export default {
 	data() {
 		return {
@@ -236,16 +198,14 @@ export default {
 			columns,
 			isEdit: false,
 			editForm: [],
-			title: '添加机构类型',
-			loading: false,
+			title: '添加快码',
+			loading: true,
 			isDrawer: false,
 			selectedRowKeys: [], // Check here to configure the default column
 			visible: false,
-			isListClass: false,
 			drawerItem: [],
 			labelCol: { span: 6 },
 			wrapperCol: { span: 14 },
-			classItem: [],
 			pagination: {
 				current: 1,
 				total: 0,
@@ -259,36 +219,31 @@ export default {
 			searcValue: '',
 			searchForm: this.$form.createForm(this),
 			form: {
-				OrgDimensionCode: '',
-				OrgDimensionName: '',
-				Enable: 'Y',
-				IsPartAuth: 'Y',
-				SortNo: 0
+				ParamGroupCode: '',
+				ParamGroupName: '',
+				ParamGroupDesc: '',
+				Enable: ''
 			},
 			rules: {
-				OrgDimensionCode: [
+				ParamGroupCode: [
 					{
 						required: true,
-						message: '请输入组织编码',
+						message: '请输入快码编码',
 						trigger: 'blur'
 					}
 				],
-				OrgDimensionName: [
+				ParamGroupName: [
 					{
 						required: true,
-						message: '请输入组织名称',
-						trigger: 'blur'
-					}
-				],
-				SortNo: [
-					{
-						required: true,
-						message: '请输入排序',
+						message: '请输入快码名称',
 						trigger: 'blur'
 					}
 				]
 			}
 		};
+	},
+	updated() {
+		renderStripe();
 	},
 	computed: {
 		hasSelected() {
@@ -296,14 +251,11 @@ export default {
 		}
 	},
 	created() {
-		this.getOrganizationList();
+		this.getParamGroupList();
 	},
 	methods: {
 		enableChange(value) {
 			this.form.Enable = value.target.value;
-		},
-		authChange(value) {
-			this.form.IsPartAuth = value.target.value;
 		},
 		//查看详情
 		detail(item) {
@@ -319,11 +271,12 @@ export default {
 		},
 		//重置搜索
 		reset() {
-			this.getOrganizationList();
+			this.getParamGroupList();
 			this.searchForm.resetFields();
 		},
 		//关键词搜索
 		search() {
+			this.loading = true;
 			this.searchForm.validateFields((err, values) => {
 				if (!err) {
 					console.log('Received values of form: ', values);
@@ -334,12 +287,13 @@ export default {
 						pagesize: this.pagination.pageSize,
 						keyword: values.searcValue
 					};
-					getOrganizationList(parmas).then(res => {
+					getParamGroupList(parmas).then(res => {
 						if (res.data.success) {
 							this.data = res.data.data.list;
 							const pagination = { ...this.pagination };
 							pagination.total = res.data.data.recordsTotal;
 							this.pagination = pagination;
+							this.loading = false;
 						}
 					});
 					// do something
@@ -347,17 +301,18 @@ export default {
 			});
 		},
 		//获取机构类型列表
-		getOrganizationList() {
+		getParamGroupList() {
 			let parmas = {
 				pageindex: this.pagination.current,
 				pagesize: this.pagination.pageSize
 			};
-			getOrganizationList(parmas).then(res => {
+			getParamGroupList(parmas).then(res => {
 				if (res.data.success) {
-					this.data = res.data.data.list;
+					this.data = res.data.data;
 					const pagination = { ...this.pagination };
 					pagination.total = res.data.data.recordsTotal;
 					this.pagination = pagination;
+					this.loading = false;
 				}
 			});
 		},
@@ -365,16 +320,15 @@ export default {
 		add() {
 			this.defaultForm();
 			this.isEdit = false;
-			this.title = '添加组织';
+			this.title = '添加快码';
 			this.visible = true;
 		},
 		defaultForm() {
 			this.form = {
-				OrgDimensionCode: '',
-				OrgDimensionName: '',
-				Enable: 'Y',
-				IsPartAuth: 'Y',
-				SortNo: 0
+				AppTypeCode: '',
+				AppTypeName: '',
+				AppTypeDesc: '',
+				Enable: 'Y'
 			};
 		},
 		//关闭对话框
@@ -384,7 +338,7 @@ export default {
 		edit(item) {
 			this.visible = true;
 			this.isEdit = true;
-			this.title = '编辑组织列表';
+			this.title = '编辑快码';
 			this.form = item;
 		},
 		handleOk() {
@@ -392,28 +346,26 @@ export default {
 				if (valid) {
 					if (this.isEdit) {
 						let editForm = {
-							OrgDimensionId: this.form.OrgDimensionId,
-							OrgDimensionCode: this.form.OrgDimensionCode,
-							OrgDimensionName: this.form.OrgDimensionName,
-							Enable: this.form.Enable,
-							IsPartAuth: this.form.IsPartAuth,
-							SortNo: this.form.SortNo
+							AppTypeId: this.form.AppTypeId,
+							AppTypeName: this.form.AppTypeName,
+							AppTypeDesc: this.form.AppTypeDesc,
+							Enable: this.form.Enable
 						};
-						orgdimensionAction(editForm, 'update').then(res => {
+						paramGroupAction(editForm, 'update').then(res => {
 							if (res.data.success) {
 								this.$message.success('编辑成功!');
 								this.defaultForm();
 								this.visible = false;
-								this.getOrganizationList();
+								this.getParamGroupList();
 							} else {
 								this.$message.warning(res.data.message.content);
 							}
 						});
 					} else {
-						orgdimensionAction(this.form, 'add').then(res => {
+						paramGroupAction(this.form, 'add').then(res => {
 							if (res.data.success) {
 								this.$message.success('添加成功!');
-								this.getOrganizationList();
+								this.getParamGroupList();
 								this.defaultForm();
 								this.visible = false;
 							} else {
@@ -432,13 +384,13 @@ export default {
 				onOk() {
 					const params = [];
 					self.selectedRowKeys.forEach(item => {
-						params.push(self.data[item].OrgDimensionId);
+						params.push(self.data[item].ParamGroupId);
 					});
-					orgdimensionAction(params, 'delete').then(res => {
+					paramGroupAction(params, 'delete').then(res => {
 						if (res.data.success) {
 							self.selectedRowKeys = [];
 							self.$message.success('删除成功!');
-							self.getOrganizationList();
+							self.getParamGroupList();
 						} else {
 							self.$message.warning(res.data.message.content);
 						}
@@ -450,32 +402,22 @@ export default {
 		//单个删除
 		onDelete(item) {
 			let parmas = [];
-			parmas.push(item.OrgDimensionId);
-			orgdimensionAction(parmas, 'delete').then(res => {
+			parmas.push(item.ParamGroupId);
+			paramGroupAction(parmas, 'delete').then(res => {
 				if (res.data.success) {
 					this.$message.success('删除成功!');
-					this.getOrganizationList();
+					this.getParamGroupList();
 				} else {
 					this.$message.warning(res.data.message.content);
 				}
 			});
 		},
-		//分页
 		handleTableChange(pagination) {
 			this.pagination.current = pagination.current;
 			this.pagination.pageSize = pagination.pageSize;
-			this.getOrganizationList();
-		},
-		//等级管理
-		cluster(item) {
-			this.classItem = item;
-			this.isListClass = true;
-		},
-		closeModal() {
-			this.isListClass = false;
+			this.getParamGroupList();
 		}
-	},
-	components: { ListClass }
+	}
 };
 </script>
 <style lang="less">
