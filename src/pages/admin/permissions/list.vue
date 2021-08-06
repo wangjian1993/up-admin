@@ -4,30 +4,42 @@
 			<!-- 机构类型 -->
 			<a-col style="padding: 0 5px" :span="5">
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-					<span class="card-title">机构类型:</span>
-					<a-select v-model="defaultEnterTypeId" style="width: 200px" @change="enterTypeSelect">
-						<a-select-option :value="item.EnterTypeId" v-for="(item, index) in enterTypeData" :key="index">{{ item.EnterTypeName }}</a-select-option>
-					</a-select>
-					<div style="padding: 10px 0;">
-						<a-tree
-							@select="enterTreeClick"
-							v-if="enterTreeData.length"
-							:tree-data="enterTreeData"
-							:replaceFields="replaceFields"
-							default-expand-all
-							:default-selected-keys="enterValue"
-						></a-tree>
-						<a-empty v-if="enterTreeData.length == 0" />
-					</div>
+					<a-row>
+						<a-col :xs="12" :sm="8"><span class="card-title">机构类型:</span></a-col>
+						<a-col :xs="12" :sm="16">
+							<a-select v-model="defaultEnterTypeId" style="width: 120px" @change="enterTypeSelect">
+								<a-select-option :value="item.EnterTypeId" v-for="(item, index) in enterTypeData" :key="index">{{ item.EnterTypeName }}</a-select-option>
+							</a-select>
+						</a-col>
+					</a-row>
+					<a-row>
+						<a-col :xs="24" :sm="24">
+							<div style="padding: 10px 0;">
+								<a-tree
+									@select="enterTreeClick"
+									v-if="enterTreeData.length"
+									:tree-data="enterTreeData"
+									:replaceFields="replaceFields"
+									default-expand-all
+									:default-selected-keys="enterValue"
+								></a-tree>
+								<a-empty v-if="enterTreeData.length == 0" />
+							</div>
+						</a-col>
+					</a-row>
 				</a-card>
 			</a-col>
 			<!-- 组织维度 -->
 			<a-col style="padding: 0 5px" :span="5">
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-					<span class="card-title">组织维度:</span>
-					<a-select v-model="defaultOrgDimensionId" style="width: 200px" @change="orgTypeSelect" :disabled="isNotEnter">
-						<a-select-option :value="item.OrgDimensionId" v-for="(item, index) in OrganizationData" :key="index">{{ item.OrgDimensionName }}</a-select-option>
-					</a-select>
+					<a-row>
+						<a-col :xs="12" :sm="8"><span class="card-title">组织维度:</span></a-col>
+						<a-col :xs="12" :sm="16">
+							<a-select v-model="defaultOrgDimensionId" style="width: 120px" @change="orgTypeSelect" :disabled="isNotEnter">
+								<a-select-option :value="item.OrgDimensionId" v-for="(item, index) in OrganizationData" :key="index">{{ item.OrgDimensionName }}</a-select-option>
+							</a-select>
+						</a-col>
+					</a-row>
 					<div style="padding: 10px 0;">
 						<a-tree
 							@select="orgTreeClick"
@@ -44,10 +56,15 @@
 			<!-- 应用类型 -->
 			<a-col style="padding: 0 5px" :span="5">
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-					<span class="card-title">应用类型:</span>
-					<a-select v-model="defaultAppTypeId" style="width: 200px" @change="appTypeSelect" :disabled="isNotEnter">
-						<a-select-option :value="item.AppTypeId" v-for="(item, index) in appTypeData" :key="index">{{ item.AppTypeName }}</a-select-option>
-					</a-select>
+					<a-row>
+						<a-col :xs="12" :sm="6"><span class="card-title">应用类型:</span></a-col>
+						<a-col :xs="12" :sm="11">
+							<a-select v-model="defaultAppTypeId" style="width: 130px" @change="appTypeSelect" :disabled="isNotEnter">
+								<a-select-option :value="item.AppTypeId" v-for="(item, index) in appTypeData" :key="index">{{ item.AppTypeName }}</a-select-option>
+							</a-select>
+						</a-col>
+						<a-col :xs="12" :sm="7"><a-button type="primary" style="margin:0 5px;" @click="appTreeSave">保存设置</a-button></a-col>
+					</a-row>
 					<div style="padding: 10px 0;">
 						<a-tree
 							@select="appTreeClick"
@@ -56,6 +73,7 @@
 							:replaceFields="replaceFields2"
 							default-expand-all
 							checkable
+							@check="appTreeChange"
 							:default-selected-keys="appValue"
 						></a-tree>
 						<a-empty v-if="appTreeData.length == 0" />
@@ -64,7 +82,7 @@
 			</a-col>
 			<!-- 添加 -->
 			<div>
-				<a-modal :title="isEdit ? '编辑权限' : '添加权限'"  v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+				<a-modal :title="isEdit ? '编辑权限' : '添加权限'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
 					<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
 						<a-form-model-item ref="EnterTypeId" has-feedback label="机构类型" prop="EnterTypeId">
 							<a-select v-model="form.EnterTypeId" placeholder="请选择机构类型">
@@ -128,8 +146,8 @@
 const columns = [
 	{
 		title: '筛选字段',
-		dataIndex: 'EnterName',
-		scopedSlots: { customRender: 'EnterName' },
+		dataIndex: 'OrgName',
+		scopedSlots: { customRender: 'OrgName' },
 		align: 'center'
 	},
 	{
@@ -145,7 +163,7 @@ const columns = [
 		align: 'center'
 	}
 ];
-import { getInstitutionList, getEnterTree, getOrganizationList, getOrgTree, getAppTypeList, getAppMdules, getPermissionList } from '@/services/admin.js';
+import { getInstitutionList, getEnterTree, getOrganizationList, getOrgTree, getAppTypeList, getAppMdules, getPermissionList, setPermission } from '@/services/admin.js';
 export default {
 	data() {
 		return {
@@ -185,26 +203,33 @@ export default {
 				children: 'children'
 			},
 			form: {
-				EnterTypeId: '30A5E3E37C014F5FAA378DE79E39C596',
-				EnterId: '50D18646C74D4EAA81D086EE0671D6F2',
+				EnterTypeId: '',
+				EnterId: '',
 				Compartor: '=',
-				OrgId: '054EF08AAEF348DC81C995E2497D02EE'
+				OrgId: ''
 			},
 			rules: {
-				UserTypeCode: [
+				EnterTypeId: [
 					{
 						required: true,
-						message: '请输入用户编码',
+						message: '请选择机构类型',
 						trigger: 'blur'
 					}
 				],
-				UserTypeName: [
+				EnterId: [
 					{
 						required: true,
-						message: '请输入用户名称',
+						message: '请选择机构',
 						trigger: 'blur'
 					}
-				]
+				],
+				OrgId: [
+					{
+						required: true,
+						message: '请选择组织',
+						trigger: 'blur'
+					}
+				],
 			},
 			enterValue: [],
 			orgValue: [],
@@ -214,7 +239,8 @@ export default {
 			appTypeId: 0,
 			OrgId: 0,
 			isNotEnter: false,
-			permissionList: []
+			permissionList: [],
+			ModuleList: []
 		};
 	},
 	watch: {
@@ -262,7 +288,7 @@ export default {
 			getEnterTree(parmas).then(res => {
 				if (res.data.success) {
 					this.enterTreeData = res.data.data;
-					console.log('this.enterTreeData ', this.enterTreeData);
+					// console.log('this.enterTreeData ', this.enterTreeData);
 					//没有机构
 					if (this.enterTreeData.length == 0) {
 						this.orgTreeData = [];
@@ -273,7 +299,7 @@ export default {
 					this.isNotEnter = false;
 					this.enterValue.push(this.enterTreeData[0].Id);
 					this.enterid = this.enterTreeData[0].Id;
-					console.log('this.enterid===', this.enterid);
+					// console.log('this.enterid===', this.enterid);
 					this.getOrgTree();
 				}
 			});
@@ -291,9 +317,9 @@ export default {
 						return;
 					}
 					this.orgValue.push(this.orgTreeData[0].OrgId);
-					console.log('this.orgValue', this.orgValue);
+					// console.log('this.orgValue', this.orgValue);
 					this.OrgId = this.orgTreeData[0].OrgId;
-					console.log('this.OrgId===', this.OrgId);
+					// console.log('this.OrgId===', this.OrgId);
 					this.getAppMdules();
 					this.getPermissionList();
 				}
@@ -367,7 +393,7 @@ export default {
 			this.autoExpandParent = false;
 		},
 		onCheck(checkedKeys) {
-			console.log('onCheck', checkedKeys);
+			// console.log('onCheck', checkedKeys);
 			this.checkedKeys = checkedKeys;
 		},
 		goAdd() {
@@ -379,7 +405,38 @@ export default {
 		},
 		handleOk() {},
 		handleCancel() {
-			this.visible = true;
+			this.visible = false;
+		},
+		appTreeChange(key, e) {
+			// console.log(key);
+			let list = e.checkedNodes;
+			let result = [];
+			list.filter(item => {
+				result.push({
+					ModuleId: item.key,
+					ModuleCode: item.data.props.Code,
+					Type: item.data.props.Type
+				});
+			});
+			console.log(result);
+			this.ModuleList = result;
+			// this.appTreeData.filter(item => {
+
+			// });
+		},
+		appTreeSave() {
+			let parmas = {
+				orgid: this.OrgId,
+				ModuleList: this.ModuleList
+			};
+			setPermission(parmas).then(res => {
+				if (res.data.success) {
+					this.$message.success('设置成功!');
+					this.ModuleList = [];
+				}else {
+					this.$message.warning(res.data.message.content);
+				}
+			});
 		}
 	},
 	components: {}

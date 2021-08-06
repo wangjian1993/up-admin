@@ -17,7 +17,7 @@
 					<a-form layout="horizontal" :form="searchForm">
 						<div>
 							<a-col :md="18" :sm="24">
-								<a-form-item label="应用编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
+								<a-form-item label="快码组组编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
 									<a-input
 										placeholder="请输入"
 										allowClear
@@ -39,7 +39,46 @@
 				</a-col>
 			</a-row>
 		</div>
-		<div><add-app v-if="visible" @cloneModal="cloneModal" :isEdit="isEdit" :editForm="editForm" @succeed="getAppInfoList"></add-app></div>
+		<div>
+			<a-modal :title="isEdit ? '编辑快码组' : '添加快码组'" v-if="visible" :visible="visible" @ok="handleOk" :destroyOnClose="true" @cancel="handleCancel">
+				<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+					<a-form-model-item ref="ParamGroupName" has-feedback label="快码组名称" prop="ParamGroupName">
+						<a-input
+							v-model="form.ParamGroupName"
+							allowClear
+							placeholder="请输入快码组名称"
+							@blur="
+								() => {
+									$refs.ParamGroupName.onFieldBlur();
+								}
+							"
+						/>
+					</a-form-model-item>
+					<a-form-model-item ref="ParamGroupCode" has-feedback label="快码组编码" prop="ParamGroupCode">
+						<a-input
+							v-model="form.ParamGroupCode"
+							allowClear
+							placeholder="请输入快码组编码"
+							:disabled="isEdit"
+							@blur="
+								() => {
+									$refs.ParamGroupCode.onFieldBlur();
+								}
+							"
+						/>
+					</a-form-model-item>
+					<a-form-model-item ref="ParamGroupDesc" label="快码组描述">
+						<a-textarea v-model="form.ParamGroupDesc" placeholder="请输入快码组描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
+					</a-form-model-item>
+					<a-form-model-item ref="Enable" label="是否启用">
+						<a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
+							<a-radio-button value="N">否</a-radio-button>
+							<a-radio-button value="Y">是</a-radio-button>
+						</a-radio-group>
+					</a-form-model-item>
+				</a-form-model>
+			</a-modal>
+		</div>
 		<!-- 列表 -->
 		<div class="tab">
 			<a-table
@@ -61,19 +100,10 @@
 						<span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
 					</div>
 				</template>
-				<template slot="AppLogo" slot-scope="text, record">
-					<div><a-avatar :src="record.AppLogoUrl" /></div>
-				</template>
 				<template slot="enable" slot-scope="record">
 					<div>
 						<a-tag color="green" v-if="record == 'Y'">启用</a-tag>
 						<a-tag color="red" v-else>禁用</a-tag>
-					</div>
-				</template>
-				<template slot="defualt" slot-scope="record">
-					<div>
-						<a-tag color="green" v-if="record == 'Y'">是</a-tag>
-						<a-tag color="red" v-else>否</a-tag>
 					</div>
 				</template>
 				<template slot="action" slot-scope="text, record">
@@ -98,37 +128,17 @@
 		</div>
 		<!-- 查看详情 -->
 		<div>
-			<a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
-				<a-descriptions title="应用详情" :column="1">
-					<a-descriptions-item label="应用图标"><a-avatar :src="drawerItem.AppLogoUrl" /></a-descriptions-item>
-					<a-descriptions-item label="应用编码">{{ drawerItem.AppCode }}</a-descriptions-item>
-					<a-descriptions-item label="应用名称">{{ drawerItem.AppName }}</a-descriptions-item>
-					<a-descriptions-item label="应用类型">{{ drawerItem.AppTypeName }}</a-descriptions-item>
-					<a-descriptions-item label="应用序号">{{ drawerItem.AppSortNo }}</a-descriptions-item>
-					<a-descriptions-item label="布局">{{ drawerItem.LayoutTypeCode }}</a-descriptions-item>
-					<a-descriptions-item label="配置类型">{{ drawerItem.ConfigTypeCode }}</a-descriptions-item>
-					<a-descriptions-item label="组件路径">{{ drawerItem.MouduleUrl }}</a-descriptions-item>
-					<a-descriptions-item label="组件参数">{{ drawerItem.MouduleParam }}</a-descriptions-item>
-					<a-descriptions-item label="访问方式">{{ drawerItem.AccessTypeCode }}</a-descriptions-item>
-					<a-descriptions-item label="共享">
-						<div>
-							<a-tag color="green" v-if="drawerItem.IsShare == 'Y'">是</a-tag>
-							<a-tag color="red" v-else>否</a-tag>
-						</div>
-					</a-descriptions-item>
-					<a-descriptions-item label="是否授权">
-						<div>
-							<a-tag color="green" v-if="drawerItem.IsAuth == 'Y'">是</a-tag>
-							<a-tag color="red" v-else>否</a-tag>
-						</div>
-					</a-descriptions-item>
+			<a-drawer width="400" placement="right" :closable="true"  :visible="isDrawer" @close="onClose">
+				<a-descriptions title="快码组详情" :column="1">
+					<a-descriptions-item label="快码组编码">{{ drawerItem.ParamGroupCode }}</a-descriptions-item>
+					<a-descriptions-item label="快码组名称">{{ drawerItem.ParamGroupName }}</a-descriptions-item>
 					<a-descriptions-item label="是否启用">
 						<div>
 							<a-tag color="green" v-if="drawerItem.Enable == 'Y'">启用</a-tag>
 							<a-tag color="red" v-else>禁用</a-tag>
 						</div>
 					</a-descriptions-item>
-					<a-descriptions-item label="描述">{{ drawerItem.AppDesc }}</a-descriptions-item>
+					<a-descriptions-item label="描述">{{ drawerItem.ParamGroupDesc }}</a-descriptions-item>
 					<a-descriptions-item label="添加人">{{ drawerItem.UserCreated }}</a-descriptions-item>
 					<a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
 				</a-descriptions>
@@ -144,27 +154,21 @@ const columns = [
 		align: 'center'
 	},
 	{
-		title: '应用名称',
-		dataIndex: 'AppName',
-		scopedSlots: { customRender: 'AppName' },
+		title: '快码组名称',
+		dataIndex: 'ParamGroupName',
+		scopedSlots: { customRender: 'ParamGroupName' },
 		align: 'center'
 	},
 	{
-		title: '编码',
-		dataIndex: 'AppCode',
-		scopedSlots: { customRender: 'AppCode' },
+		title: '快码组编码',
+		dataIndex: 'ParamGroupCode',
+		scopedSlots: { customRender: 'ParamGroupCode' },
 		align: 'center'
 	},
 	{
-		title: '应用类型',
-		dataIndex: 'AppTypeName',
-		scopedSlots: { customRender: 'AppTypeName' },
-		align: 'center'
-	},
-	{
-		title: '图标',
-		dataIndex: 'AppLogo',
-		scopedSlots: { customRender: 'AppLogo' },
+		title: '快码组描述',
+		dataIndex: 'ParamGroupDesc',
+		scopedSlots: { customRender: 'ParamGroupDesc' },
 		align: 'center'
 	},
 	{
@@ -179,9 +183,8 @@ const columns = [
 		align: 'center'
 	}
 ];
-import { getAppInfoList, appInfoAction } from '@/services/admin.js';
+import { getParamGroupList, paramGroupAction } from '@/services/admin.js';
 import { renderStripe } from '@/utils/stripe.js';
-import AddApp from '../components/add-app.vue';
 export default {
 	data() {
 		return {
@@ -189,7 +192,7 @@ export default {
 			columns,
 			isEdit: false,
 			editForm: [],
-			title: '添加应用',
+			title: '添加快码组',
 			loading: true,
 			isDrawer: false,
 			selectedRowKeys: [], // Check here to configure the default column
@@ -208,7 +211,29 @@ export default {
 				showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`
 			},
 			searcValue: '',
-			searchForm: this.$form.createForm(this)
+			searchForm: this.$form.createForm(this),
+			form: {
+				ParamGroupCode: '',
+				ParamGroupName: '',
+				ParamGroupDesc: '',
+				Enable: 'Y'
+			},
+			rules: {
+				ParamGroupCode: [
+					{
+						required: true,
+						message: '请输入快码组编码',
+						trigger: 'blur'
+					}
+				],
+				ParamGroupName: [
+					{
+						required: true,
+						message: '请输入快码组名称',
+						trigger: 'blur'
+					}
+				]
+			}
 		};
 	},
 	updated() {
@@ -220,7 +245,7 @@ export default {
 		}
 	},
 	created() {
-		this.getAppInfoList();
+		this.getParamGroupList();
 	},
 	methods: {
 		enableChange(value) {
@@ -240,11 +265,12 @@ export default {
 		},
 		//重置搜索
 		reset() {
-			this.getAppInfoList();
+			this.getParamGroupList();
 			this.searchForm.resetFields();
 		},
 		//关键词搜索
 		search() {
+			this.loading = true;
 			this.searchForm.validateFields((err, values) => {
 				if (!err) {
 					console.log('Received values of form: ', values);
@@ -255,12 +281,13 @@ export default {
 						pagesize: this.pagination.pageSize,
 						keyword: values.searcValue
 					};
-					getAppInfoList(parmas).then(res => {
+					getParamGroupList(parmas).then(res => {
 						if (res.data.success) {
-							this.data = res.data.data.list;
+							this.data = res.data.data;
 							const pagination = { ...this.pagination };
 							pagination.total = res.data.data.recordsTotal;
 							this.pagination = pagination;
+							this.loading = false;
 						}
 					});
 					// do something
@@ -268,30 +295,37 @@ export default {
 			});
 		},
 		//获取机构类型列表
-		getAppInfoList() {
+		getParamGroupList() {
 			let parmas = {
 				pageindex: this.pagination.current,
 				pagesize: this.pagination.pageSize
 			};
-			getAppInfoList(parmas).then(res => {
+			getParamGroupList(parmas).then(res => {
 				if (res.data.success) {
-					this.data = res.data.data.list;
+					this.data = res.data.data;
 					const pagination = { ...this.pagination };
-					pagination.total = res.data.data.recordsTotal;
+					if (res.data.data.recordsTotal) {
+						pagination.total = res.data.data.recordsTotal;
+					}
 					this.pagination = pagination;
 					this.loading = false;
 				}
 			});
 		},
-		cloneModal() {
-			this.visible = false;
-		},
 		//打开对话框
 		add() {
-			// this.defaultForm();
+			this.defaultForm();
 			this.isEdit = false;
-			this.title = '添加应用';
+			this.title = '添加快码组组';
 			this.visible = true;
+		},
+		defaultForm() {
+			this.form = {
+				ParamGroupCode: '',
+				ParamGroupName: '',
+				ParamGroupDesc: '',
+				Enable: 'Y'
+			};
 		},
 		//关闭对话框
 		handleCancel() {
@@ -300,8 +334,43 @@ export default {
 		edit(item) {
 			this.visible = true;
 			this.isEdit = true;
-			this.title = '编辑应用';
-			this.editForm = item;
+			this.title = '编辑快码组';
+			this.form = item;
+		},
+		handleOk() {
+			this.$refs.ruleForm.validate(valid => {
+				if (valid) {
+					if (this.isEdit) {
+						let editForm = {
+							ParamGroupId: this.form.ParamGroupId,
+							ParamGroupName: this.form.ParamGroupName,
+							ParamGroupDesc: this.form.ParamGroupDesc,
+							Enable: this.form.Enable
+						};
+						paramGroupAction(editForm, 'update').then(res => {
+							if (res.data.success) {
+								this.$message.success('编辑成功!');
+								this.defaultForm();
+								this.visible = false;
+								this.getParamGroupList();
+							} else {
+								this.$message.warning(res.data.message.content);
+							}
+						});
+					} else {
+						paramGroupAction(this.form, 'add').then(res => {
+							if (res.data.success) {
+								this.$message.success('添加成功!');
+								this.getParamGroupList();
+								this.defaultForm();
+								this.visible = false;
+							} else {
+								this.$message.warning(res.data.message.content);
+							}
+						});
+					}
+				}
+			});
 		},
 		//多选删除
 		allDel() {
@@ -311,13 +380,13 @@ export default {
 				onOk() {
 					const params = [];
 					self.selectedRowKeys.forEach(item => {
-						params.push(self.data[item].AppId);
+						params.push(self.data[item].ParamGroupId);
 					});
-					appInfoAction(params, 'delete').then(res => {
+					paramGroupAction(params, 'delete').then(res => {
 						if (res.data.success) {
 							self.selectedRowKeys = [];
 							self.$message.success('删除成功!');
-							self.getAppInfoList();
+							self.getParamGroupList();
 						} else {
 							self.$message.warning(res.data.message.content);
 						}
@@ -329,11 +398,11 @@ export default {
 		//单个删除
 		onDelete(item) {
 			let parmas = [];
-			parmas.push(item.AppId);
-			appInfoAction(parmas, 'delete').then(res => {
+			parmas.push(item.ParamGroupId);
+			paramGroupAction(parmas, 'delete').then(res => {
 				if (res.data.success) {
 					this.$message.success('删除成功!');
-					this.getAppInfoList();
+					this.getParamGroupList();
 				} else {
 					this.$message.warning(res.data.message.content);
 				}
@@ -342,14 +411,13 @@ export default {
 		handleTableChange(pagination) {
 			this.pagination.current = pagination.current;
 			this.pagination.pageSize = pagination.pageSize;
-			this.getAppInfoList();
+			this.getParamGroupList();
 		}
-	},
-	components: { AddApp }
+	}
 };
 </script>
 <style lang="less">
 .ant-form-item {
-	margin-bottom: 5px;
+	// margin-bottom: 5px;
 }
 </style>

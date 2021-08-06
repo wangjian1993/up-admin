@@ -82,7 +82,7 @@
     <a-drawer
       width="800"
       placement="right"
-      :closable="false"
+      :closable="true"
       :visible="visible"
       @close="onClose"
       :destroyOnClose="true"

@@ -62,8 +62,8 @@
 						</template>
 						<template slot="enable" slot-scope="record">
 							<div>
-								<a-tag color="green" v-if="record == 'Y'">是</a-tag>
-								<a-tag color="red" v-else>否</a-tag>
+								<a-tag color="green" v-if="record == 'Y'">启用</a-tag>
+								<a-tag color="red" v-else>禁用</a-tag>
 							</div>
 						</template>
 						<template slot="IsPartAuth" slot-scope="record">

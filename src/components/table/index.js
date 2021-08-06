@@ -149,7 +149,7 @@ export default {
      * 加载数据方法
      * @param {Object} pagination 分页选项器
      * @param {Object} filters 过滤条件
-     * @param {Object} sorter 排序条件
+     * @param {Object} sorter 排序条
      */
     loadData (pagination, filters, sorter) {
       this.localLoading = true

@@ -117,8 +117,8 @@
 				</template>
 				<template slot="enable" slot-scope="record">
 					<div>
-						<a-tag color="green" v-if="record == 'Y'">是</a-tag>
-						<a-tag color="red" v-else>否</a-tag>
+						<a-tag color="green" v-if="record == 'Y'">启用</a-tag>
+						<a-tag color="red" v-else>禁用</a-tag>
 					</div>
 				</template>
 				<template slot="defualt" slot-scope="record">
@@ -149,15 +149,15 @@
 		</div>
 		<!-- 查看详情 -->
 		<div>
-			<a-drawer width="400" placement="right" :closable="false" :visible="isDrawer" @close="onClose">
+			<a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
 				<a-descriptions title="机构类型详情" :column="1">
 					<!-- <a-descriptions-item label="类型id">{{ drawerItem.EnterTypeId }}</a-descriptions-item> -->
 					<a-descriptions-item label="类型编码">{{ drawerItem.EnterTypeCode }}</a-descriptions-item>
 					<a-descriptions-item label="类型名称">{{ drawerItem.EnterTypeName }}</a-descriptions-item>
-					<a-descriptions-item label="是否启动">
+					<a-descriptions-item label="是否启用">
 						<div>
-							<a-tag color="green" v-if="drawerItem.Enable == 'Y'">是</a-tag>
-							<a-tag color="red" v-else>否</a-tag>
+							<a-tag color="green" v-if="drawerItem.Enable == 'Y'">启用</a-tag>
+							<a-tag color="red" v-else>禁用</a-tag>
 						</div>
 					</a-descriptions-item>
 					<a-descriptions-item label="默认">

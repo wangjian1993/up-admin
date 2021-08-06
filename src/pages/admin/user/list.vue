@@ -125,7 +125,7 @@
 					</div>
 					<!-- 查看详情 -->
 					<div>
-						<a-drawer width="400" placement="right" :closable="false" :visible="isDrawer" @close="onClose">
+						<a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
 							<a-descriptions title="用户详情" :column="1">
 								<a-descriptions-item label="用户头像"><a-avatar :src="drawerItem.PhotoUrl" /></a-descriptions-item>
 								<a-descriptions-item label="用户账号">{{ drawerItem.UserLoginId }}</a-descriptions-item>
@@ -138,10 +138,10 @@
 								<a-descriptions-item label="邮箱">{{ drawerItem.Email }}</a-descriptions-item>
 								<a-descriptions-item label="手机">{{ drawerItem.MobilePhone }}</a-descriptions-item>
 								<a-descriptions-item label="地址">{{ drawerItem.Address }}</a-descriptions-item>
-								<a-descriptions-item label="状态">
+								<a-descriptions-item label="是否启用">
 									<div>
-										<a-tag color="green" v-if="drawerItem.Enable == 'Y'">是</a-tag>
-										<a-tag color="red" v-else>否</a-tag>
+										<a-tag color="green" v-if="drawerItem.Enable == 'Y'">启用</a-tag>
+										<a-tag color="red" v-else>禁用</a-tag>
 									</div>
 								</a-descriptions-item>
 								<a-descriptions-item label="锁定转态">

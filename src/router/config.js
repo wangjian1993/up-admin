@@ -259,14 +259,24 @@ const options = {
 								icon: "database",
 							},
 							children: [{
-								path: "param",
-								name: "快码管理",
-								component: () =>
-									import(
-										/* webpackChunkName: 'database' */
-										"@/pages/admin/database/param"
-									),
-							}],
+									path: "param-group",
+									name: "快码组管理",
+									component: () =>
+										import(
+											/* webpackChunkName: 'database' */
+											"@/pages/admin/database/group"
+										),
+								},
+								{
+									path: "param",
+									name: "快码管理",
+									component: () =>
+										import(
+											/* webpackChunkName: 'database' */
+											"@/pages/admin/database/param"
+										),
+								}
+							],
 						},
 						{
 							path: "system",

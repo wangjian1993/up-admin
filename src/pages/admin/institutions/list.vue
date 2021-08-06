@@ -179,8 +179,8 @@
 				</template>
 				<template slot="Enable" slot-scope="record">
 					<div>
-						<a-tag color="green" v-if="record == 'Y'">是</a-tag>
-						<a-tag color="red" v-else>否</a-tag>
+						<a-tag color="green" v-if="record == 'Y'">启用</a-tag>
+						<a-tag color="red" v-else>禁用</a-tag>
 					</div>
 				</template>
 				<template slot="action" slot-scope="text, record">
@@ -225,8 +225,8 @@
 					<a-descriptions-item label="机构类型">{{ drawerItem.EnterTypeName }}</a-descriptions-item>
 					<a-descriptions-item label="是否启用">
 						<div>
-							<a-tag color="green" v-if="drawerItem.Enable == 'Y'">是</a-tag>
-							<a-tag color="red" v-else>否</a-tag>
+							<a-tag color="green" v-if="drawerItem.Enable == 'Y'">启用</a-tag>
+							<a-tag color="red" v-else>禁用</a-tag>
 						</div>
 					</a-descriptions-item>
 					<a-descriptions-item label="描述">{{ drawerItem.EnterTypeDesc }}</a-descriptions-item>
