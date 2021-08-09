@@ -15,7 +15,7 @@
 				<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px', margin: '0 5px' }">
 					<div>
 						<a-button @click="addSubclass" type="primary" icon="form">添加</a-button>
-						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel"  icon="delete" style="margin-left: 8px">删除</a-button>
 						<span style="margin-left: 8px">
 							<template v-if="hasSelected">
 								{{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -358,9 +358,7 @@ export default {
 								this.defaultForm();
 								this.visible = false;
 								this.getOrginfo();
-							} else {
-								this.$message.warning(res.data.message.content);
-							}
+							} 
 						});
 					} else {
 						let parma = {
@@ -379,8 +377,6 @@ export default {
 								this.getOrginfo();
 								this.defaultForm();
 								this.visible = false;
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					}
@@ -407,8 +403,6 @@ export default {
 				if (res.data.success) {
 					this.$message.success('删除成功!');
 					this.getOrginfo();
-				} else {
-					this.$message.warning(res.data.message.content);
 				}
 			});
 		},

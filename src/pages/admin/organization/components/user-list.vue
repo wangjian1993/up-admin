@@ -5,7 +5,7 @@
 				<a-col :span="24">
 					<div>
 						<a-button @click="add" type="primary" icon="form">添加</a-button>
-						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">移除</a-button>
+						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">移除</a-button>
 						<span style="margin-left: 8px">
 							<template v-if="hasSelected">
 								{{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -291,8 +291,6 @@ export default {
 				if (res.data.success) {
 					this.$message.success('移除成功!');
 					this.getOrgUser();
-				} else {
-					this.$message.warning(res.data.message.content);
 				}
 			});
 		},

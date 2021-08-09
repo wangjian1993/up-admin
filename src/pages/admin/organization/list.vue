@@ -5,7 +5,7 @@
 				<a-col :span="12">
 					<div>
 						<a-button @click="add" type="primary" icon="form">添加</a-button>
-						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
 						<span style="margin-left: 8px">
 							<template v-if="hasSelected">
 								{{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -15,27 +15,34 @@
 				</a-col>
 				<a-col :span="12">
 					<a-form layout="horizontal" :form="searchForm">
-						<div>
-							<a-col :md="18" :sm="24">
-								<a-form-item label="维度编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
-									<a-input
-										placeholder="请输入"
-										allowClear
-										v-decorator="[
-											'searcValue',
-											{
-												rules: [{ required: true, message: '机构类型编码/名称!' }]
-											}
-										]"
-									/>
-								</a-form-item>
-							</a-col>
-						</div>
-						<span style="float: right; margin-top: 3px;">
-							<a-button type="primary" @click="search">查询</a-button>
-							<a-button style="margin-left: 8px" @click="reset">重置</a-button>
-						</span>
-					</a-form>
+            <div>
+              <a-col :md="18" :sm="24">
+                <a-form-item
+                  label="组织维度编码/名称"
+                  :labelCol="{ span: 8 }"
+                  :wrapperCol="{ span: 14, offset: 1 }"
+                >
+                  <a-input-search
+                    placeholder="请输入"
+                    allowClear
+                    enter-button="搜索"
+                    @search="search"
+                    v-decorator="[
+                      'searcValue',
+                      {
+                        rules: [
+                          { required: true, message: '组织维度编码/名称!' },
+                        ],
+                      },
+                    ]"
+                  />
+                </a-form-item>
+              </a-col>
+            </div>
+            <span style="float: left; margin-top: 5px;">
+              <a-button @click="reset" icon="reload">重置</a-button>
+            </span>
+          </a-form>
 				</a-col>
 			</a-row>
 		</div>
@@ -67,16 +74,11 @@
 						/>
 					</a-form-model-item>
 					<a-form-model-item ref="SortNo" has-feedback label="排序" prop="SortNo">
-						<a-input
-							v-model="form.SortNo"
-							placeholder="请输入维度排序"
-							allowClear
-							@blur="
-								() => {
-									$refs.SortNo.onFieldBlur();
-								}
-							"
-						/>
+						<a-input-number id="SortNo" 	v-model="form.SortNo" :min="1" placeholder="请输入维度排序" @blur="
+											() => {
+												$refs.SortNo.onFieldBlur();
+											}
+										"/>
 					</a-form-model-item>
 					<a-form-model-item ref="IsPartAuth" label="是否授权">
 						<a-radio-group :value="form.IsPartAuth" button-style="solid" @change="authChange">
@@ -405,8 +407,6 @@ export default {
 								this.defaultForm();
 								this.visible = false;
 								this.getOrganizationList();
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					} else {
@@ -416,8 +416,6 @@ export default {
 								this.getOrganizationList();
 								this.defaultForm();
 								this.visible = false;
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					}
@@ -455,8 +453,6 @@ export default {
 				if (res.data.success) {
 					this.$message.success('删除成功!');
 					this.getOrganizationList();
-				} else {
-					this.$message.warning(res.data.message.content);
 				}
 			});
 		},

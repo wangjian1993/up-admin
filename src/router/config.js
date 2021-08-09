@@ -213,24 +213,19 @@ const options = {
 							path: "menu",
 							name: "菜单管理",
 							meta: {
-								icon: "bars",
+								icon: "menu",
 							},
-							component: BlankView,
-							children: [{
-								path: "list",
-								name: "菜单列表",
-								component: () =>
-									import(
-										/* webpackChunkName: 'menu' */
-										"@/pages/admin/menu/list"
-									),
-							}, ],
+							component: () =>
+							import(
+								/* webpackChunkName: 'menu' */
+								"@/pages/admin/menu"
+							)
 						},
 						{
 							path: "application",
 							name: "应用管理",
 							meta: {
-								icon: "fund",
+								icon: "appstore",
 							},
 							component: BlankView,
 							children: [{

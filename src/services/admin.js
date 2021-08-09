@@ -201,8 +201,8 @@ export async function getAppMdules(params) {
  * @param {*} params
  * @return {*}
  */
-export async function setPermission(params) {
-	return request(`${UP_ADMIN}/permission/setpermission`, METHOD.POST, params)
+export async function setPermission(params, action) {
+	return request(`${UP_ADMIN}/permission/${action}`, METHOD.POST, params)
 }
 /**
  * @description:权限-查询应用菜单树形信息API
@@ -212,7 +212,6 @@ export async function setPermission(params) {
 export async function getPermissionList(params) {
 	return request(`${UP_ADMIN}/permission/getdatapermission`, METHOD.GET, params)
 }
-
 /**
  * @description:数据字典-快码组管理
  * @param {*} params
@@ -230,6 +229,9 @@ export async function getParamList(params) {
 }
 export async function paramAction(params, action) {
 	return request(`${UP_ADMIN}/param/${action}`, METHOD.POST, params)
+}
+export async function getParamData(params) {
+	return request(`${UP_ADMIN}/param/getlist`, METHOD.GET, params)
 }
 export default {
 	getInstitutionList,
@@ -269,5 +271,6 @@ export default {
 	paramGroupAction,
 	setPermission,
 	getParamList,
-	paramAction
+	paramAction,
+	getParamData
 }

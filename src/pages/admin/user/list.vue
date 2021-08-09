@@ -1,4 +1,13 @@
+<!--
+ * @Author: max
+ * @Date: 2021-08-06 15:34:43
+ * @LastEditTime: 2021-08-09 17:44:31
+ * @LastEditors: max
+ * @Description: 用户列表
+ * @FilePath: /up-admin/src/pages/admin/user/list.vue
+-->
 <template>
+	<!-- 搜索 -->
 	<div>
 		<a-row>
 			<a-col style="padding: 0 5px" :span="6">
@@ -38,8 +47,8 @@
 									<a-form-item label="用户账号/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }"><a-input v-decorator="['key']" allowClear placeholder="请输入用户账号/名称"/></a-form-item>
 								</a-col>
 								<a-col :md="4" :sm="24">
-									<a-button type="primary" @click="search">查询</a-button>
-									<a-button style="margin-left: 8px" @click="reset">重置</a-button>
+									<a-button type="primary" @click="search" icon="search">查询</a-button>
+									<a-button style="margin-left: 8px" @click="reset" icon="reload">重置</a-button>
 								</a-col>
 							</a-row>
 						</a-form>
@@ -49,7 +58,7 @@
 							<a-col :span="12">
 								<div>
 									<a-button @click="add" type="primary" icon="form">添加</a-button>
-									<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+									<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
 									<span style="margin-left: 8px">
 										<template v-if="hasSelected">
 											{{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -404,8 +413,6 @@ export default {
 								this.defaultForm();
 								this.visible = false;
 								this.getUserList();
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					} else {
@@ -415,8 +422,6 @@ export default {
 								this.getUserList();
 								this.defaultForm();
 								this.visible = false;
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					}
@@ -454,8 +459,6 @@ export default {
 				if (res.data.success) {
 					this.$message.success('删除成功!');
 					this.getUserList();
-				} else {
-					this.$message.warning(res.data.message.content);
 				}
 			});
 		},
@@ -490,8 +493,6 @@ export default {
 					} else {
 						this.$message.success('操作成功!');
 					}
-				} else {
-					this.$message.warning(res.data.message.content);
 				}
 			});
 		}

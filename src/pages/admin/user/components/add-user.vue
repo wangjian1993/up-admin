@@ -381,8 +381,6 @@ export default {
 								this.$message.success('编辑成功!');
 								this.defaultForm();
 								this.$emit('succeed');
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					} else {
@@ -421,8 +419,6 @@ export default {
 								this.$message.success('添加成功!');
 								this.defaultForm();
 								this.$emit('succeed');
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					}

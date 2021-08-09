@@ -1,3 +1,11 @@
+<!--
+ * @Author: max
+ * @Date: 2021-07-08 09:23:52
+ * @LastEditTime: 2021-08-09 17:41:45
+ * @LastEditors: max
+ * @Description: 权限管理
+ * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
+-->
 <template>
 	<div>
 		<a-row>
@@ -63,10 +71,11 @@
 								<a-select-option :value="item.AppTypeId" v-for="(item, index) in appTypeData" :key="index">{{ item.AppTypeName }}</a-select-option>
 							</a-select>
 						</a-col>
-						<a-col :xs="12" :sm="7"><a-button type="primary" style="margin:0 5px;" @click="appTreeSave">保存设置</a-button></a-col>
+						<a-col :xs="12" :sm="7"><a-button  icon="save" type="primary" style="margin:0 0px;" @click="appTreeSave">保存</a-button></a-col>
 					</a-row>
 					<div style="padding: 10px 0;">
 						<a-tree
+							v-model="expandedKeys"
 							@select="appTreeClick"
 							v-if="appTreeData.length"
 							:tree-data="appTreeData"
@@ -85,21 +94,24 @@
 				<a-modal :title="isEdit ? '编辑权限' : '添加权限'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
 					<a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
 						<a-form-model-item ref="EnterTypeId" has-feedback label="机构类型" prop="EnterTypeId">
-							<a-select v-model="form.EnterTypeId" placeholder="请选择机构类型">
+							<a-select v-model="form.EnterTypeId" placeholder="请选择机构类型" @change="enterTypeSelect">
 								<a-select-option v-for="item in enterTypeData" :key="item.EnterTypeId">{{ item.EnterTypeName }}</a-select-option>
 							</a-select>
 						</a-form-model-item>
 						<a-form-model-item ref="EnterId" has-feedback label="机构选择" prop="EnterId">
 							<a-tree-select
+								v-model="form.EnterId"
 								style="width: 100%"
 								:tree-data="enterTreeData"
-								placeholder="Please select"
+								placeholder="请选择机构"
 								tree-default-expand-all
 								:replaceFields="replaceFields"
 							></a-tree-select>
 						</a-form-model-item>
-						<a-form-model-item ref="UserTypeDesc" label="描述">
-							<a-textarea v-model="form.UserTypeDesc" placeholder="请输入用户描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
+						<a-form-model-item ref="Compartor" has-feedback label="比较符" prop="Compartor">
+							<a-select v-model="form.Compartor" placeholder="请选择比较符">
+								<a-select-option v-for="item in parmaData" :key="item.ParamValue">{{ item.ParamName }}</a-select-option>
+							</a-select>
 						</a-form-model-item>
 					</a-form-model>
 				</a-modal>
@@ -146,8 +158,8 @@
 const columns = [
 	{
 		title: '筛选字段',
-		dataIndex: 'OrgName',
-		scopedSlots: { customRender: 'OrgName' },
+		dataIndex: 'EnterTypeName',
+		scopedSlots: { customRender: 'EnterTypeName' },
 		align: 'center'
 	},
 	{
@@ -163,7 +175,17 @@ const columns = [
 		align: 'center'
 	}
 ];
-import { getInstitutionList, getEnterTree, getOrganizationList, getOrgTree, getAppTypeList, getAppMdules, getPermissionList, setPermission } from '@/services/admin.js';
+import {
+	getInstitutionList,
+	getEnterTree,
+	getOrganizationList,
+	getOrgTree,
+	getAppTypeList,
+	getAppMdules,
+	getPermissionList,
+	setPermission,
+	getParamData
+} from '@/services/admin.js';
 export default {
 	data() {
 		return {
@@ -213,23 +235,23 @@ export default {
 					{
 						required: true,
 						message: '请选择机构类型',
-						trigger: 'blur'
+						trigger: 'change'
 					}
 				],
 				EnterId: [
 					{
 						required: true,
 						message: '请选择机构',
-						trigger: 'blur'
+						trigger: 'change'
 					}
 				],
-				OrgId: [
+				Compartor: [
 					{
 						required: true,
-						message: '请选择组织',
+						message: '请选择比较符',
 						trigger: 'blur'
 					}
-				],
+				]
 			},
 			enterValue: [],
 			orgValue: [],
@@ -240,7 +262,10 @@ export default {
 			OrgId: 0,
 			isNotEnter: false,
 			permissionList: [],
-			ModuleList: []
+			ModuleList: [],
+			expandedKeys: [],
+			treeJ: 0,
+			parmaData: []
 		};
 	},
 	watch: {
@@ -250,6 +275,7 @@ export default {
 	},
 	created() {
 		this.getData();
+		this.getParamData();
 	},
 	methods: {
 		//机构类型
@@ -334,9 +360,34 @@ export default {
 			getAppMdules(parmas).then(res => {
 				if (res.data.success) {
 					this.appTreeData = res.data.data;
+					this.bianli(this.appTreeData);
 					this.appValue.push(this.appTreeData[0].Id);
 				}
 			});
+		},
+		getParamData() {
+			let parmas = {
+				groupcode: 'OPERATORS_CODE'
+			};
+			getParamData(parmas).then(res => {
+				if (res.data.success) {
+					this.parmaData = res.data.data;
+				}
+			});
+		},
+		bianli(checkedData) {
+			for (var i in checkedData) {
+				//过滤，只处理满足此条件的，不需要过滤则去掉这层if
+				if (checkedData[i].OrgId != null) {
+					this.expandedKeys[this.treeJ++] = checkedData[i].Id;
+				}
+				if (checkedData[i].children) {
+					this.bianli(checkedData[i].children);
+				} else {
+					continue;
+				}
+			}
+			return;
 		},
 		//获取权限列表
 		getPermissionList() {
@@ -348,6 +399,14 @@ export default {
 					this.permissionList = res.data.data;
 				}
 			});
+		},
+		defaultForm() {
+			this.form = {
+				EnterTypeId: '',
+				EnterId: '',
+				Compartor: '=',
+				OrgId: ''
+			};
 		},
 		//机构选择
 		enterTreeClick(e) {
@@ -403,7 +462,22 @@ export default {
 			console.log('onSelect', info);
 			this.selectedKeys = selectedKeys;
 		},
-		handleOk() {},
+		handleOk() {
+			let parmas = {
+				EnterTypeId: this.form.EnterTypeId,
+				EnterId: this.form.EnterId,
+				Compartor: this.form.Compartor,
+				OrgId: this.OrgId
+			};
+			setPermission(parmas, 'add').then(res => {
+				if (res.data.success) {
+					this.$message.success('添加成功!');
+					this.getPermissionList();
+					this.visible = false;
+					this.defaultForm();
+				}
+			});
+		},
 		handleCancel() {
 			this.visible = false;
 		},
@@ -420,21 +494,16 @@ export default {
 			});
 			console.log(result);
 			this.ModuleList = result;
-			// this.appTreeData.filter(item => {
-
-			// });
 		},
 		appTreeSave() {
 			let parmas = {
 				orgid: this.OrgId,
 				ModuleList: this.ModuleList
 			};
-			setPermission(parmas).then(res => {
+			setPermission(parmas, 'setpermission').then(res => {
 				if (res.data.success) {
 					this.$message.success('设置成功!');
 					this.ModuleList = [];
-				}else {
-					this.$message.warning(res.data.message.content);
 				}
 			});
 		}
@@ -443,7 +512,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .left-list {
 	padding: 10px 20px;
 	text-align: center;

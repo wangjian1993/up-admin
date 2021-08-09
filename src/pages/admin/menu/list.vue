@@ -1,3 +1,11 @@
+<!--
+ * @Author: max
+ * @Date: 2021-08-06 15:34:43
+ * @LastEditTime: 2021-08-09 17:41:26
+ * @LastEditors: max
+ * @Description: 菜单管理
+ * @FilePath: /up-admin/src/pages/admin/menu/list.vue
+-->
 <template>
 	<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
 		<div class="search-box">
@@ -5,7 +13,7 @@
 				<a-col :span="6">
 					<div>
 						<a-button @click="add" type="primary" icon="form">添加</a-button>
-						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
 						<span style="margin-left: 8px">
 							<template v-if="hasSelected">
 								{{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -491,8 +499,6 @@ export default {
 								this.defaultForm();
 								this.visible = false;
 								this.getMenuList();
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					} else {
@@ -506,8 +512,6 @@ export default {
 								this.getMenuList();
 								this.defaultForm();
 								this.visible = false;
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					}
@@ -529,8 +533,6 @@ export default {
 							self.selectedRowKeys = [];
 							self.$message.success('删除成功!');
 							self.getMenuList();
-						} else {
-							self.$message.warning(res.data.message.content);
 						}
 					});
 				},
@@ -545,8 +547,6 @@ export default {
 				if (res.data.success) {
 					this.$message.success('删除成功!');
 					this.getMenuList();
-				} else {
-					this.$message.warning(res.data.message.content);
 				}
 			});
 		},

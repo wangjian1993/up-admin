@@ -6,7 +6,7 @@
 				<a-col :span="6">
 					<div>
 						<a-button @click="add" type="primary" icon="form">添加</a-button>
-						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
 						<span style="margin-left: 8px">
 							<template v-if="hasSelected">
 								{{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -562,8 +562,6 @@ export default {
 								this.defaultForm();
 								this.visible = false;
 								this.getEnterList();
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					} else {
@@ -573,8 +571,6 @@ export default {
 								this.getEnterList();
 								this.defaultForm();
 								this.visible = false;
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					}
@@ -612,8 +608,6 @@ export default {
 				if (res.data.success) {
 					this.$message.success('删除成功!');
 					this.getEnterList();
-				} else {
-					this.$message.warning(res.data.message.content);
 				}
 			});
 		},

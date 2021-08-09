@@ -1,3 +1,11 @@
+<!--
+ * @Author: max
+ * @Date: 2021-08-06 15:34:43
+ * @LastEditTime: 2021-08-09 17:42:08
+ * @LastEditors: max
+ * @Description: 用户类型
+ * @FilePath: /up-admin/src/pages/admin/user/type.vue
+-->
 <template>
 	<a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
 		<div class="search-box">
@@ -5,7 +13,7 @@
 				<a-col :span="12">
 					<div>
 						<a-button @click="add" type="primary" icon="form">添加</a-button>
-						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+						<a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
 						<span style="margin-left: 8px">
 							<template v-if="hasSelected">
 								{{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -15,27 +23,34 @@
 				</a-col>
 				<a-col :span="12">
 					<a-form layout="horizontal" :form="searchForm">
-						<div>
-							<a-col :md="18" :sm="24">
-								<a-form-item label="用户类型编码/名称" :labelCol="{ span: 8 }" :wrapperCol="{ span: 14, offset: 1 }">
-									<a-input
-										placeholder="请输入"
-										allowClear
-										v-decorator="[
-											'searcValue',
-											{
-												rules: [{ required: true, message: '机构类型编码/名称!' }]
-											}
-										]"
-									/>
-								</a-form-item>
-							</a-col>
-						</div>
-						<span style="float: right; margin-top: 3px;">
-							<a-button type="primary" @click="search">查询</a-button>
-							<a-button style="margin-left: 8px" @click="reset">重置</a-button>
-						</span>
-					</a-form>
+            <div>
+              <a-col :md="18" :sm="24">
+                <a-form-item
+                  label="用户类型编码/名称"
+                  :labelCol="{ span: 8 }"
+                  :wrapperCol="{ span: 14, offset: 1 }"
+                >
+                  <a-input-search
+                    placeholder="请输入"
+                    allowClear
+                    enter-button="搜索"
+                    @search="search"
+                    v-decorator="[
+                      'searcValue',
+                      {
+                        rules: [
+                          { required: true, message: '用户类型编码/名称!' },
+                        ],
+                      },
+                    ]"
+                  />
+                </a-form-item>
+              </a-col>
+            </div>
+            <span style="float: left; margin-top: 5px;">
+              <a-button @click="reset" icon="reload">重置</a-button>
+            </span>
+          </a-form>
 				</a-col>
 			</a-row>
 		</div>
@@ -354,8 +369,6 @@ export default {
 								this.defaultForm();
 								this.visible = false;
 								this.getUserTypeList();
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					} else {
@@ -365,8 +378,6 @@ export default {
 								this.getUserTypeList();
 								this.defaultForm();
 								this.visible = false;
-							} else {
-								this.$message.warning(res.data.message.content);
 							}
 						});
 					}
@@ -404,8 +415,6 @@ export default {
 				if (res.data.success) {
 					this.$message.success('删除成功!');
 					this.getUserTypeList();
-				} else {
-					this.$message.warning(res.data.message.content);
 				}
 			});
 		},
