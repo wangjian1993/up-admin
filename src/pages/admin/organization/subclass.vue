@@ -123,21 +123,19 @@ import { getEnterTree, getOrganizationList, getOrginfo, orginfoAction, getOrgLev
 import UserList from './components/user-list.vue';
 const columns = [
 	{
-		title: '组织编码',
-		dataIndex: 'OrgCode',
-		scopedSlots: { customRender: 'OrgCode' },
-		align: 'center'
-	},
-	{
 		title: '组织名称',
 		dataIndex: 'OrgName',
 		scopedSlots: { customRender: 'OrgName' },
-		align: 'center'
+		width: '20%',
+	},
+	{
+		title: '组织编码',
+		dataIndex: 'OrgCode',
 	},
 	{
 		title: '所属机构',
-		dataIndex: '1',
-		scopedSlots: { customRender: '1' },
+		dataIndex: 'EnterName',
+		scopedSlots: { customRender: 'EnterName' },
 		align: 'center'
 	},
 	{

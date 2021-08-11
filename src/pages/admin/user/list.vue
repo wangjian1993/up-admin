@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-10 11:47:44
+ * @LastEditTime: 2021-08-11 17:23:04
  * @LastEditors: max
  * @Description: 用户列表
  * @FilePath: /up-admin/src/pages/admin/user/list.vue
@@ -55,7 +55,7 @@
           </div>
           <div class="search-box">
             <a-row>
-              <a-col :span="12">
+              <a-col :span="8">
                 <div>
                   <a-button @click="add" type="primary" icon="form">添加</a-button>
                   <a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>

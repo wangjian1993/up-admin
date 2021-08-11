@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-08-10 11:26:58
+ * @LastEditTime: 2021-08-11 17:29:43
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -108,14 +108,6 @@
                 onChange: onSelectChange,
               }"
             >
-              <template v-for="col in ['name', 'age', 'address']" :slot="col" slot-scope="text, record">
-                <div :key="col">
-                  <a-input v-if="record.editable" allowClear style="margin: -5px 0" :value="text" @change="(e) => handleChange(e.target.value, record.key, col)" />
-                  <template v-else>
-                    {{ text }}
-                  </template>
-                </div>
-              </template>
               <template slot="operation">
                 <div>
                   <a style="margin-right: 8px">
@@ -396,10 +388,13 @@ export default {
     },
     //组织选择
     orgTreeClick(e) {
+      console.log("组织切换====");
       this.OrgId = e[0];
       this.getAppMdules();
       this.appTreeData = [];
       this.appValue = [];
+      this.expandedKeys =[];
+      this.getPermissionList();
     },
     //应用选择
     appTreeClick(e) {
@@ -478,7 +473,7 @@ export default {
     },
     appTreeSave() {
       let parmas = {
-        orgid: this.OrgId,
+        OrgId: this.OrgId,
         ModuleList: this.ModuleList,
       };
       setPermission(parmas, "setpermission").then((res) => {
@@ -488,23 +483,28 @@ export default {
         }
       });
     },
-	//多选删除
+    //多选删除 
     allDel() {
       let self = this;
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
           const params = [];
+          console.log(self.selectedRowKeys);
           self.selectedRowKeys.forEach((item) => {
-            params.push(self.data[item].OrgDimensionId);
+            console.log(self.permissionList[item])
+            params.push({
+              EnterTypeId: self.permissionList[item].EnterTypeId,
+              EnterId: self.permissionList[item].EnterId,
+              Compartor: self.permissionList[item].Compartor,
+              OrgId: self.permissionList[item].OrgId,
+            });
           });
           setPermission(params, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
-              self.getOrganizationList();
-            } else {
-              self.$message.warning(res.data.message.content);
+              self.getPermissionList();
             }
           });
         },
@@ -550,6 +550,10 @@ export default {
   }
 }
 .card-title {
+  display:inline-block;
   padding: 0 10px;
+  height: 32px;
+  display: flex;
+  align-items: center;
 }
 </style>

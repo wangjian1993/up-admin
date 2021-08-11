@@ -75,15 +75,9 @@
 <script>
 const columns = [
 	{
-		title: '序号',
-		scopedSlots: { customRender: 'index' },
-		align: 'center'
-	},
-	{
 		title: '组织名称',
 		dataIndex: 'OrgName',
 		scopedSlots: { customRender: 'OrgName' },
-		align: 'center'
 	},
 	{
 		title: '组织编码',
