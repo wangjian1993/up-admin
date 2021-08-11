@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-08-09 11:08:06
+ * @LastEditTime: 2021-08-10 10:05:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/axios-interceptors.js
@@ -19,7 +19,7 @@ const resp401 = {
 		const {
 			message
 		} = options
-		console.log(response);
+		// console.log(response);
 		if (response.status === 401) {
 			message.error('token失效,请重新登陆!')
 		}

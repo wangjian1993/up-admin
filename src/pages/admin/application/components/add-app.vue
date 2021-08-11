@@ -1,47 +1,19 @@
 <template>
   <div>
-    <app-icon
-      v-if="isIcon"
-      @closeModal="closeModal"
-      @iconClick="iconClick"
-    ></app-icon>
-    <a-modal
-      :title="isEdit ? '编辑应用' : '添加应用'"
-      v-if="visible"
-      :visible="visible"
-      :width="800"
-      centered
-      :confirm-loading="confirmLoading"
-      @ok="handleOk"
-      @cancel="handleCancel"
-    >
+    <app-icon v-if="isIcon" @closeModal="closeModal" @iconClick="iconClick"></app-icon>
+    <a-modal :title="isEdit ? '编辑应用' : '添加应用'" v-if="visible" :visible="visible" :width="800" centered :confirm-loading="confirmLoading" @ok="handleOk" @cancel="handleCancel">
       <a-tabs default-active-key="1">
         <a-tab-pane key="1" tab="基本信息">
-          <a-form-model
-            ref="ruleForm"
-            :model="form"
-            :rules="rules"
-            :label-col="labelCol"
-            :wrapper-col="wrapperCol"
-          >
+          <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-row>
               <a-col :span="12">
                 <a-form-model-item ref="AppLogo" label="图标">
-                  <a-input
-                    style="width: 150px"
-                    disabled
-                    v-model="form.AppLogo"
-                  />
+                  <a-input style="width: 150px" disabled v-model="form.AppLogo" />
                   <a-button type="primary" @click="iconSelect()">选择</a-button>
                 </a-form-model-item>
               </a-col>
               <a-col :span="12">
-                <a-form-model-item
-                  ref="AppName"
-                  has-feedback
-                  label="应用名称"
-                  prop="AppName"
-                >
+                <a-form-model-item ref="AppName" has-feedback label="应用名称" prop="AppName">
                   <a-input
                     v-model="form.AppName"
                     placeholder="请输入应用名称"
@@ -55,12 +27,7 @@
                 </a-form-model-item>
               </a-col>
               <a-col :span="12">
-                <a-form-model-item
-                  ref="AppCode"
-                  has-feedback
-                  label="应用编码"
-                  prop="AppCode"
-                >
+                <a-form-model-item ref="AppCode" has-feedback label="应用编码" prop="AppCode">
                   <a-input
                     v-model="form.AppCode"
                     placeholder="请输入应用编码"
@@ -74,22 +41,9 @@
                 </a-form-model-item>
               </a-col>
               <a-col :span="12">
-                <a-form-model-item
-                  ref="AppTypeId"
-                  has-feedback
-                  label="应用类型"
-                  prop="AppTypeId"
-                >
-                  <a-select
-                    v-model="form.AppTypeId"
-                    placeholder="请选择用户类型"
-                  >
-                    <a-select-option
-                      v-for="item in appTypeList"
-                      :key="item.AppTypeId"
-                      :value="item.AppTypeId"
-                      >{{ item.AppTypeName }}</a-select-option
-                    >
+                <a-form-model-item ref="AppTypeId" has-feedback label="应用类型" prop="AppTypeId">
+                  <a-select v-model="form.AppTypeId" placeholder="请选择用户类型">
+                    <a-select-option v-for="item in appTypeList" :key="item.AppTypeId" :value="item.AppTypeId">{{ item.AppTypeName }}</a-select-option>
                   </a-select>
                 </a-form-model-item>
               </a-col>
@@ -102,17 +56,16 @@
                 </a-form-model-item>
               </a-col>
               <a-col :span="12">
-                <a-form-model-item ref="Gender" label="是否启用">
-                  <a-radio-group v-model="form.resource">
-                    <a-radio value="1">是</a-radio>
-                    <a-radio value="2">否</a-radio>
+                <a-form-model-item ref="Enable" label="是否启用">
+                  <a-radio-group v-model="form.Enable">
+                    <a-radio value="Y">是</a-radio>
+                    <a-radio value="N">否</a-radio>
                   </a-radio-group>
                 </a-form-model-item>
               </a-col>
               <a-col :span="12">
                 <a-form-model-item ref="AppSortNo" has-feedback label="序号">
                   <a-input-number
-                    id="AppSortNo"
                     v-model="form.AppSortNo"
                     :min="1"
                     placeholder="请输入应用序号"
@@ -126,24 +79,14 @@
               </a-col>
               <a-col :span="12">
                 <a-form-model-item ref="AppDesc" label="描述">
-                  <a-textarea
-                    v-model="form.AppDesc"
-                    placeholder="请输入应用描述"
-                    :auto-size="{ minRows: 3, maxRows: 5 }"
-                  />
+                  <a-textarea v-model="form.AppDesc" placeholder="请输入应用描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
                 </a-form-model-item>
               </a-col>
             </a-row>
           </a-form-model>
         </a-tab-pane>
         <a-tab-pane key="2" tab="应用首页">
-          <a-form-model
-            ref="ruleForm"
-            :model="form"
-            :rules="rules"
-            :label-col="labelCol"
-            :wrapper-col="wrapperCol"
-          >
+          <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-row>
               <a-col :span="24">
                 <a-form-model-item ref="IsAuth" label="是否授权">
@@ -155,18 +98,22 @@
               </a-col>
               <a-col :span="24">
                 <a-form-model-item ref="LayoutTypeCode" label="布局">
-                  <a-radio-group v-model="form.LayoutTypeCode">
-                    <a-radio value="1">单页面</a-radio>
-                    <a-radio value="2">多页面</a-radio>
-                    <a-radio value="2">外部链接</a-radio>
+                  <a-radio-group v-model="form.LayoutTypeCode" v-for="item in layoutList" :key="item.ParamId">
+                    <a-radio :value="item.ParamCode">{{ item.ParamName }}</a-radio>
                   </a-radio-group>
                 </a-form-model-item>
               </a-col>
               <a-col :span="24">
                 <a-form-model-item ref="Gender" label="配置类型">
-                  <a-radio-group v-model="form.ConfigTypeCode">
-                    <a-radio value="1">Iframe</a-radio>
-                    <a-radio value="2">VUE组件</a-radio>
+                  <a-radio-group v-model="form.ConfigTypeCode" v-for="item in configTypeList" :key="item.ParamId">
+                    <a-radio :value="item.ParamCode">{{ item.ParamName }}</a-radio>
+                  </a-radio-group>
+                </a-form-model-item>
+              </a-col>
+              <a-col :span="24">
+                <a-form-model-item ref="Gender" label="访问方式">
+                  <a-radio-group v-model="form.AccessTypeCode" v-for="item in linkTypeList" :key="item.ParamId">
+                    <a-radio :value="item.ParamCode">{{ item.ParamName }}</a-radio>
                   </a-radio-group>
                 </a-form-model-item>
               </a-col>
@@ -180,14 +127,6 @@
                   <a-input v-model="form.MouduleParam" placeholder="组件参数" />
                 </a-form-model-item>
               </a-col>
-              <a-col :span="24">
-                <a-form-model-item ref="Gender" label="访问方式">
-                  <a-radio-group v-model="form.AccessTypeCode">
-                    <a-radio value="1">URL访问</a-radio>
-                    <a-radio value="2">新窗口</a-radio>
-                  </a-radio-group>
-                </a-form-model-item>
-              </a-col>
             </a-row>
           </a-form-model>
         </a-tab-pane>
@@ -196,7 +135,7 @@
   </div>
 </template>
 <script>
-import { getAppTypeList, appInfoAction, uploadFile } from "@/services/admin.js";
+import { getAppTypeList, appInfoAction, uploadFile, getParamData } from "@/services/admin.js";
 function getBase64(img, callback) {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result));
@@ -221,7 +160,7 @@ export default {
         AppDesc: "",
         AppLogo: "",
         AppTypeId: "",
-        AccessTypeCode: "",
+        AccessTypeCode: "module",
         AppSortNo: 1,
         ConfigTypeCode: "",
         IsAuth: 1,
@@ -229,6 +168,7 @@ export default {
         LayoutTypeCode: "",
         MouduleParam: "",
         MouduleUrl: "",
+        Enable: "Y",
       },
       rules: {
         AppName: [
@@ -269,10 +209,14 @@ export default {
       imageUrl: "",
       roleList: [],
       isIcon: false,
+      layoutList: [],
+      configTypeList: [],
+      linkTypeList: [],
     };
   },
   created() {
     this.getAppTypeList();
+    this.getParamData();
     if (this.isEdit) {
       this.form = this.editForm;
       this.imageUrl = this.editForm.AppLogoUrl;
@@ -286,6 +230,32 @@ export default {
     // }
   },
   methods: {
+    getParamData() {
+      let parmas = {
+        groupcode: "LAYOUT",
+      };
+      let parmas1 = {
+        groupcode: "CONFIG_TYPE",
+      };
+      let parmas2 = {
+        groupcode: "LINK_TYPE",
+      };
+      getParamData(parmas1).then((res) => {
+        if (res.data.success) {
+          this.configTypeList = res.data.data;
+        }
+      });
+      getParamData(parmas2).then((res) => {
+        if (res.data.success) {
+          this.linkTypeList = res.data.data;
+        }
+      });
+      getParamData(parmas).then((res) => {
+        if (res.data.success) {
+          this.layoutList = res.data.data;
+        }
+      });
+    },
     iconClick(item) {
       this.form.AppLogo = item;
       this.isIcon = false;
@@ -297,7 +267,7 @@ export default {
         AppDesc: "",
         AppLogo: "",
         AppTypeId: "",
-        AccessTypeCode: "",
+        AccessTypeCode: "module",
         AppSortNo: 1,
         ConfigTypeCode: "",
         IsAuth: "",
@@ -305,6 +275,7 @@ export default {
         LayoutTypeCode: "",
         MouduleParam: "",
         MouduleUrl: "",
+        Enable: "Y",
       };
     },
     uploadImg(info) {
@@ -330,10 +301,11 @@ export default {
       });
     },
     closeModal() {
-      this.isListClass = false;
+      console.log("1111111111111");
+      this.isIcon = false;
     },
     enableChange(e) {
-      this.form.Gender = e.target.value;
+      this.form.Enable = e.target.value;
     },
     handleChange(info) {
       if (info.file.status === "error") {
@@ -343,8 +315,7 @@ export default {
       }
     },
     beforeUpload(file) {
-      const isJpgOrPng =
-        file.type === "image/jpeg" || file.type === "image/png";
+      const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
       if (!isJpgOrPng) {
         this.$message.error("请选择jpg或者png格式图片");
       }
@@ -398,7 +369,7 @@ export default {
               AppDesc: this.form.AppDesc,
               AppLogo: this.form.AppLogo,
               AppTypeId: this.form.AppTypeId,
-              AccessTypeCode: this.form.AccessTypeCode,
+              AccessTypeCode: this.form.LayoutTypeCode,
               AppSortNo: this.form.AppSortNo,
               ConfigTypeCode: this.form.ConfigTypeCode,
               IsAuth: this.form.IsAuth,
@@ -406,6 +377,7 @@ export default {
               LayoutTypeCode: this.form.LayoutTypeCode,
               MouduleParam: this.form.MouduleParam,
               MouduleUrl: this.form.MouduleUrl,
+              Enable: this.form.Enable,
             };
             appInfoAction(params, "update").then((res) => {
               if (res.data.success) {
@@ -416,7 +388,6 @@ export default {
               }
             });
           } else {
-            this.form.AppLogo = this.fileData.ResourceId || "";
             appInfoAction(this.form, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");

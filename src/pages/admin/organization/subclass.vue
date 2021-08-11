@@ -4,11 +4,13 @@
 			<a-col style="padding: 0 5px" :span="6">
 				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 0px', padding: '5px' }">
 					<p>机构选择</p>
-					<a-tree @select="treeClick" :tree-data="treeList" :replaceFields="replaceFields" default-expand-all :default-selected-keys="enterValue"></a-tree>
+					<a-tree @select="treeClick" v-if="treeList.length" :tree-data="treeList" :replaceFields="replaceFields" default-expand-all :default-selected-keys="enterValue"></a-tree>
+					<a-empty v-if="treeList.length == 0" />
 				</a-card>
 				<a-card class="card" :bordered="false" :bodyStyle="{ margin: '5px', padding: '5px' }">
 					<p>组织维度选择</p>
-					<a-tree @select="leverClick" :default-selected-keys="leverValue" :tree-data="orgList" :replaceFields="replaceFields1">{{ orgList }}</a-tree>
+					<a-tree @select="leverClick" v-if="orgList.length" :default-selected-keys="leverValue" :tree-data="orgList" :replaceFields="replaceFields1">{{ orgList }}</a-tree>
+					<a-empty v-if="orgList.length == 0" />
 				</a-card>
 			</a-col>
 			<a-col :span="12" style="padding: 0 0px">
@@ -133,6 +135,12 @@ const columns = [
 		align: 'center'
 	},
 	{
+		title: '所属机构',
+		dataIndex: '1',
+		scopedSlots: { customRender: '1' },
+		align: 'center'
+	},
+	{
 		title: '等级',
 		dataIndex: 'OrgLevelName',
 		scopedSlots: { customRender: 'OrgLevelName' },
@@ -156,7 +164,7 @@ export default {
 				title: 'EnterName',
 				key: 'Id',
 				value: 'Id',
-				children: 'SubTreeModel'
+				children: 'children'
 			},
 			fieldNames: {
 				label: 'OrgDimensionName',
@@ -417,17 +425,17 @@ export default {
 			self.$confirm({
 				title: '确定要删除选中内容',
 				onOk() {
-					const params = [];
-					self.selectedRowKeys.forEach(item => {
-						params.push(self.tabData[item].OrgId);
-					});
-					orginfoAction(params, 'delete').then(res => {
+					// const params = [];
+					// console.log("self.selectedRowKeys",self.selectedRowKeys)
+					// self.selectedRowKeys.forEach(item => {
+					// 	console.log("self.tabData[item]",self.tabData[item])
+					// 	params.push(self.tabData[item].OrgId);
+					// });
+					orginfoAction(self.selectedRowKeys, 'delete').then(res => {
 						if (res.data.success) {
 							self.selectedRowKeys = [];
 							self.$message.success('删除成功!');
 							self.getOrginfo();
-						} else {
-							self.$message.warning(res.data.message.content);
 						}
 					});
 				},

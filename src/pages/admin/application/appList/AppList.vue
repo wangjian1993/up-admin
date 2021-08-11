@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-09 17:40:01
+ * @LastEditTime: 2021-08-10 14:07:34
  * @LastEditors: max
  * @Description: 应用列表
  * @FilePath: /up-admin/src/pages/admin/application/appList/AppList.vue
@@ -14,15 +14,7 @@
         <a-col :span="12">
           <div>
             <a-button @click="add" type="primary" icon="form">添加</a-button>
-            <a-button
-              type="primary"
-              :disabled="!hasSelected"
-              :loading="loading"
-              @click="allDel"
-              icon="delete"
-              style="margin-left: 8px"
-              >删除</a-button
-            >
+            <a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
             <span style="margin-left: 8px">
               <template v-if="hasSelected">
                 {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -31,47 +23,36 @@
           </div>
         </a-col>
         <a-col :span="12">
-          <a-form layout="horizontal" :form="searchForm">
-            <div>
-              <a-col :md="18" :sm="24">
-                <a-form-item
-                  label="应用编码/名称"
-                  :labelCol="{ span: 8 }"
-                  :wrapperCol="{ span: 14, offset: 1 }"
-                >
-                  <a-input-search
-                    placeholder="请输入"
-                    allowClear
-                    enter-button="搜索"
-                    @search="search"
-                    v-decorator="[
-                      'searcValue',
-                      {
-                        rules: [
-                          { required: true, message: '机构类型编码/名称!' },
-                        ],
-                      },
-                    ]"
-                  />
-                </a-form-item>
-              </a-col>
-            </div>
-            <span style="float: left; margin-top: 5px;">
-              <a-button @click="reset" icon="reload">重置</a-button>
-            </span>
-          </a-form>
+          <a-row type="flex" justify="end">
+            <a-col :span="6">
+              <a-form layout="horizontal" :form="searchForm">
+                <div>
+                  <a-form-item :wrapperCol="{ span: 24, offset: 1 }">
+                    <a-input
+                      placeholder="请输入应用编码/名称"
+                      allowClear
+                      v-decorator="[
+                        'searcValue',
+                        {
+                          rules: [{ required: true, message: '请输入应用编码/名称!' }],
+                        },
+                      ]"
+                    />
+                  </a-form-item>
+                </div>
+              </a-form>
+            </a-col>
+            <a-col :span="6">
+              <span style="float: left; margin-top: 3px;">
+                <a-button type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
+                <a-button @click="reset" icon="reload">重置</a-button>
+              </span>
+            </a-col>
+          </a-row>
         </a-col>
       </a-row>
     </div>
-    <div>
-      <add-app
-        v-if="visible"
-        @cloneModal="cloneModal"
-        :isEdit="isEdit"
-        :editForm="editForm"
-        @succeed="getAppInfoList"
-      ></add-app>
-    </div>
+    <div><add-app v-if="visible" @cloneModal="cloneModal" :isEdit="isEdit" :editForm="editForm" @succeed="getAppInfoList"></add-app></div>
     <!-- 表格列表 -->
     <div class="tab">
       <a-table
@@ -90,13 +71,11 @@
       >
         <template slot="index" slot-scope="text, record, index">
           <div>
-            <span>{{
-              (pagination.current - 1) * pagination.pageSize + (index + 1)
-            }}</span>
+            <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
         <template slot="AppLogo" slot-scope="text, record">
-          <div><a-avatar :src="record.AppLogoUrl" /></div>
+          <div><a-icon :type="record.AppLogo" /></div>
         </template>
         <template slot="enable" slot-scope="record">
           <div>
@@ -132,44 +111,18 @@
     </div>
     <!-- 查看详情 -->
     <div>
-      <a-drawer
-        width="400"
-        placement="right"
-        :closable="true"
-        :visible="isDrawer"
-        @close="onClose"
-      >
+      <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
         <a-descriptions title="应用详情" :column="1">
-          <a-descriptions-item label="应用图标"
-            ><a-avatar :src="drawerItem.AppLogoUrl"
-          /></a-descriptions-item>
-          <a-descriptions-item label="应用编码">{{
-            drawerItem.AppCode
-          }}</a-descriptions-item>
-          <a-descriptions-item label="应用名称">{{
-            drawerItem.AppName
-          }}</a-descriptions-item>
-          <a-descriptions-item label="应用类型">{{
-            drawerItem.AppTypeName
-          }}</a-descriptions-item>
-          <a-descriptions-item label="应用序号">{{
-            drawerItem.AppSortNo
-          }}</a-descriptions-item>
-          <a-descriptions-item label="布局">{{
-            drawerItem.LayoutTypeCode
-          }}</a-descriptions-item>
-          <a-descriptions-item label="配置类型">{{
-            drawerItem.ConfigTypeCode
-          }}</a-descriptions-item>
-          <a-descriptions-item label="组件路径">{{
-            drawerItem.MouduleUrl
-          }}</a-descriptions-item>
-          <a-descriptions-item label="组件参数">{{
-            drawerItem.MouduleParam
-          }}</a-descriptions-item>
-          <a-descriptions-item label="访问方式">{{
-            drawerItem.AccessTypeCode
-          }}</a-descriptions-item>
+          <a-descriptions-item label="应用图标"><a-icon :type="drawerItem.AppLogo"/></a-descriptions-item>
+          <a-descriptions-item label="应用编码">{{ drawerItem.AppCode }}</a-descriptions-item>
+          <a-descriptions-item label="应用名称">{{ drawerItem.AppName }}</a-descriptions-item>
+          <a-descriptions-item label="应用类型">{{ drawerItem.AppTypeName }}</a-descriptions-item>
+          <a-descriptions-item label="应用序号">{{ drawerItem.AppSortNo }}</a-descriptions-item>
+          <a-descriptions-item label="布局">{{ drawerItem.LayoutTypeCode }}</a-descriptions-item>
+          <a-descriptions-item label="配置类型">{{ drawerItem.ConfigTypeCode }}</a-descriptions-item>
+          <a-descriptions-item label="组件路径">{{ drawerItem.MouduleUrl }}</a-descriptions-item>
+          <a-descriptions-item label="组件参数">{{ drawerItem.MouduleParam }}</a-descriptions-item>
+          <a-descriptions-item label="访问方式">{{ drawerItem.AccessTypeCode }}</a-descriptions-item>
           <a-descriptions-item label="共享">
             <div>
               <a-tag color="green" v-if="drawerItem.IsShare == 'Y'">是</a-tag>
@@ -188,15 +141,9 @@
               <a-tag color="red" v-else>禁用</a-tag>
             </div>
           </a-descriptions-item>
-          <a-descriptions-item label="描述">{{
-            drawerItem.AppDesc
-          }}</a-descriptions-item>
-          <a-descriptions-item label="添加人">{{
-            drawerItem.UserCreated
-          }}</a-descriptions-item>
-          <a-descriptions-item label="添加时间">{{
-            drawerItem.DateTimeCreated
-          }}</a-descriptions-item>
+          <a-descriptions-item label="描述">{{ drawerItem.AppDesc }}</a-descriptions-item>
+          <a-descriptions-item label="添加人">{{ drawerItem.UserCreated }}</a-descriptions-item>
+          <a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
         </a-descriptions>
       </a-drawer>
     </div>
@@ -272,8 +219,7 @@ export default {
         showLessItems: true,
         showQuickJumper: true,
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) =>
-          `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
+        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       searcValue: "",
       searchForm: this.$form.createForm(this),

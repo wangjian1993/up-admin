@@ -215,11 +215,16 @@ const options = {
 							meta: {
 								icon: "menu",
 							},
-							component: () =>
-							import(
-								/* webpackChunkName: 'menu' */
-								"@/pages/admin/menu"
-							)
+							component: BlankView,
+							children: [{
+								path: "list",
+								name: "菜单列表",
+								component: () =>
+									import(
+										/* webpackChunkName: 'menu' */
+										"@/pages/admin/menu"
+									),
+							}, ],
 						},
 						{
 							path: "application",

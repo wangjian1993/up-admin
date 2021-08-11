@@ -1,40 +1,20 @@
 <template>
-  <a-form-model
-    ref="ruleForm"
-    :model="form"
-    :rules="rules"
-    :label-col="labelCol"
-    :wrapper-col="wrapperCol"
-  >
+  <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
     <a-row>
       <a-col :span="12">
-        <a-form-model-item
-          ref="EnterCode"
-          label="机构编码"
-          prop="EnterCode"
-          :labelCol="{ span: 6 }"
-        >
+        <a-form-model-item ref="EnterCode" label="机构编码" prop="EnterCode" :labelCol="{ span: 6 }">
           <a-select v-model="form.EnterCode" placeholder="选择机构" @change="enterTypeOption">
-            <a-select-option
-              v-for="(item, index) in selectList"
-              :key="index"
-              :value="item.EnterTypeCode"
-            >
+            <a-select-option v-for="(item, index) in selectList" :key="index" :value="item.EnterTypeCode">
               {{ item.EnterTypeCode }}
             </a-select-option>
           </a-select>
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
-        <a-form-model-item
-          ref="EnterEMail"
-          label="管理员邮箱"
-          prop="EnterEMail"
-          :labelCol="{ span: 6 }"
-        >
+        <a-form-model-item ref="EnterEMail" label="管理员邮箱" prop="EnterEMail" :labelCol="{ span: 6 }">
           <a-input
             v-model="form.EnterEMail"
-			allowClear
+            allowClear
             @blur="
               () => {
                 $refs.EnterEMail.onFieldBlur();
@@ -44,12 +24,7 @@
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
-        <a-form-model-item
-          ref="EnterName"
-          label="公司中文名"
-          prop="EnterName"
-          :labelCol="{ span: 6 }"
-        >
+        <a-form-model-item ref="EnterName" label="公司中文名" prop="EnterName" :labelCol="{ span: 6 }">
           <a-input
             v-model="form.EnterName"
             @blur="
@@ -61,14 +36,10 @@
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
-        <a-form-model-item
-          label="公司简称(中文)"
-          prop="region"
-          :labelCol="{ span: 6 }"
-        >
+        <a-form-model-item label="公司简称(中文)" prop="region" :labelCol="{ span: 6 }">
           <a-input
             v-model="form.EnterShortName"
-			allowClear
+            allowClear
             @blur="
               () => {
                 $refs.name.onFieldBlur();
@@ -79,49 +50,41 @@
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="公司英文名" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterEnName" allowClear/>
+          <a-input v-model="form.EnterEnName" allowClear />
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="上级机构" :labelCol="{ span: 6 }">
-          <a-input v-model="form.SuperiorEnterId" allowClear/>
+          <a-input v-model="form.SuperiorEnterId" allowClear />
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="公司简称(英文)" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterShortEnName" allowClear/>
+          <a-input v-model="form.EnterShortEnName" allowClear />
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="公司域名" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterUrl" allowClear/>
+          <a-input v-model="form.EnterUrl" allowClear />
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="公司法人" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterCorporate" allowClear/>
+          <a-input v-model="form.EnterCorporate" allowClear />
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="营业执照编码" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterLicense" allowClear/>
+          <a-input v-model="form.EnterLicense" allowClear />
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="公司描述" :labelCol="{ span: 6 }">
-          <a-textarea
-            v-model="form.EnterDesc"
-            placeholder="Controlled autosize"
-            :auto-size="{ minRows: 3, maxRows: 5 }"
-          />
+          <a-textarea v-model="form.EnterDesc" placeholder="Controlled autosize" :auto-size="{ minRows: 3, maxRows: 5 }" />
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
-        <a-form-model-item
-          label="机构类型"
-          prop="region"
-          :labelCol="{ span: 6 }"
-        >
+        <a-form-model-item label="机构类型" prop="region" :labelCol="{ span: 6 }">
           <a-input
             v-model="form.EnterTypeName"
             @blur="
@@ -133,11 +96,7 @@
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
-        <a-form-model-item
-          ref="Enable"
-          label="是否默认"
-          :labelCol="{ span: 6 }"
-        >
+        <a-form-model-item ref="Enable" label="是否默认" :labelCol="{ span: 6 }">
           <a-radio-group :default-value="form.Enable" button-style="solid">
             <a-radio-button value="N">
               否
@@ -150,22 +109,22 @@
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="联系人" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterContacts" allowClear/>
+          <a-input v-model="form.EnterContacts" allowClear />
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="联系电话" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterPhone" allowClear/>
+          <a-input v-model="form.EnterPhone" allowClear />
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="地址" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterAddr" allowClear/>
+          <a-input v-model="form.EnterAddr" allowClear />
         </a-form-model-item>
       </a-col>
       <a-col :span="12">
         <a-form-model-item label="传真" :labelCol="{ span: 6 }">
-          <a-input v-model="form.EnterFax" allowClear/>
+          <a-input v-model="form.EnterFax" allowClear />
         </a-form-model-item>
       </a-col>
     </a-row>
@@ -222,13 +181,13 @@ export default {
             trigger: "blur",
           },
         ],
-        EnterTypeName:[
+        EnterTypeName: [
           {
             required: true,
             message: "请选择机构类型",
             trigger: "blur",
           },
-        ]
+        ],
       },
     };
   },
@@ -258,13 +217,13 @@ export default {
         }
       });
     },
-    enterTypeOption(value){
+    enterTypeOption(value) {
       console.log(value);
-       this.selectList.filter((item)=>{
-         if(item.EnterTypeCode == value){
-           this.form.EnterTypeName = item.EnterTypeName
-         }
-       })
+      this.selectList.filter((item) => {
+        if (item.EnterTypeCode == value) {
+          this.form.EnterTypeName = item.EnterTypeName;
+        }
+      });
     },
     resetForm() {
       this.$refs.ruleForm.resetFields();

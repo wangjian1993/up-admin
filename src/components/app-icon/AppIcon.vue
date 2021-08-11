@@ -1,3 +1,11 @@
+<!--
+ * @Author: max
+ * @Date: 2021-08-03 14:49:07
+ * @LastEditTime: 2021-08-10 10:15:19
+ * @LastEditors: max
+ * @Description: 图标
+ * @FilePath: /up-admin/src/components/app-icon/AppIcon.vue
+-->
 <template>
 	<div>
 		<a-modal title="图标选择" :visible="visible" :width="800" centered :footer="null" :confirm-loading="confirmLoading" @cancel="handleCancel">
@@ -25,7 +33,8 @@ export default {
 	},
 	methods: {
 		handleCancel() {
-			this.$emit("handleCancel")
+			console.log("guanbi")
+			this.$emit("closeModal")
 		},
 		iconClick(item){
 			this.$emit("iconClick",item)

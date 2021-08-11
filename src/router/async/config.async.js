@@ -1,3 +1,11 @@
+/*
+ * @Author: max
+ * @Date: 2021-06-23 09:27:52
+ * @LastEditTime: 2021-08-11 13:56:18
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/router/async/config.async.js
+ */
 import routerMap from './router.map'
 import {parseRoutes} from '@/utils/routerUtil'
 

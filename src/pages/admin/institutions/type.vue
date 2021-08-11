@@ -1,26 +1,19 @@
+<!--
+ * @Author: max
+ * @Date: 2021-08-06 15:34:43
+ * @LastEditTime: 2021-08-10 10:35:10
+ * @LastEditors: max
+ * @Description: 组织管理
+ * @FilePath: /up-admin/src/pages/admin/institutions/type.vue
+-->
 <template>
-  <a-card
-    class="card"
-    :bordered="false"
-    :bodyStyle="{ padding: '5px' }"
-  >
+  <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <div class="search-box">
       <a-row>
         <a-col :span="12">
           <div>
-            <a-button
-              @click="add"
-              type="primary"
-              icon="form"
-            >添加</a-button>
-            <a-button
-              icon="delete"
-              type="primary"
-              :disabled="!hasSelected"
-              :loading="loading"
-              @click="allDel"
-              style="margin-left: 8px"
-            >删除</a-button>
+            <a-button @click="add" type="primary" icon="form">添加</a-button>
+            <a-button icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
             <span style="margin-left: 8px">
               <template v-if="hasSelected">
                 {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -29,138 +22,83 @@
           </div>
         </a-col>
         <a-col :span="12">
-           <a-form layout="horizontal" :form="searchForm">
-            <div>
-              <a-col :md="18" :sm="24">
-                <a-form-item
-                  label="机构类型编码/名称"
-                  :labelCol="{ span: 8 }"
-                  :wrapperCol="{ span: 14, offset: 1 }"
-                >
-                  <a-input-search
-                    placeholder="请输入"
-                    allowClear
-                    enter-button="搜索"
-                    @search="search"
-                    v-decorator="[
-                      'searcValue',
-                      {
-                        rules: [
-                          { required: true, message: '机构类型编码/名称!' },
-                        ],
-                      },
-                    ]"
-                  />
-                </a-form-item>
-              </a-col>
-            </div>
-            <span style="float: left; margin-top: 5px;">
-              <a-button @click="reset" icon="reload">重置</a-button>
-            </span>
-          </a-form>
+          <a-row type="flex" justify="end">
+            <a-col :span="6">
+              <a-form layout="horizontal" :form="searchForm">
+                <div>
+                  <a-form-item :wrapperCol="{ span: 24, offset: 1 }">
+                    <a-input
+                      placeholder="请输入机构类型编码/名称"
+                      allowClear
+                      v-decorator="[
+                        'searcValue',
+                        {
+                          rules: [{ required: true, message: '请输入机构类型编码/名称!' }],
+                        },
+                      ]"
+                    />
+                  </a-form-item>
+                </div>
+              </a-form>
+            </a-col>
+            <a-col :span="6">
+              <span style="float: left; margin-top: 3px;">
+                <a-button type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
+                <a-button @click="reset" icon="reload">重置</a-button>
+              </span>
+            </a-col>
+          </a-row>
         </a-col>
       </a-row>
     </div>
     <div>
-      <a-modal
-        :title="title"
-        :visible="visible"
-        v-if="visible"
-        @ok="handleOk"
-        destoryOnClose
-        @cancel="handleCancel"
-      >
-        <a-form-model
-          ref="ruleForm"
-          :model="typeForm"
-          :rules="rules"
-          :label-col="labelCol"
-          :wrapper-col="wrapperCol"
-        >
-          <a-form-model-item
-            ref="EnterTypeCode"
-            has-feedback
-            label="类型编号"
-            prop="EnterTypeCode"
-          >
+      <a-modal :title="title" :visible="visible" v-if="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+        <a-form-model ref="ruleForm" :model="typeForm" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-form-model-item ref="EnterTypeCode" has-feedback label="类型编号" prop="EnterTypeCode">
             <a-input
               v-model="typeForm.EnterTypeCode"
               :disabled="isEdit"
               placeholder="请输入类型编号"
               @blur="
-								() => {
-									$refs.EnterTypeCode.onFieldBlur();
-								}
-							"
+                () => {
+                  $refs.EnterTypeCode.onFieldBlur();
+                }
+              "
             />
           </a-form-model-item>
-          <a-form-model-item
-            ref="EnterTypeName"
-            has-feedback
-            label="类型名称"
-            prop="EnterTypeName"
-          >
+          <a-form-model-item ref="EnterTypeName" has-feedback label="类型名称" prop="EnterTypeName">
             <a-input
               v-model="typeForm.EnterTypeName"
               placeholder="请输入类型名称"
               @blur="
-								() => {
-									$refs.EnterTypeName.onFieldBlur();
-								}
-							"
+                () => {
+                  $refs.EnterTypeName.onFieldBlur();
+                }
+              "
             />
           </a-form-model-item>
-          <a-form-model-item
-            ref="EnterTypeDesc"
-            label="描述"
-            has-feedback
-          >
-            <a-textarea
-              v-model="typeForm.EnterTypeDesc"
-              placeholder="请输入类型描述"
-              :auto-size="{ minRows: 3, maxRows: 5 }"
-            />
+          <a-form-model-item ref="EnterTypeDesc" label="描述" has-feedback>
+            <a-textarea v-model="typeForm.EnterTypeDesc" placeholder="请输入类型描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
           </a-form-model-item>
-          <a-form-model-item
-            ref="IndexUrl"
-            label="首页URL"
-            prop="IndexUrl"
-            has-feedback
-          >
+          <a-form-model-item ref="IndexUrl" label="首页URL" prop="IndexUrl" has-feedback>
             <a-input
               v-model="typeForm.IndexUrl"
               placeholder="请输入首页URL"
               @blur="
-								() => {
-									$refs.IndexUrl.onFieldBlur();
-								}
-							"
+                () => {
+                  $refs.IndexUrl.onFieldBlur();
+                }
+              "
             />
           </a-form-model-item>
-          <a-form-model-item
-            ref="Enable"
-            label="是否启用"
-          >
-            <a-radio-group
-              :value="typeForm.Enable"
-              default-value="Y"
-              button-style="solid"
-              @change="enableChange"
-            >
+          <a-form-model-item ref="Enable" label="是否启用">
+            <a-radio-group :value="typeForm.Enable" default-value="Y" button-style="solid" @change="enableChange">
               <a-radio-button value="N">否</a-radio-button>
               <a-radio-button value="Y">是</a-radio-button>
             </a-radio-group>
           </a-form-model-item>
-          <a-form-model-item
-            ref="IsDefualt"
-            label="是否默认"
-          >
-            <a-radio-group
-              :value="typeForm.IsDefualt"
-              default-value="Y"
-              button-style="solid"
-              @change="defualtChange"
-            >
+          <a-form-model-item ref="IsDefualt" label="是否默认">
+            <a-radio-group :value="typeForm.IsDefualt" default-value="Y" button-style="solid" @change="defualtChange">
               <a-radio-button value="N">否</a-radio-button>
               <a-radio-button value="Y">是</a-radio-button>
             </a-radio-group>
@@ -176,76 +114,43 @@
         size="small"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="tableDatas => data.EnterTypeId"
+        :rowKey="(tableDatas) => data.EnterTypeId"
         :row-selection="{
-					selectedRowKeys: selectedRowKeys,
-					onChange: onSelectChange
-				}"
+          selectedRowKeys: selectedRowKeys,
+          onChange: onSelectChange,
+        }"
         bordered
       >
-        <template
-          slot="index"
-          slot-scope="text, record, index"
-        >
+        <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
-        <template
-          slot="enable"
-          slot-scope="record"
-        >
+        <template slot="enable" slot-scope="record">
           <div>
-            <a-tag
-              color="green"
-              v-if="record == 'Y'"
-            >启用</a-tag>
-            <a-tag
-              color="red"
-              v-else
-            >禁用</a-tag>
+            <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
+            <a-tag color="red" v-else>禁用</a-tag>
           </div>
         </template>
-        <template
-          slot="defualt"
-          slot-scope="record"
-        >
+        <template slot="defualt" slot-scope="record">
           <div>
-            <a-tag
-              color="green"
-              v-if="record == 'Y'"
-            >是</a-tag>
-            <a-tag
-              color="red"
-              v-else
-            >否</a-tag>
+            <a-tag color="green" v-if="record == 'Y'">是</a-tag>
+            <a-tag color="red" v-else>否</a-tag>
           </div>
         </template>
-        <template
-          slot="action"
-          slot-scope="text, record"
-        >
+        <template slot="action" slot-scope="text, record">
           <div>
-            <a-popconfirm
-              title="确定删除?"
-              @confirm="() => onDelete(record)"
-            >
+            <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
               <a style="margin-right: 8px">
                 <a-icon type="delete" />
                 删除
               </a>
             </a-popconfirm>
-            <a
-              style="margin-right: 8px"
-              @click="edit(record)"
-            >
+            <a style="margin-right: 8px" @click="edit(record)">
               <a-icon type="edit" />
               编辑
             </a>
-            <a
-              style="margin-right: 8px"
-              @click="detail(record)"
-            >
+            <a style="margin-right: 8px" @click="detail(record)">
               <a-icon type="profile" />
               查看
             </a>
@@ -255,42 +160,21 @@
     </div>
     <!-- 查看详情 -->
     <div>
-      <a-drawer
-        width="400"
-        placement="right"
-        :closable="true"
-        :visible="isDrawer"
-        @close="onClose"
-      >
-        <a-descriptions
-          title="机构类型详情"
-          :column="1"
-        >
+      <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
+        <a-descriptions title="机构类型详情" :column="1">
           <!-- <a-descriptions-item label="类型id">{{ drawerItem.EnterTypeId }}</a-descriptions-item> -->
           <a-descriptions-item label="类型编码">{{ drawerItem.EnterTypeCode }}</a-descriptions-item>
           <a-descriptions-item label="类型名称">{{ drawerItem.EnterTypeName }}</a-descriptions-item>
           <a-descriptions-item label="是否启用">
             <div>
-              <a-tag
-                color="green"
-                v-if="drawerItem.Enable == 'Y'"
-              >启用</a-tag>
-              <a-tag
-                color="red"
-                v-else
-              >禁用</a-tag>
+              <a-tag color="green" v-if="drawerItem.Enable == 'Y'">启用</a-tag>
+              <a-tag color="red" v-else>禁用</a-tag>
             </div>
           </a-descriptions-item>
           <a-descriptions-item label="默认">
             <div>
-              <a-tag
-                color="green"
-                v-if="drawerItem.IsDefualt == 'Y'"
-              >是</a-tag>
-              <a-tag
-                color="red"
-                v-else
-              >否</a-tag>
+              <a-tag color="green" v-if="drawerItem.IsDefualt == 'Y'">是</a-tag>
+              <a-tag color="red" v-else>否</a-tag>
             </div>
           </a-descriptions-item>
           <a-descriptions-item label="首页URL">{{ drawerItem.IndexUrl }}</a-descriptions-item>
@@ -351,12 +235,7 @@ const columns = [
     align: "center",
   },
 ];
-import {
-  getInstitutionList,
-  addEnterType,
-  editEnterType,
-  delEnterType,
-} from "@/services/admin.js";
+import { getInstitutionList, addEnterType, editEnterType, delEnterType } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 export default {
   data() {
@@ -381,8 +260,7 @@ export default {
         showLessItems: true,
         showQuickJumper: true,
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) =>
-          `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
+        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       searcValue: "",
       searchForm: this.$form.createForm(this),

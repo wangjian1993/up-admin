@@ -1,35 +1,20 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-09 17:40:42
+ * @LastEditTime: 2021-08-10 14:06:55
  * @LastEditors: max
  * @Description: 应用类型
  * @FilePath: /up-admin/src/pages/admin/application/appType/AppType.vue
 -->
 <template>
   <!-- 搜索 -->
-  <a-card
-    class="card"
-    :bordered="false"
-    :bodyStyle="{ padding: '5px' }"
-  >
+  <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <div class="search-box">
       <a-row>
         <a-col :span="12">
           <div>
-            <a-button
-              @click="add"
-              type="primary"
-              icon="form"
-            >添加</a-button>
-            <a-button
-              type="primary"
-              :disabled="!hasSelected"
-              :loading="loading"
-              @click="allDel"
-              icon="delete"
-              style="margin-left: 8px"
-            >删除</a-button>
+            <a-button @click="add" type="primary" icon="form">添加</a-button>
+            <a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
             <span style="margin-left: 8px">
               <template v-if="hasSelected">
                 {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -38,116 +23,69 @@
           </div>
         </a-col>
         <a-col :span="12">
-          <a-form
-            layout="horizontal"
-            :form="searchForm"
-          >
-            <div>
-              <a-col
-                :md="18"
-                :sm="24"
-              >
-                <a-form-item
-                  label="应用类型编码/名称"
-                  :labelCol="{ span: 8 }"
-                  :wrapperCol="{ span: 14, offset: 1 }"
-                >
-                  <a-input-search
-                    placeholder="请输入"
-                    allowClear
-                    enter-button="搜索"
-                    @search="search"
-                    v-decorator="[
-						'searcValue',
-						{
-							rules: [{ required: true, message: '机构类型编码/名称!' }]
-						}
-					]"
-                  />
-                </a-form-item>
-              </a-col>
-            </div>
-            <span style="float: left; margin-top: 5px;">
-              <a-button
-                @click="reset"
-				icon="reload"
-              >重置</a-button>
-            </span>
-          </a-form>
+          <a-row type="flex" justify="end">
+            <a-col :span="6">
+              <a-form layout="horizontal" :form="searchForm">
+                <div>
+                  <a-form-item :wrapperCol="{ span: 24, offset: 1 }">
+                    <a-input
+                      placeholder="请输入应用类型编码/名称"
+                      allowClear
+                      v-decorator="[
+                        'searcValue',
+                        {
+                          rules: [{ required: true, message: '请输入应用类型编码/名称!' }],
+                        },
+                      ]"
+                    />
+                  </a-form-item>
+                </div>
+              </a-form>
+            </a-col>
+            <a-col :span="6">
+              <span style="float: left; margin-top: 3px;">
+                <a-button type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
+                <a-button @click="reset" icon="reload">重置</a-button>
+              </span>
+            </a-col>
+          </a-row>
         </a-col>
       </a-row>
     </div>
     <!-- 添加编辑弹窗框 -->
     <div>
-      <a-modal
-        :title="isEdit ? '编辑应用类型' : '添加应用类型'"
-        v-if="visible"
-        :visible="visible"
-        @ok="handleOk"
-        destoryOnClose
-        @cancel="handleCancel"
-      >
-        <a-form-model
-          ref="ruleForm"
-          :model="form"
-          :rules="rules"
-          :label-col="labelCol"
-          :wrapper-col="wrapperCol"
-        >
-          <a-form-model-item
-            ref="AppTypeName"
-            has-feedback
-            label="应用名称"
-            prop="AppTypeName"
-          >
+      <a-modal :title="isEdit ? '编辑应用类型' : '添加应用类型'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+        <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-form-model-item ref="AppTypeName" has-feedback label="应用名称" prop="AppTypeName">
             <a-input
               v-model="form.AppTypeName"
               allowClear
               placeholder="请输入应用名称"
               @blur="
-								() => {
-									$refs.AppTypeName.onFieldBlur();
-								}
-							"
+                () => {
+                  $refs.AppTypeName.onFieldBlur();
+                }
+              "
             />
           </a-form-model-item>
-          <a-form-model-item
-            ref="AppTypeCode"
-            has-feedback
-            label="编码"
-            prop="AppTypeCode"
-          >
+          <a-form-model-item ref="AppTypeCode" has-feedback label="编码" prop="AppTypeCode">
             <a-input
               v-model="form.AppTypeCode"
               allowClear
               placeholder="请输入应用编码"
               :disabled="isEdit"
               @blur="
-								() => {
-									$refs.AppTypeCode.onFieldBlur();
-								}
-							"
+                () => {
+                  $refs.AppTypeCode.onFieldBlur();
+                }
+              "
             />
           </a-form-model-item>
-          <a-form-model-item
-            ref="AppTypeDesc"
-            label="应用描述"
-          >
-            <a-textarea
-              v-model="form.AppTypeDesc"
-              placeholder="请输入应用描述"
-              :auto-size="{ minRows: 3, maxRows: 5 }"
-            />
+          <a-form-model-item ref="AppTypeDesc" label="应用描述">
+            <a-textarea v-model="form.AppTypeDesc" placeholder="请输入应用描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
           </a-form-model-item>
-          <a-form-model-item
-            ref="Enable"
-            label="是否启用"
-          >
-            <a-radio-group
-              :value="form.Enable"
-              button-style="solid"
-              @change="enableChange"
-            >
+          <a-form-model-item ref="Enable" label="是否启用">
+            <a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
               <a-radio-button value="N">否</a-radio-button>
               <a-radio-button value="Y">是</a-radio-button>
             </a-radio-group>
@@ -164,76 +102,43 @@
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="tableDatas => data.EnterTypeId"
+        :rowKey="(tableDatas) => data.EnterTypeId"
         :row-selection="{
-					selectedRowKeys: selectedRowKeys,
-					onChange: onSelectChange
-				}"
+          selectedRowKeys: selectedRowKeys,
+          onChange: onSelectChange,
+        }"
         bordered
       >
-        <template
-          slot="index"
-          slot-scope="text, record, index"
-        >
+        <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
-        <template
-          slot="enable"
-          slot-scope="record"
-        >
+        <template slot="enable" slot-scope="record">
           <div>
-            <a-tag
-              color="green"
-              v-if="record == 'Y'"
-            >启用</a-tag>
-            <a-tag
-              color="red"
-              v-else
-            >禁用</a-tag>
+            <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
+            <a-tag color="red" v-else>禁用</a-tag>
           </div>
         </template>
-        <template
-          slot="defualt"
-          slot-scope="record"
-        >
+        <template slot="defualt" slot-scope="record">
           <div>
-            <a-tag
-              color="green"
-              v-if="record == 'Y'"
-            >是</a-tag>
-            <a-tag
-              color="red"
-              v-else
-            >否</a-tag>
+            <a-tag color="green" v-if="record == 'Y'">是</a-tag>
+            <a-tag color="red" v-else>否</a-tag>
           </div>
         </template>
-        <template
-          slot="action"
-          slot-scope="text, record"
-        >
+        <template slot="action" slot-scope="text, record">
           <div>
-            <a-popconfirm
-              title="确定删除?"
-              @confirm="() => onDelete(record)"
-            >
+            <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
               <a style="margin-right: 8px">
                 <a-icon type="delete" />
                 删除
               </a>
             </a-popconfirm>
-            <a
-              style="margin-right: 8px"
-              @click="edit(record)"
-            >
+            <a style="margin-right: 8px" @click="edit(record)">
               <a-icon type="edit" />
               编辑
             </a>
-            <a
-              style="margin-right: 8px"
-              @click="detail(record)"
-            >
+            <a style="margin-right: 8px" @click="detail(record)">
               <a-icon type="profile" />
               查看
             </a>
@@ -243,29 +148,14 @@
     </div>
     <!-- 查看详情 -->
     <div>
-      <a-drawer
-        width="400"
-        placement="right"
-        :closable="true"
-        :visible="isDrawer"
-        @close="onClose"
-      >
-        <a-descriptions
-          title="应用类型详情"
-          :column="1"
-        >
+      <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
+        <a-descriptions title="应用类型详情" :column="1">
           <a-descriptions-item label="应用编码">{{ drawerItem.AppTypeCode }}</a-descriptions-item>
           <a-descriptions-item label="用户名称">{{ drawerItem.AppTypeName }}</a-descriptions-item>
           <a-descriptions-item label="是否启用">
             <div>
-              <a-tag
-                color="green"
-                v-if="drawerItem.Enable == 'Y'"
-              >启用</a-tag>
-              <a-tag
-                color="red"
-                v-else
-              >禁用</a-tag>
+              <a-tag color="green" v-if="drawerItem.Enable == 'Y'">启用</a-tag>
+              <a-tag color="red" v-else>禁用</a-tag>
             </div>
           </a-descriptions-item>
           <a-descriptions-item label="描述">{{ drawerItem.AppTypeDesc }}</a-descriptions-item>
@@ -338,8 +228,7 @@ export default {
         showLessItems: true,
         showQuickJumper: true,
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) =>
-          `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
+        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       searcValue: "",
       searchForm: this.$form.createForm(this),
