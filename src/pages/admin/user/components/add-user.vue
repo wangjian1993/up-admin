@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-28 10:54:51
- * @LastEditTime: 2021-08-10 09:34:00
+ * @LastEditTime: 2021-08-12 08:46:38
  * @LastEditors: max
  * @Description: 添加用户form
  * @FilePath: /up-admin/src/pages/admin/user/components/add-user.vue
@@ -102,7 +102,7 @@
         <a-tab-pane key="2" tab="组织信息">
           <a-form-model :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-form-model-item v-for="item in orgList" :key="item.OrgDimensionId" :label="item.OrgDimensionName">
-              <a-input v-if="item.levelArray" style="width: 200px" disabled :value="item.levelArray.OrgLevelName" />
+              <a-input v-if="item.levelArray" style="width: 200px" disabled :value="item.levelArray.OrgName" />
               <a-input v-else style="width: 200px" disabled />
               <a-button type="primary" @click="orgSelect(item)">选择</a-button>
             </a-form-model-item>

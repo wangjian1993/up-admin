@@ -160,7 +160,7 @@ export default {
 	created() {
 		this.id = this.orgId;
 		this.data = [];
-		this.getOrgUser();
+		this.getOrgUser(this.orgId);
 		console.log('哈哈哈哈哈===========');
 	},
 	methods: {
@@ -212,11 +212,12 @@ export default {
 			});
 		},
 		//获取机构类型列表
-		getOrgUser() {
+		getOrgUser(id) {
+			console.log("调用=====")
 			let parmas = {
 				pageindex: this.pagination.current,
 				pagesize: this.pagination.pageSize,
-				orgid: this.id
+				orgid:id
 			};
 			getOrgUser(parmas).then(res => {
 				if (res.data.success) {

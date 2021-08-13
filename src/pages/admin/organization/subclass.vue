@@ -113,7 +113,7 @@
 					</div>
 				</a-card>
 			</a-col>
-			<a-col style="padding: 0 5px" :span="6"><user-list ref="userList" v-if="isRelationship" :orgId="orgId" :enterid="enterid"></user-list></a-col>
+			<a-col style="padding: 0 5px" :span="6"><user-list ref="getUser" v-if="isRelationship" :orgId="orgId" :enterid="enterid"></user-list></a-col>
 		</a-row>
 	</div>
 </template>
@@ -240,8 +240,11 @@ export default {
 		await this.getTreeList();
 	},
 	methods: {
-		relationship() {
+		relationship(item) {
 			this.isRelationship = true;
+			console.log(item);
+			this.orgId =item.OrgId
+			this.$refs.getUser.getOrgUser(item.OrgId);
 		},
 		orgChange(value) {
 			this.LevelList = [];

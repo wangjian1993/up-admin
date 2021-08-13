@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-11 11:04:20
+ * @LastEditTime: 2021-08-12 14:45:26
  * @LastEditors: max
  * @Description: 菜单管理
  * @FilePath: /up-admin/src/pages/admin/menu/list.vue
@@ -111,7 +111,7 @@
           <a-row>
             <a-col :span="12">
               <a-form-model-item ref="ModuleTypeCode" label="菜单类型" prop="ModuleTypeCode">
-                <a-radio-group v-model="form.ModuleTypeCode" v-for="item in menuList" :key="item.ParamId">
+                <a-radio-group v-model="form.ModuleTypeCode" v-for="item in menuList" :key="item.ParamId" @change="menuType">
                   <a-radio :value="item.ParamCode">{{ item.ParamName }}</a-radio>
                 </a-radio-group>
               </a-form-model-item>
@@ -127,7 +127,7 @@
           <a-row>
             <a-col :span="24">
               <a-form-model-item ref="AccessTypeCode" :labelCol="{ span: 3 }" label="访问方式" prop="AccessTypeCode">
-                <a-radio-group v-model="form.AccessTypeCode" v-for="item in linkTypeList" :key="item.ParamId">
+                <a-radio-group v-model="form.AccessTypeCode" v-for="item in linkTypeList" :key="item.ParamId" :disabled="form.ModuleTypeCode == 'button'"> 
                   <a-radio :value="item.ParamCode">{{ item.ParamName }}</a-radio>
                 </a-radio-group>
               </a-form-model-item>
@@ -135,15 +135,16 @@
           </a-row>
           <a-row>
             <a-col :span="12">
-              <a-form-model-item ref="component" label="组件路径"><a-input v-model="form.component" placeholder="请输入组件路径" :disabled="form.AccessTypeCode != 'module'" /></a-form-model-item>
+              <a-form-model-item v-if="form.ModuleTypeCode != 'button'" ref="component" label="组件路径"><a-input v-model="form.component" placeholder="请输入组件路径" :disabled="form.AccessTypeCode != 'module' || form.ModuleTypeCode=='catalogue'"/></a-form-model-item>
+               <a-form-model-item v-else ref="component" label="权限标识"><a-input v-model="form.component" placeholder="请输入组件路径"/></a-form-model-item>
             </a-col>
             <a-col :span="12">
-              <a-form-model-item ref="UserTypeName" label="菜单路径"><a-input v-model="form.ModuleUrl" placeholder="请输入菜单路径"/></a-form-model-item>
+              <a-form-model-item ref="UserTypeName" label="菜单路径"><a-input :disabled="form.ModuleTypeCode == 'button'" v-model="form.ModuleUrl" placeholder="请输入菜单路径"/></a-form-model-item>
             </a-col>
           </a-row>
           <a-row>
             <a-col :span="12">
-              <a-form-model-item ref="UserTypeName" label="菜单参数"><a-input v-model="form.ModuleParam" placeholder="请输入菜单参数"/></a-form-model-item>
+              <a-form-model-item ref="UserTypeName" label="菜单参数"><a-input :disabled="form.ModuleTypeCode == 'button'" v-model="form.ModuleParam" placeholder="请输入菜单参数"/></a-form-model-item>
             </a-col>
             <a-col :span="12">
               <a-form-model-item ref="Enable" label="是否启用">
@@ -202,14 +203,10 @@
             <a-tag color="red" v-else>禁用</a-tag>
           </div>
         </template>
-        <template slot="defualt" slot-scope="record">
-          <div>
-            <a-tag color="green" v-if="record == 'Y'">是</a-tag>
-            <a-tag color="red" v-else>否</a-tag>
-          </div>
-        </template>
         <template slot="ModuleLogo" slot-scope="text">
-          <div><a-icon :type="text" :style="{ fontSize: '14px' }" /></div>
+          <div>
+            <a-icon :type="text"/>
+          </div>
         </template>
         <template slot="action" slot-scope="text, record">
           <div>
@@ -292,6 +289,18 @@ const columns = [
     title: "图标",
     dataIndex: "ModuleLogo",
     scopedSlots: { customRender: "ModuleLogo" },
+    align: "center",
+  },
+  {
+    title: "排序",
+    dataIndex: "SortNo",
+    scopedSlots: { customRender: "SortNo" },
+    align: "center",
+  },
+  {
+    title: "状态",
+    dataIndex: "Enable",
+    scopedSlots: { customRender: "enable" },
     align: "center",
   },
   {
@@ -414,6 +423,16 @@ export default {
     this.getParamData();
   },
   methods: {
+    menuType(e){
+      console.log(e);
+      if(e.target.value == "catalogue"){
+        this.form.component= 'BlankView'
+      }else  if(e.target.value == "button"){
+          this.form.component= 'button'
+      }else {
+        this.form.component = ''
+      }
+    },
     getParamData() {
       let parmas = {
         groupcode: "MODULE_TYPE",
@@ -572,6 +591,15 @@ export default {
       this.isEdit = true;
       this.title = "编辑菜单";
       this.form = item;
+      if(this.form.AccessTypeCode == 'BlankView'){
+        this.form.component = 'BlankView';
+        this.form.AccessTypeCode ='module'
+      }else {
+         if(this.form.AccessTypeCode != 'external_links' || this.form.AccessTypeCode != 'nternal_link' || this.form.AccessTypeCode != 'null'){
+        this.form.component = this.form.AccessTypeCode;
+        this.form.AccessTypeCode ='module'
+      }
+      }
     },
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
@@ -593,6 +621,7 @@ export default {
               ModuleTypeCode: this.form.ModuleTypeCode,
               SuperiorId: this.form.SuperiorId,
               SortNo: this.form.SortNo,
+              Enable:this.form.Enable
             };
             menuAction(editForm, "update").then((res) => {
               if (res.data.success) {

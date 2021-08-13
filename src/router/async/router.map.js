@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-08-11 13:56:06
+ * @LastEditTime: 2021-08-12 09:48:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/router/async/router.map.js
@@ -25,6 +25,27 @@ const routerMap = {
     name: '首页',
     redirect: '/login',
     component: view.tabs
+  },
+  exception: {
+    name: '异常页',
+    icon: 'warning',
+    component: view.blank
+  },
+  exp403: {
+    authority: '*',
+    name: 'exp403',
+    path: '403',
+    component: () => import('@/pages/exception/403')
+  },
+  exp404: {
+    name: 'exp404',
+    path: '404',
+    component: () => import('@/pages/exception/404')
+  },
+  exp500: {
+    name: 'exp500',
+    path: '500',
+    component: () => import('@/pages/exception/500')
   },
 }
 export default routerMap

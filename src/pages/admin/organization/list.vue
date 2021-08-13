@@ -170,8 +170,8 @@
           </a-descriptions-item>
           <a-descriptions-item label="启用">
             <div>
-              <a-tag color="green" v-if="drawerItem.Enable == 'Y'">是</a-tag>
-              <a-tag color="red" v-else>否</a-tag>
+              <a-tag color="green" v-if="drawerItem.Enable == 'Y'">启用</a-tag>
+              <a-tag color="red" v-else>禁用</a-tag>
             </div>
           </a-descriptions-item>
           <a-descriptions-item label="是否删除">

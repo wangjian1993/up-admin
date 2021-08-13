@@ -132,9 +132,14 @@ export default {
         setAuthorization({ token: res.headers.token, expireAt: inFifteenMinutes });
         this.$message.success(this.timeFix().CN + "，欢迎回来!", 3);
         const routesConfig = userModules;
-        console.log(routesConfig);
-        loadRoutes(routesConfig);
-        this.$router.push("/home/workplace");
+        let root = [
+					{
+						router: 'root', //匹配 router.map.js 中注册名 registerName = root 的路由
+						children: routesConfig
+					}
+				];
+				loadRoutes(root);
+        this.$router.push("workplace");
       } else {
         console.log(loginRes.message.content);
         this.error = loginRes.message.content;
