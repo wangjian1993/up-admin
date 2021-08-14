@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-08-11 17:29:43
+ * @LastEditTime: 2021-08-14 14:26:35
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -10,7 +10,7 @@
   <div>
     <a-row>
       <!-- 机构类型 -->
-      <a-col style="padding: 0 5px" :span="5">
+      <a-col style="padding: 0 5px;max-height:80vh;overflow:auto" :span="5">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-row>
             <a-col :xs="12" :sm="8"><span class="card-title">机构类型:</span></a-col>
@@ -31,7 +31,7 @@
         </a-card>
       </a-col>
       <!-- 组织维度 -->
-      <a-col style="padding: 0 5px" :span="5">
+      <a-col style="padding: 0 5px;max-height:80vh;overflow:auto" :span="5">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-row>
             <a-col :xs="12" :sm="8"><span class="card-title">组织维度:</span></a-col>
@@ -48,7 +48,7 @@
         </a-card>
       </a-col>
       <!-- 应用类型 -->
-      <a-col style="padding: 0 5px" :span="5">
+      <a-col style="padding: 0 5px;max-height:80vh;overflow:auto" :span="5">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-row>
             <a-col :xs="12" :sm="6"><span class="card-title">应用类型:</span></a-col>
@@ -57,7 +57,7 @@
                 <a-select-option :value="item.AppTypeId" v-for="(item, index) in appTypeData" :key="index">{{ item.AppTypeName }}</a-select-option>
               </a-select>
             </a-col>
-            <a-col :xs="12" :sm="7"><a-button icon="save" type="primary" style="margin:0 0px;" @click="appTreeSave">保存</a-button></a-col>
+            <a-col :xs="12" :sm="7"><a-button v-if="hasPerm('save')" icon="save" type="primary" style="margin:0 0px;" @click="appTreeSave">保存</a-button></a-col>
           </a-row>
           <div style="padding: 10px 0;">
             <a-tree v-model="expandedKeys" @select="appTreeClick" v-if="appTreeData.length" :tree-data="appTreeData" :replaceFields="replaceFields2" default-expand-all checkable @check="appTreeChange" :default-selected-keys="appValue"></a-tree>
@@ -89,19 +89,21 @@
       <a-col :span="9">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <div>
-            <a-button type="primary" icon="form" @click="goAdd">添加</a-button>
-            <a-button type="primary" :disabled="!hasSelected" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
+            <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="form">添加</a-button>
+            <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+            <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
             <span style="margin-left: 8px">
               <template v-if="hasSelected">
                 {{ `共选中 ${selectedRowKeys.length} 条` }}
               </template>
             </span>
           </div>
-          <div>
+          <div v-if="hasPerm('search')">
             <a-table
               :columns="columns"
               :data-source="permissionList"
               size="small"
+              :scroll="{y:true}"
               bordered
               :row-selection="{
                 selectedRowKeys: selectedRowKeys,
@@ -110,11 +112,11 @@
             >
               <template slot="operation">
                 <div>
-                  <a style="margin-right: 8px">
+                  <a style="margin-right: 8px" :disabled="!hasPerm('add')">
                     <a-icon type="plus" />
                     新增
                   </a>
-                  <a style="margin-right: 8px">
+                  <a style="margin-right: 8px" :disabled="!hasPerm('edit')">
                     <a-icon type="edit" />
                     编辑
                   </a>
@@ -135,18 +137,21 @@ const columns = [
     dataIndex: "EnterTypeName",
     scopedSlots: { customRender: "EnterTypeName" },
     align: "center",
+    width: "30%"
   },
   {
     title: "比较符",
     dataIndex: "Compartor",
     scopedSlots: { customRender: "Compartor" },
     align: "center",
+    width: "20%"
   },
   {
     title: "字段值",
     dataIndex: "EnterName",
     scopedSlots: { customRender: "EnterName" },
     align: "center",
+    width: "50%"
   },
 ];
 import { getInstitutionList, getEnterTree, getOrganizationList, getOrgTree, getAppTypeList, getAppMdules, getPermissionList, setPermission, getParamData } from "@/services/admin.js";
@@ -393,7 +398,7 @@ export default {
       this.getAppMdules();
       this.appTreeData = [];
       this.appValue = [];
-      this.expandedKeys =[];
+      this.expandedKeys = [];
       this.getPermissionList();
     },
     //应用选择
@@ -483,7 +488,7 @@ export default {
         }
       });
     },
-    //多选删除 
+    //多选删除
     allDel() {
       let self = this;
       self.$confirm({
@@ -492,7 +497,7 @@ export default {
           const params = [];
           console.log(self.selectedRowKeys);
           self.selectedRowKeys.forEach((item) => {
-            console.log(self.permissionList[item])
+            console.log(self.permissionList[item]);
             params.push({
               EnterTypeId: self.permissionList[item].EnterTypeId,
               EnterId: self.permissionList[item].EnterId,
@@ -550,7 +555,7 @@ export default {
   }
 }
 .card-title {
-  display:inline-block;
+  display: inline-block;
   padding: 0 10px;
   height: 32px;
   display: flex;

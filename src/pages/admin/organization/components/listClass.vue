@@ -149,6 +149,7 @@
             :columns="columns"
             :data-source="list"
             size="small"
+            :scroll="{y:true}"
             :pagination="pagination"
             @change="handleTableChange"
             :rowKey="(tableDatas) => list.EnterTypeId"

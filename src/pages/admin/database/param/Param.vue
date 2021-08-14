@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-10 14:38:40
+ * @LastEditTime: 2021-08-14 18:01:12
  * @LastEditors: max
  * @Description: 快码列表
  * @FilePath: /up-admin/src/pages/admin/database/param/Param.vue
@@ -11,10 +11,10 @@
     <!-- 搜索 -->
     <a-row>
       <a-col style="padding: 0 5px" :span="6">
-        <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }" title="快码组:">
+        <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px', maxHeight: '80vh', minHeight: '80vh', overflow: 'auto' }" title="快码组:">
           <a-row>
-            <a-col :xs="12" :sm="16"><a-input-search placeholder="搜索快码组" v-model="groupSearch" enter-button @search="onSearch"/></a-col>
-            <a-col :xs="12" :sm="8"><a-button type="primary" style="margin-left: 20px;" @click="addGroup">添加组</a-button></a-col>
+            <a-col :xs="12" :sm="16"><a-input-search placeholder="搜索快码组" :disabled="!hasPerm('searchGroup')" v-model="groupSearch" enter-button @search="onSearch"/></a-col>
+            <a-col :xs="12" :sm="8"><a-button :disabled="!hasPerm('addGroup')" type="primary" style="margin-left: 20px;" @click="addGroup">添加组</a-button></a-col>
           </a-row>
           <a-row>
             <a-col :xs="24" :sm="24">
@@ -29,11 +29,12 @@
       <a-col style="padding: 0 5px" :span="18">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <div class="search-box">
-            <a-row>
+            <a-row type="flex" justify="space-between">
               <a-col :span="8">
                 <div>
-                  <a-button @click="add" type="primary" icon="form">添加</a-button>
-                  <a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
+                  <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="form">添加</a-button>
+                  <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+                  <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
                   <span style="margin-left: 8px">
                     <template v-if="hasSelected">
                       {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -41,15 +42,16 @@
                   </span>
                 </div>
               </a-col>
-              <a-col :span="16">
-                <a-row type="flex" justify="end">
-                  <a-col :span="6">
-                    <a-form layout="horizontal" :form="searchForm">
+              <a-col :sm="24" :md="24" :xl="14">
+                <a-row>
+                  <a-col>
+                    <a-form layout="horizontal" :form="searchForm" class="form-box">
                       <div>
-                        <a-form-item :wrapperCol="{ span: 24, offset: 1 }">
+                        <a-form-item>
                           <a-input
                             placeholder="请输入快码编码/名称"
                             allowClear
+                            style="width: 300px"
                             v-decorator="[
                               'searcValue',
                               {
@@ -59,13 +61,11 @@
                           />
                         </a-form-item>
                       </div>
+                      <div style="margin-top: 3px;margin-left:10px">
+                        <a-button :disabled="!hasPerm('search')" type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
+                        <a-button :disabled="!hasPerm('search')" @click="reset" icon="reload">重置</a-button>
+                      </div>
                     </a-form>
-                  </a-col>
-                  <a-col :span="6">
-                    <span style="float: left; margin-top: 3px;">
-                      <a-button type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
-                      <a-button @click="reset" icon="reload">重置</a-button>
-                    </span>
                   </a-col>
                 </a-row>
               </a-col>
@@ -185,9 +185,11 @@
           <!-- 列表 -->
           <div class="tab">
             <a-table
+              v-if="hasPerm('search')"
               :columns="columns"
               :data-source="data"
               size="small"
+              :scroll="{ y: true }"
               :loading="loading"
               :pagination="pagination"
               @change="handleTableChange"
@@ -212,12 +214,12 @@
               <template slot="action" slot-scope="text, record">
                 <div>
                   <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
-                    <a style="margin-right: 8px">
+                    <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                       <a-icon type="delete" />
                       删除
                     </a>
                   </a-popconfirm>
-                  <a style="margin-right: 8px" @click="edit(record)">
+                  <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
                     <a-icon type="edit" />
                     编辑
                   </a>
@@ -228,6 +230,7 @@
                 </div>
               </template>
             </a-table>
+            <a-empty v-else description="暂无权限" />
           </div>
           <!-- 查看详情 -->
           <div>
@@ -261,41 +264,48 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
+    width: "5%",
   },
   {
     title: "快码名称",
     dataIndex: "ParamName",
     scopedSlots: { customRender: "ParamName" },
     align: "center",
+    width: "20%",
   },
   {
     title: "快码编码",
     dataIndex: "ParamCode",
     scopedSlots: { customRender: "ParamCode" },
     align: "center",
+    width: "20%",
   },
   {
     title: "值",
     dataIndex: "ParamValue",
     scopedSlots: { customRender: "ParamValue" },
     align: "center",
+    width: "10%",
   },
   {
     title: "状态",
     dataIndex: "Enable",
     scopedSlots: { customRender: "enable" },
     align: "center",
+    width: "10%",
   },
   {
-    title: "快码组名称",
-    dataIndex: "ParamGroupName",
-    scopedSlots: { customRender: "ParamGroupName" },
+    title: "排序",
+    dataIndex: "SortNo",
+    scopedSlots: { customRender: "SortNo" },
     align: "center",
+    width: "5%",
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
     align: "center",
+    width: "30%",
   },
 ];
 import { getParamGroupList, getParamList, paramAction, paramGroupAction } from "@/services/admin.js";
@@ -530,7 +540,7 @@ export default {
             if (res.data.success) {
               this.$message.success("添加成功!");
               this.getParamGroupList();
-              this.groupVisible= false;
+              this.groupVisible = false;
             }
           });
         }

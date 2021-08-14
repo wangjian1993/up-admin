@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-08-12 09:48:00
+ * @LastEditTime: 2021-08-14 09:44:15
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/router/async/router.map.js
@@ -23,8 +23,18 @@ const routerMap = {
   root: {
     path: '/',
     name: '首页',
-    redirect: '/login',
+    redirect: '/dashboard',
     component: view.tabs
+  },
+  dashboard: {
+    name: '控制面板',
+    invisible:true,
+    component: view.blank
+  },
+  workplace: {
+    name: '工作台',
+    path: 'workplace',
+    component: () => import('@/pages/dashboard/workplace')
   },
   exception: {
     name: '异常页',

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-10 10:36:04
+ * @LastEditTime: 2021-08-14 17:35:57
  * @LastEditors: max
  * @Description: 用户类型
  * @FilePath: /up-admin/src/pages/admin/user/type.vue
@@ -9,11 +9,12 @@
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <div class="search-box">
-      <a-row>
-        <a-col :span="12">
+      <a-row type="flex" justify="space-between">
+        <a-col :span="8">
           <div>
-            <a-button @click="add" type="primary" icon="form">添加</a-button>
-            <a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
+            <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="form">添加</a-button>
+            <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+            <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
             <span style="margin-left: 8px">
               <template v-if="hasSelected">
                 {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -21,12 +22,12 @@
             </span>
           </div>
         </a-col>
-        <a-col :span="12">
-          <a-row type="flex" justify="end">
-            <a-col :span="6">
-              <a-form layout="horizontal" :form="searchForm">
+        <a-col :sm="24" :md="24" :xl="14">
+          <a-row>
+            <a-col>
+              <a-form layout="horizontal" :form="searchForm" class="form-box">
                 <div>
-                  <a-form-item :wrapperCol="{ span: 24, offset: 1 }">
+                  <a-form-item>
                     <a-input
                       placeholder="请输入用户类型编码/名称"
                       allowClear
@@ -39,13 +40,11 @@
                     />
                   </a-form-item>
                 </div>
+                <div style="margin-top: 3px;margin-left:10px">
+                  <a-button :disabled="!hasPerm('search')" type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
+                  <a-button :disabled="!hasPerm('search')" @click="reset" icon="reload">重置</a-button>
+                </div>
               </a-form>
-            </a-col>
-            <a-col :span="6">
-              <span style="float: left; margin-top: 3px;">
-                <a-button type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
-                <a-button @click="reset" icon="reload">重置</a-button>
-              </span>
             </a-col>
           </a-row>
         </a-col>
@@ -94,9 +93,11 @@
     <!-- 列表 -->
     <div class="tab">
       <a-table
+        v-if="hasPerm('search')"
         :columns="columns"
         :data-source="data"
         size="small"
+        :scroll="{y:true}"
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
@@ -127,12 +128,12 @@
         <template slot="action" slot-scope="text, record">
           <div>
             <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
-              <a style="margin-right: 8px">
+              <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                 <a-icon type="delete" />
                 删除
               </a>
             </a-popconfirm>
-            <a style="margin-right: 8px" @click="edit(record)">
+            <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
               <a-icon type="edit" />
               编辑
             </a>
@@ -143,6 +144,7 @@
           </div>
         </template>
       </a-table>
+      <a-empty v-else description="暂无权限"/>
     </div>
     <!-- 查看详情 -->
     <div>

@@ -18,6 +18,7 @@
 			:bordered="bordered"
 			:loading="loading"
 			:columns="columns"
+			:scroll="{y:true}"
 			:dataSource="dataSource"
 			:rowKey="rowKey"
 			:pagination="pagination"

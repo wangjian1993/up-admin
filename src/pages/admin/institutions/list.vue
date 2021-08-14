@@ -2,11 +2,12 @@
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <!-- 查询 -->
     <div class="search-box">
-      <a-row>
+      <a-row type="flex" justify="space-between">
         <a-col :span="6">
           <div>
-            <a-button @click="add" type="primary" icon="form">添加</a-button>
-            <a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
+            <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="form">添加</a-button>
+            <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+            <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
             <span style="margin-left: 8px">
               <template v-if="hasSelected">
                 {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -14,43 +15,41 @@
             </span>
           </div>
         </a-col>
-        <a-col :span="18">
-          <a-row type="flex" justify="end">
-            <a-col :span="10">
-              <a-form layout="horizontal" :form="searchForm">
-                <div>
-                  <a-col :span="14" style="margin-right:5px">
-                    <a-form-item>
-                      <a-input
-                        placeholder="机构编码/名称"
-                        allowClear
-                        v-decorator="[
-                          'searcValue',
-                          {
-                            rules: [{ required: true, message: '机构类型编码/名称!' }],
-                          },
-                        ]"
-                      />
-                    </a-form-item>
-                  </a-col>
-                  <a-col :span="8">
-                    <a-form-item>
-                      <!-- <a-input placeholder="请输入" v-decorator="['entertype']" /> -->
-                      <a-select placeholder="选择机构" v-decorator="['entertype']">
-                        <a-select-option v-for="(item, index) in selectList" :key="index" :value="item.EnterTypeName">{{ item.EnterTypeName }}</a-select-option>
-                      </a-select>
-                    </a-form-item>
-                  </a-col>
-                </div>
-              </a-form>
-            </a-col>
-            <a-col :span="4">
-              <span style="float: left;margin-top: 3px;">
-                <a-button type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
-                <a-button @click="reset" icon="reload">重置</a-button>
-              </span>
-            </a-col>
-          </a-row>
+        <a-col :sm="24" :md="24" :xl="14">
+          <a-form layout="horizontal" :form="searchForm" class="form-box">
+            <a-row type="flex" justify="end">
+              <a-col 
+                ><a-form-item style="margin-right:10px">
+                  <a-input
+                    placeholder="机构编码/名称"
+                    allowClear
+                    style="width: 200px"
+                    v-decorator="[
+                      'searcValue',
+                      {
+                        rules: [{ required: true, message: '机构类型编码/名称!' }],
+                      },
+                    ]"
+                  /> </a-form-item
+              ></a-col>
+              <a-col>
+                <a-form-item>
+                  <!-- <a-input placeholder="请输入" v-decorator="['entertype']" /> -->
+                  <a-select placeholder="选择机构" style="width: 300px" v-decorator="['entertype']">
+                    <a-select-option v-for="(item, index) in selectList" :key="index" :value="item.EnterTypeName">
+                      {{ item.EnterTypeName }}
+                    </a-select-option>
+                  </a-select>
+                </a-form-item></a-col
+              >
+              <a-col
+                ><div style="margin-top: 3px;margin-left:10px">
+                  <a-button :disabled="!hasPerm('search')" type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
+                  <a-button :disabled="!hasPerm('search')" @click="reset" icon="reload">重置</a-button>
+                </div></a-col
+              >
+            </a-row>
+          </a-form>
         </a-col>
       </a-row>
     </div>
@@ -114,7 +113,7 @@
                 <a-select v-model="form.EnterId" v-if="!isEdit" :disabled="isEdit" placeholder="请选择上级机构" @change="enterOption">
                   <a-select-option v-for="(item, index) in data" :key="index" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                 </a-select>
-                <a-input v-else v-model="form.SuperiorEnterName" disabled/>
+                <a-input v-else v-model="form.SuperiorEnterName" disabled />
               </a-form-model-item>
             </a-col>
             <a-col :span="12">
@@ -176,8 +175,10 @@
     <!-- 列表 -->
     <div class="tab">
       <a-table
+        v-if="hasPerm('search')"
         :columns="columns"
         :data-source="data"
+        :scroll="{ x: true }"
         size="small"
         :pagination="pagination"
         @change="handleTableChange"
@@ -202,12 +203,12 @@
         <template slot="action" slot-scope="text, record">
           <div>
             <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
-              <a style="margin-right: 8px">
+              <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                 <a-icon type="delete" />
                 删除
               </a>
             </a-popconfirm>
-            <a style="margin-right: 8px" @click="edit(record)">
+            <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
               <a-icon type="edit" />
               编辑
             </a>
@@ -218,6 +219,7 @@
           </div>
         </template>
       </a-table>
+      <a-empty v-else description="暂无权限" />
     </div>
     <!-- 查看详情 -->
     <div>
@@ -407,6 +409,7 @@ export default {
     },
   },
   created() {
+    console.log(this.$route);
     this.getEnterList();
     this.getInstitutionList();
   },

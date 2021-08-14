@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-11 17:23:04
+ * @LastEditTime: 2021-08-14 17:52:03
  * @LastEditors: max
  * @Description: 用户列表
  * @FilePath: /up-admin/src/pages/admin/user/list.vue
@@ -9,56 +9,23 @@
 <template>
   <!-- 搜索 -->
   <div>
-    <a-row>
-      <a-col style="padding: 0 5px" :span="6">
+    <a-row type="flex">
+      <a-col style="padding: 0 5px;max-height:80vh;min-height:80vh;overflow:auto" :span="5">
         <a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 5px', padding: '5px' }">
-          <p>组织选择</p>
+          <p>机构选择</p>
           <a-tree @select="treeClick" v-if="treeList.length" :tree-data="treeList" default-expand-all auto-expand-parent :replaceFields="replaceFields" :default-selected-keys="enterValue"></a-tree>
-           <a-empty v-if="treeList.length == 0" />
+          <a-empty v-if="treeList.length == 0" />
         </a-card>
       </a-col>
-      <a-col style="padding: 0 0px" :span="18">
+      <a-col style="padding: 0 0px" :span="19">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-          <div>
-            <a-row type="flex" justify="end">
-              <a-col :span="14">
-                <a-form layout="horizontal" :form="searchForm">
-                  <div>
-                    <a-col :span="8" style="margin-right:5px">
-                      <a-form-item :wrapperCol="{ span: 24, offset: 1 }">
-                        <a-select placeholder="请选择用户类型" v-decorator="['UserTypeId']">
-                          <a-select-option v-for="(item, index) in usetTypeList" :key="index" :value="item.UserTypeId">{{ item.UserTypeName }}</a-select-option>
-                        </a-select>
-                      </a-form-item>
-                    </a-col>
-                    <a-col :span="6">
-                      <a-form-item :wrapperCol="{ span: 24, offset: 1 }">
-                        <a-select placeholder="请选择用户状态" v-decorator="['enable']">
-                          <a-select-option value="Y">启用</a-select-option>
-                          <a-select-option value="N">禁用</a-select-option>
-                        </a-select>
-                      </a-form-item>
-                    </a-col>
-                    <a-col :span="8">
-                      <a-form-item :wrapperCol="{ span: 24, offset: 1 }"><a-input v-decorator="['key']" allowClear placeholder="请输入用户账号/名称"/></a-form-item>
-                    </a-col>
-                  </div>
-                </a-form>
-              </a-col>
-              <a-col :span="4">
-                <span style="float: left;margin-top: 3px;">
-                  <a-button type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
-                  <a-button @click="reset" icon="reload">重置</a-button>
-                </span>
-              </a-col>
-            </a-row>
-          </div>
           <div class="search-box">
-            <a-row>
-              <a-col :span="8">
+            <a-row type="flex" justify="space-between">
+              <a-col :span="6">
                 <div>
-                  <a-button @click="add" type="primary" icon="form">添加</a-button>
-                  <a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
+                  <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="form">添加</a-button>
+                  <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+                  <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
                   <span style="margin-left: 8px">
                     <template v-if="hasSelected">
                       {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -66,14 +33,45 @@
                   </span>
                 </div>
               </a-col>
+              <a-col :sm="24" :md="24" :xl="18">
+                <a-form layout="horizontal" :form="searchForm" class="form-box">
+                  <a-row type="flex" justify="end">
+                    <a-col
+                      ><a-form-item style="margin-right:10px">
+                        <a-select placeholder="请选择用户类型" style="width:150px" v-decorator="['UserTypeId']">
+                          <a-select-option v-for="(item, index) in usetTypeList" :key="index" :value="item.UserTypeId">{{ item.UserTypeName }}</a-select-option>
+                        </a-select>
+                      </a-form-item>
+                    </a-col>
+                    <a-col>
+                      <a-form-item style="margin-right:10px">
+                        <a-select placeholder="请选择用户状态" style="width:150px" v-decorator="['enable']">
+                          <a-select-option value="Y">启用</a-select-option>
+                          <a-select-option value="N">禁用</a-select-option>
+                        </a-select>
+                      </a-form-item></a-col
+                    >
+                    <a-col>
+                      <a-form-item><a-input v-decorator="['key']" style="width:200px" allowClear placeholder="请输入用户账号/名称"/></a-form-item>
+                    </a-col>
+                    <a-col>
+                      <div style="margin-top: 3px">
+                        <a-button :disabled="!hasPerm('search')" type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
+                        <a-button :disabled="!hasPerm('search')" @click="reset" icon="reload">重置</a-button>
+                      </div></a-col
+                    >
+                  </a-row>
+                </a-form>
+              </a-col>
             </a-row>
           </div>
           <!-- 列表 -->
-          <div class="tab">
+          <div class="tab" v-if="hasPerm('search')">
             <a-table
               :columns="columns"
               :data-source="data"
               size="small"
+              :scroll="{ y: true }"
               :loading="tableLoading"
               :pagination="pagination"
               @change="handleTableChange"
@@ -104,12 +102,12 @@
               <template slot="action" slot-scope="text, record">
                 <div>
                   <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
-                    <a style="margin-right: 8px">
+                    <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                       <a-icon type="delete" />
                       删除
                     </a>
                   </a-popconfirm>
-                  <a style="margin-right: 8px" @click="edit(record)">
+                  <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
                     <a-icon type="edit" />
                     编辑
                   </a>
@@ -123,9 +121,9 @@
                       <a-icon type="down" />
                     </a>
                     <a-menu slot="overlay">
-                      <a-menu-item key="0" @click="moreClick('enableuser', record)">{{ record.Enable == "Y" ? "禁用" : "启用" }}</a-menu-item>
-                      <a-menu-item key="1" @click="moreClick('lockuser', record)">{{ record.IsLocked == "Y" ? "解锁" : "锁定" }}</a-menu-item>
-                      <a-menu-item key="3" @click="moreClick('resetuserpwd', record)">重置密码</a-menu-item>
+                      <a-menu-item key="0" :disabled="!hasPerm('editEnable')" @click="moreClick('enableuser', record)">{{ record.Enable == "Y" ? "禁用" : "启用" }}</a-menu-item>
+                      <a-menu-item key="1" :disabled="!hasPerm('editLock')" @click="moreClick('lockuser', record)">{{ record.IsLocked == "Y" ? "解锁" : "锁定" }}</a-menu-item>
+                      <a-menu-item key="3" :disabled="!hasPerm('reset')" @click="moreClick('resetuserpwd', record)">重置密码</a-menu-item>
                     </a-menu>
                   </a-dropdown>
                 </div>
@@ -174,53 +172,62 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
+    width: "5%",
   },
   {
     title: "用户账号",
     dataIndex: "UserLoginId",
     scopedSlots: { customRender: "UserLoginId" },
     align: "center",
+    width: "15%",
   },
   {
     title: "用户名称",
     dataIndex: "UserName",
     scopedSlots: { customRender: "UserName" },
     align: "center",
+    width: "10%",
   },
   {
     title: "用户类型",
     dataIndex: "UserTypeName",
     scopedSlots: { customRender: "UserTypeName" },
     align: "center",
+    width: "10%",
   },
   {
     title: "企业微信",
     dataIndex: "EnterWechatAccount",
     scopedSlots: { customRender: "EnterWechatAccount" },
     align: "center",
+    width: "10%",
   },
   {
     title: "所属机构",
     dataIndex: "EnterName",
     scopedSlots: { customRender: "EnterName" },
     align: "center",
+    width: "20%",
   },
   {
     title: "状态",
     dataIndex: "Enable",
     scopedSlots: { customRender: "Enable" },
     align: "center",
+    width: "5%",
   },
   {
     title: "锁定状态",
     dataIndex: "IsLocked",
     scopedSlots: { customRender: "IsLocked" },
     align: "center",
+    width: "5%",
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
     align: "center",
+    width: "20%",
   },
 ];
 import { getUserList, userAction, getEnterTree, getUserTypeList } from "@/services/admin.js";

@@ -50,8 +50,12 @@ function parseRoutes(routesConfig, routerMap) {
 			}
 		} else if (typeof item === 'object') {
 			let cp = item.component;
-			if(cp == 'button') return;
-			if (item.component == 'BlankView') {
+			//过滤掉按钮类型
+			if (item.component) {
+				if (cp.indexOf("button") != -1) return;
+			}
+			if (item.component == 'BlankView' || item.component == "") {
+				//空白页
 				item.component = view.blank;
 			} else {
 				const item_component = item.component;
@@ -71,6 +75,14 @@ function parseRoutes(routesConfig, routerMap) {
 				name: item
 			} : item
 		}
+		//按钮权限
+		if(routeCfg.buttons){
+			let authority=[]
+			routeCfg.buttons.forEach(item=>{
+				authority.push(item.component)
+			})
+			routeCfg.permission = authority;
+		}
 		// 从 router 和 routeCfg 解析路由
 		const route = {
 			path: routeCfg.path || router.path || routeCfg.router,
@@ -82,7 +94,9 @@ function parseRoutes(routesConfig, routerMap) {
 					?.authority || '*',
 				icon: routeCfg.icon || router.icon || routeCfg.meta?.icon || router.meta?.icon,
 				page: routeCfg.page || router.page || routeCfg.meta?.page || router.meta?.page,
-				link: routeCfg.link || router.link || routeCfg.meta?.link || router.meta?.link
+				link: routeCfg.link || router.link || routeCfg.meta?.link || router.meta?.link,
+				permission:routeCfg.permission || [],
+				invisible:routeCfg.invisible || router.invisible
 			}
 		};
 		if (routeCfg.invisible || router.invisible) {
@@ -152,6 +166,7 @@ function loadRoutes(routesConfig) {
 	// 初始化Admin后台菜单数据
 	const rootRoute = router.options.routes.find(item => item.path === '/')
 	const menuRoutes = rootRoute && rootRoute.children
+	console.log(menuRoutes);
 	if (menuRoutes) {
 		store.commit('setting/setMenuData', menuRoutes)
 	}

@@ -176,7 +176,7 @@
         </a-list-item>
       </a-list>
     </setting-item>
-    <setting-item>
+    <!-- <setting-item>
       <a-button @click="saveSetting" type="primary" icon="save">{{
         $t("save")
       }}</a-button>
@@ -187,7 +187,7 @@
         style="float: right"
         >{{ $t("reset") }}</a-button
       >
-    </setting-item>
+    </setting-item> -->
   </div>
 </template>
 

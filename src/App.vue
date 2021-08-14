@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-07-10 10:17:37
+ * @LastEditTime: 2021-08-14 13:55:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/App.vue
@@ -95,7 +95,15 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-  #id{
-  }
+<style lang="less">
+.ant-table-column-title{
+  font-size: 700;
+  color:#000;
+}
+.ant-table{
+  min-height: 70vh;
+  max-height: 70vh;
+  overflow: auto;
+}
+.ant-table td { white-space: nowrap; }
 </style>

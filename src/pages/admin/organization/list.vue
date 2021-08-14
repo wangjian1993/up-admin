@@ -1,11 +1,12 @@
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <div class="search-box">
-      <a-row>
-        <a-col :span="12">
+      <a-row type="flex" justify="space-between">
+        <a-col :span="8">
           <div>
-            <a-button @click="add" type="primary" icon="form">添加</a-button>
-            <a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
+            <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="form">添加</a-button>
+            <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+            <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
             <span style="margin-left: 8px">
               <template v-if="hasSelected">
                 {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -13,13 +14,13 @@
             </span>
           </div>
         </a-col>
-        <a-col :span="12">
-          <a-row type="flex" justify="end">
-            <a-col :span="6">
-              <a-form layout="horizontal" :form="searchForm">
+        <a-col :sm="24" :md="24" :xl="14">
+          <a-row>
+            <a-col>
+              <a-form layout="horizontal" :form="searchForm" class="form-box">
                 <div>
-                  <a-form-item :wrapperCol="{ span: 24, offset: 1 }">
-                    <a-input
+                  <a-form-item>
+                  <a-input
                       placeholder="请输入组织维度编码/名称"
                       allowClear
                       v-decorator="[
@@ -31,13 +32,11 @@
                     />
                   </a-form-item>
                 </div>
+                <div style="margin-top: 3px;margin-left:10px">
+                  <a-button :disabled="!hasPerm('search')" type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
+                  <a-button :disabled="!hasPerm('search')" @click="reset" icon="reload">重置</a-button>
+                </div>
               </a-form>
-            </a-col>
-            <a-col :span="6">
-              <span style="float: left; margin-top: 3px;">
-                <a-button type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
-                <a-button @click="reset" icon="reload">重置</a-button>
-              </span>
             </a-col>
           </a-row>
         </a-col>
@@ -101,9 +100,11 @@
     <!-- 列表 -->
     <div class="tab">
       <a-table
+        v-if="hasPerm('search')"
         :columns="columns"
         :data-source="data"
         size="small"
+        :scroll="{y:true}"
         :pagination="pagination"
         @change="handleTableChange"
         :rowKey="(tableDatas) => data.EnterTypeId"
@@ -133,16 +134,16 @@
         <template slot="action" slot-scope="text, record">
           <div>
             <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
-              <a style="margin-right: 8px">
+              <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                 <a-icon type="delete" />
                 删除
               </a>
             </a-popconfirm>
-            <a style="margin-right: 8px" @click="cluster(record)">
+            <a style="margin-right: 8px" @click="cluster(record)" :disabled="!hasPerm('grade')">
               <a-icon type="cluster" />
               等级管理
             </a>
-            <a style="margin-right: 8px" @click="edit(record)">
+            <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
               <a-icon type="edit" />
               编辑
             </a>
@@ -153,6 +154,7 @@
           </div>
         </template>
       </a-table>
+      <a-empty v-else description="暂无权限"/>
     </div>
     <!-- 查看详情 -->
     <div>
@@ -195,41 +197,48 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
+    width: "10%"
   },
   {
     title: "维度名称",
     dataIndex: "OrgDimensionName",
     scopedSlots: { customRender: "OrgDimensionName" },
     align: "center",
+     width: "20%"
   },
   {
     title: "编码",
     dataIndex: "OrgDimensionCode",
     scopedSlots: { customRender: "OrgDimensionCode" },
     align: "center",
+     width: "20%"
   },
   {
     title: "参与授权",
     dataIndex: "IsPartAuth",
     scopedSlots: { customRender: "IsPartAuth" },
     align: "center",
+     width: "10%"
   },
   {
     title: "状态",
     dataIndex: "Enable",
     scopedSlots: { customRender: "enable" },
     align: "center",
+     width: "10%"
   },
   {
     title: "排序号",
     dataIndex: "SortNo",
     scopedSlots: { customRender: "SortNo" },
     align: "center",
+     width: "10%"
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
     align: "center",
+     width: "20%"
   },
 ];
 import { getOrganizationList, orgdimensionAction } from "@/services/admin.js";

@@ -60,7 +60,7 @@ export default {
       logging: false,
       error: "",
       form: this.$form.createForm(this),
-      routerItem:[],
+      routerItem: [],
       timeList: [
         {
           CN: "早上好",
@@ -131,15 +131,22 @@ export default {
         var inFifteenMinutes = new Date(new Date().getTime() + 4 * 60 * 60 * 1000);
         setAuthorization({ token: res.headers.token, expireAt: inFifteenMinutes });
         this.$message.success(this.timeFix().CN + "，欢迎回来!", 3);
-        const routesConfig = userModules;
+        const routesConfig = userModules || [];
+        // if (routesConfig.length == 0) {
+          let workplace = {
+            router: "dashboard", //匹配 router.map.js 中注册名 registerName = dashboard 的路由
+            children: ["workplace"], //dashboard 路由的子路由配置，依次匹配 registerName 为 workplace 和 analysis 的路由
+          };
+          routesConfig.push(workplace);
+        // }
         let root = [
-					{
-						router: 'root', //匹配 router.map.js 中注册名 registerName = root 的路由
-						children: routesConfig
-					}
-				];
-				loadRoutes(root);
-        this.$router.push("workplace");
+          {
+            router: "root", //匹配 router.map.js 中注册名 registerName = root 的路由
+            children: routesConfig,
+          },
+        ];
+        loadRoutes(root);
+        this.$router.push("dashboard");
       } else {
         console.log(loginRes.message.content);
         this.error = loginRes.message.content;

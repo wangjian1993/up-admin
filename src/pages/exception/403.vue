@@ -1,5 +1,13 @@
+<!--
+ * @Author: max
+ * @Date: 2021-07-08 09:23:52
+ * @LastEditTime: 2021-08-14 09:46:53
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/exception/403.vue
+-->
 <template>
-	<exception-page home-route="/home/workplace" :style="`min-height: ${minHeight}`" type="403" />
+	<exception-page home-route="/dashboard" :style="`min-height: ${minHeight}`" type="403" />
 </template>
 
 <script>

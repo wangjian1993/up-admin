@@ -1,3 +1,11 @@
+<!--
+ * @Author: max
+ * @Date: 2021-07-08 09:23:52
+ * @LastEditTime: 2021-08-14 09:46:23
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/components/menu/SideMenu.vue
+-->
 <template>
   <a-layout-sider
     :theme="sideTheme"
@@ -13,13 +21,13 @@
     :trigger="null"
   >
     <div :class="['logo', theme]" v-if="!collapsed">
-      <router-link to="/home/workplace">
+      <router-link to="/dashboard">
         <img src="../../assets/img/upshine-logo.png" alt="" />
         <h1>{{ systemName }}</h1>
       </router-link>
     </div>
     <div :class="['logo', theme]" v-else>
-      <router-link to="/home/workplace">
+      <router-link to="/dashboard">
         <img src="../../assets/img/upshine-logo.png" alt="" />
       </router-link>
     </div>
