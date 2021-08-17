@@ -17,7 +17,7 @@
     />
     <div
       :class="['tabs-view-content', layout, pageWidth]"
-      :style="`margin-top: ${multiPage ? -24 : 0}px`"
+      :style="`margin-top: ${multiPage ? 0 : 0}px`"
     >
       <page-toggle-transition
         :disabled="animate.disabled"

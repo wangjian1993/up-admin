@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-08-14 14:26:35
+ * @LastEditTime: 2021-08-17 16:26:23
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -10,7 +10,7 @@
   <div>
     <a-row>
       <!-- 机构类型 -->
-      <a-col style="padding: 0 5px;max-height:80vh;overflow:auto" :span="5">
+      <a-col style="padding: 0 5px;" :span="5">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-row>
             <a-col :xs="12" :sm="8"><span class="card-title">机构类型:</span></a-col>
@@ -22,7 +22,7 @@
           </a-row>
           <a-row>
             <a-col :xs="24" :sm="24">
-              <div style="padding: 10px 0;">
+              <div style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
                 <a-tree @select="enterTreeClick" v-if="enterTreeData.length" :tree-data="enterTreeData" :replaceFields="replaceFields" default-expand-all :default-selected-keys="enterValue"></a-tree>
                 <a-empty v-if="enterTreeData.length == 0" />
               </div>
@@ -31,7 +31,7 @@
         </a-card>
       </a-col>
       <!-- 组织维度 -->
-      <a-col style="padding: 0 5px;max-height:80vh;overflow:auto" :span="5">
+      <a-col style="padding: 0 5px;" :span="5">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-row>
             <a-col :xs="12" :sm="8"><span class="card-title">组织维度:</span></a-col>
@@ -41,14 +41,14 @@
               </a-select>
             </a-col>
           </a-row>
-          <div style="padding: 10px 0;">
+          <div style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
             <a-tree @select="orgTreeClick" v-if="orgTreeData.length" :tree-data="orgTreeData" :replaceFields="replaceFields1" default-expand-all :default-selected-keys="orgValue"></a-tree>
             <a-empty v-if="orgTreeData.length == 0" />
           </div>
         </a-card>
       </a-col>
       <!-- 应用类型 -->
-      <a-col style="padding: 0 5px;max-height:80vh;overflow:auto" :span="5">
+      <a-col style="padding: 0 5px;" :span="5">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-row>
             <a-col :xs="12" :sm="6"><span class="card-title">应用类型:</span></a-col>
@@ -59,7 +59,7 @@
             </a-col>
             <a-col :xs="12" :sm="7"><a-button v-if="hasPerm('save')" icon="save" type="primary" style="margin:0 0px;" @click="appTreeSave">保存</a-button></a-col>
           </a-row>
-          <div style="padding: 10px 0;">
+          <div style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
             <a-tree v-model="expandedKeys" @select="appTreeClick" v-if="appTreeData.length" :tree-data="appTreeData" :replaceFields="replaceFields2" default-expand-all checkable @check="appTreeChange" :default-selected-keys="appValue"></a-tree>
             <a-empty v-if="appTreeData.length == 0" />
           </div>

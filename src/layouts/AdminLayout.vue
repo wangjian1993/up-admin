@@ -1,27 +1,10 @@
 <template>
   <a-layout :class="['admin-layout', 'beauty-scroll']">
     <drawer v-if="isMobile" v-model="drawerOpen">
-      <side-menu
-        :theme="theme.mode"
-        :menuData="menuData"
-        :collapsed="false"
-        :collapsible="false"
-        @menuSelect="onMenuSelect"
-      />
+      <side-menu :theme="theme.mode" :menuData="menuData" :collapsed="false" :collapsible="false" @menuSelect="onMenuSelect" />
     </drawer>
-    <side-menu
-      :class="[fixedSideBar ? 'fixed-side' : '']"
-      :theme="theme.mode"
-      v-else-if="layout === 'side' || layout === 'mix'"
-      :menuData="sideMenuData"
-      :collapsed="collapsed"
-      :collapsible="true"
-    />
-    <div
-      v-if="fixedSideBar && !isMobile"
-      :style="`width: ${sideMenuWidth}; min-width: ${sideMenuWidth};max-width: ${sideMenuWidth};`"
-      class="virtual-side"
-    ></div>
+    <side-menu :class="[fixedSideBar ? 'fixed-side' : '']" :theme="theme.mode" v-else-if="layout === 'side' || layout === 'mix'" :menuData="sideMenuData" :collapsed="collapsed" :collapsible="true" />
+    <div v-if="fixedSideBar && !isMobile" :style="`width: ${sideMenuWidth}; min-width: ${sideMenuWidth};max-width: ${sideMenuWidth};`" class="virtual-side"></div>
     <drawer v-if="!hideSetting" v-model="showSetting" placement="right">
       <div class="setting" slot="handler">
         <a-icon :type="showSetting ? 'close' : 'setting'" />
@@ -39,7 +22,7 @@
         ]"
         :style="headerStyle"
         :menuData="headMenuData"
-         :breadcrumb="headBreadCrumb"
+        :breadcrumb="headBreadCrumb"
         :collapsed="collapsed"
         @toggleCollapse="toggleCollapse"
       />
@@ -54,24 +37,21 @@
         ]"
         v-show="fixedHeader"
       ></a-layout-header>
-      <a-layout-content
-        class="admin-layout-content"
-        :style="`min-height: ${minHeight}px;`"
-      >
+      <a-layout-content class="admin-layout-content" :style="`min-height: ${minHeight}px;max-height: ${maxHeight}px;height:${maxHeight}px`">
         <div style="position: relative">
           <slot></slot>
         </div>
       </a-layout-content>
-      <a-layout-footer style="padding: 0px">
+      <!-- <a-layout-footer style="padding: 0px">
         <page-footer :link-list="footerLinks" :copyright="copyright" />
-      </a-layout-footer>
+      </a-layout-footer> -->
     </a-layout>
   </a-layout>
 </template>
 
 <script>
 import AdminHeader from "./header/AdminHeader";
-import PageFooter from "./footer/PageFooter";
+// import PageFooter from "./footer/PageFooter";
 import Drawer from "../components/tool/Drawer";
 import SideMenu from "../components/menu/SideMenu";
 import Setting from "../components/setting/Setting";
@@ -81,10 +61,10 @@ import { getI18nKey } from "@/utils/routerUtil";
 
 export default {
   name: "AdminLayout",
-  components: { Setting, SideMenu, Drawer, PageFooter, AdminHeader },
+  components: { Setting, SideMenu, Drawer, AdminHeader },
   data() {
     return {
-      minHeight: window.innerHeight - 64 - 122,
+      minHeight: window.innerHeight - 48,
       collapsed: false,
       showSetting: false,
       drawerOpen: false,
@@ -109,27 +89,13 @@ export default {
     },
   },
   computed: {
-    ...mapState("setting", [
-      "isMobile",
-      "theme",
-      "layout",
-      "footerLinks",
-      "copyright",
-      "fixedHeader",
-      "fixedSideBar",
-      "fixedTabs",
-      "hideSetting",
-      "multiPage",
-    ]),
+    ...mapState("setting", ["isMobile", "theme", "layout", "footerLinks", "copyright", "fixedHeader", "fixedSideBar", "fixedTabs", "hideSetting", "multiPage"]),
     ...mapGetters("setting", ["firstMenu", "subMenu", "menuData"]),
     sideMenuWidth() {
       return this.collapsed ? "48px" : "170px";
     },
     headerStyle() {
-      let width =
-        this.fixedHeader && this.layout !== "head" && !this.isMobile
-          ? `calc(100% - ${this.sideMenuWidth})`
-          : "100%";
+      let width = this.fixedHeader && this.layout !== "head" && !this.isMobile ? `calc(100% - ${this.sideMenuWidth})` : "100%";
       let position = this.fixedHeader ? "fixed" : "static";
       return `width: ${width}; position: ${position};`;
     },
@@ -220,7 +186,7 @@ export default {
     }
   }
   .admin-layout-content {
-    padding: 24px 10px 0;
+    padding: 10px;
     /*overflow-x: hidden;*/
     /*min-height: calc(100vh - 64px - 122px);*/
   }

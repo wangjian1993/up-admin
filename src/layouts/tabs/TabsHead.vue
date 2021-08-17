@@ -188,6 +188,7 @@ export default {
 }
 .tabs-head {
   margin: 0 auto;
+  height:40px;
   &.head.fixed {
     width: 1400px;
   }

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-08-14 13:55:03
+ * @LastEditTime: 2021-08-17 16:10:59
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/App.vue
@@ -101,8 +101,8 @@ export default {
   color:#000;
 }
 .ant-table{
-  min-height: 70vh;
-  max-height: 70vh;
+  min-height:77vh;
+  max-height:77vh;
   overflow: auto;
 }
 .ant-table td { white-space: nowrap; }

@@ -2,7 +2,7 @@
   <div>
     <a-row>
       <a-col style="padding: 0 5px" :span="6">
-        <a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 0px', padding: '5px',maxHeight:'60vh',minHeight:'60vh',overflow:'auto'}">
+        <a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 0px', padding: '5px',maxHeight:'67vh',minHeight:'67vh',overflow:'auto'}">
           <p>机构选择</p>
           <a-tree @select="treeClick" v-if="treeList.length" :tree-data="treeList" :replaceFields="replaceFields" default-expand-all :default-selected-keys="enterValue"></a-tree>
           <a-empty v-if="treeList.length == 0" />

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-14 17:52:03
+ * @LastEditTime: 2021-08-17 16:19:14
  * @LastEditors: max
  * @Description: 用户列表
  * @FilePath: /up-admin/src/pages/admin/user/list.vue
@@ -10,7 +10,7 @@
   <!-- 搜索 -->
   <div>
     <a-row type="flex">
-      <a-col style="padding: 0 5px;max-height:80vh;min-height:80vh;overflow:auto" :span="5">
+      <a-col style="padding: 0 5px;" :span="5">
         <a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 5px', padding: '5px' }">
           <p>机构选择</p>
           <a-tree @select="treeClick" v-if="treeList.length" :tree-data="treeList" default-expand-all auto-expand-parent :replaceFields="replaceFields" :default-selected-keys="enterValue"></a-tree>
@@ -543,5 +543,8 @@ export default {
   .fold {
     width: 100%;
   }
+}
+/deep/.card{
+  max-height:90vh;min-height:90vh;overflow:auto
 }
 </style>

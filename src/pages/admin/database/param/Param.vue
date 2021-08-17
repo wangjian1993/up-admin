@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-14 18:01:12
+ * @LastEditTime: 2021-08-17 16:33:58
  * @LastEditors: max
  * @Description: 快码列表
  * @FilePath: /up-admin/src/pages/admin/database/param/Param.vue
@@ -11,14 +11,14 @@
     <!-- 搜索 -->
     <a-row>
       <a-col style="padding: 0 5px" :span="6">
-        <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px', maxHeight: '80vh', minHeight: '80vh', overflow: 'auto' }" title="快码组:">
+        <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px'}" title="快码组:">
           <a-row>
             <a-col :xs="12" :sm="16"><a-input-search placeholder="搜索快码组" :disabled="!hasPerm('searchGroup')" v-model="groupSearch" enter-button @search="onSearch"/></a-col>
             <a-col :xs="12" :sm="8"><a-button :disabled="!hasPerm('addGroup')" type="primary" style="margin-left: 20px;" @click="addGroup">添加组</a-button></a-col>
           </a-row>
           <a-row>
             <a-col :xs="24" :sm="24">
-              <div style="padding: 10px 0;">
+              <div style="padding: 10px 0;max-height:78vh;min-height:78vh;overflow:auto">
                 <a-tree @select="groupClick" v-if="groupData.length" :tree-data="groupData" :replaceFields="replaceFields" default-expand-all :default-selected-keys="groupValue"></a-tree>
                 <a-empty v-if="groupData.length == 0" />
               </div>
@@ -636,7 +636,4 @@ export default {
 };
 </script>
 <style lang="less">
-.ant-form-item {
-  // margin-bottom: 5px;
-}
 </style>

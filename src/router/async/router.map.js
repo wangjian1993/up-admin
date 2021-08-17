@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-08-14 09:44:15
+ * @LastEditTime: 2021-08-17 13:29:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/router/async/router.map.js
@@ -23,7 +23,7 @@ const routerMap = {
   root: {
     path: '/',
     name: '首页',
-    redirect: '/dashboard',
+    redirect: '/login',
     component: view.tabs
   },
   dashboard: {

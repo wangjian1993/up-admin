@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 16:12:00
- * @LastEditTime: 2021-08-14 18:01:39
+ * @LastEditTime: 2021-08-17 16:34:03
  * @LastEditors: max
  * @Description: 快码组管理
  * @FilePath: /up-admin/src/pages/admin/database/group/Group.vue
@@ -426,7 +426,4 @@ export default {
 };
 </script>
 <style lang="less">
-.ant-form-item {
-  // margin-bottom: 5px;
-}
 </style>
