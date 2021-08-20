@@ -11,8 +11,9 @@
         <a-form-item>
           <a-input
             autocomplete="autocomplete"
+            allowClear
             size="large"
-            placeholder="Administrator"
+            placeholder="请输入账号"
             v-decorator="[
               'name',
               {
@@ -24,11 +25,11 @@
           </a-input>
         </a-form-item>
         <a-form-item>
-          <a-input
+          <a-input-password
             size="large"
-            placeholder="14789632"
+            placeholder="请输入密码"
+            allowClear
             autocomplete="autocomplete"
-            type="password"
             v-decorator="[
               'password',
               {
@@ -37,8 +38,12 @@
             ]"
           >
             <a-icon slot="prefix" type="lock" />
-          </a-input>
+          </a-input-password>
         </a-form-item>
+        <div>
+          <a-checkbox style="float: right" :checked="isAccount" @click="cheackAccount">记住账号</a-checkbox>
+          <!-- <a style="float: right">忘记密码</a> -->
+        </div>
         <a-form-item><a-button :loading="logging" style="width: 100%;margin-top: 24px" size="large" htmlType="submit" type="primary">登录</a-button></a-form-item>
       </a-form>
     </div>
@@ -61,6 +66,7 @@ export default {
       error: "",
       form: this.$form.createForm(this),
       routerItem: [],
+      isAccount: true,
       timeList: [
         {
           CN: "早上好",
@@ -95,8 +101,15 @@ export default {
       return this.$store.state.setting.systemName;
     },
   },
+  created() {
+    //设置账号
+    this.$nextTick(() => {
+      let name = localStorage.getItem("account");
+      this.form.setFieldsValue({ name: name });
+    });
+  },
   methods: {
-    ...mapMutations("account", ["setUser", "setPermissions", "setRoles"]),
+    ...mapMutations("account", ["setUser", "setPermissions", "setRoles",'setMenu']),
     onSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err) => {
@@ -126,18 +139,29 @@ export default {
       this.logging = false;
       const loginRes = res.data;
       if (loginRes.success) {
-        const { userId, userModules } = loginRes.data;
-        this.setUser(userId);
+        const { userName, userModules } = loginRes.data;
+        console.log("userModules----",userModules)
+        this.setUser(userName);
+        // this.setMenu(userModules);
+        localStorage.setItem("menu",JSON.stringify(userModules));
         var inFifteenMinutes = new Date(new Date().getTime() + 4 * 60 * 60 * 1000);
         setAuthorization({ token: res.headers.token, expireAt: inFifteenMinutes });
         this.$message.success(this.timeFix().CN + "，欢迎回来!", 3);
         const routesConfig = userModules || [];
+        //记住账号
+        if (this.isAccount) {
+          localStorage.setItem("account", this.form.getFieldValue("name"));
+        } else {
+          localStorage.removeItem("account");
+        }
         // if (routesConfig.length == 0) {
-          let workplace = {
-            router: "dashboard", //匹配 router.map.js 中注册名 registerName = dashboard 的路由
-            children: ["workplace"], //dashboard 路由的子路由配置，依次匹配 registerName 为 workplace 和 analysis 的路由
-          };
-          routesConfig.push(workplace);
+        let workplace = {
+          router: "dashboard", //匹配 router.map.js 中注册名 registerName = dashboard 的路由
+          children: ["workplace"] //dashboard 路由的子路由配置，依次匹配 registerName 为 workplace 和 analysis 的路由
+        };
+        let personal = { router: "personal", children: ["user"] };
+        routesConfig.push(workplace);
+        routesConfig.push(personal);
         // }
         let root = [
           {
@@ -145,13 +169,13 @@ export default {
             children: routesConfig,
           },
         ];
+        console.log(root);
         loadRoutes(root);
         this.$router.push("dashboard");
-      } else {
-        console.log(loginRes.message.content);
-        this.error = loginRes.message.content;
-        this.$message.warning(this.error);
       }
+    },
+    cheackAccount() {
+      this.isAccount = !this.isAccount;
     },
   },
 };
@@ -210,5 +234,8 @@ export default {
 }
 .ant-input {
   border-radius: 5px;
+}
+.ant-form-item {
+  margin-bottom: 24px;
 }
 </style>

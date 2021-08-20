@@ -37,7 +37,7 @@
         ]"
         v-show="fixedHeader"
       ></a-layout-header>
-      <a-layout-content class="admin-layout-content" :style="`min-height: ${minHeight}px;max-height: ${maxHeight}px;height:${maxHeight}px`">
+      <a-layout-content class="admin-layout-content" :style="`min-height: ${minHeight}px;max-height: ${minHeight}px;height: ${minHeight}px`">
         <div style="position: relative">
           <slot></slot>
         </div>

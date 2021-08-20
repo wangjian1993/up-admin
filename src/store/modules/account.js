@@ -1,10 +1,19 @@
+/*
+ * @Author: max
+ * @Date: 2021-06-23 09:27:52
+ * @LastEditTime: 2021-08-20 17:17:01
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/store/modules/account.js
+ */
 export default {
   namespaced: true,
   state: {
     user: undefined,
     permissions: null,
     roles: null,
-    routesConfig: null
+    routesConfig: null,
+    menuList:[]
   },
   getters: {
     user: state => {
@@ -71,6 +80,10 @@ export default {
     setRoutesConfig(state, routesConfig) {
       state.routesConfig = routesConfig
       localStorage.setItem(process.env.VUE_APP_ROUTES_KEY, JSON.stringify(routesConfig))
+    },
+    setMenu(state,data){
+      console.log("data",data);
+      state.menuList =data;
     }
   }
 }

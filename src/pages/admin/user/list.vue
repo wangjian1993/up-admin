@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-17 16:19:14
+ * @LastEditTime: 2021-08-20 15:47:29
  * @LastEditors: max
  * @Description: 用户列表
  * @FilePath: /up-admin/src/pages/admin/user/list.vue
@@ -263,7 +263,7 @@ export default {
       pagination: {
         current: 1,
         total: 0,
-        pageSize: 10, //每页中显示10条数据
+        pageSize: 20, //每页中显示10条数据
         showSizeChanger: true,
         showLessItems: true,
         showQuickJumper: true,
@@ -383,6 +383,9 @@ export default {
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
+        }else {
+          console.log("1111")
+          this.tableLoading = false;
         }
       });
     },
@@ -500,11 +503,11 @@ export default {
           if (e == "resetuserpwd") {
             // this.$message.success("密码重置成功!新密码为: " + res.data.data.NewPwd, 10);
             this.$success({
-              title: "This is a success message",
+              title: "密码重置成功",
               // JSX support
               content: (
                 <div>
-                  <p>密码重置成功!新密码为: " + res.data.data.NewPwd</p>
+                  <p>密码重置成功!新密码为:{res.data.data.NewPwd}</p>
                 </div>
               ),
             });

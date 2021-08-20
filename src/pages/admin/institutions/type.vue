@@ -266,7 +266,7 @@ export default {
       pagination: {
         current: 1,
         total: 0,
-        pageSize: 10, //每页中显示10条数据
+        pageSize: 20, //每页中显示10条数据
         showSizeChanger: true,
         showLessItems: true,
         showQuickJumper: true,

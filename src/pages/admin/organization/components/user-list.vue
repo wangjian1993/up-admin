@@ -2,7 +2,7 @@
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <div class="search-box">
       <a-row>
-        <a-col :span="24">
+        <a-col :span="12">
           <div>
             <a-button :disabled="!hasPerm('userAdd')" @click="add" type="primary" icon="form">添加</a-button>
             <a-button v-if="hasPerm('userDelete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
@@ -14,6 +14,11 @@
             </span>
           </div>
         </a-col>
+        <a-col :span="12">
+          <div>
+            <a-input-search placeholder="姓名账号搜索" allowClear style="width: 200px" @search="onSearch" />
+          </div>
+        </a-col>
       </a-row>
     </div>
     <div><all-user v-if="isModal" :orgId="orgId" :enterid="enterid" @succeed="getOrgUser" @closeModal="closeModal"></all-user></div>
@@ -23,7 +28,6 @@
         :columns="columns"
         :data-source="data"
         size="small"
-        :scroll="{y:true}"
         :pagination="pagination"
         @change="handleTableChange"
         :rowKey="(tableDatas) => data.EnterTypeId"
@@ -36,18 +40,6 @@
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-          </div>
-        </template>
-        <template slot="enable" slot-scope="record">
-          <div>
-            <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
-            <a-tag color="red" v-else>禁用</a-tag>
-          </div>
-        </template>
-        <template slot="defualt" slot-scope="record">
-          <div>
-            <a-tag color="green" v-if="record == 'Y'">是</a-tag>
-            <a-tag color="red" v-else>否</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">
@@ -102,7 +94,7 @@ const columns = [
     align: "center",
   },
 ];
-import { getUserTypeList, delOrgUser, getOrgUser } from "@/services/admin.js";
+import {delOrgUser, getOrgUser } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import AllUser from "./all-user.vue";
 import paging from "@/config/paging.js";
@@ -184,38 +176,32 @@ export default {
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
-    //重置搜索
-    reset() {
-      this.getUserTypeList();
-      this.searchForm.resetFields();
-    },
-    //关键词搜索
-    search() {
-      this.searchForm.validateFields((err, values) => {
-        if (!err) {
-          console.log("Received values of form: ", values);
-          this.data = [];
-          this.pagination.total = 0;
-          let parmas = {
-            pageindex: this.pagination.current,
-            pagesize: this.pagination.pageSize,
-            keyword: values.searcValue,
-          };
-          getUserTypeList(parmas).then((res) => {
-            if (res.data.success) {
-              this.data = res.data.data.list;
-              const pagination = { ...this.pagination };
-              pagination.total = res.data.data.recordsTotal;
-              this.pagination = pagination;
-            }
-          });
-          // do something
+    onSearch(value){
+      this.setPage();
+      console.log(value);
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.pageSize,
+        orgid: this.id,
+        username:value
+      };
+      getOrgUser(parmas).then((res) => {
+        if (res.data.success) {
+          this.data = res.data.data.list;
+          const pagination = { ...this.pagination };
+          pagination.total = res.data.data.recordsTotal;
+          this.pagination = pagination;
         }
       });
+    },
+    setPage(){
+      this.pagination.current =1;
+      this.pagination.pageSize= 20;
     },
     //获取机构类型列表
     getOrgUser(id) {
       console.log("调用=====");
+      this.id =id
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
@@ -300,7 +286,7 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      this.getOrgUser();
+      this.getOrgUser(this.id);
     },
   },
   components: { AllUser },

@@ -1,68 +1,73 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-08-17 17:59:48
+ * @LastEditTime: 2021-08-18 18:05:20
  * @LastEditors: max
- * @Description: 
+ * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/quote/purchase/add/Add.vue
 -->
 <template>
   <div>
     <a-card class="card" :bordered="false">
-      <a-form-model :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-row>
-          <a-col :span="8">
-            <a-form-model-item label="产品品号"> <a-input v-model="form.name" /> </a-form-model-item
-          ></a-col>
-          <a-col :span="8">
-            <a-form-model-item label="需求公司">
-              <a-select v-model="form.region" placeholder="选择公司">
-                <a-select-option value="shanghai">
-                  公司1
-                </a-select-option>
-                <a-select-option value="beijing">
-                  公司2
-                </a-select-option>
-              </a-select></a-form-model-item
-            ></a-col
-          >
-          <a-col :span="5">
-            <a-form-model-item label="生产工厂">
-              <a-select v-model="form.region" placeholder="选择工厂">
-                <a-select-option value="shanghai">
-                  工厂1
-                </a-select-option>
-                <a-select-option value="beijing">
-                  工厂2
-                </a-select-option>
-              </a-select></a-form-model-item
-            ></a-col
-          >
-          <a-col :span="2">
-            <a-button type="primary">
-              查询
-            </a-button>
-          </a-col>
-        </a-row>
-        <a-row>
-          <a-col :span="8">
-            <a-form-model-item label="产品大类"> <a-input v-model="form.name" /> </a-form-model-item
-          ></a-col>
-          <a-col :span="8">
-            <a-form-model-item label="产品型号"> <a-input v-model="form.name" /> </a-form-model-item
-          ></a-col>
-          <a-col :span="8">
-            <a-form-model-item label="产品品名"> <a-input v-model="form.name" /> </a-form-model-item
-          ></a-col>
-        </a-row>
-        <a-row>
-          <a-col :span="8">
-            <a-form-model-item label="产品规格"> <a-input v-model="form.name" /> </a-form-model-item
-          ></a-col>
-        </a-row>
-      </a-form-model>
+      <div :class="advanced ? 'search' : null">
+        <a-form layout="horizontal">
+          <div :class="advanced ? null : 'fold'">
+            <a-row>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="产品品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-input placeholder="请输入产品品号" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="需求公司" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-select placeholder="请选择需求公司">
+                    <a-select-option value="1">关闭</a-select-option>
+                    <a-select-option value="2">运行中</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-select placeholder="请选择生产工厂">
+                    <a-select-option value="1">关闭</a-select-option>
+                    <a-select-option value="2">运行中</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <span style="float: left; margin-top: 5px;">
+                  <a-button type="primary" @click="searchClick">查询</a-button>
+                  <a-button style="margin-left: 8px">重置</a-button>
+                </span>
+              </a-col>
+            </a-row>
+            <a-row v-if="advanced">
+              <a-col :md="6" :sm="24">
+                <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-input placeholder="请输入产品大类" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-input placeholder="请输入产品型号" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="产品品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-input placeholder="请输入产品品号" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="产品规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-input placeholder="请输入产品品号" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </div>
+        </a-form>
+      </div>
     </a-card>
-    <a-card>
+    <!-- <a-card>
       <a-descriptions title="">
         <a-descriptions-item label="产品品号">{{ bomDetail.item_code }}</a-descriptions-item>
         <a-descriptions-item label="产品大类"><a-input placeholder="" type="text" :value="bomDetail.one_sort" @change="sortInput"/></a-descriptions-item>
@@ -70,9 +75,9 @@
         <a-descriptions-item label="产品品名">{{ bomDetail.item_name }}</a-descriptions-item>
         <a-descriptions-item label="产品规格">{{ bomDetail.item_specification }}</a-descriptions-item>
       </a-descriptions>
-    </a-card>
-    <a-card class="card" title="物料成本" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
-      <div id="input-box">
+    </a-card> -->
+    <a-card class="card" title="填写报价单" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
+      <div id="input-box" v-if="costList.length">
         <a-row>
           <a-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12" :xxl="12" v-for="(item, index) in costList.cost_options" :key="index">
             <div class="input-item" v-if="item.field_name != 'bom_cost' && item.field_name != 'total_cost'">
@@ -85,6 +90,7 @@
           </a-col>
         </a-row>
       </div>
+      <a-empty v-else :image="simpleImage" />
     </a-card>
     <a-card class="card" title="物料" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
       <standard-table :pagination="pagination" :columns="columns" :dataSource="tableData">
@@ -106,18 +112,18 @@ const columns = [
   {
     title: "阶次",
     dataIndex: "lv",
-    width:"5%"
+    width: "5%",
   },
   {
     title: "类型",
     dataIndex: "property",
-     width: "5%"
+    width: "5%",
   },
   {
     title: "上阶料号",
     dataIndex: "last_code",
     ellipsis: true,
-     width: "10%"
+    width: "10%",
   },
   {
     title: "料号",
@@ -142,7 +148,7 @@ const columns = [
     title: "E10单价",
     dataIndex: "E10",
     scopedSlots: { customRender: "e10" },
-     width: "5%"
+    width: "5%",
   },
   {
     title: "单价",
@@ -152,7 +158,7 @@ const columns = [
   {
     title: "用量",
     dataIndex: "yl",
-     width: "5%"
+    width: "5%",
   },
   {
     title: "金额",
@@ -161,17 +167,19 @@ const columns = [
   {
     title: "提示",
     dataIndex: "row_tips",
-    width: "5%"
+    width: "5%",
   },
   {
     title: "备注",
     scopedSlots: { customRender: "action" },
   },
 ];
+import { Empty } from 'ant-design-vue';
 export default {
   components: { StandardTable },
   data() {
     return {
+      advanced: true,
       bomDetail: [],
       costList: [],
       tableData: [],
@@ -192,9 +200,12 @@ export default {
       },
     };
   },
+  beforeCreate() {
+    this.simpleImage = Empty.PRESENTED_IMAGE_SIMPLE;
+  },
   created() {
-    this.searchClick();
-    this.getCompanyBomCost();
+    // this.searchClick();
+    // this.getCompanyBomCost();
   },
   methods: {
     searchClick() {
@@ -243,6 +254,9 @@ export default {
     typeInput(e) {
       this.bomDetail.two_sort = e.target.value;
     },
+    toggleAdvanced() {
+      this.advanced = !this.advanced;
+    },
   },
 };
 </script>
@@ -271,7 +285,7 @@ export default {
 .ant-form-item {
   margin-bottom: 0;
 }
-/deep/.card{
+/deep/.card {
   margin: 10px 0;
 }
 </style>

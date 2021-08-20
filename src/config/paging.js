@@ -1,7 +1,15 @@
+/*
+ * @Author: max
+ * @Date: 2021-08-17 08:26:18
+ * @LastEditTime: 2021-08-19 10:35:44
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/config/paging.js
+ */
  const pagination ={
 	current: 1,
 	total: 0,
-	pageSize: 10, //每页中显示10条数据
+	pageSize: 20, //每页中显示10条数据
 	showSizeChanger: true,
 	showLessItems: true,
 	showQuickJumper: true,

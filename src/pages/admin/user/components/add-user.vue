@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-28 10:54:51
- * @LastEditTime: 2021-08-12 08:46:38
+ * @LastEditTime: 2021-08-20 15:22:48
  * @LastEditors: max
  * @Description: 添加用户form
  * @FilePath: /up-admin/src/pages/admin/user/components/add-user.vue
@@ -341,8 +341,10 @@ export default {
       this.visible = true;
     },
     handleOk() {
+      console.log("保存=====");
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
+          console.log("111");
           if (this.modalType == "edit") {
             let role = [
               {
@@ -352,6 +354,11 @@ export default {
               },
             ];
             let org = [];
+            console.log("this.orgList", this.orgList);
+            if (!this.orgList[0].levelArray) {
+              this.$message.warning("请选择用户组织信息!");
+              return;
+            }
             this.orgList.forEach((item) => {
               let obj = {
                 OrgId: item.levelArray.OrgId,
@@ -378,10 +385,6 @@ export default {
               this.$message.warning("请选择用户权限角色");
               return;
             }
-            // if (this.roleList.RoleId == '') {
-            // 	this.$message.warning('请选择用户权限角色');
-            // 	return;
-            // }
             let role = [
               {
                 RoleId: this.roleList.RoleId,
@@ -423,7 +426,7 @@ export default {
   components: { listClass },
 };
 </script>
-<style type="text/css" lang="less" scoped>
+<style type="text/css" lang="less">
 .ant-modal-body {
   padding: 5px 15px;
 }

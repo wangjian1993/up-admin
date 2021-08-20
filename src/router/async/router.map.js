@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-08-17 13:29:58
+ * @LastEditTime: 2021-08-20 14:51:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/router/async/router.map.js
@@ -40,6 +40,16 @@ const routerMap = {
     name: '异常页',
     icon: 'warning',
     component: view.blank
+  },
+  personal: {
+    invisible:true,
+    name: '个人中心',
+    component: view.blank
+  },
+  user:{
+    name: '个人中心',
+    path: 'user',
+    component: () => import('@/pages/personal')
   },
   exp403: {
     authority: '*',

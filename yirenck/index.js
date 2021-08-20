@@ -1,8 +1,16 @@
-//  deploy/index.js里面
-const scpClient = require("scp2");
+/*
+ * @Author: max
+ * @Date: 2021-08-17 08:26:18
+ * @LastEditTime: 2021-08-19 17:57:54
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/yirenck/index.js
+ */
+//  yirenck/index.js里面
+const scpClient = require('scp2');
 const ora = require('ora');
 const chalk = require('chalk');
-const server = require('./products.');
+const server = require('./products');
 const spinner = ora(
     '正在发布到' +
     (process.env.NODE_ENV === 'prod' ? '生产' : '测试') +
@@ -15,7 +23,7 @@ var conn = new Client();
 conn
     .on('ready', function () {
         // rm 删除dist文件，\n 是换行 换行执行 重启nginx命令 我这里是用docker重启nginx
-        conn.exec('rm -rf /mdm/nginx/dist\ndocker restart nginx', function (
+        conn.exec('rm -rf /opt/nginx_fdfs/manager\ndocker restart nginx', function (
             err,
             stream
         ) {

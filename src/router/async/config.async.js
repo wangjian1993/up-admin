@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-08-14 08:57:15
+ * @LastEditTime: 2021-08-20 14:34:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/router/async/config.async.js

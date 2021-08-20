@@ -1,5 +1,5 @@
-import axios from 'axios'
-import Cookie from 'js-cookie'
+import axios from 'axios';
+import Cookie from 'js-cookie';
 
 // 跨域认证信息 header 名
 const xsrfHeaderName = 'Token';
@@ -16,13 +16,13 @@ const AUTH_TYPE = {
 	AUTH1: 'auth1',
 	AUTH2: 'auth2',
 	NOTAUTH: ""
-}
+};
 
 // http method
 const METHOD = {
 	GET: 'get',
 	POST: 'post'
-}
+};
 
 /**
  * axios请求

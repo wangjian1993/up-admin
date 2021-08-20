@@ -46,7 +46,6 @@
 						:columns="columns"
 						:data-source="list"
 						size="small"
-						:scroll="{y:true}"
 						:pagination="pagination"
 						@change="handleTableChange"
 						:rowKey="tableDatas => list.EnterTypeId"
@@ -135,7 +134,7 @@ export default {
 			pagination: {
 				current: 1,
 				total: 0,
-				pageSize: 10, //每页中显示10条数据
+				pageSize: 20, //每页中显示10条数据
 				showSizeChanger: true,
 				showLessItems: true,
 				showQuickJumper: true,
@@ -279,4 +278,8 @@ export default {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+/deep/ .ant-table{
+  min-height:0;
+}
+</style>

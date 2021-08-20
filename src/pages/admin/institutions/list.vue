@@ -161,6 +161,15 @@
             <a-col :span="12">
               <a-form-model-item label="传真" :labelCol="{ span: 6 }"><a-input v-model="form.EnterFax" placeholder="请输入联系传真"/></a-form-model-item>
             </a-col>
+            <a-col :span="12">
+              <a-form-model-item ref="SortNo" :labelCol="{ span: 6 }" has-feedback label="序号">
+                  <a-input-number
+                    v-model="form.SortNo"
+                    :min="1"
+                    placeholder="序号"
+                  />
+                </a-form-model-item>
+            </a-col>
           </a-row>
           <a-row>
             <a-col :span="24">
@@ -293,6 +302,12 @@ const columns = [
     align: "center",
   },
   {
+    title: "排序号",
+    dataIndex: "SortNo",
+    scopedSlots: { customRender: "SortNo" },
+    align: "center",
+  },
+  {
     title: "创建时间",
     dataIndex: "DateTimeCreated",
     scopedSlots: { customRender: "address" },
@@ -329,7 +344,7 @@ export default {
       pagination: {
         current: 1,
         total: 0,
-        pageSize: 10, //每页中显示10条数据
+        pageSize: 20, //每页中显示10条数据
         showSizeChanger: true,
         showLessItems: true,
         showQuickJumper: true,
@@ -360,6 +375,7 @@ export default {
         EnterId: "",
         SuperiorEnterName: "",
         Enable: "Y",
+        SortNo:1
       },
       rules: {
         EnterCode: [
@@ -536,6 +552,7 @@ export default {
         SuperiorEnterId: "",
         SuperiorEnterName: "",
         Enable: "Y",
+        SortNo:1
       };
     },
     //关闭对话框
@@ -574,6 +591,7 @@ export default {
               SuperiorEnterId: this.form.SuperiorEnterId,
               SuperiorEnterName: this.form.SuperiorEnterName,
               Enable: this.form.Enable,
+              SortNo:this.form.SortNo
             };
             updateEnterList(editForm).then((res) => {
               if (res.data.success) {

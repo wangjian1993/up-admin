@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 16:12:00
- * @LastEditTime: 2021-08-17 16:34:03
+ * @LastEditTime: 2021-08-19 09:17:12
  * @LastEditors: max
  * @Description: 快码组管理
  * @FilePath: /up-admin/src/pages/admin/database/group/Group.vue
@@ -220,7 +220,7 @@ export default {
       pagination: {
         current: 1,
         total: 0,
-        pageSize: 10, //每页中显示10条数据
+        pageSize: 20, //每页中显示10条数据
         showSizeChanger: true,
         showLessItems: true,
         showQuickJumper: true,
@@ -325,6 +325,8 @@ export default {
             pagination.total = res.data.data.recordsTotal;
           }
           this.pagination = pagination;
+          this.loading = false;
+        }else {
           this.loading = false;
         }
       });

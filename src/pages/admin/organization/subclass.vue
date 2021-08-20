@@ -1,22 +1,22 @@
 <template>
   <div>
     <a-row>
-      <a-col style="padding: 0 5px" :span="6">
-        <a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 0px', padding: '5px',maxHeight:'67vh',minHeight:'67vh',overflow:'auto'}">
+      <a-col style="padding: 0 5px" :span="5">
+        <a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 0px', padding: '5px', maxHeight: '88vh', minHeight: '88vh', overflow: 'auto' }">
           <p>机构选择</p>
           <a-tree @select="treeClick" v-if="treeList.length" :tree-data="treeList" :replaceFields="replaceFields" default-expand-all :default-selected-keys="enterValue"></a-tree>
           <a-empty v-if="treeList.length == 0" />
         </a-card>
-        <a-card class="card" :bordered="false" :bodyStyle="{ margin: '5px', padding: '5px',maxHeight:'30vh',minHeight:'20vh',overflow:'auto'}">
+        <!-- <a-card class="card" :bordered="false" :bodyStyle="{ margin: '5px', padding: '5px',maxHeight:'30vh',minHeight:'20vh',overflow:'auto'}">
           <p>组织维度选择</p>
           <a-tree @select="leverClick" v-if="orgList.length" :default-selected-keys="leverValue" :tree-data="orgList" :replaceFields="replaceFields1">{{ orgList }}</a-tree>
           <a-empty v-if="orgList.length == 0" />
-        </a-card>
+        </a-card> -->
       </a-col>
-      <a-col :span="12" style="padding: 0 0px">
+      <a-col :span="13" style="padding: 0 0px">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px', margin: '0 5px' }">
           <div>
-            <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="form">添加</a-button>
+            <a-button :disabled="!hasPerm('add')" @click="addSubclass" type="primary" icon="form">添加</a-button>
             <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
             <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
             <span style="margin-left: 8px">
@@ -24,6 +24,13 @@
                 {{ `共选中 ${selectedRowKeys.length} 条` }}
               </template>
             </span>
+            <div style="float:right;margin-right:20px">
+              <a-select v-model="leverValue" defaultActiveFirstOption style="width: 150px" @change="handleChange">
+                <a-select-option :value="item.OrgDimensionId" v-for="item in orgList" :key="item.OrgDimensionId">
+                  {{ item.OrgDimensionName}}
+                </a-select-option>
+              </a-select>
+            </div>
           </div>
           <div>
             <a-table
@@ -32,7 +39,7 @@
               :data-source="tabData"
               :pagination="pagination"
               size="small"
-              :scroll="{y:true}"
+              :scroll="{ y: true }"
               rowKey="OrgId"
               :row-selection="{
                 selectedRowKeys: selectedRowKeys,
@@ -56,23 +63,23 @@
                     新增子组
                   </a> -->
                   <a style="margin-right: 8px" @click="relationship(record)">
-                    <a-icon type="team" />
-                    用户关系
+                    <span v-if="orgId == record.OrgId" style="color:red"><a-icon type="team" />用户关系</span>
+                    <span v-else><a-icon type="team" />用户关系</span>
                   </a>
-                   <a-dropdown :trigger="['click']">
+                  <a-dropdown :trigger="['click']">
                     <a class="ant-dropdown-link">
                       更多
                       <a-icon type="down" />
                     </a>
                     <a-menu slot="overlay">
                       <a-menu-item key="0" :disabled="!hasPerm('edit')" @click="edit(record)">编辑</a-menu-item>
-                      <a-menu-item key="1" :disabled="!hasPerm('addsub')" @click="addSubclass(record,'sub')">新增子组</a-menu-item>
+                      <a-menu-item key="1" :disabled="!hasPerm('addsub')" @click="addSubclass(record, 'sub')">新增子组</a-menu-item>
                     </a-menu>
                   </a-dropdown>
                 </div>
               </template>
             </a-table>
-            <a-empty v-else description="暂无权限"/>
+            <a-empty v-else description="暂无权限" />
           </div>
           <div>
             <a-modal :title="title" :visible="visible" @ok="handleOk" @cancel="handleCancel">
@@ -140,29 +147,29 @@ const columns = [
   {
     title: "组织编码",
     dataIndex: "OrgCode",
-    width: "10%",
+    width: "15%",
   },
   {
     title: "所属机构",
     dataIndex: "EnterName",
     scopedSlots: { customRender: "EnterName" },
     align: "center",
-    width: "30%",
-    ellipsis:true
+    width: "20%",
+    ellipsis: true,
   },
   {
     title: "等级",
     dataIndex: "OrgLevelName",
     scopedSlots: { customRender: "OrgLevelName" },
     align: "center",
-    width: "20%",
-    ellipsis:true
+    width: "15%",
+    ellipsis: true,
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
     align: "center",
-     width: "20%",
+    width: "30%",
   },
 ];
 export default {
@@ -200,7 +207,7 @@ export default {
       enterid: null,
       defaultEnterid: null,
       enterValue: [],
-      leverValue: [],
+      leverValue:"",
       subType: false,
       isEdit: false,
       subItem: [],
@@ -210,7 +217,7 @@ export default {
       pagination: {
         current: 1,
         total: 0,
-        pageSize: 10, //每页中显示10条数据
+        pageSize: 20, //每页中显示10条数据
         showSizeChanger: true,
         showLessItems: true,
         showQuickJumper: true,
@@ -255,11 +262,19 @@ export default {
     await this.getTreeList();
   },
   methods: {
+    handleChange(e){
+      console.log(e);
+      this.dimsensionId = e;
+      this.getOrginfo();
+      this.getList(e);
+      this.isRelationship = false;
+    },
     relationship(item) {
       this.isRelationship = true;
       console.log(item);
       this.orgId = item.OrgId;
       this.$refs.getUser.getOrgUser(item.OrgId);
+      this.$refs.getUser.setPage();
     },
     orgChange(value) {
       this.LevelList = [];
@@ -288,7 +303,7 @@ export default {
       getOrganizationList(parmas).then((res) => {
         if (res.data.success) {
           this.orgList = res.data.data.list;
-          this.leverValue.push(this.orgList[0].OrgDimensionId);
+          this.leverValue =this.orgList[0].OrgDimensionId;
           this.dimsensionId = this.orgList[0].OrgDimensionId;
           this.getList(this.dimsensionId);
           this.getOrginfo();
@@ -321,7 +336,7 @@ export default {
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
-          this.orgId = this.tabData[0].OrgId;
+          // this.orgId = this.tabData[0].OrgId;
           // this.orgIdFlag = true;
         }
       });

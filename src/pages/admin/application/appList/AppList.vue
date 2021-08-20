@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-14 17:59:43
+ * @LastEditTime: 2021-08-19 10:36:24
  * @LastEditors: max
  * @Description: 应用列表
  * @FilePath: /up-admin/src/pages/admin/application/appList/AppList.vue
@@ -217,7 +217,7 @@ export default {
       pagination: {
         current: 1,
         total: 0,
-        pageSize: 10, //每页中显示10条数据
+        pageSize: 20, //每页中显示10条数据
         showSizeChanger: true,
         showLessItems: true,
         showQuickJumper: true,
@@ -299,6 +299,8 @@ export default {
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
+          this.loading = false;
+        }else {
           this.loading = false;
         }
       });

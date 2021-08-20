@@ -1,10 +1,13 @@
 /*
  * @Author: max
  * @Date: 2021-08-14 09:52:57
- * @LastEditTime: 2021-08-14 15:33:06
+ * @LastEditTime: 2021-08-19 17:50:30
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/deploy/products..js
+ * @FilePath: /up-admin/yirenck/products..js
+ */
+/*
+ *读取env环境变量
  */
 /*
  *读取env环境变量
@@ -12,7 +15,7 @@
 const fs = require('fs');
 const path = require('path');
 // env 文件 判断打包环境指定对应的服务器id
-const envfile = process.env.NODE_ENV === 'prod' ? '../.env' : '../.env.development';
+const envfile = process.env.NODE_ENV === 'prod' ? '../.env.prod' : '../.env.dev';
 // env环境变量的路径
 const envPath = path.resolve(__dirname, envfile);
 // env对象
@@ -53,7 +56,7 @@ const SERVER_LIST = [
   {
     id: 0,
     name: '测试环境',
-    domain: 'www.prod.com',// 域名
+    domain: '',// 域名
     host: '192.168.1.245',// ip
     port: 221,// 端口
     username: 'wj', // 登录服务器的账号
@@ -62,14 +65,14 @@ const SERVER_LIST = [
   },
   {
     id: 0,
-    name: '正式环境',
-    domain: 'www.prod.com',// 域名
+    name: '测试环境',
+    domain: '',// 域名
     host: '192.168.1.245',// ip
     port: 221,// 端口
     username: 'wj', // 登录服务器的账号
     password: 'wj@123.com',// 登录服务器的账号
     path: '/'// 发布至静态服务器的项目路径
-  }
+  },
 ];
 
 module.exports = SERVER_LIST[SERVER_ID];

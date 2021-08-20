@@ -1,3 +1,11 @@
+<!--
+ * @Author: max
+ * @Date: 2021-08-17 08:26:18
+ * @LastEditTime: 2021-08-20 14:37:29
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/layouts/header/HeaderAvatar.vue
+-->
 <template>
 	<a-dropdown>
 		<div class="header-avatar" style="cursor: pointer">
@@ -5,7 +13,7 @@
 			<span class="name">{{ user }}</span>
 		</div>
 		<a-menu :class="['avatar-menu']" slot="overlay">
-			<a-menu-item>
+			<a-menu-item @click="goUser">
 				<a-icon type="user" />
 				<span>个人中心</span>
 			</a-menu-item>
@@ -34,7 +42,7 @@ export default {
 	methods: {
 		onClick() {},
 		goUser() {
-			this.$router.push({ path: 'user/setting' });
+			this.$router.push({ path: '/personal' });
 		},
 		logout() {
 			let selt =this;
