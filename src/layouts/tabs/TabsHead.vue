@@ -214,7 +214,7 @@ export default {
     &.side,
     &.mix {
       right: 0;
-      left: 170px;
+      left: 200px;
       &.collapsed {
         left: 48px;
       }

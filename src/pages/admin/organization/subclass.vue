@@ -336,7 +336,7 @@ export default {
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
-          // this.orgId = this.tabData[0].OrgId;
+          this.orgId = this.tabData[0].OrgId;
           // this.orgIdFlag = true;
         }
       });

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-08-20 14:37:29
+ * @LastEditTime: 2021-08-21 11:34:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/layouts/header/HeaderAvatar.vue
@@ -9,7 +9,7 @@
 <template>
 	<a-dropdown>
 		<div class="header-avatar" style="cursor: pointer">
-			<a-avatar class="avatar" size="small" shape="circle" src="../../assets/img/loginbg.png" />
+			<a-avatar class="avatar" size="small" shape="circle" :src="head" />
 			<span class="name">{{ user }}</span>
 		</div>
 		<a-menu :class="['avatar-menu']" slot="overlay">
@@ -37,7 +37,7 @@ import { logout } from '@/services/user';
 export default {
 	name: 'HeaderAvatar',
 	computed: {
-		...mapGetters('account', ['user'])
+		...mapGetters('account', ['user','head'])
 	},
 	methods: {
 		onClick() {},

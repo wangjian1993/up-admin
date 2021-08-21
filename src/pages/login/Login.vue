@@ -109,7 +109,7 @@ export default {
     });
   },
   methods: {
-    ...mapMutations("account", ["setUser", "setPermissions", "setRoles",'setMenu']),
+    ...mapMutations("account", ["setUser", "setPermissions", "setRoles",'setMenu','setUserHead']),
     onSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err) => {
@@ -139,9 +139,10 @@ export default {
       this.logging = false;
       const loginRes = res.data;
       if (loginRes.success) {
-        const { userName, userModules } = loginRes.data;
+        const { userName, userModules,PhotoUrl } = loginRes.data;
         console.log("userModules----",userModules)
         this.setUser(userName);
+        this.setUserHead(PhotoUrl);
         // this.setMenu(userModules);
         localStorage.setItem("menu",JSON.stringify(userModules));
         var inFifteenMinutes = new Date(new Date().getTime() + 4 * 60 * 60 * 1000);

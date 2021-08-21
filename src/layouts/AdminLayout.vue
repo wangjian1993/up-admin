@@ -92,7 +92,7 @@ export default {
     ...mapState("setting", ["isMobile", "theme", "layout", "footerLinks", "copyright", "fixedHeader", "fixedSideBar", "fixedTabs", "hideSetting", "multiPage"]),
     ...mapGetters("setting", ["firstMenu", "subMenu", "menuData"]),
     sideMenuWidth() {
-      return this.collapsed ? "48px" : "170px";
+      return this.collapsed ? "48px" : "200px";
     },
     headerStyle() {
       let width = this.fixedHeader && this.layout !== "head" && !this.isMobile ? `calc(100% - ${this.sideMenuWidth})` : "100%";

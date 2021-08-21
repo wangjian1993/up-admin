@@ -50,18 +50,51 @@
         </a-card>
         <a-card class="card" title="修改密码" :bordered="false" :bodyStyle="{ margin: '5px', padding: '5px', maxHeight: '30vh', minHeight: '30vh', overflow: 'auto' }">
           <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
-            <a-form-item label="旧密码">
-              <a-input v-decorator="['note', { rules: [{ required: true, message: 'Please input your note!' }] }]" />
+            <a-form-item label="旧密码" has-feedback>
+              <a-input
+                v-decorator="[
+                  'OldPwd',
+                  {
+                    rules: [{ required: true, message: '请输入旧密码' }],
+                  },
+                ]"
+              />
             </a-form-item>
-            <a-form-item label="新密码">
-              <a-input v-decorator="['note', { rules: [{ required: true, message: 'Please input your note!' }] }]" />
+            <a-form-item label="新密码" has-feedback>
+              <a-input
+                v-decorator="[
+                  'NewPwd',
+                  {
+                    rules: [
+                      { required: true, message: '请输入新密码' },
+                      { max: 18, message: '密码最多18位' },
+                      { min: 6, message: '密码最少6位' },
+                      {
+                        validator: validateToNextPassword,
+                      },
+                    ],
+                  },
+                ]"
+              />
             </a-form-item>
-            <a-form-item label="确认新密码">
-              <a-input v-decorator="['note', { rules: [{ required: true, message: 'Please input your note!' }] }]" />
+            <a-form-item label="确认新密码" has-feedback>
+              <a-input
+                v-decorator="[
+                  'ComfirmNewPwd',
+                  {
+                    rules: [
+                      { required: true, message: '请再次输入新密码!' },
+                      {
+                        validator: compareToFirstPassword,
+                      },
+                    ],
+                  },
+                ]"
+              />
             </a-form-item>
           </a-form>
           <div slots="actions">
-            <a-button type="primary" style="float:right;margin-right:50px;margin-top:10px;">
+            <a-button type="primary" @click="changePwd" style="float:right;margin-right:50px;margin-top:10px;">
               保存修改
             </a-button>
           </div>
@@ -77,7 +110,7 @@
 </template>
 
 <script>
-import { getUserInfo, loginUpdate } from "@/services/user.js";
+import { getUserInfo, loginUpdate, changePwd, logout } from "@/services/user.js";
 import { uploadFile } from "@/services/admin.js";
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -171,6 +204,50 @@ export default {
         }
       });
     },
+    compareToFirstPassword(rule, value, callback) {
+      const form = this.form;
+      if (value && value !== form.getFieldValue("NewPwd")) {
+        callback("两次输入的密码不一致!");
+      } else {
+        callback();
+      }
+    },
+    validateToNextPassword(rule, value, callback) {
+      //定义你需要的正则
+      let reg = new RegExp("[\\u4E00-\\u9FFF]+", "g");
+      if (!reg.test(value)) {
+        //验证通过调用回调函数
+        callback();
+      } else {
+        callback("密码不能是中文字符,只能是数字,大小写字母,符号");
+      }
+    },
+    changePwd() {
+      let self = this;
+      self.form.validateFields((err, values) => {
+        if (!err) {
+          console.log(values);
+          changePwd(values).then((res) => {
+            if (res.data.success) {
+              self.$message.success("修改成功!");
+              self.$success({
+                title: "重新登录",
+                // JSX support
+                content: (
+                  <div>
+                    <p>密码修改成功请重新登录</p>
+                  </div>
+                ),
+                onOk() {
+                  logout();
+                  self.$router.push("/login");
+                },
+              });
+            }
+          });
+        }
+      });
+    },
   },
 };
 </script>
@@ -179,6 +256,8 @@ export default {
 .head {
   width: 104px;
   height: 104px;
+  border-radius: 50%;
+  border: none;
 }
 .avatar-uploader {
   display: flex;

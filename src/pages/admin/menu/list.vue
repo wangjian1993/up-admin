@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-19 09:09:20
+ * @LastEditTime: 2021-08-21 11:57:19
  * @LastEditors: max
  * @Description: 菜单管理
  * @FilePath: /up-admin/src/pages/admin/menu/list.vue
@@ -316,6 +316,20 @@ const columns = [
     title: "排序",
     dataIndex: "SortNo",
     scopedSlots: { customRender: "SortNo" },
+    align: "center",
+    width: "5%",
+  },
+  {
+    title: "应用名称",
+    dataIndex: "AppName",
+    scopedSlots: { customRender: "AppName" },
+    align: "center",
+    width: "5%",
+  },
+  {
+    title: "应用类型",
+    dataIndex: "AppTypeName",
+    scopedSlots: { customRender: "AppTypeName" },
     align: "center",
     width: "5%",
   },

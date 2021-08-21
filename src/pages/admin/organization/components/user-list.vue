@@ -21,7 +21,7 @@
         </a-col>
       </a-row>
     </div>
-    <div><all-user v-if="isModal" :orgId="orgId" :enterid="enterid" @succeed="getOrgUser" @closeModal="closeModal"></all-user></div>
+    <div><all-user v-if="isModal" :orgId="id" :enterid="enterid" @succeed="getUser" @closeModal="closeModal"></all-user></div>
     <!-- 列表 -->
     <div class="tab">
       <a-table
@@ -198,6 +198,9 @@ export default {
       this.pagination.current =1;
       this.pagination.pageSize= 20;
     },
+    getUser(){
+      this.getOrgUser(this.id)
+    },
     //获取机构类型列表
     getOrgUser(id) {
       console.log("调用=====");
@@ -205,7 +208,7 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        orgid: id,
+        orgid:id,
       };
       getOrgUser(parmas).then((res) => {
         if (res.data.success) {
@@ -257,7 +260,7 @@ export default {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("移除成功!");
-              self.getOrgUser();
+              self.getOrgUser(self.id);
             } else {
               self.$message.warning(res.data.message.content);
             }
@@ -279,7 +282,7 @@ export default {
       delOrgUser(parmas, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("移除成功!");
-          this.getOrgUser();
+          this.getOrgUser(this.id);
         }
       });
     },

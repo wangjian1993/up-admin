@@ -18,7 +18,7 @@
         <a-col :sm="24" :md="24" :xl="14">
           <a-form layout="horizontal" :form="searchForm" class="form-box">
             <a-row type="flex" justify="end">
-              <a-col 
+              <a-col
                 ><a-form-item style="margin-right:10px">
                   <a-input
                     placeholder="机构编码/名称"
@@ -110,10 +110,9 @@
             </a-col>
             <a-col :span="12">
               <a-form-model-item label="上级机构" :labelCol="{ span: 6 }">
-                <a-select v-model="form.EnterId" v-if="!isEdit" :disabled="isEdit" placeholder="请选择上级机构" @change="enterOption">
-                  <a-select-option v-for="(item, index) in data" :key="index" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                <a-select v-model="form.SuperiorEnterId" placeholder="请选择上级机构" @change="enterOption">
+                  <a-select-option v-for="(item, index) in supSelectList" :key="index" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                 </a-select>
-                <a-input v-else v-model="form.SuperiorEnterName" disabled />
               </a-form-model-item>
             </a-col>
             <a-col :span="12">
@@ -163,12 +162,8 @@
             </a-col>
             <a-col :span="12">
               <a-form-model-item ref="SortNo" :labelCol="{ span: 6 }" has-feedback label="序号">
-                  <a-input-number
-                    v-model="form.SortNo"
-                    :min="1"
-                    placeholder="序号"
-                  />
-                </a-form-model-item>
+                <a-input-number v-model="form.SortNo" :min="1" placeholder="序号" />
+              </a-form-model-item>
             </a-col>
           </a-row>
           <a-row>
@@ -186,12 +181,12 @@
       <a-table
         v-if="hasPerm('search')"
         :columns="columns"
-        :data-source="data"
+        :data-source="dataSource"
         :scroll="{ x: true }"
         size="small"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(tableDatas) => data.EnterTypeId"
+        :rowKey="(tableDatas) => dataSource.EnterTypeId"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -330,7 +325,7 @@ import { renderStripe } from "@/utils/stripe.js";
 export default {
   data() {
     return {
-      data: [],
+      dataSource: [],
       columns,
       isEdit: false,
       editForm: [],
@@ -355,6 +350,8 @@ export default {
       wrapperCol: { span: 14 },
       other: "",
       selectList: [],
+      supSelectList: [],
+      isSuperior: false,
       form: {
         OAId: "",
         EnterCode: "",
@@ -375,7 +372,7 @@ export default {
         EnterId: "",
         SuperiorEnterName: "",
         Enable: "Y",
-        SortNo:1
+        SortNo: 1,
       },
       rules: {
         EnterCode: [
@@ -456,7 +453,11 @@ export default {
     },
     //设置上级机构
     enterOption(value) {
-      this.data.filter((item) => {
+      if (this.form.EnterId == value) {
+        console.log("上级不能选择自己");
+        return;
+      }
+      this.dataSource.filter((item) => {
         if (item.EnterId == value) {
           this.form.SuperiorEnterId = item.EnterId;
           this.form.SuperiorEnterName = item.EnterName;
@@ -485,7 +486,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           console.log("Received values of form: ", values);
-          this.data = [];
+          this.dataSource = [];
           this.pagination.total = 0;
           let parmas = {
             pageindex: this.pagination.current,
@@ -495,7 +496,7 @@ export default {
           };
           getEnterList(parmas).then((res) => {
             if (res.data.success) {
-              this.data = res.data.data.list;
+              this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
@@ -517,7 +518,7 @@ export default {
       };
       getEnterList(parmas).then((res) => {
         if (res.data.success) {
-          this.data = res.data.data.list;
+          this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -552,7 +553,7 @@ export default {
         SuperiorEnterId: "",
         SuperiorEnterName: "",
         Enable: "Y",
-        SortNo:1
+        SortNo: 1,
       };
     },
     //关闭对话框
@@ -560,11 +561,28 @@ export default {
       this.visible = false;
     },
     edit(item) {
+      this.supSelectList = [{
+        EnterName: "顶级",
+        EnterId: 0,
+      }];
+      let list = this.dataSource;
+      list.forEach((i) =>{
+        this.supSelectList.push(i);
+      })
+      this.isSuperior = false;
       this.getInstitutionList();
       this.visible = true;
       this.isEdit = true;
       this.title = "编辑机构";
       this.form = item;
+      this.supSelectList.filter((items, index) => {
+        if (items.EnterId == item.EnterId) {
+          this.supSelectList.splice(index, 1);
+        }
+      });
+      if (item.SuperiorEnterId == 0) {
+        this.form.SuperiorEnterId = "顶级";
+      }
     },
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
@@ -591,7 +609,7 @@ export default {
               SuperiorEnterId: this.form.SuperiorEnterId,
               SuperiorEnterName: this.form.SuperiorEnterName,
               Enable: this.form.Enable,
-              SortNo:this.form.SortNo
+              SortNo: this.form.SortNo,
             };
             updateEnterList(editForm).then((res) => {
               if (res.data.success) {
@@ -622,7 +640,7 @@ export default {
         onOk() {
           const params = [];
           self.selectedRowKeys.forEach((item) => {
-            params.push(self.data[item].EnterId);
+            params.push(self.dataSource[item].EnterId);
           });
           deleteEnterList(params).then((res) => {
             if (res.data.success) {

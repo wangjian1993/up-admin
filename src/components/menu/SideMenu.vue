@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-08-14 09:46:23
+ * @LastEditTime: 2021-08-21 17:27:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/components/menu/SideMenu.vue
@@ -9,7 +9,7 @@
 <template>
   <a-layout-sider
     :theme="sideTheme"
-    width="170px"
+    width="200px"
     :class="[
       'side-menu eip-admin-collapse',
       'beauty-scroll',
@@ -82,6 +82,12 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @import "index";
+.ant-menu-submenu-title{
+  padding-left: 35px;
+}
+.ant-menu-item{
+   padding-left: 55px;
+}
 </style>

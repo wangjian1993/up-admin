@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-08-20 17:17:01
+ * @LastEditTime: 2021-08-21 13:48:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/store/modules/account.js
@@ -12,10 +12,22 @@ export default {
     user: undefined,
     permissions: null,
     roles: null,
+    head:null,
     routesConfig: null,
     menuList:[]
   },
   getters: {
+    head:state => {
+      if (!state.head) {
+        try {
+          const head = localStorage.getItem(process.env.VUE_APP_HEAD_KEY)
+          state.head = head;
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      return state.head;
+    },
     user: state => {
       if (!state.user) {
         try {
@@ -58,16 +70,20 @@ export default {
           state.routesConfig = JSON.parse(routesConfig)
           state.routesConfig = state.routesConfig ? state.routesConfig : []
         } catch (e) {
-          console.error(e.message)
+          console.error(e.message);
         }
       }
-      return state.routesConfig
+      return state.routesConfig;
     }
   },
   mutations: {
     setUser (state, user) {
       state.user = user
       localStorage.setItem(process.env.VUE_APP_USER_KEY, JSON.stringify(user))
+    },
+    setUserHead(state, data){
+      state.head = data;
+      localStorage.setItem(process.env.VUE_APP_HEAD_KEY,data)
     },
     setPermissions(state, permissions) {
       state.permissions = permissions
