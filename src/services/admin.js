@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-14 08:51:07
- * @LastEditTime: 2021-08-19 09:24:37
+ * @LastEditTime: 2021-08-23 11:13:05
  * @LastEditors: max
  * @Description: 后台接口
  * @FilePath: /up-admin/src/services/admin.js
@@ -252,6 +252,17 @@ export async function getPermissionUser(params) {
 export async function getEnterOrgTree(params) {
 	return request(`${UP_ADMIN}/permission/getenterorgs`, METHOD.GET, params);
 }
+
+
+/**
+ * @description: 日志列表
+ * @param {*} params
+ * @param {*} action
+ * @return {*}
+ */
+export async function getLogAction(params,action) {
+	return request(`${UP_ADMIN}/log/${action}`, METHOD.GET, params);
+}
 export default {
 	getInstitutionList,
 	getEnterList,
@@ -294,5 +305,6 @@ export default {
 	getParamData,
 	getEnterOrgList,
 	getPermissionUser,
-	getEnterOrgTree
+	getEnterOrgTree,
+	getLogAction
 };

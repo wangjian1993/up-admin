@@ -25,10 +25,7 @@
                     allowClear
                     style="width: 200px"
                     v-decorator="[
-                      'searcValue',
-                      {
-                        rules: [{ required: true, message: '机构类型编码/名称!' }],
-                      },
+                      'searcValue'
                     ]"
                   /> </a-form-item
               ></a-col>
@@ -36,7 +33,7 @@
                 <a-form-item>
                   <!-- <a-input placeholder="请输入" v-decorator="['entertype']" /> -->
                   <a-select placeholder="选择机构" style="width: 300px" v-decorator="['entertype']">
-                    <a-select-option v-for="(item, index) in selectList" :key="index" :value="item.EnterTypeName">
+                    <a-select-option v-for="(item, index) in selectList" :key="index" :value="item.EnterTypeCode">
                       {{ item.EnterTypeName }}
                     </a-select-option>
                   </a-select>

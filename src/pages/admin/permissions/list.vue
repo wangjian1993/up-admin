@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-08-20 09:50:40
+ * @LastEditTime: 2021-08-23 16:16:02
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -447,12 +447,12 @@ export default {
         this.orgId = "";
         this.enterid = selectedKeys[0];
       }
-      this.getPermissionUser();
-      this.getAppMdules();
       this.userId = "";
       this.userTreeData = [];
       this.appTreeData = [];
       this.userValue = [];
+      this.getPermissionUser();
+      this.getAppMdules();
     },
     //组织选择
     userTreeClick(e) {

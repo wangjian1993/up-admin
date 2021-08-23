@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-08-21 17:27:25
+ * @LastEditTime: 2021-08-21 17:37:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/components/menu/SideMenu.vue
@@ -84,10 +84,10 @@ export default {
 
 <style lang="less">
 @import "index";
-.ant-menu-submenu-title{
-  padding-left: 35px;
-}
-.ant-menu-item{
-   padding-left: 55px;
-}
+// .ant-menu-submenu-title{
+//   padding-left: 35px;
+// }
+// .ant-menu-item{
+//    padding-left: 55px;
+// }
 </style>

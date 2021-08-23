@@ -3,9 +3,21 @@
     <a-row>
       <a-col style="padding: 0 5px" :span="5">
         <a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 0px', padding: '5px', maxHeight: '88vh', minHeight: '88vh', overflow: 'auto' }">
-          <p>机构选择</p>
-          <a-tree @select="treeClick" v-if="treeList.length" :tree-data="treeList" :replaceFields="replaceFields" default-expand-all :default-selected-keys="enterValue"></a-tree>
-          <a-empty v-if="treeList.length == 0" />
+          <!-- <p>机构选择</p> -->
+          <a-row>
+            <a-col :xs="12" :sm="12"><span class="card-title">机构类型选择:</span></a-col>
+            <a-col :xs="12" :sm="12">
+              <a-select v-model="enterTypeVale" defaultActiveFirstOption style="width: 150px" @change="enterTypeChange">
+                <a-select-option :value="item.EnterTypeId" v-for="item in enterTypeList" :key="item.EnterTypeId">
+                  {{ item.EnterTypeName }}
+                </a-select-option>
+              </a-select>
+            </a-col>
+          </a-row>
+          <div style="margin-top: 20px">
+            <a-tree @select="treeClick" v-if="treeList.length" :tree-data="treeList" :replaceFields="replaceFields" default-expand-all :default-selected-keys="enterValue"></a-tree>
+            <a-empty v-if="treeList.length == 0" />
+          </div>
         </a-card>
         <!-- <a-card class="card" :bordered="false" :bodyStyle="{ margin: '5px', padding: '5px',maxHeight:'30vh',minHeight:'20vh',overflow:'auto'}">
           <p>组织维度选择</p>
@@ -27,7 +39,7 @@
             <div style="float:right;margin-right:20px">
               <a-select v-model="leverValue" defaultActiveFirstOption style="width: 150px" @change="handleChange">
                 <a-select-option :value="item.OrgDimensionId" v-for="item in orgList" :key="item.OrgDimensionId">
-                  {{ item.OrgDimensionName}}
+                  {{ item.OrgDimensionName }}
                 </a-select-option>
               </a-select>
             </div>
@@ -135,7 +147,7 @@
 </template>
 
 <script>
-import { getEnterTree, getOrganizationList, getOrginfo, orginfoAction, getOrgLevelList } from "@/services/admin.js";
+import { getEnterTree, getOrganizationList, getOrginfo, orginfoAction, getOrgLevelList, getInstitutionList } from "@/services/admin.js";
 import UserList from "./components/user-list.vue";
 const columns = [
   {
@@ -180,6 +192,7 @@ export default {
       LevelList: [],
       columns,
       orgList: [],
+      enterTypeList: [],
       replaceFields: {
         title: "EnterName",
         key: "Id",
@@ -207,7 +220,8 @@ export default {
       enterid: null,
       defaultEnterid: null,
       enterValue: [],
-      leverValue:"",
+      enterTypeVale: "",
+      leverValue: "",
       subType: false,
       isEdit: false,
       subItem: [],
@@ -259,10 +273,10 @@ export default {
     },
   },
   async created() {
-    await this.getTreeList();
+    this.getInstitutionList();
   },
   methods: {
-    handleChange(e){
+    handleChange(e) {
       console.log(e);
       this.dimsensionId = e;
       this.getOrginfo();
@@ -276,6 +290,12 @@ export default {
       this.$refs.getUser.getOrgUser(item.OrgId);
       this.$refs.getUser.setPage();
     },
+    enterTypeChange(e) {
+      console.log(e);
+      this.entertypeid = e;
+      this.tabData =[]
+      this.getTreeList();
+    },
     orgChange(value) {
       this.LevelList = [];
       this.getList(value);
@@ -284,8 +304,25 @@ export default {
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
+    getInstitutionList() {
+      let parmas = {
+        pageindex: 1,
+        pagesize: 100,
+      };
+      getInstitutionList(parmas).then((res) => {
+        if (res.data.success) {
+          this.enterTypeList = res.data.data.list;
+          this.enterTypeVale = this.enterTypeList[0].EnterTypeId;
+          this.entertypeid = this.enterTypeList[0].EnterTypeId;
+          this.getTreeList();
+        }
+      });
+    },
     getTreeList() {
-      getEnterTree().then((res) => {
+      let parmas = {
+        entertypeid: this.entertypeid,
+      };
+      getEnterTree(parmas).then((res) => {
         if (res.data.success) {
           this.treeList = res.data.data;
           this.enterValue.push(this.treeList[0].Id);
@@ -303,7 +340,7 @@ export default {
       getOrganizationList(parmas).then((res) => {
         if (res.data.success) {
           this.orgList = res.data.data.list;
-          this.leverValue =this.orgList[0].OrgDimensionId;
+          this.leverValue = this.orgList[0].OrgDimensionId;
           this.dimsensionId = this.orgList[0].OrgDimensionId;
           this.getList(this.dimsensionId);
           this.getOrginfo();
