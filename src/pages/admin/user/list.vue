@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-20 15:47:29
+ * @LastEditTime: 2021-08-24 10:21:40
  * @LastEditors: max
  * @Description: 用户列表
  * @FilePath: /up-admin/src/pages/admin/user/list.vue
@@ -11,10 +11,22 @@
   <div>
     <a-row type="flex">
       <a-col style="padding: 0 5px;" :span="5">
-        <a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 5px', padding: '5px' }">
-          <p>机构选择</p>
-          <a-tree @select="treeClick" v-if="treeList.length" :tree-data="treeList" default-expand-all auto-expand-parent :replaceFields="replaceFields" :default-selected-keys="enterValue"></a-tree>
+        <a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 0px', padding: '5px', maxHeight: '88vh', minHeight: '88vh', overflow: 'auto' }">
+          <a-row>
+            <a-col :xs="12" :sm="12"><span class="card-title">机构类型选择:</span></a-col>
+            <a-col :xs="12" :sm="12">
+              <a-select v-model="enterTypeVale" defaultActiveFirstOption style="width: 150px" @change="enterTypeChange">
+                <a-select-option :value="item.EnterTypeId" v-for="item in enterTypeList" :key="item.EnterTypeId">
+                  {{ item.EnterTypeName }}
+                </a-select-option>
+              </a-select>
+            </a-col>
+          </a-row>
+          <div style="margin-top: 20px">
+ <a-tree @select="treeClick" v-if="treeList.length" :tree-data="treeList" default-expand-all auto-expand-parent :replaceFields="replaceFields" :default-selected-keys="enterValue"></a-tree>
           <a-empty v-if="treeList.length == 0" />
+          </div>
+         
         </a-card>
       </a-col>
       <a-col style="padding: 0 0px" :span="19">
@@ -230,7 +242,7 @@ const columns = [
     width: "20%",
   },
 ];
-import { getUserList, userAction, getEnterTree, getUserTypeList } from "@/services/admin.js";
+import { getUserList, userAction, getEnterTree, getUserTypeList, getInstitutionList } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import addUser from "./components/add-user.vue";
 export default {
@@ -275,6 +287,9 @@ export default {
       usetTypeList: [],
       editItem: [],
       modalType: "",
+      enterTypeList: [],
+      enterTypeVale: "",
+      entertypeid: "",
     };
   },
   updated() {
@@ -286,10 +301,24 @@ export default {
     },
   },
   created() {
-    this.getTreeList();
+    this.getInstitutionList();
     this.getUsetType();
   },
   methods: {
+    getInstitutionList() {
+      let parmas = {
+        pageindex: 1,
+        pagesize: 100,
+      };
+      getInstitutionList(parmas).then((res) => {
+        if (res.data.success) {
+          this.enterTypeList = res.data.data.list;
+          this.enterTypeVale = this.enterTypeList[0].EnterTypeId;
+          this.entertypeid = this.enterTypeList[0].EnterTypeId;
+          this.getTreeList();
+        }
+      });
+    },
     //获取用户类型
     getUsetType() {
       let parmas = {
@@ -306,8 +335,17 @@ export default {
       console.log("1111");
       this.advanced = !this.advanced;
     },
+    enterTypeChange(e) {
+      this.data=[];
+      this.entertypeid = e;
+      this.tabData = [];
+      this.getTreeList();
+    },
     getTreeList() {
-      getEnterTree().then((res) => {
+      let parmas = {
+        entertypeid: this.entertypeid,
+      };
+      getEnterTree(parmas).then((res) => {
         if (res.data.success) {
           this.treeList = res.data.data;
           if (this.treeList.length == 0) {
@@ -383,8 +421,8 @@ export default {
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
-        }else {
-          console.log("1111")
+        } else {
+          console.log("1111");
           this.tableLoading = false;
         }
       });
@@ -547,7 +585,9 @@ export default {
     width: 100%;
   }
 }
-/deep/.card{
-  max-height:90vh;min-height:90vh;overflow:auto
+/deep/.card {
+  max-height: 90vh;
+  min-height: 90vh;
+  overflow: auto;
 }
 </style>

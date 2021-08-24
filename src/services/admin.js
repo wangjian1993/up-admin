@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-14 08:51:07
- * @LastEditTime: 2021-08-23 11:13:05
+ * @LastEditTime: 2021-08-24 13:44:30
  * @LastEditors: max
  * @Description: 后台接口
  * @FilePath: /up-admin/src/services/admin.js
@@ -263,6 +263,23 @@ export async function getEnterOrgTree(params) {
 export async function getLogAction(params,action) {
 	return request(`${UP_ADMIN}/log/${action}`, METHOD.GET, params);
 }
+
+
+/**
+ * @description: api管理接口
+ * @param {*} params
+ * @param {*} action
+ * @return {*}
+ */
+export async function getApiList(params) {
+	return request(`${UP_ADMIN}/apiinfo/getall`, METHOD.GET, params);
+}
+export async function getApiAction(params,action) {
+	return request(`${UP_ADMIN}/apiinfo/${action}`, METHOD.POST, params);
+}
+export async function getModuleList(params) {
+	return request(`${UP_ADMIN}/module/getappmodules`, METHOD.GET, params);
+}
 export default {
 	getInstitutionList,
 	getEnterList,
@@ -306,5 +323,8 @@ export default {
 	getEnterOrgList,
 	getPermissionUser,
 	getEnterOrgTree,
-	getLogAction
+	getLogAction,
+	getApiList,
+	getApiAction,
+	getModuleList
 };

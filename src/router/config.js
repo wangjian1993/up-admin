@@ -294,18 +294,6 @@ const options = {
 				],
 			},
 			{
-				path: "system",
-				name: "系统工具",
-				component: () =>
-					import(
-						/* webpackChunkName: 'system' */
-						"@/pages/admin/system"
-					),
-				meta: {
-					icon: "fund",
-				},
-			},
-			{
 				path: "log",
 				name: "系统日志",
 				component: () =>
@@ -347,33 +335,7 @@ const options = {
 					icon: "fund",
 				},
 			},
-			{
-				path: "message",
-				name: "消息管理",
-				meta: {
-					icon: "fund",
-				},
-				component: BlankView,
-				children: [{
-					path: "message-type",
-					name: "消息类型设置",
-					component: () =>
-						import(
-							/* webpackChunkName: 'message' */
-							"@/pages/admin/message/type"
-						),
-				},
-				{
-					path: "message-list",
-					name: "消息列表",
-					component: () =>
-						import(
-							/* webpackChunkName: 'message' */
-							"@/pages/admin/message/list"
-						),
-				},
-				],
-			},
+
 			],
 		},
 		],

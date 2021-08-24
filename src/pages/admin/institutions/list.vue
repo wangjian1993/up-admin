@@ -19,15 +19,7 @@
           <a-form layout="horizontal" :form="searchForm" class="form-box">
             <a-row type="flex" justify="end">
               <a-col
-                ><a-form-item style="margin-right:10px">
-                  <a-input
-                    placeholder="机构编码/名称"
-                    allowClear
-                    style="width: 200px"
-                    v-decorator="[
-                      'searcValue'
-                    ]"
-                  /> </a-form-item
+                ><a-form-item style="margin-right:10px"> <a-input placeholder="机构编码/名称" allowClear style="width: 200px" v-decorator="['searcValue']" /> </a-form-item
               ></a-col>
               <a-col>
                 <a-form-item>
@@ -179,8 +171,8 @@
         v-if="hasPerm('search')"
         :columns="columns"
         :data-source="dataSource"
-        :scroll="{ x: true }"
         size="small"
+        :scroll="{ y: scrollY }"
         :pagination="pagination"
         @change="handleTableChange"
         :rowKey="(tableDatas) => dataSource.EnterTypeId"
@@ -262,6 +254,7 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
+    width: "5%",
   },
   {
     title: "机构中文名",
@@ -280,12 +273,14 @@ const columns = [
     dataIndex: "EnterTypeName",
     scopedSlots: { customRender: "type" },
     align: "center",
+    width: "5%",
   },
   {
     title: "状态",
     dataIndex: "Enable",
     scopedSlots: { customRender: "Enable" },
     align: "center",
+    width: "5%",
   },
   {
     title: "上级机构名称",
@@ -298,6 +293,7 @@ const columns = [
     dataIndex: "SortNo",
     scopedSlots: { customRender: "SortNo" },
     align: "center",
+    width: "5%",
   },
   {
     title: "创建时间",
@@ -319,6 +315,7 @@ const columns = [
 ];
 import { getEnterList, addEnterList, updateEnterList, deleteEnterList, getInstitutionList } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
+import getTableScroll from '@/utils/setTableHeight'
 export default {
   data() {
     return {
@@ -408,6 +405,7 @@ export default {
           },
         ],
       },
+      scrollY: "",
     };
   },
   updated() {
@@ -419,11 +417,15 @@ export default {
     },
   },
   created() {
+    this.$nextTick(() => {
+      this.scrollY = getTableScroll();
+    });
     console.log(this.$route);
     this.getEnterList();
     this.getInstitutionList();
   },
   methods: {
+    
     //设置是否默认
     enableChange(value) {
       this.form.Enable = value.target.value;
@@ -558,14 +560,16 @@ export default {
       this.visible = false;
     },
     edit(item) {
-      this.supSelectList = [{
-        EnterName: "顶级",
-        EnterId: 0,
-      }];
+      this.supSelectList = [
+        {
+          EnterName: "顶级",
+          EnterId: 0,
+        },
+      ];
       let list = this.dataSource;
-      list.forEach((i) =>{
+      list.forEach((i) => {
         this.supSelectList.push(i);
-      })
+      });
       this.isSuperior = false;
       this.getInstitutionList();
       this.visible = true;
@@ -672,5 +676,8 @@ export default {
 <style lang="less">
 .ant-form-item {
   margin-bottom: 5px;
+}
+.tab {
+  min-height: 50vh;
 }
 </style>

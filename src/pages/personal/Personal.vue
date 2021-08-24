@@ -51,7 +51,7 @@
         <a-card class="card" title="修改密码" :bordered="false" :bodyStyle="{ margin: '5px', padding: '5px', maxHeight: '30vh', minHeight: '30vh', overflow: 'auto' }">
           <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
             <a-form-item label="旧密码" has-feedback>
-              <a-input
+              <a-input-password
                 v-decorator="[
                   'OldPwd',
                   {
@@ -61,7 +61,7 @@
               />
             </a-form-item>
             <a-form-item label="新密码" has-feedback>
-              <a-input
+              <a-input-password
                 v-decorator="[
                   'NewPwd',
                   {
@@ -78,7 +78,8 @@
               />
             </a-form-item>
             <a-form-item label="确认新密码" has-feedback>
-              <a-input
+              <a-input-password
+                type="password"
                 v-decorator="[
                   'ComfirmNewPwd',
                   {
@@ -142,8 +143,12 @@ export default {
         if (res.data.success) {
           this.userInfo = res.data.data;
           this.RoleName = this.userInfo.UserInRoleList[0].RoleName;
-          this.enterName = this.userInfo.UserInOrgList[0].EnterName || "";
-          this.orgName = this.userInfo.UserInOrgList[0].OrgName || "";
+          console.log("1111111", this.userInfo.UserInRoleList.length);
+          if (this.userInfo.UserInOrgList.length > 0) {
+            console.log("1111111");
+            this.enterName = this.userInfo.UserInOrgList[0].EnterName || "";
+            this.orgName = this.userInfo.UserInOrgList[0].OrgName || "";
+          }
           this.imageUrl = this.userInfo.PhotoUrl;
           this.user = {
             UserName: this.userInfo.UserName,
@@ -152,6 +157,7 @@ export default {
             EnterWechatAccount: this.userInfo.EnterWechatAccount,
             Photo: this.userInfo.Photo,
           };
+          console.log(this.user);
         }
       });
     },
@@ -197,7 +203,15 @@ export default {
     },
     saveInfo() {
       this.user.Photo = this.fileData.ResourceId || this.user.Photo;
-      loginUpdate(this.user).then((res) => {
+      console.log(this.user);
+      let parmas = {
+        UserName: this.user.UserName,
+        Email: this.user.Email,
+        EnterWechatAccount: this.user.EnterWechatAccount,
+        MobilePhone: this.user.MobilePhone,
+        Photo: this.user.Photo,
+      };
+      loginUpdate(parmas).then((res) => {
         if (res.data.success) {
           this.$message.success("修改成功!");
           this.getUserInfo();

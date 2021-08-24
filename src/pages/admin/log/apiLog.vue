@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-08-23 17:51:01
+ * @LastEditTime: 2021-08-24 18:11:16
  * @LastEditors: max
  * @Description: API日志
  * @FilePath: /up-admin/src/pages/admin/log/apiLog.vue
@@ -12,7 +12,7 @@
     <div class="search-box">
       <a-row type="flex" justify="space-between">
         <a-col :sm="24" :md="24" :xl="24">
-          <a-form layout="Inline" :form="searchForm" class="form-box">
+          <a-form :form="searchForm" class="form-box">
             <div>
               <a-form-item>
                 <a-range-picker style="width: 400px" v-decorator="['range-time-picker']" show-time format="YYYY-MM-DD HH:mm:ss" />
@@ -28,6 +28,13 @@
                 <a-input placeholder="API路径" allowClear style="width: 300px" v-decorator="['apiurl']" />
               </a-form-item>
             </div>
+            <div style="margin-left:10px">
+              <a-form-item>
+                <a-checkbox v-decorator="['orderdesc']">
+                  按耗时降序排列
+                </a-checkbox>
+              </a-form-item>
+            </div>
             <div style="margin-top: 3px;margin-left:10px">
               <a-button :disabled="!hasPerm('search')" type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
               <a-button :disabled="!hasPerm('search')" @click="reset" icon="reload">重置</a-button>
@@ -38,7 +45,7 @@
     </div>
     <!-- 列表 -->
     <div class="tab">
-      <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: true }" :loading="loading" :pagination="pagination" @change="handleTableChange" bordered>
+      <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY }" :loading="loading" :pagination="pagination" @change="handleTableChange" bordered>
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -201,6 +208,7 @@ const columns = [
 import { getLogAction } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import Trace from "./trace.vue";
+import getTableScroll from '@/utils/setTableHeight'
 export default {
   components: { Trace },
   data() {
@@ -229,12 +237,16 @@ export default {
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       searchForm: this.$form.createForm(this),
+       scrollY: "",
     };
   },
   updated() {
     renderStripe();
   },
   created() {
+    this.$nextTick(() => {
+      this.scrollY = getTableScroll();
+    });
     this.getLogList();
   },
   methods: {
@@ -261,33 +273,54 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getAppTypeList();
+      this.data = [];
+      this.pagination.total = 0;
+      this.getLogList();
       this.searchForm.resetFields();
+    },
+    formatDateTime(inputTime) {
+      var date = new Date(inputTime);
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      m = m < 10 ? "0" + m : m;
+      var d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+      var h = date.getHours();
+      h = h < 10 ? "0" + h : h;
+      var minute = date.getMinutes();
+      var second = date.getSeconds();
+      minute = minute < 10 ? "0" + minute : minute;
+      second = second < 10 ? "0" + second : second;
+      return y + "-" + m + "-" + d + " " + h + ":" + minute + ":" + second;
     },
     //关键词搜索
     search() {
       this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-          console.log("values",values['range-time-picker'])
-          // console.log("Received values of form: ", values);
-          // this.data = [];
-          // this.pagination.total = 0;
-          // let parmas = {
-          //   pageindex: this.pagination.current,
-          //   pagesize: this.pagination.pageSize,
-          //   keyword: values.searcValue,
-          // };
-          // getLogAction(parmas).then((res) => {
-          //   if (res.data.success) {
-          //     this.data = res.data.data.list;
-          //     const pagination = { ...this.pagination };
-          //     pagination.total = res.data.data.recordsTotal;
-          //     this.pagination = pagination;
-          //     this.loading = false;
-          //   }
-          // });
-          // do something
+          console.log(values)
+          let begindt = this.formatDateTime(values["range-time-picker"][0]);
+          let enddt = this.formatDateTime(values["range-time-picker"][1]);
+          this.data = [];
+          this.pagination.total = 0;
+          let parmas = {
+            pageindex: this.pagination.current,
+            pagesize: this.pagination.pageSize,
+            begindt: begindt,
+            enddt: enddt,
+            elapsetime: values.elapsetime,
+            apiurl: values.apiurl,
+            orderdesc: values.orderdesc?'Y':'N',
+          };
+         getLogAction(parmas, "getall").then((res) => {
+            if (res.data.success) {
+              this.data = res.data.data.list;
+              const pagination = { ...this.pagination };
+              pagination.total = res.data.data.recordsTotal;
+              this.pagination = pagination;
+              this.loading = false;
+            }
+          });
         }
       });
     },

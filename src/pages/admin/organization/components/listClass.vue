@@ -208,30 +208,38 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
+    width: "8%"
   },
   {
     title: "组织等级编号",
     dataIndex: "OrgLevelCode",
     scopedSlots: { customRender: "OrgLevelCode" },
     align: "center",
+    width: "20%",
+    ellipsis: true,
   },
   {
     title: "组织等级名称",
     dataIndex: "OrgLevelName",
     scopedSlots: { customRender: "OrgLevelName" },
     align: "center",
+    width: "20%",
+    ellipsis: true,
   },
   {
     title: "组织维度",
     dataIndex: "OrgDimensionName",
     scopedSlots: { customRender: "OrgDimensionName" },
     align: "center",
+    width: "10%",
+    ellipsis: true,
   },
   {
     title: "级别",
     dataIndex: "OrgLevelSortNo",
     scopedSlots: { customRender: "OrgLevelSortNo" },
     align: "center",
+    width: "8%",
   },
   {
     title: "操作",
@@ -482,4 +490,8 @@ export default {
 };
 </script>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+/deep/ .ant-table{
+  min-height: 0;
+}
+</style>
