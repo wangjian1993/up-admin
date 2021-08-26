@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-19 09:10:49
+ * @LastEditTime: 2021-08-25 09:56:20
  * @LastEditors: max
  * @Description: 用户类型
  * @FilePath: /up-admin/src/pages/admin/user/type.vue
@@ -97,7 +97,7 @@
         :columns="columns"
         :data-source="data"
         size="small"
-        :scroll="{y:true}"
+        :scroll="{ y: scrollY }"
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
@@ -199,6 +199,7 @@ const columns = [
 ];
 import { getUserTypeList, userTypeAction } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
+import getTableScroll from "@/utils/setTableHeight";
 export default {
   data() {
     return {
@@ -221,6 +222,7 @@ export default {
         showSizeChanger: true,
         showLessItems: true,
         showQuickJumper: true,
+        hideOnSinglePage:true,
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
@@ -248,6 +250,7 @@ export default {
           },
         ],
       },
+      scrollY: "",
     };
   },
   updated() {
@@ -259,6 +262,9 @@ export default {
     },
   },
   created() {
+    this.$nextTick(() => {
+      this.scrollY = getTableScroll();
+    });
     this.getUserTypeList();
   },
   methods: {

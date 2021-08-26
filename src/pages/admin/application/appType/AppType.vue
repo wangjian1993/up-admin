@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-19 09:16:11
+ * @LastEditTime: 2021-08-26 16:00:08
  * @LastEditors: max
  * @Description: 应用类型
  * @FilePath: /up-admin/src/pages/admin/application/appType/AppType.vue
@@ -271,6 +271,7 @@ export default {
     this.getAppTypeList();
   },
   methods: {
+    //状态切换
     enableChange(value) {
       this.form.Enable = value.target.value;
     },
@@ -279,6 +280,7 @@ export default {
       this.isDrawer = true;
       this.drawerItem = item;
     },
+    //关闭弹窗
     onClose() {
       this.isDrawer = false;
     },
@@ -366,6 +368,7 @@ export default {
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
+          //编辑
           if (this.isEdit) {
             let editForm = {
               AppTypeId: this.form.AppTypeId,
@@ -382,6 +385,7 @@ export default {
               }
             });
           } else {
+            //添加
             appTypeAction(this.form, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");

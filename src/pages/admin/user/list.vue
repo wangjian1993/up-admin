@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-24 10:21:40
+ * @LastEditTime: 2021-08-26 14:18:14
  * @LastEditors: max
  * @Description: 用户列表
  * @FilePath: /up-admin/src/pages/admin/user/list.vue
@@ -10,11 +10,11 @@
   <!-- 搜索 -->
   <div>
     <a-row type="flex">
-      <a-col style="padding: 0 5px;" :span="5">
+      <a-col style="padding: 0 5px;" :md="24" :lg="5">
         <a-card class="card" :bordered="false" :bodyStyle="{ margin: '0 0px', padding: '5px', maxHeight: '88vh', minHeight: '88vh', overflow: 'auto' }">
           <a-row>
-            <a-col :xs="12" :sm="12"><span class="card-title">机构类型选择:</span></a-col>
-            <a-col :xs="12" :sm="12">
+            <a-col :md="24" :lg="12"><span class="card-title">机构类型选择:</span></a-col>
+            <a-col :md="24" :lg="12">
               <a-select v-model="enterTypeVale" defaultActiveFirstOption style="width: 150px" @change="enterTypeChange">
                 <a-select-option :value="item.EnterTypeId" v-for="item in enterTypeList" :key="item.EnterTypeId">
                   {{ item.EnterTypeName }}
@@ -23,17 +23,16 @@
             </a-col>
           </a-row>
           <div style="margin-top: 20px">
- <a-tree @select="treeClick" v-if="treeList.length" :tree-data="treeList" default-expand-all auto-expand-parent :replaceFields="replaceFields" :default-selected-keys="enterValue"></a-tree>
-          <a-empty v-if="treeList.length == 0" />
+            <a-tree @select="treeClick" v-if="treeList.length" :tree-data="treeList" default-expand-all auto-expand-parent :replaceFields="replaceFields" :default-selected-keys="enterValue"></a-tree>
+            <a-empty v-if="treeList.length == 0" />
           </div>
-         
         </a-card>
       </a-col>
-      <a-col style="padding: 0 0px" :span="19">
+      <a-col style="padding: 0 0px" :md="24" :lg="19">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <div class="search-box">
             <a-row type="flex" justify="space-between">
-              <a-col :span="6">
+              <a-col :md="24" :lg="5">
                 <div>
                   <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="form">添加</a-button>
                   <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
@@ -45,7 +44,7 @@
                   </span>
                 </div>
               </a-col>
-              <a-col :sm="24" :md="24" :xl="18">
+              <a-col :md="24" :lg="19">
                 <a-form layout="horizontal" :form="searchForm" class="form-box">
                   <a-row type="flex" justify="end">
                     <a-col
@@ -87,7 +86,7 @@
               :loading="tableLoading"
               :pagination="pagination"
               @change="handleTableChange"
-              :rowKey="(tableDatas) => data.EnterTypeId"
+              :rowKey="(tableDatas) => data.UserId"
               :row-selection="{
                 selectedRowKeys: selectedRowKeys,
                 onChange: onSelectChange,
@@ -290,6 +289,7 @@ export default {
       enterTypeList: [],
       enterTypeVale: "",
       entertypeid: "",
+      isSearch: false,
     };
   },
   updated() {
@@ -336,9 +336,12 @@ export default {
       this.advanced = !this.advanced;
     },
     enterTypeChange(e) {
-      this.data=[];
+      this.data = [];
       this.entertypeid = e;
       this.tabData = [];
+      this.enterValue =[];
+      this.enterId ='';
+      this.treeList =[];
       this.getTreeList();
     },
     getTreeList() {
@@ -361,6 +364,7 @@ export default {
     treeClick(value) {
       this.tableLoading = true;
       this.enterId = value[0];
+      this.pagination.current = 1;
       this.getUserList();
     },
     //查看详情
@@ -377,6 +381,7 @@ export default {
     },
     //重置搜索
     reset() {
+      this.pagination.current = 1;
       this.getUserList();
       this.searchForm.resetFields();
     },
@@ -402,6 +407,7 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
+              this.isSearch = true;
             }
           });
         }
@@ -421,6 +427,7 @@ export default {
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
+          this.isSearch = false;
         } else {
           console.log("1111");
           this.tableLoading = false;
@@ -515,6 +522,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if (this.isSearch) {
+        this.search();
+        return;
+      }
       this.getUserList();
     },
     //更多操作

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-23 17:17:47
- * @LastEditTime: 2021-08-17 11:18:26
+ * @LastEditTime: 2021-08-26 15:53:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/config/default/setting.config.js

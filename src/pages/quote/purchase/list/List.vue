@@ -1,9 +1,9 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:59:02
- * @LastEditTime: 2021-08-23 10:51:55
+ * @LastEditTime: 2021-08-26 09:00:26
  * @LastEditors: max
- * @Description: 
+ * @Description: excel导入导出
  * @FilePath: /up-admin/src/pages/quote/purchase/list/List.vue
 -->
 <template>
@@ -11,11 +11,12 @@
     <a-upload accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload">
       <a-button type="primary">导入Excel</a-button>
     </a-upload>
+    <div><a-button type="primary" @click="exportExcel">导出Excel</a-button></div>
     <a-table :columns="columns" size="small" :data-source="tableData" style="margin-top:45px">
       <a slot="name" slot-scope="text">{{ text }}</a>
-      <span slot="__EMPTY" slot-scope="text">{{ formatDate(text,"/") }}</span>
-      <span slot="__EMPTY_6" slot-scope="text">{{ formatDate(text,"/") }}</span>
-      <span slot="__EMPTY_7" slot-scope="text">{{ formatDate(text,"/") }}</span>
+      <span slot="__EMPTY" slot-scope="text">{{ formatDate(text, "/") }}</span>
+      <span slot="__EMPTY_6" slot-scope="text">{{ formatDate(text, "/") }}</span>
+      <span slot="__EMPTY_7" slot-scope="text">{{ formatDate(text, "/") }}</span>
       <span slot="__EMPTY_9" slot-scope="text">{{ toFixed(text) }}</span>
     </a-table>
   </div>
@@ -31,6 +32,31 @@ export default {
     };
   },
   methods: {
+    //导出
+    exportExcel() {
+      let titleArr = [];
+      this.columns.map((item) => {
+        titleArr.push(item.title);
+      });
+      let arr = [];
+      this.tableData.forEach((item) => {
+        let itemArray = [];
+        for (let val in item) {
+          itemArray.push(item[val]);
+        }
+        arr.push(itemArray);
+      });
+      this.ToDoExcel(`生产计划`, titleArr, arr);
+    },
+    ToDoExcel(excelName, titleArr, dataArr) {
+      var filename = excelName + ".xlsx"; //文件名称
+      var data = [titleArr, ...dataArr]; //数据，一定注意需要时二维数组
+      var ws_name = "Sheet1"; //Excel第一个sheet的名称
+      var wb = XLSX.utils.book_new(),
+        ws = XLSX.utils.aoa_to_sheet(data);
+      XLSX.utils.book_append_sheet(wb, ws, ws_name); //将数据添加到工作薄
+      XLSX.writeFile(wb, filename);
+    },
     //导入excel
     beforeUpload(file) {
       let _this = this;
@@ -42,8 +68,8 @@ export default {
         });
       });
     },
-    toFixed(num){
-      return Math.floor(num * 100) / 100 || ""
+    toFixed(num) {
+      return Math.floor(num * 100) / 100 || "";
     },
     formatDate(numb, format) {
       const time = new Date((numb - 1) * 24 * 3600000 + 1);
@@ -80,7 +106,7 @@ export default {
                 dataIndex: val,
                 key: val,
                 ellipsis: true,
-                scopedSlots: { customRender:val },
+                scopedSlots: { customRender: val },
               });
             }
             exl.forEach((v, i) => {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 16:12:00
- * @LastEditTime: 2021-08-19 09:17:12
+ * @LastEditTime: 2021-08-26 14:27:13
  * @LastEditors: max
  * @Description: 快码组管理
  * @FilePath: /up-admin/src/pages/admin/database/group/Group.vue
@@ -251,6 +251,7 @@ export default {
           },
         ],
       },
+      isSearch:false
     };
   },
   updated() {
@@ -282,6 +283,7 @@ export default {
     },
     //重置搜索
     reset() {
+      this.pagination.current =1;
       this.getParamGroupList();
       this.searchForm.resetFields();
     },
@@ -305,6 +307,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
+              this.isSearch =true;
             }
           });
           // do something
@@ -326,6 +329,7 @@ export default {
           }
           this.pagination = pagination;
           this.loading = false;
+          this.isSearch =false;
         }else {
           this.loading = false;
         }
@@ -422,6 +426,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if(this.isSearch){
+        this.search();
+        return;
+      }
       this.getParamGroupList();
     },
   },

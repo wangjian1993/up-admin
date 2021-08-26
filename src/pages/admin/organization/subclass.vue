@@ -52,7 +52,7 @@
               :pagination="pagination"
               size="small"
               :scroll="{ y: true }"
-              rowKey="OrgId"
+             :rowKey="(data) => data.OrgId"
               :row-selection="{
                 selectedRowKeys: selectedRowKeys,
                 onChange: onSelectChange,
@@ -66,14 +66,6 @@
                       删除
                     </a>
                   </a-popconfirm>
-                  <!-- <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
-                    <a-icon type="edit" />
-                    编辑
-                  </a>
-                  <a style="margin-right: 8px" @click="addSubclass(record, 'sub')" :disabled="!hasPerm('addsub')">
-                    <a-icon type="profile" />
-                    新增子组
-                  </a> -->
                   <a style="margin-right: 8px" @click="relationship(record)">
                     <span v-if="orgId == record.OrgId" style="color:red"><a-icon type="team" />用户关系</span>
                     <span v-else><a-icon type="team" />用户关系</span>
@@ -276,34 +268,33 @@ export default {
     this.getInstitutionList();
   },
   methods: {
+    //组织机构选择
     handleChange(e) {
-      console.log(e);
       this.dimsensionId = e;
       this.getOrginfo();
       this.getList(e);
       this.isRelationship = false;
     },
+    //操作更多按钮
     relationship(item) {
       this.isRelationship = true;
-      console.log(item);
       this.orgId = item.OrgId;
       this.$refs.getUser.getOrgUser(item.OrgId);
       this.$refs.getUser.setPage();
     },
+    //机构类型选择
     enterTypeChange(e) {
-      console.log(e);
       this.entertypeid = e;
-      this.tabData =[]
+      this.tabData =[];
+      this.treeList=[];
+      this.enterValue=[];
       this.getTreeList();
-    },
-    orgChange(value) {
-      this.LevelList = [];
-      this.getList(value);
     },
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
+    //获取机构类型
     getInstitutionList() {
       let parmas = {
         pageindex: 1,
@@ -318,6 +309,7 @@ export default {
         }
       });
     },
+    //获取机构树形数据
     getTreeList() {
       let parmas = {
         entertypeid: this.entertypeid,
@@ -347,6 +339,7 @@ export default {
         }
       });
     },
+    //获取组织等级
     getList(id) {
       let parmas = {
         pageindex: 1,
@@ -370,17 +363,17 @@ export default {
       getOrginfo(parmas).then((res) => {
         if (res.data.success) {
           this.tabData = res.data.data.list;
+          if(this.tabData.length < 1){
+            return;
+          }
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.orgId = this.tabData[0].OrgId;
-          // this.orgIdFlag = true;
         }
       });
     },
-    loadData(selectedOptions) {
-      console.log(selectedOptions);
-    },
+    //状态切换
     enableChange(value) {
       this.form.Enable = value.target.value;
     },
@@ -388,17 +381,13 @@ export default {
     handleCancel() {
       this.visible = false;
     },
-    leverClick(value) {
-      this.dimsensionId = value[0];
-      this.getOrginfo();
-      this.getList(value[0]);
-      this.isRelationship = false;
-    },
+    //机构切换
     treeClick(value) {
       this.enterid = value[0];
       this.getOrginfo();
       this.isRelationship = false;
     },
+    //初始化表单
     defaultForm() {
       this.form = {
         OrgCode: "",
@@ -411,15 +400,18 @@ export default {
         EnterId: "",
       };
     },
+    //编辑按钮
     edit(item) {
       this.visible = true;
       this.isEdit = true;
       this.title = "编辑组织";
       this.form = item;
     },
+    //确认按钮
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
+          //编辑
           if (this.isEdit) {
             let editForm = {
               OrgId: this.form.OrgId,
@@ -437,6 +429,7 @@ export default {
               }
             });
           } else {
+            //添加
             let parma = {
               OrgCode: this.form.OrgCode,
               OrgName: this.form.OrgName,
@@ -459,6 +452,7 @@ export default {
         }
       });
     },
+    //新增子组
     addSubclass(item, type) {
       this.defaultForm();
       this.subItem = [];
@@ -468,7 +462,6 @@ export default {
       if (type == "sub") {
         this.subItem = item;
         this.subType = true;
-        console.log(this.subItem);
       }
     },
     //单个删除
@@ -488,17 +481,12 @@ export default {
       this.pagination.pageSize = pagination.pageSize;
       this.getOrginfo();
     },
+    //多选移除
     allDel() {
       let self = this;
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          // const params = [];
-          // console.log("self.selectedRowKeys",self.selectedRowKeys)
-          // self.selectedRowKeys.forEach(item => {
-          // 	console.log("self.tabData[item]",self.tabData[item])
-          // 	params.push(self.tabData[item].OrgId);
-          // });
           orginfoAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];

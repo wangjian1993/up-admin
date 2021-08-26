@@ -43,7 +43,7 @@
       </a-row>
     </div>
     <div>
-      <a-modal :title="title" :visible="visible" v-if="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel">
+      <a-modal :title="isEdit?'编辑组织维度':'添加组织维度'" :visible="visible" v-if="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel">
         <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item ref="OrgDimensionName" has-feedback label="维度名称" prop="OrgDimensionName">
             <a-input
@@ -192,6 +192,7 @@
   </a-card>
 </template>
 <script>
+//表头
 const columns = [
   {
     title: "序号",
@@ -313,9 +314,11 @@ export default {
     this.getOrganizationList();
   },
   methods: {
+    //状态切换
     enableChange(value) {
       this.form.Enable = value.target.value;
     },
+    //是否授权切换
     authChange(value) {
       this.form.IsPartAuth = value.target.value;
     },
@@ -324,6 +327,7 @@ export default {
       this.isDrawer = true;
       this.drawerItem = item;
     },
+    //模态关闭
     onClose() {
       this.isDrawer = false;
     },
@@ -382,6 +386,7 @@ export default {
       this.title = "添加组织";
       this.visible = true;
     },
+    //表单初始化
     defaultForm() {
       this.form = {
         OrgDimensionCode: "",
@@ -395,6 +400,7 @@ export default {
     handleCancel() {
       this.visible = false;
     },
+    //编辑
     edit(item) {
       this.visible = true;
       this.isEdit = true;

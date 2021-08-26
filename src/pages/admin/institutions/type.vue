@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-14 17:31:41
+ * @LastEditTime: 2021-08-26 15:19:32
  * @LastEditors: max
  * @Description: 组织管理
  * @FilePath: /up-admin/src/pages/admin/institutions/type.vue
@@ -52,7 +52,7 @@
       </a-row>
     </div>
     <div>
-      <a-modal :title="title" :visible="visible" v-if="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+      <a-modal :title="isEdit?'编辑机构类型':'添加机构类型'" :visible="visible" v-if="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
         <a-form-model ref="ruleForm" :model="typeForm" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item ref="EnterTypeCode" has-feedback label="类型编号" prop="EnterTypeCode">
             <a-input
@@ -113,10 +113,10 @@
         :columns="columns"
         :data-source="data"
         size="small"
-        :scroll="{ x: true, y: true }"
+        :scroll="{ y: scrollY }"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(tableDatas) => data.EnterTypeId"
+        :rowKey="(data) => data.EnterTypeId"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -190,6 +190,7 @@
   </a-card>
 </template>
 <script>
+//表头
 const columns = [
   {
     title: "序号",
@@ -246,19 +247,19 @@ const columns = [
     width: "20%",
   },
 ];
-import { getInstitutionList, addEnterType, editEnterType, delEnterType } from "@/services/admin.js";
+import { getInstitutionList, enterTypeAction } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
+import getTableScroll from "@/utils/setTableHeight";
 export default {
   data() {
     return {
-      data: [],
-      columns,
-      isEdit: false,
-      editForm: [],
-      title: "添加机构类型",
+      data: [],   //表格数据
+      columns,  //表头
+      isEdit: false,   //判断是否编辑
+      editForm: [], 
       loading: false,
       isDrawer: false,
-      selectedRowKeys: [], // Check here to configure the default column
+      selectedRowKeys: [],
       visible: false,
       drawerItem: [],
       labelCol: { span: 6 },
@@ -270,11 +271,13 @@ export default {
         showSizeChanger: true,
         showLessItems: true,
         showQuickJumper: true,
+        hideOnSinglePage: true,
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       searcValue: "",
       searchForm: this.$form.createForm(this),
+      //初始化
       typeForm: {
         EnterTypeCode: "",
         EnterTypeName: "",
@@ -283,6 +286,7 @@ export default {
         Enable: "Y",
         IsDefualt: "Y",
       },
+      //表单验证
       rules: {
         EnterTypeCode: [
           {
@@ -313,23 +317,31 @@ export default {
           },
         ],
       },
+      scrollY: "",
     };
   },
+  //设置斑马纹
   updated() {
     renderStripe();
   },
+  //表格多选
   computed: {
     hasSelected() {
       return this.selectedRowKeys.length > 0;
     },
   },
   created() {
+    this.$nextTick(() => {
+      this.scrollY = getTableScroll();
+    });
     this.getInstitutionList();
   },
   methods: {
+    //状态切换
     enableChange(value) {
       this.typeForm.Enable = value.target.value;
     },
+    //默认切换
     defualtChange(value) {
       this.typeForm.IsDefualt = value.target.value;
     },
@@ -338,6 +350,7 @@ export default {
       this.isDrawer = true;
       this.drawerItem = item;
     },
+    //关闭模态窗
     onClose() {
       this.isDrawer = false;
     },
@@ -354,7 +367,7 @@ export default {
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-          console.log("Received values of form: ", values);
+          // console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
           let parmas = {
@@ -393,9 +406,9 @@ export default {
     add() {
       this.defaultForm();
       this.isEdit = false;
-      this.title = "添加机构类型";
       this.visible = true;
     },
+    //初始化表单数据
     defaultForm() {
       this.typeForm = {
         EnterTypeCode: "",
@@ -410,16 +423,18 @@ export default {
     handleCancel() {
       this.visible = false;
     },
+    //编辑
     edit(item) {
       this.visible = true;
       this.isEdit = true;
-      this.title = "编辑机构类型";
       this.typeForm = item;
     },
+    //提交确定按钮
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           if (this.isEdit) {
+            //编辑
             let editForm = {
               EnterTypeId: this.typeForm.EnterTypeId,
               EnterTypeCode: this.typeForm.EnterTypeCode,
@@ -429,7 +444,7 @@ export default {
               Enable: this.typeForm.Enable,
               IsDefualt: this.typeForm.IsDefualt,
             };
-            editEnterType(editForm).then((res) => {
+            enterTypeAction(editForm, "update").then((res) => {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
                 this.defaultForm();
@@ -438,7 +453,8 @@ export default {
               }
             });
           } else {
-            addEnterType(this.typeForm).then((res) => {
+            //添加
+            enterTypeAction(this.typeForm, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");
                 this.getInstitutionList();
@@ -460,7 +476,7 @@ export default {
           self.selectedRowKeys.forEach((item) => {
             params.push(self.data[item].EnterTypeId);
           });
-          delEnterType(params).then((res) => {
+          enterTypeAction(params, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -477,13 +493,14 @@ export default {
     onDelete(item) {
       let parmas = [];
       parmas.push(item.EnterTypeId);
-      delEnterType(parmas).then((res) => {
+      enterTypeAction(parmas, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getInstitutionList();
         }
       });
     },
+    //分页切换
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
@@ -496,8 +513,8 @@ export default {
 .ant-form-item {
   margin-bottom: 5px;
 }
-.form-box{
-  display:flex;
-  justify-content:flex-end;
+.form-box {
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

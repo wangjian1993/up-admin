@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-08-24 18:15:41
+ * @LastEditTime: 2021-08-25 17:20:17
  * @LastEditors: max
  * @Description: API日志
  * @FilePath: /up-admin/src/pages/admin/log/sqlLog.vue
@@ -20,13 +20,13 @@
             </div>
             <div style="margin-left:10px">
               <a-form-item>
-                <a-input placeholder="SQL执行耗时(毫秒)" allowClear style="width: 300px" v-decorator="['elapsetime']" />
+                <a-input placeholder="SQL执行耗时(毫秒)" allowClear style="width: 200px" v-decorator="['elapsetime']" />
               </a-form-item>
             </div>
             <div style="margin-left:10px">
               <a-form-item>
                 <a-form-item>
-                  <a-select v-decorator="['execumehtod']" style="width: 150px" placeholder="请选择语句类型">
+                  <a-select v-decorator="['execumehtod']" style="width: 100px" placeholder="请选择语句类型">
                     <a-select-option :value="item.ParamValue" v-for="(item, index) in sqlMehtod" :key="index">
                       {{ item.ParamName }}
                     </a-select-option>
@@ -37,7 +37,7 @@
             <div style="margin-left:10px">
               <a-form-item>
                 <a-form-item>
-                  <a-select v-decorator="['type']" placeholder="请选择执行状态" style="width: 150px">
+                  <a-select v-decorator="['type']" placeholder="请选择执行状态" style="width: 100px">
                     <a-select-option :value="item.ParamValue" v-for="(item, index) in sqlState" :key="index">
                       {{ item.ParamName }}
                     </a-select-option>
@@ -133,7 +133,7 @@ const columns = [
     dataIndex: "Type",
     scopedSlots: { customRender: "Type" },
     align: "center",
-    width: "4%",
+    width: "5%",
   },
   {
     title: "执行方法",
@@ -165,7 +165,7 @@ const columns = [
 ];
 import { getLogAction, getParamData } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
-import getTableScroll from '@/utils/setTableHeight'
+import getTableScroll from "@/utils/setTableHeight";
 export default {
   data() {
     return {
@@ -196,6 +196,7 @@ export default {
       sqlState: [],
       sqlMehtod: [],
       scrollY: "",
+      isSearch: false,
     };
   },
   updated() {
@@ -247,6 +248,7 @@ export default {
     reset() {
       this.data = [];
       this.pagination.total = 0;
+      this.pagination.current =1
       this.getLogList();
       this.searchForm.resetFields();
     },
@@ -299,6 +301,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
+              this.isSearch = true;
             }
           });
         }
@@ -317,6 +320,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
+          this.isSearch = false;
         } else {
           this.loading = false;
         }
@@ -332,6 +336,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if (this.isSearch) {
+        this.search();
+        return;
+      }
       this.getLogList();
     },
   },

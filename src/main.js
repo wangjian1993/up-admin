@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-08-23 09:23:37
+ * @LastEditTime: 2021-08-26 17:07:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/main.js
@@ -19,13 +19,13 @@ import Plugins from '@/plugins';
 import { initI18n } from '@/utils/i18n';
 import bootstrap from '@/bootstrap';
 import 'moment/locale/zh-cn';
-const router = initRouter(store.state.setting.asyncRoutes)
+const router = initRouter(store.state.setting.asyncRoutes);
 const i18n = initI18n('CN', 'US')
 import { hasBtnPermission } from './utils/permissions';
 Vue.prototype.hasPerm = hasBtnPermission;
-Vue.use(Antd)
-Vue.config.productionTip = false
-Vue.use(Viser)
+Vue.use(Antd);
+Vue.config.productionTip = false;
+Vue.use(Viser);
 Vue.use(Plugins);
 // import Blob from '@/excel/Blob.js';
 // import Export2Excel from '@/excel/Export2Excel.js';

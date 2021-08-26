@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-24 17:09:01
+ * @LastEditTime: 2021-08-26 15:45:46
  * @LastEditors: max
  * @Description: api管理
  * @FilePath: /up-admin/src/pages/admin/api/ApiList.vue
@@ -10,11 +10,11 @@
   <div>
     <!-- 搜索 -->
     <a-row>
-      <a-col style="padding: 0 5px" :span="6">
+      <a-col style="padding: 0 5px" :lg="6" :sm="24">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-row>
-            <a-col :xs="24" :sm="12"><span class="card-title">应用类型:</span></a-col>
-            <a-col :xs="24" :sm="12">
+            <a-col :lg="12" :sm="24"><span class="card-title">应用类型:</span></a-col>
+            <a-col :lg="12" :sm="24">
               <a-select v-model="defaultAppTypeId" style="width: 130px" @change="appTypeSelect">
                 <a-select-option :value="item.AppTypeId" v-for="(item, index) in appTypeData" :key="index">{{ item.AppTypeName }}</a-select-option>
               </a-select>
@@ -30,11 +30,11 @@
           </a-row>
         </a-card>
       </a-col>
-      <a-col style="padding: 0 5px" :span="18">
+      <a-col style="padding: 0 5px" :lg="18" :sm="24">
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <div class="search-box">
             <a-row type="flex" justify="space-between">
-              <a-col :span="6">
+              <a-col :lg="5" :sm="24">
                 <div>
                   <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="form">添加</a-button>
                   <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
@@ -46,24 +46,24 @@
                   </span>
                 </div>
               </a-col>
-              <a-col :sm="24" :md="24" :xl="18">
+              <a-col :lg="19" :sm="24">
                 <a-row>
                   <a-col>
                     <a-form layout="horizontal" :form="searchForm" class="form-box">
                       <div>
                         <a-form-item>
-                          <a-input placeholder="请输入API路径" allowClear style="width: 300px" v-decorator="['apiurl']" />
+                          <a-input placeholder="请输入API路径" allowClear style="width: 170px" v-decorator="['apiurl']" />
                         </a-form-item>
                       </div>
                       <div style="margin-left:10px">
                         <a-form-item>
-                          <a-input placeholder="API编码/名称" allowClear style="width: 300px" v-decorator="['apicode']" />
+                          <a-input placeholder="API编码/名称" allowClear style="width: 170px" v-decorator="['apicode']" />
                         </a-form-item>
                       </div>
                       <div style="margin-left:10px">
                         <a-form-item>
                           <a-form-item>
-                            <a-select v-decorator="['apimethod']" placeholder="请选择API请求方式" style="width: 150px">
+                            <a-select v-decorator="['apimethod']" placeholder="请选择API请求方式" style="width: 140px">
                               <a-select-option value="GET">
                                 GET
                               </a-select-option>
@@ -74,8 +74,8 @@
                           </a-form-item>
                         </a-form-item>
                       </div>
-                      <div style="margin-top: 3px;margin-left:10px">
-                        <a-button :disabled="!hasPerm('search')" type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
+                      <div style="margin-top: 3px;margin-left:0px">
+                        <a-button :disabled="!hasPerm('search')" type="primary" icon="search" style="margin:0 5px" @click="search">搜索</a-button>
                         <a-button :disabled="!hasPerm('search')" @click="reset" icon="reload">重置</a-button>
                       </div>
                     </a-form>
@@ -376,6 +376,7 @@ export default {
       buttonid: "",
       addApiData: [],
       addApiDataChildren: [],
+      isSearch:false,
     };
   },
   updated() {
@@ -391,12 +392,14 @@ export default {
     this.getAppTypeList();
   },
   methods: {
+    //应用类型选择
     appTypeSelect(e) {
       this.appTypeId = e;
       this.appTreeData = [];
       this.appValue = [];
       this.getAppMdules();
     },
+    //获取应用类型
     getAppTypeList() {
       let parmas = {
         pageindex: 1,
@@ -449,6 +452,7 @@ export default {
     },
     //重置搜索
     reset() {
+      this.pagination.current =1;
       this.getApiList();
       this.searchForm.resetFields();
     },
@@ -480,6 +484,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
+              this.isSearch=true;
             }
           });
         }
@@ -499,6 +504,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
+          this.isSearch=false;
         } else {
           this.loading = false;
         }
@@ -617,6 +623,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if( this.isSearch){
+        this.search();
+        return;
+      }
       this.getApiList();
     },
     appClick(e, key) {

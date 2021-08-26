@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-08-24 17:32:55
+ * @LastEditTime: 2021-08-25 09:53:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/App.vue
@@ -100,14 +100,14 @@ export default {
   font-size: 700;
   color: #000;
 }
-.ant-table {
-  min-height: 352px !important;
-  overflow: auto;
-}
-// .ant-table{
-//   min-height:77vh;
-//   max-height:77vh;
+// .ant-table {
+//   min-height: 352px !important;
 //   overflow: auto;
 // }
+.ant-table{
+  min-height:77vh;
+  max-height:77vh;
+  overflow: auto;
+}
 // .ant-table td { white-space: nowrap; }
 </style>

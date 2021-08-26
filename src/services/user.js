@@ -1,9 +1,9 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-08-21 10:23:09
+ * @LastEditTime: 2021-08-26 09:20:41
  * @LastEditors: max
- * @Description: 
+ * @Description: 用户相关api
  * @FilePath: /up-admin/src/services/user.js
  */
 import {request, METHOD, removeAuthorization} from '@/utils/request';

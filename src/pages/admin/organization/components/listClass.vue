@@ -1,29 +1,13 @@
 <template>
   <div>
-    <a-modal
-      v-model="visible"
-      :title="classItem.OrgDimensionName + '-等级管理'"
-      :footer="null"
-      @cancel="close"
-      centered
-      :width="800"
-    >
+    <a-modal v-model="visible" :title="classItem.OrgDimensionName + '-等级管理'" :footer="null" @cancel="close" centered :width="800">
       <div>
         <div class="search-box">
           <a-row>
             <a-col :span="9">
               <div>
-                <a-button @click="add" type="primary" icon="form"
-                  >添加</a-button
-                >
-                <a-button
-                  type="primary"
-                  :disabled="!hasSelected"
-                  @click="allDel"
-                  icon="delete"
-                  style="margin-left: 8px"
-                  >删除</a-button
-                >
+                <a-button @click="add" type="primary" icon="form">添加</a-button>
+                <a-button type="primary" :disabled="!hasSelected" @click="allDel" icon="delete" style="margin-left: 8px">删除</a-button>
                 <span style="margin-left: 8px">
                   <template v-if="hasSelected">
                     {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -35,20 +19,14 @@
               <a-form layout="horizontal" :form="searchForm">
                 <div>
                   <a-col :md="15" :sm="24">
-                    <a-form-item
-                      label="等级编码/名称"
-                      :labelCol="{ span: 9 }"
-                      :wrapperCol="{ span: 14, offset: 1 }"
-                    >
+                    <a-form-item label="等级编码/名称" :labelCol="{ span: 9 }" :wrapperCol="{ span: 14, offset: 1 }">
                       <a-input
                         placeholder="请输入"
                         allowClear
                         v-decorator="[
                           'searcValue',
                           {
-                            rules: [
-                              { required: true, message: '等级编码/名称' },
-                            ],
+                            rules: [{ required: true, message: '等级编码/名称' }],
                           },
                         ]"
                       />
@@ -57,35 +35,16 @@
                 </div>
                 <span style="float: right; margin-top: 3px;">
                   <a-button type="primary" @click="search">查询</a-button>
-                  <a-button style="margin-left: 8px" @click="reset"
-                    >重置</a-button
-                  >
+                  <a-button style="margin-left: 8px" @click="reset">重置</a-button>
                 </span>
               </a-form>
             </a-col>
           </a-row>
         </div>
         <div>
-          <a-modal
-            title="编辑"
-            :visible="isAddModal"
-            @ok="handleOk"
-            @cancel="handleCancel"
-            centered
-          >
-            <a-form-model
-              ref="ruleForm"
-              :model="form"
-              :rules="rules"
-              :label-col="labelCol"
-              :wrapper-col="wrapperCol"
-            >
-              <a-form-model-item
-                ref="OrgLevelCode"
-                has-feedback
-                label="等级编码"
-                prop="OrgLevelCode"
-              >
+          <a-modal title="编辑" :visible="isAddModal" @ok="handleOk" @cancel="handleCancel" centered>
+            <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+              <a-form-model-item ref="OrgLevelCode" has-feedback label="等级编码" prop="OrgLevelCode">
                 <a-input
                   v-model="form.OrgLevelCode"
                   allowClear
@@ -96,12 +55,7 @@
                   "
                 />
               </a-form-model-item>
-              <a-form-model-item
-                ref="OrgLevelName"
-                has-feedback
-                label="名称"
-                prop="OrgLevelName"
-              >
+              <a-form-model-item ref="OrgLevelName" has-feedback label="名称" prop="OrgLevelName">
                 <a-input
                   v-model="form.OrgLevelName"
                   allowClear
@@ -112,12 +66,7 @@
                   "
                 />
               </a-form-model-item>
-              <a-form-model-item
-                ref="OrgLevelSortNo"
-                has-feedback
-                label="排序"
-                prop="OrgLevelSortNo"
-              >
+              <a-form-model-item ref="OrgLevelSortNo" has-feedback label="排序" prop="OrgLevelSortNo">
                 <a-input-number
                   id="OrgLevelSortNo"
                   v-model="form.OrgLevelSortNo"
@@ -131,11 +80,7 @@
                 />
               </a-form-model-item>
               <a-form-model-item ref="Enable" label="是否启动">
-                <a-radio-group
-                  :value="form.Enable"
-                  button-style="solid"
-                  @change="enableChange"
-                >
+                <a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
                   <a-radio-button value="N">否</a-radio-button>
                   <a-radio-button value="Y">是</a-radio-button>
                 </a-radio-group>
@@ -149,7 +94,7 @@
             :columns="columns"
             :data-source="list"
             size="small"
-            :scroll="{y:true}"
+            :scroll="{ y: true }"
             :pagination="pagination"
             @change="handleTableChange"
             :rowKey="(tableDatas) => list.EnterTypeId"
@@ -161,9 +106,7 @@
           >
             <template slot="index" slot-scope="text, record, index">
               <div>
-                <span>{{
-                  (pagination.current - 1) * pagination.pageSize + (index + 1)
-                }}</span>
+                <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
               </div>
             </template>
             <template slot="enable" slot-scope="record">
@@ -180,10 +123,7 @@
             </template>
             <template slot="action" slot-scope="text, record">
               <div>
-                <a-popconfirm
-                  title="确定删除?"
-                  @confirm="() => onDelete(record)"
-                >
+                <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
                   <a style="margin-right: 8px">
                     <a-icon type="delete" />
                     删除
@@ -208,7 +148,7 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "8%"
+    width: "8%",
   },
   {
     title: "组织等级编号",
@@ -268,8 +208,7 @@ export default {
         showLessItems: true,
         showQuickJumper: true,
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) =>
-          `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
+        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       form: {
         OrgLevelCode: "",
@@ -313,9 +252,11 @@ export default {
     this.getList();
   },
   methods: {
+    //关闭弹窗
     close() {
       this.$emit("closeModal");
     },
+    //获取组织维度数据
     getList() {
       let parmas = {
         pageindex: this.pagination.current,
@@ -331,24 +272,20 @@ export default {
         }
       });
     },
+    //状态切换
     enableChange(value) {
       this.form.Enable = value.target.value;
-    },
-    authChange(value) {
-      this.form.IsPartAuth = value.target.value;
     },
     //查看详情
     detail(item) {
       this.isDrawer = true;
       this.drawerItem = item;
     },
-    onClose() {
-      this.isDrawer = false;
-    },
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
+    //重置按钮
     reset() {
       this.getList();
       this.searchForm.resetFields();
@@ -385,6 +322,7 @@ export default {
       this.title = "添加组织";
       this.isAddModal = true;
     },
+    //初始化表单数据
     defaultForm() {
       this.form = {
         OrgDimensionCode: "",
@@ -398,15 +336,18 @@ export default {
     handleCancel() {
       this.isAddModal = false;
     },
+    //编辑
     edit(item) {
       this.isAddModal = true;
       this.isEdit = true;
       this.title = "编辑组织列表";
       this.form = item;
     },
+    //弹窗确定
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
+          //编辑
           if (this.isEdit) {
             let parmas = {
               OrgLevelCode: this.form.OrgLevelCode,
@@ -425,6 +366,7 @@ export default {
               }
             });
           } else {
+            //添加
             let parmas = {
               OrgLevelCode: this.form.OrgLevelCode,
               OrgLevelName: this.form.OrgLevelName,
@@ -491,7 +433,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-/deep/ .ant-table{
+/deep/ .ant-table {
   min-height: 0;
 }
 </style>

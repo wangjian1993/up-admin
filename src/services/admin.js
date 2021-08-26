@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-14 08:51:07
- * @LastEditTime: 2021-08-24 13:44:30
+ * @LastEditTime: 2021-08-26 15:10:20
  * @LastEditors: max
  * @Description: 后台接口
  * @FilePath: /up-admin/src/services/admin.js
@@ -21,14 +21,8 @@ import {
 export async function getInstitutionList(params) {
 	return request(`${UP_ADMIN}/entertype/getlist`, METHOD.GET, params);
 }
-export async function addEnterType(params) {
-	return request(`${UP_ADMIN}/entertype/add`, METHOD.POST, params);
-}
-export async function editEnterType(params) {
-	return request(`${UP_ADMIN}/entertype/update`, METHOD.POST, params);
-}
-export async function delEnterType(params) {
-	return request(`${UP_ADMIN}/entertype/delete`, METHOD.POST, params);
+export async function enterTypeAction(params,action) {
+	return request(`${UP_ADMIN}/entertype/${action}`, METHOD.POST, params);
 }
 
 /**
@@ -39,16 +33,9 @@ export async function delEnterType(params) {
 export async function getEnterList(params) {
 	return request(`${UP_ADMIN}/enter/getlist`, METHOD.GET, params);
 }
-export async function addEnterList(params) {
-	return request(`${UP_ADMIN}/enter/add`, METHOD.POST, params);
+export async function enterAction(params,action) {
+	return request(`${UP_ADMIN}/enter/${action}`, METHOD.POST, params);
 }
-export async function updateEnterList(params) {
-	return request(`${UP_ADMIN}/enter/update`, METHOD.POST, params);
-}
-export async function deleteEnterList(params) {
-	return request(`${UP_ADMIN}/enter/delete`, METHOD.POST, params);
-}
-
 // 组织列表
 /**
  * @description: 获取组织列表
@@ -97,12 +84,6 @@ export async function orginfoAction(params, action) {
 }
 export async function getOrgUser(params) {
 	return request(`${UP_ADMIN}/orginfo/getusers`, METHOD.GET, params);
-}
-export async function addOrgUser(params) {
-	return request(`${UP_ADMIN}/orginfo/adduser`, METHOD.POST, params);
-}
-export async function delOrgUser(params) {
-	return request(`${UP_ADMIN}/orginfo/removeuser`, METHOD.POST, params);
 }
 
 /**
@@ -282,13 +263,9 @@ export async function getModuleList(params) {
 }
 export default {
 	getInstitutionList,
+	enterTypeAction,
 	getEnterList,
-	addEnterType,
-	editEnterType,
-	delEnterType,
-	addEnterList,
-	updateEnterList,
-	deleteEnterList,
+	enterAction,
 	getOrganizationList,
 	orgdimensionAction,
 	getOrgLevelList,
@@ -306,8 +283,6 @@ export default {
 	getAppInfoList,
 	appInfoAction,
 	getOrgUser,
-	addOrgUser,
-	delOrgUser,
 	uploadFile,
 	getMenuList,
 	menuAction,

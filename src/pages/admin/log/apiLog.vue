@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-08-24 18:11:16
+ * @LastEditTime: 2021-08-26 16:00:51
  * @LastEditors: max
  * @Description: API日志
  * @FilePath: /up-admin/src/pages/admin/log/apiLog.vue
@@ -20,12 +20,12 @@
             </div>
             <div style="margin-left:10px">
               <a-form-item>
-                <a-input placeholder="API访问耗时(毫秒)" allowClear style="width: 300px" v-decorator="['elapsetime']" />
+                <a-input placeholder="API访问耗时(毫秒)" allowClear style="width: 200px" v-decorator="['elapsetime']" />
               </a-form-item>
             </div>
             <div style="margin-left:10px">
               <a-form-item>
-                <a-input placeholder="API路径" allowClear style="width: 300px" v-decorator="['apiurl']" />
+                <a-input placeholder="API路径" allowClear style="width: 200px" v-decorator="['apiurl']" />
               </a-form-item>
             </div>
             <div style="margin-left:10px">
@@ -165,7 +165,7 @@ const columns = [
     dataIndex: "AccessMothod",
     scopedSlots: { customRender: "AccessMothod" },
     align: "center",
-    width: "3%",
+    width: "5%",
   },
   {
     title: "API地址",
@@ -208,7 +208,7 @@ const columns = [
 import { getLogAction } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import Trace from "./trace.vue";
-import getTableScroll from '@/utils/setTableHeight'
+import getTableScroll from "@/utils/setTableHeight";
 export default {
   components: { Trace },
   data() {
@@ -237,7 +237,8 @@ export default {
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       searchForm: this.$form.createForm(this),
-       scrollY: "",
+      scrollY: "",
+      isSearch:false,
     };
   },
   updated() {
@@ -275,9 +276,11 @@ export default {
     reset() {
       this.data = [];
       this.pagination.total = 0;
+      this.pagination.current =1
       this.getLogList();
       this.searchForm.resetFields();
     },
+    //日期转换
     formatDateTime(inputTime) {
       var date = new Date(inputTime);
       var y = date.getFullYear();
@@ -298,9 +301,15 @@ export default {
       this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-          console.log(values)
-          let begindt = this.formatDateTime(values["range-time-picker"][0]);
-          let enddt = this.formatDateTime(values["range-time-picker"][1]);
+          if (values.elapsetime == undefined && values.apiurl == undefined && values.orderdesc == undefined && values["range-time-picker"] == undefined) {
+            this.$message.warning("请输入要查询内容!");
+            this.loading = false;
+            return;
+          }
+          if (values["range-time-picker"] != undefined) {
+            var begindt = this.formatDateTime(values["range-time-picker"][0]);
+            var enddt = this.formatDateTime(values["range-time-picker"][1]);
+          }
           this.data = [];
           this.pagination.total = 0;
           let parmas = {
@@ -310,15 +319,16 @@ export default {
             enddt: enddt,
             elapsetime: values.elapsetime,
             apiurl: values.apiurl,
-            orderdesc: values.orderdesc?'Y':'N',
+            orderdesc: values.orderdesc ? "Y" : "N",
           };
-         getLogAction(parmas, "getall").then((res) => {
+          getLogAction(parmas, "getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
+              this.isSearch =true
             }
           });
         }
@@ -337,6 +347,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
+          this.isSearch =false
         } else {
           this.loading = false;
         }
@@ -352,6 +363,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if( this.isSearch){
+        this.search();
+        return;
+      }
       this.getLogList();
     },
   },

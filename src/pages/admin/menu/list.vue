@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-21 11:57:19
+ * @LastEditTime: 2021-08-26 14:36:58
  * @LastEditors: max
  * @Description: 菜单管理
  * @FilePath: /up-admin/src/pages/admin/menu/list.vue
@@ -200,7 +200,7 @@
         :columns="columns"
         :data-source="data"
         size="small"
-        :scroll="{ y: true }"
+        :scroll="{ y: scrollY }"
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
@@ -212,9 +212,9 @@
         bordered
         className="{style.tableStyle}"
       >
-        <template slot="enable" slot-scope="record">
+        <template slot="enable" slot-scope="text">
           <div>
-            <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
+            <a-tag color="green" v-if="text == 'Y'">启用</a-tag>
             <a-tag color="red" v-else>禁用</a-tag>
           </div>
         </template>
@@ -350,6 +350,7 @@ const columns = [
 import { getMenuList, menuAction, getAppInfoList, getAppTypeList, getParamData } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import AppIcon from "@/components/app-icon/AppIcon.vue";
+import getTableScroll from "@/utils/setTableHeight";
 export default {
   components: { AppIcon },
   data() {
@@ -398,6 +399,12 @@ export default {
       appData: [],
       subData: [],
       appTypeData: [],
+      scrollY: "",
+      menuList: [],
+      linkTypeList: [],
+      configTypeList: [],
+      buttonTypeList: [],
+      isSearch: false,
       rules: {
         AppId: [
           {
@@ -441,10 +448,6 @@ export default {
             trigger: "blur",
           },
         ],
-        menuList: [],
-        linkTypeList: [],
-        configTypeList: [],
-        buttonTypeList: [],
       },
     };
   },
@@ -457,6 +460,9 @@ export default {
     },
   },
   created() {
+    this.$nextTick(() => {
+      this.scrollY = getTableScroll();
+    });
     this.getMenuList();
     this.getAppInfoList();
     this.getParamData();
@@ -489,34 +495,30 @@ export default {
       });
     },
     getParamData() {
-      let parmas = {
-        groupcode: "MODULE_TYPE",
-      };
-      let parmas2 = {
-        groupcode: "LINK_TYPE",
-      };
-      let parmas3 = {
-        groupcode: "CONFIG_TYPE",
-      };
-      let parmas4 = {
+      getParamData({
         groupcode: "BUTTON_TYPE",
-      };
-      getParamData(parmas4).then((res) => {
+      }).then((res) => {
         if (res.data.success) {
           this.buttonTypeList = res.data.data;
         }
       });
-      getParamData(parmas).then((res) => {
+      getParamData({
+        groupcode: "MODULE_TYPE",
+      }).then((res) => {
         if (res.data.success) {
           this.menuList = res.data.data;
         }
       });
-      getParamData(parmas2).then((res) => {
+      getParamData({
+        groupcode: "LINK_TYPE",
+      }).then((res) => {
         if (res.data.success) {
           this.linkTypeList = res.data.data;
         }
       });
-      getParamData(parmas3).then((res) => {
+      getParamData({
+        groupcode: "CONFIG_TYPE",
+      }).then((res) => {
         if (res.data.success) {
           this.configTypeList = res.data.data;
         }
@@ -549,6 +551,7 @@ export default {
     },
     //重置搜索
     reset() {
+      this.pagination.current = 1;
       this.getMenuList();
       this.searchForm.resetFields();
     },
@@ -572,6 +575,7 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
+              this.isSearch = true;
             }
           });
           // do something
@@ -608,7 +612,8 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-        }else {
+          this.isSearch = false;
+        } else {
           this.loading = false;
         }
       });
@@ -749,6 +754,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if (this.isSearch) {
+        this.search();
+        return;
+      }
       this.getMenuList();
     },
   },

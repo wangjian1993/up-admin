@@ -2,7 +2,7 @@
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <div class="search-box">
       <a-row>
-        <a-col :span="12">
+        <a-col :md="24" :lg="12">
           <div>
             <a-button :disabled="!hasPerm('userAdd')" @click="add" type="primary" icon="form">添加</a-button>
             <a-button v-if="hasPerm('userDelete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
@@ -14,7 +14,7 @@
             </span>
           </div>
         </a-col>
-        <a-col :span="12">
+        <a-col :md="24" :lg="12">
           <div>
             <a-input-search placeholder="姓名账号搜索" allowClear style="width: 200px" @search="onSearch" />
           </div>
@@ -30,7 +30,7 @@
         size="small"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(tableDatas) => data.EnterTypeId"
+        :rowKey="(data) => data.UserId"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -54,24 +54,6 @@
         </template>
       </a-table>
     </div>
-    <!-- 查看详情 -->
-    <div>
-      <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
-        <a-descriptions title="用户类型详情" :column="1">
-          <a-descriptions-item label="用户编码">{{ drawerItem.UserTypeCode }}</a-descriptions-item>
-          <a-descriptions-item label="用户名称">{{ drawerItem.UserTypeName }}</a-descriptions-item>
-          <a-descriptions-item label="是否启用">
-            <div>
-              <a-tag color="green" v-if="drawerItem.Enable == 'Y'">启用</a-tag>
-              <a-tag color="red" v-else>禁用</a-tag>
-            </div>
-          </a-descriptions-item>
-          <a-descriptions-item label="描述">{{ drawerItem.UserTypeDesc }}</a-descriptions-item>
-          <a-descriptions-item label="添加人">{{ drawerItem.UserCreated }}</a-descriptions-item>
-          <a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
-        </a-descriptions>
-      </a-drawer>
-    </div>
   </a-card>
 </template>
 <script>
@@ -94,7 +76,7 @@ const columns = [
     align: "center",
   },
 ];
-import {delOrgUser, getOrgUser } from "@/services/admin.js";
+import {orginfoAction, getOrgUser } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import AllUser from "./all-user.vue";
 import paging from "@/config/paging.js";
@@ -154,31 +136,15 @@ export default {
   created() {
     this.id = this.orgId;
     this.data = [];
-    this.getOrgUser(this.orgId);
-    console.log("哈哈哈哈哈===========");
   },
   methods: {
-    enableChange(value) {
-      this.form.Enable = value.target.value;
-    },
-    defualtChange(value) {
-      this.form.IsDefualt = value.target.value;
-    },
-    //查看详情
-    detail(item) {
-      this.isDrawer = true;
-      this.drawerItem = item;
-    },
-    onClose() {
-      this.isDrawer = false;
-    },
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
+    //搜索
     onSearch(value){
       this.setPage();
-      console.log(value);
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
@@ -194,16 +160,17 @@ export default {
         }
       });
     },
+    //设置分页初始数据
     setPage(){
       this.pagination.current =1;
       this.pagination.pageSize= 20;
     },
+    //获取用户
     getUser(){
       this.getOrgUser(this.id)
     },
     //获取机构类型列表
     getOrgUser(id) {
-      console.log("调用=====");
       this.id =id
       let parmas = {
         pageindex: this.pagination.current,
@@ -223,18 +190,9 @@ export default {
     add() {
       this.isModal = true;
     },
+    //关闭添加弹窗
     closeModal() {
       this.isModal = false;
-    },
-    defaultForm() {
-      this.form = {
-        EnterTypeCode: "",
-        EnterTypeName: "",
-        EnterTypeDesc: "",
-        IndexUrl: "",
-        Enable: "Y",
-        IsDefualt: "Y",
-      };
     },
     //关闭对话框
     handleCancel() {
@@ -256,7 +214,7 @@ export default {
             };
             parmas.OrgUserInfo.push(obj);
           });
-          delOrgUser(parmas, "delete").then((res) => {
+          orginfoAction(parmas, "removeuser").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("移除成功!");
@@ -279,7 +237,8 @@ export default {
           },
         ],
       };
-      delOrgUser(parmas, "delete").then((res) => {
+      //分页切换
+      orginfoAction(parmas, "removeuser").then((res) => {
         if (res.data.success) {
           this.$message.success("移除成功!");
           this.getOrgUser(this.id);

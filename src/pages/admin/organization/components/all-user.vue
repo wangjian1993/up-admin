@@ -118,7 +118,7 @@ const columns = [
     align: "center",
   },
 ];
-import { getUserList, addOrgUser } from "@/services/admin.js";
+import { getUserList, orginfoAction } from "@/services/admin.js";
 export default {
   props: ["classItem", "orgId", "enterid"],
   data() {
@@ -222,7 +222,7 @@ export default {
           },
         ],
       };
-      addOrgUser(parmas).then((res) => {
+      orginfoAction(parmas,'adduser').then((res) => {
         if (res.data.success) {
           this.$message.success("添加成功!");
           this.$emit("succeed");
@@ -243,7 +243,7 @@ export default {
             obj.UserId = self.list[item].UserId;
             parmas.OrgUserInfo.push(obj);
           });
-          addOrgUser(parmas).then((res) => {
+          orginfoAction(parmas,'adduser').then((res) => {
             if (res.data.success) {
               self.$message.success("添加成功!");
               self.$emit("succeed");

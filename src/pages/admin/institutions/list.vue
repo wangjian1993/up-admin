@@ -3,7 +3,7 @@
     <!-- 查询 -->
     <div class="search-box">
       <a-row type="flex" justify="space-between">
-        <a-col :span="6">
+        <a-col :md="24" :lg="6">
           <div>
             <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="form">添加</a-button>
             <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
@@ -15,7 +15,7 @@
             </span>
           </div>
         </a-col>
-        <a-col :sm="24" :md="24" :xl="14">
+        <a-col :md="24" :lg="18">
           <a-form layout="horizontal" :form="searchForm" class="form-box">
             <a-row type="flex" justify="end">
               <a-col
@@ -44,7 +44,7 @@
     </div>
     <!-- 添加 -->
     <div>
-      <a-modal :title="title" :visible="visible" v-if="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel" :width="840">
+      <a-modal :title="isEdit?'编辑机构':'添加机构'" :visible="visible" v-if="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel" :width="840">
         <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-row>
             <a-col :span="12">
@@ -175,7 +175,7 @@
         :scroll="{ y: scrollY }"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(tableDatas) => dataSource.EnterTypeId"
+        :rowKey="(dataSource) => dataSource.EnterId"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -249,6 +249,7 @@
   </a-card>
 </template>
 <script>
+//表头
 const columns = [
   {
     title: "序号",
@@ -261,6 +262,8 @@ const columns = [
     dataIndex: "EnterName",
     scopedSlots: { customRender: "name" },
     align: "center",
+     width: "15%",
+     ellipsis: true,
   },
   {
     title: "机构编号",
@@ -287,6 +290,8 @@ const columns = [
     dataIndex: "SuperiorEnterName",
     scopedSlots: { customRender: "SuperiorEnterName" },
     align: "center",
+    width: "15%",
+     ellipsis: true,
   },
   {
     title: "排序号",
@@ -300,6 +305,8 @@ const columns = [
     dataIndex: "DateTimeCreated",
     scopedSlots: { customRender: "address" },
     align: "center",
+    width: "10%",
+     ellipsis: true,
   },
   {
     title: "创建人",
@@ -313,7 +320,7 @@ const columns = [
     align: "center",
   },
 ];
-import { getEnterList, addEnterList, updateEnterList, deleteEnterList, getInstitutionList } from "@/services/admin.js";
+import { getEnterList, getInstitutionList,enterAction} from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from '@/utils/setTableHeight'
 export default {
@@ -406,6 +413,7 @@ export default {
         ],
       },
       scrollY: "",
+      isSearch: false,
     };
   },
   updated() {
@@ -420,12 +428,10 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    console.log(this.$route);
     this.getEnterList();
     this.getInstitutionList();
   },
   methods: {
-    
     //设置是否默认
     enableChange(value) {
       this.form.Enable = value.target.value;
@@ -435,6 +441,7 @@ export default {
       this.isDrawer = true;
       this.drawerItem = item;
     },
+    //关闭模态窗
     onClose() {
       this.isDrawer = false;
     },
@@ -453,7 +460,6 @@ export default {
     //设置上级机构
     enterOption(value) {
       if (this.form.EnterId == value) {
-        console.log("上级不能选择自己");
         return;
       }
       this.dataSource.filter((item) => {
@@ -471,12 +477,12 @@ export default {
           this.form.EnterTypeName = item.EnterTypeName;
           this.form.EnterTypeId = item.EnterTypeId;
           this.form.EnterTypeCode = item.EnterTypeCode;
-          console.log(this.form);
         }
       });
     },
     //重置搜索
     reset() {
+      this.pagination.current =1
       this.getEnterList();
       this.searchForm.resetFields();
     },
@@ -484,7 +490,6 @@ export default {
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-          console.log("Received values of form: ", values);
           this.dataSource = [];
           this.pagination.total = 0;
           let parmas = {
@@ -499,6 +504,7 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
+              this.isSearch =true;
             }
           });
           // do something
@@ -521,6 +527,7 @@ export default {
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
+          this.isSearch =false;
         }
       });
     },
@@ -531,6 +538,7 @@ export default {
       this.title = "添加机构";
       this.visible = true;
     },
+    //初始化表单数据
     defaultForm() {
       this.form = {
         OAId: "",
@@ -559,6 +567,7 @@ export default {
     handleCancel() {
       this.visible = false;
     },
+    //编辑
     edit(item) {
       this.supSelectList = [
         {
@@ -585,9 +594,11 @@ export default {
         this.form.SuperiorEnterId = "顶级";
       }
     },
+    //确定按钮
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
+          //编辑数据
           if (this.isEdit) {
             let editForm = {
               EnterId: this.form.EnterId,
@@ -612,7 +623,7 @@ export default {
               Enable: this.form.Enable,
               SortNo: this.form.SortNo,
             };
-            updateEnterList(editForm).then((res) => {
+            enterAction(editForm,'update').then((res) => {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
                 this.defaultForm();
@@ -621,7 +632,8 @@ export default {
               }
             });
           } else {
-            addEnterList(this.form).then((res) => {
+            //添加数据
+            enterAction(this.form,'add').then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");
                 this.getEnterList();
@@ -643,7 +655,7 @@ export default {
           self.selectedRowKeys.forEach((item) => {
             params.push(self.dataSource[item].EnterId);
           });
-          deleteEnterList(params).then((res) => {
+          enterAction(params,'delete').then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -658,16 +670,21 @@ export default {
     onDelete(item) {
       let parmas = [];
       parmas.push(item.EnterId);
-      deleteEnterList(parmas).then((res) => {
+      enterAction(parmas,'delete').then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getEnterList();
         }
       });
     },
+    //分页切换
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if( this.isSearch){
+        this.search();
+        return;
+      }
       this.getEnterList();
     },
   },
