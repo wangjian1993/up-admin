@@ -90,6 +90,3 @@
 .eip-admin-card-list {
   min-height: calc(100vh - 96px);
 }
-body {
-  background-color: #f0f2f5 !important;
-}

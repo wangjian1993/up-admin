@@ -205,7 +205,7 @@ const graphData = {
       y: 110
     },
     size: {
-      width: 80,
+      width: 90,
       height: 42
     },
     attrs: {
@@ -428,7 +428,7 @@ const graphData = {
       y: 234
     },
     size: {
-      width: 80,
+      width: 90,
       height: 42
     },
     attrs: {

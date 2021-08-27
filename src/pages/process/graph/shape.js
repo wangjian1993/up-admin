@@ -31,12 +31,12 @@ export const FlowChartRect = Graph.registerNode('flow-chart-rect', {
         width: '100%',
         textAlign: 'center',
         fontSize: 12,
-        color: 'rgba(0,0,0,0.85)'
+        color: '#000000'
       }
     },
     text: {
       fontSize: 12,
-      fill: 'rgba(0,0,0,0.85)',
+      fill: '#000000',
       textWrap: {
         text: '',
         width: -10

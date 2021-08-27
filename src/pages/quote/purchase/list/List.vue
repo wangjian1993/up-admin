@@ -1,133 +1,98 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:59:02
- * @LastEditTime: 2021-08-26 09:00:26
+ * @LastEditTime: 2021-08-27 16:57:35
  * @LastEditors: max
- * @Description: excel导入导出
+ * @Description: 
  * @FilePath: /up-admin/src/pages/quote/purchase/list/List.vue
 -->
 <template>
-  <div>
-    <a-upload accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload">
-      <a-button type="primary">导入Excel</a-button>
-    </a-upload>
-    <div><a-button type="primary" @click="exportExcel">导出Excel</a-button></div>
-    <a-table :columns="columns" size="small" :data-source="tableData" style="margin-top:45px">
-      <a slot="name" slot-scope="text">{{ text }}</a>
-      <span slot="__EMPTY" slot-scope="text">{{ formatDate(text, "/") }}</span>
-      <span slot="__EMPTY_6" slot-scope="text">{{ formatDate(text, "/") }}</span>
-      <span slot="__EMPTY_7" slot-scope="text">{{ formatDate(text, "/") }}</span>
-      <span slot="__EMPTY_9" slot-scope="text">{{ toFixed(text) }}</span>
-    </a-table>
-  </div>
+  <div><a-button type="primary" size="small" @click="handleDownload">Excel导出 </a-button></div>
 </template>
-
 <script>
 import XLSX from "xlsx";
 export default {
   data() {
     return {
-      columns: [],
-      tableData: [],
+      wopts: {
+        //出力文件类型
+        bookType: "xlsx",
+        // Generate Shared String Table
+        bookSST: false,
+        // Output data encoding
+        type: "binary",
+      },
     };
   },
   methods: {
-    //导出
-    exportExcel() {
-      let titleArr = [];
-      this.columns.map((item) => {
-        titleArr.push(item.title);
-      });
-      let arr = [];
-      this.tableData.forEach((item) => {
-        let itemArray = [];
-        for (let val in item) {
-          itemArray.push(item[val]);
+    // 字符串转ArrayBuffer
+    s2ab(s) {
+      if (typeof ArrayBuffer !== "undefined") {
+        var buf = new ArrayBuffer(s.length);
+        var view = new Uint8Array(buf);
+        for (let i = 0; i !== s.length; ++i) {
+          view[i] = s.charCodeAt(i) & 0xff;
         }
-        arr.push(itemArray);
-      });
-      this.ToDoExcel(`生产计划`, titleArr, arr);
-    },
-    ToDoExcel(excelName, titleArr, dataArr) {
-      var filename = excelName + ".xlsx"; //文件名称
-      var data = [titleArr, ...dataArr]; //数据，一定注意需要时二维数组
-      var ws_name = "Sheet1"; //Excel第一个sheet的名称
-      var wb = XLSX.utils.book_new(),
-        ws = XLSX.utils.aoa_to_sheet(data);
-      XLSX.utils.book_append_sheet(wb, ws, ws_name); //将数据添加到工作薄
-      XLSX.writeFile(wb, filename);
-    },
-    //导入excel
-    beforeUpload(file) {
-      let _this = this;
-      return new Promise(function(resolve) {
-        // readExcel方法也使用了Promise异步转同步，此处使用then对返回值进行处理
-        _this.readExcel(file).then((result) => {
-          // 此时标识校验成功，为resolve返回
-          if (result) resolve(result);
-        });
-      });
-    },
-    toFixed(num) {
-      return Math.floor(num * 100) / 100 || "";
-    },
-    formatDate(numb, format) {
-      const time = new Date((numb - 1) * 24 * 3600000 + 1);
-      time.setYear(time.getFullYear() - 70);
-      const year = time.getFullYear() + "";
-      const month = time.getMonth() + 1 + "";
-      const date = time.getDate() - 1 + "";
-      if (format && format.length === 1) {
-        return year + format + month + format + date;
+        return buf;
+      } else {
+        const buf = new Array(s.length);
+        for (let i = 0; i !== s.length; ++i) {
+          buf[i] = s.charCodeAt(i) & 0xff;
+        }
+        return buf;
       }
-      return year + (month < 10 ? "0" + month : month) + (date < 10 ? "0" + date : date);
     },
-    //解析Excel
-    readExcel(file) {
-      let _this = this;
-      _this.columns = [];
-      _this.tableData = [];
-      return new Promise(function(resolve, reject) {
-        // 返回Promise对象
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          // 异步执行
-          try {
-            // 以二进制流方式读取得到整份excel表格对象
-            let data = e.target.result,
-              workbook = XLSX.read(data, { type: "binary" });
-            const exlname = workbook.SheetNames[0]; // 取第一张表
-            const exl = XLSX.utils.sheet_to_json(workbook.Sheets[exlname]); // 生成json表格内容
-            let tableheader = exl[2];
-            console.log(exl);
-            for (let val in tableheader) {
-              _this.columns.push({
-                title: tableheader[val],
-                dataIndex: val,
-                key: val,
-                ellipsis: true,
-                scopedSlots: { customRender: val },
-              });
-            }
-            exl.forEach((v, i) => {
-              console.log(i);
-              if (i > 2) {
-                v = { ...v, key: i };
-              }
-            });
-            _this.tableData = exl;
-            _this.tableData.splice(0, 3);
-            resolve();
-          } catch (e) {
-            reject(e.message);
-          }
-        };
-        reader.readAsBinaryString(file);
-      });
+    // 自定义简单的下载文件实现方式
+    saveAs(obj, fileName) {
+      var tmpa = document.createElement("a");
+      tmpa.download = fileName || "下载";
+      // 绑定a标签
+      tmpa.href = URL.createObjectURL(obj);
+      // 模拟点击实现下载
+      tmpa.click();
+      // 延时释放
+      setTimeout(function() {
+        // 用URL.revokeObjectURL()来释放这个object URL
+        URL.revokeObjectURL(obj);
+      }, 100);
+    },
+    //点击Excel出力按钮
+    handleDownload() {
+      //想导出的数据
+      var data = [
+        {
+          商品名称: "aaa",
+          单价: 5,
+          件数: 5,
+          总价: "",
+        },
+        {
+          商品名称: "bbb",
+          单价: 3,
+          件数: 5,
+          总价: "",
+        },
+      ];
+      const wb = { SheetNames: ["Sheet1"], Sheets: {}, Props: {} };
+      // 将JS对象数组转换为工作表
+      data = XLSX.utils.json_to_sheet(data);
+      wb.Sheets["Sheet1"] = data;
+      //循环根据自己的需求写，注：不能再用data，data已经被转换了，可以输出看一下
+      for (let i = 2; i < 4; i++) {
+        //总价=单价*件数
+        wb.Sheets["Sheet1"]["D" + i] = { t: "n", f: "B" + i + "*C" + i };
+      }
+      // wb.Sheets["A1"] = { v: dataTitle };
+      wb.Sheets["Sheet1"]["B4"] = { f: "SUM(B:B)"};
+      wb.Sheets["Sheet1"]["C4"] = { f: "SUM(C2:C3)"};
+      wb.Sheets["Sheet1"]["D4"] = { f: "SUM(D2:D3)"};
+      this.saveAs(
+        new Blob([this.s2ab(XLSX.write(wb, this.wopts))], {
+          type: "application/octet-stream",
+        }),
+        "Excel的名字." + this.wopts.bookType
+      );
     },
   },
-  components: {},
 };
 </script>
-
-<style></style>
