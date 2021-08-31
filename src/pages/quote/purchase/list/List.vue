@@ -1,98 +1,187 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:59:02
- * @LastEditTime: 2021-08-27 16:57:35
+ * @LastEditTime: 2021-08-30 10:38:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/quote/purchase/list/List.vue
 -->
 <template>
-  <div><a-button type="primary" size="small" @click="handleDownload">Excel导出 </a-button></div>
+  <div>
+    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+      <a-tabs type="card" @change="callback">
+        <a-tab-pane key="1" tab="列表查询"> </a-tab-pane>
+        <a-tab-pane key="2" tab="销售要求报价"> </a-tab-pane>
+        <a-tab-pane key="3" tab="物料价格变动"> </a-tab-pane>
+        <a-tab-pane key="4" tab="有Bom无成本价"> </a-tab-pane>
+      </a-tabs>
+      <div>
+        <div :class="advanced ? 'search' : null">
+          <a-form layout="horizontal">
+            <div :class="advanced ? null : 'fold'">
+              <a-row>
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="需求公司" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-input placeholder="请输入需求公司" v-decorator="['note']" />
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-select placeholder="请选择生产工厂" v-decorator="['note']">
+                      <a-select-option value="1">关闭</a-select-option>
+                      <a-select-option value="2">运行中</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-select placeholder="请选择">
+                      <a-select-option value="1">关闭</a-select-option>
+                      <a-select-option value="2">运行中</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+              <a-row v-if="advanced">
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-input placeholder="请输入产品大类" />
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="产品系列" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-input placeholder="请输入产品系列" />
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-input placeholder="请输入产品品名" />
+                  </a-form-item>
+                </a-col>
+              </a-row>
+              <a-row v-if="advanced">
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-input placeholder="请输入产品品号" />
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </div>
+            <span style="float: right; margin-top: 3px;">
+              <a-button type="primary">查询</a-button>
+              <a-button style="margin-left: 8px">重置</a-button>
+              <a @click="toggleAdvanced" style="margin-left: 8px">
+                {{ advanced ? "收起" : "展开" }}
+                <a-icon :type="advanced ? 'up' : 'down'" />
+              </a>
+            </span>
+          </a-form>
+        </div>
+      </div>
+      <div>
+        <a-space class="operator">
+          <a-button @click="addNew" type="primary" icon="check">审批</a-button>
+          <a-button>复制发布</a-button>
+          <a-dropdown>
+            <a-menu @click="handleMenuClick" slot="overlay">
+              <a-menu-item key="delete">删除</a-menu-item>
+              <!-- <a-menu-item key="audit">审批</a-menu-item> -->
+            </a-menu>
+            <a-button> 更多操作 <a-icon type="down" /> </a-button>
+          </a-dropdown>
+        </a-space>
+        <standard-table :columns="columns" :dataSource="dataSource" :selectedRows.sync="selectedRows" @clear="onClear" @change="onChange" @selectedRowChange="onSelectChange">
+          <div slot="description" slot-scope="{ text }">
+            {{ text }}
+          </div>
+          <div slot="action" slot-scope="record">
+            <a style="margin-right: 8px"> <a-icon type="plus" />新增 </a>
+            <a style="margin-right: 8px"> <a-icon type="edit" />编辑 </a>
+            <a @click="deleteRecord(record.key)"> <a-icon type="delete" />删除1 </a>
+            <a @click="deleteRecord(record.key)" v-auth="`delete`"> <a-icon type="delete" />删除2 </a>
+          </div>
+          <template slot="statusTitle">
+            <a-icon @click.native="onStatusTitleClick" type="info-circle" />
+          </template>
+        </standard-table>
+      </div>
+    </a-card>
+  </div>
 </template>
+
 <script>
-import XLSX from "xlsx";
+import StandardTable from "@/components/table/StandardTable";
+const columns = [
+  {
+    title: "规则编号",
+    dataIndex: "no",
+  },
+  {
+    title: "描述",
+    dataIndex: "description",
+    scopedSlots: { customRender: "description" },
+  },
+  {
+    title: "服务调用次数",
+    dataIndex: "callNo",
+    sorter: true,
+    needTotal: true,
+    customRender: (text) => text + " 次",
+  },
+  {
+    dataIndex: "status",
+    needTotal: true,
+    slots: { title: "statusTitle" },
+  },
+  {
+    title: "更新时间",
+    dataIndex: "updatedAt",
+    sorter: true,
+  },
+  {
+    title: "操作",
+    scopedSlots: { customRender: "action" },
+  },
+];
+
+const dataSource = [];
+
+for (let i = 0; i < 100; i++) {
+  dataSource.push({
+    key: i,
+    no: "NO " + i,
+    description: "这是一段描述",
+    callNo: Math.floor(Math.random() * 1000),
+    status: Math.floor(Math.random() * 10) % 4,
+    updatedAt: "2018-07-26",
+  });
+}
 export default {
   data() {
     return {
-      wopts: {
-        //出力文件类型
-        bookType: "xlsx",
-        // Generate Shared String Table
-        bookSST: false,
-        // Output data encoding
-        type: "binary",
-      },
+      advanced: true,
+      columns: columns,
+      dataSource: dataSource,
+      selectedRows: [],
     };
   },
+  authorize: {
+    deleteRecord: "delete",
+  },
+  components: { StandardTable },
   methods: {
-    // 字符串转ArrayBuffer
-    s2ab(s) {
-      if (typeof ArrayBuffer !== "undefined") {
-        var buf = new ArrayBuffer(s.length);
-        var view = new Uint8Array(buf);
-        for (let i = 0; i !== s.length; ++i) {
-          view[i] = s.charCodeAt(i) & 0xff;
-        }
-        return buf;
-      } else {
-        const buf = new Array(s.length);
-        for (let i = 0; i !== s.length; ++i) {
-          buf[i] = s.charCodeAt(i) & 0xff;
-        }
-        return buf;
-      }
+    callback(key) {
+      console.log(key);
     },
-    // 自定义简单的下载文件实现方式
-    saveAs(obj, fileName) {
-      var tmpa = document.createElement("a");
-      tmpa.download = fileName || "下载";
-      // 绑定a标签
-      tmpa.href = URL.createObjectURL(obj);
-      // 模拟点击实现下载
-      tmpa.click();
-      // 延时释放
-      setTimeout(function() {
-        // 用URL.revokeObjectURL()来释放这个object URL
-        URL.revokeObjectURL(obj);
-      }, 100);
-    },
-    //点击Excel出力按钮
-    handleDownload() {
-      //想导出的数据
-      var data = [
-        {
-          商品名称: "aaa",
-          单价: 5,
-          件数: 5,
-          总价: "",
-        },
-        {
-          商品名称: "bbb",
-          单价: 3,
-          件数: 5,
-          总价: "",
-        },
-      ];
-      const wb = { SheetNames: ["Sheet1"], Sheets: {}, Props: {} };
-      // 将JS对象数组转换为工作表
-      data = XLSX.utils.json_to_sheet(data);
-      wb.Sheets["Sheet1"] = data;
-      //循环根据自己的需求写，注：不能再用data，data已经被转换了，可以输出看一下
-      for (let i = 2; i < 4; i++) {
-        //总价=单价*件数
-        wb.Sheets["Sheet1"]["D" + i] = { t: "n", f: "B" + i + "*C" + i };
-      }
-      // wb.Sheets["A1"] = { v: dataTitle };
-      wb.Sheets["Sheet1"]["B4"] = { f: "SUM(B:B)"};
-      wb.Sheets["Sheet1"]["C4"] = { f: "SUM(C2:C3)"};
-      wb.Sheets["Sheet1"]["D4"] = { f: "SUM(D2:D3)"};
-      this.saveAs(
-        new Blob([this.s2ab(XLSX.write(wb, this.wopts))], {
-          type: "application/octet-stream",
-        }),
-        "Excel的名字." + this.wopts.bookType
-      );
+    toggleAdvanced() {
+      this.advanced = !this.advanced;
     },
   },
 };
 </script>
+
+<style lang="less">
+.ant-form-item {
+  margin-bottom: 5px;
+}
+</style>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-28 10:54:51
- * @LastEditTime: 2021-08-20 15:22:48
+ * @LastEditTime: 2021-08-30 15:14:54
  * @LastEditors: max
  * @Description: 添加用户form
  * @FilePath: /up-admin/src/pages/admin/user/components/add-user.vue
@@ -355,18 +355,27 @@ export default {
             ];
             let org = [];
             console.log("this.orgList", this.orgList);
+            console.log(this.orgList[0].levelArray);
             if (!this.orgList[0].levelArray) {
               this.$message.warning("请选择用户组织信息!");
               return;
             }
-            this.orgList.forEach((item) => {
-              let obj = {
-                OrgId: item.levelArray.OrgId,
-                OrgCode: item.levelArray.OrgCode,
-                OrgName: item.levelArray.OrgName,
-              };
-              org.push(obj);
-            });
+            console.log("组织信息====");
+            try {
+              this.orgList.forEach((item) => {
+                if (item.levelArray.OrgId) {
+                  let obj = {
+                    OrgId: item.levelArray.OrgId,
+                    OrgCode: item.levelArray.OrgCode,
+                    OrgName: item.levelArray.OrgName,
+                  };
+                  org.push(obj);
+                }
+              });
+            } catch (e) {
+              console.log(e);
+            }
+            console.log("组织信息", org);
             this.form.UserInOrgList = org;
             this.form.UserInRoleList = role;
             this.form.EnterId = this.enterValue[0];

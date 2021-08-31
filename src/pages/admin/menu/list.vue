@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-26 14:36:58
+ * @LastEditTime: 2021-08-30 14:02:54
  * @LastEditors: max
  * @Description: 菜单管理
  * @FilePath: /up-admin/src/pages/admin/menu/list.vue
@@ -531,7 +531,9 @@ export default {
       this.isIcon = false;
     },
     iconClick(item) {
-      this.form.ModuleLogo = item;
+      if(item == '无'){
+        this.form.ModuleLogo = "";
+      }
       this.isIcon = false;
     },
     enableChange(value) {

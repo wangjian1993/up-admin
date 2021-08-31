@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-08-24 09:51:26
+ * @LastEditTime: 2021-08-30 16:23:32
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -247,11 +247,7 @@ export default {
       enterList: [],
     };
   },
-  watch: {
-    checkedKeys(val) {
-      console.log("onCheck", val);
-    },
-  },
+  watch: {},
   computed: {
     hasSelected() {
       return this.selectedRowKeys.length > 0;
@@ -264,6 +260,7 @@ export default {
   methods: {
     //机构类型
     getData() {
+      //机构类型获取
       getEnterOrgList().then((res) => {
         if (res.data.success) {
           this.enterTypeData = res.data.data;
@@ -276,12 +273,14 @@ export default {
         pageindex: 1,
         pagesize: 50,
       };
+      //机构列表获取
       getInstitutionList(parmas).then((res) => {
         if (res.data.success) {
           this.enterTypeList = res.data.data.list;
           this.getEnterList(this.enterTypeList[0].EnterTypeCode);
         }
       });
+      //用户类型获取
       getUserTypeList(parmas).then((res) => {
         if (res.data.success) {
           this.userTypeData = res.data.data.list;
@@ -289,16 +288,17 @@ export default {
           this.userTypeId = res.data.data.list[0].UserTypeId;
         }
       });
+      //应用类型获取
       getAppTypeList(parmas).then((res) => {
         if (res.data.success) {
           this.appTypeData = res.data.data.list;
           this.defaultAppTypeId = res.data.data.list[0].AppTypeId;
           this.appTypeId = res.data.data.list[0].AppTypeId;
-          console.log("this.appTypeIdt", this.appTypeId);
           this.getAppMdules();
         }
       });
     },
+    //获取机构列表
     getEnterList(id) {
       let parmas = {
         pageindex: 1,
@@ -311,7 +311,7 @@ export default {
         }
       });
     },
-    //机构列表
+    //获取机构树形结构
     getEnterTree() {
       this.enterTreeData = [];
       let parmas = {
@@ -329,15 +329,11 @@ export default {
             return;
           }
           this.isNotEnter = false;
-          console.log(this.enterTreeData[0].Id);
           this.enterValue.push(this.enterTreeData[0].Id);
-          console.log("this.enterValue====", this.enterValue);
           if (this.enterTreeData[0].Type == "ORG") {
-            console.log("组织机构=====");
             this.enterid = "";
             this.orgId = this.enterTreeData[0].Id;
           } else {
-            console.log("机构机构=====");
             this.orgId = "";
             this.enterid = this.enterTreeData[0].Id;
           }
@@ -383,6 +379,7 @@ export default {
         }
       });
     },
+    //获取快码
     getParamData() {
       let parmas = {
         groupcode: "OPERATORS_CODE",
@@ -393,6 +390,7 @@ export default {
         }
       });
     },
+    //递归遍历
     findDep(datas) {
       for (var i in datas) {
         this.treeArray.push(datas[i]);
@@ -401,6 +399,7 @@ export default {
         }
       }
     },
+    //递归查找
     bianli(checkedData) {
       for (var i in checkedData) {
         //过滤，只处理满足此条件的，不需要过滤则去掉这层if
@@ -428,6 +427,7 @@ export default {
         }
       });
     },
+    //初始化数据
     defaultForm() {
       this.form = {
         EnterTypeId: "",
@@ -439,11 +439,9 @@ export default {
     //机构选择
     enterTreeClick(selectedKeys, e) {
       if (e.node.dataRef.Type == "ORG") {
-        console.log("组织机构=====");
         this.enterid = "";
         this.orgId = selectedKeys[0];
       } else {
-        console.log("机构机构=====");
         this.orgId = "";
         this.enterid = selectedKeys[0];
       }
@@ -453,11 +451,9 @@ export default {
       this.userValue = [];
       this.getPermissionUser();
       this.getAppMdules();
-      console.log("this.userId===",this.userId)
     },
     //组织选择
     userTreeClick(e) {
-      console.log("用户切换====");
       this.userId = e[0];
       this.getAppMdules();
       this.appTreeData = [];
@@ -468,7 +464,6 @@ export default {
     },
     //菜单选择===
     appTreeClick(e) {
-      console.log(e);
       this.moduleid = e[0];
       this.getPermissionList();
     },
@@ -483,11 +478,13 @@ export default {
       this.expandedKeys = [];
       this.getEnterTree();
     },
+    //机构类型选择
     addEnterTypeSelect(e) {
       this.enterList = [];
       let data = this.enterTypeList.find((item) => item.EnterTypeId == e);
       this.getEnterList(data.EnterTypeCode);
     },
+    //递归查找
     recursive(obj, id) {
       const queue = [...obj];
       while (queue.length) {
@@ -511,13 +508,10 @@ export default {
       this.appValue = [];
       this.getAppMdules();
     },
-    onExpand(expandedKeys) {
-      this.expandedKeys = expandedKeys;
-      this.autoExpandParent = false;
-    },
     onCheck(checkedKeys) {
       this.checkedKeys = checkedKeys;
     },
+    //添加权限
     goAdd() {
       if (this.moduleid == "") {
         this.$message.warning("请先选择菜单!");
@@ -525,9 +519,7 @@ export default {
       }
       this.visible = true;
     },
-    onSelect(selectedKeys) {
-      this.selectedKeys = selectedKeys;
-    },
+    //确认按钮
     handleOk() {
       let parmas = {
         EnterTypeId: this.form.EnterTypeId,
@@ -546,28 +538,33 @@ export default {
         }
       });
     },
+    //关闭按钮
     handleCancel() {
       this.visible = false;
     },
+    //表格选择
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
-    appTreeChange(key) {
-      let list = key;
-      if (list.length == 0) {
+    //菜单选择
+    appTreeChange(node, event) {
+      //合并选中和半选中数据
+      let array = node.concat(event.halfCheckedKeys);
+      if (array.length == 0) {
         this.treeArray.forEach((items) => {
           items.IsSelect = false;
         });
         return;
       }
       this.treeArray.map((item) => {
-        if (list.includes(item.Id)) {
+        if (array.includes(item.Id)) {
           item.IsSelect = true;
         } else {
           item.IsSelect = false;
         }
       });
     },
+    //保存菜单
     appTreeSave() {
       let resArray = [];
       this.treeArray.filter((items) => {
@@ -599,9 +596,7 @@ export default {
         title: "确定要删除选中内容",
         onOk() {
           const params = [];
-          console.log(self.selectedRowKeys);
           self.selectedRowKeys.forEach((item) => {
-            console.log(self.permissionList[item]);
             params.push({
               EnterTypeId: self.permissionList[item].EnterTypeId,
               EnterId: self.permissionList[item].EnterId,

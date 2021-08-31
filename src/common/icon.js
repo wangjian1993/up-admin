@@ -154,7 +154,8 @@ const webIcons = [
   "gateway",
   "gold",
   "robot",
-  "shopping"
+  "shopping",
+  "无",
 ];
 export default {
 	webIcons

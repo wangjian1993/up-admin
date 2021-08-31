@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-08-18 18:05:20
+ * @LastEditTime: 2021-08-30 10:16:53
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/quote/purchase/add/Add.vue
@@ -77,7 +77,7 @@
       </a-descriptions>
     </a-card> -->
     <a-card class="card" title="填写报价单" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
-      <div id="input-box" v-if="costList.length">
+      <div class="input-box" v-if="costList.length">
         <a-row>
           <a-col :xs="24" :sm="24" :md="24" :lg="24" :xl="12" :xxl="12" v-for="(item, index) in costList.cost_options" :key="index">
             <div class="input-item" v-if="item.field_name != 'bom_cost' && item.field_name != 'total_cost'">
@@ -101,6 +101,46 @@
           <a><a-input @change="remarkInput(record, index)" :value="record.remark"/></a>
         </div>
       </standard-table>
+    </a-card>
+    <a-card class="card" title="系统数据" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px'}">
+      <div class="input-box">
+        <a-form :form="form" :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
+          <a-row>
+            <a-col :sm="24" :md="24" :lg="12" :xl="8">
+              <a-form-item label="发布人">
+                <a-input v-decorator="['note']" />
+              </a-form-item>
+            </a-col>
+             <a-col :sm="24" :md="24" :lg="12" :xl="8">
+              <a-form-item label="填写日期">
+                <a-input v-decorator="['note']" />
+              </a-form-item>
+            </a-col>
+             <a-col :sm="24" :md="24" :lg="12" :xl="8">
+              <a-form-item label="发布人公司">
+                <a-input v-decorator="['note']" />
+              </a-form-item>
+            </a-col>
+          </a-row>
+           <a-row>
+            <a-col :sm="24" :md="24" :lg="12" :xl="8">
+              <a-form-item label="来源">
+                <a-input v-decorator="['note']" />
+              </a-form-item>
+            </a-col>
+             <a-col :sm="24" :md="24" :lg="12" :xl="8">
+              <a-form-item label="来源单号">
+                <a-input v-decorator="['note']" />
+              </a-form-item>
+            </a-col>
+             <a-col :sm="24" :md="24" :lg="12" :xl="8">
+              <a-form-item label="来源申请人/公司">
+                <a-input v-decorator="['note']" />
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
     </a-card>
   </div>
 </template>
@@ -174,7 +214,7 @@ const columns = [
     scopedSlots: { customRender: "action" },
   },
 ];
-import { Empty } from 'ant-design-vue';
+import { Empty } from "ant-design-vue";
 export default {
   components: { StandardTable },
   data() {
@@ -189,15 +229,16 @@ export default {
       ultimatelyTotal: 0,
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
-      form: {
-        name: "",
-        region: undefined,
-        date1: undefined,
-        delivery: false,
-        type: [],
-        resource: "",
-        desc: "",
-      },
+      // form: {
+      //   name: "",
+      //   region: undefined,
+      //   date1: undefined,
+      //   delivery: false,
+      //   type: [],
+      //   resource: "",
+      //   desc: "",
+      // },
+      form: this.$form.createForm(this),
     };
   },
   beforeCreate() {
@@ -261,7 +302,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .input-item {
   display: flex;
   align-items: center;
@@ -285,7 +326,10 @@ export default {
 .ant-form-item {
   margin-bottom: 0;
 }
-/deep/.card {
+/deep/ .card {
   margin: 10px 0;
+}
+.input-box{
+  margin-bottom: 20px;
 }
 </style>
