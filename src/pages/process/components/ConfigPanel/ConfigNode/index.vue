@@ -47,6 +47,12 @@
           <a-input :value="globalGridAttr.nodeUsers" style="width: 100%" @change="onUsersChange"/>
         </a-col>
       </a-row>
+      <a-row align="middle">
+        <a-col :span="8">跳转地址</a-col>
+        <a-col :span="14">
+          <a-input :value="globalGridAttr.nodeUrl" style="width: 100%" @change="onUrlChange"/>
+        </a-col>
+      </a-row>
     </a-tab-pane>
   </a-tabs>
 </template>
@@ -117,8 +123,12 @@ export default {
       const val = e.target.value
       this.globalGridAttr.nodeUsers = val
       this.curCel.attr('approve/users', val)
+    },
+    onUrlChange(e){
+      const val = e.target.value
+      this.globalGridAttr.nodeUrl = val
+      this.curCel.attr('item/url', val)
     }
-
   }
 }
 </script>

@@ -209,6 +209,13 @@ const graphData = {
       height: 42
     },
     attrs: {
+      item:{
+        type:"哈哈哈哈哈哈",
+        url: "www.baidu.com"
+      },
+      approve:{
+        users:"1111111111111"
+      },
       text: {
         textWrap: {
           text: '起始节点'

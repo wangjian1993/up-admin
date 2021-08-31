@@ -1,3 +1,11 @@
+/*
+ * @Author: max
+ * @Date: 2021-04-04 10:20:48
+ * @LastEditTime: 2021-08-31 16:54:34
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/process/components/ConfigPanel/ConfigNode/method.js
+ */
 import FlowGraph from '../../../graph/index'
 
 export function nodeOpt (id, globalGridAttr) {
@@ -15,6 +23,7 @@ export function nodeOpt (id, globalGridAttr) {
     globalGridAttr.nodeFontSize = cell.attr('text/fontSize')
     globalGridAttr.nodeColor = cell.attr('text/fill')
     globalGridAttr.nodeUsers = cell.attr('approve/users')
+    globalGridAttr.nodeUrl = cell.attr('item/url')
   }
   return curCel
 }

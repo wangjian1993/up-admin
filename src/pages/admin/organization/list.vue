@@ -20,7 +20,7 @@
               <a-form layout="horizontal" :form="searchForm" class="form-box">
                 <div>
                   <a-form-item>
-                  <a-input
+                    <a-input
                       placeholder="请输入组织维度编码/名称"
                       allowClear
                       v-decorator="[
@@ -43,7 +43,7 @@
       </a-row>
     </div>
     <div>
-      <a-modal :title="isEdit?'编辑组织维度':'添加组织维度'" :visible="visible" v-if="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel">
+      <a-modal :title="isEdit ? '编辑组织维度' : '添加组织维度'" :visible="visible" v-if="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel">
         <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item ref="OrgDimensionName" has-feedback label="维度名称" prop="OrgDimensionName">
             <a-input
@@ -68,6 +68,11 @@
                 }
               "
             />
+          </a-form-model-item>
+          <a-form-model-item ref="EnterTypeId" has-feedback label="机构类型" prop="EnterTypeId">
+            <a-select v-model="form.EnterTypeId" placeholder="选择机构类型">
+              <a-select-option v-for="(item, index) in selectList" :key="index" :value="item.EnterTypeId">{{ item.EnterTypeName }}</a-select-option>
+            </a-select>
           </a-form-model-item>
           <a-form-model-item ref="SortNo" has-feedback label="排序" prop="SortNo">
             <a-input-number
@@ -104,7 +109,7 @@
         :columns="columns"
         :data-source="data"
         size="small"
-        :scroll="{y:true}"
+        :scroll="{ y: true }"
         :pagination="pagination"
         @change="handleTableChange"
         :rowKey="(tableDatas) => data.EnterTypeId"
@@ -154,7 +159,7 @@
           </div>
         </template>
       </a-table>
-      <a-empty v-else description="暂无权限"/>
+      <a-empty v-else description="暂无权限" />
     </div>
     <!-- 查看详情 -->
     <div>
@@ -198,51 +203,58 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "10%"
+    width: "10%",
   },
   {
     title: "维度名称",
     dataIndex: "OrgDimensionName",
     scopedSlots: { customRender: "OrgDimensionName" },
     align: "center",
-     width: "20%"
+    width: "20%",
   },
   {
     title: "编码",
     dataIndex: "OrgDimensionCode",
     scopedSlots: { customRender: "OrgDimensionCode" },
     align: "center",
-     width: "20%"
+    width: "20%",
+  },
+  {
+    title: "机构类型",
+    dataIndex: "EnterTypeName",
+    scopedSlots: { customRender: "EnterTypeName" },
+    align: "center",
+    width: "10%",
   },
   {
     title: "参与授权",
     dataIndex: "IsPartAuth",
     scopedSlots: { customRender: "IsPartAuth" },
     align: "center",
-     width: "10%"
+    width: "5%",
   },
   {
     title: "状态",
     dataIndex: "Enable",
     scopedSlots: { customRender: "enable" },
     align: "center",
-     width: "10%"
+    width: "5%",
   },
   {
     title: "排序号",
     dataIndex: "SortNo",
     scopedSlots: { customRender: "SortNo" },
     align: "center",
-     width: "10%"
+    width: "10%",
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
     align: "center",
-     width: "20%"
+    width: "20%",
   },
 ];
-import { getOrganizationList, orgdimensionAction } from "@/services/admin.js";
+import { getOrganizationList, orgdimensionAction, getInstitutionList } from "@/services/admin.js";
 import ListClass from "./components/listClass.vue";
 export default {
   data() {
@@ -302,7 +314,15 @@ export default {
             trigger: "blur",
           },
         ],
+        EnterTypeId :[
+          {
+            required: true,
+            message: "请选择机构类型",
+            trigger: "blur",
+          },
+        ],
       },
+      selectList: [],
     };
   },
   computed: {
@@ -312,8 +332,20 @@ export default {
   },
   created() {
     this.getOrganizationList();
+    this.getInstitutionList();
   },
   methods: {
+    getInstitutionList() {
+      let parmas = {
+        pageindex: 1,
+        pagesize: 100,
+      };
+      getInstitutionList(parmas).then((res) => {
+        if (res.data.success) {
+          this.selectList = res.data.data.list;
+        }
+      });
+    },
     //状态切换
     enableChange(value) {
       this.form.Enable = value.target.value;
@@ -418,6 +450,7 @@ export default {
               Enable: this.form.Enable,
               IsPartAuth: this.form.IsPartAuth,
               SortNo: this.form.SortNo,
+              EnterTypeId:this.form.EnterTypeId
             };
             orgdimensionAction(editForm, "update").then((res) => {
               if (res.data.success) {

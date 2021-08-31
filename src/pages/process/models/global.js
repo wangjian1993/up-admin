@@ -1,3 +1,11 @@
+/*
+ * @Author: max
+ * @Date: 2021-04-04 10:20:48
+ * @LastEditTime: 2021-08-31 16:54:54
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/process/models/global.js
+ */
 export const globalGridAttr = {
   type: 'mesh',
   size: 10,
@@ -24,5 +32,6 @@ export const globalGridAttr = {
   nodeFill: '#ffffff',
   nodeFontSize: 12,
   nodeColor: '#080808',
-  nodeUsers: ''
+  nodeUsers: '',
+  nodeUrl:""
 }

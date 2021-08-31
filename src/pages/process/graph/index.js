@@ -128,7 +128,7 @@ export default class FlowGraph {
     })
     this.initStencil()
     this.initShape()
-    this.initGraphShape()
+    this.initGraphShape(graphData)
     this.initEvent()
     return this.graph
   }
@@ -147,7 +147,7 @@ export default class FlowGraph {
         {
           name: 'basic',
           title: '基础节点',
-          graphHeight: 180
+          graphHeight: 280
         },
         {
           name: 'combination',
@@ -270,7 +270,20 @@ export default class FlowGraph {
         }
       }
     })
-
+    const r5 = graph.createNode({
+      shape: 'flow-chart-rect',
+      attrs: {
+        body: {
+          rx: 6,
+          ry: 6,
+        },
+        text: {
+          textWrap: {
+            text: '可选过程'
+          }
+        }
+      }
+    })
     const c1 = graph.createNode({
       shape: 'flow-chart-image-rect'
     })
@@ -292,13 +305,13 @@ export default class FlowGraph {
         parent: true
       }
     })
-    this.stencil.load([r1, r2, r3, r4], 'basic')
+    this.stencil.load([r1, r2, r3, r4,r5], 'basic')
     this.stencil.load([c1, c2, c3], 'combination')
     this.stencil.load([g1], 'group')
   }
 
-  static initGraphShape () {
-    this.graph.fromJSON(graphData)
+  static initGraphShape (data) {
+    this.graph.fromJSON(data)
   }
 
   static showPorts (ports, show) {
