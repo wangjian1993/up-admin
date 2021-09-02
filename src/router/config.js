@@ -44,68 +44,7 @@ const options = {
 				icon: "home",
 			},
 			component: BlankView,
-			children: [
-				{
-					path: "quote",
-					name: "报价管理",
-					meta: {
-						icon: "file-protect",
-					},
-					component: BlankView,
-					children: [{
-						path: "config",
-						name: "报价配置",
-						component: BlankView,
-						children: [{
-							path: "parmas",
-							name: "参数设置",
-							component: () =>
-								import(
-									/* webpackChunkName: 'bom' */
-									"@/pages/quote/config/parmas"
-								),
-						},
-						{
-							path: "authority",
-							name: "权限设置",
-							component: () =>
-								import(
-									/* webpackChunkName: 'bom' */
-									"@/pages/quote/config/authority"
-								),
-						}
-						]
-					},
-					{
-						path: "cost-config",
-						name: "费用项管理",
-						component: () =>
-							import(
-								/* webpackChunkName: 'bom' */
-								"@/pages/bom/costConfig"
-							),
-					},
-					{
-						path: "versions-config",
-						name: "配置版本",
-						component: () =>
-							import(
-								/* webpackChunkName: 'bom' */
-								"@/pages/bom/versionsConfig"
-							),
-					},
-					{
-						path: "versions-manage",
-						name: "版本管理",
-						component: () =>
-							import(
-								/* webpackChunkName: 'bom' */
-								"@/pages/bom/versionsManage"
-							),
-					},
-					],
-				},
-			],
+			children: [],
 		},
 		{
 			path: "admin",

@@ -305,23 +305,23 @@ export default class FlowGraph {
         parent: true
       }
     })
-    this.stencil.load([r1, r2, r3, r4,r5], 'basic')
-    this.stencil.load([c1, c2, c3], 'combination')
-    this.stencil.load([g1], 'group')
+    this.stencil.load([r1, r2, r3, r4,r5], 'basic');
+    this.stencil.load([c1, c2, c3], 'combination');
+    this.stencil.load([g1], 'group');
   }
 
   static initGraphShape (data) {
-    this.graph.fromJSON(data)
+    this.graph.fromJSON(data);
   }
 
   static showPorts (ports, show) {
     for (let i = 0, len = ports.length; i < len; i = i + 1) {
-      ports[i].style.visibility = show ? 'visible' : 'hidden'
+      ports[i].style.visibility = show ? 'visible' : 'hidden';
     }
   }
 
   static initEvent () {
-    const { graph } = this
+    const { graph } = this;
     const container = document.getElementById('flowContainer')
 
     graph.on('node:contextmenu', ({ cell, view }) => {
