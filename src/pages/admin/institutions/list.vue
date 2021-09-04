@@ -651,11 +651,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          const params = [];
-          self.selectedRowKeys.forEach((item) => {
-            params.push(self.dataSource[item].EnterId);
-          });
-          enterAction(params,'delete').then((res) => {
+          enterAction(self.selectedRowKeys,'delete').then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");

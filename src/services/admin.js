@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-14 08:51:07
- * @LastEditTime: 2021-08-26 15:10:20
+ * @LastEditTime: 2021-09-04 09:58:42
  * @LastEditors: max
  * @Description: 后台接口
  * @FilePath: /up-admin/src/services/admin.js
@@ -261,45 +261,3 @@ export async function getApiAction(params,action) {
 export async function getModuleList(params) {
 	return request(`${UP_ADMIN}/module/getappmodules`, METHOD.GET, params);
 }
-export default {
-	getInstitutionList,
-	enterTypeAction,
-	getEnterList,
-	enterAction,
-	getOrganizationList,
-	orgdimensionAction,
-	getOrgLevelList,
-	orgLevelAction,
-	getEnterTree,
-	getOrginfo,
-	orginfoAction,
-	getUserTypeList,
-	userTypeAction,
-	userAction,
-	getUserRoles,
-	getAppTypeList,
-	appTypeAction,
-	getUserList,
-	getAppInfoList,
-	appInfoAction,
-	getOrgUser,
-	uploadFile,
-	getMenuList,
-	menuAction,
-	getOrgTree,
-	getAppMdules,
-	getPermissionList,
-	getParamGroupList,
-	paramGroupAction,
-	setPermission,
-	getParamList,
-	paramAction,
-	getParamData,
-	getEnterOrgList,
-	getPermissionUser,
-	getEnterOrgTree,
-	getLogAction,
-	getApiList,
-	getApiAction,
-	getModuleList
-};

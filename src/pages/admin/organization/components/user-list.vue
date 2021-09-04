@@ -76,7 +76,7 @@ const columns = [
     align: "center",
   },
 ];
-import {orginfoAction, getOrgUser } from "@/services/admin.js";
+import { orginfoAction, getOrgUser } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import AllUser from "./all-user.vue";
 import paging from "@/config/paging.js";
@@ -143,13 +143,13 @@ export default {
       this.selectedRowKeys = selectedRowKeys;
     },
     //搜索
-    onSearch(value){
+    onSearch(value) {
       this.setPage();
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         orgid: this.id,
-        username:value
+        username: value,
       };
       getOrgUser(parmas).then((res) => {
         if (res.data.success) {
@@ -161,21 +161,21 @@ export default {
       });
     },
     //设置分页初始数据
-    setPage(){
-      this.pagination.current =1;
-      this.pagination.pageSize= 20;
+    setPage() {
+      this.pagination.current = 1;
+      this.pagination.pageSize = 20;
     },
     //获取用户
-    getUser(){
-      this.getOrgUser(this.id)
+    getUser() {
+      this.getOrgUser(this.id);
     },
     //获取机构类型列表
     getOrgUser(id) {
-      this.id =id
+      this.id = id;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        orgid:id,
+        orgid: id,
       };
       getOrgUser(parmas).then((res) => {
         if (res.data.success) {
@@ -210,7 +210,7 @@ export default {
           };
           self.selectedRowKeys.forEach((item) => {
             let obj = {
-              UserId: self.data[item].UserId,
+              UserId: item,
             };
             parmas.OrgUserInfo.push(obj);
           });

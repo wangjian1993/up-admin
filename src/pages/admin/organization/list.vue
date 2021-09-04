@@ -112,7 +112,7 @@
         :scroll="{ y: true }"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(tableDatas) => data.EnterTypeId"
+        :rowKey="(data) => data.OrgDimensionId"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -479,11 +479,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          const params = [];
-          self.selectedRowKeys.forEach((item) => {
-            params.push(self.data[item].OrgDimensionId);
-          });
-          orgdimensionAction(params, "delete").then((res) => {
+          orgdimensionAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");

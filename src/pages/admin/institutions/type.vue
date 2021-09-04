@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-26 15:19:32
+ * @LastEditTime: 2021-09-04 14:46:21
  * @LastEditors: max
  * @Description: 组织管理
  * @FilePath: /up-admin/src/pages/admin/institutions/type.vue
@@ -472,11 +472,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          const params = [];
-          self.selectedRowKeys.forEach((item) => {
-            params.push(self.data[item].EnterTypeId);
-          });
-          enterTypeAction(params, "delete").then((res) => {
+          enterTypeAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");

@@ -48,7 +48,7 @@
             size="small"
             :pagination="pagination"
             @change="handleTableChange"
-            :rowKey="(tableDatas) => list.EnterTypeId"
+            :rowKey="(list) => list.UserId"
             :row-selection="{
               selectedRowKeys: selectedRowKeys,
               onChange: onSelectChange,
@@ -236,11 +236,12 @@ export default {
         onOk() {
           let parmas = {
             OrgId: self.id,
-            OrgUserInfo: [],
+            OrgUserInfo:[],
           };
           self.selectedRowKeys.forEach((item) => {
-            let obj = {};
-            obj.UserId = self.list[item].UserId;
+            let obj = {
+              UserId: item,
+            };
             parmas.OrgUserInfo.push(obj);
           });
           orginfoAction(parmas,'adduser').then((res) => {

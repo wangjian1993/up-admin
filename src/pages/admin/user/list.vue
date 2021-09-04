@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-26 14:18:14
+ * @LastEditTime: 2021-09-04 14:49:25
  * @LastEditors: max
  * @Description: 用户列表
  * @FilePath: /up-admin/src/pages/admin/user/list.vue
@@ -86,7 +86,7 @@
               :loading="tableLoading"
               :pagination="pagination"
               @change="handleTableChange"
-              :rowKey="(tableDatas) => data.UserId"
+              :rowKey="(data) => data.UserId"
               :row-selection="{
                 selectedRowKeys: selectedRowKeys,
                 onChange: onSelectChange,
@@ -493,11 +493,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          const params = [];
-          self.selectedRowKeys.forEach((item) => {
-            params.push(self.data[item].UserId);
-          });
-          userAction(params, "delete").then((res) => {
+          userAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");

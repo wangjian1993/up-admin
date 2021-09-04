@@ -52,7 +52,7 @@
               :pagination="pagination"
               size="small"
               :scroll="{ y: true }"
-             :rowKey="(data) => data.OrgId"
+             :rowKey="(tabData) => tabData.OrgId"
               :row-selection="{
                 selectedRowKeys: selectedRowKeys,
                 onChange: onSelectChange,

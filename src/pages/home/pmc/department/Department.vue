@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 14:39:13
- * @LastEditTime: 2021-09-03 09:48:36
+ * @LastEditTime: 2021-09-04 15:09:54
  * @LastEditors: max
  * @Description: 生成部门配置
  * @FilePath: /up-admin/src/pages/home/pmc/department/Department.vue
@@ -29,45 +29,31 @@
               <a-form layout="horizontal" :form="searchForm" class="form-box">
                 <div>
                   <a-form-item>
-                    <a-input
-                      placeholder="请选择工厂"
-                      allowClear
-                      style="width: 200px"
-                      v-decorator="[
-                        'searcValue',
-                        {
-                          rules: [{ required: true, message: '请输入应用类型编码/名称!' }],
-                        },
-                      ]"
-                    />
+                    <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
+                      <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                    </a-select>
                   </a-form-item>
                 </div>
-                <div>
+                <div style="margin-left:10px">
                   <a-form-item>
                     <a-input
                       placeholder="请输入车间编码/名称"
                       allowClear
                       style="width: 200px"
                       v-decorator="[
-                        'searcValue',
-                        {
-                          rules: [{ required: true, message: '请输入应用类型编码/名称!' }],
-                        },
+                        'workshop'
                       ]"
                     />
                   </a-form-item>
                 </div>
-                <div>
+                <div style="margin-left:10px">
                   <a-form-item>
                     <a-input
                       placeholder="请输入产线编码/名称"
                       allowClear
                       style="width: 200px"
                       v-decorator="[
-                        'searcValue',
-                        {
-                          rules: [{ required: true, message: '请输入应用类型编码/名称!' }],
-                        },
+                        'line'
                       ]"
                     />
                   </a-form-item>
@@ -84,35 +70,48 @@
     </div>
     <!-- 添加编辑弹窗框 -->
     <div>
-      <a-modal :title="isEdit ? '编辑应用类型' : '添加应用类型'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+      <a-modal :title="isEdit ? '编辑产线' : '添加产线'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
         <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-model-item ref="AppTypeName" has-feedback label="应用名称" prop="AppTypeName">
+          <a-form-model-item ref="PlantId" has-feedback label="生产工厂" prop="PlantId">
+            <a-select v-model="form.PlantId" :disabled="isEdit" placeholder="请选择生产工厂" @change="plantChange">
+              <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+            </a-select>
+          </a-form-model-item>
+          <a-form-model-item ref="WorkShopId" has-feedback label="车间" prop="WorkShopId">
+            <a-select v-model="form.WorkShopId" :disabled="isEdit" style="width:150px" placeholder="请选择车间">
+              <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
+            </a-select>
+            <a-button type="primary" :disabled="isEdit" style="margin-left:10px" icon="plus" @click="addWorkShop">
+              新建车间
+            </a-button>
+          </a-form-model-item>
+          <a-form-model-item ref="LineName" has-feedback label="产线名称" prop="LineName">
             <a-input
-              v-model="form.AppTypeName"
+              v-model="form.LineName"
               allowClear
-              placeholder="请输入应用名称"
+              placeholder="请输入产线名称"
               @blur="
                 () => {
-                  $refs.AppTypeName.onFieldBlur();
+                  $refs.LineName.onFieldBlur();
                 }
               "
             />
           </a-form-model-item>
-          <a-form-model-item ref="AppTypeCode" has-feedback label="编码" prop="AppTypeCode">
+          <a-form-model-item ref="LineCode" has-feedback label="产线编码" prop="LineCode">
             <a-input
-              v-model="form.AppTypeCode"
+              v-model="form.LineCode"
               allowClear
-              placeholder="请输入应用编码"
+              placeholder="请输入产线编码"
               :disabled="isEdit"
               @blur="
                 () => {
-                  $refs.AppTypeCode.onFieldBlur();
+                  $refs.LineCode.onFieldBlur();
                 }
               "
             />
           </a-form-model-item>
-          <a-form-model-item ref="AppTypeDesc" label="应用描述">
-            <a-textarea v-model="form.AppTypeDesc" placeholder="请输入应用描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
+          <a-form-model-item ref="LineDesc" label="产线描述">
+            <a-textarea v-model="form.LineDesc" placeholder="请输入产线描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
           </a-form-model-item>
           <a-form-model-item ref="Enable" label="是否启用">
             <a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
@@ -134,7 +133,7 @@
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(tableDatas) => data.EnterTypeId"
+        :rowKey="(data) => data.LineId"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -182,21 +181,23 @@
     <!-- 查看详情 -->
     <div>
       <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
-        <a-descriptions title="应用类型详情" :column="1">
-          <a-descriptions-item label="应用编码">{{ drawerItem.AppTypeCode }}</a-descriptions-item>
-          <a-descriptions-item label="用户名称">{{ drawerItem.AppTypeName }}</a-descriptions-item>
+        <a-descriptions title="产线详情" :column="1">
+          <a-descriptions-item label="生产工厂">{{ drawerItem.PlantName }}</a-descriptions-item>
+          <a-descriptions-item label="车间">{{ drawerItem.WorkShopName }}</a-descriptions-item>
+          <a-descriptions-item label="产线">{{ drawerItem.LineName }}</a-descriptions-item>
           <a-descriptions-item label="是否启用">
             <div>
               <a-tag color="green" v-if="drawerItem.Enable == 'Y'">启用</a-tag>
               <a-tag color="red" v-else>禁用</a-tag>
             </div>
           </a-descriptions-item>
-          <a-descriptions-item label="描述">{{ drawerItem.AppTypeDesc }}</a-descriptions-item>
+          <a-descriptions-item label="描述">{{ drawerItem.LineDesc }}</a-descriptions-item>
           <a-descriptions-item label="添加人">{{ drawerItem.UserCreated }}</a-descriptions-item>
           <a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
         </a-descriptions>
       </a-drawer>
     </div>
+    <add-work-shop v-if="isAddWork" :plantList="plantList" @confirm="workShopConfirm" @close="workShopClose"></add-work-shop>
   </a-card>
 </template>
 <script>
@@ -207,21 +208,21 @@ const columns = [
     align: "center",
   },
   {
-    title: "应用名称",
-    dataIndex: "AppTypeName",
-    scopedSlots: { customRender: "AppTypeName" },
+    title: "生产工厂",
+    dataIndex: "PlantName",
+    scopedSlots: { customRender: "PlantName" },
     align: "center",
   },
   {
-    title: "编码",
-    dataIndex: "AppTypeCode",
-    scopedSlots: { customRender: "AppTypeCode" },
+    title: "车间",
+    dataIndex: "WorkShopName",
+    scopedSlots: { customRender: "WorkShopName" },
     align: "center",
   },
   {
-    title: "描述",
-    dataIndex: "AppTypeDesc",
-    scopedSlots: { customRender: "AppTypeDesc" },
+    title: "产线",
+    dataIndex: "LineName",
+    scopedSlots: { customRender: "LineName" },
     align: "center",
   },
   {
@@ -231,14 +232,22 @@ const columns = [
     align: "center",
   },
   {
+    title: "创建时间",
+    dataIndex: "DateTimeCreated",
+    scopedSlots: { customRender: "DateTimeCreated" },
+    align: "center",
+  },
+  {
     title: "操作",
     scopedSlots: { customRender: "action" },
     align: "center",
   },
 ];
-import { getAppTypeList, appTypeAction } from "@/services/admin.js";
+import { getLineAll, lineAction, getDemandEnter, getWorkshopList } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
+import AddWorkShop from "./AddWorkShop.vue";
 export default {
+  components: { AddWorkShop },
   data() {
     return {
       data: [],
@@ -251,6 +260,10 @@ export default {
       selectedRowKeys: [], // Check here to configure the default column
       visible: false,
       drawerItem: [],
+      plantList: [],
+      workshopList: [],
+      plantid: "",
+      isAddWork: false,
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
       pagination: {
@@ -266,23 +279,39 @@ export default {
       searcValue: "",
       searchForm: this.$form.createForm(this),
       form: {
-        AppTypeCode: "",
-        AppTypeName: "",
-        AppTypeDesc: "",
+        PlantId: "",
+        WorkShopId: "",
+        LineCode: "",
+        LineName: "",
+        LineDesc: "",
         Enable: "Y",
       },
       rules: {
-        AppTypeCode: [
+        PlantId: [
           {
             required: true,
-            message: "请输入应用编码",
+            message: "请选择生产工厂",
             trigger: "blur",
           },
         ],
-        AppTypeName: [
+        WorkShopId: [
           {
             required: true,
-            message: "请输入应用名称",
+            message: "请选择车间",
+            trigger: "blur",
+          },
+        ],
+        LineName: [
+          {
+            required: true,
+            message: "请输入产线名称",
+            trigger: "blur",
+          },
+        ],
+        LineCode: [
+          {
+            required: true,
+            message: "请输入产线编码",
             trigger: "blur",
           },
         ],
@@ -298,9 +327,52 @@ export default {
     },
   },
   created() {
-    // this.getAppTypeList();
+    this.getListAll();
+    this.getDemandEnter();
   },
   methods: {
+    //获取生产工厂
+    getDemandEnter() {
+      let parmas = {
+        entertypecode: "PLANT",
+      };
+      getDemandEnter(parmas).then((res) => {
+        if (res.data.success) {
+          this.plantList = res.data.data;
+        }
+      });
+    },
+    //获取车间列表
+    getWorkshopList() {
+      let parmas = {
+        plantid: this.plantid,
+      };
+      getWorkshopList(parmas).then((res) => {
+        if (res.data.success) {
+          this.workshopList = res.data.data;
+        }
+      });
+    },
+    //生产工厂选择
+    plantChange(e) {
+      this.workshopList = [];
+      this.form.WorkShopId = "";
+      this.plantid = e;
+      this.getWorkshopList();
+    },
+    //添加车间
+    addWorkShop() {
+      this.isAddWork = true;
+      this.getWorkshopList();
+    },
+    //车间添加成确认那妞
+    workShopConfirm() {
+      this.isAddWork = false;
+    },
+    //车间添加取消那妞
+    workShopClose() {
+      this.isAddWork = false;
+    },
     //状态切换
     enableChange(value) {
       this.form.Enable = value.target.value;
@@ -320,7 +392,7 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getAppTypeList();
+      this.getListAll();
       this.searchForm.resetFields();
     },
     //关键词搜索
@@ -334,9 +406,11 @@ export default {
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            keyword: values.searcValue,
+            plantid: values.plantid,
+            workshop: values.workshop,
+            line: values.line,
           };
-          getAppTypeList(parmas).then((res) => {
+          getLineAll(parmas).then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -350,12 +424,12 @@ export default {
       });
     },
     //获取机构类型列表
-    getAppTypeList() {
+    getListAll() {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getAppTypeList(parmas).then((res) => {
+      getLineAll(parmas).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -377,9 +451,11 @@ export default {
     //初始化表单
     defaultForm() {
       this.form = {
-        AppTypeCode: "",
-        AppTypeName: "",
-        AppTypeDesc: "",
+        PlantId: "",
+        WorkShopId: "",
+        LineCode: "",
+        LineName: "",
+        LineDesc: "",
         Enable: "Y",
       };
     },
@@ -401,25 +477,25 @@ export default {
           //编辑
           if (this.isEdit) {
             let editForm = {
-              AppTypeId: this.form.AppTypeId,
-              AppTypeName: this.form.AppTypeName,
-              AppTypeDesc: this.form.AppTypeDesc,
+              LineId: this.form.LineId,
+              LineName: this.form.LineName,
+              LineDesc: this.form.LineDesc,
               Enable: this.form.Enable,
             };
-            appTypeAction(editForm, "update").then((res) => {
+            lineAction(editForm, "update").then((res) => {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
                 this.defaultForm();
                 this.visible = false;
-                this.getAppTypeList();
+                this.getListAll();
               }
             });
           } else {
             //添加
-            appTypeAction(this.form, "add").then((res) => {
+            lineAction(this.form, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");
-                this.getAppTypeList();
+                this.getListAll();
                 this.defaultForm();
                 this.visible = false;
               }
@@ -434,15 +510,11 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          const params = [];
-          self.selectedRowKeys.forEach((item) => {
-            params.push(self.data[item].AppTypeId);
-          });
-          appTypeAction(params, "delete").then((res) => {
+          lineAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
-              self.getAppTypeList();
+              self.getListAll();
             }
           });
         },
@@ -452,11 +524,11 @@ export default {
     //单个删除
     onDelete(item) {
       let parmas = [];
-      parmas.push(item.AppTypeId);
-      appTypeAction(parmas, "delete").then((res) => {
+      parmas.push(item.LineId);
+      lineAction(parmas, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
-          this.getAppTypeList();
+          this.getListAll();
         }
       });
     },
@@ -464,7 +536,7 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      this.getAppTypeList();
+      this.getListAll();
     },
   },
 };
