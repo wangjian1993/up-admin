@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:59:02
- * @LastEditTime: 2021-08-30 10:38:40
+ * @LastEditTime: 2021-09-06 11:25:03
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/quote/purchase/list/List.vue
+ * @FilePath: /up-admin/src/pages/home/quote/purchase/list/List.vue
 -->
 <template>
   <div>
@@ -21,15 +21,16 @@
             <div :class="advanced ? null : 'fold'">
               <a-row>
                 <a-col :md="8" :sm="24">
-                  <a-form-item label="需求公司" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                    <a-input placeholder="请输入需求公司" v-decorator="['note']" />
+                  <a-form-item label="需求公司" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                    <a-select v-model="form.EnterpriseId"  placeholder="请选择需求公司">
+                      <a-select-option v-for="item in enterList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                    </a-select>
                   </a-form-item>
                 </a-col>
                 <a-col :md="8" :sm="24">
-                  <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                    <a-select placeholder="请选择生产工厂" v-decorator="['note']">
-                      <a-select-option value="1">关闭</a-select-option>
-                      <a-select-option value="2">运行中</a-select-option>
+                  <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                    <a-select v-model="form.EnterpriseId" placeholder="请选择生产工厂">
+                      <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                     </a-select>
                   </a-form-item>
                 </a-col>
@@ -111,6 +112,7 @@
 
 <script>
 import StandardTable from "@/components/table/StandardTable";
+import { getDemandEnter } from "@/services/web.js";
 const columns = [
   {
     title: "规则编号",
@@ -163,19 +165,47 @@ export default {
       columns: columns,
       dataSource: dataSource,
       selectedRows: [],
+      plantList: [],
+      enterList: [],
+      form:[]
     };
   },
   authorize: {
     deleteRecord: "delete",
   },
   components: { StandardTable },
+  created() {
+    this.getDemandEnter();
+  },
   methods: {
+    //获取需求公司
+    getDemandEnter() {
+      let parmas = {
+        entertypecode: "COMPANY",
+      };
+      let parmas1 = {
+        entertypecode: "PLANT",
+      };
+      getDemandEnter(parmas).then((res) => {
+        if (res.data.success) {
+          this.enterList = res.data.data;
+        }
+      });
+      getDemandEnter(parmas1).then((res) => {
+        if (res.data.success) {
+          this.plantList = res.data.data;
+        }
+      });
+    },
     callback(key) {
       console.log(key);
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
+    onSelectChange(){
+      
+    }
   },
 };
 </script>

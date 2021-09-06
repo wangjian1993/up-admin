@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-09-04 14:27:17
+ * @LastEditTime: 2021-09-06 16:48:37
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -42,10 +42,24 @@ export function getDemandEnter(params) {
     return request(`${UP_ADMIN}/enter/getlistbytypecode`, METHOD.GET, params);
 }
 
-
+/**
+ * @description: 报价配置项
+ * @param {*} params
+ * @return {*}
+ */
 export function getCostList(params) {
-    return request(`${UP_ADMIN}/costbase/getcostbaselist`, METHOD.GET, params);
+    return request(`${UP_WEB}/costbase/getcostbaselist`, METHOD.GET, params);
 }
 export function costAction(params, action) {
-    return request(`${UP_ADMIN}/costbase/${action}`, METHOD.POST, params);
+    return request(`${UP_WEB}/costbase/${action}`, METHOD.POST, params);
+}
+
+/**
+ * @description: 新建报价
+ * @param {*} params
+ * @return {*}
+ */
+//获取器物料配置项
+ export function getCostConfig(params,action) {
+    return request(`${UP_WEB}/quote/${action}`, METHOD.GET, params);
 }

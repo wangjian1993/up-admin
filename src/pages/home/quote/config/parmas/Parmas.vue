@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-04 16:36:22
+ * @LastEditTime: 2021-09-06 11:02:05
  * @LastEditors: max
  * @Description: 报价参数配置
  * @FilePath: /up-admin/src/pages/home/quote/config/parmas/Parmas.vue
@@ -71,7 +71,7 @@
       <a-modal :title="isEdit ? '编辑参数配置' : '添加参数配置'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
         <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item ref="EnterpriseId" has-feedback label="需求公司" prop="EnterpriseId">
-            <a-select v-model="form.EnterpriseId" :disabled="isEdit" placeholder="请选择用户类型">
+            <a-select v-model="form.EnterpriseId" :disabled="isEdit" placeholder="请选择需求公司">
               <a-select-option v-for="item in enterList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
             </a-select>
           </a-form-model-item>
