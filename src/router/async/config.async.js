@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-08-20 14:34:22
+ * @LastEditTime: 2021-09-07 09:01:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/router/async/config.async.js
@@ -13,6 +13,7 @@ import {parseRoutes} from '@/utils/routerUtil'
 const routesConfig = [
   'login',
   'root',
+  'none',
   {
     router: 'exp404',
     path: '*',

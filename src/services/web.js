@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-09-06 16:48:37
+ * @LastEditTime: 2021-09-07 16:46:18
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -60,6 +60,20 @@ export function costAction(params, action) {
  * @return {*}
  */
 //获取器物料配置项
- export function getCostConfig(params,action) {
+export function getCostConfig(params,action) {
     return request(`${UP_WEB}/quote/${action}`, METHOD.GET, params);
+}
+export function addCost(params,action) {
+    return request(`${UP_WEB}/quote/${action}`, METHOD.POST, params);
+}
+/**
+ * @description: 报价权限
+ * @param {*} params
+ * @return {*}
+ */
+export function getQuotePermission(params,action) {
+    return request(`${UP_WEB}/quote/permission/${action}`, METHOD.GET, params);
+}
+export function quotePermissionAction(params,action) {
+    return request(`${UP_WEB}/quote/permission/${action}`, METHOD.POST, params);
 }

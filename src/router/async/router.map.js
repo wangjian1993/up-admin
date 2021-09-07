@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-08-20 14:51:39
+ * @LastEditTime: 2021-09-07 09:00:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/router/async/router.map.js
@@ -66,6 +66,10 @@ const routerMap = {
     name: 'exp500',
     path: '500',
     component: () => import('@/pages/exception/500')
+  },
+  none: {
+    path: '*',
+    redirect: '/workplace'
   },
 }
 export default routerMap

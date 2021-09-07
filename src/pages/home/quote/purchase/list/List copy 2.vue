@@ -1,13 +1,13 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:59:02
- * @LastEditTime: 2021-08-27 16:57:35
+ * @LastEditTime: 2021-09-07 14:12:45
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/quote/purchase/list/List.vue
+ * @FilePath: /up-admin/src/pages/home/quote/purchase/list/List copy 2.vue
 -->
 <template>
-  <div><a-button type="primary" size="small" @click="handleDownload">Excel导出 </a-button></div>
+  <div><a-button type="primary" size="small" @click="handleDownload">导出</a-button></div>
 </template>
 <script>
 import XLSX from "xlsx";

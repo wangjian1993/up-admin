@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-06 11:02:05
+ * @LastEditTime: 2021-09-07 17:26:43
  * @LastEditors: max
  * @Description: 报价参数配置
  * @FilePath: /up-admin/src/pages/home/quote/config/parmas/Parmas.vue
@@ -29,7 +29,7 @@
               <a-form layout="horizontal" :form="searchForm" class="form-box">
                 <div>
                   <a-form-item>
-                    <a-select v-decorator="['enterpriseid']" style="width: 250px" placeholder="请选择生产工厂">
+                    <a-select v-decorator="['enterpriseid']" style="width: 250px" placeholder="请选择需求公司">
                       <a-select-option v-for="item in enterList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                     </a-select>
                   </a-form-item>
@@ -391,9 +391,9 @@ export default {
           };
           getCostList(parmas).then((res) => {
             if (res.data.success) {
-              this.data = res.data.data;
+              this.data = res.data.data.list;
               const pagination = { ...this.pagination };
-              pagination.total = res.data.data.recordsTotal;
+              pagination.total = res.data.data.list.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
             }
@@ -412,10 +412,10 @@ export default {
       };
       getCostList(parmas).then((res) => {
         if (res.data.success) {
-          this.data = res.data.data;
-          // const pagination = { ...this.pagination };
-          // pagination.total = res.data.data.recordsTotal;
-          // this.pagination = pagination;
+          this.data = res.data.data.list;
+          const pagination = { ...this.pagination };
+          pagination.total = res.data.data.list.recordsTotal;
+          this.pagination = pagination;
           this.loading = false;
         } else {
           this.loading = false;

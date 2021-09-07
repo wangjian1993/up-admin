@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-08-21 11:34:48
+ * @LastEditTime: 2021-09-07 09:15:59
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/layouts/header/HeaderAvatar.vue
@@ -51,7 +51,7 @@ export default {
 				content: '确定要退出登录吗?',
 				onOk() {
 					logout();
-					selt.$router.push('/login');
+					selt.$router.push('/');
 				},
 				onCancel() {}
 			});

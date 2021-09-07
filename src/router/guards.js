@@ -39,12 +39,18 @@ const loginGuard = (to, from, next, options) => {
 		message
 	} = options
 	if (!loginIgnore.includes(to) && !checkAuthorization()) {
-		message.warning('登录已失效，请重新登录')
+		console.log("失效=============");
+		localStorage.removeItem('admin.routes');
+		message.warning('登录已失效，请重新登录');
 		next({
 			path: '/login'
 		})
 	} else {
-		next()
+		if (to.path === '/login' && localStorage.getItem('admin.routes') != null) {
+			next({ path: '/dashboard/workplace' });
+		} else {
+			next();
+		}
 	}
 }
 
