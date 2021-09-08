@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2021-09-07 18:11:08
- * @LastEditTime: 2021-09-08 11:02:26
+ * @Date: 2021-09-08 09:21:40
+ * @LastEditTime: 2021-09-08 16:18:13
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/quote/config/authority/Category.vue
+ * @FilePath: /up-admin/src/pages/home/quote/config/authority/AuthoType.vue
 -->
 <template>
   <div>
@@ -18,7 +18,7 @@
                 <div style="margin-left:20px">
                   <a-form-item>
                     <a-input
-                      placeholder="请输入大类编码/名称"
+                      placeholder="请输入部门编码名称"
                       allowClear
                       style="width:300px"
                       v-decorator="[
@@ -47,7 +47,7 @@
             :scroll="{ y: true }"
             :pagination="pagination"
             @change="handleTableChange"
-            :rowKey="(list) => list.MitemCategoryId"
+            :rowKey="(list) => list.Id"
             :customRow="rowClick"
             :rowClassName="rowClassName"
             :row-selection="{
@@ -81,24 +81,55 @@
 </template>
 
 <script>
-const columns = [
+const columns1 = [
   {
     title: "序号",
     scopedSlots: { customRender: "index" },
     width: "10%",
   },
   {
-    title: "大类编码",
-    dataIndex: "MitemCategoryCode",
-    scopedSlots: { customRender: "MitemCategoryCode" },
+    title: "部门编码",
+    dataIndex: "Code",
+    scopedSlots: { customRender: "Code" },
     align: "center",
   },
   {
-    title: "大类名称",
-    dataIndex: "MitemCategoryName",
-    scopedSlots: { customRender: "MitemCategoryName" },
+    title: "部门名称",
+    dataIndex: "Name",
+    scopedSlots: { customRender: "Name" },
     align: "center",
-  }
+  },
+  {
+    title: "上级部门",
+    dataIndex: "SuperName",
+    scopedSlots: { customRender: "SuperName" },
+    align: "center",
+  },
+];
+const columns2 = [
+  {
+    title: "序号",
+    scopedSlots: { customRender: "index" },
+    width: "10%",
+  },
+  {
+    title: "用户账号",
+    dataIndex: "Code",
+    scopedSlots: { customRender: "Code" },
+    align: "center",
+  },
+  {
+    title: "用户名称",
+    dataIndex: "Name",
+    scopedSlots: { customRender: "Name" },
+    align: "center",
+  },
+  {
+    title: "用户类型",
+    dataIndex: "SurperName",
+    scopedSlots: { customRender: "SurperName" },
+    align: "center",
+  },
 ];
 import { getQuotePermission } from "@/services/web.js";
 export default {
@@ -108,7 +139,9 @@ export default {
       size: "small",
       visible: true,
       isAddModal: false,
-      columns,
+      columns: [],
+      columns1,
+      columns2,
       list: [],
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -130,6 +163,11 @@ export default {
   },
   created() {
     this.getList();
+    if (this.typeArray.ParamCode != "PERMISSION_TYPE_USER") {
+      this.columns = this.columns1;
+    } else {
+      this.columns = this.columns2;
+    }
   },
   methods: {
     close() {
@@ -141,7 +179,13 @@ export default {
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterArray.EnterId,
       };
-      getQuotePermission(parmas, "getcategorys").then((res) => {
+      let url = "";
+      if (this.typeArray.ParamCode != "PERMISSION_TYPE_USER") {
+        url = "getorgs";
+      } else {
+        url = "getusers";
+      }
+      getQuotePermission(parmas, url).then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -181,14 +225,14 @@ export default {
     },
     handleOk() {
       if (this.selectedRowKeys.length > 0) {
-        let array = []
+        let array = [];
         for (let task of this.selectedRowKeys) {
           const itemJson = this.list.find((item) => {
-            return item.MitemCategoryId === task;
+            return item.Id === task;
           });
           array.push(itemJson);
         }
-        this.$emit("okModal",array,2);
+        this.$emit("okModal", array, 1);
       } else {
         this.$emit("okModal");
       }
@@ -210,7 +254,13 @@ export default {
             enterpriseid: this.enterArray.EnterId,
             keyword: values.searcValue,
           };
-          getQuotePermission(parmas, "getcategorys").then((res) => {
+          let url = "";
+          if (this.typeArray.ParamCode != "PERMISSION_TYPE_USER") {
+            url = "getorgs";
+          } else {
+            url = "getusers";
+          }
+          getQuotePermission(parmas, url).then((res) => {
             if (res.data.success) {
               this.list = res.data.data.list;
               const pagination = { ...this.pagination };

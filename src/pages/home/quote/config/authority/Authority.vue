@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-09-07 18:02:36
+ * @LastEditTime: 2021-09-08 16:27:45
  * @LastEditors: max
  * @Description: 权限
  * @FilePath: /up-admin/src/pages/home/quote/config/authority/Authority.vue
@@ -56,28 +56,59 @@
     <div>
       <a-modal :title="isEdit ? '编辑权限' : '添加权限'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
         <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-model-item ref="AppTypeName" has-feedback label="需求公司" prop="AppTypeName">
-            <a-select style="width: 250px" placeholder="请选择需求公司">
+          <a-form-model-item ref="EnterId" has-feedback label="需求公司" prop="EnterId">
+            <a-select
+              v-model="form.EnterId"
+              style="width: 250px"
+              placeholder="请选择需求公司"
+              @change="enterChange"
+              @blur="
+                () => {
+                  $refs.EnterId.onFieldBlur();
+                }
+              "
+            >
               <a-select-option v-for="item in enterList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
             </a-select>
           </a-form-model-item>
-          <a-form-model-item ref="AppTypeName" has-feedback label="权限类型" prop="AppTypeName">
-            <a-select style="width: 250px" placeholder="请选择需求公司">
-              <a-select-option :value="item.ParamValue" v-for="(item, index) in permissionType" :key="index">
+          <a-form-model-item ref="PermissionTypeCode" has-feedback label="权限类型" prop="PermissionTypeCode">
+            <a-select
+              v-model="form.PermissionTypeCode"
+              style="width: 250px"
+              placeholder="请选择权限类型"
+              @change="typeChange"
+              @blur="
+                () => {
+                  $refs.PermissionTypeCode.onFieldBlur();
+                }
+              "
+            >
+              <a-select-option :value="item.ParamCode" v-for="(item, index) in permissionType" :key="index">
                 {{ item.ParamName }}
               </a-select-option>
             </a-select>
           </a-form-model-item>
           <a-form-model-item ref="AppTypeCode" has-feedback label="权限名称" prop="AppTypeCode">
-            <!-- <template v-for="(tag, index) in tags">
-              <a-tag :key="tag" :closable="index !== 0" @close="() => handleClose(tag)">
-                {{ tag }}
+            <template v-for="(tag, index) in nametags">
+              <a-tag :key="tag.Id" :closable="true" @close="() => handleClose(index, 1)">
+                {{ tag.Name }}
               </a-tag>
-            </template> -->
+            </template>
             <a-tag style="background: #fff; borderStyle: dashed;" @click="addPermissionName"> <a-icon type="plus" />添加</a-tag>
           </a-form-model-item>
           <a-form-model-item ref="AppTypeCode" has-feedback label="产品大类" prop="AppTypeCode">
+            <template v-for="(tag, index) in categorytags">
+              <a-tag :key="tag.MitemCategoryId" :closable="true" @close="() => handleClose(index, 2)">
+                {{ tag.MitemCategoryName }}
+              </a-tag>
+            </template>
             <a-tag style="background: #fff; borderStyle: dashed;" @click="addPermissionClassify"> <a-icon type="plus" />添加</a-tag>
+          </a-form-model-item>
+          <a-form-model-item ref="" label="操作权限">
+            <a-checkbox-group v-model="actionValue" :options="actionList" :default-value="actionValue" @change="actionChange" />
+          </a-form-model-item>
+          <a-form-model-item ref="Remarks" label="描述">
+            <a-textarea v-model="form.Remarks" placeholder="请输入权限描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
           </a-form-model-item>
           <a-form-model-item ref="Enable" label="是否启用">
             <a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
@@ -99,7 +130,7 @@
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(tableDatas) => data.EnterTypeId"
+        :rowKey="(data) => data.QuotePermissionId"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -147,21 +178,28 @@
     <!-- 查看详情 -->
     <div>
       <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
-        <a-descriptions title="应用类型详情" :column="1">
-          <a-descriptions-item label="应用编码">{{ drawerItem.AppTypeCode }}</a-descriptions-item>
-          <a-descriptions-item label="用户名称">{{ drawerItem.AppTypeName }}</a-descriptions-item>
+        <a-descriptions title="权限详情" :column="1">
+          <a-descriptions-item label="需求公司">{{ drawerItem.EnterName }}</a-descriptions-item>
+          <a-descriptions-item label="权限类型">{{ drawerItem.PerMissionTypeName }}</a-descriptions-item>
+          <a-descriptions-item label="权限名称">{{ drawerItem.PermissionNames }}</a-descriptions-item>
+          <a-descriptions-item label="产品大类">{{ drawerItem.MitemCategoryNames }}</a-descriptions-item>
+          <a-descriptions-item label="权限">{{ drawerItem.OperationNames }}</a-descriptions-item>
           <a-descriptions-item label="是否启用">
             <div>
               <a-tag color="green" v-if="drawerItem.Enable == 'Y'">启用</a-tag>
               <a-tag color="red" v-else>禁用</a-tag>
             </div>
           </a-descriptions-item>
-          <a-descriptions-item label="描述">{{ drawerItem.AppTypeDesc }}</a-descriptions-item>
+          <a-descriptions-item label="描述">{{ drawerItem.Remarks }}</a-descriptions-item>
           <a-descriptions-item label="添加人">{{ drawerItem.UserCreated }}</a-descriptions-item>
           <a-descriptions-item label="添加时间">{{ drawerItem.DateTimeCreated }}</a-descriptions-item>
         </a-descriptions>
       </a-drawer>
     </div>
+    <!-- 添加权限名字 -->
+    <autho-type v-if="isAuthoName" @closeModal="closeModal" @okModal="okModal" :enterArray="enterArray" :typeArray="typeArray"></autho-type>
+    <!-- 大类弹窗 -->
+    <category v-if="isCategory" @closeModal="closeModal" @okModal="okModal" :enterArray="enterArray"></category>
   </a-card>
 </template>
 <script>
@@ -172,27 +210,45 @@ const columns = [
     align: "center",
   },
   {
-    title: "应用名称",
-    dataIndex: "AppTypeName",
-    scopedSlots: { customRender: "AppTypeName" },
+    title: "需求公司",
+    dataIndex: "EnterName",
+    scopedSlots: { customRender: "EnterName" },
     align: "center",
   },
   {
-    title: "编码",
-    dataIndex: "AppTypeCode",
-    scopedSlots: { customRender: "AppTypeCode" },
+    title: "权限类型",
+    dataIndex: "PerMissionTypeName",
+    scopedSlots: { customRender: "PerMissionTypeName" },
     align: "center",
   },
   {
-    title: "描述",
-    dataIndex: "AppTypeDesc",
-    scopedSlots: { customRender: "AppTypeDesc" },
+    title: "权限名称",
+    dataIndex: "PermissionNames",
+    scopedSlots: { customRender: "PermissionNames" },
+    align: "center",
+  },
+  {
+    title: "产品大类",
+    dataIndex: "MitemCategoryNames",
+    scopedSlots: { customRender: "MitemCategoryNames" },
+    align: "center",
+  },
+  {
+    title: "权限",
+    dataIndex: "OperationNames",
+    scopedSlots: { customRender: "OperationNames" },
     align: "center",
   },
   {
     title: "状态",
     dataIndex: "Enable",
     scopedSlots: { customRender: "enable" },
+    align: "center",
+  },
+  {
+    title: "备注",
+    dataIndex: "Remarks",
+    scopedSlots: { customRender: "Remarks" },
     align: "center",
   },
   {
@@ -204,7 +260,10 @@ const columns = [
 import { getQuotePermission, quotePermissionAction, getDemandEnter } from "@/services/web.js";
 import { getParamData } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
+import AuthoType from "./AuthoType.vue";
+import Category from "./Category.vue";
 export default {
+  components: { AuthoType, Category },
   data() {
     return {
       data: [],
@@ -232,30 +291,42 @@ export default {
       searcValue: "",
       searchForm: this.$form.createForm(this),
       form: {
-        AppTypeCode: "",
-        AppTypeName: "",
-        AppTypeDesc: "",
+        EnterId: "",
+        PermissionTypeCode: "",
+        PermissionOrgOrUserList: [],
+        PermissionMitemCategoryList: [],
+        OperationCodes: "",
+        Remarks: "",
         Enable: "Y",
       },
       rules: {
-        AppTypeCode: [
+        EnterId: [
           {
             required: true,
-            message: "请输入应用编码",
+            message: "请输入需求公司",
             trigger: "blur",
           },
         ],
-        AppTypeName: [
+        PermissionTypeCode: [
           {
             required: true,
-            message: "请输入应用名称",
+            message: "请输入权限类型",
             trigger: "blur",
           },
         ],
-        enterList: [],
-        enterpriseid: "",
-        permissionType: [],
       },
+      enterList: [],
+      enterpriseid: "",
+      permissionType: [],
+      isAuthoName: false, //名称弹窗
+      isCategory: false,
+      enterArray: [], //选中需求公司
+      typeArray: [], //权限类型选择
+      nametags: [],
+      categorytags: [],
+      actionList: [],
+      actionStr: [],
+      actionValue: [],
     };
   },
   updated() {
@@ -267,6 +338,7 @@ export default {
     },
   },
   created() {
+    this.getAuthoData();
     this.getDemandEnter();
   },
   methods: {
@@ -277,9 +349,22 @@ export default {
       let parmas2 = {
         groupcode: "QUOTE_PERMISSION_TYPE",
       };
+      let parmas3 = {
+        groupcode: "FEB_QUOTE_PERMISSION",
+      };
       getParamData(parmas2).then((res) => {
         if (res.data.success) {
           this.permissionType = res.data.data;
+        }
+      });
+      getParamData(parmas3).then((res) => {
+        if (res.data.success) {
+          res.data.data.forEach((items) => {
+            this.actionList.push({
+              label: items.ParamName,
+              value: items.ParamCode,
+            });
+          });
         }
       });
       getDemandEnter(parmas).then((res) => {
@@ -308,7 +393,7 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getAppTypeList();
+      this.getAuthoData();
       this.searchForm.resetFields();
     },
     //关键词搜索
@@ -338,7 +423,7 @@ export default {
       });
     },
     //获取机构类型列表
-    getAppTypeList() {
+    getAuthoData() {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
@@ -359,55 +444,130 @@ export default {
     add() {
       this.defaultForm();
       this.isEdit = false;
-      this.title = "添加机构类型";
       this.visible = true;
     },
     //初始化表单
     defaultForm() {
       this.form = {
-        AppTypeCode: "",
-        AppTypeName: "",
-        AppTypeDesc: "",
+        EnterId: "",
+        PermissionTypeCode: "",
+        PermissionOrgOrUserList: [],
+        PermissionMitemCategoryList: [],
+        OperationCodes: "",
+        Remarks: "",
         Enable: "Y",
       };
     },
     //关闭对话框
     handleCancel() {
       this.visible = false;
+      this.nametags = [];
+      this.categorytags = [];
     },
     //编辑
     edit(item) {
       this.visible = true;
       this.isEdit = true;
-      this.title = "编辑机构类型";
-      this.form = item;
+      this.nametags = [];
+      this.categorytags = [];
+      let parmas = { id: item.QuotePermissionId };
+      getQuotePermission(parmas, "getsingle").then((res) => {
+        if (res.data.success) {
+          this.form = res.data.data;
+          //获取名称,大类编辑id
+          let MitemCategoryIds = this.form.MitemCategoryIds.split(",");
+          let PermissionIds = this.form.PermissionIds.split(",");
+          let MitemCategoryNames = this.form.MitemCategoryNames.split(",");
+          let PermissionNames = this.form.PermissionNames.split(",");
+          for (let i = 0; i < MitemCategoryIds.length; i++) {
+            this.categorytags.push({
+              MitemCategoryName: MitemCategoryNames[i],
+              MitemCategoryId: MitemCategoryIds[i],
+            });
+          }
+          for (let i = 0; i < PermissionIds.length; i++) {
+            this.nametags.push({
+              Name: PermissionNames[i],
+              Id: PermissionIds[i],
+            });
+          }
+          //操作权限
+          this.actionValue = this.form.OperationCodes.split(",");
+          //需求公司
+          this.enterArray = {
+            EnterId: this.form.EnterId,
+            EnterName: this.form.EnterName,
+          };
+          //权限类型
+          this.typeArray = {
+            ParamName: this.form.PerMissionTypeName,
+            ParamCode: this.form.PermissionTypeCode,
+          };
+        }
+      });
     },
     //弹框确认按钮
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           //编辑
+          if (this.nametags.length == 0) {
+            this.$message.warning("请先添加权限名称!");
+            return;
+          }
+          if (this.categorytags.length == 0) {
+            this.$message.warning("请先添加产品大类!");
+            return;
+          }
+          if (this.form.OperationCodes == "") {
+            this.$message.warning("请先选择操作权限!");
+            return;
+          }
           if (this.isEdit) {
             let editForm = {
-              AppTypeId: this.form.AppTypeId,
-              AppTypeName: this.form.AppTypeName,
-              AppTypeDesc: this.form.AppTypeDesc,
+              QuotePermissionId: this.form.QuotePermissionId,
+              EnterId: this.form.EnterId,
+              PermissionTypeCode: this.form.PermissionTypeCode,
+              OperationCodes: this.form.OperationCodes,
+              Remarks: this.form.Remarks,
               Enable: this.form.Enable,
+              PermissionOrgOrUserList: [],
+              PermissionMitemCategoryList: [],
             };
+            this.nametags.forEach((item) => {
+              editForm.PermissionOrgOrUserList.push({
+                Id: item.Id,
+              });
+            });
+            this.categorytags.forEach((item) => {
+              editForm.PermissionMitemCategoryList.push({
+                MitemCategoryId: item.MitemCategoryId,
+              });
+            });
             quotePermissionAction(editForm, "update").then((res) => {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
                 this.defaultForm();
                 this.visible = false;
-                this.getAppTypeList();
+                this.getAuthoData();
               }
             });
           } else {
             //添加
+            this.nametags.forEach((item) => {
+              this.form.PermissionOrgOrUserList.push({
+                Id: item.Id,
+              });
+            });
+            this.categorytags.forEach((item) => {
+              this.form.PermissionMitemCategoryList.push({
+                MitemCategoryId: item.MitemCategoryId,
+              });
+            });
             quotePermissionAction(this.form, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");
-                this.getAppTypeList();
+                this.getAuthoData();
                 this.defaultForm();
                 this.visible = false;
               }
@@ -422,15 +582,11 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          const params = [];
-          self.selectedRowKeys.forEach((item) => {
-            params.push(self.data[item].AppTypeId);
-          });
-          quotePermissionAction(params, "delete").then((res) => {
+          quotePermissionAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
-              self.getAppTypeList();
+              self.getAuthoData();
             }
           });
         },
@@ -440,11 +596,11 @@ export default {
     //单个删除
     onDelete(item) {
       let parmas = [];
-      parmas.push(item.AppTypeId);
+      parmas.push(item.QuotePermissionId);
       quotePermissionAction(parmas, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
-          this.getAppTypeList();
+          this.getAuthoData();
         }
       });
     },
@@ -452,13 +608,76 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      this.getAppTypeList();
+      this.getAuthoData();
     },
-    addPermissionName(){
-
+    //权限名称弹窗
+    addPermissionName() {
+      if (this.enterArray.length == 0) {
+        this.$message.warning("请先选择需求公司!");
+        return;
+      }
+      if (this.typeArray.length == 0) {
+        this.$message.warning("请先选择权限类型!");
+        return;
+      }
+      this.isAuthoName = true;
     },
-    addPermissionClassify(){
-
+    closeModal() {
+      this.isAuthoName = false;
+      this.isCategory = false;
+    },
+    //需求公司选择
+    enterChange(e) {
+      this.nametags = [];
+      this.categorytags = [];
+      this.enterArray = this.enterList.find((item) => item.EnterId == e);
+    },
+    typeChange(e) {
+      // this.categorytags = [];
+      this.nametags = [];
+      this.typeArray = this.permissionType.find((item) => item.ParamCode == e);
+    },
+    okModal(array, type) {
+      this.isAuthoName = false;
+      this.isCategory = false;
+      if (type == 1) {
+        this.nametags = this.nametags.concat(array);
+        let map = new Map();
+        for (let i of this.nametags) {
+          if (!map.has(i.Id)) {
+            map.set(i.Id, i);
+          }
+        }
+        this.nametags = [...map.values()];
+      } else if (type == 2) {
+        this.categorytags = this.categorytags.concat(array);
+        let map = new Map();
+        for (let i of this.categorytags) {
+          if (!map.has(i.MitemCategoryId)) {
+            map.set(i.MitemCategoryId, i);
+          }
+        }
+        this.categorytags = [...map.values()];
+      }
+    },
+    handleClose(index, type) {
+      if (type == 1) {
+        this.nametags.splice(index, 1);
+        return;
+      }
+      this.categorytags.splice(index, 1);
+    },
+    //大类选择
+    addPermissionClassify() {
+      if (this.enterArray.length == 0) {
+        this.$message.warning("请先选择需求公司!");
+        return;
+      }
+      this.isCategory = true;
+    },
+    //操作权限
+    actionChange(e) {
+      this.form.OperationCodes = e.join(",");
     },
   },
 };

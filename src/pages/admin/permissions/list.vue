@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-08-30 16:23:32
+ * @LastEditTime: 2021-09-07 18:25:19
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -601,7 +601,7 @@ export default {
               EnterTypeId: self.permissionList[item].EnterTypeId,
               EnterId: self.permissionList[item].EnterId,
               Compartor: self.permissionList[item].Compartor,
-              OrgId: self.permissionList[item].OrgId,
+              ModuleId: self.moduleid,
             });
           });
           setPermission(params, "delete").then((res) => {
