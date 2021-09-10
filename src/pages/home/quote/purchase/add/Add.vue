@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-09 13:46:18
+ * @LastEditTime: 2021-09-10 10:00:41
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -22,10 +22,11 @@
           <a-form layout="horizontal" :form="searchForm">
             <div :class="advanced ? null : 'fold'">
               <a-row>
-                <a-col :md="6" :sm="24">
+                <a-col :lg="6" :md="12" :sm="24">
                   <a-form-item label="产品品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-input
                       placeholder="请输入产品品号"
+                      :disabled="isSearch"
                       v-decorator="[
                         'itemcode',
                         {
@@ -35,9 +36,10 @@
                     />
                   </a-form-item>
                 </a-col>
-                <a-col :md="6" :sm="24">
+                <a-col :lg="6" :md="12" :sm="24">
                   <a-form-item label="需求公司" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-select
+                    :disabled="isSearch"
                       placeholder="请选择需求公司"
                       v-decorator="[
                         'enterpriseid',
@@ -50,9 +52,10 @@
                     </a-select>
                   </a-form-item>
                 </a-col>
-                <a-col :md="6" :sm="24">
+                <a-col :lg="6" :md="12" :sm="24">
                   <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-select
+                    :disabled="isSearch"
                       placeholder="请选择生产工厂"
                       v-decorator="[
                         'plantid',
@@ -65,7 +68,7 @@
                     </a-select>
                   </a-form-item>
                 </a-col>
-                <a-col :md="6" :sm="24">
+                <a-col :lg="6" :md="12" :sm="24">
                   <span style="float: left; margin-top: 5px;">
                     <a-button type="primary" @click="search">查询</a-button>
                     <a-button style="margin-left: 8px" @click="reset">重置</a-button>
@@ -73,24 +76,29 @@
                 </a-col>
               </a-row>
               <a-row>
-                <a-col :md="12" :sm="24">
-                  <a-form-item label="产品大类" :labelCol="{ span: 2 }" :wrapperCol="{ span: 14, offset: 1 }">
-                    <a-input v-model="costInfo.ItemSort" />
-                  </a-form-item>
-                </a-col>
-                <a-col :md="12" :sm="24">
-                  <a-form-item label="产品品名" :labelCol="{ span: 2 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-col :lg="6" :md="12" :sm="24">
+                  <a-form-item label="产品品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-input v-model="costInfo.ItemName" />
                   </a-form-item>
                 </a-col>
-              </a-row>
-              <a-row>
-                <a-col :md="12" :sm="24">
-                  <a-form-item label="产品规格" :labelCol="{ span: 2 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-col :lg="6" :md="12" :sm="24">
+                  <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                    <a-input v-model="costInfo.ItemSort" />
+                  </a-form-item>
+                </a-col>
+                <a-col :lg="6" :md="12" :sm="24">
+                  <a-form-item label="产品规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-textarea v-model="costInfo.ItemSpecification" :rows="2" />
                   </a-form-item>
                 </a-col>
               </a-row>
+              <!-- <a-row>
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="产品规格" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
+                    <a-textarea v-model="costInfo.ItemSpecification" :rows="1" />
+                  </a-form-item>
+                </a-col>
+              </a-row> -->
             </div>
           </a-form>
         </div>
@@ -152,6 +160,9 @@
           <div slot="Property" slot-scope="{ text }">
             <p v-if="text != '委外加工费'">{{ text }}</p>
             <p v-else style="color:#e01111">{{ text }}</p>
+          </div>
+          <div slot="e10" slot-scope="{ text, record }">
+            <p>{{ record.PriceErpSource == "" ? text : text + `(${record.PriceErpSource})` }}</p>
           </div>
           <div slot="action" slot-scope="{ record, index }">
             <a><a-input @change="remarkInput(record, index)" v-model="record.Remark"/></a>
@@ -275,6 +286,7 @@ export default {
       searchData: [],
       quoteRemark: "",
       isEdit: false,
+      isSearch:false
     };
   },
   created() {
@@ -328,9 +340,7 @@ export default {
         return item;
       });
       const columns = this.columns.map((item) => ({ key: item.dataIndex, title: item.title }));
-      // dataSource.unshift(product);
-      console.log(dataSource);
-       console.log(columns);
+      // dataSource.unshift(product)
       ExportExcel(columns, dataSource, `${this.costInfo.ItemName}_采购报价导出.xlsx`);
     },
     //获取需求公司
@@ -357,6 +367,7 @@ export default {
       this.costList = [];
       this.costInfo = [];
       this.tableData = [];
+      this.isSearch =false;
       this.searchForm.resetFields();
     },
     //关键词搜索
@@ -373,6 +384,7 @@ export default {
               this.countCost();
             }
             this.costLoading = false;
+            this.isSearch =true;
           });
         } else {
           this.costLoading = false;
@@ -413,6 +425,7 @@ export default {
         //计算电源贴片费用
         if (this.costInfo.ItemOtherInfo && item.CostName === "电源贴片费") {
           item.Amount = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * this.cost.materialTotal;
+          item.Description = `"料名带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*0.008"`;
         }
         //计算损耗费用
         if (item.CostName === "损耗") {
@@ -453,7 +466,7 @@ export default {
     },
     //保存报价单
     costSave() {
-      this.searchData =this.searchForm.getFieldsValue()
+      this.searchData = this.searchForm.getFieldsValue();
       if (this.costList.length == 0) {
         this.$message.warning("请先查询物联信息!");
         return;
@@ -485,6 +498,7 @@ export default {
       addCost(parmas, "addnewquote").then((res) => {
         if (res.data.success) {
           this.$message.success("保存成功!");
+          this.reset();
         }
         this.costLoading = false;
       });

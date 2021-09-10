@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-09 10:24:56
+ * @LastEditTime: 2021-09-10 11:48:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -11,7 +11,7 @@
     <a-modal v-model="visible" title="报价单详情" @cancel="close" width="90%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
-          <a-descriptions title="报价单" :column="4">
+          <a-descriptions title="基本信息" :column="4" bordered>
             <a-descriptions-item label="需求公司">
               {{ info.EnterpriseName }}
             </a-descriptions-item>
@@ -41,27 +41,29 @@
             </a-descriptions-item>
           </a-descriptions>
         </div>
-        <div>
-          <a-descriptions :column="6" bordered>
+        <div style="padding-top:10px">
+          <a-descriptions title="配置费用" :column="6" bordered>
             <a-descriptions-item v-for="(item, index) in ConfigList" :key="index" :label="item.CostName">
               {{ item.Amount }}
             </a-descriptions-item>
           </a-descriptions>
         </div>
         <div>
-          <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(list) => list.Id" bordered>
-            <template slot="index" slot-scope="text, record, index">
-              <div>
-                <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-              </div>
-            </template>
-            <template slot="enable" slot-scope="record">
-              <div>
-                <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
-                <a-tag color="red" v-else>禁用</a-tag>
-              </div>
-            </template>
-          </a-table>
+          <a-card title="物料列表"  class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(list) => list.Id" bordered>
+              <template slot="index" slot-scope="text, record, index">
+                <div>
+                  <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+                </div>
+              </template>
+              <template slot="enable" slot-scope="record">
+                <div>
+                  <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
+                  <a-tag color="red" v-else>禁用</a-tag>
+                </div>
+              </template>
+            </a-table>
+          </a-card>
         </div>
       </a-spin>
     </a-modal>
@@ -198,5 +200,11 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+}
+/deep/.ant-descriptions-bordered .ant-descriptions-item-label {
+  background: rgba(0, 0, 0, 0.05);
+}
+/deep/.ant-card-head{
+  padding:0;
 }
 </style>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-09-09 18:05:50
+ * @LastEditTime: 2021-09-10 18:13:01
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -72,8 +72,8 @@
 </template>
 
 <script>
-// import { getQuotePermission } from "@/services/web.js";
-import XLSX from "xlsx";
+import { mitemrequirementAction } from "@/services/web.js";
+import excel from "@/utils/xlsxTool.js";
 export default {
   props: ["plantArray"],
   data() {
@@ -97,6 +97,7 @@ export default {
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
+      tableTitle: [],
       columns: [],
       tableData: [],
       onOrgId: 0,
@@ -121,28 +122,112 @@ export default {
       this.week = str[1].replace("周", "");
     },
     handleOk() {
-      console.log(this.tableData);
-      this.tableData.map((item) => {
-        console.log(item);
+      //提交的数据格式
+      if (this.plantId == "") {
+        this.$message.warning("请先选择生产工厂!");
+        return;
+      }
+      if (this.week == "") {
+        this.$message.warning("请先选择周!");
+        return;
+      }
+      let parmas = [];
+      //合并表格头部和内容数据
+      let arr = [];
+      let table = this.tableData;
+      for (let i = 0; i < table.length; i++) {
+        let res = table[i];
+        let obj = {};
+        this.tableTitle.forEach((item) => {
+          obj[item["key"]] = res[item["key"]] || "";
+        });
+        arr.push(obj);
+      }
+      // table.forEach((item) => {
+      //   let obj = {
+      //     ...item,
+      //   };
+      //   this.tableTitle.forEach((cItem) => {
+      //     if (!Object.keys(item).includes(cItem.key)) {
+      //       obj[cItem.key] = "";
+      //     }
+      //   });
+      //   arr.push(obj);
+      // });
+      //获取年
+      var date = new Date();
+      var y = date.getFullYear();
+      //拼接后台数据
+      arr.forEach((item) => {
+        let data = {
+          PlantId: this.plantId,
+          Week: this.week,
+          MitemCode: "",
+          MitemName: "",
+          Spec: "",
+          Remarks: "",
+          RequirementList: [],
+        };
+        for (let key in item) {
+          switch (key) {
+            case "品号":
+              data.MitemCode = item[key];
+              break;
+            case "品名":
+              data.MitemName = item[key];
+              break;
+            case "规格":
+              data.Spec = item[key];
+              break;
+            case "备注":
+              data.Remarks = item[key];
+              break;
+            default:
+              break;
+          }
+          // if (index > 4) {
+          //   data.RequirementList.push({
+          //     RequirementDate: y + "/" + item[key].key,
+          //     RequirementQty: item[key].value || "",
+          //   });
+          // }
+        }
+        // item.forEach((items, index) => {
+        //   console.log(items);
+        //   switch (items.key) {
+        //     case "品号":
+        //       data.MitemCode = items.value;
+        //       break;
+        //     case "品名":
+        //       data.MitemName = items.value;
+        //       break;
+        //     case "规格":
+        //       data.Spec = items.value;
+        //       break;
+        //     case "备注":
+        //       data.Remarks = items.value;
+        //       break;
+        //     default:
+        //       break;
+        //   }
+        //   if (index > 4) {
+        //     data.RequirementList.push({
+        //       RequirementDate: y + "/" + items.key,
+        //       RequirementQty: items.value || "",
+        //     });
+        //   }
+        // });
+        // parmas.push(data);
       });
-      // let data = {
-      //   PlantId:this.plantId,
-      //   Week:this.week,
-      //   MitemCode: "5-5201-404210002",
-      //   MitemName: "螺丝",
-      //   Spec: "",
-      //   Remarks: "",
-      //   RequirementList: [
-      //     {
-      //       RequirementDate: "2021/09/10",
-      //       RequirementQty: "100",
-      //     },
-      //     {
-      //       RequirementDate: "2021/09/11",
-      //       RequirementQty: "200",
-      //     },
-      //   ],
-      // };
+      console.log(parmas);
+      // this.submitExecl(parmas)
+    },
+    submitExecl(parmas) {
+      mitemrequirementAction(parmas, "import").then((res) => {
+        if (res.data.success) {
+          this.$message.success("导入成功!");
+        }
+      });
     },
     //关闭对话框
     handleCancel() {
@@ -150,53 +235,35 @@ export default {
     },
     //导入execl
     beforeUpload(file) {
-      let _this = this;
-      return new Promise(function(resolve) {
-        // readExcel方法也使用了Promise异步转同步，此处使用then对返回值进行处理
-        _this.readExcel(file).then((result) => {
-          // 此时标识校验成功，为resolve返回
-          if (result) resolve(result);
+      const fileExt = file.name
+        .split(".")
+        .pop()
+        .toLocaleLowerCase();
+      this.uploadFile = file;
+      if (fileExt === "xlsx" || fileExt === "xls") {
+        this.readFile(file);
+        this.file = file;
+      } else {
+        this.$Notice.warning({
+          title: "文件类型错误",
+          desc: "文件：" + file.name + "不是EXCEL文件，请选择后缀为.xlsx或者.xls的EXCEL文件。",
         });
-      });
+      }
+      return false;
     },
-    //解析execl数据
-    readExcel(file) {
-      let _this = this;
-      _this.columns = [];
-      _this.tableData = [];
-      return new Promise(function(resolve, reject) {
-        // 返回Promise对象
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          // 异步执行
-          try {
-            // 以二进制流方式读取得到整份excel表格对象
-            let data = e.target.result,
-              workbook = XLSX.read(data, { type: "binary" });
-            const exlname = workbook.SheetNames[0]; // 取第一张表
-            const exl = XLSX.utils.sheet_to_json(workbook.Sheets[exlname]); // 生成json表格内容
-            console.log("exl======",exl);
-            let tableheader = exl;
-            for (let val in tableheader) {
-              _this.columns.push({
-                  title: tableheader[val],
-                  dataIndex: val,
-                  key: val,
-                  ellipsis: true,
-                  scopedSlots: { customRender: val },
-              });
-            }
-            exl.forEach((v, i) => {
-              v = { ...v, key: i };
-            });
-            _this.tableData = exl;
-            resolve();
-          } catch (e) {
-            reject(e.message);
-          }
-        };
-        reader.readAsBinaryString(file);
-      });
+    // 读取文件
+    readFile(file) {
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onload = (e) => {
+        const data = e.target.result;
+        const { header, results } = excel.read(data, "array");
+        const tableTitle = header.map((item) => {
+          return { title: item, key: item };
+        });
+        this.tableData = results; //这里的tableData就是拿到的excel表格中的数据
+        this.tableTitle = tableTitle;
+      };
     },
   },
   components: {},

@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-09 16:57:47
+ * @LastEditTime: 2021-09-10 15:29:23
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/pmc/material/ leadIn.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/material/leadIn.vue
 -->
 <template>
   <div>
@@ -90,12 +90,12 @@
       <template slot="action" slot-scope="text, record">
         <div>
           <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
-            <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+            <a style="margin-right: 8px">
               <a-icon type="delete" />
               删除
             </a>
           </a-popconfirm>
-          <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
+          <a style="margin-right: 8px" @click="edit(record)">
             <a-icon type="edit" />
             编辑
           </a>
@@ -106,12 +106,11 @@
         </div>
       </template>
     </a-table>
-    <import-execl v-if="isExecl" :plantArray="plantList"></import-execl>
+    <import-execl v-if="isExecl" :plantArray="plantList" @closeModal="closeModal"></import-execl>
   </div>
 </template>
 
 <script>
-import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 import ImportExecl from "./ImportExecl.vue";
 import getTableScroll from "@/utils/setTableHeight";
 const columns = [
@@ -171,6 +170,7 @@ const columns = [
   },
 ];
 import { renderStripe } from "@/utils/stripe.js";
+import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 export default {
   components: { ImportExecl },
   data() {
@@ -211,6 +211,9 @@ export default {
     this.getListAll();
   },
   methods: {
+    closeModal(){
+      this.isExecl = false
+    },
     getListAll() {
       let parmas = {
         pageindex: this.pagination.current,
@@ -362,8 +365,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
+      console.log(item);
       let parmas = [];
-      parmas.push(item.LineId);
+      parmas.push(item.Id);
       mitemrequirementAction(parmas, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");

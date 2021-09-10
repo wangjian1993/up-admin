@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-09 14:14:00
+ * @LastEditTime: 2021-09-10 10:47:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -83,17 +83,39 @@
     </div>
     <div>
       <a-space class="operator">
-        <a-button type="primary" icon="check-circle">审批</a-button>
-        <a-button icon="copy">复制发布</a-button>
-        <a-dropdown>
+        <a-button icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="checkAll" style="margin-left: 8px">审批</a-button>
+        <a-button icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+        <span style="margin-left: 8px">
+          <template v-if="hasSelected">
+            {{ `共选中 ${selectedRowKeys.length} 条` }}
+          </template>
+        </span>
+        <!-- <a-button type="primary" icon="check-circle" @click="checkAll">审批</a-button> -->
+        <!-- <a-button icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button> -->
+        <!-- <a-dropdown>
           <a-menu slot="overlay">
             <a-menu-item key="delete">删除</a-menu-item>
-            <!-- <a-menu-item key="audit">审批</a-menu-item> -->
+            <a-menu-item key="audit">审批</a-menu-item>
           </a-menu>
           <a-button> 更多操作 <a-icon type="down" /> </a-button>
-        </a-dropdown>
+        </a-dropdown>-->
       </a-space>
-      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY }" :loading="loading" :pagination="pagination" @change="handleTableChange" bordered>
+      <a-table
+        :columns="columns"
+        :data-source="dataSource"
+        size="small"
+        :scroll="{ y: scrollY }"
+        :loading="loading"
+        :pagination="pagination"
+        @change="handleTableChange"
+        :rowKey="(dataSource) => dataSource.Id"
+        :row-selection="{
+          selectedRowKeys: selectedRowKeys,
+          onChange: onSelectChange,
+          getCheckboxProps: getCheckboxProps,
+        }"
+        bordered
+      >
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -117,7 +139,7 @@
               <a-icon type="profile" />
               详情
             </a>
-            <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
+            <a-popconfirm title="确定删除?" v-if="record.StatusCheck == 'N'" @confirm="() => onDelete(record)">
               <a style="margin-right: 8px">
                 <a-icon type="delete" />
                 删除
@@ -299,6 +321,7 @@ export default {
       scrollY: "",
       isDetails: false,
       detailsId: "",
+      selectedRowKeys: [],
     };
   },
   updated() {
@@ -332,16 +355,16 @@ export default {
           this.searchForm.setFieldsValue({
             enterpriseid: this.enterList[0].EnterId,
           });
-        }
-      });
-      getDemandEnter(parmas1).then((res) => {
-        if (res.data.success) {
-          this.plantList = res.data.data;
-          this.plantid = this.plantList[0].EnterId;
-          this.searchForm.setFieldsValue({
-            plantid: this.plantList[0].EnterId,
+          getDemandEnter(parmas1).then((res) => {
+            if (res.data.success) {
+              this.plantList = res.data.data;
+              this.plantid = this.plantList[0].EnterId;
+              this.searchForm.setFieldsValue({
+                plantid: this.plantList[0].EnterId,
+              });
+              this.getCostList();
+            }
           });
-          this.getCostList();
         }
       });
     },
@@ -376,7 +399,7 @@ export default {
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
             plantid: values.plantid,
-            statuscheck: values.statuscheck,
+            statuscheck: values.statuscheck || "",
             itemsort: values.itemsort || "",
             itemcode: values.itemcode || "",
             itemname: values.itemname || "",
@@ -429,6 +452,15 @@ export default {
       this.pagination.pageSize = pagination.pageSize;
       this.getCostList();
     },
+    //多选
+    onSelectChange(selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys;
+    },
+    getCheckboxProps: (record) => ({
+      props: {
+        disabled: record.StatusCheck === "Y", // Column configuration not to be checked
+      },
+    }),
     //查看详情
     details(id) {
       this.isDetails = true;
@@ -439,6 +471,56 @@ export default {
     },
     reloadCost(id, sign) {
       this.$router.push({ path: "/purchase/add", query: { id: id, sign: sign } });
+    },
+    checkAll() {
+      let self = this;
+      console.log(self.selectedRowKeys);
+      self.$confirm({
+        title: "确定要审批选中内容",
+        onOk() {
+          const params = {
+            Ids: [],
+          };
+          self.selectedRowKeys.forEach((item) => {
+            params.Ids.push({
+              Id: item,
+            });
+          });
+          addCost(params, "checkquotemultiple").then((res) => {
+            if (res.data.success) {
+              self.selectedRowKeys = [];
+              self.$message.success("审批成功!");
+              this.getCostList();
+            }
+          });
+        },
+        onCancel() {},
+      });
+    },
+    //多选删除
+    allDel() {
+      let self = this;
+      self.$confirm({
+        title: "确定要删除选中内容",
+        onOk() {
+          const params = {
+            Ids: [],
+          };
+          self.selectedRowKeys.forEach((item) => {
+            params.Ids.push({
+              Id: item,
+            });
+          });
+          addCost(params, "deletequotemultiple").then((res) => {
+            if (res.data.success) {
+              self.selectedRowKeys = [];
+              self.$message.success("删除成功!");
+              this.getCostList();
+            }
+          });
+        },
+        onCancel() {},
+      });
     },
     handleExcel(id) {
       let parmas = {

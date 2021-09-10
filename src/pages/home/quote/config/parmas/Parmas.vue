@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-09 15:44:50
+ * @LastEditTime: 2021-09-10 09:27:45
  * @LastEditors: max
  * @Description: 报价参数配置
  * @FilePath: /up-admin/src/pages/home/quote/config/parmas/Parmas.vue
@@ -278,7 +278,7 @@ export default {
         Enable: "Y",
         IsReadonly: "N",
         Description: "",
-        SortNum: "1",
+        SortNum: 99,
         EnterpriseId: "",
         PlantId: "",
       },
@@ -436,7 +436,7 @@ export default {
         Enable: "Y",
         IsReadonly: "N",
         Description: "",
-        SortNum: "1",
+        SortNum: 99,
         EnterpriseId: "",
         PlantId: "",
       };
