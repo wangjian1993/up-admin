@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-09-07 16:46:18
+ * @LastEditTime: 2021-09-09 14:39:39
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -76,4 +76,17 @@ export function getQuotePermission(params,action) {
 }
 export function quotePermissionAction(params,action) {
     return request(`${UP_WEB}/quote/permission/${action}`, METHOD.POST, params);
+}
+
+/**
+ * @description: 导入物料需求计划
+ * @param {*} params
+ * @return {*}
+ */
+
+export function getMitemrequirement(params,action) {
+    return request(`${UP_WEB}/mitemrequirement/${action}`, METHOD.GET, params);
+}
+export function mitemrequirementAction(params,action) {
+    return request(`${UP_WEB}/mitemrequirement/${action}`, METHOD.POST, params);
 }

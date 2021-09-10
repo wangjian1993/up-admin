@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-07 17:26:43
+ * @LastEditTime: 2021-09-09 15:44:50
  * @LastEditors: max
  * @Description: 报价参数配置
  * @FilePath: /up-admin/src/pages/home/quote/config/parmas/Parmas.vue
@@ -336,9 +336,7 @@ export default {
           this.searchForm.setFieldsValue({
             enterpriseid: this.enterList[0].EnterId,
           });
-        }
-      });
-      getDemandEnter(parmas1).then((res) => {
+          getDemandEnter(parmas1).then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -346,6 +344,8 @@ export default {
             plantid: this.plantList[0].EnterId,
           });
           this.getCostList();
+        }
+      });
         }
       });
     },
@@ -393,7 +393,7 @@ export default {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
-              pagination.total = res.data.data.list.recordsTotal;
+              pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
             }
@@ -414,7 +414,7 @@ export default {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
-          pagination.total = res.data.data.list.recordsTotal;
+          pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
         } else {

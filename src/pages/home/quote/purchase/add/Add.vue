@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-07 16:33:52
+ * @LastEditTime: 2021-09-09 13:46:18
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -103,7 +103,7 @@
               <div class="input-item">
                 <p class="input-lable" :class="item.IsReadonly == 'N' ? 'input-lable-color2' : 'input-lable-color1'">{{ item.CostName }}:</p>
                 <p class="input-number">
-                  <a-input-number :disabled="item.IsReadonly == 'Y'" v-model="item.value" :min="0" @change="costNumber(item)" />
+                  <a-input-number :disabled="item.IsReadonly == 'Y'" v-model="item.Amount" :min="0" @change="costNumber(item)" />
                 </p>
                 <p class="input-text">{{ item.Description }}</p>
               </div>
@@ -158,46 +158,6 @@
           </div>
         </standard-table>
       </a-card>
-      <!-- <a-card class="card" title="系统数据" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px' }">
-        <div class="input-box">
-          <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
-            <a-row>
-              <a-col :sm="24" :md="24" :lg="12" :xl="8">
-                <a-form-item label="发布人">
-                  <a-input v-decorator="['note']" />
-                </a-form-item>
-              </a-col>
-              <a-col :sm="24" :md="24" :lg="12" :xl="8">
-                <a-form-item label="填写日期">
-                  <a-input v-decorator="['note']" />
-                </a-form-item>
-              </a-col>
-              <a-col :sm="24" :md="24" :lg="12" :xl="8">
-                <a-form-item label="发布人公司">
-                  <a-input v-decorator="['note']" />
-                </a-form-item>
-              </a-col>
-            </a-row>
-            <a-row>
-              <a-col :sm="24" :md="24" :lg="12" :xl="8">
-                <a-form-item label="来源">
-                  <a-input v-decorator="['note']" />
-                </a-form-item>
-              </a-col>
-              <a-col :sm="24" :md="24" :lg="12" :xl="8">
-                <a-form-item label="来源单号">
-                  <a-input v-decorator="['note']" />
-                </a-form-item>
-              </a-col>
-              <a-col :sm="24" :md="24" :lg="12" :xl="8">
-                <a-form-item label="来源申请人/公司">
-                  <a-input v-decorator="['note']" />
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </a-form>
-        </div>
-      </a-card> -->
     </a-spin>
   </div>
 </template>
@@ -314,13 +274,45 @@ export default {
       top: 10,
       searchData: [],
       quoteRemark: "",
+      isEdit: false,
     };
   },
   created() {
     this.getDemandEnter();
+    if (this.$route.query.id) {
+      this.editCost();
+      this.isEdit = true;
+    } else {
+      this.isEdit = false;
+    }
   },
   methods: {
-    //导出
+    //复制发布
+    editCost() {
+      this.costLoading = true;
+      let parmas = {
+        id: this.$route.query.id,
+        sign: this.$route.query.sign,
+      };
+      getCostConfig(parmas, "getbomdetail2").then((res) => {
+        if (res.data.success) {
+          this.tableData = res.data.data.ItemInfo.ItemChildList;
+          this.costInfo = res.data.data.ItemInfo;
+          this.costList = res.data.data.CostBaseList;
+          this.cost.materialTotal = this.costInfo.MaterialCost;
+          this.cost.ultimatelyTotal = this.costInfo.FinalCost;
+          let parmas = {
+            itemcode: this.costInfo.ItemCode,
+            enterpriseid: this.costInfo.EnterpriseId,
+            plantid: this.costInfo.PlantId,
+          };
+          this.searchForm.setFieldsValue(parmas);
+          this.searchData = parmas;
+          this.countCost();
+        }
+        this.costLoading = false;
+      });
+    },
     handleExcel() {
       const dataSource = this.tableData.map((item) => {
         Object.keys(item).forEach((key) => {
@@ -335,17 +327,10 @@ export default {
         });
         return item;
       });
-      // let product = {
-      //   产品品号: this.costInfo.ItemCode,
-      //   需求公司: this.searchData.enterpriseid,
-      //   需求工厂: this.searchData.plantid,
-      //   产品大类: this.costInfo.ItemSort,
-      //   产品品名: this.costInfo.ItemName,
-      //   产品规格: this.costInfo.ItemSpecification,
-      // };
       const columns = this.columns.map((item) => ({ key: item.dataIndex, title: item.title }));
       // dataSource.unshift(product);
       console.log(dataSource);
+       console.log(columns);
       ExportExcel(columns, dataSource, `${this.costInfo.ItemName}_采购报价导出.xlsx`);
     },
     //获取需求公司
@@ -380,15 +365,11 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.searchData = values;
-          getCostConfig(values, "getnewestcostbaseinfo").then((res) => {
-            if (res.data.success) {
-              this.costList = res.data.data;
-            }
-          });
           getCostConfig(values, "getbomdetail").then((res) => {
             if (res.data.success) {
-              this.tableData = res.data.data.ItemChildList;
-              this.costInfo = res.data.data;
+              this.tableData = res.data.data.ItemInfo.ItemChildList;
+              this.costInfo = res.data.data.ItemInfo;
+              this.costList = res.data.data.CostBaseList;
               this.countCost();
             }
             this.costLoading = false;
@@ -401,8 +382,8 @@ export default {
     costNumber() {
       let total = 0;
       this.costList.map((item) => {
-        if (item.value) {
-          total += item.value;
+        if (item.Amount) {
+          total += item.Amount;
         }
       });
       console.log(total);
@@ -426,10 +407,12 @@ export default {
       });
       //物聊费用
       this.cost.materialTotal = parseFloat(sum.toFixed(4));
+      //只有添加才计算
+
       this.costList.forEach((item) => {
         //计算电源贴片费用
-        if (item.CostName === "电源贴片费") {
-          item.value = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * this.cost.materialTotal;
+        if (this.costInfo.ItemOtherInfo && item.CostName === "电源贴片费") {
+          item.Amount = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * this.cost.materialTotal;
         }
         //计算损耗费用
         if (item.CostName === "损耗") {
@@ -437,11 +420,11 @@ export default {
           var str = percent[1].replace("%", "");
           str = str / 100;
           let num = str * this.cost.materialTotal;
-          item.value = parseFloat(num.toFixed(4));
+          item.Amount = parseFloat(num.toFixed(4));
         }
         //计算总费用
-        if (item.value) {
-          total += item.value;
+        if (item.Amount) {
+          total += item.Amount;
         }
       });
       this.costTotal = total;
@@ -470,7 +453,17 @@ export default {
     },
     //保存报价单
     costSave() {
+      this.searchData =this.searchForm.getFieldsValue()
       if (this.costList.length == 0) {
+        this.$message.warning("请先查询物联信息!");
+        return;
+      }
+      if (this.searchData.enterpriseid == undefined) {
+        this.$message.warning("请先选择需求公司!");
+        return;
+      }
+      if (this.searchData.plantid == undefined) {
+        this.$message.warning("请先选择生产工厂!");
         return;
       }
       this.costLoading = true;
@@ -489,7 +482,7 @@ export default {
         Remark: this.quoteRemark,
       };
       console.log(parmas);
-      addCost(parmas,'addnewquote').then((res) => {
+      addCost(parmas, "addnewquote").then((res) => {
         if (res.data.success) {
           this.$message.success("保存成功!");
         }

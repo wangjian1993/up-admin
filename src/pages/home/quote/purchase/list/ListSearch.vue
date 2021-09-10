@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-07 16:39:29
+ * @LastEditTime: 2021-09-09 14:14:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -113,9 +113,9 @@
                 审核
               </a>
             </a-popconfirm>
-            <a style="margin-right: 8px">
-              <a-icon type="copy" />
-              复制
+            <a style="margin-right: 8px" @click="details(record.Id)">
+              <a-icon type="profile" />
+              详情
             </a>
             <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
               <a style="margin-right: 8px">
@@ -123,10 +123,23 @@
                 删除
               </a>
             </a-popconfirm>
+            <a-dropdown :trigger="['click']">
+              <a class="ant-dropdown-link">
+                更多
+                <a-icon type="down" />
+              </a>
+              <a-menu slot="overlay">
+                <a-menu-item key="0" @click="handleExcel(record.Id)">导出</a-menu-item>
+                <a-menu-item key="1" @click="reloadCost(record.Id, 'COPY')">复制报价</a-menu-item>
+                <a-menu-item key="2" @click="reloadCost(record.Id, 'ANEW')">重新报价</a-menu-item>
+              </a-menu>
+            </a-dropdown>
           </div>
         </template>
       </a-table>
     </div>
+    <!-- 详情 -->
+    <a-details v-if="isDetails" :detailsId="detailsId" @closeModal="closeModal"></a-details>
   </div>
 </template>
 
@@ -180,15 +193,91 @@ const columns = [
     scopedSlots: { customRender: "action" },
   },
 ];
+const excelHead = [
+  {
+    title: "序号",
+    dataIndex: "IndexNo",
+    align: "center",
+    width: "4%",
+  },
+  {
+    title: "阶次",
+    dataIndex: "LvNo",
+    width: "5%",
+  },
+  {
+    title: "类型",
+    dataIndex: "Property",
+    scopedSlots: { customRender: "Property" },
+    width: "5%",
+  },
+  {
+    title: "上阶料号",
+    dataIndex: "LastCode",
+    width: "10%",
+  },
+  {
+    title: "料号",
+    dataIndex: "ChildCode",
+  },
+  {
+    title: "料名",
+    dataIndex: "ChildName",
+  },
+  {
+    title: "料规格",
+    dataIndex: "ChildSpecification",
+  },
+  {
+    title: "单位",
+    dataIndex: "UnitName",
+    width: "5%",
+  },
+  {
+    title: "E10单价",
+    dataIndex: "PriceErp",
+    scopedSlots: { customRender: "e10" },
+    width: "5%",
+  },
+  {
+    title: "单价",
+    dataIndex: "Price",
+    scopedSlots: { customRender: "Price" },
+  },
+  {
+    title: "用量",
+    dataIndex: "Yl",
+    width: "5%",
+  },
+  {
+    title: "金额",
+    dataIndex: "Amount",
+  },
+  {
+    title: "提示",
+    dataIndex: "Tips",
+    scopedSlots: { customRender: "Tips" },
+    width: "5%",
+  },
+  {
+    title: "备注",
+    dataIndex: "Remark",
+    scopedSlots: { customRender: "action" },
+  },
+];
 import { getDemandEnter, getCostConfig, addCost } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
+import ADetails from "./Details.vue";
+import ExportExcel from "@/utils/importExcel";
 export default {
+  components: { ADetails },
   data() {
     return {
       loading: true,
       advanced: true,
       columns: columns,
+      excelHead,
       dataSource: [],
       selectedRows: [],
       plantList: [],
@@ -208,6 +297,8 @@ export default {
       plantid: "",
       enterpriseid: "",
       scrollY: "",
+      isDetails: false,
+      detailsId: "",
     };
   },
   updated() {
@@ -337,6 +428,47 @@ export default {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
       this.getCostList();
+    },
+    //查看详情
+    details(id) {
+      this.isDetails = true;
+      this.detailsId = id;
+    },
+    closeModal() {
+      this.isDetails = false;
+    },
+    reloadCost(id, sign) {
+      this.$router.push({ path: "/purchase/add", query: { id: id, sign: sign } });
+    },
+    handleExcel(id) {
+      let parmas = {
+        Id: id,
+      };
+      getCostConfig(parmas, "getquotedetail").then((res) => {
+        if (res.data.success) {
+          let list = res.data.data.ItemInfo.ItemChildList;
+          // this.info = res.data.data.ItemInfo;
+          // this.ConfigList = res.data.data.ConfigList;
+          const dataSource = list.map((item) => {
+            Object.keys(item).forEach((key) => {
+              // 后端传null node写入会有问题
+              if (item[key] === null) {
+                item[key] = "";
+              }
+
+              if (Array.isArray(item[key])) {
+                item[key] = item[key].join(",");
+              }
+            });
+            return item;
+          });
+          const columns = this.excelHead.map((item) => ({ key: item.dataIndex, title: item.title }));
+          // dataSource.unshift(product);
+          console.log(dataSource);
+          console.log(columns);
+          ExportExcel(columns, dataSource, `${res.data.data.ItemInfo.ItemName}_采购报价导出.xlsx`);
+        }
+      });
     },
   },
 };

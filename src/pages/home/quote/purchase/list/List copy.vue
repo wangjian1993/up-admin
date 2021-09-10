@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:59:02
- * @LastEditTime: 2021-08-27 16:01:30
+ * @LastEditTime: 2021-09-09 14:20:06
  * @LastEditors: max
  * @Description: excel导入导出
- * @FilePath: /up-admin/src/pages/quote/purchase/list/List copy.vue
+ * @FilePath: /up-admin/src/pages/home/quote/purchase/list/List copy.vue
 -->
 <template>
   <div>

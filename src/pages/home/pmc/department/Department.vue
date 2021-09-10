@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 14:39:13
- * @LastEditTime: 2021-09-04 15:09:54
+ * @LastEditTime: 2021-09-09 16:51:07
  * @LastEditors: max
  * @Description: 生成部门配置
  * @FilePath: /up-admin/src/pages/home/pmc/department/Department.vue
@@ -149,12 +149,6 @@
           <div>
             <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
             <a-tag color="red" v-else>禁用</a-tag>
-          </div>
-        </template>
-        <template slot="defualt" slot-scope="record">
-          <div>
-            <a-tag color="green" v-if="record == 'Y'">是</a-tag>
-            <a-tag color="red" v-else>否</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">

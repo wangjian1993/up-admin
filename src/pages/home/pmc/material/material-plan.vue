@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-06-17 17:28:49
- * @LastEditTime: 2021-08-30 13:48:51
+ * @LastEditTime: 2021-09-09 17:56:12
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/pmc/leadIn/material-plan.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/material/material-plan.vue
 -->
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-    <a-tabs type="card" @change="callback">
+    <a-tabs type="card">
       <a-tab-pane key="1" tab="导入物料需求">
         <lead-in></lead-in>
       </a-tab-pane>
@@ -19,7 +19,7 @@
   </a-card>
 </template>
 <script>
-import LeadIn from "./ leadIn.vue";
+import LeadIn from "./leadIn.vue";
 import Detail from "./detail.vue";
 export default {
   components: { LeadIn, Detail },

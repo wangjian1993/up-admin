@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-08 16:18:13
+ * @LastEditTime: 2021-09-09 09:49:44
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/config/authority/AuthoType.vue
@@ -48,8 +48,6 @@
             :pagination="pagination"
             @change="handleTableChange"
             :rowKey="(list) => list.Id"
-            :customRow="rowClick"
-            :rowClassName="rowClassName"
             :row-selection="{
               selectedRowKeys: selectedRowKeys,
               onChange: onSelectChange,
@@ -65,12 +63,6 @@
               <div>
                 <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
                 <a-tag color="red" v-else>禁用</a-tag>
-              </div>
-            </template>
-            <template slot="IsPartAuth" slot-scope="record">
-              <div>
-                <a-tag color="green" v-if="record == 'Y'">是</a-tag>
-                <a-tag color="red" v-else>否</a-tag>
               </div>
             </template>
           </a-table>
