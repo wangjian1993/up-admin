@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-06-17 17:28:49
- * @LastEditTime: 2021-08-30 14:24:11
+ * @LastEditTime: 2021-09-13 18:54:10
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/pmc/manufacture/manufacture-plan.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/manufacture/manufacture-plan.vue
 -->
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
@@ -32,7 +32,7 @@ export default {
   methods: {},
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .ant-form-item {
   margin-bottom: 5px;
 }

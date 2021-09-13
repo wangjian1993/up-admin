@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-13 18:41:10
+ * @LastEditTime: 2021-09-13 18:31:53
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
+ * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
 -->
 <template>
   <div>
@@ -45,9 +45,10 @@
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-select placeholder="请选择" v-decorator="['statuscheck']">
-                    <a-select-option value="Y">已审核</a-select-option>
-                    <a-select-option value="N">未审核</a-select-option>
+                  <a-select default-value="1" disabled>
+                    <a-select-option value="1">
+                      已审核
+                    </a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -82,7 +83,7 @@
       </div>
     </div>
     <div>
-      <a-space class="operator">
+      <!-- <a-space class="operator">
         <a-button icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="checkAll" style="margin-left: 8px">审批</a-button>
         <a-button icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <span style="margin-left: 8px">
@@ -90,7 +91,7 @@
             {{ `共选中 ${selectedRowKeys.length} 条` }}
           </template>
         </span>
-      </a-space>
+      </a-space> -->
       <a-table
         :columns="columns"
         :data-source="dataSource"
@@ -120,34 +121,18 @@
         </template>
         <template slot="action" slot-scope="text, record">
           <div>
-            <a-popconfirm v-if="record.StatusCheck == 'N'" title="确定审核?" @confirm="() => onAudit(record)">
-              <a style="margin-right: 8px">
-                <a-icon type="check-circle" />
-                审核
-              </a>
-            </a-popconfirm>
             <a style="margin-right: 8px" @click="details(record.Id)">
               <a-icon type="profile" />
               详情
             </a>
-            <a-popconfirm title="确定删除?" v-if="record.StatusCheck == 'N'" @confirm="() => onDelete(record)">
-              <a style="margin-right: 8px">
-                <a-icon type="delete" />
-                删除
-              </a>
-            </a-popconfirm>
-            <a-dropdown :trigger="['click']">
-              <a class="ant-dropdown-link">
-                更多
-                <a-icon type="down" />
-              </a>
-              <a-menu slot="overlay">
-                <a-menu-item key="0" @click="handleExcel(record.Id)">导出</a-menu-item>
-                <a-menu-item key="1" @click="reloadCost(record.Id, 'COPY')">复制报价</a-menu-item>
-                <a-menu-item key="2" @click="reloadCost(record.Id, 'ANEW')">重新报价</a-menu-item>
-                <a-menu-item key="3" @click="history(record)">历史版本</a-menu-item>
-              </a-menu>
-            </a-dropdown>
+            <a style="margin-right: 8px" @click="handleExcel(record.Id)">
+              <a-icon type="export" />
+              导出
+            </a>
+            <a style="margin-right: 8px" @click="history(record)">
+              <a-icon type="history" />
+              历史版本
+            </a>
           </div>
         </template>
       </a-table>
@@ -155,7 +140,7 @@
     <!-- 详情 -->
     <a-details v-if="isDetails" :detailsId="detailsId" @closeModal="closeModal"></a-details>
     <!-- 历史版本 -->
-    <history-list v-if="isHistory" :historyData="historyData" @closeModal="closeHistory" @details="details" @handleExcel="handleExcel" :historyType="historyType" @reloadCost="reloadCost"></history-list>
+    <history-list v-if="isHistory" :historyData="historyData" @closeModal="closeHistory" @details="details" @handleExcel="handleExcel"></history-list>
   </div>
 </template>
 
@@ -165,44 +150,57 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
+    width: "5%",
   },
   {
     title: "需求公司",
     dataIndex: "EnterpriseName",
     scopedSlots: { customRender: "description" },
+    align: "center",
   },
   {
     title: "生产工厂",
     dataIndex: "PlantName",
+    align: "center",
   },
   {
     title: "产品大类",
     dataIndex: "ItemSort",
+    align: "center",
   },
   {
     title: "品号",
     dataIndex: "ItemCode",
+    align: "center",
   },
   {
     title: "品名",
     dataIndex: "ItemName",
+    align: "center",
   },
   {
     title: "规格",
     dataIndex: "ItemSpecification",
+    align: "center",
   },
   {
     title: "物料成本",
     dataIndex: "MaterialCost",
+    align: "center",
+    width: "5%",
   },
   {
     title: "最终成本",
     dataIndex: "FinalCost",
+    align: "center",
+    width: "5%",
   },
   {
     title: "状态",
     dataIndex: "StatusCheck",
     scopedSlots: { customRender: "StatusCheck" },
+    align: "center",
+    width: "5%",
   },
   {
     title: "创建日期",
@@ -329,9 +327,9 @@ export default {
       isDetails: false,
       detailsId: "",
       selectedRowKeys: [],
+      status: "Y",
       isHistory:false,
-      historyData:[],
-      historyType:"purchase"
+      historyData:[]
     };
   },
   updated() {
@@ -340,6 +338,7 @@ export default {
   created() {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
+      console.log(this.scrollY);
     });
     this.getDemandEnter();
   },
@@ -349,7 +348,6 @@ export default {
     },
   },
   methods: {
-    //历史版本
     history(item){
       this.isHistory = true;
       this.historyData =item
@@ -382,6 +380,7 @@ export default {
         }
       });
     },
+    //获取列表信息
     getCostList() {
       let parmas = {
         pageindex: this.pagination.current,
@@ -393,7 +392,7 @@ export default {
         itemcode: "",
         itemname: "",
       };
-      getCostConfig(parmas, "getquotelist").then((res) => {
+      getCostConfig(parmas, "getquotelistcommon").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           console.log(this.dataSource);
@@ -404,6 +403,7 @@ export default {
         this.loading = false;
       });
     },
+    //搜素
     search() {
       this.loading = true;
       this.searchForm.validateFields((err, values) => {
@@ -432,6 +432,7 @@ export default {
         }
       });
     },
+    //展开收起
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
@@ -461,6 +462,7 @@ export default {
         }
       });
     },
+    //分页按钮
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
@@ -470,6 +472,7 @@ export default {
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
+    //多选判断
     getCheckboxProps: (record) => ({
       props: {
         disabled: record.StatusCheck === "Y", // Column configuration not to be checked
@@ -480,65 +483,9 @@ export default {
       this.isDetails = true;
       this.detailsId = id;
     },
+    //关闭弹窗
     closeModal() {
       this.isDetails = false;
-    },
-    closeHistory(){
-      this.isHistory = false;
-    },
-    reloadCost(id, sign) {
-      this.isHistory = false;
-      this.$router.push({ path: "/purchase/add", query: { id: id, sign: sign } });
-    },
-    checkAll() {
-      let self = this;
-      console.log(self.selectedRowKeys);
-      self.$confirm({
-        title: "确定要审批选中内容",
-        onOk() {
-          const params = {
-            Ids: [],
-          };
-          self.selectedRowKeys.forEach((item) => {
-            params.Ids.push({
-              Id: item,
-            });
-          });
-          addCost(params, "checkquotemultiple").then((res) => {
-            if (res.data.success) {
-              self.selectedRowKeys = [];
-              self.$message.success("审批成功!");
-              this.getCostList();
-            }
-          });
-        },
-        onCancel() {},
-      });
-    },
-    //多选删除
-    allDel() {
-      let self = this;
-      self.$confirm({
-        title: "确定要删除选中内容",
-        onOk() {
-          const params = {
-            Ids: [],
-          };
-          self.selectedRowKeys.forEach((item) => {
-            params.Ids.push({
-              Id: item,
-            });
-          });
-          addCost(params, "deletequotemultiple").then((res) => {
-            if (res.data.success) {
-              self.selectedRowKeys = [];
-              self.$message.success("删除成功!");
-              this.getCostList();
-            }
-          });
-        },
-        onCancel() {},
-      });
     },
     //导出数据
     handleExcel(id) {
@@ -548,17 +495,17 @@ export default {
       getCostConfig(parmas, "getquotedetail").then((res) => {
         if (res.data.success) {
           let list = res.data.data.ItemInfo.ItemChildList;
-          let info =res.data.data.ItemInfo;
+          let info = res.data.data.ItemInfo;
           let ConfigList = res.data.data.ConfigList;
           var _data = [];
-          _data.push(['需求公司',info.EnterpriseName,'','需求工厂',info.PlantName]);
-          _data.push(['品号',info.ItemCode,'','品名',info.ItemName,'','大类',info.ItemSort]);
-          _data.push(['规格',info.ItemSpecification]);
+          _data.push(["需求公司", info.EnterpriseName, "", "需求工厂", info.PlantName]);
+          _data.push(["品号", info.ItemCode, "", "品名", info.ItemName, "", "大类", info.ItemSort]);
+          _data.push(["规格", info.ItemSpecification]);
           ConfigList.map((item) => {
             let array = [item.CostName, item.Amount, item.Description];
             _data.push(array);
           });
-          _data.push(['物料成本',info.MaterialCost,'最终成本',info.FinalCost]);
+          _data.push(["物料成本", info.MaterialCost, "最终成本", info.FinalCost]);
           const columns = [];
           this.excelHead.map((item) => {
             columns.push(item.title);
@@ -575,9 +522,10 @@ export default {
           const ws = XLSX.utils.aoa_to_sheet(_data);
           /* generate workbook and add the worksheet */
           const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws,info.ItemName);
+          XLSX.utils.book_append_sheet(wb, ws, info.ItemName);
           /* save to file */
           XLSX.writeFile(wb, `${info.ItemName}_采购报价导出.xlsx`);
+          this.$message.success("导出成功!");
         }
       });
     },

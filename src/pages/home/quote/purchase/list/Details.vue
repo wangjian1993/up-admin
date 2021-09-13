@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-10 11:48:43
+ * @LastEditTime: 2021-09-13 11:42:05
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -49,20 +49,17 @@
           </a-descriptions>
         </div>
         <div>
-          <a-card title="物料列表"  class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(list) => list.Id" bordered>
-              <template slot="index" slot-scope="text, record, index">
-                <div>
-                  <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-                </div>
-              </template>
-              <template slot="enable" slot-scope="record">
-                <div>
-                  <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
-                  <a-tag color="red" v-else>禁用</a-tag>
-                </div>
-              </template>
-            </a-table>
+          <a-card title="物料列表" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+            <a-tabs default-active-key="1">
+              <a-tab-pane key="1" tab="展开显示">
+                <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(list) => list.IndexNo +'tab1'" bordered>
+                </a-table>
+              </a-tab-pane>
+              <a-tab-pane key="2" tab="收缩显示">
+                <a-table :columns="columns" :data-source="treeData" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(treeData) => treeData.IndexNo +'tab2'" bordered>
+                </a-table>
+              </a-tab-pane>
+            </a-tabs>
           </a-card>
         </div>
       </a-spin>
@@ -73,74 +70,89 @@
 <script>
 const columns = [
   {
+    title: "阶次",
+    dataIndex: "LvNo",
+    width: "10%",
+    align: "center",
+  },
+  {
     title: "序号",
     dataIndex: "IndexNo",
     align: "center",
     width: "4%",
   },
   {
-    title: "阶次",
-    dataIndex: "LvNo",
-    width: "5%",
-  },
-  {
     title: "类型",
     dataIndex: "Property",
     scopedSlots: { customRender: "Property" },
     width: "5%",
+    align: "center",
   },
   {
     title: "上阶料号",
     dataIndex: "LastCode",
     width: "10%",
+    align: "center",
   },
   {
     title: "料号",
     dataIndex: "ChildCode",
+    align: "center",
   },
   {
     title: "料名",
     dataIndex: "ChildName",
+    align: "center",
   },
   {
     title: "料规格",
     dataIndex: "ChildSpecification",
+    align: "center",
   },
   {
     title: "单位",
     dataIndex: "UnitName",
-    width: "5%",
+    align: "center",
+    width: "4%",
   },
   {
     title: "E10单价",
     dataIndex: "PriceErp",
     scopedSlots: { customRender: "e10" },
+    align: "center",
     width: "5%",
   },
   {
     title: "单价",
     dataIndex: "Price",
     scopedSlots: { customRender: "Price" },
+    align: "center",
+    width: "5%",
   },
   {
     title: "用量",
     dataIndex: "Yl",
+    align: "center",
     width: "5%",
   },
   {
     title: "金额",
     dataIndex: "Amount",
+    align: "center",
+    width: "5%",
   },
   {
     title: "提示",
     dataIndex: "Tips",
     scopedSlots: { customRender: "Tips" },
+    align: "center",
     width: "5%",
   },
   {
     title: "备注",
     dataIndex: "Remark",
     scopedSlots: { customRender: "action" },
+    align: "center",
   },
 ];
 import { getCostConfig } from "@/services/web.js";
@@ -156,6 +168,7 @@ export default {
       pagination: false,
       ConfigList: [],
       loading: false,
+      treeData: [],
     };
   },
   created() {
@@ -175,9 +188,23 @@ export default {
           this.list = res.data.data.ItemInfo.ItemChildList;
           this.info = res.data.data.ItemInfo;
           this.ConfigList = res.data.data.ConfigList;
+          this.treeData = this.initTree(this.info.ItemCode);
         }
         this.loading = false;
       });
+    },
+    initTree(parent_id) {
+      // jsonArray 变量数据
+      // 第一次以后：根据id去查询parent_id相同的（相同为子数据）
+      // 第一次：查找所有parent_id为-1的数据组成第一级
+      const child = this.list.filter((item) => item.LastCode == parent_id);
+      // 第一次：循环parent_id为-1数组
+      return child.map((item) => ({
+        ...item,
+        // 当前存在id（id与parent_id应该是必须有的）调用initTree() 查找所有parent_id为本id的数据
+        // childs字段写入
+        children: this.initTree(item.ChildCode),
+      }));
     },
     //查看详情
     onClose() {
@@ -204,7 +231,7 @@ export default {
 /deep/.ant-descriptions-bordered .ant-descriptions-item-label {
   background: rgba(0, 0, 0, 0.05);
 }
-/deep/.ant-card-head{
-  padding:0;
+/deep/.ant-card-head {
+  padding: 0;
 }
 </style>

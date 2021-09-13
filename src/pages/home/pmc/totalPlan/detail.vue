@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-08-31 09:41:17
- * @LastEditTime: 2021-08-31 09:59:55
+ * @LastEditTime: 2021-09-13 18:48:02
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/pmc/totalPlan/detail.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/detail.vue
 -->
 <template>
   <div>
@@ -32,7 +32,7 @@
       </span>
     </a-form>
     <div class="operator">
-      <a-button @click="addNew" type="primary" icon="export">导出</a-button>
+      <a-button type="primary" icon="export">导出</a-button>
       <!-- <a-button>复制发布</a-button>
       <a-dropdown>
         <a-menu slot="overlay">

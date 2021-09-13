@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-08-30 14:10:26
+ * @LastEditTime: 2021-09-13 18:58:08
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/pmc/manufacture/ leadIn.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ leadIn.vue
 -->
 <template>
   <div>
@@ -75,7 +75,7 @@
       </span>
     </a-form>
     <div class="operator">
-      <a-button @click="addNew" type="primary" icon="check">审批</a-button>
+      <a-button type="primary" icon="check">审批</a-button>
       <a-button>复制发布</a-button>
       <a-dropdown>
         <a-menu slot="overlay">
@@ -193,4 +193,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped></style>

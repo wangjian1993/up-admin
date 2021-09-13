@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-10 15:29:23
+ * @LastEditTime: 2021-09-13 19:05:15
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/leadIn.vue
 -->
 <template>
   <div>
-    <a-form layout="horizontal">
+    <a-form layout="horizontal" :form="searchForm">
       <div>
         <a-row>
           <a-col :md="6" :sm="24">
@@ -24,48 +24,38 @@
                 placeholder="请输入PMC"
                 allowClear
                 style="width: 200px"
-                v-decorator="[
-                  'searcValue',
-                  {
-                    rules: [{ required: true, message: '请输入请输入PMC!' }],
-                  },
-                ]"
+                v-decorator="['pmc']"
               />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-week-picker placeholder="选择周" />
+              <a-week-picker placeholder="选择周"  @change="weekChange"/>
             </a-form-item>
           </a-col>
         </a-row>
       </div>
       <span style="float: right; margin-top: 3px;">
-        <a-button type="primary">查询</a-button>
-        <a-button style="margin-left: 8px">重置</a-button>
+        <a-button type="primary" @click="search">查询</a-button>
+        <a-button style="margin-left: 8px" @click="reset">重置</a-button>
         <a-button style="margin-left: 8px" type="primary" @click="importExcel"><a-icon type="import" />导入</a-button>
         <a-button style="margin-left: 8px" type="primary"><a-icon type="download" />下载模板</a-button>
       </span>
     </a-form>
     <div class="operator">
-      <a-button type="primary" icon="check">审批</a-button>
-      <a-button>复制发布</a-button>
-      <a-dropdown>
-        <a-menu slot="overlay">
-          <a-menu-item key="delete">删除</a-menu-item>
-          <a-menu-item key="audit">审批</a-menu-item>
-        </a-menu>
-        <a-button>
-          更多操作
-          <a-icon type="down" />
-        </a-button>
-      </a-dropdown>
+      <a-button icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
+        <a-button icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+        <span style="margin-left: 8px">
+          <template v-if="hasSelected">
+            {{ `共选中 ${selectedRowKeys.length} 条` }}
+          </template>
+        </span>
     </div>
     <a-table
       :columns="columns"
       :data-source="data"
       size="small"
-      :scroll="{ y:'100%' }"
+      :scroll="{ y:scrollY }"
       :loading="loading"
       :pagination="pagination"
       @change="handleTableChange"
@@ -73,6 +63,7 @@
       :row-selection="{
         selectedRowKeys: selectedRowKeys,
         onChange: onSelectChange,
+        getCheckboxProps: getCheckboxProps,
       }"
       bordered
     >
@@ -81,23 +72,23 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="enable" slot-scope="record">
+      <template slot="Status" slot-scope="text">
         <div>
-          <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
-          <a-tag color="red" v-else>禁用</a-tag>
+          <a-tag color="green" v-if="text == 'APPROVED'">已审批</a-tag>
+          <a-tag color="red" v-else>未审批</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
+          <a-popconfirm v-if="record.Status != 'APPROVED'" title="确定删除?" @confirm="() => actionBnt(record,'delete')">
             <a style="margin-right: 8px">
               <a-icon type="delete" />
               删除
             </a>
           </a-popconfirm>
-          <a style="margin-right: 8px" @click="edit(record)">
-            <a-icon type="edit" />
-            编辑
+          <a v-if="record.Status != 'APPROVED'" style="margin-right: 8px" @click="actionBnt(record,'approved')">
+            <a-icon type="check-circle" />
+            审批
           </a>
           <a style="margin-right: 8px" @click="detail(record)">
             <a-icon type="profile" />
@@ -193,6 +184,8 @@ export default {
       isExecl: false,
       selectedRowKeys: [],
       scrollY: "",
+      searchForm: this.$form.createForm(this),
+      week:""
     };
   },
   updated() {
@@ -211,9 +204,19 @@ export default {
     this.getListAll();
   },
   methods: {
-    closeModal(){
-      this.isExecl = false
+    detail(item){
+      // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
+      this.$emit('toDetail',item.Id)
     },
+    weekChange(date, dateString) {
+      let str = dateString.split("-");
+      this.week = str[1].replace("周", "");
+    },
+    closeModal(){
+      this.isExecl = false;
+      this.getListAll();
+    },
+    //获取列表数据
     getListAll() {
       let parmas = {
         pageindex: this.pagination.current,
@@ -231,6 +234,7 @@ export default {
         }
       });
     },
+    //获取需求工厂
     getPlant() {
       let parmas1 = {
         entertypecode: "PLANT",
@@ -267,7 +271,7 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            week: values.week,
+            week: this.week,
             pmc: values.pmc,
           };
           getMitemrequirement(parmas, "getall").then((res) => {
@@ -283,69 +287,11 @@ export default {
         }
       });
     },
-    //打开对话框
-    add() {
-      this.defaultForm();
-      this.isEdit = false;
-      this.title = "添加机构类型";
-      this.visible = true;
-    },
-    //初始化表单
-    defaultForm() {
-      this.form = {
-        PlantId: "",
-        WorkShopId: "",
-        LineCode: "",
-        LineName: "",
-        LineDesc: "",
-        Enable: "Y",
-      };
-    },
-    //关闭对话框
-    handleCancel() {
-      this.visible = false;
-    },
-    //编辑
-    edit(item) {
-      this.visible = true;
-      this.isEdit = true;
-      this.title = "编辑机构类型";
-      this.form = item;
-    },
-    //弹框确认按钮
-    handleOk() {
-      this.$refs.ruleForm.validate((valid) => {
-        if (valid) {
-          //编辑
-          if (this.isEdit) {
-            let editForm = {
-              LineId: this.form.LineId,
-              LineName: this.form.LineName,
-              LineDesc: this.form.LineDesc,
-              Enable: this.form.Enable,
-            };
-            mitemrequirementAction(editForm, "update").then((res) => {
-              if (res.data.success) {
-                this.$message.success("编辑成功!");
-                this.defaultForm();
-                this.visible = false;
-                this.getListAll();
-              }
-            });
-          } else {
-            //添加
-            mitemrequirementAction(this.form, "add").then((res) => {
-              if (res.data.success) {
-                this.$message.success("添加成功!");
-                this.getListAll();
-                this.defaultForm();
-                this.visible = false;
-              }
-            });
-          }
-        }
-      });
-    },
+    getCheckboxProps: (record) => ({
+      props: {
+        disabled: record.Status !== "APPROVAL", // Column configuration not to be checked
+      },
+    }),
     //多选删除
     allDel() {
       let self = this;
@@ -363,14 +309,35 @@ export default {
         onCancel() {},
       });
     },
+    //多选审批
+    allCheck(){
+      let self = this;
+      self.$confirm({
+        title: "确定要审批选中内容",
+        onOk() {
+          mitemrequirementAction(self.selectedRowKeys, "approved").then((res) => {
+            if (res.data.success) {
+              self.selectedRowKeys = [];
+              self.$message.success("审批成功!");
+              self.getListAll();
+            }
+          });
+        },
+        onCancel() {},
+      });
+    },
     //单个删除
-    onDelete(item) {
+    actionBnt(item,type) {
       console.log(item);
       let parmas = [];
       parmas.push(item.Id);
-      mitemrequirementAction(parmas, "delete").then((res) => {
+      mitemrequirementAction(parmas, type).then((res) => {
         if (res.data.success) {
-          this.$message.success("删除成功!");
+          if(type == 'approved'){
+            this.$message.success("审批成功!");
+          }else {
+            this.$message.success("删除成功!");
+          }
           this.getListAll();
         }
       });
@@ -378,6 +345,7 @@ export default {
     importExcel() {
       this.isExecl = true;
     },
+    //分压
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
@@ -387,4 +355,4 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped lang="less"></style>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-09-10 18:13:01
+ * @LastEditTime: 2021-09-13 08:48:09
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -142,18 +142,8 @@ export default {
           obj[item["key"]] = res[item["key"]] || "";
         });
         arr.push(obj);
+        console.log(arr)
       }
-      // table.forEach((item) => {
-      //   let obj = {
-      //     ...item,
-      //   };
-      //   this.tableTitle.forEach((cItem) => {
-      //     if (!Object.keys(item).includes(cItem.key)) {
-      //       obj[cItem.key] = "";
-      //     }
-      //   });
-      //   arr.push(obj);
-      // });
       //获取年
       var date = new Date();
       var y = date.getFullYear();
@@ -185,53 +175,26 @@ export default {
             default:
               break;
           }
-          // if (index > 4) {
-          //   data.RequirementList.push({
-          //     RequirementDate: y + "/" + item[key].key,
-          //     RequirementQty: item[key].value || "",
-          //   });
-          // }
+          if (key.indexOf("/") == 1) {
+            data.RequirementList.push({
+              RequirementDate: y + "/" + key,
+              RequirementQty: item[key] || "",
+            });
+          }
         }
-        // item.forEach((items, index) => {
-        //   console.log(items);
-        //   switch (items.key) {
-        //     case "品号":
-        //       data.MitemCode = items.value;
-        //       break;
-        //     case "品名":
-        //       data.MitemName = items.value;
-        //       break;
-        //     case "规格":
-        //       data.Spec = items.value;
-        //       break;
-        //     case "备注":
-        //       data.Remarks = items.value;
-        //       break;
-        //     default:
-        //       break;
-        //   }
-        //   if (index > 4) {
-        //     data.RequirementList.push({
-        //       RequirementDate: y + "/" + items.key,
-        //       RequirementQty: items.value || "",
-        //     });
-        //   }
-        // });
-        // parmas.push(data);
+        parmas.push(data);
       });
-      console.log(parmas);
-      // this.submitExecl(parmas)
+      this.submitExecl(parmas)
     },
     submitExecl(parmas) {
       mitemrequirementAction(parmas, "import").then((res) => {
-        if (res.data.success) {
+        if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
+          this.close();
+        }else {
+          this.$message.info(res.data.message.content);
         }
       });
-    },
-    //关闭对话框
-    handleCancel() {
-      this.isAddModal = false;
     },
     //导入execl
     beforeUpload(file) {
