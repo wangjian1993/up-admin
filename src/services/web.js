@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-09-10 15:26:48
+ * @LastEditTime: 2021-09-14 14:44:57
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -21,6 +21,9 @@ import {
  */
 export function getLineAll(params) {
     return request(`${UP_WEB}/line/getall`, METHOD.GET, params);
+}
+export function getLineList(params) {
+    return request(`${UP_WEB}/line/getlist`, METHOD.GET, params);
 }
 export function lineAction(params, action) {
     return request(`${UP_WEB}/line/${action}`, METHOD.POST, params);
@@ -89,4 +92,11 @@ export function getMitemrequirement(params,action) {
 }
 export function mitemrequirementAction(params,action) {
     return request(`${UP_WEB}/mitemrequirement/${action}`, METHOD.POST, params);
+}
+
+export function getDailyPlan(params,action) {
+    return request(`${UP_WEB}/dailyproductplan/${action}`, METHOD.GET, params);
+}
+export function dailyPlanAction(params,action) {
+    return request(`${UP_WEB}/dailyproductplan/${action}`, METHOD.POST, params);
 }

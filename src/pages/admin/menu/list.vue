@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-09-01 10:40:03
+ * @LastEditTime: 2021-09-14 09:51:02
  * @LastEditors: max
  * @Description: 菜单管理
  * @FilePath: /up-admin/src/pages/admin/menu/list.vue
@@ -728,11 +728,11 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          const params = [];
-          self.selectedRowKeys.forEach((item) => {
-            params.push(self.data[item].ModuleId);
-          });
-          menuAction(params, "delete").then((res) => {
+          // const params = [];
+          // self.selectedRowKeys.forEach((item) => {
+          //   params.push(self.data[item].ModuleId);
+          // });
+          menuAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");

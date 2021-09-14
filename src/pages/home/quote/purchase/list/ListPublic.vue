@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-13 18:31:53
+ * @LastEditTime: 2021-09-14 10:34:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -72,8 +72,8 @@
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="search">查询</a-button>
-            <a-button style="margin-left: 8px">重置</a-button>
+            <a-button type="primary" :disabled="!hasPerm('search_public')" @click="search">查询</a-button>
+            <a-button style="margin-left: 8px" :disabled="!hasPerm('search_public')">重置</a-button>
             <a @click="toggleAdvanced" style="margin-left: 8px">
               {{ advanced ? "收起" : "展开" }}
               <a-icon :type="advanced ? 'up' : 'down'" />
@@ -140,7 +140,7 @@
     <!-- 详情 -->
     <a-details v-if="isDetails" :detailsId="detailsId" @closeModal="closeModal"></a-details>
     <!-- 历史版本 -->
-    <history-list v-if="isHistory" :historyData="historyData" @closeModal="closeHistory" @details="details" @handleExcel="handleExcel"></history-list>
+    <history-list v-if="isHistory" :historyData="historyData" @closeModal="closeHistory" @details="details" @handleExcel="handleExcel" :historyType="historyType"></history-list>
   </div>
 </template>
 
@@ -296,12 +296,12 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import ADetails from "./Details.vue";
 import XLSX from "xlsx";
-import HistoryList from './HistoryList'
+import HistoryList from "./HistoryList";
 export default {
-  components: { ADetails,HistoryList},
+  components: { ADetails, HistoryList },
   data() {
     return {
-      loading: true,
+      loading: false,
       advanced: true,
       columns: columns,
       excelHead,
@@ -328,8 +328,9 @@ export default {
       detailsId: "",
       selectedRowKeys: [],
       status: "Y",
-      isHistory:false,
-      historyData:[]
+      isHistory: false,
+      historyData: [],
+      historyType:""
     };
   },
   updated() {
@@ -338,8 +339,10 @@ export default {
   created() {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
-      console.log(this.scrollY);
     });
+    if (!this.hasPerm("search_public")) {
+      return;
+    }
     this.getDemandEnter();
   },
   computed: {
@@ -348,9 +351,12 @@ export default {
     },
   },
   methods: {
-    history(item){
+    closeHistory() {
+      this.isHistory = false;
+    },
+    history(item) {
       this.isHistory = true;
-      this.historyData =item
+      this.historyData = item;
     },
     //获取需求公司
     getDemandEnter() {
@@ -533,4 +539,11 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="less">
+/deep/.ant-table {
+  min-height: 0vh;
+}
+/deep/.ant-table-body {
+  min-height: 55vh;
+}
+</style>

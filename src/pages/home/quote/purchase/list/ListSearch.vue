@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-13 18:41:10
+ * @LastEditTime: 2021-09-14 10:23:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -71,8 +71,8 @@
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="search">查询</a-button>
-            <a-button style="margin-left: 8px">重置</a-button>
+            <a-button type="primary" @click="search" :disabled="!hasPerm('search_purchase')">查询</a-button>
+            <a-button style="margin-left: 8px" :disabled="!hasPerm('search_purchase')">重置</a-button>
             <a @click="toggleAdvanced" style="margin-left: 8px">
               {{ advanced ? "收起" : "展开" }}
               <a-icon :type="advanced ? 'up' : 'down'" />
@@ -83,8 +83,10 @@
     </div>
     <div>
       <a-space class="operator">
-        <a-button icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="checkAll" style="margin-left: 8px">审批</a-button>
-        <a-button icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+        <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="checkAll" style="margin-left: 8px">审批</a-button>
+        <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="checkAll" style="margin-left: 8px">审批</a-button>
+        <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+        <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
             {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -92,6 +94,7 @@
         </span>
       </a-space>
       <a-table
+        v-if="hasPerm('search_purchase')"
         :columns="columns"
         :data-source="dataSource"
         size="small"
@@ -121,7 +124,7 @@
         <template slot="action" slot-scope="text, record">
           <div>
             <a-popconfirm v-if="record.StatusCheck == 'N'" title="确定审核?" @confirm="() => onAudit(record)">
-              <a style="margin-right: 8px">
+              <a style="margin-right: 8px" :disabled="!hasPerm('approve')">
                 <a-icon type="check-circle" />
                 审核
               </a>
@@ -131,7 +134,7 @@
               详情
             </a>
             <a-popconfirm title="确定删除?" v-if="record.StatusCheck == 'N'" @confirm="() => onDelete(record)">
-              <a style="margin-right: 8px">
+              <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                 <a-icon type="delete" />
                 删除
               </a>
@@ -142,15 +145,16 @@
                 <a-icon type="down" />
               </a>
               <a-menu slot="overlay">
-                <a-menu-item key="0" @click="handleExcel(record.Id)">导出</a-menu-item>
-                <a-menu-item key="1" @click="reloadCost(record.Id, 'COPY')">复制报价</a-menu-item>
-                <a-menu-item key="2" @click="reloadCost(record.Id, 'ANEW')">重新报价</a-menu-item>
-                <a-menu-item key="3" @click="history(record)">历史版本</a-menu-item>
+                <a-menu-item key="0" @click="handleExcel(record.Id)" :disabled="!hasPerm('export')">导出</a-menu-item>
+                <a-menu-item key="1" @click="reloadCost(record.Id, 'COPY')" :disabled="!hasPerm('copy')">复制报价</a-menu-item>
+                <a-menu-item key="2" @click="reloadCost(record.Id, 'ANEW')" :disabled="!hasPerm('again')">重新报价</a-menu-item>
+                <a-menu-item key="3" @click="history(record)" :disabled="!hasPerm('history')">历史版本</a-menu-item>
               </a-menu>
             </a-dropdown>
           </div>
         </template>
       </a-table>
+      <a-empty v-else description="暂无权限" />
     </div>
     <!-- 详情 -->
     <a-details v-if="isDetails" :detailsId="detailsId" @closeModal="closeModal"></a-details>
@@ -298,9 +302,9 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import ADetails from "./Details.vue";
 import XLSX from "xlsx";
-import HistoryList from './HistoryList'
+import HistoryList from "./HistoryList";
 export default {
-  components: { ADetails,HistoryList},
+  components: { ADetails, HistoryList },
   data() {
     return {
       loading: true,
@@ -329,9 +333,9 @@ export default {
       isDetails: false,
       detailsId: "",
       selectedRowKeys: [],
-      isHistory:false,
-      historyData:[],
-      historyType:"purchase"
+      isHistory: false,
+      historyData: [],
+      historyType: "purchase",
     };
   },
   updated() {
@@ -341,6 +345,9 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
+    if (!this.hasPerm("search_purchase")) {
+      return;
+    }
     this.getDemandEnter();
   },
   computed: {
@@ -350,9 +357,9 @@ export default {
   },
   methods: {
     //历史版本
-    history(item){
+    history(item) {
       this.isHistory = true;
-      this.historyData =item
+      this.historyData = item;
     },
     //获取需求公司
     getDemandEnter() {
@@ -483,7 +490,7 @@ export default {
     closeModal() {
       this.isDetails = false;
     },
-    closeHistory(){
+    closeHistory() {
       this.isHistory = false;
     },
     reloadCost(id, sign) {
@@ -548,17 +555,17 @@ export default {
       getCostConfig(parmas, "getquotedetail").then((res) => {
         if (res.data.success) {
           let list = res.data.data.ItemInfo.ItemChildList;
-          let info =res.data.data.ItemInfo;
+          let info = res.data.data.ItemInfo;
           let ConfigList = res.data.data.ConfigList;
           var _data = [];
-          _data.push(['需求公司',info.EnterpriseName,'','需求工厂',info.PlantName]);
-          _data.push(['品号',info.ItemCode,'','品名',info.ItemName,'','大类',info.ItemSort]);
-          _data.push(['规格',info.ItemSpecification]);
+          _data.push(["需求公司", info.EnterpriseName, "", "需求工厂", info.PlantName]);
+          _data.push(["品号", info.ItemCode, "", "品名", info.ItemName, "", "大类", info.ItemSort]);
+          _data.push(["规格", info.ItemSpecification]);
           ConfigList.map((item) => {
             let array = [item.CostName, item.Amount, item.Description];
             _data.push(array);
           });
-          _data.push(['物料成本',info.MaterialCost,'最终成本',info.FinalCost]);
+          _data.push(["物料成本", info.MaterialCost, "最终成本", info.FinalCost]);
           const columns = [];
           this.excelHead.map((item) => {
             columns.push(item.title);
@@ -575,7 +582,7 @@ export default {
           const ws = XLSX.utils.aoa_to_sheet(_data);
           /* generate workbook and add the worksheet */
           const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws,info.ItemName);
+          XLSX.utils.book_append_sheet(wb, ws, info.ItemName);
           /* save to file */
           XLSX.writeFile(wb, `${info.ItemName}_采购报价导出.xlsx`);
         }
@@ -585,4 +592,11 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped lang="less">
+/deep/.ant-table {
+  min-height: 0vh;
+}
+/deep/.ant-table-body {
+  min-height: 55vh;
+}
+</style>

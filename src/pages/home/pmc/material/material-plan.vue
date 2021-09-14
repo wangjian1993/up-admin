@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-06-17 17:28:49
- * @LastEditTime: 2021-09-13 15:29:38
+ * @LastEditTime: 2021-09-14 10:19:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/material-plan.vue
@@ -9,10 +9,10 @@
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <a-tabs type="card" v-model="activeKey" default-active-key="1" @change="callback">
-      <a-tab-pane key="1" tab="导入物料需求">
+      <a-tab-pane key="1" tab="导入物料需求" :disabled="!hasPerm('material_tab1')">
         <lead-in @toDetail="toDetail"></lead-in>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="物料需求明细">
+      <a-tab-pane key="2" tab="物料需求明细" :disabled="!hasPerm('material_tab2')">
         <detail :batchid="batchid" ref="myDeatils"></detail>
       </a-tab-pane>
     </a-tabs>

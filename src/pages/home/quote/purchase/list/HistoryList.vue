@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-13 18:40:37
+ * @LastEditTime: 2021-09-14 10:35:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/HistoryList.vue
@@ -37,8 +37,8 @@
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
                 </div>
               </template>
-              <template v-if="historyType == 'purchase'" slot="action" slot-scope="text, record">
-                <div>
+              <template slot="action" slot-scope="text, record">
+                <div v-if="historyType == 'purchase'">
                   <a-popconfirm v-if="record.StatusCheck == 'N'" title="确定审核?" @confirm="() => onAudit(record)">
                     <a style="margin-right: 8px">
                       <a-icon type="check-circle" />
@@ -67,9 +67,7 @@
                     </a-menu>
                   </a-dropdown>
                 </div>
-              </template>
-              <template v-else slot="action" slot-scope="text, record">
-                <div>
+                <div v-else>
                   <a style="margin-right: 8px" @click="details(record.Id)">
                     <a-icon type="profile" />
                     详情

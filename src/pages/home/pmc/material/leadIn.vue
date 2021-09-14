@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-13 19:05:15
+ * @LastEditTime: 2021-09-14 10:24:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/leadIn.vue
@@ -20,42 +20,40 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input
-                placeholder="请输入PMC"
-                allowClear
-                style="width: 200px"
-                v-decorator="['pmc']"
-              />
+              <a-input placeholder="请输入PMC" allowClear style="width: 200px" v-decorator="['pmc']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-week-picker placeholder="选择周"  @change="weekChange"/>
+              <a-week-picker placeholder="选择周" @change="weekChange" />
             </a-form-item>
           </a-col>
         </a-row>
       </div>
       <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search">查询</a-button>
-        <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-        <a-button style="margin-left: 8px" type="primary" @click="importExcel"><a-icon type="import" />导入</a-button>
-        <a-button style="margin-left: 8px" type="primary"><a-icon type="download" />下载模板</a-button>
+        <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
+        <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
+        <a-button style="margin-left: 8px" type="primary" @click="importExcel" :disabled="!hasPerm('import')"><a-icon type="import" />导入</a-button>
+        <a-button style="margin-left: 8px" type="primary" :disabled="!hasPerm('down')"><a-icon type="download" />下载模板</a-button>
       </span>
     </a-form>
     <div class="operator">
-      <a-button icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
-        <a-button icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-        <span style="margin-left: 8px">
-          <template v-if="hasSelected">
-            {{ `共选中 ${selectedRowKeys.length} 条` }}
-          </template>
-        </span>
+      <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
+        <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
+        <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+        <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+      <span style="margin-left: 8px">
+        <template v-if="hasSelected">
+          {{ `共选中 ${selectedRowKeys.length} 条` }}
+        </template>
+      </span>
     </div>
     <a-table
+      v-if="hasPerm('search')"
       :columns="columns"
       :data-source="data"
       size="small"
-      :scroll="{ y:scrollY }"
+      :scroll="{ y: scrollY }"
       :loading="loading"
       :pagination="pagination"
       @change="handleTableChange"
@@ -80,13 +78,13 @@
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a-popconfirm v-if="record.Status != 'APPROVED'" title="确定删除?" @confirm="() => actionBnt(record,'delete')">
-            <a style="margin-right: 8px">
+          <a-popconfirm v-if="record.Status != 'APPROVED'" title="确定删除?" @confirm="() => actionBnt(record, 'delete')">
+            <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
               <a-icon type="delete" />
               删除
             </a>
           </a-popconfirm>
-          <a v-if="record.Status != 'APPROVED'" style="margin-right: 8px" @click="actionBnt(record,'approved')">
+          <a :disabled="!hasPerm('approve')" v-if="record.Status != 'APPROVED'" style="margin-right: 8px" @click="actionBnt(record, 'approved')">
             <a-icon type="check-circle" />
             审批
           </a>
@@ -97,6 +95,7 @@
         </div>
       </template>
     </a-table>
+    <a-empty v-else description="暂无权限" />
     <import-execl v-if="isExecl" :plantArray="plantList" @closeModal="closeModal"></import-execl>
   </div>
 </template>
@@ -109,7 +108,7 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "5%"
+    width: "5%",
   },
   {
     title: "计划批号",
@@ -134,7 +133,7 @@ const columns = [
     dataIndex: "Week",
     scopedSlots: { customRender: "Week" },
     align: "center",
-    width: "5%"
+    width: "5%",
   },
   {
     title: "导入时间",
@@ -185,7 +184,7 @@ export default {
       selectedRowKeys: [],
       scrollY: "",
       searchForm: this.$form.createForm(this),
-      week:""
+      week: "",
     };
   },
   updated() {
@@ -197,22 +196,22 @@ export default {
     },
   },
   created() {
-     this.$nextTick(() => {
+    this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
     this.getPlant();
     this.getListAll();
   },
   methods: {
-    detail(item){
+    detail(item) {
       // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
-      this.$emit('toDetail',item.Id)
+      this.$emit("toDetail", item.Id);
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");
       this.week = str[1].replace("周", "");
     },
-    closeModal(){
+    closeModal() {
       this.isExecl = false;
       this.getListAll();
     },
@@ -310,7 +309,7 @@ export default {
       });
     },
     //多选审批
-    allCheck(){
+    allCheck() {
       let self = this;
       self.$confirm({
         title: "确定要审批选中内容",
@@ -327,15 +326,15 @@ export default {
       });
     },
     //单个删除
-    actionBnt(item,type) {
+    actionBnt(item, type) {
       console.log(item);
       let parmas = [];
       parmas.push(item.Id);
       mitemrequirementAction(parmas, type).then((res) => {
         if (res.data.success) {
-          if(type == 'approved'){
+          if (type == "approved") {
             this.$message.success("审批成功!");
-          }else {
+          } else {
             this.$message.success("删除成功!");
           }
           this.getListAll();
@@ -355,4 +354,11 @@ export default {
 };
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+/deep/.ant-table {
+  min-height: 0vh;
+}
+/deep/.ant-table-body {
+  min-height: 60vh;
+}
+</style>
