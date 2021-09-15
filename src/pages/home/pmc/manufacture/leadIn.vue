@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-14 18:52:24
+ * @LastEditTime: 2021-09-15 09:48:41
  * @LastEditors: max
  * @Description: 导入生产日计划
- * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ leadIn.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/manufacture/leadIn.vue
 -->
 <template>
   <div>
@@ -255,6 +255,7 @@ export default {
     },
     //获取列表数据
     getListAll() {
+      this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-13 11:42:05
+ * @LastEditTime: 2021-09-15 15:05:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -52,11 +52,17 @@
           <a-card title="物料列表" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
             <a-tabs default-active-key="1">
               <a-tab-pane key="1" tab="展开显示">
-                <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(list) => list.IndexNo +'tab1'" bordered>
+                <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(list) => list.IndexNo + 'tab1'" bordered>
+                  <div slot="e10" slot-scope="text, record">
+                    <p>{{ record.PriceErpSource == "" ? text : text + `(${record.PriceErpSource})` }}</p>
+                  </div>
                 </a-table>
               </a-tab-pane>
               <a-tab-pane key="2" tab="收缩显示">
-                <a-table :columns="columns" :data-source="treeData" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(treeData) => treeData.IndexNo +'tab2'" bordered>
+                <a-table :columns="columns" :data-source="treeData" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(treeData) => treeData.IndexNo + 'tab2'" bordered>
+                  <div slot="e10" slot-scope="text, record">
+                    <p>{{ record.PriceErpSource == "" ? text : text + `(${record.PriceErpSource})` }}</p>
+                  </div>
                 </a-table>
               </a-tab-pane>
             </a-tabs>
@@ -73,7 +79,7 @@ const columns = [
     title: "阶次",
     dataIndex: "LvNo",
     width: "10%",
-    align: "center",
+    align: "left",
   },
   {
     title: "序号",
@@ -120,7 +126,7 @@ const columns = [
     dataIndex: "PriceErp",
     scopedSlots: { customRender: "e10" },
     align: "center",
-    width: "5%",
+    width: "10%",
   },
   {
     title: "单价",
@@ -189,9 +195,35 @@ export default {
           this.info = res.data.data.ItemInfo;
           this.ConfigList = res.data.data.ConfigList;
           this.treeData = this.initTree(this.info.ItemCode);
+          this.calField(this.treeData);
         }
         this.loading = false;
       });
+    },
+    calField(tree) {
+      tree.forEach((node) => {
+        if (node.children && node.children.length > 0 ) {
+          // console.log(node.children)
+          this.calField(node.children);
+          node.Amount = node.children.reduce((sum, item) => ((sum += item.Amount), parseFloat(sum.toFixed(4))), 0);
+        } else {
+          let sum = node.Amount * 1;
+          node.Amount = parseFloat(sum.toFixed(4));
+          delete node.children;
+        }
+      });
+      return tree;
+    },
+    treeDone(data) {
+      data.forEach((item) => {
+        if (item.children && item.children.length > 0) {
+          item = this.treeDone(item.children);
+        } else {
+          delete item.children;
+        }
+        return item;
+      });
+      return data;
     },
     initTree(parent_id) {
       // jsonArray 变量数据

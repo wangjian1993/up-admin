@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-14 10:23:19
+ * @LastEditTime: 2021-09-15 14:25:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -46,6 +46,7 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
                   <a-select placeholder="请选择" v-decorator="['statuscheck']">
+                    <a-select-option value="">全部</a-select-option>
                     <a-select-option value="Y">已审核</a-select-option>
                     <a-select-option value="N">未审核</a-select-option>
                   </a-select>
@@ -53,7 +54,7 @@
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-input placeholder="请输入产品大类" v-decorator="['ItemSort']" />
+                  <a-input placeholder="请输入产品大类" v-decorator="['itemsort']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -72,7 +73,7 @@
           </div>
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search" :disabled="!hasPerm('search_purchase')">查询</a-button>
-            <a-button style="margin-left: 8px" :disabled="!hasPerm('search_purchase')">重置</a-button>
+            <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search_purchase')">重置</a-button>
             <a @click="toggleAdvanced" style="margin-left: 8px">
               {{ advanced ? "收起" : "展开" }}
               <a-icon :type="advanced ? 'up' : 'down'" />
@@ -336,6 +337,7 @@ export default {
       isHistory: false,
       historyData: [],
       historyType: "purchase",
+      isSearch:false
     };
   },
   updated() {
@@ -356,6 +358,10 @@ export default {
     },
   },
   methods: {
+    reset() {
+      this.getDemandEnter();
+      this.searchForm.resetFields();
+    },
     //历史版本
     history(item) {
       this.isHistory = true;
@@ -403,10 +409,13 @@ export default {
       getCostConfig(parmas, "getquotelist").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
-          console.log(this.dataSource);
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
+          this.isSearch =false;
+        } else {
+          this.dataSource = [];
+          this.pagination.current = 1;
         }
         this.loading = false;
       });
@@ -431,6 +440,10 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
+              this.isSearch =true;
+            } else {
+              this.dataSource = [];
+              this.pagination.current = 1;
             }
             this.loading = false;
           });
@@ -471,6 +484,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if(this.isSearch){
+        this.search();
+        return;
+      }
       this.getCostList();
     },
     //多选
@@ -584,6 +601,7 @@ export default {
           const wb = XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(wb, ws, info.ItemName);
           /* save to file */
+          this.$message.success("导出excel成功!");
           XLSX.writeFile(wb, `${info.ItemName}_采购报价导出.xlsx`);
         }
       });
@@ -597,6 +615,6 @@ export default {
   min-height: 0vh;
 }
 /deep/.ant-table-body {
-  min-height: 55vh;
+  min-height: 35vh;
 }
 </style>

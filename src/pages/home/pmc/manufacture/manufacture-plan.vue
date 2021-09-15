@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-06-17 17:28:49
- * @LastEditTime: 2021-09-14 18:56:03
+ * @LastEditTime: 2021-09-15 09:30:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/manufacture-plan.vue
@@ -22,7 +22,7 @@
   </a-card>
 </template>
 <script>
-import LeadIn from "./ leadIn.vue";
+import LeadIn from "./leadIn.vue";
 import Detail from "./detail.vue";
 export default {
   components: { LeadIn, Detail },

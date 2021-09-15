@@ -1,11 +1,12 @@
 <!--
  * @Author: max
- * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-15 09:49:11
+ * @Date: 2021-09-02 18:16:28
+ * @LastEditTime: 2021-09-15 18:04:51
  * @LastEditors: max
- * @Description: 
- * @FilePath: /up-admin/src/pages/home/pmc/material/leadIn.vue
+ * @Description: 物料需求总计划明细
+ * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/DetailMerge.vue
 -->
+
 <template>
   <div>
     <a-form layout="horizontal" :form="searchForm">
@@ -28,20 +29,27 @@
               <a-week-picker placeholder="选择周" @change="weekChange" />
             </a-form-item>
           </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-select placeholder="请选择" v-decorator="['planstatus']" style="width: 200px">
+                <a-select-option value="">全部</a-select-option>
+                <a-select-option value="Y">已审核</a-select-option>
+                <a-select-option value="N">未审核</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
         </a-row>
       </div>
       <span style="float: right; margin-top: 3px;">
         <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
-        <a-button style="margin-left: 8px" type="primary" @click="importExcel" :disabled="!hasPerm('import')"><a-icon type="import" />导入</a-button>
-        <a-button style="margin-left: 8px" type="primary" :disabled="!hasPerm('down')"><a-icon type="download" />下载模板</a-button>
       </span>
     </a-form>
     <div class="operator">
-      <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
-        <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
-        <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-        <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+      <a-button v-if="hasPerm('create')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button>
+      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button>
+      <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+      <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
       <span style="margin-left: 8px">
         <template v-if="hasSelected">
           {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -70,24 +78,20 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text">
+      <template slot="Status" slot-scope="text,record">
         <div>
-          <a-tag color="green" v-if="text == 'APPROVED'">已审批</a-tag>
-          <a-tag color="red" v-else>未审批</a-tag>
+          <a-tag color="green" v-if="text == 'GENERATED'">{{record.StatusName}}</a-tag>
+          <a-tag color="red" v-else>{{record.StatusName}}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a-popconfirm v-if="record.Status != 'APPROVED'" title="确定删除?" @confirm="() => actionBnt(record, 'delete')">
+          <a-popconfirm title="确定删除?" @confirm="() => actionBnt(record, 'masterplan/delete')">
             <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
               <a-icon type="delete" />
               删除
             </a>
           </a-popconfirm>
-          <a :disabled="!hasPerm('approve')" v-if="record.Status != 'APPROVED'" style="margin-right: 8px" @click="actionBnt(record, 'approved')">
-            <a-icon type="check-circle" />
-            审批
-          </a>
           <a style="margin-right: 8px" @click="detail(record)">
             <a-icon type="profile" />
             查看
@@ -96,13 +100,10 @@
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
-    <import-execl v-if="isExecl" :plantArray="plantList" @closeModal="closeModal"></import-execl>
   </div>
 </template>
 
 <script>
-import ImportExecl from "./ImportExecl.vue";
-import getTableScroll from "@/utils/setTableHeight";
 const columns = [
   {
     title: "序号",
@@ -114,12 +115,6 @@ const columns = [
     title: "计划批号",
     dataIndex: "BatchNo",
     scopedSlots: { customRender: "BatchNo" },
-    align: "center",
-  },
-  {
-    title: "导入人员",
-    dataIndex: "UserCreated",
-    scopedSlots: { customRender: "UserCreated" },
     align: "center",
   },
   {
@@ -136,13 +131,31 @@ const columns = [
     width: "5%",
   },
   {
-    title: "导入时间",
-    dataIndex: "DateTimeCreated",
-    scopedSlots: { customRender: "DateTimeCreated" },
+    title: "品号",
+    dataIndex: "MitemCode",
+    scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "导入数量",
+    title: "品名",
+    dataIndex: "MitemName",
+    scopedSlots: { customRender: "MitemName" },
+    align: "center",
+  },
+  {
+    title: "规格",
+    dataIndex: "Spec",
+    scopedSlots: { customRender: "Spec" },
+    align: "center",
+  },
+  {
+    title: "需求日期",
+    dataIndex: "RequirementDate",
+    scopedSlots: { customRender: "RequirementDate" },
+    align: "center",
+  },
+  {
+    title: "需求数量",
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
@@ -153,16 +166,11 @@ const columns = [
     scopedSlots: { customRender: "Status" },
     align: "center",
   },
-  {
-    title: "操作",
-    scopedSlots: { customRender: "action" },
-    align: "center",
-  },
 ];
+import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 export default {
-  components: { ImportExecl },
   data() {
     return {
       data: [],
@@ -185,6 +193,7 @@ export default {
       scrollY: "",
       searchForm: this.$form.createForm(this),
       week: "",
+      isSearch:false
     };
   },
   updated() {
@@ -211,10 +220,6 @@ export default {
       let str = dateString.split("-");
       this.week = str[1].replace("周", "");
     },
-    closeModal() {
-      this.isExecl = false;
-      this.getListAll();
-    },
     //获取列表数据
     getListAll() {
       this.loading = true;
@@ -222,13 +227,14 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getMitemrequirement(parmas, "getall").then((res) => {
+      getMitemrequirement(parmas, "masterplan/getmergedetails").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
+          this.isSearch =false
         } else {
           this.loading = false;
         }
@@ -239,16 +245,12 @@ export default {
       let parmas1 = {
         entertypecode: "PLANT",
       };
-      getMitemrequirement(parmas1, "getlistbytypecode").then((res) => {
+      getMitemrequirement(parmas1, "masterplan/getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
         }
       });
-    },
-    //关闭弹窗
-    onClose() {
-      this.isDrawer = false;
     },
     //多选
     onSelectChange(selectedRowKeys) {
@@ -274,13 +276,14 @@ export default {
             week: this.week,
             pmc: values.pmc,
           };
-          getMitemrequirement(parmas, "getall").then((res) => {
+          getMitemrequirement(parmas, "masterplan/getmergedetails").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
+              this.isSearch =true
             }
           });
           // do something
@@ -289,7 +292,7 @@ export default {
     },
     getCheckboxProps: (record) => ({
       props: {
-        disabled: record.Status !== "APPROVAL", // Column configuration not to be checked
+        disabled: record.Status !== "APPROVED", // Column configuration not to be checked
       },
     }),
     //多选删除
@@ -298,7 +301,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          mitemrequirementAction(self.selectedRowKeys, "delete").then((res) => {
+          mitemrequirementAction(self.selectedRowKeys, "masterplan/delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -313,12 +316,12 @@ export default {
     allCheck() {
       let self = this;
       self.$confirm({
-        title: "确定要审批选中内容",
+        title: "确定要生成选中内容",
         onOk() {
-          mitemrequirementAction(self.selectedRowKeys, "approved").then((res) => {
+          mitemrequirementAction(self.selectedRowKeys, "masterplan/generate").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
-              self.$message.success("审批成功!");
+              self.$message.success("生成成功!");
               self.getListAll();
             }
           });
@@ -328,7 +331,6 @@ export default {
     },
     //单个删除
     actionBnt(item, type) {
-      console.log(item);
       let parmas = [];
       parmas.push(item.Id);
       mitemrequirementAction(parmas, type).then((res) => {
@@ -342,13 +344,14 @@ export default {
         }
       });
     },
-    importExcel() {
-      this.isExecl = true;
-    },
     //分压
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if(this.isSearch){
+        this.search();
+        return;
+      }
       this.getListAll();
     },
   },

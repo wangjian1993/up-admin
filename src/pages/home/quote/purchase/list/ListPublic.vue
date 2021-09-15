@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-14 10:34:20
+ * @LastEditTime: 2021-09-15 11:44:10
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -70,15 +70,19 @@
                 </a-form-item>
               </a-col>
             </a-row>
+            <a-row>
+              <a-col :md="24" :sm="24">
+                <span style="float: right; margin-top: 3px;">
+                  <a-button type="primary" :disabled="!hasPerm('search_public')" @click="search">查询</a-button>
+                  <a-button style="margin-left: 8px" :disabled="!hasPerm('search_public')" @click="reset">重置</a-button>
+                  <a @click="toggleAdvanced" style="margin-left: 8px">
+                    {{ advanced ? "收起" : "展开" }}
+                    <a-icon :type="advanced ? 'up' : 'down'" />
+                  </a>
+                </span>
+              </a-col>
+            </a-row>
           </div>
-          <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" :disabled="!hasPerm('search_public')" @click="search">查询</a-button>
-            <a-button style="margin-left: 8px" :disabled="!hasPerm('search_public')">重置</a-button>
-            <a @click="toggleAdvanced" style="margin-left: 8px">
-              {{ advanced ? "收起" : "展开" }}
-              <a-icon :type="advanced ? 'up' : 'down'" />
-            </a>
-          </span>
         </a-form>
       </div>
     </div>
@@ -330,7 +334,8 @@ export default {
       status: "Y",
       isHistory: false,
       historyData: [],
-      historyType:""
+      historyType: "",
+      isSearch:false
     };
   },
   updated() {
@@ -340,9 +345,9 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    if (!this.hasPerm("search_public")) {
-      return;
-    }
+    // if (!this.hasPerm("search_public")) {
+    //   return;
+    // }
     this.getDemandEnter();
   },
   computed: {
@@ -351,6 +356,12 @@ export default {
     },
   },
   methods: {
+    //重置
+    //重置搜索
+    reset() {
+      this.getDemandEnter();
+      this.searchForm.resetFields();
+    },
     closeHistory() {
       this.isHistory = false;
     },
@@ -388,6 +399,7 @@ export default {
     },
     //获取列表信息
     getCostList() {
+      this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
@@ -399,12 +411,17 @@ export default {
         itemname: "",
       };
       getCostConfig(parmas, "getquotelistcommon").then((res) => {
+        console.log(res.data.success);
         if (res.data.success) {
           this.dataSource = res.data.data.list;
-          console.log(this.dataSource);
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
+          this.isSearch =false
+        }else {
+          console.log("my====")
+          this.dataSource =[]
+          this.pagination.current =1
         }
         this.loading = false;
       });
@@ -430,6 +447,10 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
+              this.isSearch =true
+            }else {
+              this.dataSource =[]
+              this.pagination.current =1
             }
             this.loading = false;
           });
@@ -472,6 +493,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if(this.isSearch){
+        this.search();
+        return;
+      }
       this.getCostList();
     },
     //多选
@@ -541,9 +566,6 @@ export default {
 
 <style scoped lang="less">
 /deep/.ant-table {
-  min-height: 0vh;
-}
-/deep/.ant-table-body {
-  min-height: 55vh;
+  min-height: 60vh;
 }
 </style>

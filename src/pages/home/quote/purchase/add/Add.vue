@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-14 09:40:07
+ * @LastEditTime: 2021-09-15 16:24:04
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -39,7 +39,7 @@
                 <a-col :lg="6" :md="12" :sm="24">
                   <a-form-item label="需求公司" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-select
-                    :disabled="isSearch"
+                      :disabled="isSearch"
                       placeholder="请选择需求公司"
                       v-decorator="[
                         'enterpriseid',
@@ -55,7 +55,7 @@
                 <a-col :lg="6" :md="12" :sm="24">
                   <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-select
-                    :disabled="isSearch"
+                      :disabled="isSearch"
                       placeholder="请选择生产工厂"
                       v-decorator="[
                         'plantid',
@@ -68,7 +68,7 @@
                     </a-select>
                   </a-form-item>
                 </a-col>
-                <a-col :lg="6" :md="12" :sm="24">
+                <a-col :lg="6" :md="12" :sm="24" v-if="!isAgainCost">
                   <span style="float: left; margin-top: 5px;">
                     <a-button :disabled="!hasPerm('search')" type="primary" @click="search">查询</a-button>
                     <a-button :disabled="!hasPerm('search')" style="margin-left: 8px" @click="reset">重置</a-button>
@@ -78,17 +78,17 @@
               <a-row>
                 <a-col :lg="6" :md="12" :sm="24">
                   <a-form-item label="产品品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                    <a-input v-model="costInfo.ItemName" />
+                    <a-input :disabled="isSearch" v-model="costInfo.ItemName" />
                   </a-form-item>
                 </a-col>
                 <a-col :lg="6" :md="12" :sm="24">
                   <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                    <a-input v-model="costInfo.ItemSort" />
+                    <a-input :disabled="isSearch" v-model="costInfo.ItemSort" />
                   </a-form-item>
                 </a-col>
                 <a-col :lg="6" :md="12" :sm="24">
                   <a-form-item label="产品规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                    <a-textarea v-model="costInfo.ItemSpecification" :rows="2" />
+                    <a-textarea :disabled="isSearch" v-model="costInfo.ItemSpecification" :rows="2" />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -153,6 +153,18 @@
       </a-card>
       <!-- //物料 -->
       <a-card class="card" title="物料" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
+        <div class="table-search">
+          <a-form layout="inline" :form="keywordForm">
+            <a-form-item label="(料号,料规格,提示)关键字匹配">
+              <a-input v-model="keyword" />
+            </a-form-item>
+            <a-form-item>
+              <a-button type="primary" @click="toAosage">
+                用量统计
+              </a-button>
+            </a-form-item>
+          </a-form>
+        </div>
         <standard-table :pagination="pagination" :columns="columns" :dataSource="tableData">
           <div slot="Price" slot-scope="{ record, index }">
             <a-input-number :id="record.key" v-model="record.Price" :min="0" @change="priceNumber(record, index)" />
@@ -169,12 +181,12 @@
           </div>
         </standard-table>
       </a-card>
+      <dosage v-if="isDosage" :searchDosage="searchDosage" @closeModal="closeModal" @empty="empty"></dosage>
     </a-spin>
   </div>
 </template>
 
 <script>
-import StandardTable from "@/components/table/StandardTable";
 const columns = [
   {
     title: "序号",
@@ -249,8 +261,10 @@ const columns = [
 ];
 import { getDemandEnter, getCostConfig, addCost } from "@/services/web.js";
 import ExportExcel from "@/utils/importExcel";
+import StandardTable from "@/components/table/StandardTable";
+import Dosage from "./Dosage.vue";
 export default {
-  components: { StandardTable },
+  components: { StandardTable, Dosage },
   data() {
     return {
       advanced: true,
@@ -265,16 +279,8 @@ export default {
       },
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
-      // form: {
-      //   name: "",
-      //   region: undefined,
-      //   date1: undefined,
-      //   delivery: false,
-      //   type: [],
-      //   resource: "",
-      //   desc: "",
-      // },
       searchForm: this.$form.createForm(this),
+      keywordForm: this.$form.createForm(this),
       plantList: [],
       enterList: [],
       loading: false,
@@ -286,7 +292,11 @@ export default {
       searchData: [],
       quoteRemark: "",
       isEdit: false,
-      isSearch:false
+      isSearch: false,
+      isAgainCost: false,
+      isDosage: false,
+      keyword: "",
+      searchDosage:[]
     };
   },
   created() {
@@ -299,6 +309,27 @@ export default {
     }
   },
   methods: {
+    //清空用量计算
+    empty(){
+      this.searchDosage = [];
+    },
+    //关闭弹窗
+    closeModal(){
+       this.isDosage = false
+    },
+    //用量统计
+    toAosage() {
+      if(this.tableData.length == 0){
+        return;
+      }
+      this.isDosage = true;
+      console.log(this.keyword);
+      this.searchDosage = this.tableData.filter((product) => {
+        return Object.keys(product).some((key)=>{
+            return String(product[key]).toLowerCase().indexOf(this.keyword) > -1;
+        });
+      });
+    },
     //复制发布
     editCost() {
       this.costLoading = true;
@@ -321,6 +352,9 @@ export default {
           this.searchForm.setFieldsValue(parmas);
           this.searchData = parmas;
           this.countCost();
+          this.isAgainCost = true;
+          this.isSearch = true;
+          console.log(" this.isAgainCost======", this.isAgainCost);
         }
         this.costLoading = false;
       });
@@ -367,7 +401,8 @@ export default {
       this.costList = [];
       this.costInfo = [];
       this.tableData = [];
-      this.isSearch =false;
+      this.isSearch = false;
+      this.isAgainCost = false;
       this.searchForm.resetFields();
     },
     //关键词搜索
@@ -384,7 +419,7 @@ export default {
               this.countCost();
             }
             this.costLoading = false;
-            this.isSearch =true;
+            this.isSearch = true;
           });
         } else {
           this.costLoading = false;
@@ -544,6 +579,10 @@ export default {
   margin-bottom: 20px;
 }
 .save-btn {
+  display: flex;
+  justify-content: flex-end;
+}
+.table-search {
   display: flex;
   justify-content: flex-end;
 }

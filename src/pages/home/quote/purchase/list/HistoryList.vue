@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-14 10:35:45
+ * @LastEditTime: 2021-09-15 13:48:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/HistoryList.vue
@@ -211,7 +211,13 @@ export default {
         plantid: this.historyData.PlantId,
         itemcode: this.historyData.ItemCode,
       };
-      getCostConfig(parmas, "getquotehistorycommon").then((res) => {
+      let url=''
+      if(this.historyType == 'purchase'){
+        url = 'getquotehistorycommon'
+      }else {
+        url ='getquotehistory'
+      }
+      getCostConfig(parmas, url).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
