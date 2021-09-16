@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-15 18:05:17
+ * @LastEditTime: 2021-09-16 10:41:47
  * @LastEditors: max
  * @Description: 物料需求总计划明细
- * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/detail.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Detail.vue
 -->
 
 <template>
@@ -20,11 +20,6 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入PMC" allowClear style="width: 200px" v-decorator="['pmc']" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
             <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-week-picker placeholder="选择周" @change="weekChange" />
             </a-form-item>
@@ -36,6 +31,18 @@
                 <a-select-option value="Y">已审核</a-select-option>
                 <a-select-option value="N">未审核</a-select-option>
               </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" placeholder="请输入品名" v-decorator="['mitemname']" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" placeholder="请输入品号" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -78,10 +85,10 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text,record">
+      <template slot="Status" slot-scope="text, record">
         <div>
-          <a-tag color="green" v-if="text == 'GENERATED'">{{record.StatusName}}</a-tag>
-          <a-tag color="red" v-else>{{record.StatusName}}</a-tag>
+          <a-tag color="green" v-if="text == 'GENERATED'">{{ record.StatusName }}</a-tag>
+          <a-tag color="red" v-else>{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
@@ -171,6 +178,7 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 export default {
+  props: ["plantList", "batchid"],
   data() {
     return {
       data: [],
@@ -187,13 +195,12 @@ export default {
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       selectedRows: [],
-      plantList: [],
       isExecl: false,
       selectedRowKeys: [],
       scrollY: "",
       searchForm: this.$form.createForm(this),
       week: "",
-      isSearch:false
+      isSearch: false,
     };
   },
   updated() {
@@ -208,8 +215,9 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    this.getPlant();
-    this.getListAll();
+    if (this.batchid == "") {
+      this.getListAll();
+    }
   },
   methods: {
     detail(item) {
@@ -222,10 +230,12 @@ export default {
     },
     //获取列表数据
     getListAll() {
+      console.log("batchid", this.batchid);
       this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        batchid: this.batchid || "",
       };
       getMitemrequirement(parmas, "masterplan/getdetails").then((res) => {
         if (res.data.success) {
@@ -234,21 +244,9 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch =false
+          this.isSearch = false;
         } else {
           this.loading = false;
-        }
-      });
-    },
-    //获取需求工厂
-    getPlant() {
-      let parmas1 = {
-        entertypecode: "PLANT",
-      };
-      getMitemrequirement(parmas1, "masterplan/getlistbytypecode").then((res) => {
-        if (res.data.success) {
-          this.plantList = res.data.data;
-          this.plantid = this.plantList[0].EnterId;
         }
       });
     },
@@ -275,6 +273,9 @@ export default {
             plantid: values.plantid,
             week: this.week,
             pmc: values.pmc,
+            mitemcode: values.mitemcode,
+            mitemname: values.mitemcode,
+            planstatus: values.planstatus,
           };
           getMitemrequirement(parmas, "masterplan/getdetails").then((res) => {
             if (res.data.success) {
@@ -283,7 +284,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
-              this.isSearch =true
+              this.isSearch = true;
             }
           });
           // do something
@@ -348,7 +349,7 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if(this.isSearch){
+      if (this.isSearch) {
         this.search();
         return;
       }

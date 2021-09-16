@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2021-09-07 14:19:07
- * @LastEditTime: 2021-09-07 14:30:44
+ * @LastEditTime: 2021-09-16 18:23:07
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/utils/importExcel.JS
+ * @FilePath: /up-admin/src/utils/ExportExcel.js
  */
 import XLSX from 'xlsx';
 
@@ -32,7 +32,6 @@ export default function ExportExcel(headers, data, fileName = '导出结果.xlsx
     const outputPos = Object.keys(output);
     // 计算出范围 ,["A1",..., "H2"]
     const ref = `${outputPos[0]}:${outputPos[outputPos.length - 1]}`;
-
     // 构建 workbook 对象
     const wb = {
         SheetNames: ['mySheet'],

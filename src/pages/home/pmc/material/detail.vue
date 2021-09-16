@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-15 09:49:00
+ * @LastEditTime: 2021-09-16 16:45:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
@@ -119,7 +119,7 @@
 
 <script>
 import { getMitemrequirement } from "@/services/web.js";
-import ExportExcel from "@/utils/importExcel";
+import ExportExcel from "@/utils/ExportExcel";
 const columns = [
   {
     title: "序号",
@@ -208,6 +208,7 @@ export default {
       plantid: "",
       week: "",
       drawerItem: [],
+      isSearch:false
     };
   },
   updated() {
@@ -274,6 +275,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
+          this.isSearch =false
         } else {
           this.loading = false;
         }
@@ -283,6 +285,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if(this.isSearch){
+        this.search();
+        return;
+      }
       this.getListAll();
     },
     //收起展开
@@ -313,6 +319,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
+              this.isSearch =true
             }
           });
           // do something

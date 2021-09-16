@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-15 18:04:51
+ * @LastEditTime: 2021-09-16 18:38:16
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/DetailMerge.vue
@@ -65,7 +65,7 @@
       :loading="loading"
       :pagination="pagination"
       @change="handleTableChange"
-      :rowKey="(data) => data.Id"
+      :rowKey="(data) => data.BatchId"
       :row-selection="{
         selectedRowKeys: selectedRowKeys,
         onChange: onSelectChange,
@@ -78,28 +78,27 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text,record">
+      <template slot="Status" slot-scope="text, record">
         <div>
-          <a-tag color="green" v-if="text == 'GENERATED'">{{record.StatusName}}</a-tag>
-          <a-tag color="red" v-else>{{record.StatusName}}</a-tag>
+          <a-tag color="green" v-if="text == 'GENERATED'">{{ record.StatusName }}</a-tag>
+          <a-tag color="red" v-else>{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a-popconfirm title="确定删除?" @confirm="() => actionBnt(record, 'masterplan/delete')">
-            <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
-              <a-icon type="delete" />
-              删除
-            </a>
-          </a-popconfirm>
           <a style="margin-right: 8px" @click="detail(record)">
             <a-icon type="profile" />
-            查看
+            需求日期明细
+          </a>
+          <a style="margin-right: 8px" @click="handleExcel(record)">
+            <a-icon type="export" />
+            导出
           </a>
         </div>
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
+    <requirement v-if="isDetail" :detailData="detailData" @closeModal="closeModal"></requirement>
   </div>
 </template>
 
@@ -109,7 +108,7 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "5%",
+    width: "3%",
   },
   {
     title: "计划批号",
@@ -128,7 +127,7 @@ const columns = [
     dataIndex: "Week",
     scopedSlots: { customRender: "Week" },
     align: "center",
-    width: "5%",
+    width: "3%",
   },
   {
     title: "品号",
@@ -149,12 +148,6 @@ const columns = [
     align: "center",
   },
   {
-    title: "需求日期",
-    dataIndex: "RequirementDate",
-    scopedSlots: { customRender: "RequirementDate" },
-    align: "center",
-  },
-  {
     title: "需求数量",
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
@@ -166,11 +159,20 @@ const columns = [
     scopedSlots: { customRender: "Status" },
     align: "center",
   },
+  {
+    title: "操作",
+    scopedSlots: { customRender: "action" },
+    align: "center",
+  },
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
+import Requirement from "./Requirement.vue";
+import ExportExcel from "@/utils/ExportExcel.js";
 export default {
+  components: { Requirement },
+  props: ["plantList"],
   data() {
     return {
       data: [],
@@ -187,13 +189,14 @@ export default {
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       selectedRows: [],
-      plantList: [],
       isExecl: false,
       selectedRowKeys: [],
       scrollY: "",
       searchForm: this.$form.createForm(this),
       week: "",
-      isSearch:false
+      isSearch: false,
+      isDetail: false,
+      detailData: [],
     };
   },
   updated() {
@@ -208,14 +211,18 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    this.getPlant();
     this.getListAll();
   },
   methods: {
-    detail(item) {
-      // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
-      this.$emit("toDetail", item.Id);
+    closeModal() {
+      this.isDetail = false;
     },
+    //物料需求详情
+    detail(item) {
+      this.isDetail = true;
+      this.detailData = item;
+    },
+    //周选择
     weekChange(date, dateString) {
       let str = dateString.split("-");
       this.week = str[1].replace("周", "");
@@ -230,25 +237,14 @@ export default {
       getMitemrequirement(parmas, "masterplan/getmergedetails").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
+          console.log(this.data[0]);
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch =false
+          this.isSearch = false;
         } else {
           this.loading = false;
-        }
-      });
-    },
-    //获取需求工厂
-    getPlant() {
-      let parmas1 = {
-        entertypecode: "PLANT",
-      };
-      getMitemrequirement(parmas1, "masterplan/getlistbytypecode").then((res) => {
-        if (res.data.success) {
-          this.plantList = res.data.data;
-          this.plantid = this.plantList[0].EnterId;
         }
       });
     },
@@ -283,7 +279,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
-              this.isSearch =true
+              this.isSearch = true;
             }
           });
           // do something
@@ -348,11 +344,62 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if(this.isSearch){
+      if (this.isSearch) {
         this.search();
         return;
       }
       this.getListAll();
+    },
+    setTableData() {
+      this.loading = true;
+      let data = this.detailData.RequirementDetails;
+      let obj = {};
+      data.forEach((item, index) => {
+        let dateArray = item.RequirementDate.split("T");
+        let date = dateArray[0].replace(/-/g, "/");
+        this.columns.push({
+          title: date,
+          dataIndex: "table" + index,
+          align: "center",
+        });
+        obj["table" + index] = item.RequirementQty;
+      });
+      this.list.push(obj);
+      this.loading = false;
+    },
+    handleExcel(list) {
+      let dataSource = [];
+      const header = [];
+      this.columns.map((item) => {
+        if (item.dataIndex) {
+          header.push({ key: item.dataIndex, title: item.title });
+        }
+      });
+      let data = list.RequirementDetails;
+      let obj = {
+        ...list,
+      };
+      data.forEach((item, index) => {
+        let dateArray = item.RequirementDate.split("T");
+        let date = dateArray[0].replace(/-/g, "/");
+        header.push({
+          key: "table" + index,
+          title: date,
+        });
+        obj["table" + index] = item.RequirementQty;
+      });
+      dataSource.push(obj);
+      console.log(header);
+      console.log(dataSource);
+      var timestamp = Date.parse(new Date());
+      console.log(header);
+      try {
+        ExportExcel(header, dataSource, `物料需求总计划明细${timestamp}.xlsx`);
+        this.$message.success("导出数据成功!");
+      } catch (error) {
+        console.log(error);
+        this.$message.error('导出数据失败');
+      }
     },
   },
 };
@@ -363,6 +410,6 @@ export default {
   min-height: 0vh;
 }
 /deep/.ant-table-body {
-  min-height: 60vh;
+  min-height: 40vh;
 }
 </style>

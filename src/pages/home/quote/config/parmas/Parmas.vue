@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-10 09:27:45
+ * @LastEditTime: 2021-09-16 15:07:58
  * @LastEditors: max
  * @Description: 报价参数配置
  * @FilePath: /up-admin/src/pages/home/quote/config/parmas/Parmas.vue
@@ -307,6 +307,7 @@ export default {
       },
       enterpriseid: "",
       plantid: "",
+      isSearch:false
     };
   },
   updated() {
@@ -396,6 +397,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
+              this.isSearch =true;
             }
           });
           // do something
@@ -404,6 +406,7 @@ export default {
     },
     //获取机构类型列表
     getCostList() {
+      this.loading =true
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
@@ -417,6 +420,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
+          this.isSearch =false
         } else {
           this.loading = false;
         }
@@ -527,6 +531,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if(this.isSearch){
+        this.search();
+        return
+      }
       this.getCostList();
     },
   },

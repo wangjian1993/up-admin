@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-15 09:49:11
+ * @LastEditTime: 2021-09-16 15:04:23
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/leadIn.vue
@@ -185,6 +185,7 @@ export default {
       scrollY: "",
       searchForm: this.$form.createForm(this),
       week: "",
+      isSearch:false
     };
   },
   updated() {
@@ -229,6 +230,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
+          this.isSearch =false
         } else {
           this.loading = false;
         }
@@ -281,6 +283,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
+              this.isSearch =true
             }
           });
           // do something
@@ -349,6 +352,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if(this.isSearch){
+        this.search();
+        return;
+      }
       this.getListAll();
     },
   },

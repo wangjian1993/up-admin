@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-15 16:24:04
+ * @LastEditTime: 2021-09-16 16:45:53
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -260,7 +260,7 @@ const columns = [
   },
 ];
 import { getDemandEnter, getCostConfig, addCost } from "@/services/web.js";
-import ExportExcel from "@/utils/importExcel";
+import ExportExcel from "@/utils/ExportExcel";
 import StandardTable from "@/components/table/StandardTable";
 import Dosage from "./Dosage.vue";
 export default {

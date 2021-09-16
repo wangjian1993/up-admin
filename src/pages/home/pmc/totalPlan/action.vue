@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-15 17:20:23
+ * @LastEditTime: 2021-09-16 10:33:38
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/action.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Action.vue
 -->
 <template>
   <div>
@@ -18,11 +18,11 @@
               </a-select>
             </a-form-item>
           </a-col>
-          <a-col :md="6" :sm="24">
+          <!-- <a-col :md="6" :sm="24">
             <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入PMC" allowClear style="width: 200px" v-decorator="['pmc']" />
             </a-form-item>
-          </a-col>
+          </a-col> -->
           <a-col :md="6" :sm="24">
             <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-week-picker placeholder="选择周" @change="weekChange" />
@@ -163,6 +163,7 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 export default {
+  props: ["plantList"],
   data() {
     return {
       data: [],
@@ -179,13 +180,12 @@ export default {
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       selectedRows: [],
-      plantList: [],
       isExecl: false,
       selectedRowKeys: [],
       scrollY: "",
       searchForm: this.$form.createForm(this),
       week: "",
-      isSearch:false
+      isSearch: false,
     };
   },
   updated() {
@@ -200,8 +200,8 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    this.getPlant();
     this.getListAll();
+    console.log("plantList", this.plantList);
   },
   methods: {
     detail(item) {
@@ -226,21 +226,9 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch =false
+          this.isSearch = false;
         } else {
           this.loading = false;
-        }
-      });
-    },
-    //获取需求工厂
-    getPlant() {
-      let parmas1 = {
-        entertypecode: "PLANT",
-      };
-      getMitemrequirement(parmas1, "masterplan/getlistbytypecode").then((res) => {
-        if (res.data.success) {
-          this.plantList = res.data.data;
-          this.plantid = this.plantList[0].EnterId;
         }
       });
     },
@@ -275,7 +263,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
-              this.isSearch =true
+              this.isSearch = true;
             }
           });
           // do something
@@ -340,7 +328,7 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if(this.isSearch){
+      if (this.isSearch) {
         this.search();
         return;
       }

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 14:39:13
- * @LastEditTime: 2021-09-09 16:51:07
+ * @LastEditTime: 2021-09-16 14:59:16
  * @LastEditors: max
  * @Description: 生成部门配置
  * @FilePath: /up-admin/src/pages/home/pmc/department/Department.vue
@@ -36,26 +36,12 @@
                 </div>
                 <div style="margin-left:10px">
                   <a-form-item>
-                    <a-input
-                      placeholder="请输入车间编码/名称"
-                      allowClear
-                      style="width: 200px"
-                      v-decorator="[
-                        'workshop'
-                      ]"
-                    />
+                    <a-input placeholder="请输入车间编码/名称" allowClear style="width: 200px" v-decorator="['workshop']" />
                   </a-form-item>
                 </div>
                 <div style="margin-left:10px">
                   <a-form-item>
-                    <a-input
-                      placeholder="请输入产线编码/名称"
-                      allowClear
-                      style="width: 200px"
-                      v-decorator="[
-                        'line'
-                      ]"
-                    />
+                    <a-input placeholder="请输入产线编码/名称" allowClear style="width: 200px" v-decorator="['line']" />
                   </a-form-item>
                 </div>
                 <div style="margin-top: 3px;margin-left:10px">
@@ -272,6 +258,7 @@ export default {
       },
       searcValue: "",
       searchForm: this.$form.createForm(this),
+      isSearch: false,
       form: {
         PlantId: "",
         WorkShopId: "",
@@ -411,6 +398,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
+              this.isSearch = true;
             }
           });
           // do something
@@ -419,6 +407,7 @@ export default {
     },
     //获取机构类型列表
     getListAll() {
+      this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
@@ -430,6 +419,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
+          this.isSearch = false;
         } else {
           this.loading = false;
         }
@@ -530,6 +520,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if (this.isSearch) {
+        this.search();
+        return;
+      }
       this.getListAll();
     },
   },

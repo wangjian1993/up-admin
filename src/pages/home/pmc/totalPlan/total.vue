@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-15 18:14:55
+ * @LastEditTime: 2021-09-16 14:06:55
  * @LastEditors: max
  * @Description: 物料需求总计划
- * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/total.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Total.vue
 -->
 
 <template>
@@ -17,11 +17,6 @@
               <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
                 <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
               </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入PMC" allowClear style="width: 200px" v-decorator="['pmc']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -86,7 +81,7 @@
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" @click="detail(record)">
+          <a style="margin-right: 8px" @click="detail(record.Id)">
             <a-icon type="profile" />
             查看明细
           </a>
@@ -158,6 +153,7 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 export default {
+  props: ["plantList"],
   data() {
     return {
       data: [],
@@ -174,7 +170,6 @@ export default {
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       selectedRows: [],
-      plantList: [],
       isExecl: false,
       selectedRowKeys: [],
       scrollY: "",
@@ -195,13 +190,11 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    this.getPlant();
     this.getListAll();
   },
   methods: {
-    detail(item) {
-      // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
-      this.$emit("toDetail", item.Id);
+    detail(id) {
+      this.$emit("toDetail",id);
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");
@@ -224,18 +217,6 @@ export default {
           this.isSearch =false
         } else {
           this.loading = false;
-        }
-      });
-    },
-    //获取需求工厂
-    getPlant() {
-      let parmas1 = {
-        entertypecode: "PLANT",
-      };
-      getMitemrequirement(parmas1, "masterplan/getlistbytypecode").then((res) => {
-        if (res.data.success) {
-          this.plantList = res.data.data;
-          this.plantid = this.plantList[0].EnterId;
         }
       });
     },

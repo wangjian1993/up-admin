@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-09-08 16:27:45
+ * @LastEditTime: 2021-09-16 15:06:15
  * @LastEditors: max
  * @Description: 权限
  * @FilePath: /up-admin/src/pages/home/quote/config/authority/Authority.vue
@@ -327,6 +327,7 @@ export default {
       actionList: [],
       actionStr: [],
       actionValue: [],
+      isSearch:false
     };
   },
   updated() {
@@ -416,6 +417,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
+              this.isSearch =true
             }
           });
           // do something
@@ -424,6 +426,7 @@ export default {
     },
     //获取机构类型列表
     getAuthoData() {
+      this.loading =true
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
@@ -435,6 +438,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
+          this.isSearch =false
         } else {
           this.loading = false;
         }
@@ -608,6 +612,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if(this.isSearch){
+        this.search();
+        return;
+      }
       this.getAuthoData();
     },
     //权限名称弹窗

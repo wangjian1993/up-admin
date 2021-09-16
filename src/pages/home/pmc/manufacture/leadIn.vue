@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-15 09:48:41
+ * @LastEditTime: 2021-09-16 15:02:04
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/leadIn.vue
@@ -223,6 +223,7 @@ export default {
       plantId: "",
       workshopId: "",
       lineId: "",
+      isSearch:false
     };
   },
   updated() {
@@ -267,6 +268,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
+          this.isSearch =false
         } else {
           this.loading = false;
         }
@@ -373,6 +375,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
+              this.isSearch =true;
             }
           });
           // do something
@@ -441,6 +444,10 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
+      if(this.isSearch){
+        this.search();
+        return;
+      }
       this.getListAll();
     },
   },

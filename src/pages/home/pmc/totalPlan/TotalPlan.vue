@@ -1,28 +1,28 @@
 <!--
  * @Author: max
  * @Date: 2021-08-31 09:36:32
- * @LastEditTime: 2021-09-15 19:08:40
+ * @LastEditTime: 2021-09-16 10:29:26
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/TotalPlan.vue
 -->
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-    <a-tabs type="card">
+    <a-tabs type="card" v-model="activeKey" default-active-key="1" @change="callback">
       <a-tab-pane key="1" tab="处理物料计划">
-        <action></action>
+        <action :plantList="plantList"></action>
       </a-tab-pane>
       <a-tab-pane key="2" tab="物料需求总计划">
-        <total></total>
+        <total :plantList="plantList" @toDetail="toDetail"></total>
       </a-tab-pane>
       <a-tab-pane key="3" tab="物料需求总计划明细">
-        <detail></detail>
+        <detail :plantList="plantList" :batchid="batchid" ref="myDeatils"></detail>
       </a-tab-pane>
       <a-tab-pane key="4" tab="物料需求总计划明细合并">
-        <detail-merge></detail-merge>
+        <detail-merge :plantList="plantList"></detail-merge>
       </a-tab-pane>
       <a-tab-pane key="5" tab="物料需求总计划(供应商回复)">
-        <reply></reply>
+        <reply :plantList="plantList"></reply>
       </a-tab-pane>
     </a-tabs>
   </a-card>
@@ -34,19 +34,32 @@ import Detail from "./Detail.vue";
 import Total from "./Total.vue";
 import Reply from "./Reply.vue";
 import { getMitemrequirement } from "@/services/web.js";
-import { mapActions } from "vuex";
 export default {
   components: { Action, Detail, Total, Reply, DetailMerge },
   data() {
     return {
       plantList: [],
+      activeKey: "1",
+      batchid: "",
     };
   },
   created() {
     this.getPlant();
   },
   methods: {
-    ...mapActions("plan", ["planListAction"]),
+     toDetail(id) {
+      console.log(id)
+      this.batchid = id;
+      console.log(this.batchid)
+      this.activeKey = "3";
+      this.$nextTick(() => {
+        this.$refs.myDeatils.getListAll();
+      });
+    },
+    callback(key) {
+      console.log(key);
+      this.activeKey = key;
+    },
     //获取需求工厂
     getPlant() {
       let parmas1 = {
@@ -54,10 +67,7 @@ export default {
       };
       getMitemrequirement(parmas1, "masterplan/getlistbytypecode").then((res) => {
         if (res.data.success) {
-          // this.planListAction(res.data.data);
-          // this['plan/planListAction'].then(res => {
-          //   console.log("1111",res)
-          // })
+          this.plantList = res.data.data
         }
       });
     },
