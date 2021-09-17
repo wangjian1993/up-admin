@@ -1,13 +1,12 @@
 /*
  * @Author: max
  * @Date: 2021-09-07 14:19:07
- * @LastEditTime: 2021-09-16 18:23:07
+ * @LastEditTime: 2021-09-17 09:20:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/ExportExcel.js
  */
 import XLSX from 'xlsx';
-
 /**
  * 导出Excel的处理函数--针对table
  * @param {Array} headers: [{key: 'date', title: '日期'}, {key: 'name', title: '名称'}]

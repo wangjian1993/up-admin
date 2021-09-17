@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-16 16:45:57
+ * @LastEditTime: 2021-09-17 11:00:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
@@ -57,7 +57,7 @@
       </span>
     </a-form>
     <div class="operator">
-      <a-button :disabled="!hasPerm('export')" type="primary" @click="importExcel" icon="export">导出</a-button>
+      <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
     </div>
     <a-table
       :columns="columns"
@@ -239,6 +239,7 @@ export default {
     //重置搜索
     reset() {
       this.getListAll();
+      this.week =""
       this.searchForm.resetFields();
     },
     weekChange(date, dateString) {
@@ -302,12 +303,15 @@ export default {
           console.log("Received values of form: ", values);
           this.dataSourcedata = [];
           this.pagination.total = 0;
+          if(this.week != ""){
+            var w =this.week
+          }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             batchid: values.batchid,
-            week: this.week,
+            week:w,
             pmc: values.pmc,
             mitemcode: values.mitemcode,
             mitemname: values.mitemname,
@@ -326,7 +330,7 @@ export default {
         }
       });
     },
-    importExcel() {
+    exportExcel() {
       const dataSource = this.dataSource.map((item) => {
         Object.keys(item).forEach((key) => {
           // 后端传null node写入会有问题
@@ -341,7 +345,13 @@ export default {
       });
       const header = this.columns.map((item) => ({ key: item.dataIndex, title: item.title }));
       var timestamp = Date.parse(new Date());
-      ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
+       try {
+        ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
+        this.$message.success("导出数据成功!");
+      } catch (error) {
+        console.log(error);
+        this.$message.error("导出数据失败");
+      }
     },
   },
 };

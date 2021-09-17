@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-16 10:41:47
+ * @LastEditTime: 2021-09-17 11:01:24
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Detail.vue
@@ -257,6 +257,7 @@ export default {
     //重置搜索
     reset() {
       this.getListAll();
+      this.week =""
       this.searchForm.resetFields();
     },
     //关键词搜索
@@ -267,11 +268,14 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
+          if(this.week != ""){
+            var w =this.week
+          }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            week: this.week,
+            week:w,
             pmc: values.pmc,
             mitemcode: values.mitemcode,
             mitemname: values.mitemcode,

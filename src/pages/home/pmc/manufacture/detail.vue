@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-16 16:45:20
+ * @LastEditTime: 2021-09-17 10:56:52
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/detail.vue
@@ -75,7 +75,7 @@
       </span>
     </a-form>
     <div class="operator">
-      <a-button :disabled="!hasPerm('export')" type="primary" @click="importExcel" icon="export">导出</a-button>
+      <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
     </div>
     <a-table
       :columns="columns"
@@ -414,6 +414,22 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
+    //日期转换
+    formatDateTime(inputTime) {
+      var date = new Date(inputTime);
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      m = m < 10 ? "0" + m : m;
+      var d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+      var h = date.getHours();
+      h = h < 10 ? "0" + h : h;
+      var minute = date.getMinutes();
+      var second = date.getSeconds();
+      minute = minute < 10 ? "0" + minute : minute;
+      second = second < 10 ? "0" + second : second;
+      return y + "-" + m + "-" + d + " " + h + ":" + minute + ":" + second;
+    },
     search() {
       this.loading = true;
       this.searchForm.validateFields((err, values) => {
@@ -452,7 +468,7 @@ export default {
         }
       });
     },
-    importExcel() {
+    exportExcel() {
       const dataSource = this.dataSource.map((item) => {
         Object.keys(item).forEach((key) => {
           // 后端传null node写入会有问题
@@ -467,7 +483,13 @@ export default {
       });
       const header = this.columns.map((item) => ({ key: item.dataIndex, title: item.title }));
       var timestamp = Date.parse(new Date());
-      ExportExcel(header, dataSource, `生产日计划明细_${timestamp}.xlsx`);
+      try {
+        ExportExcel(header, dataSource, `生产日计划明细_${timestamp}.xlsx`);
+        this.$message.success("导出数据成功!");
+      } catch (error) {
+        console.log(error);
+        this.$message.error("导出数据失败");
+      }
     },
   },
 };

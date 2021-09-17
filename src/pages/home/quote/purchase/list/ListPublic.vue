@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-15 11:44:10
+ * @LastEditTime: 2021-09-17 15:16:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -54,19 +54,19 @@
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-input placeholder="请输入产品大类" v-decorator="['ItemSort']" />
+                  <a-input placeholder="请输入产品大类" allowClear v-decorator="['itemsort']" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row v-if="advanced">
               <a-col :md="6" :sm="24">
                 <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-input placeholder="请输入产品品名" v-decorator="['itemname']" />
+                  <a-input placeholder="请输入产品品名" allowClear v-decorator="['itemname']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-input placeholder="请输入产品品号" v-decorator="['itemcode']" />
+                  <a-input placeholder="请输入产品品号" allowClear v-decorator="['itemcode']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -335,7 +335,7 @@ export default {
       isHistory: false,
       historyData: [],
       historyType: "",
-      isSearch:false
+      isSearch: false,
     };
   },
   updated() {
@@ -417,11 +417,11 @@ export default {
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
-          this.isSearch =false
-        }else {
-          console.log("my====")
-          this.dataSource =[]
-          this.pagination.current =1
+          this.isSearch = false;
+        } else {
+          console.log("my====");
+          this.dataSource = [];
+          this.pagination.current = 1;
         }
         this.loading = false;
       });
@@ -441,16 +441,17 @@ export default {
             itemcode: values.itemcode || "",
             itemname: values.itemname || "",
           };
-          getCostConfig(parmas, "getquotelist").then((res) => {
+          getCostConfig(parmas, "getquotelistcommon").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.isSearch =true
-            }else {
-              this.dataSource =[]
-              this.pagination.current =1
+              this.isSearch = true;
+            } else {
+              this.dataSource = [];
+              this.pagination.current = 1;
+              this.pagination.total = 0;
             }
             this.loading = false;
           });
@@ -493,7 +494,7 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if(this.isSearch){
+      if (this.isSearch) {
         this.search();
         return;
       }
@@ -555,8 +556,14 @@ export default {
           const wb = XLSX.utils.book_new();
           XLSX.utils.book_append_sheet(wb, ws, info.ItemName);
           /* save to file */
-          XLSX.writeFile(wb, `${info.ItemName}_采购报价导出.xlsx`);
-          this.$message.success("导出成功!");
+          var timestamp = Date.parse(new Date());
+          try {
+            XLSX.writeFile(wb, `${info.ItemCode}_采购报价导出_${timestamp}.xlsx`);
+            this.$message.success("导出数据成功!");
+          } catch (error) {
+            console.log(error);
+            this.$message.error("导出数据失败");
+          }
         }
       });
     },

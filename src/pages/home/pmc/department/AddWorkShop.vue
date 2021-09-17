@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-04 14:04:40
- * @LastEditTime: 2021-09-04 14:32:45
+ * @LastEditTime: 2021-09-17 14:12:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/department/AddWorkShop.vue
@@ -12,7 +12,7 @@
       <a-modal title="添加车间" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
         <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item ref="PlantId" has-feedback label="生产工厂" prop="PlantId">
-            <a-select v-model="form.PlantId" placeholder="请选择生产工厂">
+            <a-select v-model="form.PlantId" placeholder="请选择生产工厂" disabled="">
               <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
             </a-select>
           </a-form-model-item>
@@ -58,7 +58,7 @@
 <script>
 import { addWorkshop } from "@/services/web.js";
 export default {
-  props: ["plantList"],
+  props: ["plantList", "plantid"],
   data() {
     return {
       visible: true,
@@ -95,6 +95,9 @@ export default {
         ],
       },
     };
+  },
+  created() {
+    this.form.PlantId = this.plantid;
   },
   methods: {
     //初始化表单

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 14:39:13
- * @LastEditTime: 2021-09-16 14:59:16
+ * @LastEditTime: 2021-09-17 14:14:04
  * @LastEditors: max
  * @Description: 生成部门配置
  * @FilePath: /up-admin/src/pages/home/pmc/department/Department.vue
@@ -177,7 +177,7 @@
         </a-descriptions>
       </a-drawer>
     </div>
-    <add-work-shop v-if="isAddWork" :plantList="plantList" @confirm="workShopConfirm" @close="workShopClose"></add-work-shop>
+    <add-work-shop v-if="isAddWork" :plantList="plantList" :plantid="plantid" @confirm="workShopConfirm" @close="workShopClose"></add-work-shop>
   </a-card>
 </template>
 <script>
@@ -343,12 +343,17 @@ export default {
     },
     //添加车间
     addWorkShop() {
+      if(this.form.PlantId == ''){
+        this.$message.warning("请先选择生产工厂!");
+        return;
+      }
       this.isAddWork = true;
       this.getWorkshopList();
     },
     //车间添加成确认那妞
     workShopConfirm() {
       this.isAddWork = false;
+      this.getWorkshopList();
     },
     //车间添加取消那妞
     workShopClose() {

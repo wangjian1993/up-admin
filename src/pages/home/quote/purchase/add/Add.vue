@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-16 16:45:53
+ * @LastEditTime: 2021-09-17 18:17:02
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -154,32 +154,49 @@
       <!-- //物料 -->
       <a-card class="card" title="物料" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
         <div class="table-search">
+          <a-space class="operator">
+            <a-button type="primary" :disabled="!hasSelected" :loading="loading" @click="toAosage" style="margin-left: 8px">用量统计</a-button>
+            <span style="margin-left: 8px">
+              <template v-if="hasSelected">
+                {{ `共选中 ${selectedRowKeys.length} 条` }}
+              </template>
+            </span>
+          </a-space>
           <a-form layout="inline" :form="keywordForm">
             <a-form-item label="(料号,料规格,提示)关键字匹配">
-              <a-input v-model="keyword" />
-            </a-form-item>
-            <a-form-item>
-              <a-button type="primary" @click="toAosage">
-                用量统计
-              </a-button>
+              <a-input v-model="keyword" allowClear @change="listSearch" />
             </a-form-item>
           </a-form>
         </div>
-        <standard-table :pagination="pagination" :columns="columns" :dataSource="tableData">
-          <div slot="Price" slot-scope="{ record, index }">
+        <a-table
+          :pagination="pagination"
+          size="small"
+          :columns="columns"
+          :data-source="searchList"
+          :rowKey="(searchList) => searchList.ChildCode"
+          :row-selection="{
+            selectedRowKeys: selectedRowKeys,
+            onChange: onSelectChange,
+          }"
+        >
+          <div slot="Price" slot-scope="text, record, index">
             <a-input-number :id="record.key" v-model="record.Price" :min="0" @change="priceNumber(record, index)" />
           </div>
-          <div slot="Property" slot-scope="{ text }">
+          <div slot="Property" slot-scope="text">
             <p v-if="text != '委外加工费'">{{ text }}</p>
             <p v-else style="color:#e01111">{{ text }}</p>
           </div>
-          <div slot="e10" slot-scope="{ text, record }">
+          <div slot="e10" slot-scope="text, record">
             <p>{{ record.PriceErpSource == "" ? text : text + `(${record.PriceErpSource})` }}</p>
           </div>
-          <div slot="action" slot-scope="{ record, index }">
+          <div slot="action" slot-scope="text, record, index">
             <a><a-input @change="remarkInput(record, index)" v-model="record.Remark"/></a>
           </div>
-        </standard-table>
+          <!-- <template slot="dosage" slot-scope="text,record">
+            <p v-if="!record.dosage" @click="dosageClick(record)">{{ text}}</p>
+            <p v-else style="color:#e01111" @click="dosageClick(record)">{{ text}}</p>
+          </template> -->
+        </a-table>
       </a-card>
       <dosage v-if="isDosage" :searchDosage="searchDosage" @closeModal="closeModal" @empty="empty"></dosage>
     </a-spin>
@@ -187,91 +204,102 @@
 </template>
 
 <script>
-const columns = [
-  {
-    title: "序号",
-    dataIndex: "IndexNo",
-    align: "center",
-    width: "4%",
-  },
-  {
-    title: "阶次",
-    dataIndex: "LvNo",
-    width: "5%",
-  },
-  {
-    title: "类型",
-    dataIndex: "Property",
-    scopedSlots: { customRender: "Property" },
-    width: "5%",
-  },
-  {
-    title: "上阶料号",
-    dataIndex: "LastCode",
-    width: "10%",
-  },
-  {
-    title: "料号",
-    dataIndex: "ChildCode",
-  },
-  {
-    title: "料名",
-    dataIndex: "ChildName",
-  },
-  {
-    title: "料规格",
-    dataIndex: "ChildSpecification",
-  },
-  {
-    title: "单位",
-    dataIndex: "UnitName",
-    width: "5%",
-  },
-  {
-    title: "E10单价",
-    dataIndex: "PriceErp",
-    scopedSlots: { customRender: "e10" },
-    width: "5%",
-  },
-  {
-    title: "单价",
-    dataIndex: "Price",
-    scopedSlots: { customRender: "Price" },
-  },
-  {
-    title: "用量",
-    dataIndex: "Yl",
-    width: "5%",
-  },
-  {
-    title: "金额",
-    dataIndex: "Amount",
-  },
-  {
-    title: "提示",
-    dataIndex: "Tips",
-    scopedSlots: { customRender: "Tips" },
-    width: "5%",
-  },
-  {
-    title: "备注",
-    dataIndex: "Remark",
-    scopedSlots: { customRender: "action" },
-  },
-];
 import { getDemandEnter, getCostConfig, addCost } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcel";
-import StandardTable from "@/components/table/StandardTable";
 import Dosage from "./Dosage.vue";
 export default {
-  components: { StandardTable, Dosage },
+  components: { Dosage },
   data() {
     return {
       advanced: true,
-      bomDetail: [],
       costList: [],
       tableData: [],
-      columns,
+      columns: [
+        {
+          title: "序号",
+          dataIndex: "IndexNo",
+          align: "center",
+          width: "4%",
+        },
+        {
+          title: "阶次",
+          dataIndex: "LvNo",
+          width: "5%",
+          align: "center",
+        },
+        {
+          title: "类型",
+          dataIndex: "Property",
+          scopedSlots: { customRender: "Property" },
+          width: "5%",
+          align: "center",
+        },
+        {
+          title: "上阶料号",
+          dataIndex: "LastCode",
+          width: "10%",
+          align: "center",
+        },
+        {
+          title: "料号",
+          dataIndex: "ChildCode",
+          align: "center",
+        },
+        {
+          title: "料名",
+          dataIndex: "ChildName",
+          align: "center",
+        },
+        {
+          title: "料规格",
+          dataIndex: "ChildSpecification",
+          align: "center",
+        },
+        {
+          title: "单位",
+          dataIndex: "UnitName",
+          width: "5%",
+          align: "center",
+        },
+        {
+          title: "E10单价",
+          dataIndex: "PriceErp",
+          scopedSlots: { customRender: "e10" },
+          width: "5%",
+          align: "center",
+        },
+        {
+          title: "单价",
+          dataIndex: "Price",
+          scopedSlots: { customRender: "Price" },
+          align: "center",
+        },
+        {
+          title: "用量",
+          dataIndex: "Yl",
+          width: "5%",
+          scopedSlots: { customRender: "dosage" },
+          align: "center",
+          customCell: this.dosageClick,
+        },
+        {
+          title: "金额",
+          dataIndex: "Amount",
+          align: "center",
+        },
+        {
+          title: "提示",
+          dataIndex: "Tips",
+          scopedSlots: { customRender: "Tips" },
+          width: "5%",
+          align: "center",
+        },
+        {
+          title: "备注",
+          dataIndex: "Remark",
+          scopedSlots: { customRender: "action" },
+        },
+      ],
       pagination: false,
       cost: {
         materialTotal: 0, //物料成本
@@ -296,7 +324,10 @@ export default {
       isAgainCost: false,
       isDosage: false,
       keyword: "",
-      searchDosage:[]
+      searchDosage: [],
+      isTableSearch: false,
+      searchList: [],
+      selectedRowKeys: [],
     };
   },
   created() {
@@ -308,27 +339,27 @@ export default {
       this.isEdit = false;
     }
   },
+  computed: {
+    hasSelected() {
+      return this.selectedRowKeys.length > 0;
+    },
+  },
   methods: {
     //清空用量计算
-    empty(){
+    empty() {
       this.searchDosage = [];
     },
     //关闭弹窗
-    closeModal(){
-       this.isDosage = false
+    closeModal() {
+      this.isDosage = false;
     },
     //用量统计
     toAosage() {
-      if(this.tableData.length == 0){
-        return;
-      }
       this.isDosage = true;
-      console.log(this.keyword);
-      this.searchDosage = this.tableData.filter((product) => {
-        return Object.keys(product).some((key)=>{
-            return String(product[key]).toLowerCase().indexOf(this.keyword) > -1;
-        });
+      this.searchDosage = this.searchList.filter((product) => {
+        return this.selectedRowKeys.includes(product.ChildCode);
       });
+      console.log(this.searchDosage)
     },
     //复制发布
     editCost() {
@@ -340,6 +371,7 @@ export default {
       getCostConfig(parmas, "getbomdetail2").then((res) => {
         if (res.data.success) {
           this.tableData = res.data.data.ItemInfo.ItemChildList;
+          this.searchList = this.tableData;
           this.costInfo = res.data.data.ItemInfo;
           this.costList = res.data.data.CostBaseList;
           this.cost.materialTotal = this.costInfo.MaterialCost;
@@ -396,6 +428,11 @@ export default {
         }
       });
     },
+    //多选
+    onSelectChange(selectedRowKeys) {
+      console.log(selectedRowKeys);
+      this.selectedRowKeys = selectedRowKeys;
+    },
     //重置数据
     reset() {
       this.costList = [];
@@ -403,6 +440,12 @@ export default {
       this.tableData = [];
       this.isSearch = false;
       this.isAgainCost = false;
+      this.quoteRemark = "";
+      this.keyword = "";
+      this.cost = {
+        materialTotal: 0, //物料成本
+        ultimatelyTotal: 0, //最终成本
+      };
       this.searchForm.resetFields();
     },
     //关键词搜索
@@ -414,6 +457,7 @@ export default {
           getCostConfig(values, "getbomdetail").then((res) => {
             if (res.data.success) {
               this.tableData = res.data.data.ItemInfo.ItemChildList;
+              this.searchList = this.tableData;
               this.costInfo = res.data.data.ItemInfo;
               this.costList = res.data.data.CostBaseList;
               this.countCost();
@@ -459,8 +503,9 @@ export default {
       this.costList.forEach((item) => {
         //计算电源贴片费用
         if (this.costInfo.ItemOtherInfo && item.CostName === "电源贴片费") {
-          item.Amount = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * this.cost.materialTotal;
-          item.Description = `"料名带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*0.008"`;
+          let str = item.Description.split("*");
+          item.Amount = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * str[1];
+          item.Description = `料名带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
         }
         //计算损耗费用
         if (item.CostName === "损耗") {
@@ -482,7 +527,11 @@ export default {
     },
     //修改单价
     priceNumber(item, index) {
-      this.tableData[index].Amount = item.Price * item.Yl;
+      this.tableData.find((items) => {
+        if (items.ChildCode == item.ChildCode) {
+          items.Amount = item.Price * item.Yl;
+        }
+      });
       if (item.Price != item.PriceErp) {
         this.tableData[index].Tips = "价格修改过";
       } else {
@@ -515,9 +564,10 @@ export default {
         return;
       }
       this.costLoading = true;
+      var obj = Object.assign(this.tableData, this.searchList);
       let parmas = {
         CostBaseList: this.costList,
-        ItemChildList: this.tableData,
+        ItemChildList: obj,
         EnterpriseId: this.searchData.enterpriseid,
         PlantId: this.searchData.plantid,
         ItemCode: this.costInfo.ItemCode,
@@ -537,6 +587,32 @@ export default {
         }
         this.costLoading = false;
       });
+    },
+    //列表搜索
+    listSearch(e) {
+      this.searchList = this.tableData.filter((product) => {
+        return Object.keys(product).some((key) => {
+          return (
+            String(product[key])
+              .toLowerCase()
+              .indexOf(e.target.value) > -1
+          );
+        });
+      });
+    },
+    dosageClick(record) {
+      return {
+        style: {
+          cursor: "pointer",
+        },
+        on: {
+          // 鼠标单击行
+          click: () => {
+            console.log(record.dosage);
+            this.selectedRowKeys.includes(record.ChildCode) ? (this.selectedRowKeys = this.selectedRowKeys.filter((n) => n !== record.ChildCode)) : this.selectedRowKeys.push(record.ChildCode);
+          },
+        },
+      };
     },
   },
 };
@@ -584,6 +660,6 @@ export default {
 }
 .table-search {
   display: flex;
-  justify-content: flex-end;
+  justify-content:space-between;
 }
 </style>

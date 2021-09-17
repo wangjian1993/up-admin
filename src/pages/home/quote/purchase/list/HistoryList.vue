@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-15 13:48:47
+ * @LastEditTime: 2021-09-17 15:19:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/HistoryList.vue
@@ -213,9 +213,9 @@ export default {
       };
       let url=''
       if(this.historyType == 'purchase'){
-        url = 'getquotehistorycommon'
-      }else {
         url ='getquotehistory'
+      }else {
+        url ='getquotehistorycommon'
       }
       getCostConfig(parmas, url).then((res) => {
         if (res.data.success) {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-09-13 08:48:09
+ * @LastEditTime: 2021-09-17 14:49:34
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -38,34 +38,15 @@
           </div>
         </a-form>
         <!-- 列表 -->
-        <!-- <div class="tab">
-          <a-table
-            :columns="columns"
-            :data-source="list"
-            :size="size"
-            :scroll="{ y: true }"
-            :pagination="pagination"
-            @change="handleTableChange"
-            :rowKey="(list) => list.Id"
-            :row-selection="{
-              selectedRowKeys: selectedRowKeys,
-              onChange: onSelectChange,
-            }"
-            bordered
-          >
+        <div class="tab">
+          <a-table :columns="columns" :data-source="errorList" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(errorList) => errorList.Id" bordered>
             <template slot="index" slot-scope="text, record, index">
               <div>
-                <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-              </div>
-            </template>
-            <template slot="enable" slot-scope="record">
-              <div>
-                <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
-                <a-tag color="red" v-else>禁用</a-tag>
+                <span>{{ index }}</span>
               </div>
             </template>
           </a-table>
-        </div> -->
+        </div>
       </div>
     </a-modal>
   </div>
@@ -74,6 +55,18 @@
 <script>
 import { mitemrequirementAction } from "@/services/web.js";
 import excel from "@/utils/xlsxTool.js";
+const columns = [
+  {
+    title: "序号",
+    scopedSlots: { customRender: "index" },
+    align: "center",
+  },
+  {
+    title: "错误信息",
+    dataIndex: "content",
+    align: "center",
+  },
+];
 export default {
   props: ["plantArray"],
   data() {
@@ -81,26 +74,13 @@ export default {
       size: "small",
       visible: true,
       isAddModal: false,
-      list: [],
+      columns,
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
-      selectedRowKeys: [],
-      searchForm: this.$form.createForm(this),
-      rowSelectionType: "radio",
-      pagination: {
-        current: 1,
-        total: 0,
-        pageSize: 20, //每页中显示10条数据
-        showSizeChanger: true,
-        showLessItems: true,
-        showQuickJumper: true,
-        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
-      },
+      errorList: [],
+      pagination: false,
       tableTitle: [],
-      columns: [],
       tableData: [],
-      onOrgId: 0,
       plantId: "",
       week: "",
     };
@@ -142,13 +122,12 @@ export default {
           obj[item["key"]] = res[item["key"]] || "";
         });
         arr.push(obj);
-        console.log(arr)
       }
       //获取年
       var date = new Date();
       var y = date.getFullYear();
       //拼接后台数据
-      arr.forEach((item) => {
+      arr.forEach((item, index) => {
         let data = {
           PlantId: this.plantId,
           Week: this.week,
@@ -176,22 +155,42 @@ export default {
               break;
           }
           if (key.indexOf("/") == 1) {
-            data.RequirementList.push({
-              RequirementDate: y + "/" + key,
-              RequirementQty: item[key] || "",
-            });
+            console.log(item[key]);
+            if (typeof item[key] !== "number" && item[key] != "") {
+              console.log("不是数字====", key);
+              this.errorList.push({
+                content: `第${index + 1}行,${key}数据${item[key]}错误,物料信息必须为数字`,
+              });
+            }
+            var regPos = /^\d+(\.\d+)?$/; //非负浮点数
+            var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/;
+            if (regPos.test(item[key]) || regNeg.test(item[key])) {
+              data.RequirementList.push({
+                RequirementDate: y + "/" + key,
+                RequirementQty: item[key] || "",
+              });
+              return true;
+            } else {
+              console.log(index);
+              console.log(key);
+              return false;
+            }
           }
         }
         parmas.push(data);
       });
-      this.submitExecl(parmas)
+      if (this.errorList.length == 0) {
+        this.submitExecl(parmas);
+      } else {
+        this.$message.error("物料信息格式错误,请修改");
+      }
     },
     submitExecl(parmas) {
       mitemrequirementAction(parmas, "import").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.close();
-        }else {
+        } else {
           this.$message.info(res.data.message.content);
         }
       });
@@ -207,10 +206,7 @@ export default {
         this.readFile(file);
         this.file = file;
       } else {
-        this.$Notice.warning({
-          title: "文件类型错误",
-          desc: "文件：" + file.name + "不是EXCEL文件，请选择后缀为.xlsx或者.xls的EXCEL文件。",
-        });
+        this.$message.warning("文件类型错误,请重新上传");
       }
       return false;
     },
@@ -241,5 +237,8 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+}
+/deep/.ant-table {
+  min-height: 0vh;
 }
 </style>

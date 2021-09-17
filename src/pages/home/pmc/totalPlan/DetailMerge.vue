@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-16 18:38:16
+ * @LastEditTime: 2021-09-17 10:58:03
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/DetailMerge.vue
@@ -20,41 +20,51 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入PMC" allowClear style="width: 200px" v-decorator="['pmc']" />
+            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入计划批号" allowClear style="width: 200px" v-decorator="['batchno']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-week-picker placeholder="选择周" @change="weekChange" />
+              <a-week-picker placeholder="选择周" @change="weekChange" v-decorator="['week']"/>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select placeholder="请选择" v-decorator="['planstatus']" style="width: 200px">
-                <a-select-option value="">全部</a-select-option>
-                <a-select-option value="Y">已审核</a-select-option>
-                <a-select-option value="N">未审核</a-select-option>
-              </a-select>
+            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入品号" allowClear style="width: 200px" v-decorator="['mitemcode']" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['mitemname']" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="时间选择" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-range-picker style="width: 400px" v-decorator="['range-time-picker']" show-time format="YYYY-MM-DD HH:mm:ss" />
             </a-form-item>
           </a-col>
         </a-row>
+        <a-row>
+          <a-col :md="24" :sm="24">
+            <span style="float: right; margin-top: 3px;">
+              <a-button type="primary" @click="search">查询</a-button>
+              <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+            </span>
+          </a-col>
+        </a-row>
       </div>
-      <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
-        <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
-      </span>
     </a-form>
     <div class="operator">
-      <a-button v-if="hasPerm('create')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button>
-      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button>
-      <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+      <!-- <a-button v-if="hasPerm('create')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button>
+      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button> -->
+      <!-- <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
       <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
       <span style="margin-left: 8px">
         <template v-if="hasSelected">
           {{ `共选中 ${selectedRowKeys.length} 条` }}
         </template>
-      </span>
+      </span> -->
     </div>
     <a-table
       v-if="hasPerm('search')"
@@ -169,7 +179,8 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 import Requirement from "./Requirement.vue";
-import ExportExcel from "@/utils/ExportExcel.js";
+// import ExportExcel from "@/utils/ExportExcel.js";
+import XLSX from "xlsx";
 export default {
   components: { Requirement },
   props: ["plantList"],
@@ -255,22 +266,50 @@ export default {
     //重置搜索
     reset() {
       this.getListAll();
+      this.week =""
       this.searchForm.resetFields();
+    },
+    //日期转换
+    formatDateTime(inputTime) {
+      var date = new Date(inputTime);
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      m = m < 10 ? "0" + m : m;
+      var d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+      var h = date.getHours();
+      h = h < 10 ? "0" + h : h;
+      var minute = date.getMinutes();
+      var second = date.getSeconds();
+      minute = minute < 10 ? "0" + minute : minute;
+      second = second < 10 ? "0" + second : second;
+      return y + "-" + m + "-" + d + " " + h + ":" + minute + ":" + second;
     },
     //关键词搜索
     search() {
       this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-          console.log("Received values of form: ", values);
+          console.log("Received values of form: ", values.week);
           this.data = [];
           this.pagination.total = 0;
+          if (values["range-time-picker"] != undefined) {
+            var begindt = this.formatDateTime(values["range-time-picker"][0]);
+            var enddt = this.formatDateTime(values["range-time-picker"][1]);
+          }
+          if(this.week != ""){
+            var w =this.week
+          }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            week: this.week,
-            pmc: values.pmc,
+            week:w,
+            batchno: values.batchno,
+            mitemcode:values.mitemcode,
+            mitemname:values.mitemname,
+            startdate:begindt,
+            enddate:enddt
           };
           getMitemrequirement(parmas, "masterplan/getmergedetails").then((res) => {
             if (res.data.success) {
@@ -367,38 +406,36 @@ export default {
       this.list.push(obj);
       this.loading = false;
     },
+    //导出excel数据
     handleExcel(list) {
       let dataSource = [];
       const header = [];
       this.columns.map((item) => {
         if (item.dataIndex) {
-          header.push({ key: item.dataIndex, title: item.title });
+          header.push(item.title);
+          dataSource.push(list[item.dataIndex]);
         }
       });
       let data = list.RequirementDetails;
-      let obj = {
-        ...list,
-      };
-      data.forEach((item, index) => {
+      data.forEach((item) => {
         let dateArray = item.RequirementDate.split("T");
         let date = dateArray[0].replace(/-/g, "/");
-        header.push({
-          key: "table" + index,
-          title: date,
-        });
-        obj["table" + index] = item.RequirementQty;
+        header.push(date);
+        dataSource.push(item.RequirementQty);
       });
-      dataSource.push(obj);
-      console.log(header);
-      console.log(dataSource);
       var timestamp = Date.parse(new Date());
-      console.log(header);
+      var _data = [header, dataSource];
+      const ws = XLSX.utils.aoa_to_sheet(_data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "物联需求总计划明细");
+      /* save to file */
       try {
-        ExportExcel(header, dataSource, `物料需求总计划明细${timestamp}.xlsx`);
+        let name = `'物联需求总计划明细_${timestamp}'` + ".xlsx";
+        XLSX.writeFile(wb, name);
         this.$message.success("导出数据成功!");
       } catch (error) {
         console.log(error);
-        this.$message.error('导出数据失败');
+        this.$message.error("导出数据失败");
       }
     },
   },
