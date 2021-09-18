@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-09-14 18:47:30
+ * @LastEditTime: 2021-09-18 10:15:12
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
@@ -52,34 +52,15 @@
           </div>
         </a-form>
         <!-- 列表 -->
-        <!-- <div class="tab">
-          <a-table
-            :columns="columns"
-            :data-source="list"
-            :size="size"
-            :scroll="{ y: true }"
-            :pagination="pagination"
-            @change="handleTableChange"
-            :rowKey="(list) => list.Id"
-            :row-selection="{
-              selectedRowKeys: selectedRowKeys,
-              onChange: onSelectChange,
-            }"
-            bordered
-          >
+        <div class="tab" v-if="this.errorList.length != 0">
+          <a-table :columns="columns" :data-source="errorList" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(errorList) => errorList.Id" bordered>
             <template slot="index" slot-scope="text, record, index">
               <div>
-                <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-              </div>
-            </template>
-            <template slot="enable" slot-scope="record">
-              <div>
-                <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
-                <a-tag color="red" v-else>禁用</a-tag>
+                <span>{{ index + 1 }}</span>
               </div>
             </template>
           </a-table>
-        </div> -->
+        </div>
       </div>
     </a-modal>
   </div>
@@ -88,31 +69,29 @@
 <script>
 import excel from "@/utils/xlsxTool.js";
 import { getWorkshopList, getLineList, dailyPlanAction } from "@/services/web.js";
+const columns = [
+  {
+    title: "序号",
+    scopedSlots: { customRender: "index" },
+    align: "center",
+    width: "10%",
+  },
+  {
+    title: "错误信息",
+    dataIndex: "content",
+    align: "center",
+  },
+];
 export default {
   props: ["plantArray"],
   data() {
     return {
       size: "small",
       visible: true,
-      isAddModal: false,
-      list: [],
-      labelCol: { span: 6 },
-      wrapperCol: { span: 14 },
-      selectedRowKeys: [],
-      searchForm: this.$form.createForm(this),
-      rowSelectionType: "radio",
-      pagination: {
-        current: 1,
-        total: 0,
-        pageSize: 20, //每页中显示10条数据
-        showSizeChanger: true,
-        showLessItems: true,
-        showQuickJumper: true,
-        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
-      },
+      errorList: [],
+      pagination: false,
       tableTitle: [],
-      columns: [],
+      columns,
       tableData: [],
       plantId: "",
       workshopId: "",
@@ -120,7 +99,7 @@ export default {
       workshopList: [],
       lineList: [],
       lineId: "",
-      people: 0,
+      people: "",
     };
   },
   created() {},
@@ -166,6 +145,7 @@ export default {
     lineChange(e) {
       this.lineId = e;
     },
+    //周选择
     weekChange(date, dateString) {
       let str = dateString.split("-");
       this.week = str[1].replace("周", "");
@@ -182,16 +162,15 @@ export default {
       }
       return year + (month < 10 ? "0" + month : month) + (date < 10 ? "0" + date : date);
     },
+    //修改对象key
     transitionKey(list, map) {
       function toTransition(list) {
         var newObj = list.constructor === Array ? [] : {};
-
         for (let key in list) {
           var newKey = map[key] ? map[key] : key;
 
           newObj[newKey] = typeof list[key] === "object" ? toTransition(list[key], map) : list[key];
         }
-
         return newObj;
       }
       return toTransition(list);
@@ -212,6 +191,10 @@ export default {
       }
       if (this.people == "") {
         this.$message.warning("请输入人数!");
+        return;
+      }
+      if (this.tableData.length === 0) {
+        this.$message.warning("请先导入excel文件!");
         return;
       }
       let keyMap = {
@@ -236,11 +219,32 @@ export default {
         PersonQty: this.people,
         PlanList: [],
       };
-      console.log(this.tableData);
       let arr = this.transitionKey(this.tableData, keyMap);
-      arr.forEach((item) => {
+      arr.forEach((item, index) => {
+        //错误信息判断
+        if (typeof item.OrderQty !== "number" || item.OrderQty === "") {
+          this.errorList.push({
+            content: `第${index + 1}行,"订单数量"数据(${item.OrderQty})错误,必须为数字`,
+          });
+        }
+        if (typeof item.PlanQty !== "number" || item.PlanQty === "") {
+          this.errorList.push({
+            content: `第${index + 1}行,"计划数量"数据(${item.PlanQty})错误,必须为数字`,
+          });
+        }
+        if (typeof item.WorkHour !== "number" || item.WorkHour === "") {
+          this.errorList.push({
+            content: `第${index + 1}行,"工时"数据(${item.WorkHour})错误,必须为数字`,
+          });
+        }
+        if (typeof item.PerCapiteCapacity !== "number" || item.PerCapiteCapacity === "") {
+          this.errorList.push({
+            content: `第${index + 1}行,"人均标准产值"数据(${item.PerCapiteCapacity})错误,必须为数字`,
+          });
+        }
+        //数据添加
         data.PlanList.push({
-          PlanDate:  this.formatDate(item.PlanDate) || "",
+          PlanDate: this.formatDate(item.PlanDate) || "",
           WorkOrderNo: item.WorkOrderNo || "",
           MitemCode: item.MitemCode || "",
           MitemName: item.MitemName || "",
@@ -254,8 +258,11 @@ export default {
           Remarks: item.Remarks || "",
         });
       });
-      console.log(data);
-      this.submitExecl(data);
+      if (this.errorList.length == 0) {
+        this.submitExecl(data);
+      } else {
+        this.$message.error("生产日计划数据格式错误,请修改");
+      }
     },
     submitExecl(parmas) {
       dailyPlanAction(parmas, "import").then((res) => {
@@ -313,5 +320,8 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: center;
+}
+/deep/.ant-table {
+  min-height: 0vh;
 }
 </style>

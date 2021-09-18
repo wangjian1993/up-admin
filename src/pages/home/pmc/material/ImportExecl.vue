@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-09-17 14:49:34
+ * @LastEditTime: 2021-09-18 10:01:02
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -38,11 +38,11 @@
           </div>
         </a-form>
         <!-- 列表 -->
-        <div class="tab">
+        <div class="tab" v-if="this.errorList.length != 0">
           <a-table :columns="columns" :data-source="errorList" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(errorList) => errorList.Id" bordered>
             <template slot="index" slot-scope="text, record, index">
               <div>
-                <span>{{ index }}</span>
+                <span>{{ index + 1 }}</span>
               </div>
             </template>
           </a-table>
@@ -60,6 +60,7 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
+    width: "10%",
   },
   {
     title: "错误信息",
@@ -73,10 +74,7 @@ export default {
     return {
       size: "small",
       visible: true,
-      isAddModal: false,
       columns,
-      labelCol: { span: 6 },
-      wrapperCol: { span: 14 },
       errorList: [],
       pagination: false,
       tableTitle: [],
@@ -109,6 +107,10 @@ export default {
       }
       if (this.week == "") {
         this.$message.warning("请先选择周!");
+        return;
+      }
+      if (this.tableData.length === 0) {
+        this.$message.warning("请先导入excel文件!");
         return;
       }
       let parmas = [];
@@ -155,30 +157,21 @@ export default {
               break;
           }
           if (key.indexOf("/") == 1) {
-            console.log(item[key]);
-            if (typeof item[key] !== "number" && item[key] != "") {
-              console.log("不是数字====", key);
+            if (typeof item[key] !== "number" && item[key] !== "") {
               this.errorList.push({
-                content: `第${index + 1}行,${key}数据${item[key]}错误,物料信息必须为数字`,
+                content: `第${index + 1}行,日期${key}数据'${item[key]}'错误,必须为数字`,
               });
-            }
-            var regPos = /^\d+(\.\d+)?$/; //非负浮点数
-            var regNeg = /^(-(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*)))$/;
-            if (regPos.test(item[key]) || regNeg.test(item[key])) {
+            } else {
               data.RequirementList.push({
                 RequirementDate: y + "/" + key,
                 RequirementQty: item[key] || "",
               });
-              return true;
-            } else {
-              console.log(index);
-              console.log(key);
-              return false;
             }
           }
         }
         parmas.push(data);
       });
+      console.log(this.errorList);
       if (this.errorList.length == 0) {
         this.submitExecl(parmas);
       } else {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-17 18:17:02
+ * @LastEditTime: 2021-09-18 17:36:28
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -198,7 +198,7 @@
           </template> -->
         </a-table>
       </a-card>
-      <dosage v-if="isDosage" :searchDosage="searchDosage" @closeModal="closeModal" @empty="empty"></dosage>
+      <dosage v-if="isDosage" :searchDosage="searchDosage" @closeModal="closeModal" @empty="empty" @remove="removeDosage"></dosage>
     </a-spin>
   </div>
 </template>
@@ -348,6 +348,8 @@ export default {
     //清空用量计算
     empty() {
       this.searchDosage = [];
+      this.selectedRowKeys =[];
+      this.isDosage = false;
     },
     //关闭弹窗
     closeModal() {
@@ -359,7 +361,6 @@ export default {
       this.searchDosage = this.searchList.filter((product) => {
         return this.selectedRowKeys.includes(product.ChildCode);
       });
-      console.log(this.searchDosage)
     },
     //复制发布
     editCost() {
@@ -386,7 +387,6 @@ export default {
           this.countCost();
           this.isAgainCost = true;
           this.isSearch = true;
-          console.log(" this.isAgainCost======", this.isAgainCost);
         }
         this.costLoading = false;
       });
@@ -398,7 +398,6 @@ export default {
           if (item[key] === null) {
             item[key] = "";
           }
-
           if (Array.isArray(item[key])) {
             item[key] = item[key].join(",");
           }
@@ -406,8 +405,9 @@ export default {
         return item;
       });
       const columns = this.columns.map((item) => ({ key: item.dataIndex, title: item.title }));
+      var timestamp = Date.parse(new Date());
       // dataSource.unshift(product)
-      ExportExcel(columns, dataSource, `${this.costInfo.ItemName}_采购报价导出.xlsx`);
+      ExportExcel(columns, dataSource, `${this.costInfo.ItemCode}_采购报价导出_${timestamp}.xlsx`);
     },
     //获取需求公司
     getDemandEnter() {
@@ -430,7 +430,6 @@ export default {
     },
     //多选
     onSelectChange(selectedRowKeys) {
-      console.log(selectedRowKeys);
       this.selectedRowKeys = selectedRowKeys;
     },
     //重置数据
@@ -477,7 +476,6 @@ export default {
           total += item.Amount;
         }
       });
-      console.log(total);
       this.costTotal = total;
       let expenses = this.cost.materialTotal + this.costTotal;
       this.cost.ultimatelyTotal = parseFloat(expenses.toFixed(4));
@@ -579,7 +577,6 @@ export default {
         FinalCost: this.cost.ultimatelyTotal,
         Remark: this.quoteRemark,
       };
-      console.log(parmas);
       addCost(parmas, "addnewquote").then((res) => {
         if (res.data.success) {
           this.$message.success("保存成功!");
@@ -600,6 +597,9 @@ export default {
         });
       });
     },
+    removeDosage(index){
+      this.selectedRowKeys.splice(index, 1);
+    },
     dosageClick(record) {
       return {
         style: {
@@ -608,7 +608,6 @@ export default {
         on: {
           // 鼠标单击行
           click: () => {
-            console.log(record.dosage);
             this.selectedRowKeys.includes(record.ChildCode) ? (this.selectedRowKeys = this.selectedRowKeys.filter((n) => n !== record.ChildCode)) : this.selectedRowKeys.push(record.ChildCode);
           },
         },

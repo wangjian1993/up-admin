@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-15 15:39:45
- * @LastEditTime: 2021-09-15 16:23:30
+ * @LastEditTime: 2021-09-18 14:26:06
  * @LastEditors: max
  * @Description: 用量统计
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Dosage.vue
@@ -29,7 +29,7 @@
                 </a-form-item>
               </a-form>
             </div>
-            <a-table :columns="columns" :data-source="searchDosage" :size="size" :pagination="pagination" :rowKey="(searchDosage) => searchDosage.Id" bordered>
+            <a-table :columns="columns" :data-source="searchDosage" :size="size" :pagination="pagination" :rowKey="(searchDosage) => searchDosage.Id" bordered @change="handleTableChange">
               <template slot="StatusCheck" slot-scope="record">
                 <div>
                   <a-tag color="green" v-if="record == 'Y'">已审核</a-tag>
@@ -122,10 +122,10 @@ export default {
     dosageCount() {
       let sum = 0;
       this.searchDosage.forEach((item) => {
-        //遍历prodAllPrice这个字段，并累加
+        //遍历Yl这个字段，并累加
         sum += item.Yl;
       });
-      this.dosage = sum;
+      this.dosage = parseFloat(sum.toFixed(4));
     },
     empty() {
       this.$emit("empty");
@@ -134,9 +134,14 @@ export default {
     remove(index, item) {
       this.searchDosage.splice(index, 1);
       this.dosage = this.dosage - item.Yl;
+      this.$emit("remove",item);
     },
     close() {
       this.$emit("closeModal");
+    },
+    handleTableChange(pagination) {
+      this.pagination.current = pagination.current;
+      this.pagination.pageSize = pagination.pageSize;
     },
   },
   components: {},
