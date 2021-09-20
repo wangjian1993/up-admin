@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-09-07 09:00:08
+ * @LastEditTime: 2021-09-20 15:00:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/router/async/router.map.js
@@ -28,7 +28,7 @@ const routerMap = {
   },
   dashboard: {
     name: '控制面板',
-    invisible:true,
+    invisible: true,
     component: view.blank
   },
   workplace: {
@@ -41,12 +41,29 @@ const routerMap = {
     icon: 'warning',
     component: view.blank
   },
+  quote: {
+    invisible: true,
+    name: '采购报价',
+    component: view.blank
+  },
+  copy: {
+    invisible: true,
+    name: '复制报价',
+    path: 'purchase/copy',
+    component: () => import('@/pages/home/quote/purchase/copy')
+  },
+  anew: {
+    invisible: true,
+    name: '重新报价',
+    path: 'purchase/anew',
+    component: () => import('@/pages/home/quote/purchase/anew')
+  },
   personal: {
-    invisible:true,
+    invisible: true,
     name: '个人中心',
     component: view.blank
   },
-  user:{
+  user: {
     name: '个人中心',
     path: 'user',
     component: () => import('@/pages/personal')

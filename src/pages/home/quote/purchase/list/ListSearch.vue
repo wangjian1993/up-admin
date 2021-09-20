@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-17 15:16:53
+ * @LastEditTime: 2021-09-20 14:59:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -160,7 +160,7 @@
     <!-- 详情 -->
     <a-details v-if="isDetails" :detailsId="detailsId" @closeModal="closeModal"></a-details>
     <!-- 历史版本 -->
-    <history-list v-if="isHistory" :historyData="historyData" @closeModal="closeHistory" @details="details" @handleExcel="handleExcel" :historyType="historyType" @reloadCost="reloadCost"></history-list>
+    <history-list v-if="isHistory" :historyData="historyData" @closeModal="closeHistory" @details="details" @handleExcel="handleExcel" :historyType="historyType" @reloadCost="reloadCost" @onDelete="onDelete" @onAudit="onAudit"></history-list>
   </div>
 </template>
 
@@ -512,7 +512,11 @@ export default {
     },
     reloadCost(id, sign) {
       this.isHistory = false;
-      this.$router.push({ path: "/purchase/add", query: { id: id, sign: sign } });
+      if (sign == "copy") {
+        this.$router.push({ path: "quote/purchase/copy", query: { id: id, sign: sign } });
+      } else {
+        this.$router.push({ path: "quote/purchase/anew", query: { id: id, sign: sign } });
+      }
     },
     checkAll() {
       let self = this;
@@ -532,7 +536,11 @@ export default {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("审批成功!");
-              this.getCostList();
+              if (self.isSearch) {
+                self.search();
+                return;
+              }
+              self.getCostList();
             }
           });
         },
@@ -557,7 +565,11 @@ export default {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
-              this.getCostList();
+              if (self.isSearch) {
+                self.search();
+                return;
+              }
+              self.getCostList();
             }
           });
         },

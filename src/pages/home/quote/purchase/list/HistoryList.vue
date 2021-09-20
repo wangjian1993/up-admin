@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-17 15:19:08
+ * @LastEditTime: 2021-09-20 13:54:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/HistoryList.vue
@@ -161,7 +161,7 @@ const columns = [
     scopedSlots: { customRender: "action" },
   },
 ];
-import { getCostConfig } from "@/services/web.js";
+import { getCostConfig,addCost} from "@/services/web.js";
 export default {
   props: ["historyData", "historyType"],
   data() {
@@ -235,6 +235,30 @@ export default {
     handleCancel() {
       this.isAddModal = false;
     },
+    onAudit(item){
+       let parmas = {
+        Id: item.Id,
+        StatusCheck: item.StatusCheck == "Y" ? "N" : "Y",
+      };
+      addCost(parmas, "checkquote").then((res) => {
+        if (res.data.success) {
+          this.$message.success("审核成功!");
+          this.getList();
+        }
+      });
+    },
+    onDelete(item){
+       let parmas = {
+        Id: item.Id,
+        IsDelete: "Y",
+      };
+      addCost(parmas, "deletequote").then((res) => {
+        if (res.data.success) {
+          this.$message.success("删除成功!");
+          this.getList();
+        }
+      });
+    }
   },
   components: {},
 };

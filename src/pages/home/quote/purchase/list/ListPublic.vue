@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-17 15:16:37
+ * @LastEditTime: 2021-09-20 14:32:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -530,14 +530,18 @@ export default {
           let info = res.data.data.ItemInfo;
           let ConfigList = res.data.data.ConfigList;
           var _data = [];
-          _data.push(["需求公司", info.EnterpriseName, "", "需求工厂", info.PlantName]);
-          _data.push(["品号", info.ItemCode, "", "品名", info.ItemName, "", "大类", info.ItemSort]);
+          _data.push(["需求公司", info.EnterpriseName]);
+          _data.push(["需求工厂", info.PlantName]);
+          _data.push(["品号", info.ItemCode]);
+          _data.push(["品名", info.ItemName]);
+          _data.push(["大类", info.ItemSort]);
           _data.push(["规格", info.ItemSpecification]);
           ConfigList.map((item) => {
             let array = [item.CostName, item.Amount, item.Description];
             _data.push(array);
           });
-          _data.push(["物料成本", info.MaterialCost, "最终成本", info.FinalCost]);
+          _data.push(["物料成本", info.MaterialCost]);
+          _data.push(["最终成本", info.FinalCost]);
           const columns = [];
           this.excelHead.map((item) => {
             columns.push(item.title);
@@ -554,7 +558,7 @@ export default {
           const ws = XLSX.utils.aoa_to_sheet(_data);
           /* generate workbook and add the worksheet */
           const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, info.ItemName);
+          XLSX.utils.book_append_sheet(wb, ws, `${info.ItemCode}`);
           /* save to file */
           var timestamp = Date.parse(new Date());
           try {

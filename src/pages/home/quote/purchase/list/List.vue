@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:59:02
- * @LastEditTime: 2021-09-14 09:54:31
+ * @LastEditTime: 2021-09-20 14:35:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/List.vue
@@ -26,7 +26,8 @@ import ListPublic from "./ListPublic.vue"
 export default {
   components: { ListSearch,ListPublic},
   data() {
-    return {};
+    return {
+    };
   },
 };
 </script>

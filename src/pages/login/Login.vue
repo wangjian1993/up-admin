@@ -160,8 +160,13 @@ export default {
           router: "dashboard", //匹配 router.map.js 中注册名 registerName = dashboard 的路由
           children: ["workplace"] //dashboard 路由的子路由配置，依次匹配 registerName 为 workplace 和 analysis 的路由
         };
+        // let cost = {
+        //   router :"quote", //匹配 router.map.js 中注册名 registerName = quote 的路由
+        //   children: ["copy",'anew']
+        // }
         let personal = { router: "personal", children: ["user"] };
         routesConfig.push(workplace);
+        // routesConfig.push(cost);
         routesConfig.push(personal);
         // }
         let root = [
