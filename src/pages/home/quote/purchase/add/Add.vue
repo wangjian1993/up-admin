@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-20 13:59:01
+ * @LastEditTime: 2021-09-22 14:27:38
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -14,7 +14,7 @@
         <!-- 搜索 -->
         <div class="save-btn">
           <span>
-            <a-button :disabled="!hasPerm('save')" type="primary" icon="save" @click="costSave">保存</a-button>
+            <a-button :disabled="!hasPerm('save')" type="primary" icon="save" @click="costSave">{{ saveBtnText }}</a-button>
             <a-button :disabled="!hasPerm('export')" style="margin-left: 8px" type="primary" icon="import" @click="handleExcel">导出</a-button>
           </span>
         </div>
@@ -120,7 +120,7 @@
           <a-row>
             <a-col :md="24" :lg="24" :xl="12">
               <div class="input-item">
-                <p class="input-lable">物料成本:</p>
+                <p class="input-lable input-text-color">物料成本:</p>
                 <p class="input-number">
                   <a-input-number disabled :min="0" v-model="cost.materialTotal" />
                 </p>
@@ -129,7 +129,7 @@
             </a-col>
             <a-col :md="24" :lg="24" :xl="12">
               <div class="input-item">
-                <p class="input-lable">最终成本:</p>
+                <p class="input-lable input-text-color">最终成本:</p>
                 <p class="input-number">
                   <a-input-number disabled :min="0" v-model="cost.ultimatelyTotal" />
                 </p>
@@ -330,6 +330,7 @@ export default {
       isTableSearch: false,
       searchList: [],
       selectedRowKeys: [],
+      saveBtnText: "保存",
     };
   },
   created() {
@@ -339,6 +340,12 @@ export default {
       this.isEdit = true;
     } else {
       this.isEdit = false;
+    }
+    if (this.$route.query.sign == "COPY") {
+      this.saveBtnText = "保存复制报价";
+    }
+    if (this.$route.query.sign == "ANEW") {
+      this.saveBtnText = "保存重新报价";
     }
   },
   computed: {
@@ -350,7 +357,7 @@ export default {
     //清空用量计算
     empty() {
       this.searchDosage = [];
-      this.selectedRowKeys =[];
+      this.selectedRowKeys = [];
       this.isDosage = false;
     },
     //关闭弹窗
@@ -443,9 +450,9 @@ export default {
       this.isAgainCost = false;
       this.quoteRemark = "";
       this.keyword = "";
-      this.searchList=[];
-      this.selectedRowKeys =[];
-      this.searchDosage =[];
+      this.searchList = [];
+      this.selectedRowKeys = [];
+      this.searchDosage = [];
       this.cost = {
         materialTotal: 0, //物料成本
         ultimatelyTotal: 0, //最终成本
@@ -506,6 +513,11 @@ export default {
       this.costList.forEach((item) => {
         //计算电源贴片费用
         if (this.costInfo.ItemOtherInfo && item.CostName === "电源贴片费") {
+          if (item.Description == "") {
+            item.Amount = 0;
+            item.Description = `料名带有“贴片”关键字(0)行)，用量(0)*0`;
+            return;
+          }
           let str = item.Description.split("*");
           item.Amount = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * str[1];
           item.Description = `料名带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
@@ -602,7 +614,7 @@ export default {
         });
       });
     },
-    removeDosage(index){
+    removeDosage(index) {
       this.selectedRowKeys.splice(index, 1);
     },
     dosageClick(record) {
@@ -664,6 +676,9 @@ export default {
 }
 .table-search {
   display: flex;
-  justify-content:space-between;
+  justify-content: space-between;
+}
+.input-text-color{
+  color: #dd0707;
 }
 </style>

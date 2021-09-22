@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:59:02
- * @LastEditTime: 2021-09-20 14:35:36
+ * @LastEditTime: 2021-09-22 14:36:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/List.vue
@@ -12,9 +12,9 @@
       <a-tabs type="card">
         <a-tab-pane key="1" tab="列表查询(公共端)" :disabled="!hasPerm('search_public')"><list-public></list-public></a-tab-pane>
         <a-tab-pane key="2" tab="列表查询(采购端)" :disabled="!hasPerm('search_purchase')"><list-search></list-search></a-tab-pane>
-        <a-tab-pane key="3" tab="销售要求报价"> </a-tab-pane>
+        <!-- <a-tab-pane key="3" tab="销售要求报价"> </a-tab-pane>
         <a-tab-pane key="4" tab="物料价格变动"> </a-tab-pane>
-        <a-tab-pane key="5" tab="有Bom无成本价"> </a-tab-pane>
+        <a-tab-pane key="5" tab="有Bom无成本价"> </a-tab-pane> -->
       </a-tabs>
     </a-card>
   </div>

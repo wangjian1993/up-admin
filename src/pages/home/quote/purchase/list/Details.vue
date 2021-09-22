@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-15 15:05:48
+ * @LastEditTime: 2021-09-22 15:51:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -76,10 +76,16 @@
 <script>
 const columns = [
   {
+    title: "上阶料号",
+    dataIndex: "LastCode",
+    width: "14%",
+    align: "left",
+  },
+  {
     title: "阶次",
     dataIndex: "LvNo",
-    width: "10%",
-    align: "left",
+    width: "4%",
+    align: "center",
   },
   {
     title: "序号",
@@ -95,25 +101,20 @@ const columns = [
     align: "center",
   },
   {
-    title: "上阶料号",
-    dataIndex: "LastCode",
-    width: "10%",
-    align: "center",
-  },
-  {
-    title: "料号",
+    title: "品号",
     dataIndex: "ChildCode",
     align: "center",
   },
   {
-    title: "料名",
+    title: "品名",
     dataIndex: "ChildName",
     align: "center",
   },
   {
-    title: "料规格",
+    title: "规格",
     dataIndex: "ChildSpecification",
     align: "center",
+    width: "15%",
   },
   {
     title: "单位",
@@ -126,7 +127,7 @@ const columns = [
     dataIndex: "PriceErp",
     scopedSlots: { customRender: "e10" },
     align: "center",
-    width: "10%",
+    width: "8%",
   },
   {
     title: "单价",
@@ -139,7 +140,7 @@ const columns = [
     title: "用量",
     dataIndex: "Yl",
     align: "center",
-    width: "5%",
+    width: "4%",
   },
   {
     title: "金额",

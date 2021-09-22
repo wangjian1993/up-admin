@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-16 15:07:58
+ * @LastEditTime: 2021-09-22 15:23:02
  * @LastEditors: max
  * @Description: 报价参数配置
  * @FilePath: /up-admin/src/pages/home/quote/config/parmas/Parmas.vue
@@ -373,7 +373,7 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
+      this.getDemandEnter();
       this.searchForm.resetFields();
     },
     //关键词搜索

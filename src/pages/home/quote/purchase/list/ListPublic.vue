@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-20 14:32:07
+ * @LastEditTime: 2021-09-22 19:29:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -186,6 +186,7 @@ const columns = [
     title: "规格",
     dataIndex: "ItemSpecification",
     align: "center",
+    width: "20%",
   },
   {
     title: "物料成本",
@@ -299,8 +300,9 @@ import { getDemandEnter, getCostConfig, addCost } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import ADetails from "./Details.vue";
-import XLSX from "xlsx";
+// import { funtransformF } from "./excel";
 import HistoryList from "./HistoryList";
+import { exportjsontoexcelMore } from "./exportExcel";
 export default {
   components: { ADetails, HistoryList },
   data() {
@@ -336,6 +338,7 @@ export default {
       historyData: [],
       historyType: "",
       isSearch: false,
+      exportData: [],
     };
   },
   updated() {
@@ -519,6 +522,63 @@ export default {
     closeModal() {
       this.isDetails = false;
     },
+    handleExportMore() {
+      let list = [];
+      for (let i = 0; i < 1; i++) {
+        let title = `第个表格`;
+        let timeText = `统计日期：2020到2021`;
+        let headList = [
+          [title, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+          [timeText, null, null, null, null, null, null, null, null, null, null, null, null, null, null],
+          ["工号111", "姓名", "提成1", null, null, null, null, null, "提成2", null, "提成3", null, "提成4", null, "合计（元）"],
+          ["工号", "姓名", "大哥", "大哥", "大哥", "大哥", "大哥", "大哥", "大哥", "大哥", "大哥", "大哥", "大哥", "大哥", "大哥"],
+        ]; // 导出的表头数据
+        let contentList = [];
+        let merges1 = [
+          // 设置表头单元格合
+          { s: { r: 0, c: 0 }, e: { r: 0, c: 14 } },
+          { s: { r: 1, c: 0 }, e: { r: 1, c: 14 } },
+          { s: { r: 2, c: 2 }, e: { r: 2, c: 7 } },
+          { s: { r: 2, c: 8 }, e: { r: 2, c: 9 } },
+          { s: { r: 2, c: 10 }, e: { r: 2, c: 11 } },
+          { s: { r: 2, c: 12 }, e: { r: 2, c: 13 } },
+          { s: { r: 2, c: 0 }, e: { r: 3, c: 0 } },
+          { s: { r: 2, c: 1 }, e: { r: 3, c: 1 } },
+          { s: { r: 2, c: 14 }, e: { r: 3, c: 14 } },
+        ];
+
+        let merges2 = []; // 设置表格内容单元格合并
+        let aoa = [...headList, ...contentList]; // 导出的数据
+        let merges = [...merges1, ...merges2]; // 合并单元格
+        // 样式修改
+        let formStyle = {};
+        formStyle["A1"] = {
+          font: {
+            name: "宋体",
+            bold: true,
+            italic: false,
+            underline: false,
+          },
+          alignment: {
+            horizontal: "center",
+            vertical: "center",
+          },
+        };
+        list.push({
+          Sheet: `第1个`, // 下方tab切换名称
+          data: aoa, // 表格数据
+          merges, //  合并单元格
+          autoWidth: true, // 自适应宽度
+          formStyle: formStyle, // 特殊行或列样式
+        });
+      }
+      console.log(list);
+      exportjsontoexcelMore({
+        dataList: list,
+        bookType: "xlsx", // 导出类型
+        filename: "我的测试导出", // 导出标题名
+      });
+    },
     //导出数据
     handleExcel(id) {
       let parmas = {
@@ -527,21 +587,46 @@ export default {
       getCostConfig(parmas, "getquotedetail").then((res) => {
         if (res.data.success) {
           let list = res.data.data.ItemInfo.ItemChildList;
+          this.exportData = list;
           let info = res.data.data.ItemInfo;
           let ConfigList = res.data.data.ConfigList;
-          var _data = [];
-          _data.push(["需求公司", info.EnterpriseName]);
-          _data.push(["需求工厂", info.PlantName]);
-          _data.push(["品号", info.ItemCode]);
-          _data.push(["品名", info.ItemName]);
-          _data.push(["大类", info.ItemSort]);
-          _data.push(["规格", info.ItemSpecification]);
-          ConfigList.map((item) => {
-            let array = [item.CostName, item.Amount, item.Description];
+          let _data = [];
+          let mergeTitle = [];
+          for (let i = 0; i < 6; i++) {
+            mergeTitle.push({
+              s: { r: i, c: 1 },
+              e: { r: i, c: 14 },
+            });
+          }
+          _data.push(["需求公司", info.EnterpriseName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["需求工厂", info.PlantName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["品号", info.ItemCode, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["大类", info.ItemSort, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          ConfigList.map((item, index) => {
+            let array = [item.CostName, item.Amount, null, null, null, null, null, null, null, null, null, null, null, null, null];
             _data.push(array);
+            mergeTitle.push({
+              s: { r: 6 + index, c: 1 },
+              e: { r: 6 + index, c: 2 },
+            });
+            mergeTitle.push({
+              s: { r: 6 + index, c: 2 },
+              e: { r: 6 + index, c: 14 },
+            });
           });
-          _data.push(["物料成本", info.MaterialCost]);
-          _data.push(["最终成本", info.FinalCost]);
+          _data.push(["物料成本", info.MaterialCost, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["最终成本", info.FinalCost, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          let _data1 = [..._data];
+          mergeTitle.push({
+            s: { r: 6 + ConfigList.length, c: 1 },
+            e: { r: 6 + ConfigList.length, c: 14 },
+          });
+          mergeTitle.push({
+            s: { r: 7 + ConfigList.length, c: 1 },
+            e: { r: 7 + ConfigList.length, c: 14 },
+          });
           const columns = [];
           this.excelHead.map((item) => {
             columns.push(item.title);
@@ -555,14 +640,54 @@ export default {
             });
             _data.push(array);
           });
-          const ws = XLSX.utils.aoa_to_sheet(_data);
-          /* generate workbook and add the worksheet */
-          const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, `${info.ItemCode}`);
-          /* save to file */
+          this.exportData.map((item) => {
+            let array1 = [];
+            console.log(_data1);
+            if (item.LvNo == 2) {
+              console.log(item.LvNo)
+              Object.keys(item).forEach((key) => {
+                  array1.push(item[key]);
+              });
+              _data1.push(array1);
+            }
+          });
           var timestamp = Date.parse(new Date());
+          let excelArray = [];
+          let contentList = [];
+          let merges2 = []; // 设置表格内容单元格合并
+          let aoa = [..._data, ...contentList]; // 导出的数据
+          let aoa1 = [..._data1, ...contentList]; // 导出的数据
+          let merges = [...mergeTitle, ...merges2]; // 合并单元格
+          // 样式修改
+          console.log(aoa1);
+          let formStyle = {};
+          excelArray.push({
+            Sheet: `展开显示`, // 下方tab切换名称
+            data: aoa, // 表格数据
+            merges, //  合并单元格
+            autoWidth: true, // 自适应宽度
+            formStyle: formStyle, // 特殊行或列样式
+          });
+          excelArray.push({
+            Sheet: `收缩显示`, // 下方tab切换名称
+            data: aoa1, // 表格数据
+            merges, //  合并单元格
+            autoWidth: true, // 自适应宽度
+            formStyle: formStyle, // 特殊行或列样式
+          });
+          console.log(excelArray);
+          exportjsontoexcelMore({
+            dataList: excelArray,
+            bookType: "xlsx", // 导出类型
+            filename: `${info.ItemCode}_采购报价导出_${timestamp}`, // 导出标题名
+          });
           try {
-            XLSX.writeFile(wb, `${info.ItemCode}_采购报价导出_${timestamp}.xlsx`);
+            // funtransformF(_data, mergeTitle, sheetCols, `${info.ItemCode}_采购报价导出_${timestamp}.xlsx`);
+            // exportjsontoexcelMore({
+            //   dataList: array,
+            //   bookType: "xlsx", // 导出类型
+            //   filename: `${info.ItemCode}_采购报价导出_${timestamp}`, // 导出标题名
+            // });
             this.$message.success("导出数据成功!");
           } catch (error) {
             console.log(error);

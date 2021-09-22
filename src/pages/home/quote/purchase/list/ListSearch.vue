@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-20 14:59:36
+ * @LastEditTime: 2021-09-22 15:49:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -170,44 +170,58 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
+    width: "4%",
   },
   {
     title: "需求公司",
     dataIndex: "EnterpriseName",
     scopedSlots: { customRender: "description" },
+    align: "center",
   },
   {
     title: "生产工厂",
     dataIndex: "PlantName",
+    align: "center",
   },
   {
     title: "产品大类",
     dataIndex: "ItemSort",
+    align: "center",
   },
   {
     title: "品号",
     dataIndex: "ItemCode",
+    align: "center",
   },
   {
     title: "品名",
     dataIndex: "ItemName",
+    align: "center",
   },
   {
     title: "规格",
     dataIndex: "ItemSpecification",
+    align: "center",
+    width: "20%",
   },
   {
     title: "物料成本",
     dataIndex: "MaterialCost",
+    align: "center",
+    width: "5%",
   },
   {
     title: "最终成本",
     dataIndex: "FinalCost",
+    align: "center",
+    width: "5%",
   },
   {
     title: "状态",
     dataIndex: "StatusCheck",
     scopedSlots: { customRender: "StatusCheck" },
+    align: "center",
+    width: "5%",
   },
   {
     title: "创建日期",
@@ -237,60 +251,73 @@ const excelHead = [
     title: "阶次",
     dataIndex: "LvNo",
     width: "5%",
+    align: "center",
   },
   {
     title: "类型",
     dataIndex: "Property",
     scopedSlots: { customRender: "Property" },
     width: "5%",
+    align: "center",
   },
   {
     title: "上阶料号",
     dataIndex: "LastCode",
     width: "10%",
+    align: "center",
   },
   {
-    title: "料号",
+    title: "品号",
     dataIndex: "ChildCode",
+    align: "center",
   },
   {
-    title: "料名",
+    title: "品名",
     dataIndex: "ChildName",
+    align: "center",
   },
   {
-    title: "料规格",
+    title: "规格",
     dataIndex: "ChildSpecification",
+    width: "20%",
+    align: "center",
   },
   {
     title: "单位",
     dataIndex: "UnitName",
     width: "5%",
+    align: "center",
   },
   {
     title: "E10单价",
     dataIndex: "PriceErp",
     scopedSlots: { customRender: "e10" },
     width: "5%",
+    align: "center",
   },
   {
     title: "单价",
     dataIndex: "Price",
     scopedSlots: { customRender: "Price" },
+    align: "center",
   },
   {
     title: "用量",
     dataIndex: "Yl",
     width: "5%",
+    align: "center",
   },
   {
     title: "金额",
     dataIndex: "Amount",
+    align: "center",
   },
   {
     title: "提示",
     dataIndex: "Tips",
     scopedSlots: { customRender: "Tips" },
     width: "5%",
+    align: "center",
   },
   {
     title: "备注",
@@ -302,7 +329,7 @@ import { getDemandEnter, getCostConfig, addCost } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import ADetails from "./Details.vue";
-import XLSX from "xlsx";
+import { funtransformF } from "./excel";
 import HistoryList from "./HistoryList";
 export default {
   components: { ADetails, HistoryList },
@@ -512,11 +539,12 @@ export default {
     },
     reloadCost(id, sign) {
       this.isHistory = false;
-      if (sign == "copy") {
-        this.$router.push({ path: "quote/purchase/copy", query: { id: id, sign: sign } });
-      } else {
-        this.$router.push({ path: "quote/purchase/anew", query: { id: id, sign: sign } });
-      }
+      this.$router.push({ path: "/purchase/add", query: { id: id, sign: sign } });
+      // if (sign == "copy") {
+      //   this.$router.push({ path: "purchase/add", query: { id: id, sign: sign } });
+      // } else {
+      //   this.$router.push({ path: "quote/purchase/anew", query: { id: id, sign: sign } });
+      // }
     },
     checkAll() {
       let self = this;
@@ -587,14 +615,41 @@ export default {
           let info = res.data.data.ItemInfo;
           let ConfigList = res.data.data.ConfigList;
           var _data = [];
-          _data.push(["需求公司", info.EnterpriseName, "", "需求工厂", info.PlantName]);
-          _data.push(["品号", info.ItemCode, "", "品名", info.ItemName, "", "大类", info.ItemSort]);
+          let mergeTitle = [];
+          for (let i = 0; i < 6; i++) {
+            mergeTitle.push({
+              s: { r: i, c: 1 },
+              e: { r: i, c: 14 },
+            });
+          }
+          _data.push(["需求公司", info.EnterpriseName]);
+          _data.push(["需求工厂", info.PlantName]);
+          _data.push(["品号", info.ItemCode]);
+          _data.push(["品名", info.ItemName]);
+          _data.push(["大类", info.ItemSort]);
           _data.push(["规格", info.ItemSpecification]);
-          ConfigList.map((item) => {
-            let array = [item.CostName, item.Amount, item.Description];
+          ConfigList.map((item, index) => {
+            let array = [item.CostName, item.Amount, null, null, null, null, null, item.Description];
             _data.push(array);
+            mergeTitle.push({
+              s: { r: 6 + index, c: 1 },
+              e: { r: 6 + index, c: 6 },
+            });
+            mergeTitle.push({
+              s: { r: 6 + index, c: 7 },
+              e: { r: 6 + index, c: 14 },
+            });
           });
-          _data.push(["物料成本", info.MaterialCost, "最终成本", info.FinalCost]);
+          _data.push(["物料成本", info.MaterialCost]);
+          _data.push(["最终成本", info.FinalCost]);
+          mergeTitle.push({
+            s: { r: 6 + ConfigList.length, c: 1 },
+            e: { r: 6 + ConfigList.length, c: 14 },
+          });
+          mergeTitle.push({
+            s: { r: 7 + ConfigList.length, c: 1 },
+            e: { r: 7 + ConfigList.length, c: 14 },
+          });
           const columns = [];
           this.excelHead.map((item) => {
             columns.push(item.title);
@@ -608,14 +663,30 @@ export default {
             });
             _data.push(array);
           });
-          const ws = XLSX.utils.aoa_to_sheet(_data);
-          /* generate workbook and add the worksheet */
-          const wb = XLSX.utils.book_new();
-          XLSX.utils.book_append_sheet(wb, ws, info.ItemName);
-          /* save to file */
+          // s 是 Start，开始。
+          // e 是 End，结束。
+          // c 是 Column，列。
+          // r 是 Row，行。
+          const sheetCols = [
+            { wch: 10 }, // 序号
+            { wch: 5 }, // 阶次
+            { wch: 8 }, // 类型
+            { wch: 10 }, // 上阶料号
+            { wch: 10 }, // 料号
+            { wch: 18 }, // 料名
+            { wch: 20 }, // 规格
+            { wch: 6 }, // 单位
+            { wch: 8 }, // 价格来源
+            { wch: 7 }, // E10单价
+            { wch: 7 }, // 单价
+            { wch: 7 }, // 用量
+            { wch: 6 }, // 金额
+            { wch: 10 }, // 提示
+            { wch: 10 }, // 备注
+          ];
           var timestamp = Date.parse(new Date());
           try {
-            XLSX.writeFile(wb, `${info.ItemCode}_采购报价导出_${timestamp}.xlsx`);
+            funtransformF(_data, mergeTitle, sheetCols, `${info.ItemCode}_采购报价导出_${timestamp}.xlsx`);
             this.$message.success("导出数据成功!");
           } catch (error) {
             console.log(error);

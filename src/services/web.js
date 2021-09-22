@@ -1,13 +1,13 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-09-15 16:29:31
+ * @LastEditTime: 2021-09-22 18:19:29
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
  */
 import {
-    UP_WEB,UP_ADMIN
+    UP_WEB
 } from '@/services/api'
 import {
     request,
@@ -42,7 +42,7 @@ export function addWorkshop(params) {
  * @return {*}
  */
 export function getDemandEnter(params) {
-    return request(`${UP_ADMIN}/enter/getlistbytypecode`, METHOD.GET, params);
+    return request(`${UP_WEB}/quote/getlistbytypecode`, METHOD.GET, params);
 }
 
 /**
