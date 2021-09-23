@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-09-22 18:19:29
+ * @LastEditTime: 2021-09-23 14:18:44
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -105,4 +105,18 @@ export function getDailyPlan(params,action) {
 }
 export function dailyPlanAction(params,action) {
     return request(`${UP_WEB}/dailyproductplan/${action}`, METHOD.POST, params);
+}
+
+
+/**
+ * @description: 供应链物料需求总计划
+ * @param {*} params
+ * @param {*} action
+ * @return {*}
+ */
+export function getScmAction(params,action) {
+    return request(`${UP_WEB}/scm/${action}`, METHOD.GET, params);
+}
+export function setScmAction(params,action) {
+    return request(`${UP_WEB}/scm/${action}`, METHOD.POST, params);
 }

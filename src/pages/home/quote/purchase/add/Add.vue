@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-22 14:27:38
+ * @LastEditTime: 2021-09-23 13:39:46
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -180,7 +180,7 @@
           }"
         >
           <div slot="Price" slot-scope="text, record, index">
-            <a-input-number :id="record.key" v-model="record.Price" :min="0" @change="priceNumber(record, index)" />
+            <a-input-number :disabled="record.Property === '自制件' || record.Property === '虚设件' " :id="record.key" v-model="record.Price" :min="0" @change="priceNumber(record, index)" />
           </div>
           <div slot="Property" slot-scope="text">
             <p v-if="text != '委外加工费'">{{ text }}</p>
@@ -205,8 +205,93 @@
 
 <script>
 import { getDemandEnter, getCostConfig, addCost } from "@/services/web.js";
-import ExportExcel from "@/utils/ExportExcel";
 import Dosage from "./Dosage.vue";
+import { exportjsontoexcelMore } from "../list/exportExcel";
+const excelHead = [
+  {
+    title: "序号",
+    dataIndex: "IndexNo",
+    align: "center",
+    width: "4%",
+  },
+  {
+    title: "阶次",
+    dataIndex: "LvNo",
+    width: "5%",
+    align: "center",
+  },
+  {
+    title: "类型",
+    dataIndex: "Property",
+    scopedSlots: { customRender: "Property" },
+    width: "5%",
+    align: "center",
+  },
+  {
+    title: "上阶料号",
+    dataIndex: "LastCode",
+    width: "10%",
+    align: "center",
+  },
+  {
+    title: "品号",
+    dataIndex: "ChildCode",
+    align: "center",
+  },
+  {
+    title: "品名",
+    dataIndex: "ChildName",
+    align: "center",
+  },
+  {
+    title: "规格",
+    dataIndex: "ChildSpecification",
+    width: "20%",
+    align: "center",
+  },
+  {
+    title: "单位",
+    dataIndex: "UnitName",
+    width: "5%",
+    align: "center",
+  },
+  {
+    title: "E10单价",
+    dataIndex: "PriceErp",
+    scopedSlots: { customRender: "e10" },
+    width: "5%",
+    align: "center",
+  },
+  {
+    title: "单价",
+    dataIndex: "Price",
+    scopedSlots: { customRender: "Price" },
+    align: "center",
+  },
+  {
+    title: "用量",
+    dataIndex: "Yl",
+    width: "5%",
+    align: "center",
+  },
+  {
+    title: "金额",
+    dataIndex: "Amount",
+    align: "center",
+  },
+  {
+    title: "提示",
+    dataIndex: "Tips",
+    scopedSlots: { customRender: "Tips" },
+    width: "5%",
+    align: "center",
+  },
+  {
+    title: "备注",
+    dataIndex: "Remark",
+    scopedSlots: { customRender: "action" },
+  },
+];
 export default {
   components: { Dosage },
   data() {
@@ -302,6 +387,7 @@ export default {
           align: "center",
         },
       ],
+      excelHead,
       pagination: false,
       cost: {
         materialTotal: 0, //物料成本
@@ -331,6 +417,7 @@ export default {
       searchList: [],
       selectedRowKeys: [],
       saveBtnText: "保存",
+      exportData: [],
     };
   },
   created() {
@@ -400,23 +487,130 @@ export default {
         this.costLoading = false;
       });
     },
+    //导出excel
     handleExcel() {
-      const dataSource = this.tableData.map((item) => {
-        Object.keys(item).forEach((key) => {
-          // 后端传null node写入会有问题
-          if (item[key] === null) {
-            item[key] = "";
-          }
-          if (Array.isArray(item[key])) {
-            item[key] = item[key].join(",");
-          }
+      if (this.tableData.length == 0) {
+        this.$message.warning("请先查询报价信息!");
+        return;
+      }
+      let list = this.tableData;
+      this.exportData = list;
+      let info = this.costInfo;
+      let ConfigList = this.costList;
+      let _data = [];
+      let mergeTitle = [];
+      for (let i = 0; i < 6; i++) {
+        mergeTitle.push({
+          s: { r: i, c: 1 },
+          e: { r: i, c: 14 },
         });
-        return item;
+      }
+      let enterInfo = this.searchForm.getFieldsValue();
+      let en = this.enterList.find((item) => item.EnterId === enterInfo.enterpriseid);
+      let pl = this.plantList.find((item) => item.EnterId === enterInfo.plantid);
+      _data.push(["需求公司", en.EnterName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["需求工厂", pl.EnterName || 0, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["品号", info.ItemCode, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["大类", info.ItemSort, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      ConfigList.map((item, index) => {
+        let array = [item.CostName, item.Amount || 0, null, null, null, null, null, null, null, null, null, null, null, null, null];
+        _data.push(array);
+        mergeTitle.push({
+          s: { r: 6 + index, c: 1 },
+          e: { r: 6 + index, c: 2 },
+        });
+        mergeTitle.push({
+          s: { r: 6 + index, c: 2 },
+          e: { r: 6 + index, c: 14 },
+        });
       });
-      const columns = this.columns.map((item) => ({ key: item.dataIndex, title: item.title }));
-      var timestamp = Date.parse(new Date());
-      // dataSource.unshift(product)
-      ExportExcel(columns, dataSource, `${this.costInfo.ItemCode}_采购报价导出_${timestamp}.xlsx`);
+      _data.push(["物料成本", this.cost.materialTotal, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["最终成本", this.cost.ultimatelyTotal, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      mergeTitle.push({
+        s: { r: 6 + ConfigList.length, c: 1 },
+        e: { r: 6 + ConfigList.length, c: 14 },
+      });
+      mergeTitle.push({
+        s: { r: 7 + ConfigList.length, c: 1 },
+        e: { r: 7 + ConfigList.length, c: 14 },
+      });
+      const columns = [];
+      this.excelHead.map((item) => {
+        columns.push(item.title);
+      });
+      columns.splice(8, 0, "价格来源");
+      _data.push(columns);
+      let _data1 = [..._data];
+      list.map((item) => {
+        let array = [];
+        Object.keys(item).forEach((key) => {
+          array.push(item[key]);
+        });
+        _data.push(array);
+      });
+      this.exportData.map((item) => {
+        let array1 = [];
+        if (item.LvNo != 2) {
+          Object.keys(item).forEach((key) => {
+            array1.push(item[key]);
+          });
+          _data1.push(array1);
+        }
+      });
+      let excelArray = [];
+      let contentList = [];
+      let merges2 = []; // 设置表格内容单元格合并
+      let aoa = [..._data, ...contentList]; // 导出的数据
+      let aoa1 = [..._data1, ...contentList]; // 导出的数据
+      let merges = [...mergeTitle, ...merges2]; // 合并单元格
+      // 样式修改
+      const sheetCols = [
+        { wch: 10 }, // 序号
+        { wch: 5 }, // 阶次
+        { wch: 8 }, // 类型
+        { wch: 10 }, // 上阶料号
+        { wch: 10 }, // 料号
+        { wch: 18 }, // 料名
+        { wch: 20 }, // 规格
+        { wch: 6 }, // 单位
+        { wch: 8 }, // 价格来源
+        { wch: 7 }, // E10单价
+        { wch: 7 }, // 单价
+        { wch: 7 }, // 用量
+        { wch: 6 }, // 金额
+        { wch: 10 }, // 提示
+        { wch: 10 }, // 备注
+      ];
+      let formStyle = {};
+      excelArray.push({
+        Sheet: `展开显示`, // 下方tab切换名称
+        data: aoa, // 表格数据
+        merges, //  合并单元格
+        autoWidth: false, // 自适应宽度
+        formStyle: formStyle, // 特殊行或列样式
+        sheetCols,
+      });
+      excelArray.push({
+        Sheet: `收缩显示`, // 下方tab切换名称
+        data: aoa1, // 表格数据
+        merges, //  合并单元格
+        autoWidth: false, // 自适应宽度
+        formStyle: formStyle, // 特殊行或列样式
+        sheetCols,
+      });
+      try {
+        var temp = info.ItemName.replace(/['//<>%;.)(&+]/g, " ").replace(/(^\s)|(\s$)/g, "");
+        exportjsontoexcelMore({
+          dataList: excelArray,
+          bookType: "xlsx", // 导出类型
+          filename: `${info.ItemCode}_${temp}`, // 导出标题名
+        });
+        this.$message.success("导出数据成功!");
+      } catch (error) {
+        this.$message.error("导出数据失败");
+      }
     },
     //获取需求公司
     getDemandEnter() {
@@ -678,7 +872,7 @@ export default {
   display: flex;
   justify-content: space-between;
 }
-.input-text-color{
+.input-text-color {
   color: #dd0707;
 }
 </style>

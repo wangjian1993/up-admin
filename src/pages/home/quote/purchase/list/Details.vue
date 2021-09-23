@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-22 15:51:50
+ * @LastEditTime: 2021-09-23 11:48:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -76,8 +76,8 @@
 <script>
 const columns = [
   {
-    title: "上阶料号",
-    dataIndex: "LastCode",
+    title: "品号",
+    dataIndex: "ChildCode",
     width: "14%",
     align: "left",
   },
@@ -94,15 +94,15 @@ const columns = [
     width: "4%",
   },
   {
+    title: "上阶料号",
+    dataIndex: "LastCode",
+    align: "center",
+  },
+  {
     title: "类型",
     dataIndex: "Property",
     scopedSlots: { customRender: "Property" },
     width: "5%",
-    align: "center",
-  },
-  {
-    title: "品号",
-    dataIndex: "ChildCode",
     align: "center",
   },
   {
@@ -195,7 +195,15 @@ export default {
           this.list = res.data.data.ItemInfo.ItemChildList;
           this.info = res.data.data.ItemInfo;
           this.ConfigList = res.data.data.ConfigList;
-          this.treeData = this.initTree(this.info.ItemCode);
+          let data = [];
+          this.list.forEach((item) => {
+            {
+              if (item.LastCode !== this.info.ItemCode) {
+                data.push(item);
+              }
+            }
+          });
+          this.treeData = this.initTree(data,3);
           this.calField(this.treeData);
         }
         this.loading = false;
@@ -203,7 +211,7 @@ export default {
     },
     calField(tree) {
       tree.forEach((node) => {
-        if (node.children && node.children.length > 0 ) {
+        if (node.children && node.children.length > 0) {
           // console.log(node.children)
           this.calField(node.children);
           node.Amount = node.children.reduce((sum, item) => ((sum += item.Amount), parseFloat(sum.toFixed(4))), 0);
@@ -215,22 +223,11 @@ export default {
       });
       return tree;
     },
-    treeDone(data) {
-      data.forEach((item) => {
-        if (item.children && item.children.length > 0) {
-          item = this.treeDone(item.children);
-        } else {
-          delete item.children;
-        }
-        return item;
-      });
-      return data;
-    },
-    initTree(parent_id) {
+    initTree(parent_id,no) {
       // jsonArray 变量数据
       // 第一次以后：根据id去查询parent_id相同的（相同为子数据）
       // 第一次：查找所有parent_id为-1的数据组成第一级
-      const child = this.list.filter((item) => item.LastCode == parent_id);
+      const child = this.list.filter((item) => item.LastCode == parent_id || item.LvNo == no);
       // 第一次：循环parent_id为-1数组
       return child.map((item) => ({
         ...item,

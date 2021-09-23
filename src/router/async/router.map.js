@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-09-20 15:00:14
+ * @LastEditTime: 2021-09-23 10:39:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/router/async/router.map.js
@@ -40,23 +40,6 @@ const routerMap = {
     name: '异常页',
     icon: 'warning',
     component: view.blank
-  },
-  quote: {
-    invisible: true,
-    name: '采购报价',
-    component: view.blank
-  },
-  copy: {
-    invisible: true,
-    name: '复制报价',
-    path: 'purchase/copy',
-    component: () => import('@/pages/home/quote/purchase/copy')
-  },
-  anew: {
-    invisible: true,
-    name: '重新报价',
-    path: 'purchase/anew',
-    component: () => import('@/pages/home/quote/purchase/anew')
   },
   personal: {
     invisible: true,

@@ -217,10 +217,10 @@ export function exportjsontoexcel({
         } else {
             dataInfo[i + ''].s = {
                 border: borderAll,
-                //居中属性
+                //居中属性left
                 alignment: {
-                    horizontal: "center",
-                    vertical: "center"
+                    horizontal: "left",
+                    vertical: "left"
                 },
             }
         }
@@ -257,7 +257,8 @@ export function exportjsontoexcelMore({
             data,
             merges,
             autoWidth,
-            formStyle
+            formStyle,
+            sheetCols
         } = item
         let ws = sheet_from_array_of_arrays(data)
         //合并单元格
@@ -269,7 +270,7 @@ export function exportjsontoexcelMore({
                 /*先判断是否为null/undefined*/
                 if (val == null) {
                     return {
-                        'wch': 15
+                        'wch': 10
                     };
                 }
                 /*再判断是否为中文*/
@@ -313,6 +314,9 @@ export function exportjsontoexcelMore({
                 }
             }
             ws['!cols'] = result;
+        }else {
+            // console.log("不自适应",sheetCols);
+            ws['!cols'] = sheetCols;
         }
 
         /* add worksheet to workbook */
@@ -395,8 +399,8 @@ export function exportjsontoexcelMore({
                     border: borderAll,
                     //居中属性
                     alignment: {
-                        horizontal: "center",
-                        vertical: "center"
+                        horizontal: "left",
+                        vertical: "left"
                     },
                 }
             }
