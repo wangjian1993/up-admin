@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-23 19:11:00
+ * @LastEditTime: 2021-09-24 09:05:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/MitemOrder.vue
@@ -59,7 +59,7 @@
               :scroll="{ y: true }"
               :pagination="pagination"
               @change="handleTableChange"
-              :rowKey="(list) => list.MitemCode"
+              :rowKey="(list) => list.PurchaseOrderNo"
               :row-selection="{
                 selectedRowKeys: selectedRowKeys,
                 onChange: onSelectChange,
@@ -170,6 +170,9 @@ export default {
   },
   created() {
     this.getList();
+    this.searchForm.setFieldsValue({
+      mitemcode:this.MitemCode
+    })
   },
   methods: {
     close() {
@@ -204,7 +207,7 @@ export default {
         let itemJson = {};
         for (let task of this.selectedRowKeys) {
           itemJson = this.list.find((item) => {
-            return item.MitemCode === task;
+            return item.PurchaseOrderNo === task;
           });
         }
         this.$emit("orderItem", itemJson);

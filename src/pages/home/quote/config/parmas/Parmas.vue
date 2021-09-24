@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-22 15:23:02
+ * @LastEditTime: 2021-09-24 17:26:34
  * @LastEditors: max
  * @Description: 报价参数配置
  * @FilePath: /up-admin/src/pages/home/quote/config/parmas/Parmas.vue
@@ -91,6 +91,13 @@
                   $refs.CostName.onFieldBlur();
                 }
               "
+            />
+          </a-form-model-item>
+          <a-form-model-item ref="CostSort" has-feedback label="分类" prop="CostSort">
+            <a-input
+              v-model="form.CostSort"
+              allowClear
+              placeholder="请输入加工费分类"
             />
           </a-form-model-item>
           <a-form-model-item ref="SortNum" has-feedback label="排序" prop="SortNum">
@@ -201,6 +208,7 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
+    width: "5%",
   },
   {
     title: "需求公司",
@@ -212,6 +220,7 @@ const columns = [
     title: "生产工厂",
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
+    width: "10%",
     align: "center",
   },
   {
@@ -221,22 +230,31 @@ const columns = [
     align: "center",
   },
   {
+    title: "加工费用分类",
+    dataIndex: "CostSort",
+    scopedSlots: { customRender: "CostSort" },
+    align: "center",
+  },
+  {
     title: "是否只读",
     dataIndex: "IsReadonly",
     scopedSlots: { customRender: "IsReadonly" },
     align: "center",
+    width: "5%",
   },
   {
     title: "状态",
     dataIndex: "Enable",
     scopedSlots: { customRender: "enable" },
     align: "center",
+    width: "5%",
   },
   {
     title: "排序",
     dataIndex: "SortNum",
     scopedSlots: { customRender: "SortNum" },
     align: "center",
+    width: "5%",
   },
   {
     title: "操作",
@@ -301,6 +319,13 @@ export default {
           {
             required: true,
             message: "请输入加工费名称",
+            trigger: "blur",
+          },
+        ],
+        CostSort:[
+          {
+            required: true,
+            message: "请输入加工费分类",
             trigger: "blur",
           },
         ],

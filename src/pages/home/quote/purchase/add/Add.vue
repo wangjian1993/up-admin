@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-23 13:39:46
+ * @LastEditTime: 2021-09-24 18:14:00
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -92,13 +92,6 @@
                   </a-form-item>
                 </a-col>
               </a-row>
-              <!-- <a-row>
-                <a-col :md="8" :sm="24">
-                  <a-form-item label="产品规格" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
-                    <a-textarea v-model="costInfo.ItemSpecification" :rows="1" />
-                  </a-form-item>
-                </a-col>
-              </a-row> -->
             </div>
           </a-form>
         </div>
@@ -106,14 +99,15 @@
       <!-- 填写报价单 -->
       <a-card class="card" title="填写报价单" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
         <div class="input-box" v-if="costList.length">
-          <a-row>
-            <a-col :md="24" :lg="24" :xl="12" v-for="(item, index) in costList" :key="index">
+          <a-row v-for="(item, index) in costList" :key="index + 'cost'">
+            <p>{{ item.CostSort }}:</p>
+            <a-col :md="24" :lg="24" :xl="12" v-for="(items, indexs) in item.list" :key="indexs">
               <div class="input-item">
-                <p class="input-lable" :class="item.IsReadonly == 'N' ? 'input-lable-color2' : 'input-lable-color1'">{{ item.CostName }}:</p>
+                <p class="input-lable" :class="items.IsReadonly == 'N' ? 'input-lable-color2' : 'input-lable-color1'">{{ items.CostName }}:</p>
                 <p class="input-number">
-                  <a-input-number :disabled="item.IsReadonly == 'Y'" v-model="item.Amount" :min="0" @change="costNumber(item)" />
+                  <a-input-number :disabled="items.IsReadonly == 'Y'" v-model="items.Amount" :min="0" @change="costNumber(items)" />
                 </p>
-                <p class="input-text">{{ item.Description }}</p>
+                <p class="input-text">{{ items.Description }}</p>
               </div>
             </a-col>
           </a-row>
@@ -180,7 +174,7 @@
           }"
         >
           <div slot="Price" slot-scope="text, record, index">
-            <a-input-number :disabled="record.Property === '自制件' || record.Property === '虚设件' " :id="record.key" v-model="record.Price" :min="0" @change="priceNumber(record, index)" />
+            <a-input-number :disabled="record.Property === '自制件' || record.Property === '虚设件'" :id="record.key" v-model="record.Price" :min="0" @change="priceNumber(record, index)" />
           </div>
           <div slot="Property" slot-scope="text">
             <p v-if="text != '委外加工费'">{{ text }}</p>
@@ -487,6 +481,249 @@ export default {
         this.costLoading = false;
       });
     },
+    //获取需求公司
+    getDemandEnter() {
+      let parmas = {
+        entertypecode: "COMPANY",
+      };
+      let parmas1 = {
+        entertypecode: "PLANT",
+      };
+      getDemandEnter(parmas).then((res) => {
+        if (res.data.success) {
+          this.enterList = res.data.data;
+          this.searchForm.setFieldsValue({
+            enterpriseid: this.enterList[0].EnterId,
+          });
+        }
+      });
+      getDemandEnter(parmas1).then((res) => {
+        if (res.data.success) {
+          this.plantList = res.data.data;
+          this.searchForm.setFieldsValue({
+            plantid: this.plantList[0].EnterId,
+          });
+        }
+      });
+    },
+    //多选
+    onSelectChange(selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys;
+    },
+    //重置数据
+    reset() {
+      this.costList = [];
+      this.costInfo = [];
+      this.tableData = [];
+      this.isSearch = false;
+      this.isAgainCost = false;
+      this.quoteRemark = "";
+      this.keyword = "";
+      this.searchList = [];
+      this.selectedRowKeys = [];
+      this.searchDosage = [];
+      this.cost = {
+        materialTotal: 0, //物料成本
+        ultimatelyTotal: 0, //最终成本
+      };
+      this.searchForm.resetFields();
+    },
+    //关键词搜索
+    search() {
+      this.costLoading = true;
+      this.searchForm.validateFields((err, values) => {
+        if (!err) {
+          this.searchData = values;
+          getCostConfig(values, "getbomdetail").then((res) => {
+            if (res.data.success) {
+              this.tableData = res.data.data.ItemInfo.ItemChildList;
+              this.searchList = this.tableData;
+              this.costInfo = res.data.data.ItemInfo;
+              this.costList = res.data.data.CostBaseList;
+              this.countCost();
+            }
+            this.costLoading = false;
+            this.isSearch = true;
+          });
+        } else {
+          this.costLoading = false;
+        }
+      });
+    },
+    costNumber() {
+      let total = 0;
+      this.costList.map((item) => {
+        if (item.Amount) {
+          total += item.Amount;
+        }
+      });
+      this.costTotal = total;
+      let expenses = this.cost.materialTotal + this.costTotal;
+      this.cost.ultimatelyTotal = parseFloat(expenses.toFixed(4));
+    },
+    //计算物料成本
+    countCost() {
+      var sum = 0;
+      let total = 0;
+      this.priceNone = [];
+      let list = this.tableData;
+      list.forEach((item) => {
+        item.Remark = "";
+        sum += item.Price * item.Yl;
+        //价格不全数量
+        if (item.Price == 0) {
+          this.priceNone.push(item);
+        }
+      });
+      //物聊费用
+      this.cost.materialTotal = parseFloat(sum.toFixed(4));
+      //只有添加才计算
+
+      this.costList.forEach((item) => {
+        //计算电源贴片费用
+        if (this.costInfo.ItemOtherInfo && item.CostName === "电源贴片费") {
+          if (item.Description == "") {
+            item.Amount = 0;
+            item.Description = `料名带有“贴片”关键字(0)行)，用量(0)*0`;
+            return;
+          }
+          let str = item.Description.split("*");
+          item.Amount = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * str[1];
+          item.Description = `料名带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
+        }
+        //计算损耗费用
+        if (item.CostName === "损耗") {
+          let percent = item.Description.split("*");
+          var str = percent[1].replace("%", "");
+          str = str / 100;
+          let num = str * this.cost.materialTotal;
+          item.Amount = parseFloat(num.toFixed(4));
+        }
+        //计算总费用
+        if (item.Amount) {
+          total += item.Amount;
+        }
+      });
+      let dataTemp = this.arrayGroup(this.costList);
+      this.costList = dataTemp;
+      this.costTotal = total;
+      //最终费用
+      let expenses = this.cost.materialTotal + this.costTotal;
+      this.cost.ultimatelyTotal = parseFloat(expenses.toFixed(4));
+    },
+    arrayGroup(arr) {
+      var map = {},
+        dest = [];
+      for (var i = 0; i < arr.length; i++) {
+        var ai = arr[i];
+        if (!map[ai.CostSort]) {
+          dest.push({
+            CostSort: ai.CostSort,
+            list: [ai],
+          });
+          map[ai.CostSort] = ai;
+        } else {
+          for (var j = 0; j < dest.length; j++) {
+            var dj = dest[j];
+            if (dj.CostSort == ai.CostSort) {
+              dj.list.push(ai);
+              break;
+            }
+          }
+        }
+      }
+      return dest;
+    },
+    //修改单价
+    priceNumber(item, index) {
+      this.tableData.find((items) => {
+        if (items.ChildCode == item.ChildCode) {
+          items.Amount = item.Price * item.Yl;
+        }
+      });
+      if (item.Price != item.PriceErp) {
+        this.tableData[index].Tips = "价格修改过";
+      } else {
+        if (item.Price == 0) {
+          this.tableData[index].Tips = "价格不全";
+        } else {
+          this.tableData[index].Tips = "";
+        }
+      }
+      this.countCost();
+    },
+    //修改备注
+    remarkInput(e, index) {
+      console.log(e);
+      console.log(index);
+    },
+    //保存报价单
+    costSave() {
+      this.searchData = this.searchForm.getFieldsValue();
+      if (this.costList.length == 0) {
+        this.$message.warning("请先查询物联信息!");
+        return;
+      }
+      if (this.searchData.enterpriseid == undefined) {
+        this.$message.warning("请先选择需求公司!");
+        return;
+      }
+      if (this.searchData.plantid == undefined) {
+        this.$message.warning("请先选择生产工厂!");
+        return;
+      }
+      this.costLoading = true;
+      var obj = Object.assign(this.tableData, this.searchList);
+      let parmas = {
+        CostBaseList: this.costList,
+        ItemChildList: obj,
+        EnterpriseId: this.searchData.enterpriseid,
+        PlantId: this.searchData.plantid,
+        ItemCode: this.costInfo.ItemCode,
+        ItemName: this.costInfo.ItemName,
+        ItemSpecification: this.costInfo.ItemSpecification,
+        ItemSort: this.costInfo.ItemSort,
+        MaterialCost: this.cost.materialTotal,
+        MaterialCostDescription: "价格不全*" + this.priceNone.length,
+        FinalCost: this.cost.ultimatelyTotal,
+        Remark: this.quoteRemark,
+      };
+      addCost(parmas, "addnewquote").then((res) => {
+        if (res.data.success) {
+          this.$message.success("保存成功!");
+          this.reset();
+        }
+        this.costLoading = false;
+      });
+    },
+    //列表搜索
+    listSearch(e) {
+      this.searchList = this.tableData.filter((product) => {
+        return Object.keys(product).some((key) => {
+          return (
+            String(product[key])
+              .toLowerCase()
+              .indexOf(e.target.value) > -1
+          );
+        });
+      });
+    },
+    removeDosage(index) {
+      this.selectedRowKeys.splice(index, 1);
+    },
+    dosageClick(record) {
+      return {
+        style: {
+          cursor: "pointer",
+        },
+        on: {
+          // 鼠标单击行
+          click: () => {
+            this.selectedRowKeys.includes(record.ChildCode) ? (this.selectedRowKeys = this.selectedRowKeys.filter((n) => n !== record.ChildCode)) : this.selectedRowKeys.push(record.ChildCode);
+          },
+        },
+      };
+    },
     //导出excel
     handleExcel() {
       if (this.tableData.length == 0) {
@@ -611,218 +848,6 @@ export default {
       } catch (error) {
         this.$message.error("导出数据失败");
       }
-    },
-    //获取需求公司
-    getDemandEnter() {
-      let parmas = {
-        entertypecode: "COMPANY",
-      };
-      let parmas1 = {
-        entertypecode: "PLANT",
-      };
-      getDemandEnter(parmas).then((res) => {
-        if (res.data.success) {
-          this.enterList = res.data.data;
-        }
-      });
-      getDemandEnter(parmas1).then((res) => {
-        if (res.data.success) {
-          this.plantList = res.data.data;
-        }
-      });
-    },
-    //多选
-    onSelectChange(selectedRowKeys) {
-      this.selectedRowKeys = selectedRowKeys;
-    },
-    //重置数据
-    reset() {
-      this.costList = [];
-      this.costInfo = [];
-      this.tableData = [];
-      this.isSearch = false;
-      this.isAgainCost = false;
-      this.quoteRemark = "";
-      this.keyword = "";
-      this.searchList = [];
-      this.selectedRowKeys = [];
-      this.searchDosage = [];
-      this.cost = {
-        materialTotal: 0, //物料成本
-        ultimatelyTotal: 0, //最终成本
-      };
-      this.searchForm.resetFields();
-    },
-    //关键词搜索
-    search() {
-      this.costLoading = true;
-      this.searchForm.validateFields((err, values) => {
-        if (!err) {
-          this.searchData = values;
-          getCostConfig(values, "getbomdetail").then((res) => {
-            if (res.data.success) {
-              this.tableData = res.data.data.ItemInfo.ItemChildList;
-              this.searchList = this.tableData;
-              this.costInfo = res.data.data.ItemInfo;
-              this.costList = res.data.data.CostBaseList;
-              this.countCost();
-            }
-            this.costLoading = false;
-            this.isSearch = true;
-          });
-        } else {
-          this.costLoading = false;
-        }
-      });
-    },
-    costNumber() {
-      let total = 0;
-      this.costList.map((item) => {
-        if (item.Amount) {
-          total += item.Amount;
-        }
-      });
-      this.costTotal = total;
-      let expenses = this.cost.materialTotal + this.costTotal;
-      this.cost.ultimatelyTotal = parseFloat(expenses.toFixed(4));
-    },
-    //计算物料成本
-    countCost() {
-      var sum = 0;
-      let total = 0;
-      this.priceNone = [];
-      let list = this.tableData;
-      list.forEach((item) => {
-        item.Remark = "";
-        sum += item.Price * item.Yl;
-        //价格不全数量
-        if (item.Price == 0) {
-          this.priceNone.push(item);
-        }
-      });
-      //物聊费用
-      this.cost.materialTotal = parseFloat(sum.toFixed(4));
-      //只有添加才计算
-
-      this.costList.forEach((item) => {
-        //计算电源贴片费用
-        if (this.costInfo.ItemOtherInfo && item.CostName === "电源贴片费") {
-          if (item.Description == "") {
-            item.Amount = 0;
-            item.Description = `料名带有“贴片”关键字(0)行)，用量(0)*0`;
-            return;
-          }
-          let str = item.Description.split("*");
-          item.Amount = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * str[1];
-          item.Description = `料名带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
-        }
-        //计算损耗费用
-        if (item.CostName === "损耗") {
-          let percent = item.Description.split("*");
-          var str = percent[1].replace("%", "");
-          str = str / 100;
-          let num = str * this.cost.materialTotal;
-          item.Amount = parseFloat(num.toFixed(4));
-        }
-        //计算总费用
-        if (item.Amount) {
-          total += item.Amount;
-        }
-      });
-      this.costTotal = total;
-      //最终费用
-      let expenses = this.cost.materialTotal + this.costTotal;
-      this.cost.ultimatelyTotal = parseFloat(expenses.toFixed(4));
-    },
-    //修改单价
-    priceNumber(item, index) {
-      this.tableData.find((items) => {
-        if (items.ChildCode == item.ChildCode) {
-          items.Amount = item.Price * item.Yl;
-        }
-      });
-      if (item.Price != item.PriceErp) {
-        this.tableData[index].Tips = "价格修改过";
-      } else {
-        if (item.Price == 0) {
-          this.tableData[index].Tips = "价格不全";
-        } else {
-          this.tableData[index].Tips = "";
-        }
-      }
-      this.countCost();
-    },
-    //修改备注
-    remarkInput(e, index) {
-      console.log(e);
-      console.log(index);
-    },
-    //保存报价单
-    costSave() {
-      this.searchData = this.searchForm.getFieldsValue();
-      if (this.costList.length == 0) {
-        this.$message.warning("请先查询物联信息!");
-        return;
-      }
-      if (this.searchData.enterpriseid == undefined) {
-        this.$message.warning("请先选择需求公司!");
-        return;
-      }
-      if (this.searchData.plantid == undefined) {
-        this.$message.warning("请先选择生产工厂!");
-        return;
-      }
-      this.costLoading = true;
-      var obj = Object.assign(this.tableData, this.searchList);
-      let parmas = {
-        CostBaseList: this.costList,
-        ItemChildList: obj,
-        EnterpriseId: this.searchData.enterpriseid,
-        PlantId: this.searchData.plantid,
-        ItemCode: this.costInfo.ItemCode,
-        ItemName: this.costInfo.ItemName,
-        ItemSpecification: this.costInfo.ItemSpecification,
-        ItemSort: this.costInfo.ItemSort,
-        MaterialCost: this.cost.materialTotal,
-        MaterialCostDescription: "价格不全*" + this.priceNone.length,
-        FinalCost: this.cost.ultimatelyTotal,
-        Remark: this.quoteRemark,
-      };
-      addCost(parmas, "addnewquote").then((res) => {
-        if (res.data.success) {
-          this.$message.success("保存成功!");
-          this.reset();
-        }
-        this.costLoading = false;
-      });
-    },
-    //列表搜索
-    listSearch(e) {
-      this.searchList = this.tableData.filter((product) => {
-        return Object.keys(product).some((key) => {
-          return (
-            String(product[key])
-              .toLowerCase()
-              .indexOf(e.target.value) > -1
-          );
-        });
-      });
-    },
-    removeDosage(index) {
-      this.selectedRowKeys.splice(index, 1);
-    },
-    dosageClick(record) {
-      return {
-        style: {
-          cursor: "pointer",
-        },
-        on: {
-          // 鼠标单击行
-          click: () => {
-            this.selectedRowKeys.includes(record.ChildCode) ? (this.selectedRowKeys = this.selectedRowKeys.filter((n) => n !== record.ChildCode)) : this.selectedRowKeys.push(record.ChildCode);
-          },
-        },
-      };
     },
   },
 };

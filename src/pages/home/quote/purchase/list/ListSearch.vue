@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-23 09:09:39
+ * @LastEditTime: 2021-09-24 17:15:51
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -54,7 +54,12 @@
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-input placeholder="请输入产品大类" allowClear v-decorator="['itemsort']" />
+                  <!-- <a-input placeholder="请输入产品大类" allowClear v-decorator="['itemsort']" /> -->
+                  <a-select show-search placeholder="请选择大类" option-filter-prop="children" style="width: 200px" :filter-option="filterOption"  v-decorator="['itemsort']">
+                    <a-select-option v-for="(item, index) in categoryList" :value="item" :key="index">
+                      {{ item }}
+                    </a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -333,6 +338,7 @@ import { exportjsontoexcelMore } from "./exportExcel";
 import HistoryList from "./HistoryList";
 export default {
   components: { ADetails, HistoryList },
+  props: ["categoryList"],
   data() {
     return {
       loading: true,
@@ -385,6 +391,9 @@ export default {
     },
   },
   methods: {
+    filterOption(input, option) {
+      return option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    },
     reset() {
       this.getDemandEnter();
       this.searchForm.resetFields();

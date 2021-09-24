@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-31 09:36:32
- * @LastEditTime: 2021-09-23 14:20:41
+ * @LastEditTime: 2021-09-24 09:36:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/MasterPlan.vue
@@ -10,13 +10,13 @@
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <a-tabs type="card" v-model="activeKey" default-active-key="1" @change="callback">
       <a-tab-pane key="1" tab="采购物料需求总计划">
-        <plan :plantList="plantList"></plan>
+        <plan :plantList="plantList"  @toDetail="toDetail"></plan>
       </a-tab-pane>
       <a-tab-pane key="2" tab="采购物料需求总计划明细">
-        <detail :plantList="plantList" @toDetail="toDetail"></detail>
+        <detail :plantList="plantList" :batchid="batchid" ref="myDeatils"></detail>
       </a-tab-pane>
       <a-tab-pane key="3" tab="采购物料需求总计划异常处理">
-        <exception :plantList="plantList" :batchid="batchid" ref="myDeatils"></exception>
+        <exception :plantList="plantList"></exception>
       </a-tab-pane>
       <a-tab-pane key="4" tab="采购物料需求总计划明细合并">
         <detail-merge :plantList="plantList"></detail-merge>
@@ -44,10 +44,8 @@ export default {
   },
   methods: {
      toDetail(id) {
-      console.log(id)
       this.batchid = id;
-      console.log(this.batchid)
-      this.activeKey = "3";
+      this.activeKey = "2";
       this.$nextTick(() => {
         this.$refs.myDeatils.getListAll();
       });

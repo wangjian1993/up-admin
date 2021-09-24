@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 15:09:41
- * @LastEditTime: 2021-09-23 19:09:56
+ * @LastEditTime: 2021-09-24 09:26:51
  * @LastEditors: max
  * @Description: 手动匹配
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Matching.vue
@@ -27,7 +27,7 @@
           </a-form-model-item>
           <a-form-model-item ref="RequirementDate" has-feedback label="需求日期" prop="RequirementDate">
             <a-select v-model="form.RequirementDate" placeholder="请选择需求日期" @change="dateChange">
-              <a-select-option v-for="item in materialDates" :key="item.RequirementDate" :value="item.RequirementDate">{{ item.RequirementDate }}</a-select-option>
+              <a-select-option v-for="(item, index) in materialDates" :key="index" :value="item.RequirementDate">{{ item.RequirementDate }}</a-select-option>
             </a-select>
           </a-form-model-item>
           <a-form-model-item has-feedback label="需求数量">
@@ -71,7 +71,7 @@ import BatchNo from "./BatchNo.vue";
 import MitemOrder from "./MitemOrder.vue";
 export default {
   components: { BatchNo, MitemOrder },
-  props: ["plantList"],
+  props: ["plantList", "matchingData"],
   data() {
     return {
       size: "small",
@@ -141,7 +141,18 @@ export default {
       orderData: [],
     };
   },
-  created() {},
+  created() {
+    console.log(this.matchingData);
+    if (this.matchingData.BatchNo) {
+      this.form.BatchNo = this.matchingData.BatchNo;
+      this.form.BatchId = this.matchingData.Id;
+      this.batchnoData.BatchId = this.matchingData.Id;
+      this.batchnoData.BatchNo = this.matchingData.BatchNo;
+      this.batchnoData.PlantName = this.matchingData.PlantName;
+      this.batchnoData.PlantId = this.matchingData.PlantId;
+      this.getMitemsByBatch();
+    }
+  },
   methods: {
     batchno() {
       this.isBatchNo = true;
@@ -172,7 +183,7 @@ export default {
       this.form.PurchaseOrderNo = item.PurchaseOrderNo;
       this.form.SupplierCode = item.SupplierCode;
       this.form.LineItem = item.LineItem;
-      this.form.LineItemNum = item.LineItemNum;
+      this.form.LineItemNum = item.lineItemNum;
     },
     //获取物料信息
     getMitemsByBatch() {
@@ -210,9 +221,13 @@ export default {
       this.isDrawer = false;
     },
     handleOk() {
+      let planid = this.plantList.find((item) => item.EnterName === this.batchnoData.PlantName);
+      this.form.PlantId = planid.EnterId;
       setScmAction(this.form, "manualmatch/add").then((res) => {
         if (res.data.success) {
-          console.log("1111")
+          this.$message.success("手动匹配成功!");
+          this.$emit("succeed");
+          this.$emit("closeModal");
         }
       });
     },

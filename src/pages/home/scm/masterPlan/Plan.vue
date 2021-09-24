@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:33
- * @LastEditTime: 2021-09-23 16:56:10
+ * @LastEditTime: 2021-09-24 09:18:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Plan.vue
@@ -53,7 +53,7 @@
       </span>
     </a-form>
     <div class="operator">
-      <a-button icon="delete" type="primary" :disabled="!hasPerm('matching')" @click="matching" style="margin-left: 8px">手动匹配</a-button>
+      <a-button icon="interaction" type="primary" :disabled="!hasPerm('matching')" @click="matching" style="margin-left: 8px">手动匹配</a-button>
       <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">审核发布</a-button>
       <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">审核发布</a-button>
       <span style="margin-left: 8px">
@@ -84,27 +84,27 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text">
+      <template slot="MatchStatus" slot-scope="text,record">
         <div>
-          <a-tag color="green" v-if="text == 'APPROVED'">已审批</a-tag>
-          <a-tag color="red" v-else>未审批</a-tag>
+          <a-tag color="green" v-if="text != 'ERR_MATCH'">{{record.MatchStatusName}}</a-tag>
+          <a-tag color="red" v-else>{{record.MatchStatusName}}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" :disabled="!hasPerm('matching')" @click="detail(record)">
-            <a-icon type="profile" />
+          <a style="margin-right: 8px" :disabled="!hasPerm('matching')" @click="matching(record)">
+            <a-icon type="interaction" />
             手动匹配
           </a>
           <a style="margin-right: 8px" @click="detail(record)">
             <a-icon type="profile" />
-            查看
+            查看明细
           </a>
         </div>
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
-    <matching v-if="isMatching" :plantList="plantList" @closeModal="closeModal"></matching>
+    <matching v-if="isMatching" :matchingData="matchingData" :plantList="plantList" @closeModal="closeModal" @succeed="getListAll"></matching>
   </div>
 </template>
 
@@ -155,8 +155,8 @@ const columns = [
   },
   {
     title: "计划状态",
-    dataIndex: "Status",
-    scopedSlots: { customRender: "Status" },
+    dataIndex: "MatchStatus",
+    scopedSlots: { customRender: "MatchStatus" },
     align: "center",
   },
   {
@@ -195,6 +195,7 @@ export default {
       week: "",
       isSearch: false,
       isMatching: false,
+      matchingData:[]
     };
   },
   updated() {
@@ -212,8 +213,9 @@ export default {
     this.getListAll();
   },
   methods: {
-    matching() {
+    matching(item) {
       this.isMatching = true;
+      this.matchingData = item;
     },
     closeModal(){
         this.isMatching = false;
