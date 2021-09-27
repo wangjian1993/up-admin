@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-19 09:17:39
+ * @LastEditTime: 2021-09-27 17:34:44
  * @LastEditors: max
  * @Description: 快码列表
  * @FilePath: /up-admin/src/pages/admin/database/param/Param.vue
@@ -53,10 +53,7 @@
                             allowClear
                             style="width: 300px"
                             v-decorator="[
-                              'searcValue',
-                              {
-                                rules: [{ required: true, message: '请输入快码编码/名称!' }],
-                              },
+                              'searcValue'
                             ]"
                           />
                         </a-form-item>

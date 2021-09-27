@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-24 17:26:34
+ * @LastEditTime: 2021-09-27 17:03:14
  * @LastEditors: max
  * @Description: 报价参数配置
  * @FilePath: /up-admin/src/pages/home/quote/config/parmas/Parmas.vue
@@ -490,6 +490,7 @@ export default {
             let editForm = {
               Id: this.form.Id,
               IsReadonly: this.form.IsReadonly,
+              CostSort:this.form.CostSort,
               Description: this.form.Description,
               SortNum: this.form.SortNum,
               Enable: this.form.Enable,

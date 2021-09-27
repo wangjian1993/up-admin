@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-09 09:49:44
+ * @LastEditTime: 2021-09-27 10:04:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/config/authority/AuthoType.vue
@@ -224,6 +224,7 @@ export default {
           });
           array.push(itemJson);
         }
+        console.log("array===",array)
         this.$emit("okModal", array, 1);
       } else {
         this.$emit("okModal");

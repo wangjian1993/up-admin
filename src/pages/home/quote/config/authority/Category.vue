@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 18:11:08
- * @LastEditTime: 2021-09-08 11:02:26
+ * @LastEditTime: 2021-09-27 10:07:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/config/authority/Category.vue
@@ -188,6 +188,7 @@ export default {
           });
           array.push(itemJson);
         }
+        console.log("array===",array)
         this.$emit("okModal",array,2);
       } else {
         this.$emit("okModal");

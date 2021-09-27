@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-24 18:14:00
+ * @LastEditTime: 2021-09-27 15:26:14
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -100,7 +100,7 @@
       <a-card class="card" title="填写报价单" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
         <div class="input-box" v-if="costList.length">
           <a-row v-for="(item, index) in costList" :key="index + 'cost'">
-            <p>{{ item.CostSort }}:</p>
+            <p>{{ item.CostSort}}({{item.total}}}):</p>
             <a-col :md="24" :lg="24" :xl="12" v-for="(items, indexs) in item.list" :key="indexs">
               <div class="input-item">
                 <p class="input-lable" :class="items.IsReadonly == 'N' ? 'input-lable-color2' : 'input-lable-color1'">{{ items.CostName }}:</p>
@@ -112,6 +112,7 @@
             </a-col>
           </a-row>
           <a-row>
+            <p>总费用:</p>
             <a-col :md="24" :lg="24" :xl="12">
               <div class="input-item">
                 <p class="input-lable input-text-color">物料成本:</p>
@@ -553,9 +554,14 @@ export default {
     costNumber() {
       let total = 0;
       this.costList.map((item) => {
-        if (item.Amount) {
-          total += item.Amount;
-        }
+        let sum = 0
+        item.list.map((items) => {
+          if (items.Amount) {
+            total += items.Amount;
+            sum += items.Amount;
+          }
+        });
+        item.total =parseFloat(sum.toFixed(4));
       });
       this.costTotal = total;
       let expenses = this.cost.materialTotal + this.costTotal;
@@ -606,6 +612,16 @@ export default {
       });
       let dataTemp = this.arrayGroup(this.costList);
       this.costList = dataTemp;
+      this.costList.map((item) => {
+        let sum = 0
+        item.list.map((items) => {
+          if(items.Amount){
+            sum += items.Amount
+          }
+        })
+        console.log(sum);
+        item.total =parseFloat(sum.toFixed(4));
+      })
       this.costTotal = total;
       //最终费用
       let expenses = this.cost.materialTotal + this.costTotal;
@@ -674,8 +690,13 @@ export default {
       }
       this.costLoading = true;
       var obj = Object.assign(this.tableData, this.searchList);
+      let cost = [];
+      this.costList.map((item) => {
+        cost = cost.concat(item.list);
+      });
+      console.log(cost);
       let parmas = {
-        CostBaseList: this.costList,
+        CostBaseList: cost,
         ItemChildList: obj,
         EnterpriseId: this.searchData.enterpriseid,
         PlantId: this.searchData.plantid,
@@ -734,6 +755,7 @@ export default {
       this.exportData = list;
       let info = this.costInfo;
       let ConfigList = this.costList;
+      // let ConfigList = this.arrayGroup(this.costList);
       let _data = [];
       let mergeTitle = [];
       for (let i = 0; i < 6; i++) {
@@ -751,27 +773,50 @@ export default {
       _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
       _data.push(["大类", info.ItemSort, null, null, null, null, null, null, null, null, null, null, null, null, null]);
       _data.push(["规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-      ConfigList.map((item, index) => {
-        let array = [item.CostName, item.Amount || 0, null, null, null, null, null, null, null, null, null, null, null, null, null];
+      let cost = [];
+      ConfigList.map((item) => {
+        cost = cost.concat(item.list);
+      });
+      console.log("ConfigList===", ConfigList);
+      cost.map((item, index) => {
+        let array = [item.CostSort, item.CostName, null, item.Amount, null, null, null, null, null, null, null, null, null, null, null];
         _data.push(array);
         mergeTitle.push({
           s: { r: 6 + index, c: 1 },
           e: { r: 6 + index, c: 2 },
         });
         mergeTitle.push({
-          s: { r: 6 + index, c: 2 },
+          s: { r: 6 + index, c: 3 },
           e: { r: 6 + index, c: 14 },
         });
+      });
+      ConfigList.map((item, index) => {
+        let l = item.list.length - 1;
+        if (index == 0) {
+          mergeTitle.push({
+            s: { r: 6, c: 0 },
+            e: { r: 6 + l, c: 0 },
+          });
+        } else {
+          mergeTitle.push({
+            s: { r: 6 + ConfigList[index - 1].list.length, c: 0 },
+            e: { r: 6 + l + ConfigList[index - 1].list.length, c: 0 },
+          });
+          console.log({
+            s: { r: 6 + ConfigList[index - 1].list.length, c: 0 },
+            e: { r: 6 + l + ConfigList[index - 1].list.length, c: 0 },
+          });
+        }
       });
       _data.push(["物料成本", this.cost.materialTotal, null, null, null, null, null, null, null, null, null, null, null, null, null]);
       _data.push(["最终成本", this.cost.ultimatelyTotal, null, null, null, null, null, null, null, null, null, null, null, null, null]);
       mergeTitle.push({
-        s: { r: 6 + ConfigList.length, c: 1 },
-        e: { r: 6 + ConfigList.length, c: 14 },
+        s: { r: 6 + cost.length, c: 1 },
+        e: { r: 6 + cost.length, c: 14 },
       });
       mergeTitle.push({
-        s: { r: 7 + ConfigList.length, c: 1 },
-        e: { r: 7 + ConfigList.length, c: 14 },
+        s: { r: 7 + cost.length, c: 1 },
+        e: { r: 7 + cost.length, c: 14 },
       });
       const columns = [];
       this.excelHead.map((item) => {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-09-16 15:06:15
+ * @LastEditTime: 2021-09-27 14:35:25
  * @LastEditors: max
  * @Description: 权限
  * @FilePath: /up-admin/src/pages/home/quote/config/authority/Authority.vue
@@ -452,6 +452,9 @@ export default {
     },
     //初始化表单
     defaultForm() {
+      this.form.PermissionOrgOrUserList =[];
+       this.form.PermissionMitemCategoryList =[];
+       this.actionValue =[];
       this.form = {
         EnterId: "",
         PermissionTypeCode: "",
@@ -512,6 +515,9 @@ export default {
     },
     //弹框确认按钮
     handleOk() {
+       this.form.PermissionOrgOrUserList =[];
+       this.form.PermissionMitemCategoryList =[];
+       this.actionValue =[];
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           //编辑
@@ -671,6 +677,7 @@ export default {
     handleClose(index, type) {
       if (type == 1) {
         this.nametags.splice(index, 1);
+        console.log(this.nametags);
         return;
       }
       this.categorytags.splice(index, 1);

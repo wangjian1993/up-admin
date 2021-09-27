@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-09-07 18:25:19
+ * @LastEditTime: 2021-09-27 18:12:30
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -404,6 +404,7 @@ export default {
       for (var i in checkedData) {
         //过滤，只处理满足此条件的，不需要过滤则去掉这层if
         if (checkedData[i].IsCheck) {
+          console.log(checkedData[i]);
           this.expandedKeys[this.treeJ++] = checkedData[i].Id;
         }
         if (checkedData[i].children) {
@@ -549,7 +550,9 @@ export default {
     //菜单选择
     appTreeChange(node, event) {
       //合并选中和半选中数据
-      let array = node.concat(event.halfCheckedKeys);
+      console.log(event.halfCheckedKeys);
+      // let array = node.concat(event.halfCheckedKeys);
+      let array = node;
       if (array.length == 0) {
         this.treeArray.forEach((items) => {
           items.IsSelect = false;

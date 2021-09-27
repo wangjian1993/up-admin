@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-23 11:48:39
+ * @LastEditTime: 2021-09-27 10:27:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -41,10 +41,10 @@
             </a-descriptions-item>
           </a-descriptions>
         </div>
-        <div style="padding-top:10px">
-          <a-descriptions title="配置费用" :column="6" bordered>
-            <a-descriptions-item v-for="(item, index) in ConfigList" :key="index" :label="item.CostName">
-              {{ item.Amount }}
+        <div>
+          <a-descriptions style="padding:5px 0" :title="item.CostSort" v-for="(item, index) in ConfigList" :key="index" :column="6" bordered>
+            <a-descriptions-item v-for="(items, indexs) in item.list" :key="indexs + 'cost'" :label="items.CostName">
+              {{ items.Amount }}
             </a-descriptions-item>
           </a-descriptions>
         </div>
@@ -185,6 +185,29 @@ export default {
     close() {
       this.$emit("closeModal");
     },
+    arrayGroup(arr) {
+      var map = {},
+        dest = [];
+      for (var i = 0; i < arr.length; i++) {
+        var ai = arr[i];
+        if (!map[ai.CostSort]) {
+          dest.push({
+            CostSort: ai.CostSort,
+            list: [ai],
+          });
+          map[ai.CostSort] = ai;
+        } else {
+          for (var j = 0; j < dest.length; j++) {
+            var dj = dest[j];
+            if (dj.CostSort == ai.CostSort) {
+              dj.list.push(ai);
+              break;
+            }
+          }
+        }
+      }
+      return dest;
+    },
     getList() {
       this.loading = true;
       let parmas = {
@@ -194,7 +217,7 @@ export default {
         if (res.data.success) {
           this.list = res.data.data.ItemInfo.ItemChildList;
           this.info = res.data.data.ItemInfo;
-          this.ConfigList = res.data.data.ConfigList;
+          this.ConfigList = this.arrayGroup(res.data.data.ConfigList);
           let data = [];
           this.list.forEach((item) => {
             {
@@ -203,7 +226,7 @@ export default {
               }
             }
           });
-          this.treeData = this.initTree(data,3);
+          this.treeData = this.initTree(data, 3);
           this.calField(this.treeData);
         }
         this.loading = false;
@@ -223,7 +246,7 @@ export default {
       });
       return tree;
     },
-    initTree(parent_id,no) {
+    initTree(parent_id, no) {
       // jsonArray 变量数据
       // 第一次以后：根据id去查询parent_id相同的（相同为子数据）
       // 第一次：查找所有parent_id为-1的数据组成第一级

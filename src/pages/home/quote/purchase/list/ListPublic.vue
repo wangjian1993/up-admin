@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-24 17:15:06
+ * @LastEditTime: 2021-09-27 14:17:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -55,7 +55,7 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
                   <!-- <a-input placeholder="请输入产品大类" allowClear v-decorator="['itemsort']" /> -->
-                  <a-select show-search placeholder="请选择大类" option-filter-prop="children" style="width: 200px" :filter-option="filterOption"  v-decorator="['itemsort']">
+                  <a-select show-search placeholder="请选择大类" option-filter-prop="children" style="width: 200px" :filter-option="filterOption" v-decorator="['itemsort']">
                     <a-select-option v-for="(item, index) in categoryList" :value="item" :key="index">
                       {{ item }}
                     </a-select-option>
@@ -529,6 +529,29 @@ export default {
     closeModal() {
       this.isDetails = false;
     },
+    arrayGroup(arr) {
+      var map = {},
+        dest = [];
+      for (var i = 0; i < arr.length; i++) {
+        var ai = arr[i];
+        if (!map[ai.CostSort]) {
+          dest.push({
+            CostSort: ai.CostSort,
+            list: [ai],
+          });
+          map[ai.CostSort] = ai;
+        } else {
+          for (var j = 0; j < dest.length; j++) {
+            var dj = dest[j];
+            if (dj.CostSort == ai.CostSort) {
+              dj.list.push(ai);
+              break;
+            }
+          }
+        }
+      }
+      return dest;
+    },
     //导出数据
     handleExcel(id) {
       let parmas = {
@@ -539,7 +562,7 @@ export default {
           let list = res.data.data.ItemInfo.ItemChildList;
           this.exportData = list;
           let info = res.data.data.ItemInfo;
-          let ConfigList = res.data.data.ConfigList;
+          let ConfigList = this.arrayGroup(res.data.data.ConfigList);
           let _data = [];
           let mergeTitle = [];
           for (let i = 0; i < 6; i++) {
@@ -554,27 +577,50 @@ export default {
           _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
           _data.push(["大类", info.ItemSort, null, null, null, null, null, null, null, null, null, null, null, null, null]);
           _data.push(["规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-          ConfigList.map((item, index) => {
-            let array = [item.CostName, item.Amount, null, null, null, null, null, null, null, null, null, null, null, null, null];
+          let cost = [];
+          ConfigList.map((item) => {
+            cost = cost.concat(item.list);
+          });
+          console.log("ConfigList===", ConfigList);
+          cost.map((item, index) => {
+            let array = [item.CostSort, item.CostName, null, item.Amount, null, null, null, null, null, null, null, null, null, null, null];
             _data.push(array);
             mergeTitle.push({
               s: { r: 6 + index, c: 1 },
               e: { r: 6 + index, c: 2 },
             });
             mergeTitle.push({
-              s: { r: 6 + index, c: 2 },
+              s: { r: 6 + index, c: 3 },
               e: { r: 6 + index, c: 14 },
             });
+          });
+          ConfigList.map((item, index) => {
+            let l =item.list.length - 1
+            if (index == 0) {
+              mergeTitle.push({
+                s: { r: 6, c: 0 },
+                e: { r: 6 + l, c: 0 },
+              });
+            } else {
+              mergeTitle.push({
+                s: { r: 6 + ConfigList[index - 1].list.length, c: 0 },
+                e: { r: 6 + l + ConfigList[index - 1].list.length, c: 0 },
+              });
+              console.log({
+                s: { r: 6 + ConfigList[index - 1].list.length, c: 0 },
+                e: { r: 6 + l + ConfigList[index - 1].list.length, c: 0 },
+              })
+            }
           });
           _data.push(["物料成本", info.MaterialCost, null, null, null, null, null, null, null, null, null, null, null, null, null]);
           _data.push(["最终成本", info.FinalCost, null, null, null, null, null, null, null, null, null, null, null, null, null]);
           mergeTitle.push({
-            s: { r: 6 + ConfigList.length, c: 1 },
-            e: { r: 6 + ConfigList.length, c: 14 },
+            s: { r: 6 + cost.length, c: 1 },
+            e: { r: 6 + cost.length, c: 14 },
           });
           mergeTitle.push({
-            s: { r: 7 + ConfigList.length, c: 1 },
-            e: { r: 7 + ConfigList.length, c: 14 },
+            s: { r: 7 + cost.length, c: 1 },
+            e: { r: 7 + cost.length, c: 14 },
           });
           const columns = [];
           this.excelHead.map((item) => {

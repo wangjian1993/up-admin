@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 16:12:00
- * @LastEditTime: 2021-08-26 14:27:13
+ * @LastEditTime: 2021-09-27 17:35:35
  * @LastEditors: max
  * @Description: 快码组管理
  * @FilePath: /up-admin/src/pages/admin/database/group/Group.vue
@@ -34,10 +34,7 @@
                       allowClear
                       style="width: 300px"
                       v-decorator="[
-                        'searcValue',
-                        {
-                          rules: [{ required: true, message: '请输入快码组编码/名称!' }],
-                        },
+                        'searcValue'
                       ]"
                     />
                   </a-form-item>
