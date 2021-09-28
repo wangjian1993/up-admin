@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-27 15:26:14
+ * @LastEditTime: 2021-09-28 14:02:36
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -99,38 +99,40 @@
       <!-- 填写报价单 -->
       <a-card class="card" title="填写报价单" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
         <div class="input-box" v-if="costList.length">
-          <a-row v-for="(item, index) in costList" :key="index + 'cost'">
-            <p>{{ item.CostSort}}({{item.total}}}):</p>
-            <a-col :md="24" :lg="24" :xl="12" v-for="(items, indexs) in item.list" :key="indexs">
-              <div class="input-item">
-                <p class="input-lable" :class="items.IsReadonly == 'N' ? 'input-lable-color2' : 'input-lable-color1'">{{ items.CostName }}:</p>
-                <p class="input-number">
-                  <a-input-number :disabled="items.IsReadonly == 'Y'" v-model="items.Amount" :min="0" @change="costNumber(items)" />
-                </p>
-                <p class="input-text">{{ items.Description }}</p>
-              </div>
-            </a-col>
+          <a-row>
+            <a-card bordered :title="`${item.CostSort}(${item.total})`" v-for="(item, index) in costList" :key="index + 'cost'">
+              <a-col :md="24" :lg="24" :xl="12" v-for="(items, indexs) in item.list" :key="indexs">
+                <div class="input-item">
+                  <p class="input-lable" :class="items.IsReadonly == 'N' ? 'input-lable-color2' : 'input-lable-color1'">{{ items.CostName }}:</p>
+                  <p class="input-number">
+                    <a-input-number :disabled="items.IsReadonly == 'Y'" v-model="items.Amount" :min="0" @change="costNumber(items)" />
+                  </p>
+                  <p class="input-text">{{ items.Description }}</p>
+                </div>
+              </a-col>
+            </a-card>
           </a-row>
           <a-row>
-            <p>总费用:</p>
-            <a-col :md="24" :lg="24" :xl="12">
-              <div class="input-item">
-                <p class="input-lable input-text-color">物料成本:</p>
-                <p class="input-number">
-                  <a-input-number disabled :min="0" v-model="cost.materialTotal" />
-                </p>
-                <p class="input-text" v-if="priceNone.length > 0">价格不全 *{{ priceNone.length }}</p>
-              </div>
-            </a-col>
-            <a-col :md="24" :lg="24" :xl="12">
-              <div class="input-item">
-                <p class="input-lable input-text-color">最终成本:</p>
-                <p class="input-number">
-                  <a-input-number disabled :min="0" v-model="cost.ultimatelyTotal" />
-                </p>
-                <p class="input-text"></p>
-              </div>
-            </a-col>
+            <a-card bordered title="总费用">
+              <a-col :md="24" :lg="24" :xl="12">
+                <div class="input-item">
+                  <p class="input-lable input-text-color">物料成本:</p>
+                  <p class="input-number">
+                    <a-input-number disabled :min="0" v-model="cost.materialTotal" />
+                  </p>
+                  <p class="input-text">{{ costInfo.ItemOtherInfo.PriceIncompleteMsg }}</p>
+                </div>
+              </a-col>
+              <a-col :md="24" :lg="24" :xl="12">
+                <div class="input-item">
+                  <p class="input-lable input-text-color">最终成本:</p>
+                  <p class="input-number">
+                    <a-input-number disabled :min="0" v-model="cost.ultimatelyTotal" />
+                  </p>
+                  <p class="input-text"></p>
+                </div>
+              </a-col>
+            </a-card>
           </a-row>
           <a-row>
             <a-col :md="24" :lg="24" :xl="24">
@@ -554,14 +556,14 @@ export default {
     costNumber() {
       let total = 0;
       this.costList.map((item) => {
-        let sum = 0
+        let sum = 0;
         item.list.map((items) => {
           if (items.Amount) {
             total += items.Amount;
             sum += items.Amount;
           }
         });
-        item.total =parseFloat(sum.toFixed(4));
+        item.total = parseFloat(sum.toFixed(4));
       });
       this.costTotal = total;
       let expenses = this.cost.materialTotal + this.costTotal;
@@ -571,15 +573,15 @@ export default {
     countCost() {
       var sum = 0;
       let total = 0;
-      this.priceNone = [];
+      // this.priceNone = [];
       let list = this.tableData;
       list.forEach((item) => {
         item.Remark = "";
         sum += item.Price * item.Yl;
         //价格不全数量
-        if (item.Price == 0) {
-          this.priceNone.push(item);
-        }
+        // if (item.Price == 0) {
+        //   this.priceNone.push(item);
+        // }
       });
       //物聊费用
       this.cost.materialTotal = parseFloat(sum.toFixed(4));
@@ -613,15 +615,15 @@ export default {
       let dataTemp = this.arrayGroup(this.costList);
       this.costList = dataTemp;
       this.costList.map((item) => {
-        let sum = 0
+        let sum = 0;
         item.list.map((items) => {
-          if(items.Amount){
-            sum += items.Amount
+          if (items.Amount) {
+            sum += items.Amount;
           }
-        })
+        });
         console.log(sum);
-        item.total =parseFloat(sum.toFixed(4));
-      })
+        item.total = parseFloat(sum.toFixed(4));
+      });
       this.costTotal = total;
       //最终费用
       let expenses = this.cost.materialTotal + this.costTotal;
@@ -779,7 +781,7 @@ export default {
       });
       console.log("ConfigList===", ConfigList);
       cost.map((item, index) => {
-        let array = [item.CostSort, item.CostName, null, item.Amount, null, null, null, null, null, null, null, null, null, null, null];
+        let array = [item.CostSort, item.CostName, null, item.Amount || 0, null, null, null, null, null, null, null, null, null, null, null];
         _data.push(array);
         mergeTitle.push({
           s: { r: 6 + index, c: 1 },
@@ -944,5 +946,11 @@ export default {
 }
 .input-text-color {
   color: #dd0707;
+}
+/deep/ .ant-card-bordered {
+  border: 1px #d3d0d0 solid;
+}
+/deep/ .ant-card {
+  margin: 5px 0px;
 }
 </style>

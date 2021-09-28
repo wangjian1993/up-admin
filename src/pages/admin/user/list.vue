@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-09-04 14:49:25
+ * @LastEditTime: 2021-09-28 09:57:36
  * @LastEditors: max
  * @Description: 用户列表
  * @FilePath: /up-admin/src/pages/admin/user/list.vue
@@ -134,7 +134,7 @@
                     <a-menu slot="overlay">
                       <a-menu-item key="0" :disabled="!hasPerm('editEnable')" @click="moreClick('enableuser', record)">{{ record.Enable == "Y" ? "禁用" : "启用" }}</a-menu-item>
                       <a-menu-item key="1" :disabled="!hasPerm('editLock')" @click="moreClick('lockuser', record)">{{ record.IsLocked == "Y" ? "解锁" : "锁定" }}</a-menu-item>
-                      <a-menu-item key="3" :disabled="!hasPerm('reset')" @click="moreClick('resetuserpwd', record)">重置密码</a-menu-item>
+                      <!-- <a-menu-item key="3" :disabled="!hasPerm('reset')" @click="moreClick('resetuserpwd', record)">重置密码</a-menu-item> -->
                     </a-menu>
                   </a-dropdown>
                 </div>

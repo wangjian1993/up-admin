@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-31 09:36:32
- * @LastEditTime: 2021-09-24 09:36:56
+ * @LastEditTime: 2021-09-28 10:38:15
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/MasterPlan.vue
@@ -9,16 +9,16 @@
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <a-tabs type="card" v-model="activeKey" default-active-key="1" @change="callback">
-      <a-tab-pane key="1" tab="采购物料需求总计划">
+      <a-tab-pane key="1" tab="采购物料需求总计划" v-if="hasPerm('master_tab1')">
         <plan :plantList="plantList"  @toDetail="toDetail"></plan>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="采购物料需求总计划明细">
+      <a-tab-pane key="2" tab="采购物料需求总计划明细" v-if="hasPerm('master_tab2')">
         <detail :plantList="plantList" :batchid="batchid" ref="myDeatils"></detail>
       </a-tab-pane>
-      <a-tab-pane key="3" tab="采购物料需求总计划异常处理">
+      <a-tab-pane key="3" tab="采购物料需求总计划异常处理" v-if="hasPerm('master_tab3')">
         <exception :plantList="plantList"></exception>
       </a-tab-pane>
-      <a-tab-pane key="4" tab="采购物料需求总计划明细合并">
+      <a-tab-pane key="4" tab="采购物料需求总计划明细合并" v-if="hasPerm('master_tab4')">
         <detail-merge :plantList="plantList"></detail-merge>
       </a-tab-pane>
     </a-tabs>

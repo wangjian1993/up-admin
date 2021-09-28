@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-06-17 17:28:49
- * @LastEditTime: 2021-09-15 09:30:55
+ * @LastEditTime: 2021-09-28 10:28:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/manufacture-plan.vue
@@ -9,15 +9,15 @@
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <a-tabs type="card" v-model="activeKey" default-active-key="1" @change="callback">
-      <a-tab-pane key="1" tab="导入生产日计划">
+      <a-tab-pane key="1" tab="导入生产日计划" v-if="hasPerm('manufacture_tab1')">
         <lead-in @toDetail="toDetail"></lead-in>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="生产日计划明细">
+      <a-tab-pane key="2" tab="生产日计划明细" v-if="hasPerm('manufacture_tab2')">
         <detail :batchid="batchid" ref="myDeatils"></detail>
       </a-tab-pane>
-      <a-tab-pane key="3" tab="生产日计划达成情况">
+      <!-- <a-tab-pane key="3" tab="生产日计划达成情况">
         <detail></detail>
-      </a-tab-pane>
+      </a-tab-pane> -->
     </a-tabs>
   </a-card>
 </template>

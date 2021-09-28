@@ -1,18 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:33
- * @LastEditTime: 2021-09-24 09:18:06
+ * @LastEditTime: 2021-09-28 11:18:03
  * @LastEditors: max
- * @Description: 
+ * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Plan.vue
--->
-<!--
- * @Author: max
- * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-17 11:01:04
- * @LastEditors: max
- * @Description: 
- * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Action.vue
 -->
 <template>
   <div>
