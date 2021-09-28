@@ -7,7 +7,7 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin')
 
 const productionGzipExtensions = ['js', 'css']
 const isProd = process.env.NODE_ENV === 'production'
-
+console.log("isProd===",isProd)
 const assetsCDN = {
   // webpack build externals
   externals: {

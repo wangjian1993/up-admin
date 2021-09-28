@@ -1,13 +1,13 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-08-26 09:20:41
+ * @LastEditTime: 2021-09-28 14:51:03
  * @LastEditors: max
  * @Description: 用户相关api
  * @FilePath: /up-admin/src/services/user.js
  */
 import {request, METHOD, removeAuthorization} from '@/utils/request';
-const userApi="http://192.168.1.245:6688/api/auth";
+import {UP_USER} from './api'
 /**
  * 登录服务
  * @param name 账户名
@@ -15,7 +15,7 @@ const userApi="http://192.168.1.245:6688/api/auth";
  * @returns {Promise<AxiosResponse<T>>}
  */
 export async function login(name, password) {
-  return request(`${userApi}/user/uservalidate`, METHOD.POST, {
+  return request(`${UP_USER}/user/uservalidate`, METHOD.POST, {
     userName: name,
     userPwd: password
   },false);
@@ -27,7 +27,7 @@ export async function login(name, password) {
  * @return {*}
  */
 export async function loginUpdate(parmas) {
-  return request(`${userApi}/user/update`, METHOD.POST,parmas);
+  return request(`${UP_USER}/user/update`, METHOD.POST,parmas);
 }
 /**
  * @description: 获取用户信息
@@ -35,7 +35,7 @@ export async function loginUpdate(parmas) {
  * @return {*}
  */
 export async function getUserInfo() {
-  return request(`${userApi}/user/getuser`, METHOD.POST);
+  return request(`${UP_USER}/user/getuser`, METHOD.POST);
 }
 /**
  * @description: 修改用户密码
@@ -43,7 +43,7 @@ export async function getUserInfo() {
  * @return {*}
  */
 export async function changePwd(parmas) {
-  return request(`${userApi}/user/changepwd`, METHOD.POST,parmas);
+  return request(`${UP_USER}/user/changepwd`, METHOD.POST,parmas);
 }
 /**
  * 退出登录

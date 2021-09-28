@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-08-19 17:57:54
+ * @LastEditTime: 2021-09-28 16:23:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/yirenck/index.js
@@ -13,7 +13,7 @@ const chalk = require('chalk');
 const server = require('./products');
 const spinner = ora(
     '正在发布到' +
-    (process.env.NODE_ENV === 'prod' ? '生产' : '测试') +
+    (process.env.NODE_ENV === 'production' ? '生产' : '测试') +
     '服务器...'
 );
 
@@ -50,7 +50,7 @@ conn
                                 console.log(
                                     chalk.green(
                                         'Success! 成功发布到' +
-                                        (process.env.NODE_ENV === 'prod'
+                                        (process.env.NODE_ENV === 'production'
                                             ? '生产'
                                             : '测试') +
                                         '服务器! \n'
