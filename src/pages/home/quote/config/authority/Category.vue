@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 18:11:08
- * @LastEditTime: 2021-09-27 10:07:22
+ * @LastEditTime: 2021-09-29 15:51:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/config/authority/Category.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" @cancel="close" @ok="handleOk" centered :width="800">
+    <a-modal v-model="visible" title="大类列表" @cancel="close" @ok="handleOk" centered :width="800">
       <div>
         <div class="search-box">
           <a-row>
@@ -22,10 +22,7 @@
                       allowClear
                       style="width:300px"
                       v-decorator="[
-                        'searcValue',
-                        {
-                          rules: [{ required: true, message: '等级编码/名称' }],
-                        },
+                        'searcValue'
                       ]"
                     />
                   </a-form-item>

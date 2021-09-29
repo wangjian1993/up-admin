@@ -109,7 +109,7 @@ export default {
     });
   },
   methods: {
-    ...mapMutations("account", ["setUser", "setPermissions", "setRoles",'setMenu','setUserHead']),
+    ...mapMutations("account", ["setUser", "setPermissions", "setRoles", "setMenu", "setUserHead"]),
     onSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err) => {
@@ -139,12 +139,12 @@ export default {
       this.logging = false;
       const loginRes = res.data;
       if (loginRes.success) {
-        const { userName, userModules,PhotoUrl } = loginRes.data;
-        console.log("userModules----",userModules)
+        const { userName, userModules, PhotoUrl } = loginRes.data;
+        console.log("userModules----", userModules);
         this.setUser(userName);
-        this.setUserHead(PhotoUrl);
+        this.setUserHead("./" + PhotoUrl);
         // this.setMenu(userModules);
-        localStorage.setItem("menu",JSON.stringify(userModules));
+        localStorage.setItem("menu", JSON.stringify(userModules));
         var inFifteenMinutes = new Date(new Date().getTime() + 4 * 60 * 60 * 1000);
         setAuthorization({ token: res.headers.token, expireAt: inFifteenMinutes });
         this.$message.success(this.timeFix().CN + "，欢迎回来!", 3);
@@ -158,7 +158,7 @@ export default {
         // if (routesConfig.length == 0) {
         let workplace = {
           router: "dashboard", //匹配 router.map.js 中注册名 registerName = dashboard 的路由
-          children: ["workplace"] //dashboard 路由的子路由配置，依次匹配 registerName 为 workplace 和 analysis 的路由
+          children: ["workplace"], //dashboard 路由的子路由配置，依次匹配 registerName 为 workplace 和 analysis 的路由
         };
         // let cost = {
         //   router :"quote", //匹配 router.map.js 中注册名 registerName = quote 的路由

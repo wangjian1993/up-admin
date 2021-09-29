@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-28 10:54:51
- * @LastEditTime: 2021-08-30 15:14:54
+ * @LastEditTime: 2021-09-29 10:53:49
  * @LastEditors: max
  * @Description: 添加用户form
  * @FilePath: /up-admin/src/pages/admin/user/components/add-user.vue
@@ -206,7 +206,7 @@ export default {
     console.log(this.modalType);
     if (this.modalType == "edit") {
       this.form = this.editItem;
-      this.imageUrl = this.editItem.PhotoUrl;
+      this.imageUrl ="./"+ this.editItem.PhotoUrl;
       this.roleList = this.editItem.UserInRoleList;
     }
   },

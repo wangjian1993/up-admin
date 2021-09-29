@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-27 10:04:57
+ * @LastEditTime: 2021-09-29 16:16:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/config/authority/AuthoType.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" @cancel="close" @ok="handleOk" centered :width="800">
+    <a-modal v-model="visible" :title="typeArray.ParamCode != 'PERMISSION_TYPE_USER'?'部门列表':'个人用户列表'" @cancel="close" @ok="handleOk" centered :width="800">
       <div>
         <div class="search-box">
           <a-row>
@@ -18,14 +18,11 @@
                 <div style="margin-left:20px">
                   <a-form-item>
                     <a-input
-                      placeholder="请输入部门编码名称"
+                      :placeholder="typeArray.ParamCode != 'PERMISSION_TYPE_USER'?'请输入部门编码/名称':'请输入用户编码/名称'"
                       allowClear
                       style="width:300px"
                       v-decorator="[
-                        'searcValue',
-                        {
-                          rules: [{ required: true, message: '等级编码/名称' }],
-                        },
+                        'searcValue'
                       ]"
                     />
                   </a-form-item>

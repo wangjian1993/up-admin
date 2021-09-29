@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-28 14:02:36
+ * @LastEditTime: 2021-09-29 16:14:46
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -97,52 +97,69 @@
         </div>
       </a-card>
       <!-- 填写报价单 -->
-      <a-card class="card" title="填写报价单" :bordered="false" :bodyStyle="{ padding: '0px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
+      <a-card class="card" title="填写报价单" :bordered="false" :bodyStyle="{ padding: '5px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
         <div class="input-box" v-if="costList.length">
-          <a-row>
-            <a-card bordered :title="`${item.CostSort}(${item.total})`" v-for="(item, index) in costList" :key="index + 'cost'">
-              <a-col :md="24" :lg="24" :xl="12" v-for="(items, indexs) in item.list" :key="indexs">
-                <div class="input-item">
-                  <p class="input-lable" :class="items.IsReadonly == 'N' ? 'input-lable-color2' : 'input-lable-color1'">{{ items.CostName }}:</p>
-                  <p class="input-number">
-                    <a-input-number :disabled="items.IsReadonly == 'Y'" v-model="items.Amount" :min="0" @change="costNumber(items)" />
-                  </p>
-                  <p class="input-text">{{ items.Description }}</p>
-                </div>
-              </a-col>
-            </a-card>
+          <a-row v-for="(item, index) in costList" :key="index + 'cost'" class="cost-list">
+            <a-col :md="2" :lg="2" :xl="2">
+              <p class="input-title">{{ item.CostSort }}</p>
+            </a-col>
+            <a-col :md="22" :lg="22" :xl="22">
+              <a-row>
+                <a-col :md="24" :lg="24" :xl="12" v-for="(items, indexs) in item.list" :key="indexs">
+                  <div class="input-item">
+                    <p class="input-lable">{{ items.CostName }}:</p>
+                    <p class="input-number">
+                      <a-input-number :disabled="items.IsReadonly == 'Y'" v-model="items.Amount" :min="0" @change="costNumber(items)" />
+                    </p>
+                    <p class="input-text">{{ items.Description }}</p>
+                  </div>
+                </a-col>
+              </a-row>
+            </a-col>
           </a-row>
-          <a-row>
-            <a-card bordered title="总费用">
-              <a-col :md="24" :lg="24" :xl="12">
-                <div class="input-item">
-                  <p class="input-lable input-text-color">物料成本:</p>
-                  <p class="input-number">
-                    <a-input-number disabled :min="0" v-model="cost.materialTotal" />
-                  </p>
-                  <p class="input-text">{{ costInfo.ItemOtherInfo.PriceIncompleteMsg }}</p>
-                </div>
-              </a-col>
-              <a-col :md="24" :lg="24" :xl="12">
-                <div class="input-item">
-                  <p class="input-lable input-text-color">最终成本:</p>
-                  <p class="input-number">
-                    <a-input-number disabled :min="0" v-model="cost.ultimatelyTotal" />
-                  </p>
-                  <p class="input-text"></p>
-                </div>
-              </a-col>
-            </a-card>
+          <a-row class="cost-list">
+            <a-col :md="2" :lg="2" :xl="2">
+              <p class="input-title">总费用</p>
+            </a-col>
+            <a-col :md="22" :lg="22" :xl="22">
+              <a-row>
+                <a-col :md="24" :lg="24" :xl="12">
+                  <div class="input-item">
+                    <p class="input-lable input-text-color">物料成本:</p>
+                    <p class="input-number">
+                      <a-input-number disabled :min="0" v-model="cost.materialTotal" />
+                    </p>
+                    <p class="input-text">{{ costInfo.ItemOtherInfo.PriceIncompleteMsg }}</p>
+                  </div>
+                </a-col>
+                <a-col :md="24" :lg="24" :xl="12">
+                  <div class="input-item">
+                    <p class="input-lable input-text-color">最终成本:</p>
+                    <p class="input-number">
+                      <a-input-number disabled :min="0" v-model="cost.ultimatelyTotal" />
+                    </p>
+                    <p class="input-text"></p>
+                  </div>
+                </a-col>
+              </a-row>
+            </a-col>
           </a-row>
-          <a-row>
-            <a-col :md="24" :lg="24" :xl="24">
-              <div class="input-item">
-                <p class="input-lable">备注:</p>
-                <p class="input-number">
-                  <a-input type="textarea" v-model="quoteRemark" style="width:300px" />
-                </p>
-                <p class="input-text"></p>
-              </div>
+          <a-row class="cost-list">
+            <a-col :md="2" :lg="2" :xl="2">
+              <p class="input-title"></p>
+            </a-col>
+            <a-col :md="22" :lg="22" :xl="22">
+              <a-row>
+                <a-col :md="24" :lg="24" :xl="24">
+                  <div class="input-item">
+                    <p class="input-lable">备注:</p>
+                    <p class="input-number">
+                      <a-input type="textarea" v-model="quoteRemark" style="width:300px" />
+                    </p>
+                    <p class="input-text"></p>
+                  </div>
+                </a-col>
+              </a-row>
             </a-col>
           </a-row>
         </div>
@@ -905,8 +922,9 @@ export default {
   display: flex;
   align-items: center;
   .input-lable {
-    width: 100px;
+    width: 120px;
     text-align: right;
+    font-size: 15px;
   }
   .input-number {
     padding-left: 5px;
@@ -945,12 +963,31 @@ export default {
   justify-content: space-between;
 }
 .input-text-color {
-  color: #dd0707;
-}
-/deep/ .ant-card-bordered {
-  border: 1px #d3d0d0 solid;
+  color: #f51f1f;
+  font-weight: 700;
 }
 /deep/ .ant-card {
   margin: 5px 0px;
+}
+.cost-list {
+  display: flex;
+  align-items: center;
+  border: 1px #e6e2e2 solid;
+  margin-bottom: 5px;
+}
+.input-title {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+}
+/deep/ p {
+  margin-bottom: 3px;
+  padding: 0;
+}
+/deep/ .ant-card-head-title {
+  padding: 5px 0;
 }
 </style>

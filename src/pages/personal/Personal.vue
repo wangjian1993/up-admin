@@ -95,7 +95,7 @@
             </a-form-item>
           </a-form>
           <div slots="actions">
-            <a-button type="primary" @click="changePwd" style="float:right;margin-right:50px;margin-top:10px;">
+            <a-button type="primary" disabled @click="changePwd" style="float:right;margin-right:50px;margin-top:10px;">
               保存修改
             </a-button>
           </div>
@@ -149,7 +149,7 @@ export default {
             this.enterName = this.userInfo.UserInOrgList[0].EnterName || "";
             this.orgName = this.userInfo.UserInOrgList[0].OrgName || "";
           }
-          this.imageUrl = this.userInfo.PhotoUrl;
+          this.imageUrl = "./" +this.userInfo.PhotoUrl;
           this.user = {
             UserName: this.userInfo.UserName,
             Email: this.userInfo.Email,

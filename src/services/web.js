@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-09-23 14:18:44
+ * @LastEditTime: 2021-09-29 11:47:44
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -119,4 +119,17 @@ export function getScmAction(params,action) {
 }
 export function setScmAction(params,action) {
     return request(`${UP_WEB}/scm/${action}`, METHOD.POST, params);
+}
+
+/**
+ * @description: 供应商回复
+ * @param {*} params
+ * @param {*} action
+ * @return {*}
+ */
+ export function getSupplierAction(params,action) {
+    return request(`${UP_WEB}/scm/supplier/${action}`, METHOD.GET, params);
+}
+export function setSupplierAction(params,action) {
+    return request(`${UP_WEB}/scm/supplier/${action}`, METHOD.POST, params);
 }

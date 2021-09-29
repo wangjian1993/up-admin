@@ -1,18 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-09-29 14:29:48
+ * @Date: 2021-09-23 14:01:20
+ * @LastEditTime: 2021-09-29 14:05:07
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
--->
-<!--
- * @Author: max
- * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-17 11:00:02
- * @LastEditors: max
- * @Description: 
- * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
+ * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
 -->
 <template>
   <div>
@@ -117,39 +109,19 @@
       </template>
       <template slot="MatchStatus" slot-scope="text, record">
         <div>
-          <a-tag color="green" v-if="text !== 'ERR_MATCH'">{{ record.MatchStatusName }}</a-tag>
+          <a-tag color="green" v-if="text === 'MANUAL_MATCHED' || text === 'MATCHED'">{{ record.MatchStatusName }}</a-tag>
           <a-tag color="red" v-else>{{ record.MatchStatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" @click="details(record)">
+          <a style="margin-right: 8px" @click="matching(record)" v-if="record.MatchStatus === 'ERR_MATCH' || record.MatchStatus == 'CANNOT_MATCH'">
             <a-icon type="profile" />
-            详情
+            手动匹配
           </a>
         </div>
       </template>
     </a-table>
-    <!-- 查看详情 -->
-    <div>
-      <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
-        <a-descriptions title="详情" :column="1">
-          <a-descriptions-item label="计划批号">{{ drawerItem.BatchNo }}</a-descriptions-item>
-          <a-descriptions-item label="生产工厂">{{ drawerItem.PlantName }}</a-descriptions-item>
-          <a-descriptions-item label="品号">{{ drawerItem.MitemCode }}</a-descriptions-item>
-          <a-descriptions-item label="品名">{{ drawerItem.MitemName }}</a-descriptions-item>
-          <a-descriptions-item label="规格">{{ drawerItem.Spec }}</a-descriptions-item>
-          <a-descriptions-item label="需求日期">{{ drawerItem.RequirementDate }}</a-descriptions-item>
-          <a-descriptions-item label="需求数量">{{ drawerItem.Qty }}</a-descriptions-item>
-          <a-descriptions-item label="状态">
-            <div>
-              <a-tag color="green" v-if="drawerItem.Status == 'APPROVED'">已审核</a-tag>
-              <a-tag color="red" v-else>未审核</a-tag>
-            </div>
-          </a-descriptions-item>
-        </a-descriptions>
-      </a-drawer>
-    </div>
   </div>
 </template>
 
@@ -252,12 +224,18 @@ const columns = [
     dataIndex: "MatchStatus",
     scopedSlots: { customRender: "MatchStatus" },
     align: "center",
-  }
+  },
+  {
+    title: "操作",
+    scopedSlots: { customRender: "action" },
+    align: "center",
+    fixed: "right",
+    width: 100,
+  },
 ];
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 export default {
-  props: ["batchid"],
   data() {
     return {
       scrollY: "",
@@ -284,6 +262,8 @@ export default {
       drawerItem: [],
       isSearch: false,
       statistic: [],
+      isMatching: false,
+      matchingData: [],
     };
   },
   updated() {
@@ -304,13 +284,13 @@ export default {
   },
   methods: {
     //关闭弹出框
-    onClose() {
-      this.isDrawer = false;
+    matching(item) {
+      this.isMatching = true;
+      this.matchingData = item;
+      this.matchingData.Id =item.BatchId
     },
-    //查看详情
-    details(item) {
-      this.isDrawer = true;
-      this.drawerItem = item;
+    closeModal() {
+      this.isMatching = false;
     },
     //重置搜索
     reset() {
@@ -321,17 +301,6 @@ export default {
     weekChange(date, dateString) {
       let str = dateString.split("-");
       this.week = str[1].replace("周", "");
-    },
-    getPlant() {
-      let parmas1 = {
-        entertypecode: "PLANT",
-      };
-      getScmAction(parmas1, "requirement/getlistbytypecode").then((res) => {
-        if (res.data.success) {
-          this.plantList = res.data.data;
-          this.plantid = this.plantList[0].EnterId;
-        }
-      });
     },
     getStatistic() {
       getScmAction("", "requirement/detail/gettotal").then((res) => {
@@ -350,7 +319,7 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        batchid: this.batchid || "",
+        batchid: "",
       };
       getScmAction(parmas, "requirement/detail/getall").then((res) => {
         if (res.data.success) {
@@ -431,7 +400,7 @@ export default {
             mitemcode: values.mitemcode,
             mitemname: values.mitemname,
           };
-          getScmAction(parmas, "requirement/detail/getall").then((res) => {
+          getScmAction(parmas, "getdetails").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

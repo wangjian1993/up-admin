@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-09-28 09:57:36
+ * @LastEditTime: 2021-09-29 10:54:18
  * @LastEditors: max
  * @Description: 用户列表
  * @FilePath: /up-admin/src/pages/admin/user/list.vue
@@ -145,7 +145,7 @@
           <div>
             <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
               <a-descriptions title="用户详情" :column="1">
-                <a-descriptions-item label="用户头像"><a-avatar :src="drawerItem.PhotoUrl"/></a-descriptions-item>
+                <a-descriptions-item label="用户头像"><a-avatar :src="`./${drawerItem.PhotoUrl}`"/></a-descriptions-item>
                 <a-descriptions-item label="用户账号">{{ drawerItem.UserLoginId }}</a-descriptions-item>
                 <a-descriptions-item label="用户名称">{{ drawerItem.UserName }}</a-descriptions-item>
                 <a-descriptions-item label="企业微信">{{ drawerItem.EnterWechatAccount }}</a-descriptions-item>
