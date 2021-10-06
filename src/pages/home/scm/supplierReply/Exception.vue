@@ -1,7 +1,7 @@
 <!--
  * @Author: max
- * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-09-29 14:05:07
+ * @Date: 2021-09-23 13:59:52
+ * @LastEditTime: 2021-10-06 11:42:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
@@ -45,41 +45,55 @@
               <a-input style="width: 200px" placeholder="请输入品号" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-select v-decorator="['status']" placeholder="请选择状态" style="width: 200px">
+                <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                  {{ item.ParamName }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
         </a-row>
+        <span style="margin-top: 3px;display: flex;justify-content: flex-end;margin-right: 10px;">
+          <a-button type="primary" @click="search">查询</a-button>
+          <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+          <a @click="toggleAdvanced" style="margin-left: 8px">
+            {{ advanced ? "收起" : "展开" }}
+            <a-icon :type="advanced ? 'up' : 'down'" />
+          </a>
+        </span>
       </div>
-      <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search">查询</a-button>
-        <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-        <a @click="toggleAdvanced" style="margin-left: 8px">
-          {{ advanced ? "收起" : "展开" }}
-          <a-icon :type="advanced ? 'up' : 'down'" />
-        </a>
-      </span>
     </a-form>
-    <div class="operator">
+    <!-- <div class="operator">
       <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
-    </div>
+    </div> -->
     <a-card class="card" :bordered="false" :bodyStyle="{ padding: '16px' }">
       <div>
         <a-row type="flex" justify="center">
-          <a-col :span="6"
-            ><div class="statistic" @click="getStatisticList('MANUAL_MATCHED,MATCHED')">
-              <a-statistic title="已匹配笔数" :value="statistic.MatchedQty"
+          <a-col :span="5"
+            ><div class="statistic" @click="getStatisticList('PART_REPLY_NO_DIFF,NO_CONFIRM_DIFF,ALL_REPLY')">
+              <a-statistic title="已回复笔数" :value="statistic.ReplyQty"
                 ><template #suffix>
                   <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template
               ></a-statistic></div
           ></a-col>
-          <a-col :span="6" class="statistic" @click="getStatisticList(',NO_MATCH,CANNOT_MATCH,ERR_MATCH')">
-            <a-statistic title="未匹配笔数" :value-style="{ color: '#cf1322' }" :value="statistic.NoMatchQty"
+          <a-col :span="5" class="statistic" @click="getStatisticList('REPLY_RELEASE_DIFF,CONFIRMED_DIFF')">
+            <a-statistic title="有差异笔数" :value-style="{ color: '#cf1322' }" :value="statistic.DiffQty"
               ><template #suffix>
                 <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
-          <a-col :span="6" class="statistic" @click="getStatisticList(',NO_MATCH,CANNOT_MATCH,ERR_MATCH', 'Y')">
-            <a-statistic title="未匹配属于我的笔数" :value-style="{ color: '#cf1322' }" :value="statistic.MeQty"
+          <a-col :span="5" class="statistic" @click="getStatisticList('REPLY_RELEASE_DIFF', 'Y')">
+            <a-statistic title="有差异属于我的笔数" :value-style="{ color: '#cf1322' }" :value="statistic.MeDiffQty"
               ><template #suffix>
                 <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
-          <a-col :span="6" class="statistic" @click="getListAll">
+          <a-col :span="5" class="statistic" @click="getStatisticList('NO_CONFIRM_DIFF', 'Y')">
+            <a-statistic title="归属于我的未回复笔数" :value-style="{ color: '#cf1322' }" :value="statistic.MeNoReplyQty"
+              ><template #suffix>
+                <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+          ></a-col>
+          <a-col :span="4" class="statistic" @click="getListAll">
             <a-statistic title="总笔数" :value="statistic.AllQty"
               ><template #suffix>
                 <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
@@ -91,7 +105,7 @@
       :columns="columns"
       :data-source="dataSource"
       size="small"
-      :scroll="{ y: scrollY, x: 2000 }"
+      :scroll="{ y: scrollY, x: 2200 }"
       :loading="loading"
       :pagination="pagination"
       @change="handleTableChange"
@@ -109,31 +123,38 @@
       </template>
       <template slot="MatchStatus" slot-scope="text, record">
         <div>
-          <a-tag color="green" v-if="text === 'MANUAL_MATCHED' || text === 'MATCHED'">{{ record.MatchStatusName }}</a-tag>
+          <a-tag color="green" v-if="text !== 'ERR_MATCH'">{{ record.MatchStatusName }}</a-tag>
           <a-tag color="red" v-else>{{ record.MatchStatusName }}</a-tag>
         </div>
       </template>
-      <template slot="action" slot-scope="text, record">
+      <template slot="action" slot-scope="text, record" v-if="record.PurchaseId != undefined || record.PurchaseId != null">
         <div>
-          <a style="margin-right: 8px" @click="matching(record)" v-if="record.MatchStatus === 'ERR_MATCH' || record.MatchStatus == 'CANNOT_MATCH'">
+          <a style="margin-right: 8px" @click="consent(record)" :disabled="!hasPerm('consent')">
             <a-icon type="profile" />
-            手动匹配
+            同意供应商交期
+          </a>
+        </div>
+        <div>
+          <a style="margin-right: 8px" @click="adjustDate(record)" :disabled="!hasPerm('adjust')">
+            <a-icon type="profile" />
+            调整供应商交期
           </a>
         </div>
       </template>
     </a-table>
+    <adjust-date v-if="isAdjust" :adjustData="adjustData" @closeModal="closeModal"></adjust-date>
   </div>
 </template>
 
 <script>
-import { getScmAction } from "@/services/web.js";
+import { getSupplierAction, setSupplierAction } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcel";
 const columns = [
   {
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width: "50px",
   },
   {
     title: "计划批号",
@@ -158,6 +179,7 @@ const columns = [
     dataIndex: "Week",
     scopedSlots: { customRender: "Week" },
     align: "center",
+    width: "50px",
   },
   {
     title: "品号",
@@ -175,6 +197,7 @@ const columns = [
     title: "规格",
     dataIndex: "Spec",
     align: "center",
+    width: "350px",
   },
   {
     title: "需求日期",
@@ -187,6 +210,26 @@ const columns = [
     dataIndex: "RequirementQty",
     scopedSlots: { customRender: "RequirementQty" },
     align: "center",
+    width: "70px",
+  },
+  {
+    title: "供应商回复日期",
+    dataIndex: "SupplierReplyDate",
+    scopedSlots: { customRender: "SupplierReplyDate" },
+    align: "center",
+  },
+  {
+    title: "回复数量",
+    dataIndex: "SupplierReplyQty",
+    scopedSlots: { customRender: "SupplierReplyQty" },
+    align: "center",
+    width: "70px",
+  },
+  {
+    title: "采购沟通结果",
+    dataIndex: "PurchaseReplyResult",
+    scopedSlots: { customRender: "PurchaseReplyResult" },
+    align: "center",
     width: "5%",
   },
   {
@@ -194,6 +237,7 @@ const columns = [
     dataIndex: "PurchaseUserName",
     scopedSlots: { customRender: "PurchaseUserName" },
     align: "center",
+    width: "70px",
   },
   {
     title: "供应商",
@@ -212,12 +256,14 @@ const columns = [
     dataIndex: "LineItem",
     scopedSlots: { customRender: "LineItem" },
     align: "center",
+    width: "60px",
   },
   {
     title: "采购订单数量",
     dataIndex: "TransitQty",
     scopedSlots: { customRender: "TransitQty" },
     align: "center",
+    width: "60px",
   },
   {
     title: "计划状态",
@@ -230,20 +276,24 @@ const columns = [
     scopedSlots: { customRender: "action" },
     align: "center",
     fixed: "right",
-    width: 100,
+    width: 140,
   },
 ];
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
+import { getParamData } from "@/services/admin.js";
+import AdjustDate from "./AdjustDate.vue";
 export default {
+  components: { AdjustDate },
+  props: ["plantList"],
   data() {
     return {
       scrollY: "",
       loading: false,
       advanced: true,
+      isAdjust: false,
       columns: columns,
       dataSource: [],
-      isDrawer: false,
       selectedRowKeys: [],
       pagination: {
         current: 1,
@@ -256,14 +306,13 @@ export default {
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       searchForm: this.$form.createForm(this),
-      plantList: [],
       plantid: "",
       week: "",
       drawerItem: [],
       isSearch: false,
       statistic: [],
-      isMatching: false,
-      matchingData: [],
+      stateList: [],
+      adjustData: [],
     };
   },
   updated() {
@@ -274,8 +323,8 @@ export default {
       this.scrollY = getTableScroll();
     });
     this.getListAll();
-    this.getPlant();
     this.getStatistic();
+    this.getParamData();
   },
   computed: {
     hasSelected() {
@@ -283,14 +332,22 @@ export default {
     },
   },
   methods: {
-    //关闭弹出框
-    matching(item) {
-      this.isMatching = true;
-      this.matchingData = item;
-      this.matchingData.Id =item.BatchId
-    },
     closeModal() {
-      this.isMatching = false;
+      this.isAdjust = false;
+    },
+    adjustDate(item) {
+      this.isAdjust = true;
+      this.adjustData = item;
+    },
+    getParamData() {
+      let parmas = {
+        groupcode: "MATCH_STATUS",
+      };
+      getParamData(parmas).then((res) => {
+        if (res.data.success) {
+          this.stateList = res.data.data;
+        }
+      });
     },
     //重置搜索
     reset() {
@@ -303,7 +360,7 @@ export default {
       this.week = str[1].replace("周", "");
     },
     getStatistic() {
-      getScmAction("", "requirement/detail/gettotal").then((res) => {
+      getSupplierAction("", "reply/gettotal").then((res) => {
         if (res.data.success) {
           this.statistic = res.data.data;
         }
@@ -319,9 +376,8 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        batchid: "",
       };
-      getScmAction(parmas, "requirement/detail/getall").then((res) => {
+      getSupplierAction(parmas, "reply/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           this.dataSource.forEach((item) => {
@@ -340,7 +396,7 @@ export default {
       });
     },
     getStatisticList(type, isme) {
-      console.log("111");
+      // console.log("111");
       this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
@@ -348,7 +404,7 @@ export default {
         matchstatus: type,
         isme: isme || "",
       };
-      getScmAction(parmas, "requirement/detail/getall").then((res) => {
+      getSupplierAction(parmas, "reply/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           this.dataSource.forEach((item) => {
@@ -384,7 +440,7 @@ export default {
       this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-          console.log("Received values of form: ", values);
+          // console.log("Received values of form: ", values);
           this.dataSourcedata = [];
           this.pagination.total = 0;
           if (this.week != "") {
@@ -397,10 +453,11 @@ export default {
             batchid: values.batchid,
             week: w,
             pmc: values.pmc,
+            status: values.status,
             mitemcode: values.mitemcode,
             mitemname: values.mitemname,
           };
-          getScmAction(parmas, "getdetails").then((res) => {
+          getSupplierAction(parmas, "reply/getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -433,9 +490,22 @@ export default {
         ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
         this.$message.success("导出数据成功!");
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         this.$message.error("导出数据失败");
       }
+    },
+    //同意供应商交期
+    consent(item) {
+      let parmas = {
+        BatchId: item.BatchId,
+        DetailId: item.Id,
+        PurchaseId: item.PurchaseId,
+      };
+      setSupplierAction(parmas, "reply/agree").then((res) => {
+        if (res.data.success) {
+          this.$message.success("同意供应商交期成功!");
+        }
+      });
     },
   },
 };

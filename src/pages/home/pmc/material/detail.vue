@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-17 11:00:02
+ * @LastEditTime: 2021-10-06 09:59:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
@@ -125,7 +125,7 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "5%",
+    width: "3%",
   },
   {
     title: "计划批号",
@@ -138,6 +138,7 @@ const columns = [
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
     align: "center",
+    width: "5%",
   },
   {
     title: "品号",
@@ -155,6 +156,7 @@ const columns = [
     title: "规格",
     dataIndex: "Spec",
     align: "center",
+    width: "20%",
   },
   {
     title: "需求日期",
@@ -177,6 +179,7 @@ const columns = [
   },
   {
     title: "操作",
+    align: "center",
     scopedSlots: { customRender: "action" },
   },
 ];

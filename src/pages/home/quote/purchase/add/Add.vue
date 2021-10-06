@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-09-29 16:14:46
+ * @LastEditTime: 2021-10-06 18:43:08
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -177,7 +177,7 @@
             </span>
           </a-space>
           <a-form layout="inline" :form="keywordForm">
-            <a-form-item label="(料号,料规格,提示)关键字匹配">
+            <a-form-item label="(品号,规格,提示)关键字匹配">
               <a-input v-model="keyword" allowClear @change="listSearch" />
             </a-form-item>
           </a-form>
@@ -188,9 +188,11 @@
           :columns="columns"
           :data-source="searchList"
           :rowKey="(searchList) => searchList.ChildCode"
+          :row-class-name="rowClassName"
           :row-selection="{
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
+            onSelect:onSelect
           }"
         >
           <div slot="Price" slot-scope="text, record, index">
@@ -199,6 +201,9 @@
           <div slot="Property" slot-scope="text">
             <p v-if="text != '委外加工费'">{{ text }}</p>
             <p v-else style="color:#e01111">{{ text }}</p>
+          </div>
+          <div slot="Tips" slot-scope="text">
+            <p style="color:#f51f1f">{{ text }}</p>
           </div>
           <div slot="e10" slot-scope="text, record">
             <p>{{ record.PriceErpSource == "" ? text : text + `(${record.PriceErpSource})` }}</p>
@@ -242,7 +247,7 @@ const excelHead = [
     align: "center",
   },
   {
-    title: "上阶料号",
+    title: "上阶品号",
     dataIndex: "LastCode",
     width: "10%",
     align: "center",
@@ -318,12 +323,12 @@ export default {
           title: "序号",
           dataIndex: "IndexNo",
           align: "center",
-          width: "4%",
+          width: "3%",
         },
         {
           title: "阶次",
           dataIndex: "LvNo",
-          width: "5%",
+          width: "3%",
           align: "center",
         },
         {
@@ -334,25 +339,26 @@ export default {
           align: "center",
         },
         {
-          title: "上阶料号",
+          title: "上阶品号",
           dataIndex: "LastCode",
-          width: "10%",
           align: "center",
         },
         {
-          title: "料号",
+          title: "品号",
           dataIndex: "ChildCode",
           align: "center",
         },
         {
-          title: "料名",
+          title: "品名",
           dataIndex: "ChildName",
           align: "center",
+          width: "10%",
         },
         {
-          title: "料规格",
+          title: "规格",
           dataIndex: "ChildSpecification",
           align: "center",
+          width: "20%",
         },
         {
           title: "单位",
@@ -372,11 +378,12 @@ export default {
           dataIndex: "Price",
           scopedSlots: { customRender: "Price" },
           align: "center",
+          width: "5%",
         },
         {
           title: "用量",
           dataIndex: "Yl",
-          width: "5%",
+          width: "3%",
           scopedSlots: { customRender: "dosage" },
           align: "center",
           customCell: this.dosageClick,
@@ -432,6 +439,7 @@ export default {
       selectedRowKeys: [],
       saveBtnText: "保存",
       exportData: [],
+      tableCurrRowId:""
     };
   },
   created() {
@@ -529,6 +537,12 @@ export default {
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
+      //  this.tableCurrRowId = selectedRowKeys;
+    },
+    onSelect(record, selected){
+      if(selected){
+        this.tableCurrRowId =record.ChildCode;
+      }
     },
     //重置数据
     reset() {
@@ -609,12 +623,12 @@ export default {
         if (this.costInfo.ItemOtherInfo && item.CostName === "电源贴片费") {
           if (item.Description == "") {
             item.Amount = 0;
-            item.Description = `料名带有“贴片”关键字(0)行)，用量(0)*0`;
+            item.Description = `品名带有“贴片”关键字(0)行)，用量(0)*0`;
             return;
           }
           let str = item.Description.split("*");
           item.Amount = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * str[1];
-          item.Description = `料名带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
+          item.Description = `品名带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
         }
         //计算损耗费用
         if (item.CostName === "损耗") {
@@ -638,7 +652,7 @@ export default {
             sum += items.Amount;
           }
         });
-        console.log(sum);
+        // console.log(sum);
         item.total = parseFloat(sum.toFixed(4));
       });
       this.costTotal = total;
@@ -713,7 +727,7 @@ export default {
       this.costList.map((item) => {
         cost = cost.concat(item.list);
       });
-      console.log(cost);
+      // console.log(cost);
       let parmas = {
         CostBaseList: cost,
         ItemChildList: obj,
@@ -751,19 +765,27 @@ export default {
     removeDosage(index) {
       this.selectedRowKeys.splice(index, 1);
     },
-    dosageClick(record) {
-      return {
-        style: {
-          cursor: "pointer",
-        },
-        on: {
-          // 鼠标单击行
-          click: () => {
-            this.selectedRowKeys.includes(record.ChildCode) ? (this.selectedRowKeys = this.selectedRowKeys.filter((n) => n !== record.ChildCode)) : this.selectedRowKeys.push(record.ChildCode);
-          },
-        },
-      };
+    rowClassName(record) {
+      // console.log(record)
+      //选择行后设置颜色
+      //return 'white'
+      // console.log(this.selectedRowKeys.includes(record.ChildCode));
+      // return record.ChildCode === this.tableCurrRowId ? "blue" : "white";
+      return this.selectedRowKeys.includes(record.ChildCode) ? "litigationInfoListredRow" : "white"
     },
+    // dosageClick(record) {
+    //   return {
+    //     style: {
+    //       cursor: "pointer",
+    //     },
+    //     on: {
+    //       // 鼠标单击行
+    //       click: () => {
+    //         this.selectedRowKeys.includes(record.ChildCode) ? (this.selectedRowKeys = this.selectedRowKeys.filter((n) => n !== record.ChildCode)) : this.selectedRowKeys.push(record.ChildCode);
+    //       },
+    //     },
+    //   };
+    // },
     //导出excel
     handleExcel() {
       if (this.tableData.length == 0) {
@@ -796,7 +818,7 @@ export default {
       ConfigList.map((item) => {
         cost = cost.concat(item.list);
       });
-      console.log("ConfigList===", ConfigList);
+      // console.log("ConfigList===", ConfigList);
       cost.map((item, index) => {
         let array = [item.CostSort, item.CostName, null, item.Amount || 0, null, null, null, null, null, null, null, null, null, null, null];
         _data.push(array);
@@ -821,10 +843,10 @@ export default {
             s: { r: 6 + ConfigList[index - 1].list.length, c: 0 },
             e: { r: 6 + l + ConfigList[index - 1].list.length, c: 0 },
           });
-          console.log({
-            s: { r: 6 + ConfigList[index - 1].list.length, c: 0 },
-            e: { r: 6 + l + ConfigList[index - 1].list.length, c: 0 },
-          });
+          // console.log({
+          //   s: { r: 6 + ConfigList[index - 1].list.length, c: 0 },
+          //   e: { r: 6 + l + ConfigList[index - 1].list.length, c: 0 },
+          // });
         }
       });
       _data.push(["物料成本", this.cost.materialTotal, null, null, null, null, null, null, null, null, null, null, null, null, null]);
@@ -871,8 +893,8 @@ export default {
         { wch: 10 }, // 序号
         { wch: 5 }, // 阶次
         { wch: 8 }, // 类型
-        { wch: 10 }, // 上阶料号
-        { wch: 10 }, // 料号
+        { wch: 10 }, // 上阶品号
+        { wch: 10 }, // 品号
         { wch: 18 }, // 料名
         { wch: 20 }, // 规格
         { wch: 6 }, // 单位
@@ -989,5 +1011,14 @@ export default {
 }
 /deep/ .ant-card-head-title {
   padding: 5px 0;
+}
+/deep/.ant-table-tbody .white {
+  background-color: #fff !important;
+  height: 40px !important;
+  border: none !important;
+  padding: 0 !important;
+}
+/deep/ .litigationInfoListredRow {
+  background-color: red
 }
 </style>

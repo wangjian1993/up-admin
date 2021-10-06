@@ -1,10 +1,10 @@
-import routerMap from '@/router/async/router.map'
+import routerMap from '@/router/async/router.map';
 import {
 	mergeI18nFromRoutes
-} from '@/utils/i18n'
-import Router from 'vue-router'
-import deepMerge from 'deepmerge'
-import basicOptions from '@/router/async/config.async'
+} from '@/utils/i18n';
+import Router from 'vue-router';
+import deepMerge from 'deepmerge';
+import basicOptions from '@/router/async/config.async';
 //应用配置
 let appOptions = {
 	router: undefined,
@@ -20,10 +20,10 @@ function setAppOptions(options) {
 		router,
 		store,
 		i18n
-	} = options
-	appOptions.router = router
-	appOptions.store = store
-	appOptions.i18n = i18n
+	} = options;
+	appOptions.router = router;
+	appOptions.store = store;
+	appOptions.i18n = i18n;
 }
 
 const view = {
@@ -166,7 +166,7 @@ function loadRoutes(routesConfig) {
 	// 初始化Admin后台菜单数据
 	const rootRoute = router.options.routes.find(item => item.path === '/')
 	const menuRoutes = rootRoute && rootRoute.children
-	console.log(menuRoutes);
+	// console.log(menuRoutes);
 	if (menuRoutes) {
 		store.commit('setting/setMenuData', menuRoutes)
 	}

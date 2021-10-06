@@ -94,7 +94,7 @@ const columns = [
     width: "4%",
   },
   {
-    title: "上阶料号",
+    title: "上阶品号",
     dataIndex: "LastCode",
     align: "center",
   },

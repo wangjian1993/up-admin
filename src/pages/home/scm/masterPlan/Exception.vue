@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-09-24 14:17:37
+ * @LastEditTime: 2021-10-06 09:43:52
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Exception.vue
@@ -134,7 +134,7 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width: "50px"
   },
   {
     title: "计划批号",
@@ -159,6 +159,7 @@ const columns = [
     dataIndex: "Week",
     scopedSlots: { customRender: "Week" },
     align: "center",
+    width: "50px"
   },
   {
     title: "品号",
@@ -176,6 +177,7 @@ const columns = [
     title: "规格",
     dataIndex: "Spec",
     align: "center",
+    width: "350px"
   },
   {
     title: "需求日期",
@@ -188,7 +190,7 @@ const columns = [
     dataIndex: "RequirementQty",
     scopedSlots: { customRender: "RequirementQty" },
     align: "center",
-    width: "5%",
+    width: "100px"
   },
   {
     title: "负责采购",
@@ -213,6 +215,7 @@ const columns = [
     dataIndex: "LineItem",
     scopedSlots: { customRender: "LineItem" },
     align: "center",
+    width: "70px"
   },
   {
     title: "采购订单数量",

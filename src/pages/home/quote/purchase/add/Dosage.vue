@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-15 15:39:45
- * @LastEditTime: 2021-09-18 14:26:06
+ * @LastEditTime: 2021-10-06 18:23:45
  * @LastEditors: max
  * @Description: 用量统计
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Dosage.vue
@@ -17,7 +17,13 @@
             <div class="table-search">
               <a-form layout="inline">
                 <a-form-item label="用量统计">
-                  <a-input v-model="dosage" disabled />
+                  <a-input v-model="dosage" disabled style="width:80px"/>
+                </a-form-item>
+                <a-form-item label="基数">
+                  <a-input-number v-model="radix" style="width:80px" :min="0" @change="radixChange"/>
+                </a-form-item>
+                <a-form-item label="费用">
+                  <a-input v-model="cost" disabled style="width:80px"/>
                 </a-form-item>
                 <a-form-item>
                   <a-button type="primary" @click="dosageCount">
@@ -101,6 +107,8 @@ export default {
       columns,
       loading: false,
       dosage: 0,
+      cost: "",
+      radix: "",
       pagination: {
         current: 1,
         total: 0,
@@ -121,20 +129,30 @@ export default {
   methods: {
     dosageCount() {
       let sum = 0;
+      this.radix = localStorage.getItem("radix") || 0;
       this.searchDosage.forEach((item) => {
         //遍历Yl这个字段，并累加
         sum += item.Yl;
       });
       this.dosage = parseFloat(sum.toFixed(4));
+      let c = this.radix * this.dosage;
+      this.cost = parseFloat(c.toFixed(4));
+    },
+    radixChange(e){
+      let c = e * this.dosage;
+      this.cost = parseFloat(c.toFixed(4));
+      localStorage.setItem("radix",e)
     },
     empty() {
       this.$emit("empty");
       this.dosage = 0;
+      this.cost =0;
+      this.radix =0;
     },
     remove(index, item) {
       this.searchDosage.splice(index, 1);
       this.dosage = this.dosage - item.Yl;
-      this.$emit("remove",item);
+      this.$emit("remove", item);
     },
     close() {
       this.$emit("closeModal");

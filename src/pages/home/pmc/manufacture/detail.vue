@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-17 10:56:52
+ * @LastEditTime: 2021-10-06 09:56:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/detail.vue
@@ -143,7 +143,7 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "5%",
+    width: "50px",
   },
   {
     title: "日计划批号",
@@ -156,18 +156,21 @@ const columns = [
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
     align: "center",
+     width: "80px",
   },
   {
     title: "生产车间",
     dataIndex: "WorkShopName",
     scopedSlots: { customRender: "WorkShopName" },
     align: "center",
+    width: "80px",
   },
   {
     title: "产线",
     dataIndex: "LineName",
     scopedSlots: { customRender: "LineName" },
     align: "center",
+    width: "60px",
   },
   {
     title: "计划生产日期",
@@ -216,30 +219,35 @@ const columns = [
     dataIndex: "OrderQty",
     scopedSlots: { customRender: "OrderQty" },
     align: "center",
+    width: "80px",
   },
   {
     title: "计划数量",
     dataIndex: "PlanQty",
     scopedSlots: { customRender: "PlanQty" },
     align: "center",
+    width: "80px",
   },
   {
     title: "人均标准产量",
     dataIndex: "PerCapitaCapacity",
     scopedSlots: { customRender: "PerCapitaCapacity" },
     align: "center",
+    width: "80px",
   },
   {
     title: "工时",
     dataIndex: "WorkHour",
     scopedSlots: { customRender: "WorkHour" },
     align: "center",
+    width: "80px",
   },
   {
     title: "物料库存情况",
     dataIndex: "MaterialShortage",
     scopedSlots: { customRender: "MaterialShortage" },
     align: "center",
+    width: "200px",
   },
   {
     title: "备注",

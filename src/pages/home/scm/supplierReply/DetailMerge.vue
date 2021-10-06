@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-09-24 14:26:04
+ * @LastEditTime: 2021-10-06 09:48:12
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/scm/masterPlan/DetailMerge.vue
+ * @FilePath: /up-admin/src/pages/home/scm/supplierReply/DetailMerge.vue
 -->
 
 <template>
@@ -111,7 +111,6 @@
     <requirement v-if="isDetail" :detailData="detailData" @closeModal="closeModal"></requirement>
   </div>
 </template>
-
 <script>
 const columns = [
   {
@@ -131,6 +130,7 @@ const columns = [
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
     align: "center",
+    width: "6%"
   },
   {
     title: "周",
@@ -156,12 +156,14 @@ const columns = [
     dataIndex: "Spec",
     scopedSlots: { customRender: "Spec" },
     align: "center",
+    width: "25%"
   },
   {
     title: "需求数量",
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
+    width: "5%"
   },
   {
     title: "状态",
@@ -177,9 +179,8 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getScmAction} from "@/services/web.js";
+import { getSupplierAction} from "@/services/web.js";
 import Requirement from "./Requirement.vue";
-// import ExportExcel from "@/utils/ExportExcel.js";
 import XLSX from "xlsx";
 export default {
   components: { Requirement },
@@ -245,7 +246,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getScmAction(parmas, "requirement/detail/getmergedetails").then((res) => {
+      getSupplierAction(parmas, "reply/getmergedetails").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -289,7 +290,7 @@ export default {
       this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-          console.log("Received values of form: ", values.week);
+          // console.log("Received values of form: ", values.week);
           this.data = [];
           this.pagination.total = 0;
           if (values["range-time-picker"] != undefined) {
@@ -310,7 +311,7 @@ export default {
             startdate:begindt,
             enddate:enddt
           };
-          getScmAction(parmas, "requirement/detail/getmergedetails").then((res) => {
+          getSupplierAction(parmas, "reply/getmergedetails").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };

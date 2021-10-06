@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-09-29 14:29:48
+ * @LastEditTime: 2021-10-06 09:43:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
@@ -130,26 +130,6 @@
         </div>
       </template>
     </a-table>
-    <!-- 查看详情 -->
-    <div>
-      <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
-        <a-descriptions title="详情" :column="1">
-          <a-descriptions-item label="计划批号">{{ drawerItem.BatchNo }}</a-descriptions-item>
-          <a-descriptions-item label="生产工厂">{{ drawerItem.PlantName }}</a-descriptions-item>
-          <a-descriptions-item label="品号">{{ drawerItem.MitemCode }}</a-descriptions-item>
-          <a-descriptions-item label="品名">{{ drawerItem.MitemName }}</a-descriptions-item>
-          <a-descriptions-item label="规格">{{ drawerItem.Spec }}</a-descriptions-item>
-          <a-descriptions-item label="需求日期">{{ drawerItem.RequirementDate }}</a-descriptions-item>
-          <a-descriptions-item label="需求数量">{{ drawerItem.Qty }}</a-descriptions-item>
-          <a-descriptions-item label="状态">
-            <div>
-              <a-tag color="green" v-if="drawerItem.Status == 'APPROVED'">已审核</a-tag>
-              <a-tag color="red" v-else>未审核</a-tag>
-            </div>
-          </a-descriptions-item>
-        </a-descriptions>
-      </a-drawer>
-    </div>
   </div>
 </template>
 
@@ -186,6 +166,7 @@ const columns = [
     dataIndex: "Week",
     scopedSlots: { customRender: "Week" },
     align: "center",
+    width: "50px"
   },
   {
     title: "品号",
@@ -198,11 +179,13 @@ const columns = [
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
+    width: "150px"
   },
   {
     title: "规格",
     dataIndex: "Spec",
     align: "center",
+    width: "350px"
   },
   {
     title: "需求日期",
@@ -215,7 +198,7 @@ const columns = [
     dataIndex: "RequirementQty",
     scopedSlots: { customRender: "RequirementQty" },
     align: "center",
-    width: "5%",
+    width: "100px"
   },
   {
     title: "负责采购",
@@ -240,12 +223,14 @@ const columns = [
     dataIndex: "LineItem",
     scopedSlots: { customRender: "LineItem" },
     align: "center",
+    width: "50px"
   },
   {
     title: "采购订单数量",
     dataIndex: "TransitQty",
     scopedSlots: { customRender: "TransitQty" },
     align: "center",
+    width: "100px"
   },
   {
     title: "计划状态",

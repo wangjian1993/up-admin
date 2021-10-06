@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-17 11:01:24
+ * @LastEditTime: 2021-10-06 10:00:27
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Detail.vue
@@ -116,7 +116,7 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "5%",
+    width: "3%",
   },
   {
     title: "计划批号",
@@ -129,6 +129,7 @@ const columns = [
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
     align: "center",
+     width: "5%",
   },
   {
     title: "周",
@@ -154,6 +155,7 @@ const columns = [
     dataIndex: "Spec",
     scopedSlots: { customRender: "Spec" },
     align: "center",
+     width: "20%",
   },
   {
     title: "需求日期",
@@ -166,6 +168,7 @@ const columns = [
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
+     width: "5%",
   },
   {
     title: "状态",

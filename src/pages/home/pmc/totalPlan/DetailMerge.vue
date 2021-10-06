@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-17 10:58:03
+ * @LastEditTime: 2021-10-06 10:01:12
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/DetailMerge.vue
@@ -131,6 +131,7 @@ const columns = [
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
     align: "center",
+     width: "5%",
   },
   {
     title: "周",
@@ -156,12 +157,14 @@ const columns = [
     dataIndex: "Spec",
     scopedSlots: { customRender: "Spec" },
     align: "center",
+     width: "20%",
   },
   {
     title: "需求数量",
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
+     width: "5%",
   },
   {
     title: "状态",

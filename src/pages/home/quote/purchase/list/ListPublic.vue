@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-09-27 14:17:08
+ * @LastEditTime: 2021-10-06 10:02:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -159,23 +159,26 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "5%",
+    width: "3%",
   },
   {
     title: "需求公司",
     dataIndex: "EnterpriseName",
     scopedSlots: { customRender: "description" },
     align: "center",
+    width: "5%",
   },
   {
     title: "生产工厂",
     dataIndex: "PlantName",
     align: "center",
+    width: "5%",
   },
   {
     title: "产品大类",
     dataIndex: "ItemSort",
     align: "center",
+    width: "5%",
   },
   {
     title: "品号",
@@ -248,7 +251,7 @@ const excelHead = [
     width: "5%",
   },
   {
-    title: "上阶料号",
+    title: "上阶品号",
     dataIndex: "LastCode",
     width: "10%",
   },
@@ -656,8 +659,8 @@ export default {
             { wch: 10 }, // 序号
             { wch: 5 }, // 阶次
             { wch: 8 }, // 类型
-            { wch: 10 }, // 上阶料号
-            { wch: 10 }, // 料号
+            { wch: 10 }, // 上阶品号
+            { wch: 10 }, // 品号
             { wch: 18 }, // 料名
             { wch: 20 }, // 规格
             { wch: 6 }, // 单位
