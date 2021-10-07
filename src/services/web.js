@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-09-29 11:47:44
+ * @LastEditTime: 2021-10-07 11:00:28
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -127,9 +127,21 @@ export function setScmAction(params,action) {
  * @param {*} action
  * @return {*}
  */
- export function getSupplierAction(params,action) {
+export function getSupplierAction(params,action) {
     return request(`${UP_WEB}/scm/supplier/${action}`, METHOD.GET, params);
 }
 export function setSupplierAction(params,action) {
     return request(`${UP_WEB}/scm/supplier/${action}`, METHOD.POST, params);
+}
+/**
+ * @description: 采购质检
+ * @param {*} params
+ * @param {*} action
+ * @return {*}
+ */
+export function getQualityAction(params,action) {
+    return request(`${UP_WEB}/purchase/qt/${action}`, METHOD.GET, params);
+}
+export function setQualityAction(params,action) {
+    return request(`${UP_WEB}/purchase/qt/${action}`, METHOD.POST, params);
 }

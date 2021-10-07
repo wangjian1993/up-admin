@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-15 15:39:45
- * @LastEditTime: 2021-10-07 09:18:11
+ * @LastEditTime: 2021-10-07 10:45:36
  * @LastEditors: max
  * @Description: 用量统计
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Dosage.vue
@@ -20,7 +20,7 @@
                   <a-input v-model="dosage" disabled style="width:80px"/>
                 </a-form-item>
                 <a-form-item label="基数">
-                  <a-input-number v-model="radix" style="width:80px" :min="1" @change="radixChange"/>
+                  <a-input-number v-model="radix" style="width:80px" :min="0" @change="radixChange"/>
                 </a-form-item>
                 <a-form-item label="费用">
                   <a-input v-model="cost" disabled style="width:80px"/>
@@ -107,8 +107,8 @@ export default {
       columns,
       loading: false,
       dosage: 0,
-      cost: "",
-      radix: "",
+      cost:0,
+      radix: 1,
       pagination: {
         current: 1,
         total: 0,

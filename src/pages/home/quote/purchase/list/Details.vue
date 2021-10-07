@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-27 10:27:22
+ * @LastEditTime: 2021-10-07 17:01:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -27,10 +27,16 @@
             <a-descriptions-item label="产品大类">
               {{ info.ItemSort }}
             </a-descriptions-item>
-            <a-descriptions-item label="物料成本">
+            <a-descriptions-item>
+              <template v-slot:label>
+                <span style="color:red">物料成本</span>
+              </template>
               {{ info.MaterialCost }}
             </a-descriptions-item>
-            <a-descriptions-item label="最终成本">
+            <a-descriptions-item>
+              <template v-slot:label>
+                <span style="color:red">最终成本</span>
+              </template>
               {{ info.FinalCost }}
             </a-descriptions-item>
             <a-descriptions-item label="备注">
