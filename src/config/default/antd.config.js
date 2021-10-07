@@ -26,7 +26,7 @@ const ANTD = {
       'text-color-secondary': 'rgba(0, 0, 0, 0.45)',
       'shadow-color': 'rgba(0, 0, 0, 0.15)',
       'border-color-split': '#f0f0f0',
-      'background-color-light': '#fafafa',
+      'background-color-light': '',
       'background-color-base': '#f5f5f5',
       'table-selected-row-bg': '#fafafa',
       'table-expanded-row-bg': '#fbfbfb',

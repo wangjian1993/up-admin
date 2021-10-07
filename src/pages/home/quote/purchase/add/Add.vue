@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-06 18:43:08
+ * @LastEditTime: 2021-10-07 09:09:35
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -27,6 +27,7 @@
                     <a-input
                       placeholder="请输入产品品号"
                       :disabled="isSearch"
+                      allowClear
                       v-decorator="[
                         'itemcode',
                         {
@@ -769,9 +770,9 @@ export default {
       // console.log(record)
       //选择行后设置颜色
       //return 'white'
-      // console.log(this.selectedRowKeys.includes(record.ChildCode));
-      // return record.ChildCode === this.tableCurrRowId ? "blue" : "white";
-      return this.selectedRowKeys.includes(record.ChildCode) ? "litigationInfoListredRow" : "white"
+      console.log(this.selectedRowKeys.includes(record.ChildCode));
+      return this.selectedRowKeys.includes(record.ChildCode) ? "blue" : "white";
+      // return this.selectedRowKeys.includes(record.ChildCode) ? "litigationInfoListredRow" : ""
     },
     // dosageClick(record) {
     //   return {
@@ -940,6 +941,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+/deep/.ant-table-tbody > tr.ant-table-row-selected td{
+  background: none;
+  color:inherit;
+}
 .input-item {
   display: flex;
   align-items: center;
@@ -1018,7 +1023,12 @@ export default {
   border: none !important;
   padding: 0 !important;
 }
-/deep/ .litigationInfoListredRow {
-  background-color: red
+/deep/.ant-table-tbody .blue {
+  background: #cce8cf;
+  // opacity: 1;
+  // color:#cce8cf;
+  height: 40px !important;
+  border: none !important;
+  padding: 0 !important;
 }
 </style>

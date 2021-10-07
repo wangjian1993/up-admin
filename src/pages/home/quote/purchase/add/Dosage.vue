@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-15 15:39:45
- * @LastEditTime: 2021-10-06 18:23:45
+ * @LastEditTime: 2021-10-07 09:18:11
  * @LastEditors: max
  * @Description: 用量统计
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Dosage.vue
@@ -20,7 +20,7 @@
                   <a-input v-model="dosage" disabled style="width:80px"/>
                 </a-form-item>
                 <a-form-item label="基数">
-                  <a-input-number v-model="radix" style="width:80px" :min="0" @change="radixChange"/>
+                  <a-input-number v-model="radix" style="width:80px" :min="1" @change="radixChange"/>
                 </a-form-item>
                 <a-form-item label="费用">
                   <a-input v-model="cost" disabled style="width:80px"/>
@@ -129,7 +129,7 @@ export default {
   methods: {
     dosageCount() {
       let sum = 0;
-      this.radix = localStorage.getItem("radix") || 0;
+      this.radix = localStorage.getItem("radix") || 1;
       this.searchDosage.forEach((item) => {
         //遍历Yl这个字段，并累加
         sum += item.Yl;
@@ -152,6 +152,8 @@ export default {
     remove(index, item) {
       this.searchDosage.splice(index, 1);
       this.dosage = this.dosage - item.Yl;
+      let c = this.radix * this.dosage;
+      this.cost = parseFloat(c.toFixed(4));
       this.$emit("remove", item);
     },
     close() {
