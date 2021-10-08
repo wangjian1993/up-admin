@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-06 09:56:37
+ * @LastEditTime: 2021-10-08 09:50:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/detail.vue
@@ -85,7 +85,6 @@
       :loading="loading"
       :pagination="pagination"
       @change="handleTableChange"
-      :rowKey="(dataSource) => dataSource.Id"
       :row-selection="{
         selectedRowKeys: selectedRowKeys,
         onChange: onSelectChange,
@@ -97,10 +96,9 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text">
+      <template slot="Status" slot-scope="text,record">
         <div>
-          <a-tag color="green" v-if="text == 'APPROVED'">已审批</a-tag>
-          <a-tag color="red" v-else>未审批</a-tag>
+          <a-tag :color="text !== 'APPROVAL'?'green':'red'">{{record.StatusName}}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
@@ -117,18 +115,6 @@
       <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
         <a-descriptions title="详情" :column="1">
           <a-descriptions-item v-for="(item, index) in filterData" :key="index" :label="item.title">{{ drawerItem[item.dataIndex] }}</a-descriptions-item>
-          <!-- <a-descriptions-item label="生产车间">{{ drawerItem.MitemCode }}</a-descriptions-item>
-          <a-descriptions-item label="产线">{{ drawerItem.MitemName }}</a-descriptions-item>
-          <a-descriptions-item label="计划生产日期">{{ drawerItem.Spec }}</a-descriptions-item>
-          <a-descriptions-item label="工单号">{{ drawerItem.RequirementDate }}</a-descriptions-item>
-          <a-descriptions-item label="工单号">{{ drawerItem.RequirementDate }}</a-descriptions-item>
-          <a-descriptions-item label="需求数量">{{ drawerItem.Qty }}</a-descriptions-item>
-          <a-descriptions-item label="状态">
-            <div>
-              <a-tag color="green" v-if="drawerItem.Status == 'APPROVED'">已审核</a-tag>
-              <a-tag color="red" v-else>未审核</a-tag>
-            </div>
-          </a-descriptions-item> -->
         </a-descriptions>
       </a-drawer>
     </div>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-07 18:13:29
+ * @LastEditTime: 2021-10-08 10:26:24
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -130,7 +130,7 @@
                     <p class="input-number">
                       <a-input-number disabled :min="0" v-model="cost.materialTotal" />
                     </p>
-                    <p class="input-text">{{ costInfo.ItemOtherInfo.PriceIncompleteMsg }}</p>
+                    <p class="input-text" v-if="costInfo.ItemOtherInfo">{{ costInfo.ItemOtherInfo.PriceIncompleteMsg}}</p>
                   </div>
                 </a-col>
                 <a-col :md="24" :lg="24" :xl="12">

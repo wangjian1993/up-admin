@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-17 11:00:41
+ * @LastEditTime: 2021-10-08 13:44:59
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/leadIn.vue
@@ -34,14 +34,14 @@
         <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
         <a-button style="margin-left: 8px" type="primary" @click="importExcel" :disabled="!hasPerm('import')"><a-icon type="import" />导入</a-button>
-        <a-button style="margin-left: 8px" type="primary" :disabled="!hasPerm('down')"><a-icon type="download" />下载模板</a-button>
+        <a-button style="margin-left: 8px" type="primary" @click="downloadExcel" :disabled="!hasPerm('down')"><a-icon type="download" />下载模板</a-button>
       </span>
     </a-form>
     <div class="operator">
       <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
-        <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
-        <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-        <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
+      <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+      <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
       <span style="margin-left: 8px">
         <template v-if="hasSelected">
           {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -70,21 +70,21 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text">
+      <template slot="Status" slot-scope="text, record">
         <div>
-          <a-tag color="green" v-if="text == 'APPROVED'">已审批</a-tag>
-          <a-tag color="red" v-else>未审批</a-tag>
+          <a-tag color="green" v-if="text !== 'APPROVAL'">{{ record.StatusName }}</a-tag>
+          <a-tag color="red" v-else>{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a-popconfirm v-if="record.Status != 'APPROVED'" title="确定删除?" @confirm="() => actionBnt(record, 'delete')">
+          <a-popconfirm v-if="record.Status === 'APPROVAL'" title="确定删除?" @confirm="() => actionBnt(record, 'delete')">
             <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
               <a-icon type="delete" />
               删除
             </a>
           </a-popconfirm>
-          <a :disabled="!hasPerm('approve')" v-if="record.Status != 'APPROVED'" style="margin-right: 8px" @click="actionBnt(record, 'approved')">
+          <a :disabled="!hasPerm('approve')" v-if="record.Status === 'APPROVAL'" style="margin-right: 8px" @click="actionBnt(record, 'approved')">
             <a-icon type="check-circle" />
             审批
           </a>
@@ -185,7 +185,7 @@ export default {
       scrollY: "",
       searchForm: this.$form.createForm(this),
       week: "",
-      isSearch:false
+      isSearch: false,
     };
   },
   updated() {
@@ -230,7 +230,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch =false
+          this.isSearch = false;
         } else {
           this.loading = false;
         }
@@ -259,7 +259,7 @@ export default {
     //重置搜索
     reset() {
       this.getListAll();
-      this.week =""
+      this.week = "";
       this.searchForm.resetFields();
     },
     //关键词搜索
@@ -270,8 +270,8 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          if(this.week != ""){
-            var w =this.week
+          if (this.week != "") {
+            var w = this.week;
           }
           let parmas = {
             pageindex: this.pagination.current,
@@ -287,7 +287,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
-              this.isSearch =true
+              this.isSearch = true;
             }
           });
           // do something
@@ -356,11 +356,19 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if(this.isSearch){
+      if (this.isSearch) {
         this.search();
         return;
       }
       this.getListAll();
+    },
+    //下载模板
+    downloadExcel() {
+      // window.location.open = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
+      window.open("./Upload/excel/20211008/物料需求计划导入模板.xlsx", '_blank');
+      // let a = document.createElement("a");
+      // a.href = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
+      // a.click();
     },
   },
 };

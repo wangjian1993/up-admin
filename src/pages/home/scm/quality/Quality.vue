@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 10:40:23
- * @LastEditTime: 2021-10-07 17:18:45
+ * @LastEditTime: 2021-10-08 09:22:36
  * @LastEditors: max
  * @Description: 采购质检
  * @FilePath: /up-admin/src/pages/home/scm/quality/Quality.vue
@@ -114,8 +114,10 @@
         :pagination="pagination"
         @change="handleTableChange"
         :row-selection="{
+          columnWidth:40,
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
+          getCheckboxProps: getCheckboxProps,
         }"
         bordered
       >
@@ -132,7 +134,7 @@
         </template>
         <template slot="action" slot-scope="text, record">
           <div>
-            <a style="margin-right: 8px" @click="check(record)" :disabled="!hasPerm('approve')">
+            <a style="margin-right: 8px" @click="check(record)" v-if="record.QtStatusName === '待检'" :disabled="!hasPerm('approve')">
               <a-icon type="profile" />
               审批
             </a>
@@ -185,13 +187,6 @@ const columns = [
     dataIndex: "MitemSpec",
     align: "center",
     width: "350px",
-  },
-  {
-    title: "送货单数量",
-    dataIndex: "Qty",
-    scopedSlots: { customRender: "Qty" },
-    align: "center",
-    width: "80px",
   },
   {
     title: "到货数量",
@@ -426,6 +421,11 @@ export default {
         }
       });
     },
+    getCheckboxProps: (record) => ({
+      props: {
+        disabled: record.QtStatusName === '待检', // Column configuration not to be checked
+      },
+    }),
     //分页
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;

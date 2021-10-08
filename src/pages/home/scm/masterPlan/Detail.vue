@@ -1,18 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-06 09:43:03
+ * @LastEditTime: 2021-10-08 09:33:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
--->
-<!--
- * @Author: max
- * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-09-17 11:00:02
- * @LastEditors: max
- * @Description: 
- * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
 -->
 <template>
   <div>
@@ -462,7 +454,7 @@ export default {
   min-height: 0vh;
 }
 /deep/.ant-table-body {
-  min-height: 0vh;
+  min-height: 55vh;
 }
 .statistic {
   display: flex;

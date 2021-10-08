@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-10-06 09:48:12
+ * @LastEditTime: 2021-10-08 09:31:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/DetailMerge.vue
@@ -398,6 +398,6 @@ export default {
   min-height: 0vh;
 }
 /deep/.ant-table-body {
-  min-height: 40vh;
+  min-height: 56vh;
 }
 </style>

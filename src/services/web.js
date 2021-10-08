@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-10-07 11:00:28
+ * @LastEditTime: 2021-10-08 11:09:50
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -144,4 +144,17 @@ export function getQualityAction(params,action) {
 }
 export function setQualityAction(params,action) {
     return request(`${UP_WEB}/purchase/qt/${action}`, METHOD.POST, params);
+}
+
+/**
+ * @description: 采购质检
+ * @param {*} params
+ * @param {*} action
+ * @return {*}
+ */
+ export function getBuyerAction(params,action) {
+    return request(`${UP_WEB}/purchase/reset/${action}`, METHOD.GET, params);
+}
+export function setBuyerAction(params,action) {
+    return request(`${UP_WEB}/purchase/reset/${action}`, METHOD.POST, params);
 }

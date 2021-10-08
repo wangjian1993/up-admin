@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-16 15:02:04
+ * @LastEditTime: 2021-10-08 13:46:13
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/leadIn.vue
@@ -55,7 +55,7 @@
         <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
         <a-button style="margin-left: 8px" type="primary" @click="importExcel" :disabled="!hasPerm('import')"><a-icon type="import" />导入</a-button>
-        <a-button style="margin-left: 8px" type="primary" :disabled="!hasPerm('down')"><a-icon type="download" />下载模板</a-button>
+        <a-button style="margin-left: 8px" type="primary" @click="downloadExcel" :disabled="!hasPerm('down')"><a-icon type="download" />下载模板</a-button>
       </span>
     </a-form>
     <div class="operator">
@@ -91,21 +91,20 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text">
+      <template slot="Status" slot-scope="text,record">
         <div>
-          <a-tag color="green" v-if="text == 'APPROVED'">已审批</a-tag>
-          <a-tag color="red" v-else>未审批</a-tag>
+          <a-tag :color="text !== 'APPROVAL'?'green':'red'">{{record.StatusName}}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a-popconfirm v-if="record.Status != 'APPROVED'" title="确定删除?" @confirm="() => actionBnt(record, 'delete')">
+          <a-popconfirm v-if="record.Status === 'APPROVAL'" title="确定删除?" @confirm="() => actionBnt(record, 'delete')">
             <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
               <a-icon type="delete" />
               删除
             </a>
           </a-popconfirm>
-          <a :disabled="!hasPerm('approve')" v-if="record.Status != 'APPROVED'" style="margin-right: 8px" @click="actionBnt(record, 'approved')">
+          <a :disabled="!hasPerm('approve')" v-if="record.Status === 'APPROVAL'" style="margin-right: 8px" @click="actionBnt(record, 'approved')">
             <a-icon type="check-circle" />
             审批
           </a>
@@ -449,6 +448,13 @@ export default {
         return;
       }
       this.getListAll();
+    },
+    downloadExcel() {
+      // window.location.open = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
+      window.open("./Upload/excel/20211008/生产日计划导入模板.xlsx", '_blank');
+      // let a = document.createElement("a");
+      // a.href = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
+      // a.click();
     },
   },
 };
