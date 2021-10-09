@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-17 11:01:04
+ * @LastEditTime: 2021-10-09 10:58:21
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Action.vue
@@ -18,25 +18,26 @@
               </a-select>
             </a-form-item>
           </a-col>
-          <!-- <a-col :md="6" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入PMC" allowClear style="width: 200px" v-decorator="['pmc']" />
             </a-form-item>
-          </a-col> -->
+          </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-week-picker placeholder="选择周" @change="weekChange" />
             </a-form-item>
           </a-col>
-          <a-col :md="6" :sm="24">
+          <!-- <a-col :md="6" :sm="24">
             <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select placeholder="请选择" v-decorator="['planstatus']" style="width: 200px">
-                <a-select-option value="">全部</a-select-option>
-                <a-select-option value="Y">已审核</a-select-option>
-                <a-select-option value="N">未审核</a-select-option>
-              </a-select>
+              <a-select v-decorator="['planstatus']" placeholder="请选择状态" style="width: 200px">
+                 <a-select-option value="">全部</a-select-option>
+                  <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                    {{ item.ParamName }}
+                  </a-select-option>
+                </a-select>
             </a-form-item>
-          </a-col>
+          </a-col> -->
         </a-row>
       </div>
       <span style="float: right; margin-top: 3px;">
@@ -93,7 +94,7 @@
           </a-popconfirm>
           <a style="margin-right: 8px" @click="detail(record)">
             <a-icon type="profile" />
-            查看
+            查看明细
           </a>
         </div>
       </template>
@@ -163,7 +164,7 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 export default {
-  props: ["plantList"],
+  props: ["plantList","stateList"],
   data() {
     return {
       data: [],
@@ -205,8 +206,7 @@ export default {
   },
   methods: {
     detail(item) {
-      // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
-      this.$emit("toDetail", item.Id);
+      this.$emit("toDetail", item.Id,'3');
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");
@@ -260,7 +260,7 @@ export default {
             week: w,
             pmc: values.pmc,
           };
-          getMitemrequirement(parmas, "getall").then((res) => {
+          getMitemrequirement(parmas, "masterplan/getapprovedlist").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -344,9 +344,9 @@ export default {
 
 <style scoped lang="less">
 /deep/.ant-table {
-  min-height: 0vh;
+  min-height: 67vh;
 }
 /deep/.ant-table-body {
-  min-height: 60vh;
+  min-height: 0vh;
 }
 </style>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-10-08 09:31:48
+ * @LastEditTime: 2021-10-09 16:27:21
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/DetailMerge.vue
@@ -180,7 +180,7 @@ const columns = [
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getSupplierAction} from "@/services/web.js";
-import Requirement from "./Requirement.vue";
+import Requirement from "@/components/requirement/Requirement.vue";
 import XLSX from "xlsx";
 export default {
   components: { Requirement },
@@ -339,23 +339,6 @@ export default {
         return;
       }
       this.getListAll();
-    },
-    setTableData() {
-      this.loading = true;
-      let data = this.detailData.RequirementDetails;
-      let obj = {};
-      data.forEach((item, index) => {
-        let dateArray = item.RequirementDate.split("T");
-        let date = dateArray[0].replace(/-/g, "/");
-        this.columns.push({
-          title: date,
-          dataIndex: "table" + index,
-          align: "center",
-        });
-        obj["table" + index] = item.RequirementQty;
-      });
-      this.list.push(obj);
-      this.loading = false;
     },
     //导出excel数据
     handleExcel(list) {

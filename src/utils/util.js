@@ -1,3 +1,11 @@
+/*
+ * @Author: max
+ * @Date: 2021-06-23 09:27:52
+ * @LastEditTime: 2021-10-09 09:29:38
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/utils/util.js
+ */
 import enquireJs from 'enquire.js'
 
 export function isDef (v){
@@ -18,6 +26,11 @@ export function remove (arr, item) {
 
 export function isRegExp (v) {
   return _toString.call(v) === '[object RegExp]'
+}
+//截取时间
+export function splitData(data){
+  let str = data.split('T');
+  return str[0];
 }
 
 export function enquireScreen(call) {

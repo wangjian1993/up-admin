@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-08 09:33:03
+ * @LastEditTime: 2021-10-09 14:52:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
@@ -268,7 +268,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll();
+      this.scrollY = getTableScroll(230);
     });
     this.getListAll();
     this.getPlant();
@@ -451,10 +451,10 @@ export default {
 
 <style scoped lang="less">
 /deep/.ant-table {
-  min-height: 0vh;
+  min-height: 40vh;
 }
 /deep/.ant-table-body {
-  min-height: 55vh;
+  min-height: 0vh;
 }
 .statistic {
   display: flex;

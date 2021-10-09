@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-17 11:01:44
+ * @LastEditTime: 2021-10-09 10:58:34
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Total.vue
@@ -26,11 +26,12 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select placeholder="请选择" v-decorator="['planstatus']">
-                <a-select-option value="">全部</a-select-option>
-                <a-select-option value="Y">已审核</a-select-option>
-                <a-select-option value="N">未审核</a-select-option>
-              </a-select>
+              <a-select v-decorator="['planstatus']" placeholder="请选择状态" style="width: 200px">
+                 <a-select-option value="">全部</a-select-option>
+                  <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                    {{ item.ParamName }}
+                  </a-select-option>
+                </a-select>
             </a-form-item>
           </a-col>
         </a-row>
@@ -41,8 +42,8 @@
       </span>
     </a-form>
     <div class="operator">
-      <a-button v-if="hasPerm('create')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button>
-      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button>
+      <a-button v-if="hasPerm('create')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">审核发布</a-button>
+      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">审核发布</a-button>
       <!-- <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
       <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button> -->
       <span style="margin-left: 8px">
@@ -81,9 +82,13 @@
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" @click="detail(record.Id)">
+          <a style="margin-right: 8px" @click="detail(record.Id,'3')">
             <a-icon type="profile" />
             查看明细
+          </a>
+          <a style="margin-right: 8px" @click="detail(record.Id,'4')">
+            <a-icon type="profile" />
+            查看合并明细
           </a>
         </div>
       </template>
@@ -136,6 +141,7 @@ const columns = [
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
+    width: "5%",
   },
   {
     title: "状态",
@@ -153,7 +159,7 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 export default {
-  props: ["plantList"],
+  props: ["plantList",'stateList'],
   data() {
     return {
       data: [],
@@ -193,8 +199,8 @@ export default {
     this.getListAll();
   },
   methods: {
-    detail(id) {
-      this.$emit("toDetail",id);
+    detail(id,tab) {
+      this.$emit("toDetail",id,tab);
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");
@@ -248,7 +254,7 @@ export default {
             week: w,
             pmc: values.pmc,
           };
-          getMitemrequirement(parmas, "masterplan/getlistbytypecode").then((res) => {
+          getMitemrequirement(parmas, "masterplan/getgrenatelist").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -288,12 +294,12 @@ export default {
     allCheck() {
       let self = this;
       self.$confirm({
-        title: "确定要生成选中内容",
+        title: "确定要审核发布选中内容",
         onOk() {
-          mitemrequirementAction(self.selectedRowKeys, "masterplan/generate").then((res) => {
+          mitemrequirementAction(self.selectedRowKeys, "requirement/release").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
-              self.$message.success("生成成功!");
+              self.$message.success("审核成功!");
               self.getListAll();
             }
           });
@@ -332,7 +338,7 @@ export default {
 
 <style scoped lang="less">
 /deep/.ant-table {
-  min-height: 0vh;
+  min-height: 67vh;
 }
 /deep/.ant-table-body {
   min-height: 60vh;

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-06 10:00:27
+ * @LastEditTime: 2021-10-09 10:21:32
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Detail.vue
@@ -26,11 +26,12 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select placeholder="请选择" v-decorator="['planstatus']" style="width: 200px">
-                <a-select-option value="">全部</a-select-option>
-                <a-select-option value="Y">已审核</a-select-option>
-                <a-select-option value="N">未审核</a-select-option>
-              </a-select>
+              <a-select v-decorator="['planstatus']" placeholder="请选择状态" style="width: 200px">
+                 <a-select-option value="">全部</a-select-option>
+                  <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                    {{ item.ParamName }}
+                  </a-select-option>
+                </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -101,7 +102,7 @@
           </a-popconfirm>
           <a style="margin-right: 8px" @click="detail(record)">
             <a-icon type="profile" />
-            查看
+            查看明细
           </a>
         </div>
       </template>
@@ -181,7 +182,7 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 export default {
-  props: ["plantList", "batchid"],
+  props: ["plantList", "batchid",'stateList'],
   data() {
     return {
       data: [],
@@ -216,7 +217,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll();
+      this.scrollY = getTableScroll(140);
     });
     if (this.batchid == "") {
       this.getListAll();
@@ -368,9 +369,9 @@ export default {
 
 <style scoped lang="less">
 /deep/.ant-table {
-  min-height: 0vh;
+  min-height: 62vh;
 }
 /deep/.ant-table-body {
-  min-height: 60vh;
+  min-height: 0vh;
 }
 </style>

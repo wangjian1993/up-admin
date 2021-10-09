@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-08 10:26:24
+ * @LastEditTime: 2021-10-09 14:25:45
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -130,7 +130,7 @@
                     <p class="input-number">
                       <a-input-number disabled :min="0" v-model="cost.materialTotal" />
                     </p>
-                    <p class="input-text" v-if="costInfo.ItemOtherInfo">{{ costInfo.ItemOtherInfo.PriceIncompleteMsg}}</p>
+                    <p class="input-text" v-if="costInfo.ItemOtherInfo">{{ costInfo.ItemOtherInfo.PriceIncompleteMsg }}</p>
                   </div>
                 </a-col>
                 <a-col :md="24" :lg="24" :xl="12">
@@ -191,10 +191,10 @@
           :rowKey="(searchList) => searchList.ChildCode"
           :row-class-name="rowClassName"
           :row-selection="{
-            columnWidth:40,
+            columnWidth: 40,
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
-            onSelect:onSelect
+            onSelect: onSelect,
           }"
         >
           <div slot="Price" slot-scope="text, record, index">
@@ -210,8 +210,8 @@
           <div slot="e10" slot-scope="text, record">
             <p>{{ record.PriceErpSource == "" ? text : text + `(${record.PriceErpSource})` }}</p>
           </div>
-          <div slot="action" slot-scope="text, record, index">
-            <a-input style="width:100px" allowClear @change="remarkInput(record, index)" :value="record.Remark" v-model="record.Remark"/>
+          <div slot="Remark" slot-scope="text, record ,i">
+            <a-input style="width:100px" allowClear @change="(e) => remarkInput(e, record,i)" :value="text" />
           </div>
           <!-- <template slot="dosage" slot-scope="text,record">
             <p v-if="!record.dosage" @click="dosageClick(record)">{{ text}}</p>
@@ -310,7 +310,7 @@ const excelHead = [
   {
     title: "备注",
     dataIndex: "Remark",
-    scopedSlots: { customRender: "action" },
+    scopedSlots: { customRender: "Remark" },
     width: "8%",
   },
 ];
@@ -406,7 +406,7 @@ export default {
         {
           title: "备注",
           dataIndex: "Remark",
-          scopedSlots: { customRender: "action" },
+          scopedSlots: { customRender: "Remark" },
           width: "5%",
           align: "center",
         },
@@ -442,8 +442,8 @@ export default {
       selectedRowKeys: [],
       saveBtnText: "保存",
       exportData: [],
-      tableCurrRowId:"",
-      costListGroup:[]
+      tableCurrRowId: "",
+      costListGroup: [],
     };
   },
   created() {
@@ -543,9 +543,9 @@ export default {
       this.selectedRowKeys = selectedRowKeys;
       //  this.tableCurrRowId = selectedRowKeys;
     },
-    onSelect(record, selected){
-      if(selected){
-        this.tableCurrRowId =record.ChildCode;
+    onSelect(record, selected) {
+      if (selected) {
+        this.tableCurrRowId = record.ChildCode;
       }
     },
     //重置数据
@@ -576,6 +576,9 @@ export default {
             if (res.data.success) {
               this.tableData = res.data.data.ItemInfo.ItemChildList;
               this.searchList = this.tableData;
+              this.searchList.forEach((item) => {
+                item.Remark = item.SupplierName + item.PriceEffectiveDate;
+              });
               this.costInfo = res.data.data.ItemInfo;
               this.costList = res.data.data.CostBaseList;
               this.countCost();
@@ -650,7 +653,7 @@ export default {
         item.list.map((items) => {
           if (items.Amount) {
             sum += items.Amount;
-          }else {
+          } else {
             // items.Amount = 0
           }
         });
@@ -688,8 +691,8 @@ export default {
     priceNumber(item, index) {
       this.tableData.find((items) => {
         if (items.ChildCode == item.ChildCode) {
-          let a = item.Price * item.Yl
-          items.Amount =  parseFloat(a.toFixed(4));
+          let a = item.Price * item.Yl;
+          items.Amount = parseFloat(a.toFixed(4));
         }
       });
       if (item.Price != item.PriceErp) {
@@ -706,12 +709,14 @@ export default {
         cost = cost.concat(item.list);
       });
       this.costList = cost;
-      console.log(this.costList);
+      // console.log(this.costList);
       this.countCost();
     },
     //修改备注
-    remarkInput(item,index) {
-      this.searchList[index].Remark =item.Remark;
+    remarkInput(e,item) {
+      const newData = [...this.searchList];
+      item.Remark = e.target.value;
+      this.searchList = newData;
     },
     //保存报价单
     costSave() {
@@ -730,11 +735,11 @@ export default {
       }
       this.costLoading = true;
       //添加备注信息
-      this.tableData.forEach(item=>{
-        if(!item.Remark){
-          item.Remark = ""
+      this.tableData.forEach((item) => {
+        if (!item.Remark) {
+          item.Remark = "";
         }
-      })
+      });
       var obj = Object.assign(this.tableData, this.searchList);
       let cost = [];
       this.costList.map((item) => {
@@ -933,9 +938,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-/deep/.ant-table-tbody > tr.ant-table-row-selected td{
+/deep/.ant-table-tbody > tr.ant-table-row-selected td {
   background: none;
-  color:inherit;
+  color: inherit;
 }
 .input-item {
   display: flex;

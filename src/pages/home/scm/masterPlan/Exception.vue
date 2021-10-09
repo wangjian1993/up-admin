@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-10-06 09:43:52
+ * @LastEditTime: 2021-10-09 14:53:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Exception.vue
@@ -277,7 +277,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll();
+      this.scrollY = getTableScroll(210);
     });
     this.getListAll();
     this.getPlant();

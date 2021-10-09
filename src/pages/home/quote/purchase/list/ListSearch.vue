@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-10-06 16:24:29
+ * @LastEditTime: 2021-10-09 16:42:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -750,7 +750,7 @@ export default {
             { wch: 7 }, // 用量
             { wch: 6 }, // 金额
             { wch: 10 }, // 提示
-            { wch: 10 }, // 备注
+            { wch: 22 }, // 备注
           ];
           let formStyle = {};
           excelArray.push({

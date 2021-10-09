@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:33
- * @LastEditTime: 2021-09-28 11:18:03
+ * @LastEditTime: 2021-10-09 18:07:28
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Plan.vue
@@ -76,10 +76,9 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="MatchStatus" slot-scope="text,record">
+      <template slot="Status" slot-scope="text,record">
         <div>
-          <a-tag color="green" v-if="text != 'ERR_MATCH'">{{record.MatchStatusName}}</a-tag>
-          <a-tag color="red" v-else>{{record.MatchStatusName}}</a-tag>
+          <a-tag :color="text === 'APPROVED'?'green':'red'">{{record.StatusName}}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
@@ -147,8 +146,8 @@ const columns = [
   },
   {
     title: "计划状态",
-    dataIndex: "MatchStatus",
-    scopedSlots: { customRender: "MatchStatus" },
+    dataIndex: "Status",
+    scopedSlots: { customRender: "Status" },
     align: "center",
   },
   {
@@ -351,10 +350,10 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table {
-  min-height: 0vh;
-}
-/deep/.ant-table-body {
-  min-height: 60vh;
-}
+// /deep/.ant-table {
+//   min-height: 0vh;
+// }
+// /deep/.ant-table-body {
+//   min-height: 60vh;
+// }
 </style>

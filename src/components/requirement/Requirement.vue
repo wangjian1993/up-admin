@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-16 15:47:55
- * @LastEditTime: 2021-09-16 16:39:56
+ * @LastEditTime: 2021-10-09 16:18:47
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Requirement.vue
+ * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Requirement.vue
 -->
 <template>
   <div>
@@ -69,7 +69,7 @@ export default {
           dataIndex: "table" + index,
           align: "center",
         });
-        obj["table" + index] = item.RequirementQty;
+        obj["table" + index] = `[${item.RequirementQty}:${item.ReplyQty || 0}]`;
       });
       this.list.push(obj);
       this.loading = false;

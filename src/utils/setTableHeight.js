@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-24 18:04:26
- * @LastEditTime: 2021-08-26 14:47:05
+ * @LastEditTime: 2021-10-09 18:09:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/setTableHeight.js
@@ -29,5 +29,8 @@ export default function getTableScroll(extraHeight, id) {
   let height = `calc(100vh - ${tHeaderBottom + extraHeight}px)`;
   // document.getElementsByClassName("ant-table")[0].style.maxHeight = `calc(100vh - ${tHeaderBottom}px)`;
   // document.getElementsByClassName("ant-table")[0].style.mixHeight = `calc(100vh - ${tHeaderBottom}px)`;
+  const table = document.getElementsByClassName('ant-table-body')[0];
+  console.log(table);
+  table.style.mixHeight = height;
   return height;
 }

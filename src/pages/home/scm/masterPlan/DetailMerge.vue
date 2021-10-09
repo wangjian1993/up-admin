@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-09-24 14:26:04
+ * @LastEditTime: 2021-10-09 16:27:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/DetailMerge.vue
@@ -178,7 +178,7 @@ const columns = [
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getScmAction} from "@/services/web.js";
-import Requirement from "./Requirement.vue";
+import Requirement from "@/components/requirement/Requirement.vue";
 // import ExportExcel from "@/utils/ExportExcel.js";
 import XLSX from "xlsx";
 export default {
@@ -351,7 +351,7 @@ export default {
           dataIndex: "table" + index,
           align: "center",
         });
-        obj["table" + index] = item.RequirementQty;
+        obj["table" + index] = `[${item.RequirementQty}:${item.ReplyQty || 0}]`;
       });
       this.list.push(obj);
       this.loading = false;
@@ -394,9 +394,9 @@ export default {
 
 <style scoped lang="less">
 /deep/.ant-table {
-  min-height: 0vh;
+  min-height: 60vh;
 }
 /deep/.ant-table-body {
-  min-height: 40vh;
+  min-height: 0vh;
 }
 </style>

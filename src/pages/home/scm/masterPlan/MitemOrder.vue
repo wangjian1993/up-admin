@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-24 09:05:33
+ * @LastEditTime: 2021-10-09 15:27:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/MitemOrder.vue
@@ -135,6 +135,12 @@ const columns = [
     title: "采购名称",
     dataIndex: "EmployeeName",
     scopedSlots: { customRender: "EmployeeName" },
+    align: "center",
+  },
+  {
+    title: "在途数量",
+    dataIndex: "QtyTransit",
+    scopedSlots: { customRender: "QtyTransit" },
     align: "center",
   },
 ];

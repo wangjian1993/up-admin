@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-08 13:46:13
+ * @LastEditTime: 2021-10-09 16:08:18
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/leadIn.vue
@@ -180,7 +180,7 @@ const columns = [
     align: "center",
   },
   {
-    title: "状态",
+    title: "计划状态",
     dataIndex: "Status",
     scopedSlots: { customRender: "Status" },
     align: "center",

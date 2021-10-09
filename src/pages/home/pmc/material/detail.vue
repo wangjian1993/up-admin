@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-06 09:59:14
+ * @LastEditTime: 2021-10-09 16:42:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
@@ -79,11 +79,18 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text">
+      <template slot="Status" slot-scope="text, record">
         <div>
-          <a-tag color="green" v-if="text == 'APPROVED'">已审批</a-tag>
-          <a-tag color="red" v-else>未审批</a-tag>
+          <a-tag :color="text === 'APPROVAL' || text === 'PUSHED_ERR' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
         </div>
+      </template>
+      <template slot="MatchStatus" slot-scope="text, record">
+        <div>
+          <a-tag :color="text === 'ERR_MATCH' || text === 'PUSHED_ERR' || text === 'CANNOT_MATCH' || text === 'NO_MATCH' ? 'red' : 'green'">{{ record.MatchStatusName }}</a-tag>
+        </div>
+      </template>
+      <template slot="RequirementDate" slot-scope="text">
+        <p>{{ splitData(text) }}</p>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
@@ -120,6 +127,7 @@
 <script>
 import { getMitemrequirement } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcel";
+import { splitData} from "@/utils/util.js";
 const columns = [
   {
     title: "序号",
@@ -172,9 +180,15 @@ const columns = [
     width: "5%",
   },
   {
-    title: "状态",
+    title: "计划状态",
     dataIndex: "Status",
     scopedSlots: { customRender: "Status" },
+    align: "center",
+  },
+  {
+    title: "物料状态",
+    dataIndex: "MatchStatus",
+    scopedSlots: { customRender: "MatchStatus" },
     align: "center",
   },
   {
@@ -211,7 +225,7 @@ export default {
       plantid: "",
       week: "",
       drawerItem: [],
-      isSearch:false
+      isSearch: false,
     };
   },
   updated() {
@@ -219,7 +233,8 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll();
+      this.scrollY = getTableScroll(110);
+      console.log(this.scrollY);
     });
     this.getListAll();
     this.getPlant();
@@ -230,6 +245,7 @@ export default {
     },
   },
   methods: {
+    splitData,
     //关闭弹出框
     onClose() {
       this.isDrawer = false;
@@ -242,7 +258,7 @@ export default {
     //重置搜索
     reset() {
       this.getListAll();
-      this.week =""
+      this.week = "";
       this.searchForm.resetFields();
     },
     weekChange(date, dateString) {
@@ -279,7 +295,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch =false
+          this.isSearch = false;
         } else {
           this.loading = false;
         }
@@ -289,7 +305,7 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if(this.isSearch){
+      if (this.isSearch) {
         this.search();
         return;
       }
@@ -306,15 +322,15 @@ export default {
           console.log("Received values of form: ", values);
           this.dataSourcedata = [];
           this.pagination.total = 0;
-          if(this.week != ""){
-            var w =this.week
+          if (this.week != "") {
+            var w = this.week;
           }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             batchid: values.batchid,
-            week:w,
+            week: w,
             pmc: values.pmc,
             mitemcode: values.mitemcode,
             mitemname: values.mitemname,
@@ -326,7 +342,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
-              this.isSearch =true
+              this.isSearch = true;
             }
           });
           // do something
@@ -348,7 +364,7 @@ export default {
       });
       const header = this.columns.map((item) => ({ key: item.dataIndex, title: item.title }));
       var timestamp = Date.parse(new Date());
-       try {
+      try {
         ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
         this.$message.success("导出数据成功!");
       } catch (error) {
@@ -361,10 +377,10 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table{
-  min-height: 0vh;
+/deep/.ant-table {
+  min-height: 60vh;
 }
-/deep/.ant-table-body{
-  min-height: 50vh;
+/deep/.ant-table-body {
+  min-height: 0vh;
 }
 </style>

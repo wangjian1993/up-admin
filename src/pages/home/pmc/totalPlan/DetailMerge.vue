@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-06 10:01:12
+ * @LastEditTime: 2021-10-09 16:26:12
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/DetailMerge.vue
@@ -40,7 +40,7 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="时间选择" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="导入时间选择" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-range-picker style="width: 400px" v-decorator="['range-time-picker']" show-time format="YYYY-MM-DD HH:mm:ss" />
             </a-form-item>
           </a-col>
@@ -167,7 +167,7 @@ const columns = [
      width: "5%",
   },
   {
-    title: "状态",
+    title: "计划状态",
     dataIndex: "Status",
     scopedSlots: { customRender: "Status" },
     align: "center",
@@ -181,12 +181,12 @@ const columns = [
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
-import Requirement from "./Requirement.vue";
+import Requirement from "@/components/requirement/Requirement.vue";
 // import ExportExcel from "@/utils/ExportExcel.js";
 import XLSX from "xlsx";
 export default {
   components: { Requirement },
-  props: ["plantList"],
+  props: ["plantList",'batchid'],
   data() {
     return {
       data: [],
@@ -225,7 +225,10 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    this.getListAll();
+    if (this.batchid == "") {
+      this.getListAll();
+    }
+    // this.getListAll();
   },
   methods: {
     closeModal() {
@@ -247,6 +250,7 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        batchno:this.batchid || ""
       };
       getMitemrequirement(parmas, "masterplan/getmergedetails").then((res) => {
         if (res.data.success) {
@@ -392,23 +396,6 @@ export default {
       }
       this.getListAll();
     },
-    setTableData() {
-      this.loading = true;
-      let data = this.detailData.RequirementDetails;
-      let obj = {};
-      data.forEach((item, index) => {
-        let dateArray = item.RequirementDate.split("T");
-        let date = dateArray[0].replace(/-/g, "/");
-        this.columns.push({
-          title: date,
-          dataIndex: "table" + index,
-          align: "center",
-        });
-        obj["table" + index] = item.RequirementQty;
-      });
-      this.list.push(obj);
-      this.loading = false;
-    },
     //导出excel数据
     handleExcel(list) {
       let dataSource = [];
@@ -447,9 +434,9 @@ export default {
 
 <style scoped lang="less">
 /deep/.ant-table {
-  min-height: 0vh;
+  min-height: 62vh;
 }
 /deep/.ant-table-body {
-  min-height: 40vh;
+  min-height: 0vh;
 }
 </style>

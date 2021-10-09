@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-08 13:44:59
+ * @LastEditTime: 2021-10-09 16:54:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/leadIn.vue
@@ -72,8 +72,7 @@
       </template>
       <template slot="Status" slot-scope="text, record">
         <div>
-          <a-tag color="green" v-if="text !== 'APPROVAL'">{{ record.StatusName }}</a-tag>
-          <a-tag color="red" v-else>{{ record.StatusName }}</a-tag>
+          <a-tag :color="text === 'APPROVAL' || text === 'PUSHED_ERR' ?'red':'green'">{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
@@ -148,7 +147,7 @@ const columns = [
     align: "center",
   },
   {
-    title: "状态",
+    title: "计划状态",
     dataIndex: "Status",
     scopedSlots: { customRender: "Status" },
     align: "center",
@@ -375,10 +374,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table {
-  min-height: 0vh;
-}
 /deep/.ant-table-body {
-  min-height: 60vh;
+  min-height: 0vh;
 }
 </style>
