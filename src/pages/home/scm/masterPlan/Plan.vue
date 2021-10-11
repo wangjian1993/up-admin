@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:33
- * @LastEditTime: 2021-10-09 18:07:28
+ * @LastEditTime: 2021-10-11 14:55:32
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Plan.vue
@@ -45,7 +45,7 @@
       </span>
     </a-form>
     <div class="operator">
-      <a-button icon="interaction" type="primary" :disabled="!hasPerm('matching')" @click="matching" style="margin-left: 8px">手动匹配</a-button>
+      <!-- <a-button icon="interaction" type="primary" :disabled="!hasPerm('matching')" @click="matching" style="margin-left: 8px">手动匹配</a-button> -->
       <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">审核发布</a-button>
       <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">审核发布</a-button>
       <span style="margin-left: 8px">
@@ -67,7 +67,6 @@
       :row-selection="{
         selectedRowKeys: selectedRowKeys,
         onChange: onSelectChange,
-        getCheckboxProps: getCheckboxProps,
       }"
       bordered
     >
@@ -83,7 +82,7 @@
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" :disabled="!hasPerm('matching')" @click="matching(record)">
+          <a style="margin-right: 8px" v-if="record.StatusName === '匹配错误'" :disabled="!hasPerm('matching')" @click="matching(record)">
             <a-icon type="interaction" />
             手动匹配
           </a>
@@ -281,11 +280,6 @@ export default {
         }
       });
     },
-    getCheckboxProps: (record) => ({
-      props: {
-        disabled: record.Status !== "APPROVED", // Column configuration not to be checked
-      },
-    }),
     //多选删除
     allDel() {
       let self = this;

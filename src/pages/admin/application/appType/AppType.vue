@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-26 16:00:08
+ * @LastEditTime: 2021-10-11 17:30:55
  * @LastEditors: max
  * @Description: 应用类型
  * @FilePath: /up-admin/src/pages/admin/application/appType/AppType.vue
@@ -439,8 +439,13 @@ export default {
   },
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .ant-form-item {
   margin-bottom: 5px;
+}
+/deep/ .ant-table{
+  min-height:77vh;
+  max-height:77vh;
+  overflow: auto;
 }
 </style>

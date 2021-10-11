@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-08 09:50:01
+ * @LastEditTime: 2021-10-11 18:01:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/detail.vue
@@ -96,9 +96,9 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text,record">
+      <template slot="Status" slot-scope="text, record">
         <div>
-          <a-tag :color="text !== 'APPROVAL'?'green':'red'">{{record.StatusName}}</a-tag>
+          <a-tag :color="text !== 'APPROVAL' ? 'green' : 'red'">{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
@@ -142,7 +142,7 @@ const columns = [
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
     align: "center",
-     width: "80px",
+    width: "80px",
   },
   {
     title: "生产车间",
@@ -257,7 +257,7 @@ const columns = [
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 export default {
-  props: ["batchid"],
+  props: ["detailData"],
   data() {
     return {
       scrollY: "",
@@ -266,7 +266,7 @@ export default {
       columns: columns,
       dataSource: [],
       isDrawer: false,
-      isSearch:false,
+      isSearch: false,
       selectedRowKeys: [],
       pagination: {
         current: 1,
@@ -298,6 +298,14 @@ export default {
     });
     this.getListAll();
     this.getPlant();
+    if (this.detailData) {
+      this.$nextTick(() => {
+        this.searchForm.setFieldsValue({
+          plantid: this.detailData.PlantId,
+          batchno: this.detailData.BatchNo,
+        });
+      });
+    }
   },
   computed: {
     hasSelected() {
@@ -380,6 +388,8 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        batchno: this.detailData.BatchNo || "",
+        PlantId: this.detailData.PlantId,
       };
       getDailyPlan(parmas, "detail/getall").then((res) => {
         if (res.data.success) {
@@ -388,7 +398,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch =false
+          this.isSearch = false;
         } else {
           this.loading = false;
         }
@@ -398,7 +408,7 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if(this.isSearch){
+      if (this.isSearch) {
         this.search();
         return;
       }
@@ -455,7 +465,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
-              this.isSearch =true
+              this.isSearch = true;
             }
           });
           // do something
@@ -475,7 +485,12 @@ export default {
         });
         return item;
       });
-      const header = this.columns.map((item) => ({ key: item.dataIndex, title: item.title }));
+      const header = []
+      this.columns.map((item) => {
+        if( item.dataIndex){
+          header.push({ key: item.dataIndex, title: item.title })
+        }
+      });
       var timestamp = Date.parse(new Date());
       try {
         ExportExcel(header, dataSource, `生产日计划明细_${timestamp}.xlsx`);
@@ -490,12 +505,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table {
-  min-height: 0vh;
-}
-/deep/.ant-table-body {
-  min-height: 50vh;
-}
 .ant-form-item {
   margin-bottom: 5px;
 }

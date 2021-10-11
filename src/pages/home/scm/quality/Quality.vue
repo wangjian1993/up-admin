@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 10:40:23
- * @LastEditTime: 2021-10-08 09:22:36
+ * @LastEditTime: 2021-10-11 15:08:01
  * @LastEditors: max
  * @Description: 采购质检
  * @FilePath: /up-admin/src/pages/home/scm/quality/Quality.vue
@@ -21,17 +21,17 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="到货批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" placeholder="请输入计划批号" v-decorator="['orderno']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入计划批号" v-decorator="['orderno']" />
               </a-form-item>
             </a-col>
              <a-col :md="6" :sm="24">
               <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" placeholder="请输入品号" v-decorator="['mitemcode']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['mitemcode']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" placeholder="请输入品名" v-decorator="['mitemname']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
               </a-form-item>
             </a-col>
           </a-row>

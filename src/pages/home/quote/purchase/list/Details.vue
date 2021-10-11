@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-07 17:01:42
+ * @LastEditTime: 2021-10-11 15:45:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -292,5 +292,10 @@ export default {
 }
 /deep/.ant-card-head {
   padding: 0;
+}
+/deep/.ant-table{
+  min-height:77vh;
+  max-height:77vh;
+  overflow: auto;
 }
 </style>

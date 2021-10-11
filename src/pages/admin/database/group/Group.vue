@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 16:12:00
- * @LastEditTime: 2021-09-27 17:35:35
+ * @LastEditTime: 2021-10-11 17:31:43
  * @LastEditors: max
  * @Description: 快码组管理
  * @FilePath: /up-admin/src/pages/admin/database/group/Group.vue
@@ -432,5 +432,10 @@ export default {
   },
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
+/deep/ .ant-table{
+  min-height:77vh;
+  max-height:77vh;
+  overflow: auto;
+}
 </style>

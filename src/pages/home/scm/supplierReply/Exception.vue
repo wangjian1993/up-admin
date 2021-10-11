@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-06 11:42:34
+ * @LastEditTime: 2021-10-11 18:41:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
@@ -30,19 +30,19 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入计划批号" v-decorator="['batchid']" />
+              <a-input style="width: 200px" allowClear placeholder="请输入计划批号" v-decorator="['batchid']" />
             </a-form-item>
           </a-col>
         </a-row>
         <a-row v-if="advanced">
           <a-col :md="6" :sm="24">
             <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入品名" v-decorator="['mitemname']" />
+              <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入品号" v-decorator="['mitemcode']" />
+              <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -110,10 +110,6 @@
       :pagination="pagination"
       @change="handleTableChange"
       :rowKey="(dataSource) => dataSource.Id"
-      :row-selection="{
-        selectedRowKeys: selectedRowKeys,
-        onChange: onSelectChange,
-      }"
       bordered
     >
       <template slot="index" slot-scope="text, record, index">
@@ -125,6 +121,49 @@
         <div>
           <a-tag color="green" v-if="text !== 'ERR_MATCH'">{{ record.MatchStatusName }}</a-tag>
           <a-tag color="red" v-else>{{ record.MatchStatusName }}</a-tag>
+        </div>
+      </template>
+      <template slot="RequirementDate" slot-scope="text">
+        <p>{{ splitData(text) }}</p>
+      </template>
+      <template slot="PurchaseUserName" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+        </div>
+      </template>
+      <template slot="SupplierReplyDate" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+        </div>
+      </template>
+      <template slot="SupplierReplyQty" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+        </div>
+      </template>
+      <template slot="PurchaseReplyResult" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+        </div>
+      </template>
+      <template slot="SupplierName" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+        </div>
+      </template>
+      <template slot="PurchaseOrderNo" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+        </div>
+      </template>
+      <template slot="LineItem" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+        </div>
+      </template>
+      <template slot="TransitQty" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
         </div>
       </template>
       <template slot="action" slot-scope="text, record" v-if="record.PurchaseId != undefined || record.PurchaseId != null">
@@ -250,6 +289,7 @@ const columns = [
     dataIndex: "PurchaseOrderNo",
     scopedSlots: { customRender: "PurchaseOrderNo" },
     align: "center",
+    width: "150px",
   },
   {
     title: "行项目",
@@ -283,6 +323,7 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { getParamData } from "@/services/admin.js";
 import AdjustDate from "./AdjustDate.vue";
+import { splitData } from "@/utils/util.js";
 export default {
   components: { AdjustDate },
   props: ["plantList"],
@@ -332,6 +373,7 @@ export default {
     },
   },
   methods: {
+    splitData,
     closeModal() {
       this.isAdjust = false;
     },
@@ -380,11 +422,7 @@ export default {
       getSupplierAction(parmas, "reply/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
-          this.dataSource.forEach((item) => {
-            if (item.PurchaseOrderMatchList.length > 0) {
-              item = Object.assign(item, item.PurchaseOrderMatchList[0]);
-            }
-          });
+          this.setPurchaseOrderMatchList();
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -407,11 +445,7 @@ export default {
       getSupplierAction(parmas, "reply/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
-          this.dataSource.forEach((item) => {
-            if (item.PurchaseOrderMatchList.length > 0) {
-              item = Object.assign(item, item.PurchaseOrderMatchList[0]);
-            }
-          });
+          this.setPurchaseOrderMatchList();
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -419,6 +453,38 @@ export default {
           this.isSearch = false;
         } else {
           this.loading = false;
+        }
+      });
+    },
+    setPurchaseOrderMatchList() {
+      this.dataSource.forEach((item) => {
+        if (item.PurchaseOrderMatchList.length > 0) {
+          let PurchaseUserName = [];
+          let SupplierName = [];
+          let PurchaseOrderNo = [];
+          let LineItem = [];
+          let TransitQty = [];
+          let SupplierReplyDate = [];
+          let SupplierReplyQty = [];
+          let PurchaseReplyResult = [];
+          item.PurchaseOrderMatchList.map((items) => {
+            PurchaseUserName.push(items.PurchaseUserName);
+            SupplierName.push(items.SupplierName);
+            PurchaseOrderNo.push(items.PurchaseOrderNo);
+            LineItem.push(items.LineItem);
+            TransitQty.push(items.TransitQty);
+            SupplierReplyDate.push(items.SupplierReplyDate);
+            SupplierReplyQty.push(items.SupplierReplyQty);
+            PurchaseReplyResult.push(items.PurchaseReplyResult);
+          });
+          item.PurchaseUserName = PurchaseUserName;
+          item.SupplierName = SupplierName;
+          item.PurchaseOrderNo = PurchaseOrderNo;
+          item.LineItem = LineItem;
+          item.TransitQty = TransitQty;
+          item.SupplierReplyDate = SupplierReplyDate;
+          item.SupplierReplyQty = SupplierReplyQty;
+          item.PurchaseReplyResult = PurchaseReplyResult;
         }
       });
     },
@@ -460,6 +526,7 @@ export default {
           getSupplierAction(parmas, "reply/getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
+              this.setPurchaseOrderMatchList();
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
@@ -472,27 +539,41 @@ export default {
       });
     },
     exportExcel() {
-      const dataSource = this.dataSource.map((item) => {
-        Object.keys(item).forEach((key) => {
-          // 后端传null node写入会有问题
-          if (item[key] === null) {
-            item[key] = "";
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.total,
+      };
+      getSupplierAction(parmas, "reply/getall").then((res) => {
+        if (res.data.success) {
+          let list = res.data.data.list;
+          const dataSource = list.map((item) => {
+            Object.keys(item).forEach((key) => {
+              // 后端传null node写入会有问题
+              if (item[key] === null) {
+                item[key] = "";
+              }
+              if (Array.isArray(item[key])) {
+                item[key] = item[key].join(",");
+              }
+            });
+            return item;
+          });
+          const header = [];
+          this.columns.map((item) => {
+            if (item.dataIndex) {
+              header.push({ key: item.dataIndex, title: item.title });
+            }
+          });
+          var timestamp = Date.parse(new Date());
+          try {
+            ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
+            this.$message.success("导出数据成功!");
+          } catch (error) {
+            // console.log(error);
+            this.$message.error("导出数据失败");
           }
-          if (Array.isArray(item[key])) {
-            item[key] = item[key].join(",");
-          }
-        });
-        return item;
+        }
       });
-      const header = this.columns.map((item) => ({ key: item.dataIndex, title: item.title }));
-      var timestamp = Date.parse(new Date());
-      try {
-        ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
-        this.$message.success("导出数据成功!");
-      } catch (error) {
-        // console.log(error);
-        this.$message.error("导出数据失败");
-      }
     },
     //同意供应商交期
     consent(item) {

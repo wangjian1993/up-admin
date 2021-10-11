@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-11 10:41:55
+ * @LastEditTime: 2021-10-11 15:44:26
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -14,8 +14,10 @@
         <!-- 搜索 -->
         <div class="save-btn">
           <span>
-            <a-button :disabled="!hasPerm('save')" type="primary" icon="save" @click="costSave">{{ saveBtnText }}</a-button>
-            <a-button :disabled="!hasPerm('export')" style="margin-left: 8px" type="primary" icon="import" @click="handleExcel">导出</a-button>
+            <a-button v-if="!isAgainCost" :disabled="!hasPerm('search')" type="primary" @click="search" icon="search">查询</a-button>
+            <a-button v-if="!isAgainCost" :disabled="!hasPerm('search')" style="margin-left: 10px" icon="reload" @click="reset">重置</a-button>
+            <a-button :disabled="!hasPerm('save')" type="primary" icon="save" style="margin-left: 10px" @click="costSave">{{ saveBtnText }}</a-button>
+            <a-button :disabled="!hasPerm('export')" style="margin-left: 10px" type="primary" icon="import" @click="handleExcel">导出</a-button>
           </span>
         </div>
         <div :class="advanced ? 'search' : null">
@@ -68,12 +70,6 @@
                       <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                     </a-select>
                   </a-form-item>
-                </a-col>
-                <a-col :lg="6" :md="12" :sm="24" v-if="!isAgainCost">
-                  <span style="float: left; margin-top: 5px;">
-                    <a-button :disabled="!hasPerm('search')" type="primary" @click="search">查询</a-button>
-                    <a-button :disabled="!hasPerm('search')" style="margin-left: 8px" @click="reset">重置</a-button>
-                  </span>
                 </a-col>
               </a-row>
               <a-row>
@@ -1035,5 +1031,10 @@ export default {
 }
 /deep/.raemark-input input{
   font-size:10px
+}
+/deep/.ant-table{
+  min-height:77vh;
+  max-height:77vh;
+  overflow: auto;
 }
 </style>

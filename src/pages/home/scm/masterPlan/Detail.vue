@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-09 14:52:13
+ * @LastEditTime: 2021-10-11 18:43:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
@@ -30,19 +30,19 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入计划批号" v-decorator="['batchid']" />
+              <a-input style="width: 200px" allowClear placeholder="请输入计划批号" v-decorator="['batchid']" />
             </a-form-item>
           </a-col>
         </a-row>
         <a-row v-if="advanced">
           <a-col :md="6" :sm="24">
             <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入品名" v-decorator="['mitemname']" />
+              <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入品号" v-decorator="['mitemcode']" />
+              <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -96,10 +96,6 @@
       :pagination="pagination"
       @change="handleTableChange"
       :rowKey="(dataSource) => dataSource.Id"
-      :row-selection="{
-        selectedRowKeys: selectedRowKeys,
-        onChange: onSelectChange,
-      }"
       bordered
     >
       <template slot="index" slot-scope="text, record, index">
@@ -109,8 +105,32 @@
       </template>
       <template slot="MatchStatus" slot-scope="text, record">
         <div>
-          <a-tag color="green" v-if="text !== 'ERR_MATCH'">{{ record.MatchStatusName }}</a-tag>
-          <a-tag color="red" v-else>{{ record.MatchStatusName }}</a-tag>
+          <a-tag :color="text === 'PUSHED_ERR' || text === 'ERR_MATCH'? 'red' : 'green'">{{ record.MatchStatusName }}</a-tag>
+        </div>
+      </template>
+      <template slot="PurchaseUserName" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+        </div>
+      </template>
+      <template slot="SupplierName" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+        </div>
+      </template>
+      <template slot="PurchaseOrderNo" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+        </div>
+      </template>
+       <template slot="LineItem" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+        </div>
+      </template>
+      <template slot="TransitQty" slot-scope="text">
+        <div>
+          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
@@ -158,7 +178,7 @@ const columns = [
     dataIndex: "Week",
     scopedSlots: { customRender: "Week" },
     align: "center",
-    width: "50px"
+    width: "50px",
   },
   {
     title: "品号",
@@ -171,13 +191,13 @@ const columns = [
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
-    width: "150px"
+    width: "150px",
   },
   {
     title: "规格",
     dataIndex: "Spec",
     align: "center",
-    width: "350px"
+    width: "350px",
   },
   {
     title: "需求日期",
@@ -190,7 +210,7 @@ const columns = [
     dataIndex: "RequirementQty",
     scopedSlots: { customRender: "RequirementQty" },
     align: "center",
-    width: "100px"
+    width: "100px",
   },
   {
     title: "负责采购",
@@ -209,27 +229,28 @@ const columns = [
     dataIndex: "PurchaseOrderNo",
     scopedSlots: { customRender: "PurchaseOrderNo" },
     align: "center",
+    width: "150px",
   },
   {
     title: "行项目",
     dataIndex: "LineItem",
     scopedSlots: { customRender: "LineItem" },
     align: "center",
-    width: "50px"
+    width: "50px",
   },
   {
     title: "采购订单数量",
     dataIndex: "TransitQty",
     scopedSlots: { customRender: "TransitQty" },
     align: "center",
-    width: "100px"
+    width: "100px",
   },
   {
-    title: "计划状态",
+    title: "物料状态",
     dataIndex: "MatchStatus",
     scopedSlots: { customRender: "MatchStatus" },
     align: "center",
-  }
+  },
 ];
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
@@ -334,7 +355,23 @@ export default {
           this.dataSource = res.data.data.list;
           this.dataSource.forEach((item) => {
             if (item.PurchaseOrderMatchList.length > 0) {
-              item = Object.assign(item, item.PurchaseOrderMatchList[0]);
+              let PurchaseUserName = [];
+              let SupplierName = [];
+              let PurchaseOrderNo = [];
+              let LineItem = [];
+              let TransitQty = [];
+              item.PurchaseOrderMatchList.map((items) => {
+                PurchaseUserName.push(items.PurchaseUserName);
+                SupplierName.push(items.SupplierName);
+                PurchaseOrderNo.push(items.PurchaseOrderNo);
+                LineItem.push(items.LineItem);
+                TransitQty.push(items.TransitQty);
+              });
+              item.PurchaseUserName = PurchaseUserName;
+              item.SupplierName = SupplierName;
+              item.PurchaseOrderNo = PurchaseOrderNo;
+              item.LineItem = LineItem;
+              item.TransitQty = TransitQty;
             }
           });
           const pagination = { ...this.pagination };

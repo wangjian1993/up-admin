@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-08-26 15:45:46
+ * @LastEditTime: 2021-10-11 17:34:17
  * @LastEditors: max
  * @Description: api管理
  * @FilePath: /up-admin/src/pages/admin/api/ApiList.vue
@@ -652,10 +652,15 @@ export default {
   },
 };
 </script>
-<style lang="less" scope>
+<style lang="less" scoped>
 .card-title {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+/deep/ .ant-table{
+  min-height:77vh;
+  max-height:77vh;
+  overflow: auto;
 }
 </style>

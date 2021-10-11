@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 14:39:13
- * @LastEditTime: 2021-09-17 14:14:04
+ * @LastEditTime: 2021-10-11 16:42:21
  * @LastEditors: max
  * @Description: 生成部门配置
  * @FilePath: /up-admin/src/pages/home/pmc/department/Department.vue
@@ -115,7 +115,7 @@
         :columns="columns"
         :data-source="data"
         size="small"
-        :scroll="{ y: true }"
+        :scroll="{ y: scrollY }"
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
@@ -226,10 +226,12 @@ const columns = [
 import { getLineAll, lineAction, getDemandEnter, getWorkshopList } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
 import AddWorkShop from "./AddWorkShop.vue";
+import getTableScroll from "@/utils/setTableHeight";
 export default {
   components: { AddWorkShop },
   data() {
     return {
+      scrollY:"",
       data: [],
       columns,
       isEdit: false,
@@ -308,6 +310,9 @@ export default {
     },
   },
   created() {
+    this.$nextTick(() => {
+      this.scrollY = getTableScroll();
+    });
     this.getListAll();
     this.getDemandEnter();
   },

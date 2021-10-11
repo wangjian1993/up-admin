@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-09 15:27:40
+ * @LastEditTime: 2021-10-11 17:42:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/MitemOrder.vue
@@ -34,12 +34,7 @@
                   </div>
                   <div style="margin-left:20px">
                     <a-form-item>
-                      <a-input placeholder="请输入工号/姓名" allowClear style="width:200px" v-decorator="['batchno']" />
-                    </a-form-item>
-                  </div>
-                  <div style="margin-left:20px">
-                    <a-form-item>
-                      <a-input disabled placeholder="请输入物料编码/名称" allowClear style="width:200px" v-decorator="['mitemcode']" />
+                      <a-input placeholder="请输入物料编码/名称" allowClear style="width:200px" v-decorator="['mitemcode']" />
                     </a-form-item>
                   </div>
                   <span style="margin-left:20px;margin-top:-5px">
@@ -59,7 +54,7 @@
               :scroll="{ y: true }"
               :pagination="pagination"
               @change="handleTableChange"
-              :rowKey="(list) => list.PurchaseOrderNo"
+              :rowKey="(list, index) => index"
               :row-selection="{
                 selectedRowKeys: selectedRowKeys,
                 onChange: onSelectChange,
@@ -67,6 +62,11 @@
               }"
               bordered
             >
+              <template slot="index" slot-scope="text, record, index">
+                <div>
+                  <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+                </div>
+              </template>
             </a-table>
           </div>
         </div>
@@ -146,7 +146,7 @@ const columns = [
 ];
 import { getScmAction } from "@/services/web.js";
 export default {
-  props: ["plantList","MitemCode"],
+  props: ["plantList", "MitemCode"],
   data() {
     return {
       size: "small",
@@ -171,14 +171,16 @@ export default {
       },
       onOrgId: 0,
       loading: false,
-      isSearch:false
+      isSearch: false,
     };
   },
   created() {
     this.getList();
-    this.searchForm.setFieldsValue({
-      mitemcode:this.MitemCode
-    })
+    this.$nextTick(() => {
+      this.searchForm.setFieldsValue({
+        mitemcode: this.MitemCode,
+      });
+    });
   },
   methods: {
     close() {
@@ -190,7 +192,7 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        mitemcode:this.MitemCode
+        mitemcode: this.MitemCode,
       };
       getScmAction(parmas, "manualmatch/getpurchaseorders").then((res) => {
         if (res.data.success) {
@@ -199,23 +201,18 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch =false
+          this.isSearch = false;
         }
       });
     },
     //多选
-    onSelectChange(selectedRowKeys,selectedRows) {
+    onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;
       console.log(selectedRows);
     },
     handleOk() {
       if (this.selectedRowKeys.length > 0) {
-        let itemJson = {};
-        for (let task of this.selectedRowKeys) {
-          itemJson = this.list.find((item) => {
-            return item.PurchaseOrderNo === task;
-          });
-        }
+        let itemJson = this.list[this.selectedRowKeys[0]];
         this.$emit("orderItem", itemJson);
       } else {
         this.$emit("orderItem");
@@ -229,7 +226,7 @@ export default {
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-            this.loading = true;
+          this.loading = true;
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
@@ -247,7 +244,7 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.isSearch =true;
+              this.isSearch = true;
               this.loading = false;
             }
           });
@@ -259,9 +256,9 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if(this.isSearch){
-          this.search();
-          return
+      if (this.isSearch) {
+        this.search();
+        return;
       }
       this.getList();
     },

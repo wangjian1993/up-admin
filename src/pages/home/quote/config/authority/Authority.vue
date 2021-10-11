@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-09-27 14:35:25
+ * @LastEditTime: 2021-10-11 15:48:24
  * @LastEditors: max
  * @Description: 权限
  * @FilePath: /up-admin/src/pages/home/quote/config/authority/Authority.vue
@@ -126,7 +126,7 @@
         :columns="columns"
         :data-source="data"
         size="small"
-        :scroll="{ y: true }"
+        :scroll="{ y: scrollY }"
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
@@ -262,10 +262,12 @@ import { getParamData } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import AuthoType from "./AuthoType.vue";
 import Category from "./Category.vue";
+import getTableScroll from "@/utils/setTableHeight";
 export default {
   components: { AuthoType, Category },
   data() {
     return {
+      scrollY:"",
       data: [],
       columns,
       isEdit: false,
@@ -339,6 +341,9 @@ export default {
     },
   },
   created() {
+    this.$nextTick(() => {
+      this.scrollY = getTableScroll();
+    });
     this.getAuthoData();
     this.getDemandEnter();
   },

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-06-17 17:28:49
- * @LastEditTime: 2021-09-28 10:28:17
+ * @LastEditTime: 2021-10-11 17:08:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/manufacture-plan.vue
@@ -13,7 +13,7 @@
         <lead-in @toDetail="toDetail"></lead-in>
       </a-tab-pane>
       <a-tab-pane key="2" tab="生产日计划明细" v-if="hasPerm('manufacture_tab2')">
-        <detail :batchid="batchid" ref="myDeatils"></detail>
+        <detail :detailData="detailData" ref="myDeatils"></detail>
       </a-tab-pane>
       <!-- <a-tab-pane key="3" tab="生产日计划达成情况">
         <detail></detail>
@@ -29,13 +29,12 @@ export default {
   data() {
     return {
       activeKey: "1",
-      batchid: "",
+      detailData: [],
     };
   },
   methods: {
-    toDetail(id) {
-      console.log(id);
-      this.batchid = id;
+    toDetail(item) {
+      this.detailData = item;
       this.activeKey = "2";
       this.$nextTick(() => {
         this.$refs.myDeatils.getListAll();

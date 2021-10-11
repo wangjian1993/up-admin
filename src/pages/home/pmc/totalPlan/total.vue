@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-11 10:27:41
+ * @LastEditTime: 2021-10-11 11:25:30
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Total.vue
@@ -156,7 +156,7 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
+import { getMitemrequirement, mitemrequirementAction,setScmAction } from "@/services/web.js";
 export default {
   props: ["plantList",'stateList'],
   data() {
@@ -290,7 +290,7 @@ export default {
       self.$confirm({
         title: "确定要审核发布选中内容",
         onOk() {
-          mitemrequirementAction(self.selectedRowKeys, "requirement/release").then((res) => {
+          setScmAction(self.selectedRowKeys, "requirement/release").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("审核成功!");

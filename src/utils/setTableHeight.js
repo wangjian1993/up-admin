@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-24 18:04:26
- * @LastEditTime: 2021-10-11 10:48:58
+ * @LastEditTime: 2021-10-11 16:58:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/setTableHeight.js
@@ -20,18 +20,19 @@ export default function getTableScroll(extraHeight, id) {
   //表格内容距离顶部的距离
   // console.log("tHeader", tHeader);
   let tHeaderBottom = 0;
+  let tHeaderTop = 0;
   if (tHeader) {
     tHeaderBottom = tHeader.getBoundingClientRect().bottom;
+    tHeaderTop = tHeader.getBoundingClientRect().top;
   }
-  console.log("tHeaderBottom",tHeaderBottom);
-  //窗体高度-表格内容顶部的高度-表格内容底部的高度
+  console.log("extraHeight",extraHeight);
   // let height = document.body.clientHeight - tHeaderBottom - extraHeight
   let height = `calc(100vh - ${tHeaderBottom + extraHeight}px)`;
-  // let height1 = `calc(100vh - ${tHeaderBottom + 70}px)`;
+  let height1 = `calc(100vh - ${tHeaderTop + extraHeight}px)`;
   // document.getElementsByClassName("ant-table")[0].style.maxHeight = `calc(100vh - ${tHeaderBottom}px)`;
   // document.getElementsByClassName("ant-table")[0].style.mixHeight = `calc(100vh - ${tHeaderBottom}px)`;
-  // const table = document.getElementsByClassName('ant-table')[0];
-  // table.style.mixHeight = height;
-  // table.style.minHeight = height;
+  const table = document.getElementsByClassName('ant-table')[0];
+  table.style.minHeight = height1;
+  // console.log(table);
   return height;
 }

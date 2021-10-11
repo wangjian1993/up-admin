@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-10-11 10:01:09
+ * @LastEditTime: 2021-10-11 16:13:04
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -28,7 +28,7 @@
               <a-col :md="8" :sm="24">
                 <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
                   <div style="display:flex;">
-                    <a-upload name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload">
+                    <a-upload name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload" :remove="removeFile">
                       <a-button> <a-icon type="upload" />添加execl文件 </a-button>
                     </a-upload>
                   </div>
@@ -85,6 +85,13 @@ export default {
   },
   created() {},
   methods: {
+    //移除文件
+    removeFile(file){
+      console.log(file);
+      if(file.status === "removed"){
+        this.errorList = []
+      }
+    },
     close() {
       this.$emit("closeModal");
     },

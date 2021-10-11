@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-10-09 16:27:13
+ * @LastEditTime: 2021-10-11 18:44:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/DetailMerge.vue
@@ -76,11 +76,6 @@
       :pagination="pagination"
       @change="handleTableChange"
       :rowKey="(data) => data.BatchId"
-      :row-selection="{
-        selectedRowKeys: selectedRowKeys,
-        onChange: onSelectChange,
-        getCheckboxProps: getCheckboxProps,
-      }"
       bordered
     >
       <template slot="index" slot-scope="text, record, index">
@@ -164,7 +159,7 @@ const columns = [
     align: "center",
   },
   {
-    title: "状态",
+    title: "计划状态",
     dataIndex: "MatchStatus",
     scopedSlots: { customRender: "MatchStatus" },
     align: "center",

@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-16 15:47:55
- * @LastEditTime: 2021-10-09 16:18:47
+ * @LastEditTime: 2021-10-11 14:57:13
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Requirement.vue
+ * @FilePath: /up-admin/src/components/requirement/Requirement.vue
 -->
 <template>
   <div>
@@ -42,7 +42,7 @@
 
 <script>
 export default {
-  props: ["detailData"],
+  props: ["detailData","isReplies"],
   data() {
     return {
       size: "small",
@@ -69,7 +69,12 @@ export default {
           dataIndex: "table" + index,
           align: "center",
         });
-        obj["table" + index] = `[${item.RequirementQty}:${item.ReplyQty || 0}]`;
+        if(this.isReplies){
+           obj["table" + index] = `[${item.RequirementQty}:${item.ReplyQty || 0}]`;
+        }else {
+           obj["table" + index] = `${item.RequirementQty}`;
+        }
+       
       });
       this.list.push(obj);
       this.loading = false;

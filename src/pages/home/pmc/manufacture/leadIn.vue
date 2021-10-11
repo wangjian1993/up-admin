@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-11 09:13:42
+ * @LastEditTime: 2021-10-11 17:12:26
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/leadIn.vue
@@ -235,7 +235,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(40);
+      this.scrollY = getTableScroll(70);
     });
     this.getPlant();
     this.getListAll();
@@ -243,7 +243,7 @@ export default {
   methods: {
     detail(item) {
       // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
-      this.$emit("toDetail", item.Id);
+      this.$emit("toDetail", item);
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");
@@ -461,12 +461,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table {
-  min-height: 0vh;
-}
-/deep/.ant-table-body {
-  min-height: 60vh;
-}
 .ant-form-item {
   margin-bottom: 5px;
 }

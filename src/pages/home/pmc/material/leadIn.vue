@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-11 09:11:35
+ * @LastEditTime: 2021-10-11 17:11:30
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/leadIn.vue
@@ -197,7 +197,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(20);
+      this.scrollY = getTableScroll(70);
     });
     this.getPlant();
     this.getListAll();

@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-09 10:21:32
+ * @LastEditTime: 2021-10-11 15:20:20
  * @LastEditors: max
  * @Description: 物料需求总计划明细
- * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Detail.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/detail.vue
 -->
 
 <template>
@@ -36,14 +36,19 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入品名" v-decorator="['mitemname']" />
+              <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
             </a-form-item>
           </a-col>
         </a-row>
         <a-row>
           <a-col :md="6" :sm="24">
             <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入品号" v-decorator="['mitemcode']" />
+              <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['mitemcode']" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" allowClear placeholder="请输入计划批号" v-decorator="['batchno']" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -53,7 +58,7 @@
         <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
       </span>
     </a-form>
-    <div class="operator">
+    <!-- <div class="operator">
       <a-button v-if="hasPerm('create')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button>
       <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button>
       <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
@@ -63,7 +68,7 @@
           {{ `共选中 ${selectedRowKeys.length} 条` }}
         </template>
       </span>
-    </div>
+    </div> -->
     <a-table
       v-if="hasPerm('search')"
       :columns="columns"
@@ -74,11 +79,6 @@
       :pagination="pagination"
       @change="handleTableChange"
       :rowKey="(data) => data.Id"
-      :row-selection="{
-        selectedRowKeys: selectedRowKeys,
-        onChange: onSelectChange,
-        getCheckboxProps: getCheckboxProps,
-      }"
       bordered
     >
       <template slot="index" slot-scope="text, record, index">
@@ -90,6 +90,17 @@
         <div>
           <a-tag color="green" v-if="text == 'GENERATED'">{{ record.StatusName }}</a-tag>
           <a-tag color="red" v-else>{{ record.StatusName }}</a-tag>
+        </div>
+      </template>
+      <template slot="MatchStatus" slot-scope="text, record">
+        <div>
+          <!-- <a-tag :color="text === '未匹配' || text === '匹配错误'|| text === 'CANNOT_MATCH'?'red':'greed'" >{{ record. }}</a-tag> -->
+           <a-tag color="red">{{ record.MatchStatusName }}</a-tag>
+        </div>
+      </template>
+       <template slot="RequirementDate" slot-scope="text">
+        <div>
+         <p>{{ splitData(text) }}</p>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
@@ -172,15 +183,22 @@ const columns = [
      width: "5%",
   },
   {
-    title: "状态",
+    title: "计划状态",
     dataIndex: "Status",
     scopedSlots: { customRender: "Status" },
+    align: "center",
+  },
+  {
+    title: "物料状态",
+    dataIndex: "MatchStatus",
+    scopedSlots: { customRender: "MatchStatus" },
     align: "center",
   },
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
+import { splitData} from "@/utils/util.js";
 export default {
   props: ["plantList", "batchid",'stateList'],
   data() {
@@ -224,6 +242,7 @@ export default {
     }
   },
   methods: {
+    splitData,
     detail(item) {
       // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
       this.$emit("toDetail", item.Id);
@@ -284,6 +303,7 @@ export default {
             mitemcode: values.mitemcode,
             mitemname: values.mitemcode,
             planstatus: values.planstatus,
+            batchno:values.batchno
           };
           getMitemrequirement(parmas, "masterplan/getdetails").then((res) => {
             if (res.data.success) {

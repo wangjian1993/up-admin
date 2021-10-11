@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-09 16:42:33
+ * @LastEditTime: 2021-10-11 18:00:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
@@ -233,11 +233,18 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(110);
+      this.scrollY = getTableScroll(115);
       console.log(this.scrollY);
     });
     this.getListAll();
     this.getPlant();
+    if (this.batchid) {
+      this.$nextTick(() => {
+        this.searchForm.setFieldsValue({
+          batchid: this.batchid,
+        });
+      });
+    }
   },
   computed: {
     hasSelected() {
@@ -362,7 +369,12 @@ export default {
         });
         return item;
       });
-      const header = this.columns.map((item) => ({ key: item.dataIndex, title: item.title }));
+      const header = []
+      this.columns.map((item) => {
+        if( item.dataIndex){
+          header.push({ key: item.dataIndex, title: item.title })
+        }
+      });
       var timestamp = Date.parse(new Date());
       try {
         ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
@@ -377,10 +389,4 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table {
-  min-height: 60vh;
-}
-/deep/.ant-table-body {
-  min-height: 0vh;
-}
 </style>

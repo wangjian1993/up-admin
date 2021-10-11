@@ -254,8 +254,13 @@ export default {
   components: { AllUser },
 };
 </script>
-<style lang="less">
+<style lang="less" scoped>
 .ant-form-item {
   margin-bottom: 5px;
+}
+/deep/ .ant-table{
+  min-height:77vh;
+  max-height:77vh;
+  overflow: auto;
 }
 </style>

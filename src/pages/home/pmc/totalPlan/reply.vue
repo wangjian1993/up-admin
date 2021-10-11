@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-09 16:24:04
+ * @LastEditTime: 2021-10-11 15:36:51
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Reply.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/reply.vue
 -->
 <template>
   <div>
@@ -109,7 +109,7 @@
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
-    <requirement v-if="isDetail" :detailData="detailData" @closeModal="closeModal"></requirement>
+    <requirement v-if="isDetail" :detailData="detailData" :isReplies="true" @closeModal="closeModal"></requirement>
   </div>
 </template>
 

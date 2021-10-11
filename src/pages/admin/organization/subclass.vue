@@ -503,7 +503,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .left-list {
   padding: 10px 20px;
   text-align: center;
@@ -531,5 +531,10 @@ export default {
     color: @title-color;
     font-size: 14px;
   }
+}
+/deep/ .ant-table{
+  min-height:77vh;
+  max-height:77vh;
+  overflow: auto;
 }
 </style>

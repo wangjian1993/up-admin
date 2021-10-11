@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-09-27 17:03:14
+ * @LastEditTime: 2021-10-11 16:37:15
  * @LastEditors: max
  * @Description: 报价参数配置
  * @FilePath: /up-admin/src/pages/home/quote/config/parmas/Parmas.vue
@@ -137,7 +137,7 @@
         :columns="columns"
         :data-source="data"
         size="small"
-        :scroll="{ y: true }"
+        :scroll="{ y: scrollY }"
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
@@ -264,9 +264,11 @@ const columns = [
 ];
 import { getCostList, costAction, getDemandEnter } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
+import getTableScroll from "@/utils/setTableHeight";
 export default {
   data() {
     return {
+      scrollY:"",
       data: [],
       columns,
       isEdit: false,
@@ -344,6 +346,9 @@ export default {
     },
   },
   created() {
+    this.$nextTick(() => {
+      this.scrollY = getTableScroll();
+    });
     this.getDemandEnter();
   },
   methods: {
