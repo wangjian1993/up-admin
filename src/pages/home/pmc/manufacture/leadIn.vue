@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-09 16:08:18
+ * @LastEditTime: 2021-10-11 09:13:42
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/leadIn.vue
@@ -235,7 +235,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll();
+      this.scrollY = getTableScroll(40);
     });
     this.getPlant();
     this.getListAll();

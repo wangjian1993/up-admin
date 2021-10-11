@@ -249,32 +249,7 @@ const options = {
 				meta: {
 					icon: "fund",
 				},
-			},
-			{
-				path: "phone",
-				name: "移动端管理",
-				component: () =>
-					import(
-						/* webpackChunkName: 'phone' */
-						"@/pages/dashboard/analysis"
-					),
-				meta: {
-					icon: "fund",
-				},
-			},
-			{
-				path: "report",
-				name: "报表管理",
-				component: () =>
-					import(
-						/* webpackChunkName: 'report' */
-						"@/pages/dashboard/analysis"
-					),
-				meta: {
-					icon: "fund",
-				},
-			},
-
+			}
 			],
 		},
 		],

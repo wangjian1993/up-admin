@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-09-18 10:01:02
+ * @LastEditTime: 2021-10-11 10:01:09
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -125,6 +125,7 @@ export default {
         });
         arr.push(obj);
       }
+      console.log("arr=",arr)
       //获取年
       var date = new Date();
       var y = date.getFullYear();
@@ -156,7 +157,7 @@ export default {
             default:
               break;
           }
-          if (key.indexOf("/") == 1) {
+          if (key.indexOf("/") > -1) {
             if (typeof item[key] !== "number" && item[key] !== "") {
               this.errorList.push({
                 content: `第${index + 1}行,日期${key}数据'${item[key]}'错误,必须为数字`,
@@ -213,6 +214,8 @@ export default {
         const tableTitle = header.map((item) => {
           return { title: item, key: item };
         });
+        // console.log("导入数据===",results)
+        // console.log("导入数据===",tableTitle)
         this.tableData = results; //这里的tableData就是拿到的excel表格中的数据
         this.tableTitle = tableTitle;
       };

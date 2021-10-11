@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-09 14:25:45
+ * @LastEditTime: 2021-10-11 10:41:55
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -210,8 +210,8 @@
           <div slot="e10" slot-scope="text, record">
             <p>{{ record.PriceErpSource == "" ? text : text + `(${record.PriceErpSource})` }}</p>
           </div>
-          <div slot="Remark" slot-scope="text, record ,i">
-            <a-input style="width:100px" allowClear @change="(e) => remarkInput(e, record,i)" :value="text" />
+          <div slot="Remark" slot-scope="text, record, i" class="raemark-input">
+            <a-input size="small" style="width:150px;font-size: 10px;" allowClear @change="(e) => remarkInput(e, record, i)" :value="text" />
           </div>
           <!-- <template slot="dosage" slot-scope="text,record">
             <p v-if="!record.dosage" @click="dosageClick(record)">{{ text}}</p>
@@ -560,11 +560,14 @@ export default {
       this.searchList = [];
       this.selectedRowKeys = [];
       this.searchDosage = [];
+      this.searchData =[]
       this.cost = {
         materialTotal: 0, //物料成本
         ultimatelyTotal: 0, //最终成本
       };
+      // this.searchForm.resetFields();
       this.searchForm.resetFields();
+      this.getDemandEnter();
     },
     //关键词搜索
     search() {
@@ -577,7 +580,8 @@ export default {
               this.tableData = res.data.data.ItemInfo.ItemChildList;
               this.searchList = this.tableData;
               this.searchList.forEach((item) => {
-                item.Remark = item.SupplierName + item.PriceEffectiveDate;
+                let data = item.PriceEffectiveDate.split(" ");
+                item.Remark = item.SupplierName + data[0];
               });
               this.costInfo = res.data.data.ItemInfo;
               this.costList = res.data.data.CostBaseList;
@@ -713,7 +717,7 @@ export default {
       this.countCost();
     },
     //修改备注
-    remarkInput(e,item) {
+    remarkInput(e, item) {
       const newData = [...this.searchList];
       item.Remark = e.target.value;
       this.searchList = newData;
@@ -763,6 +767,7 @@ export default {
         if (res.data.success) {
           this.$message.success("保存成功!");
           this.reset();
+          this.$router.push({path:'/purchase/list',query:{type:2}});
         }
         this.costLoading = false;
       });
@@ -1027,5 +1032,8 @@ export default {
   height: 40px !important;
   border: none !important;
   padding: 0 !important;
+}
+/deep/.raemark-input input{
+  font-size:10px
 }
 </style>

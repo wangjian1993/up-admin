@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-09 10:58:34
+ * @LastEditTime: 2021-10-11 10:27:41
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Total.vue
@@ -65,7 +65,6 @@
       :row-selection="{
         selectedRowKeys: selectedRowKeys,
         onChange: onSelectChange,
-        getCheckboxProps: getCheckboxProps,
       }"
       bordered
     >
@@ -268,11 +267,6 @@ export default {
         }
       });
     },
-    getCheckboxProps: (record) => ({
-      props: {
-        disabled: record.Status !== "APPROVED", // Column configuration not to be checked
-      },
-    }),
     //多选删除
     allDel() {
       let self = this;
