@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 15:16:07
- * @LastEditTime: 2021-10-07 16:45:32
+ * @LastEditTime: 2021-10-12 15:00:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/quality/BatchApprove.vue
@@ -53,19 +53,19 @@ const columns = [
     width: "10%",
   },
   {
-    title: "品号",
+    title: "BOM号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "品名",
+    title: "产品型号",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
   },
   {
-    title: "规格",
+    title: " 产品规格",
     dataIndex: "MitemSpec",
     align: "center",
     width: "20%",

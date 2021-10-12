@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-08-30 14:14:32
+ * @LastEditTime: 2021-10-12 15:02:54
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/pmc/manufacture/detail.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/manufacture/achievement.vue
 -->
 <template>
   <div>
@@ -45,12 +45,12 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-             <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+             <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input-number style="width: 100%" placeholder="请输入" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-             <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+             <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input-number style="width: 100%" placeholder="请输入" />
             </a-form-item>
           </a-col>

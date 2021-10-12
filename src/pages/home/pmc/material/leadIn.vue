@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-11 17:11:30
+ * @LastEditTime: 2021-10-12 15:10:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/leadIn.vue
@@ -205,7 +205,7 @@ export default {
   methods: {
     detail(item) {
       // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
-      this.$emit("toDetail", item.Id);
+      this.$emit("toDetail", item.BatchNo);
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");

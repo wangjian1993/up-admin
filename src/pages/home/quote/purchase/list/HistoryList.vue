@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-20 13:54:28
+ * @LastEditTime: 2021-10-12 15:00:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/HistoryList.vue
@@ -18,7 +18,7 @@
             <a-descriptions-item label="需求工厂">
               {{ historyData.PlantName }}
             </a-descriptions-item>
-            <a-descriptions-item label="品号">
+            <a-descriptions-item label="BOM号">
               {{ historyData.ItemCode }}
             </a-descriptions-item>
           </a-descriptions>
@@ -111,17 +111,17 @@ const columns = [
     align: "center",
   },
   {
-    title: "品号",
+    title: "BOM号",
     dataIndex: "ItemCode",
     align: "center",
   },
   {
-    title: "品名",
+    title: "产品型号",
     dataIndex: "ItemName",
     align: "center",
   },
   {
-    title: "规格",
+    title: " 产品规格",
     dataIndex: "ItemSpecification",
     align: "center",
   },

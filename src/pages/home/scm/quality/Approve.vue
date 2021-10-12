@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 11:42:53
- * @LastEditTime: 2021-10-07 15:17:15
+ * @LastEditTime: 2021-10-12 15:00:49
  * @LastEditors: max
  * @Description: 单个审批
  * @FilePath: /up-admin/src/pages/home/scm/quality/Approve.vue
@@ -20,10 +20,10 @@
           <a-form-model-item has-feedback label="供应商">
             <span>{{ approveData.SupplierName }}</span>
           </a-form-model-item>
-          <a-form-model-item has-feedback label="品号">
+          <a-form-model-item has-feedback label="BOM号">
             <span>{{ approveData.MitemCode }}</span>
           </a-form-model-item>
-          <a-form-model-item has-feedback label="品名">
+          <a-form-model-item has-feedback label="产品型号">
             <span>{{ approveData.MitemName }}</span>
           </a-form-model-item>
           <a-form-model-item has-feedback label="到货数量">

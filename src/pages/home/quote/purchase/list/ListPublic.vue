@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-10-06 10:02:54
+ * @LastEditTime: 2021-10-12 15:07:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -65,13 +65,13 @@
             </a-row>
             <a-row v-if="advanced">
               <a-col :md="6" :sm="24">
-                <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-input placeholder="请输入产品品名" allowClear v-decorator="['itemname']" />
+                <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-input placeholder="请输入产品型号" allowClear v-decorator="['itemname']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-input placeholder="请输入产品品号" allowClear v-decorator="['itemcode']" />
+                <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-input placeholder="请输入产品BOM号" allowClear v-decorator="['itemcode']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -181,17 +181,17 @@ const columns = [
     width: "5%",
   },
   {
-    title: "品号",
+    title: "BOM号",
     dataIndex: "ItemCode",
     align: "center",
   },
   {
-    title: "品名",
+    title: "产品型号",
     dataIndex: "ItemName",
     align: "center",
   },
   {
-    title: "规格",
+    title: " 产品规格",
     dataIndex: "ItemSpecification",
     align: "center",
     width: "20%",
@@ -251,20 +251,20 @@ const excelHead = [
     width: "5%",
   },
   {
-    title: "上阶品号",
+    title: "上阶BOM号",
     dataIndex: "LastCode",
     width: "10%",
   },
   {
-    title: "品号",
+    title: "BOM号",
     dataIndex: "ChildCode",
   },
   {
-    title: "品名",
+    title: "产品型号",
     dataIndex: "ChildName",
   },
   {
-    title: "规格",
+    title: " 产品规格",
     dataIndex: "ChildSpecification",
   },
   {
@@ -576,10 +576,10 @@ export default {
           }
           _data.push(["需求公司", info.EnterpriseName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
           _data.push(["需求工厂", info.PlantName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-          _data.push(["品号", info.ItemCode, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-          _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["BOM号", info.ItemCode, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["产品型号", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
           _data.push(["大类", info.ItemSort, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-          _data.push(["规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push([" 产品规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null, null]);
           let cost = [];
           ConfigList.map((item) => {
             cost = cost.concat(item.list);
@@ -659,10 +659,10 @@ export default {
             { wch: 10 }, // 序号
             { wch: 5 }, // 阶次
             { wch: 8 }, // 类型
-            { wch: 10 }, // 上阶品号
-            { wch: 10 }, // 品号
+            { wch: 10 }, // 上阶BOM号
+            { wch: 10 }, // BOM号
             { wch: 18 }, // 料名
-            { wch: 20 }, // 规格
+            { wch: 20 }, //  产品规格
             { wch: 6 }, // 单位
             { wch: 8 }, // 价格来源
             { wch: 7 }, // E10单价

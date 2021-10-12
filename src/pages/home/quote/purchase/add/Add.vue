@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-11 15:44:26
+ * @LastEditTime: 2021-10-12 16:04:45
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -16,6 +16,8 @@
           <span>
             <a-button v-if="!isAgainCost" :disabled="!hasPerm('search')" type="primary" @click="search" icon="search">查询</a-button>
             <a-button v-if="!isAgainCost" :disabled="!hasPerm('search')" style="margin-left: 10px" icon="reload" @click="reset">重置</a-button>
+          </span>
+          <span>
             <a-button :disabled="!hasPerm('save')" type="primary" icon="save" style="margin-left: 10px" @click="costSave">{{ saveBtnText }}</a-button>
             <a-button :disabled="!hasPerm('export')" style="margin-left: 10px" type="primary" icon="import" @click="handleExcel">导出</a-button>
           </span>
@@ -25,15 +27,15 @@
             <div :class="advanced ? null : 'fold'">
               <a-row>
                 <a-col :lg="6" :md="12" :sm="24">
-                  <a-form-item label="产品品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-input
-                      placeholder="请输入产品品号"
+                      placeholder="请输入产品BOM号"
                       :disabled="isSearch"
                       allowClear
                       v-decorator="[
                         'itemcode',
                         {
-                          rules: [{ required: true, message: '请输入产品品号' }],
+                          rules: [{ required: true, message: '请输入产品BOM号' }],
                         },
                       ]"
                     />
@@ -106,7 +108,7 @@
                   <div class="input-item">
                     <p class="input-lable">{{ items.CostName }}:</p>
                     <p class="input-number">
-                      <a-input-number :disabled="items.IsReadonly == 'Y'" v-model="items.Amount" :min="0" @change="costNumber(items)" />
+                      <a-input-number size="small" :disabled="items.IsReadonly == 'Y'" v-model="items.Amount" :min="0" @change="costNumber(items)" />
                     </p>
                     <p class="input-text">{{ items.Description }}</p>
                   </div>
@@ -124,7 +126,7 @@
                   <div class="input-item">
                     <p class="input-lable input-text-color">物料成本:</p>
                     <p class="input-number">
-                      <a-input-number disabled :min="0" v-model="cost.materialTotal" />
+                      <a-input-number size="small" disabled :min="0" v-model="cost.materialTotal" />
                     </p>
                     <p class="input-text" v-if="costInfo.ItemOtherInfo">{{ costInfo.ItemOtherInfo.PriceIncompleteMsg }}</p>
                   </div>
@@ -133,7 +135,7 @@
                   <div class="input-item">
                     <p class="input-lable input-text-color">最终成本:</p>
                     <p class="input-number">
-                      <a-input-number disabled :min="0" v-model="cost.ultimatelyTotal" />
+                      <a-input-number disabled size="small" :min="0" v-model="cost.ultimatelyTotal" />
                     </p>
                     <p class="input-text"></p>
                   </div>
@@ -151,7 +153,7 @@
                   <div class="input-item">
                     <p class="input-lable">备注:</p>
                     <p class="input-number">
-                      <a-input type="textarea" v-model="quoteRemark" style="width:300px" />
+                      <a-input type="textarea"  v-model="quoteRemark" style="width:300px" />
                     </p>
                     <p class="input-text"></p>
                   </div>
@@ -174,7 +176,7 @@
             </span>
           </a-space>
           <a-form layout="inline" :form="keywordForm">
-            <a-form-item label="(品号,品名,规格,提示)关键字匹配">
+            <a-form-item label="(BOM号,产品型号, 产品规格,提示)关键字匹配">
               <a-input v-model="keyword" allowClear @change="listSearch" />
             </a-form-item>
           </a-form>
@@ -245,23 +247,23 @@ const excelHead = [
     align: "center",
   },
   {
-    title: "上阶品号",
+    title: "上阶BOM号",
     dataIndex: "LastCode",
     width: "9%",
     align: "center",
   },
   {
-    title: "品号",
+    title: "BOM号",
     dataIndex: "ChildCode",
     align: "center",
   },
   {
-    title: "品名",
+    title: "产品型号",
     dataIndex: "ChildName",
     align: "center",
   },
   {
-    title: "规格",
+    title: " 产品规格",
     dataIndex: "ChildSpecification",
     width: "18%",
     align: "center",
@@ -338,23 +340,23 @@ export default {
           align: "center",
         },
         {
-          title: "上阶品号",
+          title: "上阶BOM号",
           dataIndex: "LastCode",
           align: "center",
         },
         {
-          title: "品号",
+          title: "BOM号",
           dataIndex: "ChildCode",
           align: "center",
         },
         {
-          title: "品名",
+          title: "产品型号",
           dataIndex: "ChildName",
           align: "center",
           width: "10%",
         },
         {
-          title: "规格",
+          title: " 产品规格",
           dataIndex: "ChildSpecification",
           align: "center",
           width: "20%",
@@ -814,10 +816,10 @@ export default {
       let pl = this.plantList.find((item) => item.EnterId === enterInfo.plantid);
       _data.push(["需求公司", en.EnterName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
       _data.push(["需求工厂", pl.EnterName || 0, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-      _data.push(["品号", info.ItemCode, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-      _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["BOM号", info.ItemCode, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["产品型号", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
       _data.push(["大类", info.ItemSort, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-      _data.push(["规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push([" 产品规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null, null]);
       let cost = [];
       ConfigList.map((item) => {
         cost = cost.concat(item.list);
@@ -892,10 +894,10 @@ export default {
         { wch: 10 }, // 序号
         { wch: 5 }, // 阶次
         { wch: 8 }, // 类型
-        { wch: 10 }, // 上阶品号
-        { wch: 10 }, // 品号
+        { wch: 10 }, // 上阶BOM号
+        { wch: 10 }, // BOM号
         { wch: 18 }, // 料名
-        { wch: 20 }, // 规格
+        { wch: 20 }, //  产品规格
         { wch: 6 }, // 单位
         { wch: 8 }, // 价格来源
         { wch: 7 }, // E10单价
@@ -981,7 +983,7 @@ export default {
 }
 .save-btn {
   display: flex;
-  justify-content: flex-end;
+  justify-content:space-between;
 }
 .table-search {
   display: flex;

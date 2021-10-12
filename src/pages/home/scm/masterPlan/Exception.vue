@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-10-11 18:44:00
+ * @LastEditTime: 2021-10-12 17:48:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Exception.vue
@@ -36,13 +36,13 @@
         </a-row>
         <a-row v-if="advanced">
           <a-col :md="6" :sm="24">
-            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
+            <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" allowClear placeholder="请输入产品型号" v-decorator="['mitemname']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['mitemcode']" />
+            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" allowClear placeholder="请输入BOM号" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -59,30 +59,30 @@
     <div class="operator">
       <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
     </div>
-    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '16px' }">
+    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
       <div>
         <a-row type="flex" justify="center">
           <a-col :span="6"
-            ><div class="statistic" @click="getStatisticList('MANUAL_MATCHED,MATCHED')">
-              <a-statistic title="已匹配笔数" :value="statistic.MatchedQty"
+            ><div class="statistic" @click="getStatisticList('1000')">
+              <a-statistic title="已匹配笔数:" :value="statistic.MatchedQty"
                 ><template #suffix>
-                  <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template
+                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template
               ></a-statistic></div
           ></a-col>
-          <a-col :span="6" class="statistic" @click="getStatisticList(',NO_MATCH,CANNOT_MATCH,ERR_MATCH')">
-            <a-statistic title="未匹配笔数" :value-style="{ color: '#cf1322' }" :value="statistic.NoMatchQty"
+          <a-col :span="6" class="statistic" @click="getStatisticList('0100')">
+            <a-statistic title="未匹配笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.NoMatchQty"
               ><template #suffix>
-                <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+                <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
-          <a-col :span="6" class="statistic" @click="getStatisticList(',NO_MATCH,CANNOT_MATCH,ERR_MATCH', 'Y')">
-            <a-statistic title="未匹配属于我的笔数" :value-style="{ color: '#cf1322' }" :value="statistic.MeQty"
+          <a-col :span="6" class="statistic" @click="getStatisticList('0010')">
+            <a-statistic title="未匹配属于我的笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.MeQty"
               ><template #suffix>
-                <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+                <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
           <a-col :span="6" class="statistic" @click="getListAll">
-            <a-statistic title="总笔数" :value="statistic.AllQty"
+            <a-statistic title="总笔数:" :value="statistic.AllQty"
               ><template #suffix>
-                <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+                <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
         </a-row>
       </div>
@@ -135,7 +135,7 @@
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" @click="matching(record)" v-if="record.MatchStatusName === '未匹配' || record.MatchStatusName == '匹配异常' || record.MatchStatusName == '推送异常'">
+          <a style="margin-right: 8px" @click="matching(record)" v-if="record.MatchStatusName === '未匹配' || record.MatchStatusName == '匹配异常' || record.MatchStatusName == '推送异常'|| record.MatchStatusName == '匹配错误'">
             <a-icon type="profile" />
             手动匹配
           </a>
@@ -182,19 +182,19 @@ const columns = [
     width: "50px"
   },
   {
-    title: "品号",
+    title: "BOM号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "品名",
+    title: "产品型号",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
   },
   {
-    title: "规格",
+    title: " 产品规格",
     dataIndex: "Spec",
     align: "center",
     width: "350px"
@@ -249,6 +249,7 @@ const columns = [
     dataIndex: "MatchStatus",
     scopedSlots: { customRender: "MatchStatus" },
     align: "center",
+    fixed: "right",
   },
   {
     title: "操作",
@@ -298,7 +299,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(210);
+      this.scrollY = getTableScroll(160);
     });
     this.getListAll();
     this.getPlant();
@@ -398,21 +399,36 @@ export default {
         }
       });
     },
-    getStatisticList(type, isme) {
+    getStatisticList(type) {
       console.log("111");
       this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        matchstatus: type,
-        isme: isme || "",
+        fastcondition: type,
       };
       getScmAction(parmas, "requirement/detail/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           this.dataSource.forEach((item) => {
             if (item.PurchaseOrderMatchList.length > 0) {
-              item = Object.assign(item, item.PurchaseOrderMatchList[0]);
+              let PurchaseUserName = [];
+              let SupplierName = [];
+              let PurchaseOrderNo = [];
+              let LineItem = [];
+              let TransitQty = [];
+              item.PurchaseOrderMatchList.map((items) => {
+                PurchaseUserName.push(items.PurchaseUserName);
+                SupplierName.push(items.SupplierName);
+                PurchaseOrderNo.push(items.PurchaseOrderNo);
+                LineItem.push(items.LineItem);
+                TransitQty.push(items.TransitQty);
+              });
+              item.PurchaseUserName = PurchaseUserName;
+              item.SupplierName = SupplierName;
+              item.PurchaseOrderNo = PurchaseOrderNo;
+              item.LineItem = LineItem;
+              item.TransitQty = TransitQty;
             }
           });
           const pagination = { ...this.pagination };
@@ -462,6 +478,27 @@ export default {
           getScmAction(parmas, "requirement/detail/getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
+              this.dataSource.forEach((item) => {
+            if (item.PurchaseOrderMatchList.length > 0) {
+              let PurchaseUserName = [];
+              let SupplierName = [];
+              let PurchaseOrderNo = [];
+              let LineItem = [];
+              let TransitQty = [];
+              item.PurchaseOrderMatchList.map((items) => {
+                PurchaseUserName.push(items.PurchaseUserName);
+                SupplierName.push(items.SupplierName);
+                PurchaseOrderNo.push(items.PurchaseOrderNo);
+                LineItem.push(items.LineItem);
+                TransitQty.push(items.TransitQty);
+              });
+              item.PurchaseUserName = PurchaseUserName;
+              item.SupplierName = SupplierName;
+              item.PurchaseOrderNo = PurchaseOrderNo;
+              item.LineItem = LineItem;
+              item.TransitQty = TransitQty;
+            }
+          });
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
@@ -474,27 +511,41 @@ export default {
       });
     },
     exportExcel() {
-      const dataSource = this.dataSource.map((item) => {
-        Object.keys(item).forEach((key) => {
-          // 后端传null node写入会有问题
-          if (item[key] === null) {
-            item[key] = "";
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.total,
+      };
+      getScmAction(parmas, "requirement/detail/getall").then((res) => {
+        if (res.data.success) {
+          let list = res.data.data.list;
+          const dataSource = list.map((item) => {
+            Object.keys(item).forEach((key) => {
+              // 后端传null node写入会有问题
+              if (item[key] === null) {
+                item[key] = "";
+              }
+              if (Array.isArray(item[key])) {
+                item[key] = item[key].join(",");
+              }
+            });
+            return item;
+          });
+          const header = [];
+          this.columns.map((item) => {
+            if (item.dataIndex) {
+              header.push({ key: item.dataIndex, title: item.title });
+            }
+          });
+          var timestamp = Date.parse(new Date());
+          try {
+            ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
+            this.$message.success("导出数据成功!");
+          } catch (error) {
+            // console.log(error);
+            this.$message.error("导出数据失败");
           }
-          if (Array.isArray(item[key])) {
-            item[key] = item[key].join(",");
-          }
-        });
-        return item;
+        }
       });
-      const header = this.columns.map((item) => ({ key: item.dataIndex, title: item.title }));
-      var timestamp = Date.parse(new Date());
-      try {
-        ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
-        this.$message.success("导出数据成功!");
-      } catch (error) {
-        console.log(error);
-        this.$message.error("导出数据失败");
-      }
     },
   },
 };
@@ -511,5 +562,17 @@ export default {
   display: flex;
   justify-content: center;
   cursor: pointer;
+}
+/deep/.ant-statistic {
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  cursor: pointer;
+}
+/deep/.ant-statistic-title{
+  margin-bottom:0;
+  font-size: 18px;
+  // font-weight: 700;
+  color:#000;
 }
 </style>

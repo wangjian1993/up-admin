@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:33
- * @LastEditTime: 2021-10-11 14:55:32
+ * @LastEditTime: 2021-10-12 17:32:16
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Plan.vue
@@ -29,12 +29,13 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select placeholder="请选择" v-decorator="['planstatus']" style="width: 200px">
-                <a-select-option value="">全部</a-select-option>
-                <a-select-option value="Y">已审核</a-select-option>
-                <a-select-option value="N">未审核</a-select-option>
-              </a-select>
+            <a-form-item label="计划状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-select v-decorator="['planstatus']" placeholder="请选择状态" style="width: 200px">
+                 <a-select-option value="">全部</a-select-option>
+                  <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                    {{ item.ParamName }}
+                  </a-select-option>
+                </a-select>
             </a-form-item>
           </a-col>
         </a-row>
@@ -75,14 +76,14 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text,record">
+       <template slot="Status" slot-scope="text,record">
         <div>
-          <a-tag :color="text === 'APPROVED'?'green':'red'">{{record.StatusName}}</a-tag>
+          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" v-if="record.StatusName === '匹配错误'" :disabled="!hasPerm('matching')" @click="matching(record)">
+          <a style="margin-right: 8px" v-if="record.StatusName === '匹配错误' || record.StatusName === '推送异常'||record.StatusName === '部分推送'||record.StatusName === '部分匹配'" :disabled="!hasPerm('matching')" @click="matching(record)">
             <a-icon type="interaction" />
             手动匹配
           </a>
@@ -161,7 +162,7 @@ import { getScmAction, setScmAction } from "@/services/web.js";
 import Matching from "./Matching";
 export default {
   components: { Matching },
-  props: ["plantList"],
+  props: ["plantList",'stateList'],
   data() {
     return {
       data: [],
@@ -265,6 +266,7 @@ export default {
             plantid: values.plantid,
             week: w,
             pmc: values.pmc,
+            planstatus:values.planstatus
           };
           getScmAction(parmas, "requirement/getall").then((res) => {
             if (res.data.success) {

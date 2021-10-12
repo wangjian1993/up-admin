@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 10:40:23
- * @LastEditTime: 2021-10-11 15:08:01
+ * @LastEditTime: 2021-10-12 17:16:41
  * @LastEditors: max
  * @Description: 采购质检
  * @FilePath: /up-admin/src/pages/home/scm/quality/Quality.vue
@@ -25,25 +25,25 @@
               </a-form-item>
             </a-col>
              <a-col :md="6" :sm="24">
-              <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['mitemcode']" />
+              <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入BOM号" v-decorator="['mitemcode']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
+              <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入产品型号" v-decorator="['mitemname']" />
               </a-form-item>
             </a-col>
           </a-row>
           <a-row v-if="advanced">
             <!-- <a-col :md="6" :sm="24">
-              <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" placeholder="请输入品名" v-decorator="['mitemname']" />
+              <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" placeholder="请输入产品型号" v-decorator="['mitemname']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" placeholder="请输入品号" v-decorator="['mitemcode']" />
+              <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" placeholder="请输入BOM号" v-decorator="['mitemcode']" />
               </a-form-item>
             </a-col> -->
             <!-- <a-col :md="6" :sm="24">
@@ -77,30 +77,30 @@
           </span>
         </a-space>
       </div>
-      <a-card class="card" :bordered="false" :bodyStyle="{ padding: '16px' }">
+      <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
         <div>
           <a-row type="flex" justify="center">
             <a-col :span="6"
               ><div class="statistic" @click="getStatisticList('Y','')">
-                <a-statistic title="今日来料总数" :value="statistic.TodayInComingQty"
+                <a-statistic title="今日来料总数:" :value="statistic.TodayInComingQty"
                   ><template #suffix>
-                    <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template
+                    <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template
                 ></a-statistic></div
             ></a-col>
             <a-col :span="6" class="statistic" @click="getStatisticList('Y','N')">
-              <a-statistic title="今日未处理批数" :value-style="{ color: '#cf1322' }" :value="statistic.TodayNoApprovedQty"
+              <a-statistic title="今日未处理批数:" :value-style="{ color: '#cf1322' }" :value="statistic.TodayNoApprovedQty"
                 ><template #suffix>
-                  <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
             ></a-col>
             <a-col :span="6" class="statistic" @click="getStatisticList('Y', 'Y')">
-              <a-statistic title="今日已处理批数" :value-style="{ color: '#cf1322' }" :value="statistic.TodayApprovedQty"
+              <a-statistic title="今日已处理批数:" :value-style="{ color: '#cf1322' }" :value="statistic.TodayApprovedQty"
                 ><template #suffix>
-                  <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
             ></a-col>
             <a-col :span="6" class="statistic" @click="getStatisticList('', 'N')">
-              <a-statistic title="总未处理批数" :value-style="{ color: '#cf1322' }" :value="statistic.TotalNoApprovedQty"
+              <a-statistic title="总未处理批数:" :value-style="{ color: '#cf1322' }" :value="statistic.TotalNoApprovedQty"
                 ><template #suffix>
-                  <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
             ></a-col>
           </a-row>
         </div>
@@ -171,19 +171,19 @@ const columns = [
     align: "center",
   },
   {
-    title: "品号",
+    title: "BOM号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "品名",
+    title: "产品型号",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
   },
   {
-    title: "规格",
+    title: " 产品规格",
     dataIndex: "MitemSpec",
     align: "center",
     width: "350px",
@@ -488,5 +488,17 @@ export default {
 }
 /deep/.ant-form-item {
   margin-bottom: 5px;
+}
+/deep/.ant-statistic {
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  cursor: pointer;
+}
+/deep/.ant-statistic-title{
+  margin-bottom:0;
+  font-size: 18px;
+  // font-weight: 700;
+  color:#000;
 }
 </style>

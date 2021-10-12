@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-10-11 17:32:34
+ * @LastEditTime: 2021-10-12 14:18:39
  * @LastEditors: max
  * @Description: 快码列表
  * @FilePath: /up-admin/src/pages/admin/database/param/Param.vue
@@ -167,8 +167,8 @@
                     "
                   />
                 </a-form-model-item>
-                <a-form-model-item ref="ParamGroupDesc" label="快码描述">
-                  <a-textarea v-model="form.ParamGroupDesc" placeholder="请输入快码描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
+                <a-form-model-item ref="ParamDesc" label="快码描述">
+                  <a-textarea v-model="form.ParamDesc" placeholder="请输入快码描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
                 </a-form-model-item>
                 <a-form-model-item ref="Enable" label="是否启用">
                   <a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">

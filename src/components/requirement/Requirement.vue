@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-16 15:47:55
- * @LastEditTime: 2021-10-11 14:57:13
+ * @LastEditTime: 2021-10-12 15:58:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/components/requirement/Requirement.vue
@@ -18,10 +18,10 @@
             <a-descriptions-item label="计划批号">
               {{ detailData.BatchNo }}
             </a-descriptions-item>
-            <a-descriptions-item label="品号">
+            <a-descriptions-item label="BOM号">
               {{ detailData.MitemCode }}
             </a-descriptions-item>
-            <a-descriptions-item label="品名">
+            <a-descriptions-item label="产品型号">
               {{ detailData.MitemName }}
             </a-descriptions-item>
           </a-descriptions>
@@ -62,6 +62,7 @@ export default {
       let data = this.detailData.RequirementDetails;
       let obj = {};
       data.forEach((item, index) => {
+        if(item.RequirementQty != 0){
         let dateArray = item.RequirementDate.split("T");
         let date = dateArray[0].replace(/-/g, "/");
         this.columns.push({
@@ -74,7 +75,7 @@ export default {
         }else {
            obj["table" + index] = `${item.RequirementQty}`;
         }
-       
+        }
       });
       this.list.push(obj);
       this.loading = false;

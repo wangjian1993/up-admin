@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-31 09:36:32
- * @LastEditTime: 2021-09-28 10:38:15
+ * @LastEditTime: 2021-10-12 17:33:30
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/MasterPlan.vue
@@ -10,10 +10,10 @@
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <a-tabs type="card" v-model="activeKey" default-active-key="1" @change="callback">
       <a-tab-pane key="1" tab="采购物料需求总计划" v-if="hasPerm('master_tab1')">
-        <plan :plantList="plantList"  @toDetail="toDetail"></plan>
+        <plan :plantList="plantList" :stateList="stateList" @toDetail="toDetail"></plan>
       </a-tab-pane>
       <a-tab-pane key="2" tab="采购物料需求总计划明细" v-if="hasPerm('master_tab2')">
-        <detail :plantList="plantList" :batchid="batchid" ref="myDeatils"></detail>
+        <detail :plantList="plantList" :stateList="stateList" :batchid="batchid" ref="myDeatils"></detail>
       </a-tab-pane>
       <a-tab-pane key="3" tab="采购物料需求总计划异常处理" v-if="hasPerm('master_tab3')">
         <exception :plantList="plantList"></exception>
@@ -26,10 +26,11 @@
 </template>
 <script>
 import { getScmAction } from "@/services/web.js";
-import Plan from './Plan'
-import Detail from './Detail'
-import Exception from './Exception.vue'
-import DetailMerge from './DetailMerge.vue'
+import { getParamData } from "@/services/admin.js";
+import Plan from "./Plan";
+import Detail from "./Detail";
+import Exception from "./Exception.vue";
+import DetailMerge from "./DetailMerge.vue";
 export default {
   components: { Plan, Detail, Exception, DetailMerge },
   data() {
@@ -37,13 +38,15 @@ export default {
       plantList: [],
       activeKey: "1",
       batchid: "",
+      stateList:[]
     };
   },
   created() {
     this.getPlant();
+    this.getParamData();
   },
   methods: {
-     toDetail(id) {
+    toDetail(id) {
       this.batchid = id;
       this.activeKey = "2";
       this.$nextTick(() => {
@@ -53,6 +56,16 @@ export default {
     callback(key) {
       this.activeKey = key;
     },
+    getParamData() {
+      let parmas = {
+        groupcode: "MITEM_REQUIREMENT_STATUS",
+      };
+      getParamData(parmas).then((res) => {
+        if (res.data.success) {
+          this.stateList = res.data.data;
+        }
+      });
+    },
     //获取需求工厂
     getPlant() {
       let parmas1 = {
@@ -60,7 +73,7 @@ export default {
       };
       getScmAction(parmas1, "requirement/getlistbytypecode").then((res) => {
         if (res.data.success) {
-          this.plantList = res.data.data
+          this.plantList = res.data.data;
         }
       });
     },

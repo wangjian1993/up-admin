@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-11 18:41:55
+ * @LastEditTime: 2021-10-12 17:16:51
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
@@ -36,13 +36,13 @@
         </a-row>
         <a-row v-if="advanced">
           <a-col :md="6" :sm="24">
-            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
+            <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" allowClear placeholder="请输入产品型号" v-decorator="['mitemname']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['mitemcode']" />
+            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" allowClear placeholder="请输入产品型号" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -68,35 +68,35 @@
     <!-- <div class="operator">
       <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
     </div> -->
-    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '16px' }">
+    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
       <div>
         <a-row type="flex" justify="center">
           <a-col :span="5"
             ><div class="statistic" @click="getStatisticList('PART_REPLY_NO_DIFF,NO_CONFIRM_DIFF,ALL_REPLY')">
-              <a-statistic title="已回复笔数" :value="statistic.ReplyQty"
+              <a-statistic title="已回复笔数:" :value="statistic.ReplyQty"
                 ><template #suffix>
-                  <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template
+                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template
               ></a-statistic></div
           ></a-col>
           <a-col :span="5" class="statistic" @click="getStatisticList('REPLY_RELEASE_DIFF,CONFIRMED_DIFF')">
-            <a-statistic title="有差异笔数" :value-style="{ color: '#cf1322' }" :value="statistic.DiffQty"
+            <a-statistic title="有差异笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.DiffQty"
               ><template #suffix>
-                <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+                <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
           <a-col :span="5" class="statistic" @click="getStatisticList('REPLY_RELEASE_DIFF', 'Y')">
-            <a-statistic title="有差异属于我的笔数" :value-style="{ color: '#cf1322' }" :value="statistic.MeDiffQty"
+            <a-statistic title="有差异属于我的笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.MeDiffQty"
               ><template #suffix>
-                <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+                <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
           <a-col :span="5" class="statistic" @click="getStatisticList('NO_CONFIRM_DIFF', 'Y')">
-            <a-statistic title="归属于我的未回复笔数" :value-style="{ color: '#cf1322' }" :value="statistic.MeNoReplyQty"
+            <a-statistic title="归属于我的未回复笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.MeNoReplyQty"
               ><template #suffix>
-                <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+                <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
           <a-col :span="4" class="statistic" @click="getListAll">
-            <a-statistic title="总笔数" :value="statistic.AllQty"
+            <a-statistic title="总笔数:" :value="statistic.AllQty"
               ><template #suffix>
-                <span style="margin-left: 4px;font-size: 14px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+                <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
         </a-row>
       </div>
@@ -221,19 +221,19 @@ const columns = [
     width: "50px",
   },
   {
-    title: "品号",
+    title: "BOM号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "品名",
+    title: "产品型号",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
   },
   {
-    title: "规格",
+    title: " 产品规格",
     dataIndex: "Spec",
     align: "center",
     width: "350px",
@@ -603,5 +603,17 @@ export default {
   display: flex;
   justify-content: center;
   cursor: pointer;
+}
+/deep/.ant-statistic {
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  cursor: pointer;
+}
+/deep/.ant-statistic-title{
+  margin-bottom:0;
+  font-size: 18px;
+  // font-weight: 700;
+  color:#000;
 }
 </style>

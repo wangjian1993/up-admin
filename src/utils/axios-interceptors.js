@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-08-10 10:05:09
+ * @LastEditTime: 2021-10-12 15:42:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/axios-interceptors.js
@@ -92,7 +92,7 @@ const reqCommon = {
 		if (url.indexOf('uservalidate') === -1 && xsrfCookieName && !Cookie.get(xsrfCookieName)) {
 			message.warning('认证 token 已过期，请重新登录');
 			setTimeout(()=>{
-				location.href = '/login'
+				location.href = './';
 			},200)
 		}
 		return config

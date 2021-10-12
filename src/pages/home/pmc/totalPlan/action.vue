@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-09 10:58:21
+ * @LastEditTime: 2021-10-12 15:11:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Action.vue
@@ -149,7 +149,7 @@ const columns = [
     align: "center",
   },
   {
-    title: "状态",
+    title: "计划状态",
     dataIndex: "Status",
     scopedSlots: { customRender: "Status" },
     align: "center",

@@ -5,7 +5,7 @@
 				<div class="">
 					<a-row>
 						<a-col :md="8" :sm="24">
-							<a-form-item label="产品品号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1}">
+							<a-form-item label="产品BOM号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1}">
 								<a-input placeholder="请输入" v-decorator="['username', { rules: [{ required: true, message: 'Please input your name' }] }]" />
 							</a-form-item>
 						</a-col>
@@ -45,7 +45,7 @@
 			</a-form>
 		</div>
 		<standard-table :columns="columns" :dataSource="dataSource" :selectedRows.sync="selectedRows" @clear="onClear" @change="onChange" @selectedRowChange="onSelectChange">
-			<div slot="action" slot-scope="{ text, record }">
+			<div slot="action" slot-scope="{record }">
 				<a style="margin-right: 8px">
 					<a-icon type="plus" />
 					新增

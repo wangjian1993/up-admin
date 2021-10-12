@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-11 15:45:46
+ * @LastEditTime: 2021-10-12 14:59:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -18,10 +18,10 @@
             <a-descriptions-item label="需求工厂">
               {{ info.PlantName }}
             </a-descriptions-item>
-            <a-descriptions-item label="品号">
+            <a-descriptions-item label="BOM号">
               {{ info.ItemCode }}
             </a-descriptions-item>
-            <a-descriptions-item label="品名">
+            <a-descriptions-item label="产品型号">
               {{ info.ItemName }}
             </a-descriptions-item>
             <a-descriptions-item label="产品大类">
@@ -42,7 +42,7 @@
             <a-descriptions-item label="备注">
               {{ info.Remark }}
             </a-descriptions-item>
-            <a-descriptions-item label="规格">
+            <a-descriptions-item label=" 产品规格">
               {{ info.ItemSpecification }}
             </a-descriptions-item>
           </a-descriptions>
@@ -82,7 +82,7 @@
 <script>
 const columns = [
   {
-    title: "品号",
+    title: "BOM号",
     dataIndex: "ChildCode",
     width: "14%",
     align: "left",
@@ -100,7 +100,7 @@ const columns = [
     width: "4%",
   },
   {
-    title: "上阶品号",
+    title: "上阶BOM号",
     dataIndex: "LastCode",
     align: "center",
   },
@@ -112,12 +112,12 @@ const columns = [
     align: "center",
   },
   {
-    title: "品名",
+    title: "产品型号",
     dataIndex: "ChildName",
     align: "center",
   },
   {
-    title: "规格",
+    title: " 产品规格",
     dataIndex: "ChildSpecification",
     align: "center",
     width: "15%",

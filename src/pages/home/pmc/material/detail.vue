@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-11 18:00:18
+ * @LastEditTime: 2021-10-12 17:41:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
@@ -36,12 +36,12 @@
         </a-row>
         <a-row v-if="advanced">
           <a-col :md="6" :sm="24">
-            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入品名" v-decorator="['mitemname']" />
+            <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" placeholder="请输入产品型号" v-decorator="['mitemname']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input style="width: 200px" placeholder="请输入品号" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
@@ -107,15 +107,19 @@
         <a-descriptions title="详情" :column="1">
           <a-descriptions-item label="计划批号">{{ drawerItem.BatchNo }}</a-descriptions-item>
           <a-descriptions-item label="生产工厂">{{ drawerItem.PlantName }}</a-descriptions-item>
-          <a-descriptions-item label="品号">{{ drawerItem.MitemCode }}</a-descriptions-item>
-          <a-descriptions-item label="品名">{{ drawerItem.MitemName }}</a-descriptions-item>
-          <a-descriptions-item label="规格">{{ drawerItem.Spec }}</a-descriptions-item>
+          <a-descriptions-item label="BOM号">{{ drawerItem.MitemCode }}</a-descriptions-item>
+          <a-descriptions-item label="产品型号">{{ drawerItem.MitemName }}</a-descriptions-item>
+          <a-descriptions-item label=" 产品规格">{{ drawerItem.Spec }}</a-descriptions-item>
           <a-descriptions-item label="需求日期">{{ drawerItem.RequirementDate }}</a-descriptions-item>
           <a-descriptions-item label="需求数量">{{ drawerItem.Qty }}</a-descriptions-item>
-          <a-descriptions-item label="状态">
+          <a-descriptions-item label="计划状态">
             <div>
-              <a-tag color="green" v-if="drawerItem.Status == 'APPROVED'">已审核</a-tag>
-              <a-tag color="red" v-else>未审核</a-tag>
+              <a-tag :color="drawerItem.Status === 'APPROVAL' || drawerItem.Status === 'PUSHED_ERR' ? 'red' : 'green'">{{ drawerItem.StatusName }}</a-tag>
+            </div>
+          </a-descriptions-item>
+           <a-descriptions-item label="物料状态">
+            <div>
+              <a-tag :color="drawerItem.MatchStatus === 'ERR_MATCH' || drawerItem.MatchStatus === 'PUSHED_ERR' || drawerItem.MatchStatus === 'CANNOT_MATCH' || drawerItem.MatchStatus === 'NO_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
             </div>
           </a-descriptions-item>
         </a-descriptions>
@@ -149,19 +153,19 @@ const columns = [
     width: "5%",
   },
   {
-    title: "品号",
+    title: "BOM号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "品名",
+    title: "产品型号",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
   },
   {
-    title: "规格",
+    title: " 产品规格",
     dataIndex: "Spec",
     align: "center",
     width: "20%",
@@ -357,32 +361,41 @@ export default {
       });
     },
     exportExcel() {
-      const dataSource = this.dataSource.map((item) => {
-        Object.keys(item).forEach((key) => {
-          // 后端传null node写入会有问题
-          if (item[key] === null) {
-            item[key] = "";
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.total,
+      };
+      getMitemrequirement(parmas, "getdetails").then((res) => {
+        if (res.data.success) {
+          let list = res.data.data.list;
+          const dataSource = list.map((item) => {
+            Object.keys(item).forEach((key) => {
+              // 后端传null node写入会有问题
+              if (item[key] === null) {
+                item[key] = "";
+              }
+              if (Array.isArray(item[key])) {
+                item[key] = item[key].join(",");
+              }
+            });
+            return item;
+          });
+          const header = [];
+          this.columns.map((item) => {
+            if (item.dataIndex) {
+              header.push({ key: item.dataIndex, title: item.title });
+            }
+          });
+          var timestamp = Date.parse(new Date());
+          try {
+            ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
+            this.$message.success("导出数据成功!");
+          } catch (error) {
+            // console.log(error);
+            this.$message.error("导出数据失败");
           }
-          if (Array.isArray(item[key])) {
-            item[key] = item[key].join(",");
-          }
-        });
-        return item;
-      });
-      const header = []
-      this.columns.map((item) => {
-        if( item.dataIndex){
-          header.push({ key: item.dataIndex, title: item.title })
         }
       });
-      var timestamp = Date.parse(new Date());
-      try {
-        ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
-        this.$message.success("导出数据成功!");
-      } catch (error) {
-        console.log(error);
-        this.$message.error("导出数据失败");
-      }
     },
   },
 };

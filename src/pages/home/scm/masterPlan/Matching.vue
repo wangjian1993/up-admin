@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 15:09:41
- * @LastEditTime: 2021-09-24 09:26:51
+ * @LastEditTime: 2021-10-12 14:45:52
  * @LastEditors: max
  * @Description: 手动匹配
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Matching.vue
@@ -31,7 +31,7 @@
             </a-select>
           </a-form-model-item>
           <a-form-model-item has-feedback label="需求数量">
-            <span>{{ mitemDate.RequirementQty }}</span>
+            <span>{{ mitemData.RequirementQty }}</span>
           </a-form-model-item>
           <a-form-model-item ref="PurchaseOrderNo" has-feedback label="采购订单" prop="PurchaseOrderNo">
             <a-input v-model="form.PurchaseOrderNo" allowClear placeholder="请选择采购订单" disabled style="width:200px" />
@@ -146,10 +146,15 @@ export default {
     if (this.matchingData.BatchNo) {
       this.form.BatchNo = this.matchingData.BatchNo;
       this.form.BatchId = this.matchingData.Id;
+      this.form.MitemCode = this.matchingData.MitemCode;
+      this.mitemData.MitemName = this.matchingData.MitemName;
+      this.mitemData.RequirementQty = this.matchingData.RequirementQty;
+      this.form.RequirementDate = this.matchingData.RequirementDate;
       this.batchnoData.BatchId = this.matchingData.Id;
       this.batchnoData.BatchNo = this.matchingData.BatchNo;
       this.batchnoData.PlantName = this.matchingData.PlantName;
       this.batchnoData.PlantId = this.matchingData.PlantId;
+      console.log(this.mitemData);
       this.getMitemsByBatch();
     }
   },

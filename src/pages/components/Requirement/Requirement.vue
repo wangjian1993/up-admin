@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-16 15:47:55
- * @LastEditTime: 2021-10-09 16:18:47
+ * @LastEditTime: 2021-10-12 15:02:48
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Requirement.vue
+ * @FilePath: /up-admin/src/pages/components/Requirement/Requirement.vue
 -->
 <template>
   <div>
@@ -18,10 +18,10 @@
             <a-descriptions-item label="计划批号">
               {{ detailData.BatchNo }}
             </a-descriptions-item>
-            <a-descriptions-item label="品号">
+            <a-descriptions-item label="BOM号">
               {{ detailData.MitemCode }}
             </a-descriptions-item>
-            <a-descriptions-item label="品名">
+            <a-descriptions-item label="产品型号">
               {{ detailData.MitemName }}
             </a-descriptions-item>
           </a-descriptions>

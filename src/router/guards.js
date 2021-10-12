@@ -43,7 +43,7 @@ const loginGuard = (to, from, next, options) => {
 		localStorage.removeItem('admin.routes');
 		message.warning('登录已失效，请重新登录');
 		next({
-			path: '/login'
+			path: '/'
 		})
 	} else {
 		if (to.path === '/login' && localStorage.getItem('admin.routes') != null) {

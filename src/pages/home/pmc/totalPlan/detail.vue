@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-11 15:20:20
+ * @LastEditTime: 2021-10-12 16:31:20
  * @LastEditors: max
  * @Description: 物料需求总计划明细
- * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/detail.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Detail.vue
 -->
 
 <template>
@@ -27,22 +27,22 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['planstatus']" placeholder="请选择状态" style="width: 200px">
-                 <a-select-option value="">全部</a-select-option>
-                  <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
-                    {{ item.ParamName }}
-                  </a-select-option>
-                </a-select>
+                <a-select-option value="">全部</a-select-option>
+                <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                  {{ item.ParamName }}
+                </a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
+            <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" allowClear placeholder="请输入产品型号" v-decorator="['mitemname']" />
             </a-form-item>
           </a-col>
         </a-row>
         <a-row>
           <a-col :md="6" :sm="24">
-            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
@@ -53,7 +53,7 @@
           </a-col>
         </a-row>
       </div>
-      <span style="float: right; margin-top: 3px;">
+      <span style="display:flex;justify-content:flex-end">
         <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
       </span>
@@ -69,18 +69,7 @@
         </template>
       </span>
     </div> -->
-    <a-table
-      v-if="hasPerm('search')"
-      :columns="columns"
-      :data-source="data"
-      size="small"
-      :scroll="{ y: scrollY }"
-      :loading="loading"
-      :pagination="pagination"
-      @change="handleTableChange"
-      :rowKey="(data) => data.Id"
-      bordered
-    >
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY }" :loading="loading" :pagination="pagination" @change="handleTableChange" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -88,37 +77,53 @@
       </template>
       <template slot="Status" slot-scope="text, record">
         <div>
-          <a-tag color="green" v-if="text == 'GENERATED'">{{ record.StatusName }}</a-tag>
-          <a-tag color="red" v-else>{{ record.StatusName }}</a-tag>
+          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="MatchStatus" slot-scope="text, record">
         <div>
-          <!-- <a-tag :color="text === '未匹配' || text === '匹配错误'|| text === 'CANNOT_MATCH'?'red':'greed'" >{{ record. }}</a-tag> -->
-           <a-tag color="red">{{ record.MatchStatusName }}</a-tag>
+          <a-tag :color="record.MatchStatusName === '未匹配' || record.MatchStatusName === '匹配错误' || text === 'CANNOT_MATCH' ? 'red' : 'green'">{{ record.MatchStatusName }}</a-tag>
         </div>
       </template>
-       <template slot="RequirementDate" slot-scope="text">
+      <template slot="RequirementDate" slot-scope="text">
         <div>
-         <p>{{ splitData(text) }}</p>
+          <p>{{ splitData(text) }}</p>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a-popconfirm title="确定删除?" @confirm="() => actionBnt(record, 'masterplan/delete')">
-            <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
-              <a-icon type="delete" />
-              删除
-            </a>
-          </a-popconfirm>
           <a style="margin-right: 8px" @click="detail(record)">
             <a-icon type="profile" />
-            查看明细
+            查看详情
           </a>
         </div>
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
+    <div>
+      <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
+        <a-descriptions title="详情" :column="1">
+          <a-descriptions-item label="计划批号">{{ drawerItem.BatchNo }}</a-descriptions-item>
+          <a-descriptions-item label="生产工厂">{{ drawerItem.PlantName }}</a-descriptions-item>
+          <a-descriptions-item label="BOM号">{{ drawerItem.MitemCode }}</a-descriptions-item>
+          <a-descriptions-item label="产品型号">{{ drawerItem.MitemName }}</a-descriptions-item>
+          <a-descriptions-item label=" 产品规格">{{ drawerItem.Spec }}</a-descriptions-item>
+          <a-descriptions-item label="需求日期">{{ drawerItem.RequirementDate }}</a-descriptions-item>
+          <a-descriptions-item label="需求数量">{{ drawerItem.Qty }}</a-descriptions-item>
+          <a-descriptions-item label="错误信息">{{ drawerItem.Msg }}</a-descriptions-item>
+          <a-descriptions-item label="计划状态">
+            <div>
+              <a-tag :color="drawerItem.StatusName === '待审' || drawerItem.StatusName === '匹配错误' || drawerItem.StatusName === '部分推送' || drawerItem.StatusName === '推送异常' ? 'red' : 'green'">{{ drawerItem.StatusName }}</a-tag>
+            </div>
+          </a-descriptions-item>
+          <a-descriptions-item label="物料状态">
+            <div>
+               <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.Status === 'CANNOT_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
+            </div>
+          </a-descriptions-item>
+        </a-descriptions>
+      </a-drawer>
+    </div>
   </div>
 </template>
 
@@ -141,7 +146,7 @@ const columns = [
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
     align: "center",
-     width: "5%",
+    width: "5%",
   },
   {
     title: "周",
@@ -151,23 +156,23 @@ const columns = [
     width: "5%",
   },
   {
-    title: "品号",
+    title: "BOM号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "品名",
+    title: "产品型号",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
   },
   {
-    title: "规格",
+    title: " 产品规格",
     dataIndex: "Spec",
     scopedSlots: { customRender: "Spec" },
     align: "center",
-     width: "20%",
+    width: "20%",
   },
   {
     title: "需求日期",
@@ -180,7 +185,7 @@ const columns = [
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
-     width: "5%",
+    width: "5%",
   },
   {
     title: "计划状态",
@@ -194,13 +199,18 @@ const columns = [
     scopedSlots: { customRender: "MatchStatus" },
     align: "center",
   },
+  {
+    title: "操作",
+    scopedSlots: { customRender: "action" },
+    align: "center",
+  },
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
-import { splitData} from "@/utils/util.js";
+import { splitData } from "@/utils/util.js";
 export default {
-  props: ["plantList", "batchid",'stateList'],
+  props: ["plantList", "batchid", "stateList"],
   data() {
     return {
       data: [],
@@ -223,6 +233,8 @@ export default {
       searchForm: this.$form.createForm(this),
       week: "",
       isSearch: false,
+      drawerItem: [],
+      isDrawer: false,
     };
   },
   updated() {
@@ -235,17 +247,29 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(140);
+      this.scrollY = getTableScroll(110);
     });
     if (this.batchid == "") {
       this.getListAll();
+    }
+    if (this.batchid) {
+      this.$nextTick(() => {
+        this.searchForm.setFieldsValue({
+          batchno: this.batchid,
+        });
+      });
     }
   },
   methods: {
     splitData,
     detail(item) {
       // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
-      this.$emit("toDetail", item.Id);
+      // this.$emit("toDetail", item.Id);
+      this.drawerItem = item;
+      this.isDrawer = true;
+    },
+    onClose() {
+      this.isDrawer = false;
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");
@@ -258,7 +282,7 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        batchid: this.batchid || "",
+        batchno: this.batchid || "",
       };
       getMitemrequirement(parmas, "masterplan/getdetails").then((res) => {
         if (res.data.success) {
@@ -280,7 +304,7 @@ export default {
     //重置搜索
     reset() {
       this.getListAll();
-      this.week =""
+      this.week = "";
       this.searchForm.resetFields();
     },
     //关键词搜索
@@ -291,19 +315,19 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          if(this.week != ""){
-            var w =this.week
+          if (this.week != "") {
+            var w = this.week;
           }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            week:w,
+            week: w,
             pmc: values.pmc,
             mitemcode: values.mitemcode,
             mitemname: values.mitemcode,
             planstatus: values.planstatus,
-            batchno:values.batchno
+            batchno: values.batchno,
           };
           getMitemrequirement(parmas, "masterplan/getdetails").then((res) => {
             if (res.data.success) {
@@ -388,10 +412,4 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table {
-  min-height: 62vh;
-}
-/deep/.ant-table-body {
-  min-height: 0vh;
-}
 </style>

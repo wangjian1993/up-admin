@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-15 15:39:45
- * @LastEditTime: 2021-10-07 10:45:36
+ * @LastEditTime: 2021-10-12 15:00:08
  * @LastEditors: max
  * @Description: 用量统计
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Dosage.vue
@@ -72,17 +72,17 @@ const columns = [
     width: "5%",
   },
   {
-    title: "品号",
+    title: "BOM号",
     dataIndex: "ChildCode",
     align: "center",
   },
   {
-    title: "品名",
+    title: "产品型号",
     dataIndex: "ChildName",
     align: "center",
   },
   {
-    title: "规格",
+    title: " 产品规格",
     dataIndex: "ChildSpecification",
     align: "center",
   },

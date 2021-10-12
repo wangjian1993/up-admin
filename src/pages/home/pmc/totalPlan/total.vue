@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-11 11:25:30
+ * @LastEditTime: 2021-10-12 16:23:50
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Total.vue
@@ -32,6 +32,11 @@
                     {{ item.ParamName }}
                   </a-select-option>
                 </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" allowClear placeholder="请输入PMC" v-decorator="['pmc']" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -75,17 +80,16 @@
       </template>
       <template slot="Status" slot-scope="text,record">
         <div>
-          <a-tag color="green" v-if="text == 'GENERATED'">{{record.StatusName}}</a-tag>
-          <a-tag color="red" v-else>{{record.StatusName}}</a-tag>
+          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" @click="detail(record.Id,'3')">
+          <a style="margin-right: 8px" @click="detail(record.BatchNo,'3')">
             <a-icon type="profile" />
             查看明细
           </a>
-          <a style="margin-right: 8px" @click="detail(record.Id,'4')">
+          <a style="margin-right: 8px" @click="detail(record.BatchNo,'4')">
             <a-icon type="profile" />
             查看合并明细
           </a>
@@ -93,6 +97,7 @@
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
+    <!-- 查看详情 -->
   </div>
 </template>
 
@@ -111,7 +116,7 @@ const columns = [
     align: "center",
   },
   {
-    title: "导入人员",
+    title: "PMC",
     dataIndex: "UserCreated",
     scopedSlots: { customRender: "UserCreated" },
     align: "center",
@@ -143,7 +148,7 @@ const columns = [
     width: "5%",
   },
   {
-    title: "状态",
+    title: "计划状态",
     dataIndex: "Status",
     scopedSlots: { customRender: "Status" },
     align: "center",
@@ -156,7 +161,7 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getMitemrequirement, mitemrequirementAction,setScmAction } from "@/services/web.js";
+import { getMitemrequirement,setScmAction } from "@/services/web.js";
 export default {
   props: ["plantList",'stateList'],
   data() {
@@ -252,6 +257,7 @@ export default {
             plantid: values.plantid,
             week: w,
             pmc: values.pmc,
+            planstatus:values.planstatus
           };
           getMitemrequirement(parmas, "masterplan/getgrenatelist").then((res) => {
             if (res.data.success) {
@@ -267,23 +273,6 @@ export default {
         }
       });
     },
-    //多选删除
-    allDel() {
-      let self = this;
-      self.$confirm({
-        title: "确定要删除选中内容",
-        onOk() {
-          mitemrequirementAction(self.selectedRowKeys, "delete").then((res) => {
-            if (res.data.success) {
-              self.selectedRowKeys = [];
-              self.$message.success("删除成功!");
-              self.getListAll();
-            }
-          });
-        },
-        onCancel() {},
-      });
-    },
     //多选审批
     allCheck() {
       let self = this;
@@ -293,7 +282,7 @@ export default {
           setScmAction(self.selectedRowKeys, "requirement/release").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
-              self.$message.success("审核成功!");
+              self.$message.success(res.data.data);
               self.getListAll();
             }
           });
@@ -301,22 +290,7 @@ export default {
         onCancel() {},
       });
     },
-    //单个删除
-    actionBnt(item, type) {
-      let parmas = [];
-      parmas.push(item.Id);
-      mitemrequirementAction(parmas, type).then((res) => {
-        if (res.data.success) {
-          if (type == "approved") {
-            this.$message.success("审批成功!");
-          } else {
-            this.$message.success("删除成功!");
-          }
-          this.getListAll();
-        }
-      });
-    },
-    //分压
+    //分页
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
@@ -332,9 +306,6 @@ export default {
 
 <style scoped lang="less">
 /deep/.ant-table {
-  min-height: 67vh;
-}
-/deep/.ant-table-body {
-  min-height: 60vh;
+  min-height:65vh;
 }
 </style>
