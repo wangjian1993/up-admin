@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-10-12 15:01:07
+ * @LastEditTime: 2021-10-13 11:51:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/DetailMerge.vue
@@ -75,7 +75,6 @@
       :loading="loading"
       :pagination="pagination"
       @change="handleTableChange"
-      :rowKey="(data) => data.BatchId"
       bordered
     >
       <template slot="index" slot-scope="text, record, index">
@@ -103,7 +102,7 @@
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
-    <requirement v-if="isDetail" :detailData="detailData" @closeModal="closeModal"></requirement>
+    <requirement v-if="isDetail" :detailData="detailData" :isReplies="true" @closeModal="closeModal"></requirement>
   </div>
 </template>
 <script>

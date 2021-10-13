@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-10-12 15:00:38
+ * @LastEditTime: 2021-10-13 09:20:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/DetailMerge.vue
@@ -37,6 +37,16 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入产品型号" allowClear style="width: 200px" v-decorator="['mitemname']" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="计划状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-select v-decorator="['planstatus']" placeholder="请选择计划状态" style="width: 200px">
+                 <a-select-option value="">全部</a-select-option>
+                  <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                    {{ item.ParamName }}
+                  </a-select-option>
+                </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -83,10 +93,9 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="MatchStatus" slot-scope="text, record">
+      <template slot="Status" slot-scope="text,record">
         <div>
-          <a-tag color="green" v-if="text === 'MANUAL_MATCHED' || text === 'MATCHED'">>{{ record.MatchStatusName }}</a-tag>
-          <a-tag color="red" v-else>{{ record.MatchStatusName }}</a-tag>
+          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
@@ -160,8 +169,8 @@ const columns = [
   },
   {
     title: "计划状态",
-    dataIndex: "MatchStatus",
-    scopedSlots: { customRender: "MatchStatus" },
+    dataIndex: "Status",
+    scopedSlots: { customRender: "Status" },
     align: "center",
   },
   {
@@ -178,7 +187,7 @@ import Requirement from "@/components/requirement/Requirement.vue";
 import XLSX from "xlsx";
 export default {
   components: { Requirement },
-  props: ["plantList"],
+  props: ["plantList",'stateList'],
   data() {
     return {
       data: [],
@@ -303,7 +312,8 @@ export default {
             mitemcode:values.mitemcode,
             mitemname:values.mitemname,
             startdate:begindt,
-            enddate:enddt
+            enddate:enddt,
+            planstatus:values.planstatus,
           };
           getScmAction(parmas, "requirement/detail/getmergedetails").then((res) => {
             if (res.data.success) {
