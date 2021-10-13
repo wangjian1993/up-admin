@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-10-12 17:48:37
+ * @LastEditTime: 2021-10-13 10:12:59
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Exception.vue
@@ -45,6 +45,16 @@
               <a-input style="width: 200px" allowClear placeholder="请输入BOM号" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="计划状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-select v-decorator="['planstatus']" placeholder="请选择计划状态" style="width: 200px">
+                <a-select-option value="">全部</a-select-option>
+                <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                  {{ item.ParamName }}
+                </a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
         </a-row>
       </div>
       <span style="float: right; margin-top: 3px;">
@@ -62,24 +72,24 @@
     <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
       <div>
         <a-row type="flex" justify="center">
-          <a-col :span="6"
+          <a-col :sm="12" :md="12" :xl="6"
             ><div class="statistic" @click="getStatisticList('1000')">
               <a-statistic title="已匹配笔数:" :value="statistic.MatchedQty"
                 ><template #suffix>
                   <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template
               ></a-statistic></div
           ></a-col>
-          <a-col :span="6" class="statistic" @click="getStatisticList('0100')">
+          <a-col :sm="12" :md="12" :xl="6" class="statistic" @click="getStatisticList('0100')">
             <a-statistic title="未匹配笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.NoMatchQty"
               ><template #suffix>
                 <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
-          <a-col :span="6" class="statistic" @click="getStatisticList('0010')">
+          <a-col :sm="12" :md="12" :xl="6" class="statistic" @click="getStatisticList('0010')">
             <a-statistic title="未匹配属于我的笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.MeQty"
               ><template #suffix>
                 <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
-          <a-col :span="6" class="statistic" @click="getListAll">
+          <a-col :sm="12" :md="12" :xl="6" class="statistic" @click="getListAll">
             <a-statistic title="总笔数:" :value="statistic.AllQty"
               ><template #suffix>
                 <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
@@ -87,25 +97,23 @@
         </a-row>
       </div>
     </a-card>
-    <a-table
-      :columns="columns"
-      :data-source="dataSource"
-      size="small"
-      :scroll="{ y: scrollY, x: 2000 }"
-      :loading="loading"
-      :pagination="pagination"
-      @change="handleTableChange"
-      :rowKey="(dataSource) => dataSource.Id"
-      bordered
-    >
+    <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
+      <template slot="RequirementDate" slot-scope="text">
+        <p>{{ splitData(text) }}</p>
+      </template>
+      <template slot="Status" slot-scope="text, record">
+        <div>
+          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
+        </div>
+      </template>
       <template slot="MatchStatus" slot-scope="text, record">
         <div>
-          <a-tag :color="text === 'PUSHED_ERR' || text === 'ERR_MATCH'? 'red' : 'green'">{{ record.MatchStatusName }}</a-tag>
+          <a-tag :color="text === 'PUSHED_ERR' || text === 'ERR_MATCH' ? 'red' : 'green'">{{ record.MatchStatusName }}</a-tag>
         </div>
       </template>
       <template slot="PurchaseUserName" slot-scope="text">
@@ -123,7 +131,7 @@
           <p v-for="(item, index) in text" :key="index">{{ item }}</p>
         </div>
       </template>
-       <template slot="LineItem" slot-scope="text">
+      <template slot="LineItem" slot-scope="text">
         <div>
           <p v-for="(item, index) in text" :key="index">{{ item }}</p>
         </div>
@@ -135,14 +143,36 @@
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" @click="matching(record)" v-if="record.MatchStatusName === '未匹配' || record.MatchStatusName == '匹配异常' || record.MatchStatusName == '推送异常'|| record.MatchStatusName == '匹配错误'">
+          <a style="margin-right: 8px" @click="matching(record)" v-if="record.MatchStatusName === '未匹配' || record.MatchStatusName == '匹配异常' || record.MatchStatusName == '推送异常' || record.MatchStatusName == '匹配错误'">
             <a-icon type="profile" />
             手动匹配
+          </a>
+          <a style="margin-right: 8px" @click="details(record)">
+            <a-icon type="profile" />
+            详情
           </a>
         </div>
       </template>
     </a-table>
     <matching v-if="isMatching" :matchingData="matchingData" :plantList="plantList" @closeModal="closeModal" @succeed="getListAll"></matching>
+    <!-- 查看详情 -->
+    <div>
+      <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
+        <a-descriptions title="详情" :column="1">
+          <a-descriptions-item v-for="(item, index) in filterData" :key="index" :label="item.title">{{ drawerItem[item.dataIndex] }}</a-descriptions-item>
+          <a-descriptions-item label="计划状态">
+            <div>
+              <a-tag :color="drawerItem.StatusName === '待审' || drawerItem.StatusName === '匹配错误' || drawerItem.StatusName === '部分推送' || drawerItem.StatusName === '推送异常' ? 'red' : 'green'">{{ drawerItem.StatusName }}</a-tag>
+            </div>
+          </a-descriptions-item>
+          <a-descriptions-item label="物料状态">
+            <div>
+               <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.Status === 'CANNOT_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
+            </div>
+          </a-descriptions-item>
+        </a-descriptions>
+      </a-drawer>
+    </div>
   </div>
 </template>
 
@@ -154,7 +184,7 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "50px"
+    width: "50px",
   },
   {
     title: "计划批号",
@@ -179,7 +209,7 @@ const columns = [
     dataIndex: "Week",
     scopedSlots: { customRender: "Week" },
     align: "center",
-    width: "50px"
+    width: "50px",
   },
   {
     title: "BOM号",
@@ -197,7 +227,7 @@ const columns = [
     title: " 产品规格",
     dataIndex: "Spec",
     align: "center",
-    width: "350px"
+    width: "350px",
   },
   {
     title: "需求日期",
@@ -210,7 +240,7 @@ const columns = [
     dataIndex: "RequirementQty",
     scopedSlots: { customRender: "RequirementQty" },
     align: "center",
-    width: "100px"
+    width: "100px",
   },
   {
     title: "负责采购",
@@ -229,20 +259,27 @@ const columns = [
     dataIndex: "PurchaseOrderNo",
     scopedSlots: { customRender: "PurchaseOrderNo" },
     align: "center",
-    width: "150px"
+    width: "150px",
   },
   {
     title: "行项目",
     dataIndex: "LineItem",
     scopedSlots: { customRender: "LineItem" },
     align: "center",
-    width: "70px"
+    width: "70px",
   },
   {
     title: "采购订单数量",
     dataIndex: "TransitQty",
     scopedSlots: { customRender: "TransitQty" },
     align: "center",
+  },
+  {
+    title: "计划状态",
+    dataIndex: "Status",
+    scopedSlots: { customRender: "Status" },
+    align: "center",
+    fixed: "right",
   },
   {
     title: "物料状态",
@@ -262,8 +299,10 @@ const columns = [
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import Matching from "./Matching";
+import { splitData } from "@/utils/util.js";
 export default {
   components: { Matching },
+  props: ["stateList"],
   data() {
     return {
       scrollY: "",
@@ -309,13 +348,28 @@ export default {
     hasSelected() {
       return this.selectedRowKeys.length > 0;
     },
+    filterData() {
+      return this.columns.filter((obj) => {
+        if (obj.dataIndex !== "Status" && obj.dataIndex !== "MatchStatus") {
+          return obj.dataIndex;
+        }
+      });
+    },
   },
   methods: {
+    splitData,
+    details(item) {
+      this.isDrawer = true;
+      this.drawerItem = item;
+    },
+    onClose() {
+      this.isDrawer = false;
+    },
     //关闭弹出框
     matching(item) {
       this.isMatching = true;
       this.matchingData = item;
-      this.matchingData.Id =item.BatchId
+      this.matchingData.Id = item.BatchId;
     },
     closeModal() {
       this.isMatching = false;
@@ -354,9 +408,32 @@ export default {
     },
     getCheckboxProps: (record) => ({
       props: {
-        disabled: record.MatchStatusName === '未匹配' && record.MatchStatusName === '匹配异常' && record.MatchStatusName === '推送异常', // Column configuration not to be checked
+        disabled: record.MatchStatusName === "未匹配" && record.MatchStatusName === "匹配异常" && record.MatchStatusName === "推送异常", // Column configuration not to be checked
       },
     }),
+    setPurchaseOrderMatchList() {
+      this.dataSource.forEach((item) => {
+        if (item.PurchaseOrderMatchList.length > 0) {
+          let PurchaseUserName = [];
+          let SupplierName = [];
+          let PurchaseOrderNo = [];
+          let LineItem = [];
+          let TransitQty = [];
+          item.PurchaseOrderMatchList.map((items) => {
+            PurchaseUserName.push(items.PurchaseUserName);
+            SupplierName.push(items.SupplierName);
+            PurchaseOrderNo.push(items.PurchaseOrderNo);
+            LineItem.push(items.LineItem);
+            TransitQty.push(items.TransitQty);
+          });
+          item.PurchaseUserName = PurchaseUserName;
+          item.SupplierName = SupplierName;
+          item.PurchaseOrderNo = PurchaseOrderNo;
+          item.LineItem = LineItem;
+          item.TransitQty = TransitQty;
+        }
+      });
+    },
     //获取列表
     getListAll() {
       this.loading = true;
@@ -368,27 +445,7 @@ export default {
       getScmAction(parmas, "requirement/detail/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
-          this.dataSource.forEach((item) => {
-            if (item.PurchaseOrderMatchList.length > 0) {
-              let PurchaseUserName = [];
-              let SupplierName = [];
-              let PurchaseOrderNo = [];
-              let LineItem = [];
-              let TransitQty = [];
-              item.PurchaseOrderMatchList.map((items) => {
-                PurchaseUserName.push(items.PurchaseUserName);
-                SupplierName.push(items.SupplierName);
-                PurchaseOrderNo.push(items.PurchaseOrderNo);
-                LineItem.push(items.LineItem);
-                TransitQty.push(items.TransitQty);
-              });
-              item.PurchaseUserName = PurchaseUserName;
-              item.SupplierName = SupplierName;
-              item.PurchaseOrderNo = PurchaseOrderNo;
-              item.LineItem = LineItem;
-              item.TransitQty = TransitQty;
-            }
-          });
+          this.setPurchaseOrderMatchList();
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -410,27 +467,7 @@ export default {
       getScmAction(parmas, "requirement/detail/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
-          this.dataSource.forEach((item) => {
-            if (item.PurchaseOrderMatchList.length > 0) {
-              let PurchaseUserName = [];
-              let SupplierName = [];
-              let PurchaseOrderNo = [];
-              let LineItem = [];
-              let TransitQty = [];
-              item.PurchaseOrderMatchList.map((items) => {
-                PurchaseUserName.push(items.PurchaseUserName);
-                SupplierName.push(items.SupplierName);
-                PurchaseOrderNo.push(items.PurchaseOrderNo);
-                LineItem.push(items.LineItem);
-                TransitQty.push(items.TransitQty);
-              });
-              item.PurchaseUserName = PurchaseUserName;
-              item.SupplierName = SupplierName;
-              item.PurchaseOrderNo = PurchaseOrderNo;
-              item.LineItem = LineItem;
-              item.TransitQty = TransitQty;
-            }
-          });
+          this.setPurchaseOrderMatchList();
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -474,11 +511,32 @@ export default {
             pmc: values.pmc,
             mitemcode: values.mitemcode,
             mitemname: values.mitemname,
+            planstatus: values.planstatus,
           };
           getScmAction(parmas, "requirement/detail/getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
-              this.dataSource.forEach((item) => {
+              this.setPurchaseOrderMatchList();
+              const pagination = { ...this.pagination };
+              pagination.total = res.data.data.recordsTotal;
+              this.pagination = pagination;
+              this.loading = false;
+              this.isSearch = true;
+            }
+          });
+          // do something
+        }
+      });
+    },
+    exportExcel() {
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.total,
+      };
+      getScmAction(parmas, "requirement/detail/getall").then((res) => {
+        if (res.data.success) {
+          let list = res.data.data.list;
+          list.forEach((item) => {
             if (item.PurchaseOrderMatchList.length > 0) {
               let PurchaseUserName = [];
               let SupplierName = [];
@@ -499,25 +557,6 @@ export default {
               item.TransitQty = TransitQty;
             }
           });
-              const pagination = { ...this.pagination };
-              pagination.total = res.data.data.recordsTotal;
-              this.pagination = pagination;
-              this.loading = false;
-              this.isSearch = true;
-            }
-          });
-          // do something
-        }
-      });
-    },
-    exportExcel() {
-      let parmas = {
-        pageindex: this.pagination.current,
-        pagesize: this.pagination.total,
-      };
-      getScmAction(parmas, "requirement/detail/getall").then((res) => {
-        if (res.data.success) {
-          let list = res.data.data.list;
           const dataSource = list.map((item) => {
             Object.keys(item).forEach((key) => {
               // 后端传null node写入会有问题
@@ -566,13 +605,13 @@ export default {
 /deep/.ant-statistic {
   display: flex;
   align-items: center;
-  justify-content:center;
+  justify-content: center;
   cursor: pointer;
 }
-/deep/.ant-statistic-title{
-  margin-bottom:0;
+/deep/.ant-statistic-title {
+  margin-bottom: 0;
   font-size: 18px;
   // font-weight: 700;
-  color:#000;
+  color: #000;
 }
 </style>

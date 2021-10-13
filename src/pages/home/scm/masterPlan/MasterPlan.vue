@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-31 09:36:32
- * @LastEditTime: 2021-10-12 17:33:30
+ * @LastEditTime: 2021-10-13 09:16:24
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/MasterPlan.vue
@@ -16,7 +16,7 @@
         <detail :plantList="plantList" :stateList="stateList" :batchid="batchid" ref="myDeatils"></detail>
       </a-tab-pane>
       <a-tab-pane key="3" tab="采购物料需求总计划异常处理" v-if="hasPerm('master_tab3')">
-        <exception :plantList="plantList"></exception>
+        <exception :plantList="plantList" :stateList="stateList"></exception>
       </a-tab-pane>
       <a-tab-pane key="4" tab="采购物料需求总计划明细合并" v-if="hasPerm('master_tab4')">
         <detail-merge :plantList="plantList"></detail-merge>
