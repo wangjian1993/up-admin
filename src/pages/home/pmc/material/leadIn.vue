@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-12 15:10:02
+ * @LastEditTime: 2021-10-14 10:53:51
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/leadIn.vue
@@ -20,7 +20,8 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入PMC" allowClear style="width: 200px" v-decorator="['pmc']" />
+              <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
+              <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -96,12 +97,11 @@
     </a-table>
     <a-empty v-else description="暂无权限" />
     <import-execl v-if="isExecl" :plantArray="plantList" @closeModal="closeModal"></import-execl>
+    <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
   </div>
 </template>
 
 <script>
-import ImportExecl from "./ImportExecl.vue";
-import getTableScroll from "@/utils/setTableHeight";
 const columns = [
   {
     title: "序号",
@@ -158,10 +158,13 @@ const columns = [
     align: "center",
   },
 ];
+import ImportExecl from "./ImportExecl.vue";
+import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
+import UserList from '@/components/app-user/UserList'
 export default {
-  components: { ImportExecl },
+  components: { ImportExecl,UserList},
   data() {
     return {
       data: [],
@@ -185,6 +188,7 @@ export default {
       searchForm: this.$form.createForm(this),
       week: "",
       isSearch: false,
+      isUserList:false
     };
   },
   updated() {
@@ -203,6 +207,19 @@ export default {
     this.getListAll();
   },
   methods: {
+    //pmc选择
+    userSearch(){
+      this.isUserList =true
+    },
+    closeUserModal(){
+      this.isUserList =false
+    },
+    okUserModal(item){
+      this.isUserList =false;
+      this.searchForm.setFieldsValue({
+        pmc:item.Name
+      });
+    },
     detail(item) {
       // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
       this.$emit("toDetail", item.BatchNo);

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-12 16:23:50
+ * @LastEditTime: 2021-10-14 11:15:44
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Total.vue
@@ -36,7 +36,8 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" allowClear placeholder="请输入PMC" v-decorator="['pmc']" />
+              <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
+              <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -80,7 +81,7 @@
       </template>
       <template slot="Status" slot-scope="text,record">
         <div>
-          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
+          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' || record.StatusName === '有差异_未确认'? 'red' : 'green'">{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
@@ -97,6 +98,7 @@
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
+    <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
     <!-- 查看详情 -->
   </div>
 </template>
@@ -162,7 +164,9 @@ const columns = [
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement,setScmAction } from "@/services/web.js";
+import UserList from '@/components/app-user/UserList'
 export default {
+  components: {UserList},
   props: ["plantList",'stateList'],
   data() {
     return {
@@ -185,7 +189,8 @@ export default {
       scrollY: "",
       searchForm: this.$form.createForm(this),
       week: "",
-      isSearch:false
+      isSearch:false,
+       isUserList:false
     };
   },
   updated() {
@@ -203,6 +208,19 @@ export default {
     this.getListAll();
   },
   methods: {
+    //pmc选择
+    userSearch(){
+      this.isUserList =true
+    },
+    closeUserModal(){
+      this.isUserList =false
+    },
+    okUserModal(item){
+      this.isUserList =false;
+      this.searchForm.setFieldsValue({
+        pmc:item.Name
+      });
+    },
     detail(id,tab) {
       this.$emit("toDetail",id,tab);
     },

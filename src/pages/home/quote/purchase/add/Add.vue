@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-12 16:04:45
+ * @LastEditTime: 2021-10-14 08:52:42
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -26,8 +26,8 @@
           <a-form layout="horizontal" :form="searchForm">
             <div :class="advanced ? null : 'fold'">
               <a-row>
-                <a-col :lg="6" :md="12" :sm="24">
-                  <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-col :lg="8" :md="12" :sm="24">
+                  <a-form-item label="BOM号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-input
                       placeholder="请输入产品BOM号"
                       :disabled="isSearch"
@@ -41,8 +41,8 @@
                     />
                   </a-form-item>
                 </a-col>
-                <a-col :lg="6" :md="12" :sm="24">
-                  <a-form-item label="需求公司" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-col :lg="8" :md="12" :sm="24">
+                  <a-form-item label="需求公司" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-select
                       :disabled="isSearch"
                       placeholder="请选择需求公司"
@@ -57,8 +57,8 @@
                     </a-select>
                   </a-form-item>
                 </a-col>
-                <a-col :lg="6" :md="12" :sm="24">
-                  <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-col :lg="8" :md="12" :sm="24">
+                  <a-form-item label="生产工厂" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-select
                       :disabled="isSearch"
                       placeholder="请选择生产工厂"
@@ -75,19 +75,19 @@
                 </a-col>
               </a-row>
               <a-row>
-                <a-col :lg="6" :md="12" :sm="24">
-                  <a-form-item label="产品品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-col :lg="8" :md="12" :sm="24">
+                  <a-form-item label="产品型号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-input :disabled="isSearch" v-model="costInfo.ItemName" />
                   </a-form-item>
                 </a-col>
-                <a-col :lg="6" :md="12" :sm="24">
-                  <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-col :lg="8" :md="12" :sm="24">
+                  <a-form-item label="产品大类" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-input :disabled="isSearch" v-model="costInfo.ItemSort" />
                   </a-form-item>
                 </a-col>
-                <a-col :lg="6" :md="12" :sm="24">
-                  <a-form-item label="产品规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                    <a-textarea :disabled="isSearch" v-model="costInfo.ItemSpecification" :rows="2" />
+                <a-col :lg="8" :md="12" :sm="24">
+                  <a-form-item label="产品规格" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
+                    <a-textarea :disabled="isSearch" v-model="costInfo.ItemSpecification" :rows="3" />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -627,12 +627,12 @@ export default {
         if (this.costInfo.ItemOtherInfo && item.CostName === "电源贴片费") {
           if (item.Description == "") {
             item.Amount = 0;
-            item.Description = `品名带有“贴片”关键字(0)行)，用量(0)*0`;
+            item.Description = `产品型号带有“贴片”关键字(0)行)，用量(0)*0`;
             return;
           }
           let str = item.Description.split("*");
           item.Amount = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * str[1];
-          item.Description = `品名带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
+          item.Description = `产品型号带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
         }
         //计算损耗费用
         if (item.CostName === "损耗") {
@@ -724,7 +724,7 @@ export default {
     costSave() {
       this.searchData = this.searchForm.getFieldsValue();
       if (this.costList.length == 0) {
-        this.$message.warning("请先查询物联信息!");
+        this.$message.warning("请先查询物料信息!");
         return;
       }
       if (this.searchData.enterpriseid == undefined) {
@@ -1038,5 +1038,8 @@ export default {
   min-height:77vh;
   max-height:77vh;
   overflow: auto;
+}
+/deep/ .ant-input[disabled],.ant-select-disabled,.ant-input-number-disabled{
+  color:rgba(0,0,0,.5);
 }
 </style>

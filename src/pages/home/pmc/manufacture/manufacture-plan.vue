@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-06-17 17:28:49
- * @LastEditTime: 2021-10-11 17:08:22
+ * @LastEditTime: 2021-10-14 16:59:26
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/manufacture-plan.vue
@@ -15,17 +15,18 @@
       <a-tab-pane key="2" tab="生产日计划明细" v-if="hasPerm('manufacture_tab2')">
         <detail :detailData="detailData" ref="myDeatils"></detail>
       </a-tab-pane>
-      <!-- <a-tab-pane key="3" tab="生产日计划达成情况">
-        <detail></detail>
-      </a-tab-pane> -->
+      <a-tab-pane key="3" tab="生产日计划达成情况" v-if="hasPerm('manufacture_tab3')">
+        <achievement></achievement>
+      </a-tab-pane>
     </a-tabs>
   </a-card>
 </template>
 <script>
 import LeadIn from "./leadIn.vue";
 import Detail from "./detail.vue";
+import Achievement from "./achievement.vue";
 export default {
-  components: { LeadIn, Detail },
+  components: { LeadIn, Detail, Achievement },
   data() {
     return {
       activeKey: "1",

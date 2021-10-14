@@ -1,12 +1,12 @@
 /*
  * @Author: max
  * @Date: 2021-08-24 18:04:26
- * @LastEditTime: 2021-10-11 16:58:14
+ * @LastEditTime: 2021-10-14 14:37:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/setTableHeight.js
  */
-export default function getTableScroll(extraHeight, id) {
+export default function getTableScroll(extraHeight = 70, id) {
   if (typeof extraHeight == "undefined") {
     //  默认底部分页64 + 边距10
     extraHeight = 70;

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-13 11:44:45
+ * @LastEditTime: 2021-10-14 15:54:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
@@ -20,7 +20,8 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入PMC" allowClear style="width: 200px" v-decorator="['pmc']" />
+              <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
+              <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -71,29 +72,29 @@
     <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
       <div>
         <a-row type="flex" justify="center">
-          <a-col :span="5"
+          <a-col :xxl="5" :xl="8" :lg="12"
             ><div class="statistic" @click="getStatisticList('10000')">
               <a-statistic title="已回复笔数:" :value="statistic.ReplyQty"
                 ><template #suffix>
                   <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template
               ></a-statistic></div
           ></a-col>
-          <a-col :span="5" class="statistic" @click="getStatisticList('01000')">
+          <a-col :xxl="5" :xl="8" :lg="12" class="statistic" @click="getStatisticList('01000')">
             <a-statistic title="有差异笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.DiffQty"
               ><template #suffix>
                 <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
-          <a-col :span="5" class="statistic" @click="getStatisticList('00100')">
+          <a-col :xxl="5" :xl="8" :lg="12" class="statistic" @click="getStatisticList('00100')">
             <a-statistic title="有差异属于我的笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.MeDiffQty"
               ><template #suffix>
                 <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
-          <a-col :span="5" class="statistic" @click="getStatisticList('00010')">
+          <a-col :xxl="5" :xl="8" :lg="12" class="statistic" @click="getStatisticList('00010')">
             <a-statistic title="归属于我的未回复笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.MeNoReplyQty"
               ><template #suffix>
                 <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
           ></a-col>
-          <a-col :span="4" class="statistic" @click="getListAll">
+          <a-col :xxl="4" :xl="8" :lg="12" class="statistic" @click="getListAll">
             <a-statistic title="总笔数:" :value="statistic.AllQty"
               ><template #suffix>
                 <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
@@ -127,7 +128,7 @@
       </template>
       <template slot="SupplierReplyDate" slot-scope="text">
         <div>
-          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+          <p v-for="(item, index) in text" :key="index">{{splitData(item) }}</p>
         </div>
       </template>
       <template slot="SupplierReplyQty" slot-scope="text">
@@ -161,7 +162,7 @@
         </div>
       </template>
       <template slot="action" slot-scope="text, record" >
-        <div v-if="record.PurchaseId != undefined || record.PurchaseId != null">
+        <div v-if="record.SupplierReplyQty > 0">
           <a style="margin-right: 8px" @click="consent(record)" :disabled="!hasPerm('consent')">
             <a-icon type="profile" />
             同意供应商交期
@@ -197,9 +198,15 @@
               <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.Status === 'CANNOT_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
             </div>
           </a-descriptions-item>
+          <a-descriptions-item label="错误信息">
+            <div>
+             {{drawerItem.Msg}}
+            </div>
+          </a-descriptions-item>
         </a-descriptions>
       </a-drawer>
     </div>
+    <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
   </div>
 </template>
 
@@ -357,8 +364,9 @@ import getTableScroll from "@/utils/setTableHeight";
 import { getParamData } from "@/services/admin.js";
 import AdjustDate from "./AdjustDate.vue";
 import { splitData } from "@/utils/util.js";
+import UserList from '@/components/app-user/UserList'
 export default {
-  components: { AdjustDate },
+  components: { AdjustDate,UserList},
   props: ["plantList"],
   data() {
     return {
@@ -388,6 +396,7 @@ export default {
       statistic: [],
       stateList: [],
       adjustData: [],
+      isUserList:false
     };
   },
   updated() {
@@ -415,6 +424,19 @@ export default {
   },
   methods: {
     splitData,
+     //pmc选择
+    userSearch(){
+      this.isUserList =true
+    },
+    closeUserModal(){
+      this.isUserList =false
+    },
+    okUserModal(item){
+      this.isUserList =false;
+      this.searchForm.setFieldsValue({
+        pmc:item.Name
+      });
+    },
      //关闭弹出框
     onClose() {
       this.isDrawer = false;
@@ -426,17 +448,6 @@ export default {
       for (const key in this.drawerItem) {
          return this.drawerItem[key].length > 0;
       }
-      // for (const key in this.drawerItem) {
-      //   console.log(this.drawerItem.PurchaseUserName)
-      //   this.drawerItem.PurchaseUserName = item.PurchaseUserName.join(",");
-      //   this.drawerItem.SupplierName = item.SupplierName.join(",");
-      //   this.drawerItem.PurchaseOrderNo = item.PurchaseOrderNo.join(",");
-      //   this.drawerItem.LineItem = item.LineItem.join(",");
-      //   this.drawerItem.TransitQty = item.TransitQty.join(",");
-      //   this.drawerItem.SupplierReplyDate = item.SupplierReplyDate.join(",");
-      //   this.drawerItem.SupplierReplyQty = item.SupplierReplyQty.join(",");
-      //   this.drawerItem.PurchaseReplyResult = item.PurchaseReplyResult.join(",");
-      // }
     },
     closeModal() {
       this.isAdjust = false;
@@ -458,6 +469,7 @@ export default {
     //重置搜索
     reset() {
       this.getListAll();
+      this.getStatistic();
       this.week = "";
       this.searchForm.resetFields();
     },
@@ -521,7 +533,7 @@ export default {
     },
     setPurchaseOrderMatchList() {
       this.dataSource.forEach((item) => {
-        if (item.PurchaseOrderMatchList.length > 0) {
+        if (item.PurchaseOrderMatchList !== null && item.PurchaseOrderMatchList.length > 0) {
           let PurchaseUserName = [];
           let SupplierName = [];
           let PurchaseOrderNo = [];
@@ -613,7 +625,7 @@ export default {
         if (res.data.success) {
           let list = res.data.data.list;
           list.forEach((item) => {
-            if (item.PurchaseOrderMatchList.length > 0) {
+            if (item.PurchaseOrderMatchList !== null && item.PurchaseOrderMatchList.length > 0) {
               let PurchaseUserName = [];
               let SupplierName = [];
               let PurchaseOrderNo = [];
@@ -644,6 +656,9 @@ export default {
               item.PurchaseReplyResult = PurchaseReplyResult;
               item.PurchaseChangeDate =PurchaseChangeDate
             }
+            item.Status =item.StatusName;
+            item.MatchStatus =item.MatchStatusName;
+            item.RequirementDate = splitData(item.RequirementDate)
           });
           const dataSource = list.map((item) => {
             Object.keys(item).forEach((key) => {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-11 14:49:30
+ * @LastEditTime: 2021-10-14 14:20:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/BatchNo.vue
@@ -40,7 +40,7 @@
             :columns="columns"
             :data-source="list"
             :size="size"
-            :scroll="{ y: true }"
+            :scroll="{ y: 600 }"
             :pagination="pagination"
             @change="handleTableChange"
             :rowKey="(list) => list.BatchId"

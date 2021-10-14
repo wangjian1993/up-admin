@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-09-29 16:16:45
+ * @LastEditTime: 2021-10-14 10:40:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/config/authority/AuthoType.vue
@@ -41,7 +41,7 @@
             :columns="columns"
             :data-source="list"
             :size="size"
-            :scroll="{ y: true }"
+            :scroll="{ y: 500 }"
             :pagination="pagination"
             @change="handleTableChange"
             :rowKey="(list) => list.Id"

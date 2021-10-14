@@ -1,30 +1,29 @@
 <!--
  * @Author: max
- * @Date: 2021-09-07 18:11:08
- * @LastEditTime: 2021-10-14 10:40:46
+ * @Date: 2021-09-08 09:21:40
+ * @LastEditTime: 2021-10-14 10:45:40
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/quote/config/authority/Category.vue
+ * @FilePath: /up-admin/src/components/app-user/UserList.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="大类列表" @cancel="close" @ok="handleOk" centered :width="800">
+    <a-modal v-model="visible" title="用户列表" @cancel="close" @ok="handleOk" centered :width="800">
       <div>
         <div class="search-box">
           <a-row>
             <a-col :span="24">
               <a-form layout="horizontal" :form="searchForm" class="form-box">
-                <div>需求公司:{{ enterArray.EnterName }}</div>
+                <div>
+                  <a-form-item label="公司" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-select v-decorator="['enterpriseid']" style="width: 200px" placeholder="请选择公司">
+                      <a-select-option v-for="item in enterList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </div>
                 <div style="margin-left:20px">
                   <a-form-item>
-                    <a-input
-                      placeholder="请输入大类编码/名称"
-                      allowClear
-                      style="width:300px"
-                      v-decorator="[
-                        'searcValue'
-                      ]"
-                    />
+                    <a-input placeholder="请输入用户编码/名称" allowClear style="width:300px" v-decorator="['searcValue']" />
                   </a-form-item>
                 </div>
                 <span style="margin-left:20px;margin-top:-5px">
@@ -44,12 +43,11 @@
             :scroll="{ y: 500 }"
             :pagination="pagination"
             @change="handleTableChange"
-            :rowKey="(list) => list.MitemCategoryId"
-            :customRow="rowClick"
-            :rowClassName="rowClassName"
+            :rowKey="(list) => list.Id"
             :row-selection="{
               selectedRowKeys: selectedRowKeys,
               onChange: onSelectChange,
+              type: 'radio',
             }"
             bordered
           >
@@ -73,21 +71,27 @@ const columns = [
     width: "10%",
   },
   {
-    title: "大类编码",
-    dataIndex: "MitemCategoryCode",
-    scopedSlots: { customRender: "MitemCategoryCode" },
+    title: "用户账号",
+    dataIndex: "Code",
+    scopedSlots: { customRender: "Code" },
     align: "center",
   },
   {
-    title: "大类名称",
-    dataIndex: "MitemCategoryName",
-    scopedSlots: { customRender: "MitemCategoryName" },
+    title: "用户名称",
+    dataIndex: "Name",
+    scopedSlots: { customRender: "Name" },
     align: "center",
-  }
+  },
+  {
+    title: "用户类型",
+    dataIndex: "SurperName",
+    scopedSlots: { customRender: "SurperName" },
+    align: "center",
+  },
 ];
-import { getQuotePermission } from "@/services/web.js";
+import { getQuotePermission, getDemandEnter } from "@/services/web.js";
 export default {
-  props: ["enterArray", "typeArray"],
+  props: ["plantList", "typeArray"],
   data() {
     return {
       size: "small",
@@ -99,7 +103,6 @@ export default {
       wrapperCol: { span: 14 },
       selectedRowKeys: [],
       searchForm: this.$form.createForm(this),
-      rowSelectionType: "radio",
       pagination: {
         current: 1,
         total: 0,
@@ -110,13 +113,29 @@ export default {
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
-      onOrgId: 0,
+      enterList:[],
+      enterpriseid:""
     };
   },
   created() {
-    this.getList();
+    this.getDemandEnter();
   },
   methods: {
+    getDemandEnter() {
+      let parmas = {
+        entertypecode: "COMPANY",
+      };
+      getDemandEnter(parmas).then((res) => {
+        if (res.data.success) {
+          this.enterList = res.data.data;
+          this.enterpriseid =this.enterList[0].EnterId
+          this.searchForm.setFieldsValue({
+            enterpriseid: this.enterList[0].EnterId,
+          });
+          this.getList();
+        }
+      });
+    },
     close() {
       this.$emit("closeModal");
     },
@@ -124,9 +143,9 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        enterpriseid: this.enterArray.EnterId,
+        enterpriseid: this.enterpriseid,
       };
-      getQuotePermission(parmas, "getcategorys").then((res) => {
+      getQuotePermission(parmas, "getusers").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -134,27 +153,6 @@ export default {
           this.pagination = pagination;
         }
       });
-    },
-    //table行点击
-    rowClick(record) {
-      return {
-        on: {
-          dblclick: () => {
-            console.log(record);
-            this.onOrgId = record.OrgId;
-            this.$emit("orgSubSelect", record);
-          },
-        },
-      };
-    },
-    //table行class
-    rowClassName(record) {
-      let className = "";
-      if (record.OrgId == this.onOrgId) {
-        className = "rowActive";
-        this.is_check = true;
-      }
-      return className;
     },
     //查看详情
     onClose() {
@@ -166,15 +164,14 @@ export default {
     },
     handleOk() {
       if (this.selectedRowKeys.length > 0) {
-        let array = []
+        let itemJson =[]
         for (let task of this.selectedRowKeys) {
-          const itemJson = this.list.find((item) => {
-            return item.MitemCategoryId === task;
+          itemJson = this.list.find((item) => {
+            return item.Id === task;
           });
-          array.push(itemJson);
         }
-        console.log("array===",array)
-        this.$emit("okModal",array,2);
+        console.log("array===", itemJson);
+        this.$emit("okModal", itemJson, 1);
       } else {
         this.$emit("okModal");
       }
@@ -193,10 +190,10 @@ export default {
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            enterpriseid: this.enterArray.EnterId,
+            enterpriseid: values.enterpriseid,
             keyword: values.searcValue,
           };
-          getQuotePermission(parmas, "getcategorys").then((res) => {
+          getQuotePermission(parmas, "getusers").then((res) => {
             if (res.data.success) {
               this.list = res.data.data.list;
               const pagination = { ...this.pagination };

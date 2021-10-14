@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 15:09:41
- * @LastEditTime: 2021-10-12 14:45:52
+ * @LastEditTime: 2021-10-14 17:32:01
  * @LastEditors: max
  * @Description: 手动匹配
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Matching.vue
@@ -137,7 +137,6 @@ export default {
       materialData: [],
       mitemData: [],
       materialDates: [],
-      mitemDate: [],
       orderData: [],
     };
   },
@@ -146,7 +145,7 @@ export default {
     if (this.matchingData.BatchNo) {
       this.form.BatchNo = this.matchingData.BatchNo;
       this.form.BatchId = this.matchingData.Id;
-      this.form.MitemCode = this.matchingData.MitemCode;
+      this.mitemData.MitemCode = this.matchingData.MitemCode;
       this.mitemData.MitemName = this.matchingData.MitemName;
       this.mitemData.RequirementQty = this.matchingData.RequirementQty;
       this.form.RequirementDate = this.matchingData.RequirementDate;
@@ -209,6 +208,7 @@ export default {
       getScmAction(parmas, "manualmatch/getrequirementdates").then((res) => {
         if (res.data.success) {
           this.materialDates = res.data.data;
+          console.log(res.data.data)
         }
       });
     },
@@ -218,8 +218,7 @@ export default {
       this.getRequirementDates();
     },
     dateChange(e) {
-      console.log(e);
-      this.mitemDate = this.materialDates.find((item) => (item.RequirementDate = e));
+      this.mitemData = this.materialDates.find((item) => (item.RequirementDate == e));
     },
     //查看详情
     onClose() {

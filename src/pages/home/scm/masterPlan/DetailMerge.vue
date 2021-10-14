@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-10-13 09:20:19
+ * @LastEditTime: 2021-10-14 18:13:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/DetailMerge.vue
@@ -26,7 +26,7 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-week-picker placeholder="选择周" @change="weekChange" v-decorator="['week']"/>
+              <a-week-picker placeholder="选择周" @change="weekChange" v-decorator="['week']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -42,11 +42,11 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="计划状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['planstatus']" placeholder="请选择计划状态" style="width: 200px">
-                 <a-select-option value="">全部</a-select-option>
-                  <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
-                    {{ item.ParamName }}
-                  </a-select-option>
-                </a-select>
+                <a-select-option value="">全部</a-select-option>
+                <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                  {{ item.ParamName }}
+                </a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -65,35 +65,14 @@
         </a-row>
       </div>
     </a-form>
-    <div class="operator">
-      <!-- <a-button v-if="hasPerm('create')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button>
-      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button> -->
-      <!-- <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-      <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-      <span style="margin-left: 8px">
-        <template v-if="hasSelected">
-          {{ `共选中 ${selectedRowKeys.length} 条` }}
-        </template>
-      </span> -->
-    </div>
-    <a-table
-      v-if="hasPerm('search')"
-      :columns="columns"
-      :data-source="data"
-      size="small"
-      :scroll="{ y: scrollY }"
-      :loading="loading"
-      :pagination="pagination"
-      @change="handleTableChange"
-      :rowKey="(data) => data.BatchId"
-      bordered
-    >
+    <div class="operator"></div>
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY,x:3000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data,index) => data.BatchId + index" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text,record">
+      <template slot="Status" slot-scope="text, record">
         <div>
           <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
         </div>
@@ -181,13 +160,13 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getScmAction} from "@/services/web.js";
+import { getScmAction } from "@/services/web.js";
 import Requirement from "@/components/requirement/Requirement.vue";
 // import ExportExcel from "@/utils/ExportExcel.js";
 import XLSX from "xlsx";
 export default {
   components: { Requirement },
-  props: ["plantList",'stateList'],
+  props: ["plantList", "stateList"],
   data() {
     return {
       data: [],
@@ -252,6 +231,16 @@ export default {
       getScmAction(parmas, "requirement/detail/getmergedetails").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
+          let dateList = this.data[0].RequirementDetails;
+          dateList.forEach((item) => {
+            let dateArray = item.RequirementDate.split("T").split("-");
+            console.log(dateArray)
+            let date = dateArray[0].replace(/-/g, "/");
+            this.columns.push({
+              title:date,
+              dataIndex:date,
+            });
+          });
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -269,7 +258,7 @@ export default {
     //重置搜索
     reset() {
       this.getListAll();
-      this.week =""
+      this.week = "";
       this.searchForm.resetFields();
     },
     //日期转换
@@ -300,20 +289,20 @@ export default {
             var begindt = this.formatDateTime(values["range-time-picker"][0]);
             var enddt = this.formatDateTime(values["range-time-picker"][1]);
           }
-          if(this.week != ""){
-            var w =this.week
+          if (this.week != "") {
+            var w = this.week;
           }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            week:w,
+            week: w,
             batchno: values.batchno,
-            mitemcode:values.mitemcode,
-            mitemname:values.mitemname,
-            startdate:begindt,
-            enddate:enddt,
-            planstatus:values.planstatus,
+            mitemcode: values.mitemcode,
+            mitemname: values.mitemname,
+            startdate: begindt,
+            enddate: enddt,
+            planstatus: values.planstatus,
           };
           getScmAction(parmas, "requirement/detail/getmergedetails").then((res) => {
             if (res.data.success) {

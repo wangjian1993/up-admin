@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-09-28 16:35:40
+ * @LastEditTime: 2021-10-14 13:51:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/api.js
@@ -27,5 +27,6 @@ module.exports = {
   MB_CLOUD: `${BASE_URL}/workflow/upshine/bom_cost/`,
   UP_ADMIN: `${BASE_URL_MOCK}/api/base`,
   UP_WEB: `${BASE_URL_MOCK}/api/feb`,
-  UP_USER: `${BASE_URL_MOCK}/api/auth`
+  UP_USER: `${BASE_URL_MOCK}/api/auth`,
+  UP_ERP: `${BASE_URL_MOCK}/api/erpreport`
 }

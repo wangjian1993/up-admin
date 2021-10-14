@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-12 16:31:30
+ * @LastEditTime: 2021-10-14 11:05:02
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/DetailMerge.vue
@@ -84,8 +84,7 @@
       </template>
       <template slot="Status" slot-scope="text, record">
         <div>
-          <a-tag color="green" v-if="text == 'GENERATED'">{{ record.StatusName }}</a-tag>
-          <a-tag color="red" v-else>{{ record.StatusName }}</a-tag>
+           <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' || record.StatusName === '有差异_未确认'? 'red' : 'green'">{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">

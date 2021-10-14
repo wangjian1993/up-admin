@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-08 14:14:32
+ * @LastEditTime: 2021-10-14 10:41:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/buyer/BuyerUser.vue
@@ -33,7 +33,7 @@
             :columns="columns"
             :data-source="list"
             :size="size"
-            :scroll="{ y: true }"
+            :scroll="{ y: 500 }"
             :pagination="pagination"
             @change="handleTableChange"
             :rowKey="(list) => list.Id"
@@ -47,12 +47,6 @@
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-              </div>
-            </template>
-            <template slot="enable" slot-scope="record">
-              <div>
-                <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
-                <a-tag color="red" v-else>禁用</a-tag>
               </div>
             </template>
           </a-table>

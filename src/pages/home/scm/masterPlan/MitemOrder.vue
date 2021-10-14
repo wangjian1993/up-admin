@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-11 17:42:57
+ * @LastEditTime: 2021-10-14 17:36:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/MitemOrder.vue
@@ -13,34 +13,46 @@
         <div>
           <div class="search-box">
             <a-row>
-              <a-col :span="24">
+              <a-col :lg="24" :md="12" :sm="12">
                 <a-form layout="horizontal" :form="searchForm" class="form-box">
-                  <div style="margin-left:20px">
-                    <a-form-item>
-                      <a-select style="width: 200px" v-decorator="['plantid']" placeholder="请选择生产工厂">
-                        <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
-                      </a-select>
-                    </a-form-item>
-                  </div>
-                  <div style="margin-left:20px">
-                    <a-form-item>
-                      <a-input placeholder="请输入供应商编码/名称" allowClear style="width:200px" v-decorator="['supplier']" />
-                    </a-form-item>
-                  </div>
-                  <div style="margin-left:20px">
-                    <a-form-item>
-                      <a-input placeholder="请输入采购订单号" allowClear style="width:200px" v-decorator="['purchaseno']" />
-                    </a-form-item>
-                  </div>
-                  <div style="margin-left:20px">
-                    <a-form-item>
-                      <a-input placeholder="请输入物料编码/名称" allowClear style="width:200px" v-decorator="['mitemcode']" />
-                    </a-form-item>
-                  </div>
-                  <span style="margin-left:20px;margin-top:-5px">
-                    <a-button type="primary" @click="search">查询</a-button>
-                    <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-                  </span>
+                  <a-row>
+                    <a-col :xl="5" :lg="8" :md="6" :sm="24"
+                      ><div style="margin-left:20px">
+                        <a-form-item>
+                          <a-select style="width: 200px" v-decorator="['plantid']" placeholder="请选择生产工厂">
+                            <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                          </a-select>
+                        </a-form-item>
+                      </div></a-col
+                    >
+                    <a-col :xl="5" :lg="8" :md="6" :sm="6"
+                      ><div style="margin-left:20px">
+                        <a-form-item>
+                          <a-input placeholder="请输入供应商编码/名称" allowClear style="width:200px" v-decorator="['supplier']" />
+                        </a-form-item></div
+                    ></a-col>
+
+                    <a-col :xl="5" :lg="8" :md="6" :sm="6"
+                      ><div style="margin-left:20px">
+                        <a-form-item>
+                          <a-input placeholder="请输入采购订单号" allowClear style="width:200px" v-decorator="['purchaseno']" />
+                        </a-form-item></div
+                    ></a-col>
+
+                    <a-col :xl="5" :lg="8" :md="6" :sm="6">
+                      <div style="margin-left:20px">
+                        <a-form-item>
+                          <a-input placeholder="请输入物料编码/名称" allowClear style="width:200px" v-decorator="['mitemcode']" />
+                        </a-form-item></div
+                    ></a-col>
+
+                    <a-col :xl="4" :lg="8" :md="6" :sm="6"
+                      ><span style="margin-left:20px;margin-top:-5px">
+                        <a-button type="primary" @click="search">查询</a-button>
+                        <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+                      </span></a-col
+                    >
+                  </a-row>
                 </a-form>
               </a-col>
             </a-row>
@@ -51,7 +63,7 @@
               :columns="columns"
               :data-source="list"
               :size="size"
-              :scroll="{ y: true }"
+              :scroll="{ y: 600 }"
               :pagination="pagination"
               @change="handleTableChange"
               :rowKey="(list, index) => index"
@@ -219,6 +231,7 @@ export default {
       }
     },
     reset() {
+      this.MitemCode =""
       this.getList();
       this.searchForm.resetFields();
     },
@@ -235,7 +248,7 @@ export default {
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             purchaseno: values.purchaseno,
-            mitemcode: this.MitemCode,
+            mitemcode: values.mitemcode,
             supplier: values.supplier,
           };
           getScmAction(parmas, "manualmatch/getpurchaseorders").then((res) => {
@@ -277,6 +290,6 @@ export default {
   align-items: center;
 }
 /deep/.ant-table {
-  min-height: 0vh;
+  min-height: 500px;
 }
 </style>

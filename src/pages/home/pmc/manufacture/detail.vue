@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-12 15:03:01
+ * @LastEditTime: 2021-10-14 17:22:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/detail.vue
@@ -100,6 +100,12 @@
         <div>
           <a-tag :color="text !== 'APPROVAL' ? 'green' : 'red'">{{ record.StatusName }}</a-tag>
         </div>
+      </template>
+      <template slot="OrderDeliveryDate" slot-scope="text">
+        <span>{{splitData(text)}}</span>
+      </template>
+      <template slot="OrderDate" slot-scope="text">
+        <span>{{splitData(text)}}</span>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
@@ -256,6 +262,7 @@ const columns = [
 ];
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
+import { splitData } from "@/utils/util.js";
 export default {
   props: ["detailData"],
   data() {
@@ -294,7 +301,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll();
+      this.scrollY = getTableScroll(70);
     });
     this.getListAll();
     this.getPlant();
@@ -318,6 +325,7 @@ export default {
     },
   },
   methods: {
+    splitData,
     //关闭弹出框
     onClose() {
       this.isDrawer = false;
@@ -507,5 +515,8 @@ export default {
 <style scoped lang="less">
 .ant-form-item {
   margin-bottom: 5px;
+}
+/deep/ .ant-table{
+  min-height:60vh;
 }
 </style>

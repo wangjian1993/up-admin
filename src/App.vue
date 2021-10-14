@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-10-11 15:42:54
+ * @LastEditTime: 2021-10-14 11:03:26
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/App.vue
@@ -100,14 +100,7 @@ export default {
   font-size: 700;
   color: #000;
 }
-// .ant-table {
-//   min-height: 352px !important;
-//   overflow: auto;
-// }
-// .ant-table{
-//   min-height:77vh;
-//   max-height:77vh;
-//   overflow: auto;
-// }
-// .ant-table td { white-space: nowrap; }
+.ant-input[disabled],.ant-select-disabled,.ant-input-number-disabled{
+  color:rgba(0,0,0,.5);
+}
 </style>

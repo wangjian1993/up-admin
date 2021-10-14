@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-30 09:52:45
- * @LastEditTime: 2021-09-30 17:53:27
+ * @LastEditTime: 2021-10-14 15:37:28
  * @LastEditors: max
  * @Description: 调整供应商交期
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/AdjustDate.vue
@@ -50,7 +50,7 @@
             </a-col>
             <a-col :span="24" class="adjust-box">
               <span>供应商回复日期:</span>
-              <span>{{ adjustData.SupplierReplyDate }}</span>
+              <span>{{splitData( adjustData.SupplierReplyDate) }}</span>
             </a-col>
             <a-col :span="24" class="adjust-box">
               <span>供应商回复数量:</span>
@@ -69,6 +69,7 @@
 
 <script>
 import { setSupplierAction } from "@/services/web.js";
+import { splitData } from "@/utils/util.js";
 export default {
   props: ["adjustData"],
   data() {
@@ -86,6 +87,7 @@ export default {
     console.log(this.adjustData);
   },
   methods: {
+    splitData,
     close() {
       this.$emit("closeModal");
     },

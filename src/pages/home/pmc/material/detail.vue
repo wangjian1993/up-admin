@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-12 17:41:29
+ * @LastEditTime: 2021-10-14 11:10:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
@@ -20,7 +20,8 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入PMC" allowClear style="width: 200px" v-decorator="['pmc']" />
+              <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
+              <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -125,6 +126,7 @@
         </a-descriptions>
       </a-drawer>
     </div>
+    <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
   </div>
 </template>
 
@@ -203,7 +205,9 @@ const columns = [
 ];
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
+import UserList from '@/components/app-user/UserList'
 export default {
+  components: {UserList},
   props: ["batchid"],
   data() {
     return {
@@ -230,6 +234,7 @@ export default {
       week: "",
       drawerItem: [],
       isSearch: false,
+      isUserList:false
     };
   },
   updated() {
@@ -257,6 +262,19 @@ export default {
   },
   methods: {
     splitData,
+     //pmc选择
+    userSearch(){
+      this.isUserList =true
+    },
+    closeUserModal(){
+      this.isUserList =false
+    },
+    okUserModal(item){
+      this.isUserList =false;
+      this.searchForm.setFieldsValue({
+        pmc:item.Name
+      });
+    },
     //关闭弹出框
     onClose() {
       this.isDrawer = false;

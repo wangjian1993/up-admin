@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:33
- * @LastEditTime: 2021-10-12 17:32:16
+ * @LastEditTime: 2021-10-14 14:55:43
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Plan.vue
@@ -20,7 +20,8 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入PMC" allowClear style="width: 200px" v-decorator="['pmc']" />
+              <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
+              <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -76,9 +77,9 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-       <template slot="Status" slot-scope="text,record">
+       <template slot="StatusName" slot-scope="text">
         <div>
-          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
+          <a-tag :color="text === '待审' || text === '匹配错误' || text === '部分推送' || text === '推送异常' || text == '有差异_未确认' ? 'red' : 'green'">{{ text }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
@@ -96,6 +97,7 @@
     </a-table>
     <a-empty v-else description="暂无权限" />
     <matching v-if="isMatching" :matchingData="matchingData" :plantList="plantList" @closeModal="closeModal" @succeed="getListAll"></matching>
+     <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
   </div>
 </template>
 
@@ -146,8 +148,8 @@ const columns = [
   },
   {
     title: "计划状态",
-    dataIndex: "Status",
-    scopedSlots: { customRender: "Status" },
+    dataIndex: "StatusName",
+    scopedSlots: { customRender: "StatusName" },
     align: "center",
   },
   {
@@ -160,8 +162,9 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getScmAction, setScmAction } from "@/services/web.js";
 import Matching from "./Matching";
+import UserList from '@/components/app-user/UserList'
 export default {
-  components: { Matching },
+  components: { Matching,UserList},
   props: ["plantList",'stateList'],
   data() {
     return {
@@ -186,7 +189,8 @@ export default {
       week: "",
       isSearch: false,
       isMatching: false,
-      matchingData:[]
+      matchingData:[],
+      isUserList:false
     };
   },
   updated() {
@@ -204,6 +208,19 @@ export default {
     this.getListAll();
   },
   methods: {
+    //pmc选择
+    userSearch(){
+      this.isUserList =true
+    },
+    closeUserModal(){
+      this.isUserList =false
+    },
+    okUserModal(item){
+      this.isUserList =false;
+      this.searchForm.setFieldsValue({
+        pmc:item.Name
+      });
+    },
     matching(item) {
       this.isMatching = true;
       this.matchingData = item;
@@ -213,7 +230,7 @@ export default {
     },
     detail(item) {
       // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
-      this.$emit("toDetail", item.Id);
+      this.$emit("toDetail", item.BatchNo);
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");

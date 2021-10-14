@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 18:11:08
- * @LastEditTime: 2021-10-08 15:09:28
+ * @LastEditTime: 2021-10-14 10:41:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/buyer/BuyerCategory.vue
@@ -38,7 +38,7 @@
             :columns="columns"
             :data-source="list"
             :size="size"
-            :scroll="{ y: true }"
+            :scroll="{ y: 500 }"
             :pagination="pagination"
             @change="handleTableChange"
             :rowKey="(list) => (modelTypes == 1 ? list.MitemCategoryId : list.MitemCode)"
@@ -51,18 +51,6 @@
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-              </div>
-            </template>
-            <template slot="enable" slot-scope="record">
-              <div>
-                <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
-                <a-tag color="red" v-else>禁用</a-tag>
-              </div>
-            </template>
-            <template slot="IsPartAuth" slot-scope="record">
-              <div>
-                <a-tag color="green" v-if="record == 'Y'">是</a-tag>
-                <a-tag color="red" v-else>否</a-tag>
               </div>
             </template>
           </a-table>
