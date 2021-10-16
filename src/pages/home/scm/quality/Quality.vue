@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 10:40:23
- * @LastEditTime: 2021-10-12 17:16:41
+ * @LastEditTime: 2021-10-16 09:08:49
  * @LastEditors: max
  * @Description: 采购质检
  * @FilePath: /up-admin/src/pages/home/scm/quality/Quality.vue
@@ -126,6 +126,10 @@
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
+        
+        <template slot="OrderDate" slot-scope="text">
+          <span>{{splitData(text) }}</span>
+        </template>
         <template slot="QtStatusName" slot-scope="text">
           <div>
             <a-tag color="green" v-if="text !== '待检'">{{ text }}</a-tag>
@@ -161,6 +165,20 @@ const columns = [
     title: "生产工厂",
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
+    align: "center",
+    width: "120px",
+  },
+  {
+    title: "到货单号",
+    dataIndex: "OrderNo",
+    scopedSlots: { customRender: "OrderNo" },
+    align: "center",
+    width: "150px",
+  },
+  {
+    title: "订单日期",
+    dataIndex: "OrderDate",
+    scopedSlots: { customRender: "OrderDate" },
     align: "center",
     width: "100px",
   },
@@ -255,6 +273,7 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { getParamData } from "@/services/admin.js";
 import BatchApprove from './BatchApprove.vue'
+import { splitData} from "@/utils/util.js";
 export default {
   components: {Approve,BatchApprove},
   data() {
@@ -307,6 +326,7 @@ export default {
     },
   },
   methods: {
+    splitData,
     check(item) {
       this.isApprove =true;
       this.approveData =item

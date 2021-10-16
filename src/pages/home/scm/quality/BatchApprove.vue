@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 15:16:07
- * @LastEditTime: 2021-10-12 15:00:53
+ * @LastEditTime: 2021-10-16 09:09:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/quality/BatchApprove.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="批量审核" @cancel="close" @ok="handleOk" centered width="70%">
+    <a-modal v-model="visible" title="批量审批" @cancel="close" @ok="handleOk" centered width="70%">
       <div>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-table :columns="columns" :data-source="batchData" :size="size" :pagination="pagination" bordered>

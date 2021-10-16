@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-14 16:59:36
+ * @LastEditTime: 2021-10-16 15:30:49
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/erp/bomList/List.vue
+ * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
 -->
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
@@ -12,8 +12,8 @@
       <div>
         <a-row>
           <a-col :md="6" :sm="24">
-            <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
+            <a-form-item label="需求工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择需求工厂">
                 <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
               </a-select>
             </a-form-item>
@@ -33,11 +33,6 @@
               <a-input placeholder="请输入产品规格" allowClear style="width: 200px" v-decorator="['itemspecification']" />
             </a-form-item>
           </a-col>
-          <!-- <a-col :md="6" :sm="24">
-            <a-form-item label="时间选择" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" show-time format="YYYY-MM-DD HH:mm:ss" />
-            </a-form-item>
-          </a-col> -->
         </a-row>
         <a-row>
           <a-col :md="24" :sm="24">
@@ -49,10 +44,18 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow">
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+        </div>
+      </template>
+      <template slot="action" slot-scope="text, record">
+        <div>
+          <a style="margin-right: 8px" @click="detail(record)">
+            <a-icon type="profile" />
+            查看
+          </a>
         </div>
       </template>
       <template slot="ApproveStatus" slot-scope="text">
@@ -72,7 +75,7 @@
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
-    <erp-dosage v-if="isDosage" :info="mitemcodeData" :columns="columns"></erp-dosage>
+    <erp-dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></erp-dosage>
   </a-card>
 </template>
 <script>
@@ -95,7 +98,8 @@ const columns = [
     dataIndex: "SHORTCUT",
     scopedSlots: { customRender: "SHORTCUT" },
     align: "center",
-    width: 70,
+    width: 150,
+    ellipsis: true,
   },
   {
     title: "产品型号",
@@ -118,6 +122,8 @@ const columns = [
     dataIndex: "DRAWING_NO",
     scopedSlots: { customRender: "DRAWING_NO" },
     align: "center",
+    width: 150,
+    ellipsis: true,
   },
   {
     title: "单位",
@@ -170,6 +176,7 @@ const columns = [
     dataIndex: "ApproveDate",
     scopedSlots: { customRender: "ApproveDate" },
     align: "center",
+    width: 120,
   },
   {
     title: "生效审核人员",
@@ -183,6 +190,7 @@ const columns = [
     dataIndex: "CreateDate",
     scopedSlots: { customRender: "CreateDate" },
     align: "center",
+    width: 120,
   },
   {
     title: "创建人员",
@@ -195,12 +203,14 @@ const columns = [
     dataIndex: "LastModifiedDate",
     scopedSlots: { customRender: "LastModifiedDate" },
     align: "center",
+    width: 150,
   },
   {
     title: "最后修改人员",
     dataIndex: "EMPLOYEE_NAME_L",
     scopedSlots: { customRender: "EMPLOYEE_NAME_L" },
     align: "center",
+    width: 150,
   },
   {
     title: "备注",
@@ -208,20 +218,27 @@ const columns = [
     scopedSlots: { customRender: "REMARK" },
     align: "center",
   },
+  {
+    title: "操作",
+    scopedSlots: { customRender: "action" },
+    align: "center",
+    fixed: "right",
+    width: 100,
+  },
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData, modelType } from "@/utils/util.js";
-import ErpDosage from './ErpDosage.vue';
+import ErpDosage from "../components/ErpDosage.vue";
 export default {
-  components: {ErpDosage},
+  components: { ErpDosage },
   data() {
     return {
       data: [],
       columns,
       loading: false,
-      isDosage:false,
+      isDosage: false,
       pagination: {
         current: 1,
         total: 0,
@@ -242,7 +259,7 @@ export default {
       isDetail: false,
       detailData: [],
       plantList: [],
-      mitemcodeData:[]
+      mitemcodeData: [],
     };
   },
   updated() {
@@ -263,12 +280,12 @@ export default {
     splitData,
     modelType,
     closeModal() {
-      this.isDetail = false;
+      this.isDosage = false;
     },
     //物料需求详情
     detail(item) {
-      this.isDetail = true;
-      this.detailData = item;
+      this.isDosage = true;
+      this.mitemcodeData = item;
     },
     getPlant() {
       let parmas = {
@@ -277,6 +294,11 @@ export default {
       getERPReportAction(parmas, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
+          this.plantId = this.plantList[0].PlantId;
+          this.searchForm.setFieldsValue({
+            plantid: this.plantList[0].PlantId,
+          });
+          this.getListAll();
         }
       });
     },
@@ -286,6 +308,10 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        plantid: this.plantId,
+        itemcode: "",
+        itemname: "",
+        itemspecification: "",
       };
       getERPReportAction(parmas, "getbomlist").then((res) => {
         if (res.data.success) {
@@ -340,13 +366,12 @@ export default {
       return {
         style: {
           // 行背景色
-          "background-color": "#8fd0fa",
           cursor: "pointer",
         },
         on: {
           dblclick: () => {
-            this.isDosage =true;
-            this.mitemcodeData = record
+            this.isDosage = true;
+            this.mitemcodeData = record;
           },
         },
       };
@@ -368,5 +393,12 @@ export default {
 <style scoped lang="less">
 .ant-form-item {
   margin-bottom: 5px;
+}
+/deep/div {
+  -moz-user-select: none; /*火狐*/
+  -webkit-user-select: none; /*webkit浏览器*/
+  -ms-user-select: none; /*IE10*/
+  -khtml-user-select: none; /*早期浏览器*/
+  user-select: none;
 }
 </style>

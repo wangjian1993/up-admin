@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-10-15 18:22:29
+ * @LastEditTime: 2021-10-16 08:58:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/DetailMerge.vue
@@ -64,15 +64,14 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="MatchStatus" slot-scope="text, record">
+      <template slot="Status" slot-scope="text, record">
         <div>
-          <a-tag color="green" v-if="text === 'MANUAL_MATCHED' || text === 'MATCHED'">>{{ record.MatchStatusName }}</a-tag>
-          <a-tag color="red" v-else>{{ record.MatchStatusName }}</a-tag>
+          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="time" slot-scope="text">
-        <div>
-          <span>{{ text.RequirementQty }}</span>
+        <div :style="{ background: text.Color }">
+          <span style="color:#fff">{{ text.RequirementQty }}</span>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
@@ -244,8 +243,7 @@ export default {
           title: dateArray[1] + "/" + dateArray[2],
           dataIndex: "table_" + index,
           align: "center",
-          width: "40px",
-          customCell: this.renderTimeBackground,
+          width: "60px",
           scopedSlots: { customRender: "time" },
         });
       });
@@ -265,12 +263,12 @@ export default {
         width: 100,
       });
     },
-    renderTimeBackground(record, rowIndex) {
+    renderTimeBackground(record) {
       let l = record.RequirementDetails.length;
       for (let i = 0; i < l; i++) {
         return {
           style: {
-            "background-color":record["table_" + i].Color,
+            "background-color": record["table_" + i].Color,
           },
         };
       }

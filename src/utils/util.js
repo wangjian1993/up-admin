@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-10-15 10:10:03
+ * @LastEditTime: 2021-10-16 10:59:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/util.js
@@ -29,10 +29,11 @@ export function isRegExp(v) {
 }
 //截取时间
 export function splitData(data) {
-  if (data !== null) {
+  if (data !== null && data !== "" &&  data !== undefined) {
     let str = data.split('T');
     return str[0];
   }
+  return;
 }
 
 export function enquireScreen(call) {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-14 11:10:55
+ * @LastEditTime: 2021-10-16 09:03:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
@@ -146,6 +146,13 @@ const columns = [
     dataIndex: "BatchNo",
     scopedSlots: { customRender: "BatchNo" },
     align: "center",
+  },
+  {
+    title: "周",
+    dataIndex: "Week",
+    scopedSlots: { customRender: "Week" },
+    align: "center",
+    width: "5%",
   },
   {
     title: "生产工厂",

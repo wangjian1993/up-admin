@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-16 16:35:04
+ * @LastEditTime: 2021-10-16 17:36:27
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
+ * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
 -->
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
@@ -18,11 +18,23 @@
               </a-select>
             </a-form-item>
           </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['itemcode', { rules: [{ required: true, message: '请输入BOM号' }] }]" />
+           <a-col :md="6" :sm="24">
+            <a-form-item label="ECN变更单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入ECN变更单号" allowClear style="width: 200px" v-decorator="['ecnchangeorder']" />
             </a-form-item>
           </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="主件BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入主件BOM号" allowClear style="width: 200px" v-decorator="['itemcodep']" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="元件BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入元件BOM号" allowClear style="width: 200px" v-decorator="['itemcodec']" />
+            </a-form-item>
+          </a-col>
+        </a-row>
+        <a-row>
           <a-col :md="6" :sm="24">
             <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select style="width: 120px" v-decorator="['approvestatus']">
@@ -30,31 +42,21 @@
                   全部
                 </a-select-option>
                 <a-select-option value="N">
-                  未生效
-                </a-select-option>
-                <a-select-option value="V">
-                  失效
+                  未审核
                 </a-select-option>
                 <a-select-option value="Y">
-                  生效
+                  已审核
                 </a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="BOM日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-date-picker v-decorator="['bomdate']" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row>
           <a-col :md="8" :sm="24">
-            <a-form-item label="录入日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="单据日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-range-picker style="width: 300px" v-decorator="['range-time-picker1']" />
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
-            <a-form-item label="最后修改日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="审核日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
             </a-form-item>
           </a-col>
@@ -69,7 +71,7 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow">
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY,x:2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ECN_ID" bordered :customRow="handleClickRow">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -92,7 +94,7 @@
       <template slot="ITEM_TYPE" slot-scope="text">
         <span>{{ feedSystem(text) }}</span>
       </template>
-      <template slot="APPROVEDATE_ECN" slot-scope="text">
+      <template slot="DOC_DATE" slot-scope="text">
         <span>{{ splitData(text) }}</span>
       </template>
       <template slot="ApproveDate" slot-scope="text">
@@ -103,7 +105,7 @@
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
-    <erp-dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></erp-dosage>
+    <variation-info v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></variation-info>
   </a-card>
 </template>
 <script>
@@ -112,177 +114,100 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width: 50,
   },
   {
-    title: "主件品号",
-    dataIndex: "ITEM_CODE",
-    scopedSlots: { customRender: "ITEM_CODE" },
+    title: "ECN单号",
+    dataIndex: "DOC_NO",
+    scopedSlots: { customRender: "DOC_NO" },
     align: "center",
-    width: 250,
+    width: 200,
   },
   {
-    title: "快捷码",
-    dataIndex: "SHORTCUT",
-    scopedSlots: { customRender: "SHORTCUT" },
+    title: "单据类型",
+    dataIndex: "DOC_NAME",
+    scopedSlots: { customRender: "DOC_NAME" },
     align: "center",
     width: 150,
     ellipsis: true,
   },
   {
-    title: "产品型号",
-    dataIndex: "ITEM_NAME",
-    scopedSlots: { customRender: "ITEM_NAME" },
-    align: "center",
-    width: 250,
-    ellipsis: true,
-  },
-  {
-    title: "规格",
-    dataIndex: "ITEM_SPECIFICATION",
-    scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-    align: "center",
-    width: 300,
-    ellipsis: true,
-  },
-  {
-    title: "组成用量",
-    dataIndex: "QTY_PER",
-    scopedSlots: { customRender: "QTY_PER" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "插件位置",
-    dataIndex: "COMPONENT_LOCATION",
-    scopedSlots: { customRender: "COMPONENT_LOCATION" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "图号",
-    dataIndex: "DRAWING_NO",
-    scopedSlots: { customRender: "DRAWING_NO" },
+    title: "单据日期",
+    dataIndex: "DOC_DATE",
+    scopedSlots: { customRender: "DOC_DATE" },
     align: "center",
     width: 150,
     ellipsis: true,
   },
   {
-    title: "单位",
-    dataIndex: "UNIT_NAME",
-    scopedSlots: { customRender: "UNIT_NAME" },
+    title: "变更原因",
+    dataIndex: "DESCRIPTION_1",
+    scopedSlots: { customRender: "DESCRIPTION_1" },
     align: "center",
-    width: 50,
+    width: 200,
+    ellipsis: true,
   },
   {
-    title: "品号类型",
-    dataIndex: "ITEM_PROPERTY",
-    scopedSlots: { customRender: "ITEM_PROPERTY" },
+    title: "变更原因说明",
+    dataIndex: "REASON_DESC",
+    scopedSlots: { customRender: "REASON_DESC" },
     align: "center",
-    width: "5%",
+    width: 150,
   },
   {
-    title: "供料方式",
-    dataIndex: "ITEM_TYPE",
-    scopedSlots: { customRender: "ITEM_TYPE" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "底数",
-    dataIndex: "DENOMINATOR",
-    scopedSlots: { customRender: "DENOMINATOR" },
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "ECN变更状态",
-    dataIndex: "ECNSTATUS",
-    scopedSlots: { customRender: "ECNSTATUS" },
-    align: "center",
-    width: 110,
-  },
-  {
-    title: "ECN变更日期",
-    dataIndex: "APPROVEDATE_ECN",
-    scopedSlots: { customRender: "APPROVEDATE_ECN" },
-    align: "center",
-    width: 110,
-  },
-  {
-    title: "固定损耗量",
-    dataIndex: "FIXED_LOSS_RATE",
-    scopedSlots: { customRender: "FIXED_LOSS_RATE" },
-    align: "center",
-    width: 100,
-  },
-  {
-    title: "变动损耗",
-    dataIndex: "DYNAMIC_LOSS_RATE",
-    scopedSlots: { customRender: "DYNAMIC_LOSS_RATE" },
+    title: "变更部门",
+    dataIndex: "ADMIN_UNIT_NAME_T",
+    scopedSlots: { customRender: "ADMIN_UNIT_NAME_T" },
     align: "center",
     width: 80,
   },
   {
-    title: "超领率",
-    dataIndex: "ISSUE_OVERRUN_RATE",
-    scopedSlots: { customRender: "ISSUE_OVERRUN_RATE" },
+    title: "主办人",
+    dataIndex: "EMPLOYEE_NAME_T",
+    scopedSlots: { customRender: "EMPLOYEE_NAME_T" },
+    align: "center",
+    width: 150,
+    ellipsis: true,
+  },
+  {
+    title: "变更范围",
+    dataIndex: "CONTENT",
+    scopedSlots: { customRender: "CONTENT" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "专案负责人",
+    dataIndex: "EMPLOYEE_NAME",
+    scopedSlots: { customRender: "EMPLOYEE_NAME" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "紧急等级",
+    dataIndex: "DESCRIPTION_2",
+    scopedSlots: { customRender: "DESCRIPTION_2" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "审核码",
+    dataIndex: "ApproveStatus",
+    scopedSlots: { customRender: "ApproveStatus" },
     align: "center",
     width: 60,
   },
   {
-    title: "缺领率",
-    dataIndex: "ISSUE_SHORTAGE_RATE",
-    scopedSlots: { customRender: "ISSUE_SHORTAGE_RATE" },
-    align: "center",
-    width: 60,
-  },
-  {
-    title: "默认仓库",
-    dataIndex: "WAREHOUSE_CODE",
-    scopedSlots: { customRender: "WAREHOUSE_CODE" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "仓库名称",
-    dataIndex: "WAREHOUSE_NAME",
-    scopedSlots: { customRender: "WAREHOUSE_NAME" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "仓库库存",
-    dataIndex: "INVENTORY_QTY",
-    scopedSlots: { customRender: "INVENTORY_QTY" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "生效日期",
+    title: "审核日期",
     dataIndex: "ApproveDate",
     scopedSlots: { customRender: "ApproveDate" },
     align: "center",
-    width: 120,
-  },
-  {
-    title: "失效时间",
-    dataIndex: "EXPRITY_DATE",
-    scopedSlots: { customRender: "EXPRITY_DATE" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "备注",
-    dataIndex: "REMARK",
-    scopedSlots: { customRender: "REMARK" },
-    align: "center",
+    width: 110,
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
     align: "center",
-    fixed: "right",
     width: 100,
   },
 ];
@@ -290,10 +215,10 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
-import ErpDosage from "../components/ErpDosage.vue";
+import VariationInfo from "./VariationInfo.vue";
 import { feedSystem, modelType,stateType} from "@/utils/BomParmas.js";
 export default {
-  components: { ErpDosage },
+  components: { VariationInfo },
   data() {
     return {
       data: [],
@@ -401,37 +326,34 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           this.pagination.total = 0;
-          console.log(values["bomdate"]);
-          if (values["bomdate"]) {
-            var bomdate = values["bomdate"].format("YYYY-MM-DD");
-          }
           if (values["range-time-picker1"]) {
             const rangeValue1 = values["range-time-picker1"];
-            var createdatestart = rangeValue1[0].format("YYYY-MM-DD");
-            var createdateend = rangeValue1[1].format("YYYY-MM-DD");
+            var docdatestart = rangeValue1[0].format("YYYY-MM-DD");
+            var docdateend = rangeValue1[1].format("YYYY-MM-DD");
           }
           if (values["range-time-picker2"]) {
             const rangeValue2 = values["range-time-picker2"];
-            var lastmodifieddatestart = rangeValue2[0].format("YYYY-MM-DD");
-            var lastmodifieddateend = rangeValue2[1].format("YYYY-MM-DD");
+            var approvedatestart = rangeValue2[0].format("YYYY-MM-DD");
+            var approvedateend = rangeValue2[1].format("YYYY-MM-DD");
           }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid || "",
-            itemcode: values.itemcode || "",
-            bomdate: bomdate || "",
+            itemcodep: values.itemcodep || "",
+            itemcodec: values.itemcodec || "",
+            ecnchangeorder: values.ecnchangeorder || "",
             approvestatus: values.approvestatus,
-            createdatestart: createdatestart || "",
-            createdateend: createdateend || "",
-            lastmodifieddatestart: lastmodifieddatestart || "",
-            lastmodifieddateend: lastmodifieddateend || "",
+            docdatestart: docdatestart || "",
+            docdateend: docdateend || "",
+            approvedatestart: approvedatestart || "",
+            approvedateend: approvedateend || "",
           };
-          getERPReportAction(parmas, "bomreversequery").then((res) => {
+          getERPReportAction(parmas, "getecnchangeorder").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };

@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 11:42:53
- * @LastEditTime: 2021-10-12 15:00:49
+ * @LastEditTime: 2021-10-16 09:09:28
  * @LastEditors: max
  * @Description: 单个审批
  * @FilePath: /up-admin/src/pages/home/scm/quality/Approve.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="审核" @cancel="close" @ok="handleOk" centered :width="600">
+    <a-modal v-model="visible" title="审批" @cancel="close" @ok="handleOk" centered :width="600">
       <div>
         <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item has-feedback label="到货单后">
