@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-14 08:52:42
+ * @LastEditTime: 2021-10-15 16:39:40
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -10,7 +10,7 @@
   <div>
     <a-spin tip="loading..." :spinning="costLoading">
       <a-card class="card" :bordered="false">
-        <a-back-top />
+        <a-back-top :visibilityHeight="300" />
         <!-- 搜索 -->
         <div class="save-btn">
           <span>
@@ -153,7 +153,7 @@
                   <div class="input-item">
                     <p class="input-lable">备注:</p>
                     <p class="input-number">
-                      <a-input type="textarea"  v-model="quoteRemark" style="width:300px" />
+                      <a-input type="textarea" v-model="quoteRemark" style="width:300px" />
                     </p>
                     <p class="input-text"></p>
                   </div>
@@ -212,8 +212,7 @@
             <a-input size="small" style="width:150px;font-size: 10px;" allowClear @change="(e) => remarkInput(e, record, i)" :value="text" />
           </div>
           <!-- <template slot="dosage" slot-scope="text,record">
-            <p v-if="!record.dosage" @click="dosageClick(record)">{{ text}}</p>
-            <p v-else style="color:#e01111" @click="dosageClick(record)">{{ text}}</p>
+            <p @click="dosageClick(record)">{{ text}}</p>
           </template> -->
         </a-table>
       </a-card>
@@ -478,7 +477,7 @@ export default {
     //用量统计
     toAosage() {
       this.isDosage = true;
-      this.searchDosage = this.searchList.filter((product) => {
+      this.searchDosage = this.tableData.filter((product) => {
         return this.selectedRowKeys.includes(product.ChildCode);
       });
     },
@@ -539,7 +538,6 @@ export default {
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
-      //  this.tableCurrRowId = selectedRowKeys;
     },
     onSelect(record, selected) {
       if (selected) {
@@ -558,7 +556,7 @@ export default {
       this.searchList = [];
       this.selectedRowKeys = [];
       this.searchDosage = [];
-      this.searchData =[]
+      this.searchData = [];
       this.cost = {
         materialTotal: 0, //物料成本
         ultimatelyTotal: 0, //最终成本
@@ -601,6 +599,8 @@ export default {
           if (items.Amount) {
             total += items.Amount;
             sum += items.Amount;
+          } else {
+            items.Amount = 0;
           }
         });
         item.total = parseFloat(sum.toFixed(4));
@@ -614,11 +614,15 @@ export default {
       var sum = 0;
       let total = 0;
       // this.priceNone = [];
+      console.log(this.tableData);
+      console.log(this.searchList);
       let list = this.tableData;
+      // let list = Object.assign(this.tableData, this.searchList);
       list.forEach((item) => {
         sum += item.Price * item.Yl;
         //价格不全数量
       });
+      console.log(sum)
       //物聊费用
       this.cost.materialTotal = parseFloat(sum.toFixed(4));
       //只有添加才计算
@@ -631,7 +635,8 @@ export default {
             return;
           }
           let str = item.Description.split("*");
-          item.Amount = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * str[1];
+          let price1 = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * str[1];
+          item.Amount = parseFloat(price1.toFixed(4));
           item.Description = `产品型号带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
         }
         //计算损耗费用
@@ -694,7 +699,11 @@ export default {
       this.tableData.find((items) => {
         if (items.ChildCode == item.ChildCode) {
           let a = item.Price * item.Yl;
+          items.Price = item.Price
           items.Amount = parseFloat(a.toFixed(4));
+          if (item.Price === null) {
+            item.Price = 0;
+          }
         }
       });
       if (item.Price != item.PriceErp) {
@@ -711,7 +720,6 @@ export default {
         cost = cost.concat(item.list);
       });
       this.costList = cost;
-      // console.log(this.costList);
       this.countCost();
     },
     //修改备注
@@ -765,7 +773,7 @@ export default {
         if (res.data.success) {
           this.$message.success("保存成功!");
           this.reset();
-          this.$router.push({path:'/purchase/list',query:{type:2}});
+          this.$router.push({ path: "/purchase/list", query: { type: 2 } });
         }
         this.costLoading = false;
       });
@@ -783,8 +791,31 @@ export default {
         });
       });
     },
-    removeDosage(index) {
-      this.selectedRowKeys.splice(index, 1);
+    removeDosage(ChildCode) {
+      this.selectedRowKeys.map((item, i) => {
+        if (item == ChildCode) {
+          this.selectedRowKeys.splice(i, 1);
+        }
+      });
+    },
+    dosageClick(record) {
+      return {
+        style: {
+          cursor: "pointer",
+        },
+        on: {
+          // 鼠标单击行
+          click: () => {
+            if (this.selectedRowKeys.indexOf(record.ChildCode) > -1) {
+              console.log("deleting...");
+              this.selectedRowKeys.splice(this.selectedRowKeys.indexOf(record.ChildCode), 1);
+            } else {
+              this.selectedRowKeys.push(record.ChildCode);
+            }
+            this.rowClassName(record);
+          },
+        },
+      };
     },
     rowClassName(record) {
       //选择行后设置颜色
@@ -983,7 +1014,7 @@ export default {
 }
 .save-btn {
   display: flex;
-  justify-content:space-between;
+  justify-content: space-between;
 }
 .table-search {
   display: flex;
@@ -1031,15 +1062,17 @@ export default {
   border: none !important;
   padding: 0 !important;
 }
-/deep/.raemark-input input{
-  font-size:10px
+/deep/.raemark-input input {
+  font-size: 10px;
 }
-/deep/.ant-table{
-  min-height:77vh;
-  max-height:77vh;
+/deep/.ant-table {
+  min-height: 77vh;
+  max-height: 77vh;
   overflow: auto;
 }
-/deep/ .ant-input[disabled],.ant-select-disabled,.ant-input-number-disabled{
-  color:rgba(0,0,0,.5);
+/deep/ .ant-input[disabled],
+.ant-select-disabled,
+.ant-input-number-disabled {
+  color: rgba(0, 0, 0, 0.5);
 }
 </style>

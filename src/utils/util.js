@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-10-14 16:07:24
+ * @LastEditTime: 2021-10-15 10:10:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/util.js
@@ -29,8 +29,10 @@ export function isRegExp(v) {
 }
 //截取时间
 export function splitData(data) {
-  let str = data.split('T');
-  return str[0];
+  if (data !== null) {
+    let str = data.split('T');
+    return str[0];
+  }
 }
 
 export function enquireScreen(call) {
@@ -76,7 +78,7 @@ export function modelType(type) {
       name: "采购价"
     },
   ];
-  let codeName ="";
+  let codeName = "";
   obj.map(item => {
     if (item.type == type) {
       codeName = item.name;

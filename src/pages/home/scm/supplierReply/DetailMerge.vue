@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-10-13 11:51:42
+ * @LastEditTime: 2021-10-15 18:22:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/DetailMerge.vue
@@ -13,6 +13,11 @@
       <div>
         <a-row>
           <a-col :md="6" :sm="24">
+            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入计划批号" allowClear style="width: 200px" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
                 <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
@@ -20,13 +25,8 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入计划批号" allowClear style="width: 200px" v-decorator="['batchno']" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
             <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-week-picker placeholder="选择周" @change="weekChange" v-decorator="['week']"/>
+              <a-week-picker placeholder="选择周" @change="weekChange" v-decorator="['week']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -34,6 +34,8 @@
               <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :md="6" :sm="24">
             <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入产品型号" allowClear style="width: 200px" v-decorator="['mitemname']" />
@@ -55,28 +57,8 @@
         </a-row>
       </div>
     </a-form>
-    <div class="operator">
-      <!-- <a-button v-if="hasPerm('create')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button>
-      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button> -->
-      <!-- <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-      <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-      <span style="margin-left: 8px">
-        <template v-if="hasSelected">
-          {{ `共选中 ${selectedRowKeys.length} 条` }}
-        </template>
-      </span> -->
-    </div>
-    <a-table
-      v-if="hasPerm('search')"
-      :columns="columns"
-      :data-source="data"
-      size="small"
-      :scroll="{ y: scrollY }"
-      :loading="loading"
-      :pagination="pagination"
-      @change="handleTableChange"
-      bordered
-    >
+    <div class="operator"></div>
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 4000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -88,12 +70,13 @@
           <a-tag color="red" v-else>{{ record.MatchStatusName }}</a-tag>
         </div>
       </template>
+      <template slot="time" slot-scope="text">
+        <div>
+          <span>{{ text.RequirementQty }}</span>
+        </div>
+      </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" @click="detail(record)">
-            <a-icon type="profile" />
-            需求日期明细
-          </a>
           <a style="margin-right: 8px" @click="handleExcel(record)">
             <a-icon type="export" />
             导出
@@ -111,69 +94,68 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width: 50,
   },
   {
     title: "计划批号",
     dataIndex: "BatchNo",
     scopedSlots: { customRender: "BatchNo" },
     align: "center",
+    width: 200,
   },
   {
     title: "生产工厂",
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
     align: "center",
-    width: "6%"
+    width: 100,
   },
   {
     title: "周",
     dataIndex: "Week",
     scopedSlots: { customRender: "Week" },
     align: "center",
-    width: "3%",
+    width: 50,
   },
   {
     title: "BOM号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
+    width: 200,
   },
   {
     title: "产品型号",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
+    width: 200,
   },
   {
     title: " 产品规格",
     dataIndex: "Spec",
     scopedSlots: { customRender: "Spec" },
     align: "center",
-    width: "25%"
+    width: 250,
   },
   {
     title: "需求数量",
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
-    width: "5%"
+    width: 80,
   },
   {
     title: "计划状态",
-    dataIndex: "MatchStatus",
-    scopedSlots: { customRender: "MatchStatus" },
+    dataIndex: "Status",
+    scopedSlots: { customRender: "Status" },
     align: "center",
-  },
-  {
-    title: "操作",
-    scopedSlots: { customRender: "action" },
-    align: "center",
+    width: 80,
   },
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getSupplierAction} from "@/services/web.js";
+import { getSupplierAction } from "@/services/web.js";
 import Requirement from "@/components/requirement/Requirement.vue";
 import XLSX from "xlsx";
 export default {
@@ -183,7 +165,7 @@ export default {
     return {
       data: [],
       columns,
-      loading: true,
+      loading: false,
       pagination: {
         current: 1,
         total: 0,
@@ -203,6 +185,7 @@ export default {
       isSearch: false,
       isDetail: false,
       detailData: [],
+      timeDataLenght: 0,
     };
   },
   updated() {
@@ -217,7 +200,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    this.getListAll();
+    // this.getListAll();
   },
   methods: {
     closeModal() {
@@ -253,6 +236,45 @@ export default {
         }
       });
     },
+    setTimeList() {
+      let dateList = this.data[0].RequirementDetails;
+      dateList.forEach((item, index) => {
+        let dateArray = item.RequirementDate.split(/T|-/);
+        this.columns.push({
+          title: dateArray[1] + "/" + dateArray[2],
+          dataIndex: "table_" + index,
+          align: "center",
+          width: "40px",
+          customCell: this.renderTimeBackground,
+          scopedSlots: { customRender: "time" },
+        });
+      });
+      this.data = this.data.map((item) => {
+        let obj = {};
+        item.RequirementDetails.map((items, index) => {
+          obj["table_" + index] = items;
+          items.key = "table_" + index;
+        });
+        return { ...item, ...obj };
+      });
+      this.columns.push({
+        title: "操作",
+        scopedSlots: { customRender: "action" },
+        align: "center",
+        fixed: "right",
+        width: 100,
+      });
+    },
+    renderTimeBackground(record, rowIndex) {
+      let l = record.RequirementDetails.length;
+      for (let i = 0; i < l; i++) {
+        return {
+          style: {
+            "background-color":record["table_" + i].Color,
+          },
+        };
+      }
+    },
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
@@ -260,7 +282,7 @@ export default {
     //重置搜索
     reset() {
       this.getListAll();
-      this.week =""
+      this.week = "";
       this.searchForm.resetFields();
     },
     //日期转换
@@ -291,23 +313,27 @@ export default {
             var begindt = this.formatDateTime(values["range-time-picker"][0]);
             var enddt = this.formatDateTime(values["range-time-picker"][1]);
           }
-          if(this.week != ""){
-            var w =this.week
+          if (this.week != "") {
+            var w = this.week;
           }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            week:w,
+            week: w,
             batchno: values.batchno,
-            mitemcode:values.mitemcode,
-            mitemname:values.mitemname,
-            startdate:begindt,
-            enddate:enddt
+            mitemcode: values.mitemcode,
+            mitemname: values.mitemname,
+            startdate: begindt,
+            enddate: enddt,
           };
           getSupplierAction(parmas, "reply/getmergedetails").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
+              if (this.data.length > 0) {
+                this.setTimeList();
+              }
+              console.log(this.data);
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
@@ -319,11 +345,6 @@ export default {
         }
       });
     },
-    getCheckboxProps: (record) => ({
-      props: {
-        disabled: record.Status !== "APPROVED", // Column configuration not to be checked
-      },
-    }),
     //分页
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
@@ -372,9 +393,6 @@ export default {
 
 <style scoped lang="less">
 /deep/.ant-table {
-  min-height: 0vh;
-}
-/deep/.ant-table-body {
-  min-height: 56vh;
+  min-height: 62vh;
 }
 </style>

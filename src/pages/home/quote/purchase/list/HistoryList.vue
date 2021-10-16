@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-12 15:00:13
+ * @LastEditTime: 2021-10-15 16:41:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/HistoryList.vue
@@ -25,7 +25,7 @@
         </div>
         <div>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="dataSource" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(dataSource) => dataSource.Id" bordered>
+            <a-table :columns="columns" :data-source="dataSource" :size="size" :scroll="{ y:600 }" :pagination="pagination" :rowKey="(dataSource) => dataSource.Id" bordered>
               <template slot="StatusCheck" slot-scope="record">
                 <div>
                   <a-tag color="green" v-if="record == 'Y'">已审核</a-tag>
@@ -35,6 +35,11 @@
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+                </div>
+              </template>
+               <template slot="DatetimeCreated" slot-scope="text">
+                <div>
+                  <span>{{timeSplit(text)}}</span>
                 </div>
               </template>
               <template slot="action" slot-scope="text, record">
@@ -92,18 +97,20 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "5%",
+    width:50,
   },
   {
     title: "需求公司",
     dataIndex: "EnterpriseName",
     scopedSlots: { customRender: "description" },
     align: "center",
+    width:100,
   },
   {
     title: "生产工厂",
     dataIndex: "PlantName",
     align: "center",
+    width:100,
   },
   {
     title: "产品大类",
@@ -149,6 +156,7 @@ const columns = [
     dataIndex: "DatetimeCreated",
     scopedSlots: { customRender: "DatetimeCreated" },
     align: "center",
+    width:200,
   },
   {
     title: "最新版本",
@@ -187,6 +195,9 @@ export default {
     this.getList();
   },
   methods: {
+    timeSplit(str){
+      return str.replace("T","/")
+    },
     //复制版本
     reloadCost(id, type) {
       this.$emit("reloadCost", id, type);

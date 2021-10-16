@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-10-14 18:13:00
+ * @LastEditTime: 2021-10-15 10:04:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/DetailMerge.vue
@@ -13,15 +13,15 @@
       <div>
         <a-row>
           <a-col :md="6" :sm="24">
+            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入计划批号" allowClear style="width: 200px" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
                 <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
               </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入计划批号" allowClear style="width: 200px" v-decorator="['batchno']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -34,6 +34,8 @@
               <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :md="6" :sm="24">
             <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入产品型号" allowClear style="width: 200px" v-decorator="['mitemname']" />
@@ -66,7 +68,7 @@
       </div>
     </a-form>
     <div class="operator"></div>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY,x:3000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data,index) => data.BatchId + index" bordered>
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 4000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data, index) => data.BatchId + index" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -79,10 +81,10 @@
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" @click="detail(record)">
+          <!-- <a style="margin-right: 8px" @click="detail(record)">
             <a-icon type="profile" />
             需求日期明细
-          </a>
+          </a> -->
           <a style="margin-right: 8px" @click="handleExcel(record)">
             <a-icon type="export" />
             导出
@@ -101,61 +103,63 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width: 50,
   },
   {
     title: "计划批号",
     dataIndex: "BatchNo",
     scopedSlots: { customRender: "BatchNo" },
     align: "center",
+    width: 200,
   },
   {
     title: "生产工厂",
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
     align: "center",
+    width: 100,
   },
   {
     title: "周",
     dataIndex: "Week",
     scopedSlots: { customRender: "Week" },
     align: "center",
-    width: "3%",
+    width: 50,
   },
   {
     title: "BOM号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
+    width: 200,
   },
   {
     title: "产品型号",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
+    width: 200,
   },
   {
     title: " 产品规格",
     dataIndex: "Spec",
     scopedSlots: { customRender: "Spec" },
     align: "center",
+    width: 250,
   },
   {
     title: "需求数量",
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
+    width: 80,
   },
   {
     title: "计划状态",
     dataIndex: "Status",
     scopedSlots: { customRender: "Status" },
     align: "center",
-  },
-  {
-    title: "操作",
-    scopedSlots: { customRender: "action" },
-    align: "center",
+    width: 80,
   },
 ];
 import getTableScroll from "@/utils/setTableHeight";
@@ -171,7 +175,7 @@ export default {
     return {
       data: [],
       columns,
-      loading: true,
+      loading: false,
       pagination: {
         current: 1,
         total: 0,
@@ -205,7 +209,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    this.getListAll();
+    // this.getListAll();
   },
   methods: {
     closeModal() {
@@ -231,16 +235,9 @@ export default {
       getScmAction(parmas, "requirement/detail/getmergedetails").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
-          let dateList = this.data[0].RequirementDetails;
-          dateList.forEach((item) => {
-            let dateArray = item.RequirementDate.split("T").split("-");
-            console.log(dateArray)
-            let date = dateArray[0].replace(/-/g, "/");
-            this.columns.push({
-              title:date,
-              dataIndex:date,
-            });
-          });
+          if (this.data.length > 0) {
+            this.setTimeList();
+          }
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -249,6 +246,32 @@ export default {
         } else {
           this.loading = false;
         }
+      });
+    },
+    setTimeList() {
+      let dateList = this.data[0].RequirementDetails;
+      dateList.forEach((item, index) => {
+        let dateArray = item.RequirementDate.split(/T|-/);
+        this.columns.push({
+          title: dateArray[1] + "/" + dateArray[2],
+          dataIndex: "table" + index,
+          align: "center",
+          width: "40px",
+        });
+      });
+      this.data = this.data.map((item) => {
+        let obj = {};
+        item.RequirementDetails.map((items, index) => {
+          obj["table" + index] = items.RequirementQty;
+        });
+        return { ...item, ...obj };
+      });
+      this.columns.push({
+        title: "操作",
+        scopedSlots: { customRender: "action" },
+        align: "center",
+        fixed: "right",
+        width: 100,
       });
     },
     //多选
@@ -279,9 +302,9 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           console.log("Received values of form: ", values.week);
           this.data = [];
           this.pagination.total = 0;
@@ -307,6 +330,9 @@ export default {
           getScmAction(parmas, "requirement/detail/getmergedetails").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
+              if (this.data.length > 0) {
+                this.setTimeList();
+              }
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
@@ -392,5 +418,8 @@ export default {
 }
 /deep/.ant-table-body {
   min-height: 0vh;
+}
+/deep/.ant-form-item {
+  margin-bottom: 0px;
 }
 </style>

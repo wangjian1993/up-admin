@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-15 15:39:45
- * @LastEditTime: 2021-10-12 15:00:08
+ * @LastEditTime: 2021-10-15 11:48:10
  * @LastEditors: max
  * @Description: 用量统计
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Dosage.vue
@@ -17,13 +17,13 @@
             <div class="table-search">
               <a-form layout="inline">
                 <a-form-item label="用量统计">
-                  <a-input v-model="dosage" disabled style="width:80px"/>
+                  <a-input v-model="dosage" disabled style="width:80px" />
                 </a-form-item>
                 <a-form-item label="基数">
-                  <a-input-number v-model="radix" style="width:80px" :min="0" @change="radixChange"/>
+                  <a-input-number v-model="radix" style="width:80px" :min="0" @change="radixChange" />
                 </a-form-item>
                 <a-form-item label="费用">
-                  <a-input v-model="cost" disabled style="width:80px"/>
+                  <a-input v-model="cost" disabled style="width:80px" />
                 </a-form-item>
                 <a-form-item>
                   <a-button type="primary" @click="dosageCount">
@@ -35,7 +35,7 @@
                 </a-form-item>
               </a-form>
             </div>
-            <a-table :columns="columns" :data-source="searchDosage" :size="size" :pagination="pagination" :rowKey="(searchDosage) => searchDosage.Id" bordered @change="handleTableChange">
+            <a-table :columns="columns" :data-source="searchDosage" :size="size" :pagination="pagination" :rowKey="(searchDosage) => searchDosage.Id" :scroll="{ y: 600 }" bordered @change="handleTableChange">
               <template slot="StatusCheck" slot-scope="record">
                 <div>
                   <a-tag color="green" v-if="record == 'Y'">已审核</a-tag>
@@ -107,7 +107,7 @@ export default {
       columns,
       loading: false,
       dosage: 0,
-      cost:0,
+      cost: 0,
       radix: 1,
       pagination: {
         current: 1,
@@ -138,23 +138,27 @@ export default {
       let c = this.radix * this.dosage;
       this.cost = parseFloat(c.toFixed(4));
     },
-    radixChange(e){
+    radixChange(e) {
       let c = e * this.dosage;
       this.cost = parseFloat(c.toFixed(4));
-      localStorage.setItem("radix",e)
+      localStorage.setItem("radix", e);
     },
     empty() {
       this.$emit("empty");
       this.dosage = 0;
-      this.cost =0;
-      this.radix =0;
+      this.cost = 0;
+      this.radix = 0;
     },
-    remove(index, item) {
-      this.searchDosage.splice(index, 1);
-      this.dosage = this.dosage - item.Yl;
-      let c = this.radix * this.dosage;
-      this.cost = parseFloat(c.toFixed(4));
-      this.$emit("remove", item);
+    remove(index, list) {
+      this.searchDosage.map((item,i) => {
+        if (item.ChildCode == list.ChildCode) {
+          this.searchDosage.splice(i, 1);
+          this.dosage = this.dosage - item.Yl;
+          let c = this.radix * this.dosage;
+          this.cost = parseFloat(c.toFixed(4));
+          this.$emit("remove", item.ChildCode);
+        }
+      });
     },
     close() {
       this.$emit("closeModal");
