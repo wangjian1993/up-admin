@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-10-16 18:08:49
+ * @LastEditTime: 2021-10-18 10:55:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/VariationInfo.vue
@@ -52,7 +52,22 @@
         </div>
         <div>
           <a-card title="BOM变更" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 300, x: 2700 }" :pagination="pagination" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered>
+            <a-table
+              :columns="columns"
+              :data-source="list"
+              :size="size"
+              :scroll="{ y: 300, x: 2700 }"
+              :pagination="pagination"
+              :customRow="handleClickRow"
+              @change="handleTableChange"
+              :rowKey="(list) => list.BOM_D_ID"
+              bordered
+              :rowClassName="
+                (record, index) => {
+                  return index === selectIndex ? 'active' : '';
+                }
+              "
+            >
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -408,6 +423,7 @@ export default {
       modelData: [],
       dateil: [],
       dateilLoading: false,
+      selectIndex: -1,
     };
   },
   created() {
@@ -484,7 +500,7 @@ export default {
       this.pagination2.pageSize = pagination.pageSize;
       this.getDateil();
     },
-    handleClickRow(record) {
+    handleClickRow(record, index) {
       return {
         style: {
           // 行背景色
@@ -494,7 +510,7 @@ export default {
           click: () => {
             // this.isModelInfo = true;
             // this.modelData = record;
-            console.log("111");
+            this.selectIndex = index;
             this.dateil = record;
             this.getDateil();
           },
@@ -533,5 +549,8 @@ export default {
 }
 /deep/.ant-modal {
   height: 100%;
+}
+/deep/.active {
+  background: rgb(24, 151, 20);
 }
 </style>

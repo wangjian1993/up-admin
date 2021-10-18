@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-15 16:42:40
+ * @LastEditTime: 2021-10-18 18:18:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -56,9 +56,14 @@
         </div>
         <div>
           <a-card title="物料列表" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-tabs default-active-key="1">
+            <a-form layout="inline" :form="keywordForm">
+              <a-form-item label="关键字匹配">
+                <a-input v-model="keyword" allowClear @change="listSearch" />
+              </a-form-item>
+            </a-form>
+            <a-tabs default-active-key="1" @change="callback">
               <a-tab-pane key="1" tab="展开显示">
-                <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 600 }" :pagination="pagination" :rowKey="(list) => list.IndexNo + 'tab1'" bordered>
+                <a-table :columns="columns" :data-source="searchList" :size="size" :scroll="{ y: 600 }" :pagination="pagination" :rowKey="(list) => list.IndexNo + 'tab1'" bordered>
                   <div slot="e10" slot-scope="text, record">
                     <p>{{ record.PriceErpSource == "" ? text : text + `(${record.PriceErpSource})` }}</p>
                   </div>
@@ -182,6 +187,9 @@ export default {
       ConfigList: [],
       loading: false,
       treeData: [],
+      keywordForm: this.$form.createForm(this),
+      searchList: [],
+      keyword: "",
     };
   },
   created() {
@@ -222,6 +230,7 @@ export default {
       getCostConfig(parmas, "getquotedetail").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.ItemInfo.ItemChildList;
+          this.searchList = this.list;
           this.info = res.data.data.ItemInfo;
           this.ConfigList = this.arrayGroup(res.data.data.ConfigList);
           let data = [];
@@ -273,6 +282,22 @@ export default {
     handleCancel() {
       this.isAddModal = false;
     },
+    callback(key) {
+      console.log(key);
+    },
+    //列表搜索
+    listSearch(e) {
+      let keyword = e.target.value;
+      this.searchList = this.list.filter((product) => {
+        return Object.keys(product).some((key) => {
+          return (
+            String(product[key])
+              .toLowerCase()
+              .indexOf(keyword.toLowerCase()) > -1
+          );
+        });
+      });
+    },
   },
   components: {},
 };
@@ -293,9 +318,9 @@ export default {
 /deep/.ant-card-head {
   padding: 0;
 }
-/deep/.ant-table{
-  min-height:77vh;
-  max-height:77vh;
+/deep/.ant-table {
+  min-height: 77vh;
+  max-height: 77vh;
   overflow: auto;
 }
 </style>

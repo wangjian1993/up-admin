@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-10-11 16:12:55
+ * @LastEditTime: 2021-10-18 17:12:36
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
@@ -42,7 +42,7 @@
               <a-col :md="8" :sm="24">
                 <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
                   <div style="display:flex;">
-                    <a-upload name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload" :remove="removeFile">
+                    <a-upload name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload" :remove="removeFile" :fileList="fileList">
                       <a-button> <a-icon type="upload" />添加execl文件 </a-button>
                     </a-upload>
                   </div>
@@ -100,16 +100,14 @@ export default {
       lineList: [],
       lineId: "",
       people: "",
+      fileList: [],
     };
   },
   created() {},
   methods: {
     //移除文件
-    removeFile(file){
-      console.log(file);
-      if(file.status === "removed"){
-        this.errorList = []
-      }
+    removeFile(){
+      this.fileList =[]
     },
     close() {
       this.$emit("closeModal");
@@ -287,7 +285,8 @@ export default {
         .split(".")
         .pop()
         .toLocaleLowerCase();
-      this.uploadFile = file;
+      let fileList = [...this.fileList, file];
+      this.fileList = fileList.slice(-1);
       if (fileExt === "xlsx" || fileExt === "xls") {
         this.readFile(file);
         this.file = file;

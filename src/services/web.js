@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-10-14 13:52:02
+ * @LastEditTime: 2021-10-18 16:15:03
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -157,4 +157,17 @@ export function setQualityAction(params,action) {
 }
 export function setBuyerAction(params,action) {
     return request(`${UP_WEB}/purchase/reset/${action}`, METHOD.POST, params);
+}
+
+/**
+ * @description: 物料输出计划
+ * @param {*} params
+ * @param {*} action
+ * @return {*}
+ */
+ export function getMitemPlanAction(params,action) {
+    return request(`${UP_WEB}/mitemplan/${action}`, METHOD.GET, params);
+}
+export function setMitemPlanAction(params,action) {
+    return request(`${UP_WEB}/mitemplan/${action}`, METHOD.POST, params);
 }

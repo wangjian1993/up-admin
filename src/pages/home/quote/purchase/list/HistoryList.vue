@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-15 16:41:57
+ * @LastEditTime: 2021-10-18 17:18:24
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/HistoryList.vue
@@ -162,6 +162,12 @@ const columns = [
     title: "最新版本",
     dataIndex: "QuoteVersion",
     scopedSlots: { customRender: "QuoteVersion" },
+    align: "center",
+  },
+  {
+    title: "审核人",
+    dataIndex: "UserCheck",
+    scopedSlots: { customRender: "UserCheck" },
     align: "center",
   },
   {
