@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:39:23
- * @LastEditTime: 2021-10-18 17:45:34
+ * @LastEditTime: 2021-10-19 17:58:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ExportPlan.vue
@@ -19,19 +19,8 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
-              <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-week-picker placeholder="选择周" @change="weekChange" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
             <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入计划批号" v-decorator="['batchid']" />
+              <a-input style="width: 200px" placeholder="请输入计划批号" v-decorator="['batchno']" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -39,55 +28,19 @@
       <span style="float: right; margin-top: 3px;">
         <a-button type="primary" @click="search">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-        <a @click="toggleAdvanced" style="margin-left: 8px">
-          {{ advanced ? "收起" : "展开" }}
-          <a-icon :type="advanced ? 'up' : 'down'" />
-        </a>
       </span>
     </a-form>
     <div class="operator">
       <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
     </div>
-    <a-table
-      :columns="columns"
-      :data-source="dataSource"
-      size="small"
-      :scroll="{ y: scrollY }"
-      :loading="loading"
-      :pagination="pagination"
-      @change="handleTableChange"
-      :rowKey="(dataSource) => dataSource.Id"
-      :row-selection="{
-        selectedRowKeys: selectedRowKeys,
-        onChange: onSelectChange,
-      }"
-      bordered
-    >
+    <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text, record">
-        <div>
-          <a-tag :color="text === 'APPROVAL' || text === 'PUSHED_ERR' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
-        </div>
-      </template>
-      <template slot="MatchStatus" slot-scope="text, record">
-        <div>
-          <a-tag :color="text === 'ERR_MATCH' || text === 'PUSHED_ERR' || text === 'CANNOT_MATCH' || text === 'NO_MATCH' ? 'red' : 'green'">{{ record.MatchStatusName }}</a-tag>
-        </div>
-      </template>
       <template slot="RequirementDate" slot-scope="text">
-        <p>{{ splitData(text) }}</p>
-      </template>
-      <template slot="action" slot-scope="text, record">
-        <div>
-          <a style="margin-right: 8px" @click="details(record)">
-            <a-icon type="profile" />
-            详情
-          </a>
-        </div>
+        <span>{{ splitData(text) }}</span>
       </template>
     </a-table>
     <!-- 查看详情 -->
@@ -106,7 +59,7 @@
               <a-tag :color="drawerItem.Status === 'APPROVAL' || drawerItem.Status === 'PUSHED_ERR' ? 'red' : 'green'">{{ drawerItem.StatusName }}</a-tag>
             </div>
           </a-descriptions-item>
-           <a-descriptions-item label="物料状态">
+          <a-descriptions-item label="物料状态">
             <div>
               <a-tag :color="drawerItem.MatchStatus === 'ERR_MATCH' || drawerItem.MatchStatus === 'PUSHED_ERR' || drawerItem.MatchStatus === 'CANNOT_MATCH' || drawerItem.MatchStatus === 'NO_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
             </div>
@@ -121,105 +74,104 @@
 <script>
 import { getMitemPlanAction } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcel";
-import { splitData} from "@/utils/util.js";
+import { splitData } from "@/utils/util.js";
 const columns = [
   {
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width: 50,
   },
   {
     title: "计划批号",
     dataIndex: "BatchNo",
     scopedSlots: { customRender: "BatchNo" },
     align: "center",
+    width: 180,
   },
   {
     title: "生产工厂",
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
     align: "center",
-    width: "5%",
+    width: 80,
   },
   {
-    title: "子件品号",
+    title: "子件BOM号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
+    width: 180,
   },
   {
-    title: "子件品号",
+    title: "子件品名",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
-  },
-  {
-    title: " 子件规格",
-    dataIndex: "Spec",
-    align: "center",
-    width: "20%",
+    width: 180,
   },
   {
     title: "需求日期",
     dataIndex: "RequirementDate",
     scopedSlots: { customRender: "RequirementDate" },
     align: "center",
+    width: 100,
   },
   {
-    title: "需求数量",
-    dataIndex: "Qty",
-    scopedSlots: { customRender: "Qty" },
+    title: "库存数量",
+    dataIndex: "StockQty",
+    scopedSlots: { customRender: "StockQty" },
     align: "center",
-    width: "5%",
+    width: 100,
   },
   {
-    title: "子件需求数量",
-    dataIndex: "Qty",
-    scopedSlots: { customRender: "Qty" },
+    title: "待排产需求总数量",
+    dataIndex: "WaitScheduleQty",
+    scopedSlots: { customRender: "WaitScheduleQty" },
     align: "center",
-    width: "5%",
+    width: 160,
+  },
+  {
+    title: "待产需求总数量",
+    dataIndex: "WaitProductionQty",
+    scopedSlots: { customRender: "WaitProductionQty" },
+    align: "center",
+    width: 160,
   },
   {
     title: "未来可用需求总量",
-    dataIndex: "Qty",
-    scopedSlots: { customRender: "Qty" },
+    dataIndex: "FutureAvailableQty",
+    scopedSlots: { customRender: "FutureAvailableQty" },
     align: "center",
-    width: "5%",
+    width: 160,
   },
   {
     title: "已预留总数",
-    dataIndex: "Qty",
-    scopedSlots: { customRender: "Qty" },
+    dataIndex: "TotalReservedQty",
+    scopedSlots: { customRender: "TotalReservedQty" },
     align: "center",
-    width: "5%",
+    width: 100,
   },
   {
     title: "可用总数",
-    dataIndex: "Qty",
-    scopedSlots: { customRender: "Qty" },
+    dataIndex: "AvailableQty",
+    scopedSlots: { customRender: "AvailableQty" },
     align: "center",
     width: "5%",
   },
   {
     title: "待采购数量",
-    dataIndex: "Qty",
-    scopedSlots: { customRender: "Qty" },
+    dataIndex: "PurchaseQty",
+    scopedSlots: { customRender: "PurchaseQty" },
     align: "center",
-    width: "5%",
+    width: 100,
   },
-  {
-    title: "计划状态",
-    dataIndex: "Status",
-    scopedSlots: { customRender: "Status" },
-    align: "center",
-  }
 ];
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
-import UserList from '@/components/app-user/UserList'
+import UserList from "@/components/app-user/UserList";
 export default {
-  components: {UserList},
+  components: { UserList },
   props: ["batchid"],
   data() {
     return {
@@ -246,7 +198,7 @@ export default {
       week: "",
       drawerItem: [],
       isSearch: false,
-      isUserList:false
+      isUserList: false,
     };
   },
   updated() {
@@ -254,8 +206,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(115);
-      console.log(this.scrollY);
+      this.scrollY = getTableScroll(30);
     });
     this.getListAll();
     this.getPlant();
@@ -274,17 +225,17 @@ export default {
   },
   methods: {
     splitData,
-     //pmc选择
-    userSearch(){
-      this.isUserList =true
+    //pmc选择
+    userSearch() {
+      this.isUserList = true;
     },
-    closeUserModal(){
-      this.isUserList =false
+    closeUserModal() {
+      this.isUserList = false;
     },
-    okUserModal(item){
-      this.isUserList =false;
+    okUserModal(item) {
+      this.isUserList = false;
       this.searchForm.setFieldsValue({
-        pmc:item.Name
+        pmc: item.Name,
       });
     },
     //关闭弹出框
@@ -327,7 +278,6 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        batchno: this.batchid || "",
       };
       getMitemPlanAction(parmas, "result/getexport").then((res) => {
         if (res.data.success) {
@@ -363,16 +313,11 @@ export default {
           console.log("Received values of form: ", values);
           this.dataSourcedata = [];
           this.pagination.total = 0;
-          if (this.week != "") {
-            var w = this.week;
-          }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             batchno: values.batchno,
-            week: w,
-            pmc: values.pmc,
           };
           getMitemPlanAction(parmas, "result/getexport").then((res) => {
             if (res.data.success) {
@@ -389,11 +334,14 @@ export default {
       });
     },
     exportExcel() {
+      let inputData = this.searchForm.getFieldsValue();
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
+        plantid: inputData.plantid,
+        batchno: inputData.batchno,
       };
-      getMitemPlanAction(parmas, "getdetails").then((res) => {
+      getMitemPlanAction(parmas, "result/getexport").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {
@@ -405,6 +353,7 @@ export default {
               if (Array.isArray(item[key])) {
                 item[key] = item[key].join(",");
               }
+              item.RequirementDate = splitData(item.RequirementDate);
             });
             return item;
           });
@@ -414,9 +363,8 @@ export default {
               header.push({ key: item.dataIndex, title: item.title });
             }
           });
-          var timestamp = Date.parse(new Date());
           try {
-            ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
+            ExportExcel(header, dataSource, `物料需求计划_${inputData.batchno}.xlsx`);
             this.$message.success("导出数据成功!");
           } catch (error) {
             // console.log(error);
@@ -429,5 +377,4 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
-</style>
+<style scoped lang="less"></style>

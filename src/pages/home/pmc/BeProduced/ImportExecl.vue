@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-10-18 17:08:22
+ * @LastEditTime: 2021-10-19 09:30:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ImportExecl.vue
@@ -95,10 +95,10 @@ export default {
   methods: {
     //移除文件
     removeFile() {
-      this.fileList1 =[]
+      this.fileList1 = [];
     },
-    removeFile2(){
-       this.fileList2 =[]
+    removeFile2() {
+      this.fileList2 = [];
     },
     close() {
       this.$emit("closeModal");
@@ -113,6 +113,18 @@ export default {
     weekChange(date, dateString) {
       let str = dateString.split("-");
       this.week = str[1].replace("周", "");
+    },
+    //时间格式化
+    formatDate(numb, format = "/") {
+      const time = new Date((numb - 1) * 24 * 3600000 + 1);
+      time.setYear(time.getFullYear() - 70);
+      const year = time.getFullYear() + "";
+      const month = time.getMonth() + 1 + "";
+      const date = time.getDate() - 1 + "";
+      if (format && format.length === 1) {
+        return year + format + month + format + date;
+      }
+      return year + (month < 10 ? "0" + month : month) + (date < 10 ? "0" + date : date);
     },
     handleOk() {
       this.errorList = [];
@@ -197,10 +209,10 @@ export default {
               }
               break;
             case "开工日期":
-              list.CommencementDate = item[key];
+              list.CommencementDate = this.formatDate(item[key], "-");
               break;
             case "需求日期":
-              list.RequirementDate = item[key];
+              list.RequirementDate = this.formatDate(item[key], "-");
               break;
             case "周":
               if ((typeof item[key] !== "number" && item[key] !== "") || item[key] < 0 || item[key] > 53) {
@@ -241,7 +253,7 @@ export default {
         .pop()
         .toLocaleLowerCase();
       let fileList = [...this.fileList2, file];
-      this.fileList2 = fileList.slice(-1);  
+      this.fileList2 = fileList.slice(-1);
       if (fileExt === "xlsx" || fileExt === "xls") {
         this.readFile(file, 2);
         this.file = file;

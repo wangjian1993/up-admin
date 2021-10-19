@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-15 16:39:40
+ * @LastEditTime: 2021-10-19 17:38:48
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -603,10 +603,13 @@ export default {
             items.Amount = 0;
           }
         });
-        item.total = parseFloat(sum.toFixed(4));
+        console.log("sum",sum);
+        let totalSum = Number(sum);
+        console.log("totalSum",totalSum);
+        item.total = parseFloat(totalSum.toFixed(4));
       });
       this.costTotal = total;
-      let expenses = this.cost.materialTotal + this.costTotal;
+      let expenses = Number(this.cost.materialTotal + this.costTotal);
       this.cost.ultimatelyTotal = parseFloat(expenses.toFixed(4));
     },
     //计算物料成本
@@ -614,15 +617,15 @@ export default {
       var sum = 0;
       let total = 0;
       // this.priceNone = [];
-      console.log(this.tableData);
-      console.log(this.searchList);
+      // console.log(this.tableData);
+      // console.log(this.searchList);
       let list = this.tableData;
       // let list = Object.assign(this.tableData, this.searchList);
       list.forEach((item) => {
         sum += item.Price * item.Yl;
         //价格不全数量
       });
-      console.log(sum)
+      // console.log(sum)
       //物聊费用
       this.cost.materialTotal = parseFloat(sum.toFixed(4));
       //只有添加才计算
@@ -668,7 +671,7 @@ export default {
       });
       this.costTotal = total;
       //最终费用
-      let expenses = this.cost.materialTotal + this.costTotal;
+      let expenses =Number(this.cost.materialTotal + this.costTotal);
       this.cost.ultimatelyTotal = parseFloat(expenses.toFixed(4));
     },
     arrayGroup(arr) {
@@ -698,8 +701,8 @@ export default {
     priceNumber(item, index) {
       this.tableData.find((items) => {
         if (items.ChildCode == item.ChildCode) {
-          let a = item.Price * item.Yl;
-          items.Price = item.Price
+          let a =item.Price * item.Yl;
+          items.Price = item.Price;
           items.Amount = parseFloat(a.toFixed(4));
           if (item.Price === null) {
             item.Price = 0;
@@ -750,14 +753,14 @@ export default {
           item.Remark = "";
         }
       });
-      var obj = Object.assign(this.tableData, this.searchList);
+      // var obj = Object.assign(this.tableData, this.searchList);
       let cost = [];
       this.costList.map((item) => {
         cost = cost.concat(item.list);
       });
       let parmas = {
         CostBaseList: cost,
-        ItemChildList: obj,
+        ItemChildList: this.tableData,
         EnterpriseId: this.searchData.enterpriseid,
         PlantId: this.searchData.plantid,
         ItemCode: this.costInfo.ItemCode,
@@ -807,7 +810,7 @@ export default {
           // 鼠标单击行
           click: () => {
             if (this.selectedRowKeys.indexOf(record.ChildCode) > -1) {
-              console.log("deleting...");
+              // console.log("deleting...");
               this.selectedRowKeys.splice(this.selectedRowKeys.indexOf(record.ChildCode), 1);
             } else {
               this.selectedRowKeys.push(record.ChildCode);

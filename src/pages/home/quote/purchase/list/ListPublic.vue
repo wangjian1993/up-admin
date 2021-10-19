@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-10-18 17:17:45
+ * @LastEditTime: 2021-10-19 15:57:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -604,7 +604,7 @@ export default {
             });
           });
           ConfigList.map((item, index) => {
-            let l =item.list.length - 1
+            let l = item.list.length - 1;
             if (index == 0) {
               mergeTitle.push({
                 s: { r: 6, c: 0 },
@@ -618,7 +618,7 @@ export default {
               console.log({
                 s: { r: 6 + ConfigList[index - 1].list.length, c: 0 },
                 e: { r: 6 + l + ConfigList[index - 1].list.length, c: 0 },
-              })
+              });
             }
           });
           _data.push(["物料成本", info.MaterialCost, null, null, null, null, null, null, null, null, null, null, null, null, null]);

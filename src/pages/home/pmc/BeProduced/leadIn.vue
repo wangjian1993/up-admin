@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-18 17:45:09
+ * @LastEditTime: 2021-10-19 10:21:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/leadIn.vue
@@ -97,16 +97,37 @@
               删除
             </a>
           </a-popconfirm>
-          <a style="margin-right: 8px" @click="detail(record)">
+          <a style="margin-right: 8px" @click="showInfo(record)">
             <a-icon type="profile" />
-            查看计算结果
+            详情
+          </a>
+          <a style="margin-right: 8px" @click="errorInfo(record)" v-if="record.Status === 'CALCULATION_EXCEPTION' || record.Status === 'IMPORT_EXCEPTION'">
+            <a-icon type="profile" />
+            异常信息
+          </a>
+          <a style="margin-right: 8px" @click="detail(record)" v-if="record.Status === 'CALCULATION_COMPLETED'">
+            <a-icon type="profile" />
+            计算结果
           </a>
         </div>
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
+    <div>
+      <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
+        <a-descriptions title="详情" :column="1">
+          <a-descriptions-item v-for="(item, index) in filterData" :key="index" :label="item.title">{{ drawerItem[item.dataIndex] }}</a-descriptions-item>
+          <a-descriptions-item label="状态">
+            <div>
+              <a-tag :color="drawerItem.Status === 'PROCESSING' || drawerItem.MatchStatusName === 'PENDING' || drawerItem.Status === 'IMPORT_EXCEPTION' || drawerItem.MatchStatusName === 'CALCULATION_EXCEPTION' ? 'red' : 'green'">{{ drawerItem.StatusName }}</a-tag>
+            </div>
+          </a-descriptions-item>
+        </a-descriptions>
+      </a-drawer>
+    </div>
     <import-execl v-if="isExecl" :plantArray="plantList" @closeModal="closeModal"></import-execl>
     <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
+    <error-info v-if="isError" :errorData="errorData" @closeModal="closeErrorModal"></error-info>
   </div>
 </template>
 
@@ -147,12 +168,14 @@ const columns = [
     dataIndex: "WaitProductionQty",
     scopedSlots: { customRender: "WaitProductionQty" },
     align: "center",
+    width: 120,
   },
   {
     title: "待排产计划数量",
     dataIndex: "WaitScheduleQty",
     scopedSlots: { customRender: "WaitScheduleQty" },
     align: "center",
+    width: 120,
   },
   {
     title: "计划状态",
@@ -171,8 +194,9 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemPlanAction, setMitemPlanAction } from "@/services/web.js";
 import UserList from "@/components/app-user/UserList";
+import ErrorInfo from "./ErrorInfo.vue";
 export default {
-  components: { ImportExecl, UserList },
+  components: { ImportExecl, UserList, ErrorInfo },
   props: ["plantList", "stateList"],
   data() {
     return {
@@ -197,6 +221,10 @@ export default {
       week: "",
       isSearch: false,
       isUserList: false,
+      isError: false,
+      errorData: [],
+      isDrawer: false,
+      drawerItem: [],
     };
   },
   updated() {
@@ -206,6 +234,13 @@ export default {
     hasSelected() {
       return this.selectedRowKeys.length > 0;
     },
+    filterData() {
+      return this.columns.filter((obj) => {
+        if (obj.dataIndex !== "Status") {
+          return obj.dataIndex;
+        }
+      });
+    },
   },
   created() {
     this.$nextTick(() => {
@@ -214,6 +249,17 @@ export default {
     this.getListAll();
   },
   methods: {
+    errorInfo(record) {
+      this.isError = true;
+      this.errorData = record;
+    },
+    closeErrorModal() {
+      this.isError = false;
+    },
+    showInfo(item) {
+      this.isDrawer = true;
+      this.drawerItem = item;
+    },
     //pmc选择
     userSearch() {
       this.isUserList = true;
@@ -358,16 +404,12 @@ export default {
     },
     getCheckboxProps: (record) => ({
       props: {
-        disabled: record.Status !== "IMPORT_EXCEPTION" || record.Status !== "CALCULATION_EXCEPTION", // Column configuration not to be checked
+        disabled: record.Status !== "IMPORT_EXCEPTION" && record.Status !== "CALCULATION_EXCEPTION", // Column configuration not to be checked
       },
     }),
     //下载模板
     downloadExcel() {
-      // window.location.open = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
-      window.open("./Upload/excel/20211008/物料需求计划导入模板.xlsx", "_blank");
-      // let a = document.createElement("a");
-      // a.href = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
-      // a.click();
+      window.open("./Upload/rar/20211019/待产计划与待排产计划导入模板.rar", "_blank");
     },
   },
 };

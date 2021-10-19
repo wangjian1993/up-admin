@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-18 18:18:00
+ * @LastEditTime: 2021-10-19 18:23:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -21,29 +21,32 @@
             <a-descriptions-item label="BOM号">
               {{ info.ItemCode }}
             </a-descriptions-item>
-            <a-descriptions-item label="产品型号">
-              {{ info.ItemName }}
-            </a-descriptions-item>
             <a-descriptions-item label="产品大类">
               {{ info.ItemSort }}
             </a-descriptions-item>
-            <a-descriptions-item>
+            <a-descriptions-item label="产品型号" :span="2">
+              {{ info.ItemName }}
+            </a-descriptions-item>
+            <a-descriptions-item :span="2">
               <template v-slot:label>
                 <span style="color:red">物料成本</span>
               </template>
               {{ info.MaterialCost }}
             </a-descriptions-item>
-            <a-descriptions-item>
+            <a-descriptions-item label=" 产品规格" :span="4">
+              {{ info.ItemSpecification }}
+            </a-descriptions-item>
+            <a-descriptions-item :span="2">
+              <template v-slot:label>
+                <span style="color:red">备注</span>
+              </template>
+              <span style="color:red">{{ info.Remark }}</span>
+            </a-descriptions-item>
+            <a-descriptions-item :span="2">
               <template v-slot:label>
                 <span style="color:red">最终成本</span>
               </template>
               {{ info.FinalCost }}
-            </a-descriptions-item>
-            <a-descriptions-item label="备注">
-              {{ info.Remark }}
-            </a-descriptions-item>
-            <a-descriptions-item label=" 产品规格">
-              {{ info.ItemSpecification }}
             </a-descriptions-item>
           </a-descriptions>
         </div>
@@ -233,15 +236,15 @@ export default {
           this.searchList = this.list;
           this.info = res.data.data.ItemInfo;
           this.ConfigList = this.arrayGroup(res.data.data.ConfigList);
-          let data = [];
-          this.list.forEach((item) => {
-            {
-              if (item.LastCode !== this.info.ItemCode) {
-                data.push(item);
-              }
-            }
-          });
-          this.treeData = this.initTree(data, 3);
+          // let data = [];
+          // this.list.forEach((item) => {
+          //   {
+          //     if (item.LastCode !== this.info.ItemCode) {
+          //       data.push(item);
+          //     }
+          //   }
+          // });
+          this.treeData = this.initTree(this.info.ItemCode);
           this.calField(this.treeData);
         }
         this.loading = false;
@@ -261,11 +264,12 @@ export default {
       });
       return tree;
     },
-    initTree(parent_id, no) {
+    initTree(parent_id) {
+      console.log(parent_id)
       // jsonArray 变量数据
       // 第一次以后：根据id去查询parent_id相同的（相同为子数据）
       // 第一次：查找所有parent_id为-1的数据组成第一级
-      const child = this.list.filter((item) => item.LastCode == parent_id || item.LvNo == no);
+      const child = this.list.filter((item) => item.LastCode == parent_id);
       // 第一次：循环parent_id为-1数组
       return child.map((item) => ({
         ...item,
