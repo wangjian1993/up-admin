@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-12 16:31:20
+ * @LastEditTime: 2021-10-20 10:14:24
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Detail.vue
@@ -82,7 +82,7 @@
       </template>
       <template slot="MatchStatus" slot-scope="text, record">
         <div>
-          <a-tag :color="record.MatchStatusName === '未匹配' || record.MatchStatusName === '匹配错误' || text === 'CANNOT_MATCH' ? 'red' : 'green'">{{ record.MatchStatusName }}</a-tag>
+          <a-tag :color="record.MatchStatusName === '未匹配' || record.MatchStatusName === '匹配错误' || text === 'CANNOT_MATCH' || record.MatchStatusName === '推送异常' ? 'red' : 'green'">{{ record.MatchStatusName }}</a-tag>
         </div>
       </template>
       <template slot="RequirementDate" slot-scope="text">
@@ -118,7 +118,7 @@
           </a-descriptions-item>
           <a-descriptions-item label="物料状态">
             <div>
-               <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.Status === 'CANNOT_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
+               <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.MatchStatus === 'CANNOT_MATCH' || drawerItem.MatchStatusName === '推送异常' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
             </div>
           </a-descriptions-item>
         </a-descriptions>

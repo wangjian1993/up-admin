@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:33
- * @LastEditTime: 2021-10-14 14:55:43
+ * @LastEditTime: 2021-10-20 16:28:54
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Plan.vue
@@ -117,8 +117,8 @@ const columns = [
   },
   {
     title: "PMC",
-    dataIndex: "UserCreated",
-    scopedSlots: { customRender: "UserCreated" },
+    dataIndex: "UserName",
+    scopedSlots: { customRender: "UserName" },
     align: "center",
   },
   {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2021-10-16 15:19:05
+ * @LastEditTime: 2021-10-20 14:32:17
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
@@ -92,10 +92,10 @@
               </a-descriptions>
             </a-tab-pane>
             <a-tab-pane key="7" tab="品号图片">
-              Content of Tab Pane 3
+              <img :src="imgUrl" alt="">
             </a-tab-pane>
             <a-tab-pane key="8" tab="品号附件">
-              Content of Tab Pane 3
+              
             </a-tab-pane>
           </a-tabs>
         </div>
@@ -162,9 +162,11 @@ export default {
       production,
       plant,
       finance,
+      imgUrl:""
     };
   },
   created() {
+    this.getImg();
     this.getList();
   },
   methods: {
@@ -173,6 +175,16 @@ export default {
     feedSystem,
     close() {
       this.$emit("closeModal");
+    },
+    getImg(){
+      let parmas = {
+        itemcode: this.modelData.ITEM_CODE,
+      };
+      getERPReportAction(parmas, "getbomchildlevel").then((res) => {
+        if (res.data.success) {
+          this.imgUrl = res.data.data
+        }
+      });
     },
     getList() {
       this.loading = true;

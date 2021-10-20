@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-16 15:30:49
+ * @LastEditTime: 2021-10-20 14:33:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -393,12 +393,5 @@ export default {
 <style scoped lang="less">
 .ant-form-item {
   margin-bottom: 5px;
-}
-/deep/div {
-  -moz-user-select: none; /*火狐*/
-  -webkit-user-select: none; /*webkit浏览器*/
-  -ms-user-select: none; /*IE10*/
-  -khtml-user-select: none; /*早期浏览器*/
-  user-select: none;
 }
 </style>

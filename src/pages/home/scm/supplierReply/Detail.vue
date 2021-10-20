@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-14 15:58:09
+ * @LastEditTime: 2021-10-20 10:21:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Detail.vue
@@ -215,8 +215,8 @@ const columns = [
   },
   {
     title: "PMC",
-    dataIndex: "UserCreated",
-    scopedSlots: { customRender: "UserCreated" },
+    dataIndex: "UserName",
+    scopedSlots: { customRender: "UserName" },
     align: "center",
   },
   {

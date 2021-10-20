@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-10-12 15:42:54
+ * @LastEditTime: 2021-10-20 17:31:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/axios-interceptors.js
@@ -23,10 +23,14 @@ const resp401 = {
 		if (response.status === 401) {
 			message.error('token失效,请重新登陆!')
 		}
-		if (response.data.message.code === 401) {
-			message.error('token失效,请重新登陆!')
+		if (response.data.message.code == 401) {
+			message.error('token失效,请重新登陆!');
+			localStorage.removeItem('admin.routes');
+			setTimeout(() => {
+				location.href = './';
+			}, 200)
 		}
-		if(!response.data.success){
+		if (!response.data.success) {
 			message.error(response.data.message.content);
 			return response;
 		}
@@ -83,17 +87,17 @@ const reqCommon = {
 	 * @param options 应用配置 包含: {router, i18n, store, message}
 	 * @returns {*}
 	 */
-	onFulfilled(config,options) {
-		const {message} = options
+	onFulfilled(config, options) {
+		const { message } = options
 		const {
 			url,
 			xsrfCookieName
 		} = config
 		if (url.indexOf('uservalidate') === -1 && xsrfCookieName && !Cookie.get(xsrfCookieName)) {
 			message.warning('认证 token 已过期，请重新登录');
-			setTimeout(()=>{
+			setTimeout(() => {
 				location.href = './';
-			},200)
+			}, 200)
 		}
 		return config
 	},

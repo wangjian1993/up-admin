@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-10-15 10:04:32
+ * @LastEditTime: 2021-10-20 16:56:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/DetailMerge.vue
@@ -57,38 +57,30 @@
             </a-form-item>
           </a-col>
         </a-row>
-        <a-row>
-          <a-col :md="24" :sm="24">
-            <span style="float: right; margin-top: 3px;">
-              <a-button type="primary" @click="search">查询</a-button>
-              <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-            </span>
-          </a-col>
-        </a-row>
       </div>
+      <span style="float: right; margin-top: 3px;">
+        <a-button type="primary" @click="search">查询</a-button>
+        <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+      </span>
     </a-form>
-    <div class="operator"></div>
+    <div class="operator">
+      <a-button v-if="hasPerm('export')" :disabled="!isExport" type="primary" @click="handleExcel" icon="export">导出</a-button>
+      <a-button v-else type="primary" disabled @click="handleExcel" icon="export">导出</a-button>
+    </div>
     <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 4000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data, index) => data.BatchId + index" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
+      <template slot="time" slot-scope="text">
+        <div v-if="text.RequirementQty > 0">
+          <span :style="{ color: 'red', fontWeight: '700' }">{{ text.RequirementQty }}</span>
+        </div>
+      </template>
       <template slot="Status" slot-scope="text, record">
         <div>
           <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
-        </div>
-      </template>
-      <template slot="action" slot-scope="text, record">
-        <div>
-          <!-- <a style="margin-right: 8px" @click="detail(record)">
-            <a-icon type="profile" />
-            需求日期明细
-          </a> -->
-          <a style="margin-right: 8px" @click="handleExcel(record)">
-            <a-icon type="export" />
-            导出
-          </a>
         </div>
       </template>
     </a-table>
@@ -167,8 +159,10 @@ import { renderStripe } from "@/utils/stripe.js";
 import { getScmAction } from "@/services/web.js";
 import Requirement from "@/components/requirement/Requirement.vue";
 // import ExportExcel from "@/utils/ExportExcel.js";
+import {dColumns} from '@/mixins/requirement.js'
 import XLSX from "xlsx";
 export default {
+  mixins:[dColumns],
   components: { Requirement },
   props: ["plantList", "stateList"],
   data() {
@@ -195,6 +189,9 @@ export default {
       isSearch: false,
       isDetail: false,
       detailData: [],
+      isExport: false,
+      isReset: false,
+      defaultColumns:[]
     };
   },
   updated() {
@@ -209,6 +206,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
+    console.log(this.dColumns);
     // this.getListAll();
   },
   methods: {
@@ -219,11 +217,6 @@ export default {
     detail(item) {
       this.isDetail = true;
       this.detailData = item;
-    },
-    //周选择
-    weekChange(date, dateString) {
-      let str = dateString.split("-");
-      this.week = str[1].replace("周", "");
     },
     //获取列表数据
     getListAll() {
@@ -254,51 +247,20 @@ export default {
         let dateArray = item.RequirementDate.split(/T|-/);
         this.columns.push({
           title: dateArray[1] + "/" + dateArray[2],
-          dataIndex: "table" + index,
+          dataIndex: "table_" + index,
           align: "center",
-          width: "40px",
+          width: "60px",
+          scopedSlots: { customRender: "time" },
         });
       });
       this.data = this.data.map((item) => {
         let obj = {};
         item.RequirementDetails.map((items, index) => {
-          obj["table" + index] = items.RequirementQty;
+          obj["table_" + index] = items;
+          items.key = "table_" + index;
         });
         return { ...item, ...obj };
       });
-      this.columns.push({
-        title: "操作",
-        scopedSlots: { customRender: "action" },
-        align: "center",
-        fixed: "right",
-        width: 100,
-      });
-    },
-    //多选
-    onSelectChange(selectedRowKeys) {
-      this.selectedRowKeys = selectedRowKeys;
-    },
-    //重置搜索
-    reset() {
-      this.getListAll();
-      this.week = "";
-      this.searchForm.resetFields();
-    },
-    //日期转换
-    formatDateTime(inputTime) {
-      var date = new Date(inputTime);
-      var y = date.getFullYear();
-      var m = date.getMonth() + 1;
-      m = m < 10 ? "0" + m : m;
-      var d = date.getDate();
-      d = d < 10 ? "0" + d : d;
-      var h = date.getHours();
-      h = h < 10 ? "0" + h : h;
-      var minute = date.getMinutes();
-      var second = date.getSeconds();
-      minute = minute < 10 ? "0" + minute : minute;
-      second = second < 10 ? "0" + second : second;
-      return y + "-" + m + "-" + d + " " + h + ":" + minute + ":" + second;
     },
     //关键词搜索
     search() {
@@ -338,6 +300,7 @@ export default {
               this.pagination = pagination;
               this.loading = false;
               this.isSearch = true;
+              this.isExport = true;
             }
           });
           // do something
@@ -377,48 +340,66 @@ export default {
       this.loading = false;
     },
     //导出excel数据
-    handleExcel(list) {
-      let dataSource = [];
-      const header = [];
-      this.columns.map((item) => {
-        if (item.dataIndex) {
-          header.push(item.title);
-          dataSource.push(list[item.dataIndex]);
+    handleExcel() {
+      let inputData = this.searchForm.getFieldsValue();
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.pageSize,
+        batchno: inputData.batchno,
+      };
+      getScmAction(parmas, "requirement/detail/getmergedetails").then((res) => {
+        if (res.data.success) {
+          var _data = [];
+          let dataSource = [];
+          let list = res.data.data.list;
+          // let dateArray = item.RequirementDate.split(/T|-/);
+          dataSource = list.map((item) => {
+            let obj = {};
+            item.RequirementDetails.map((items, index) => {
+              if (items.RequirementQty > 0) {
+                obj["table_" + index] = items.RequirementQty;
+              } else {
+                obj["table_" + index] = "";
+              }
+            });
+            return { ...item, ...obj };
+          });
+          const header = [];
+          this.columns.map((item) => {
+            if (item.dataIndex) {
+              header.push(item.title);
+            }
+          });
+          _data.push(header);
+          dataSource.forEach((item) => {
+            let array = [];
+            this.columns.map((items) => {
+              if (items.dataIndex) {
+                array.push(item[items.dataIndex]);
+              }
+            });
+            _data.push(array);
+          });
+          const ws = XLSX.utils.aoa_to_sheet(_data);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, `${inputData.batchno}`);
+          /* save to file */
+          try {
+            let name = `'物联需求总计划明细_${inputData.batchno}'` + ".xlsx";
+            XLSX.writeFile(wb, name);
+            this.$message.success("导出数据成功!");
+          } catch (error) {
+            console.log(error);
+            this.$message.error("导出数据失败");
+          }
         }
       });
-      let data = list.RequirementDetails;
-      data.forEach((item) => {
-        let dateArray = item.RequirementDate.split("T");
-        let date = dateArray[0].replace(/-/g, "/");
-        header.push(date);
-        dataSource.push(item.RequirementQty);
-      });
-      var timestamp = Date.parse(new Date());
-      var _data = [header, dataSource];
-      const ws = XLSX.utils.aoa_to_sheet(_data);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "物联需求总计划明细");
-      /* save to file */
-      try {
-        let name = `'物联需求总计划明细_${timestamp}'` + ".xlsx";
-        XLSX.writeFile(wb, name);
-        this.$message.success("导出数据成功!");
-      } catch (error) {
-        console.log(error);
-        this.$message.error("导出数据失败");
-      }
     },
   },
 };
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table {
-  min-height: 60vh;
-}
-/deep/.ant-table-body {
-  min-height: 0vh;
-}
 /deep/.ant-form-item {
   margin-bottom: 0px;
 }

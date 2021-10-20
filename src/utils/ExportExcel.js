@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-07 14:19:07
- * @LastEditTime: 2021-10-19 17:56:54
+ * @LastEditTime: 2021-10-20 10:06:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/ExportExcel.js
@@ -41,7 +41,7 @@ export default function ExportExcel(headers, data, fileName = '导出结果.xlsx
                 {
                     '!ref': ref,
                     // eslint-disable-next-line
-                    '!cols': headers.map(item => ({ wpx: 100 }))
+                    '!cols': headers.map(item => ({ wpx: 120 }))
                 }
             )
         }

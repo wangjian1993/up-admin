@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-14 11:15:44
+ * @LastEditTime: 2021-10-20 15:09:07
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Total.vue
@@ -119,8 +119,8 @@ const columns = [
   },
   {
     title: "PMC",
-    dataIndex: "UserCreated",
-    scopedSlots: { customRender: "UserCreated" },
+    dataIndex: "UserName",
+    scopedSlots: { customRender: "UserName" },
     align: "center",
   },
   {
@@ -323,7 +323,4 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table {
-  min-height:65vh;
-}
 </style>

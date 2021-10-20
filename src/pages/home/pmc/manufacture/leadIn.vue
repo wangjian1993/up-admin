@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-14 10:54:43
+ * @LastEditTime: 2021-10-20 16:31:20
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/leadIn.vue
@@ -141,8 +141,8 @@ const columns = [
   },
   {
     title: "PMC",
-    dataIndex: "UserCreated",
-    scopedSlots: { customRender: "UserCreated" },
+    dataIndex: "UserName",
+    scopedSlots: { customRender: "UserName" },
     align: "center",
   },
   {

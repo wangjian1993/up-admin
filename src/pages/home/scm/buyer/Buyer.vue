@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-08 10:57:09
- * @LastEditTime: 2021-10-11 17:21:33
+ * @LastEditTime: 2021-10-20 17:26:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/buyer/Buyer.vue
@@ -64,13 +64,26 @@
               添加
             </a-button>
           </a-form-model-item>
-          <a-form-model-item ref="AppTypeCode" has-feedback label="产品大类" prop="AppTypeCode">
-            <template v-for="(tag, index) in categorytags">
+          <a-form-model-item ref="AppTypeCode" has-feedback label="物料大类" prop="AppTypeCode">
+            <!-- <a-select mode="tags" placeholder="选择物料大类"  style="width: 200px">
+              <a-select-option v-for="item in categorysList" :key="item.MitemCategoryId">
+                {{ item.MitemCategoryCode }}
+              </a-select-option>
+            </a-select> -->
+            <a-select v-model="form.MitemCategoryCodes" mode="tags" style="width: 100%" placeholder="选择物料大类" :token-separators="[',']">
+              <a-select-option v-for="item in categorysList" :key="item.MitemCategoryCode">
+                {{ item.MitemCategoryCode }}
+              </a-select-option>
+            </a-select>
+            <!-- <a-select v-model="form.MitemCategoryCodes" mode="tags" style="width: 100%" :token-separators="[',']">
+              <a-select-option></a-select-option>
+            </a-select> -->
+            <!-- <template v-for="(tag, index) in categorytags">
               <a-tag :key="tag.MitemCategoryCode" :closable="true" @close="() => handleClose(index, 1)">
                 {{ tag.MitemCategoryCode }}
               </a-tag>
             </template>
-            <a-tag style="background: #fff; borderStyle: dashed;" @click="addCategory(1)"> <a-icon type="plus" />添加</a-tag>
+            <a-tag style="background: #fff; borderStyle: dashed;" @click="addCategory(1)"> <a-icon type="plus" />添加</a-tag> -->
           </a-form-model-item>
           <a-form-model-item ref="AppTypeCode" has-feedback label="物料编码" prop="AppTypeCode">
             <template v-for="(tag, index) in codeTags">
@@ -234,7 +247,7 @@ export default {
         UserName: "",
         PlantId: "",
         UserId: "",
-        MitemCategoryCodes: "",
+        MitemCategoryCodes: [],
         MitemCodes: "",
       },
       rules: {
@@ -255,6 +268,7 @@ export default {
       },
       categorytags: [],
       modelTypes: "",
+      categorysList: [],
     };
   },
   updated() {
@@ -268,6 +282,7 @@ export default {
   created() {
     this.getListAll();
     this.getDemandEnter();
+    // this.getCategorysList();
   },
   methods: {
     //获取生产工厂
@@ -278,6 +293,17 @@ export default {
       getBuyerAction(parmas, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
+        }
+      });
+    },
+    getCategorysList() {
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: 100,
+      };
+      getBuyerAction(parmas, "getcategorys").then((res) => {
+        if (res.data.success) {
+          this.categorysList = res.data.data.list;
         }
       });
     },
@@ -394,7 +420,7 @@ export default {
         UserName: "",
         PlantId: "",
         UserId: "",
-        MitemCategoryCodes: "",
+        MitemCategoryCodes: [],
         MitemCodes: "",
       };
       this.categorytags = [];
@@ -410,19 +436,19 @@ export default {
       this.isEdit = true;
       this.title = "编辑机构类型";
       this.form = item;
-      console.log(item);
-      let MitemCategoryCodes = item.MitemCategoryCodes.split(",");
+      this.form.MitemCategoryCodes = item.MitemCategoryCodes.split(",");
+      console.log(this.form.MitemCategoryCodes);
       let MitemCodes = item.MitemCodes.split(",");
-      MitemCategoryCodes.forEach((item) => {
-        this.categorytags.push({
-          MitemCategoryId: "",
-          MitemCategoryCode: item,
-          MitemCategoryName: "",
-        });
-      });
+      // MitemCategoryCodes.forEach((item) => {
+      //   this.categorytags.push({
+      //     MitemCategoryId: "",
+      //     MitemCategoryCode: item,
+      //     MitemCategoryName: "",
+      //   });
+      // });
       MitemCodes.forEach((item) => {
         this.codeTags.push({
-          MitemCode:item,
+          MitemCode: item,
           MitemName: "",
           CategoryCode1: "",
           CategoryCode2: "",
@@ -446,7 +472,7 @@ export default {
             let editForm = {
               PlantId: this.form.PlantId,
               UserId: this.form.UserId,
-              MitemCategoryCodes: categoryArray.join(","),
+              MitemCategoryCodes: this.form.MitemCategoryCodes.join(","),
               MitemCodes: codeArray.join(","),
             };
             setBuyerAction(editForm, "update").then((res) => {
@@ -467,10 +493,11 @@ export default {
             this.codeTags.forEach((item) => {
               codeArray.push(item.MitemCode);
             });
+            console.log(this.form);
             let parmas = {
               PlantId: this.form.PlantId,
               UserId: this.form.UserId,
-              MitemCategoryCodes: categoryArray.join(","),
+              MitemCategoryCodes: this.form.MitemCategoryCodes.join(","),
               MitemCodes: codeArray.join(","),
             };
             setBuyerAction(parmas, "add").then((res) => {
@@ -548,9 +575,9 @@ export default {
 .ant-form-item {
   margin-bottom: 5px;
 }
-/deep/.ant-table{
-  min-height:77vh;
-  max-height:77vh;
+/deep/.ant-table {
+  min-height: 77vh;
+  max-height: 77vh;
   overflow: auto;
 }
 </style>

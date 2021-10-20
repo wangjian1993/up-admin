@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-14 11:05:02
+ * @LastEditTime: 2021-10-20 16:58:58
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/DetailMerge.vue
@@ -13,6 +13,11 @@
       <div>
         <a-row>
           <a-col :md="6" :sm="24">
+            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入计划批号" allowClear style="width: 200px" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
                 <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
@@ -20,13 +25,8 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入计划批号" allowClear style="width: 200px" v-decorator="['batchno']" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
             <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-week-picker placeholder="选择周" @change="weekChange" v-decorator="['week']"/>
+              <a-week-picker placeholder="选择周" @change="weekChange" v-decorator="['week']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -45,58 +45,30 @@
             </a-form-item>
           </a-col>
         </a-row>
-        <a-row>
-          <a-col :md="24" :sm="24">
-            <span style="float: right; margin-top: 3px;">
-              <a-button type="primary" @click="search">查询</a-button>
-              <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-            </span>
-          </a-col>
-        </a-row>
       </div>
+      <span style="float: right; margin-top: 3px;">
+        <a-button type="primary" @click="search">查询</a-button>
+        <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+      </span>
     </a-form>
     <div class="operator">
-      <!-- <a-button v-if="hasPerm('create')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button>
-      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">生成总计划</a-button> -->
-      <!-- <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-      <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-      <span style="margin-left: 8px">
-        <template v-if="hasSelected">
-          {{ `共选中 ${selectedRowKeys.length} 条` }}
-        </template>
-      </span> -->
+       <a-button v-if="hasPerm('export')" :disabled="!isExport" type="primary" @click="handleExcel" icon="export">导出</a-button>
+       <a-button v-else type="primary" disabled @click="handleExcel" icon="export">导出</a-button>
     </div>
-    <a-table
-      v-if="hasPerm('search')"
-      :columns="columns"
-      :data-source="data"
-      size="small"
-      :scroll="{ y: scrollY }"
-      :loading="loading"
-      :pagination="pagination"
-      @change="handleTableChange"
-      bordered
-    >
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 4000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text, record">
+      <template slot="StatusName" slot-scope="text">
         <div>
-           <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' || record.StatusName === '有差异_未确认'? 'red' : 'green'">{{ record.StatusName }}</a-tag>
+          <a-tag :color="text === '待审' || text === '匹配错误' || text === '部分推送' || text === '推送异常' || text === '有差异_未确认' ? 'red' : 'green'">{{ text }}</a-tag>
         </div>
       </template>
-      <template slot="action" slot-scope="text, record">
-        <div>
-          <a style="margin-right: 8px" @click="detail(record)">
-            <a-icon type="profile" />
-            需求日期明细
-          </a>
-          <a style="margin-right: 8px" @click="handleExcel(record)">
-            <a-icon type="export" />
-            导出
-          </a>
+      <template slot="time" slot-scope="text">
+        <div v-if="text.RequirementQty > 0">
+          <span :style="{ color: 'red', fontWeight: '700' }">{{ text.RequirementQty }}</span>
         </div>
       </template>
     </a-table>
@@ -111,27 +83,28 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width: 50,
   },
   {
     title: "计划批号",
     dataIndex: "BatchNo",
     scopedSlots: { customRender: "BatchNo" },
     align: "center",
+    width: 200,
   },
   {
     title: "生产工厂",
     dataIndex: "PlantName",
     scopedSlots: { customRender: "PlantName" },
     align: "center",
-     width: "5%",
+    width: 100,
   },
   {
     title: "周",
     dataIndex: "Week",
     scopedSlots: { customRender: "Week" },
     align: "center",
-    width: "3%",
+    width: 50,
   },
   {
     title: "BOM号",
@@ -150,24 +123,19 @@ const columns = [
     dataIndex: "Spec",
     scopedSlots: { customRender: "Spec" },
     align: "center",
-     width: "20%",
+    width: 300,
   },
   {
     title: "需求数量",
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
-     width: "5%",
+    width: 80,
   },
   {
     title: "计划状态",
-    dataIndex: "Status",
-    scopedSlots: { customRender: "Status" },
-    align: "center",
-  },
-  {
-    title: "操作",
-    scopedSlots: { customRender: "action" },
+    dataIndex: "StatusName",
+    scopedSlots: { customRender: "StatusName" },
     align: "center",
   },
 ];
@@ -175,15 +143,17 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 import Requirement from "@/components/requirement/Requirement.vue";
-// import ExportExcel from "@/utils/ExportExcel.js";
 import XLSX from "xlsx";
+import {dColumns} from '@/mixins/requirement.js'
 export default {
+  mixins:[dColumns],
   components: { Requirement },
-  props: ["plantList",'batchid'],
+  props: ["plantList", "batchid"],
   data() {
     return {
       data: [],
       columns,
+      columns1:columns,
       loading: true,
       pagination: {
         current: 1,
@@ -204,6 +174,8 @@ export default {
       isSearch: false,
       isDetail: false,
       detailData: [],
+      isExport: false,
+
     };
   },
   updated() {
@@ -244,18 +216,38 @@ export default {
       let str = dateString.split("-");
       this.week = str[1].replace("周", "");
     },
+    setTimeList() {
+      let dateList = this.data[0].RequirementDetails;
+      dateList.forEach((item, index) => {
+        let dateArray = item.RequirementDate.split(/T|-/);
+        this.columns.push({
+          title: dateArray[1] + "/" + dateArray[2],
+          dataIndex: "table_" + index,
+          align: "center",
+          width: "60px",
+          scopedSlots: { customRender: "time" },
+        });
+      });
+      this.data = this.data.map((item) => {
+        let obj = {};
+        item.RequirementDetails.map((items, index) => {
+          obj["table_" + index] = items;
+          items.key = "table_" + index;
+        });
+        return { ...item, ...obj };
+      });
+    },
     //获取列表数据
     getListAll() {
       this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        batchno:this.batchid || ""
+        batchno: this.batchid || "",
       };
       getMitemrequirement(parmas, "masterplan/getmergedetails").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
-          console.log(this.data[0]);
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -272,9 +264,17 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
-      this.week =""
+      this.week = "";
+      this.data =[];
+      this.isExport = false;
       this.searchForm.resetFields();
+      this.columns.forEach((item,index) => {
+        if(item.dataIndex && item.scopedSlots.customRender === 'time'){
+          console.log(index);
+          this.columns.splice(index,1);
+        }
+      })
+      console.log(this.columns);
     },
     //日期转换
     formatDateTime(inputTime) {
@@ -304,28 +304,32 @@ export default {
             var begindt = this.formatDateTime(values["range-time-picker"][0]);
             var enddt = this.formatDateTime(values["range-time-picker"][1]);
           }
-          if(this.week != ""){
-            var w =this.week
+          if (this.week != "") {
+            var w = this.week;
           }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            week:w,
+            week: w,
             batchno: values.batchno,
-            mitemcode:values.mitemcode,
-            mitemname:values.mitemname,
-            startdate:begindt,
-            enddate:enddt
+            mitemcode: values.mitemcode,
+            mitemname: values.mitemname,
+            startdate: begindt,
+            enddate: enddt,
           };
           getMitemrequirement(parmas, "masterplan/getmergedetails").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
+              if (this.data.length > 0) {
+                this.setTimeList();
+              }
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
               this.isSearch = true;
+              this.isExport = true;
             }
           });
           // do something
@@ -397,40 +401,63 @@ export default {
       this.getListAll();
     },
     //导出excel数据
-    handleExcel(list) {
-      let dataSource = [];
-      const header = [];
-      this.columns.map((item) => {
-        if (item.dataIndex) {
-          header.push(item.title);
-          dataSource.push(list[item.dataIndex]);
+    handleExcel() {
+      let inputData = this.searchForm.getFieldsValue();
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.pageSize,
+        batchno: inputData.batchno,
+      };
+      getMitemrequirement(parmas, "masterplan/getmergedetails").then((res) => {
+        if (res.data.success) {
+          var _data = [];
+          let dataSource = [];
+          let list = res.data.data.list;
+          // let dateArray = item.RequirementDate.split(/T|-/);
+          dataSource = list.map((item) => {
+            let obj = {};
+            item.RequirementDetails.map((items, index) => {
+              if (items.RequirementQty > 0) {
+                obj["table_" + index] = items.RequirementQty;
+              } else {
+                obj["table_" + index] = "";
+              }
+            });
+            return { ...item, ...obj };
+          });
+          const header = [];
+          this.columns.map((item) => {
+            if (item.dataIndex) {
+              header.push(item.title);
+            }
+          });
+          _data.push(header);
+          dataSource.forEach((item) => {
+            let array = [];
+            this.columns.map((items) => {
+              if (items.dataIndex) {
+                array.push(item[items.dataIndex]);
+              }
+            });
+            _data.push(array);
+          });
+          const ws = XLSX.utils.aoa_to_sheet(_data);
+          const wb = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(wb, ws, `${inputData.batchno}`);
+          /* save to file */
+          try {
+            let name = `'物联需求总计划明细_${inputData.batchno}'` + ".xlsx";
+            XLSX.writeFile(wb, name);
+            this.$message.success("导出数据成功!");
+          } catch (error) {
+            console.log(error);
+            this.$message.error("导出数据失败");
+          }
         }
       });
-      let data = list.RequirementDetails;
-      data.forEach((item) => {
-        let dateArray = item.RequirementDate.split("T");
-        let date = dateArray[0].replace(/-/g, "/");
-        header.push(date);
-        dataSource.push(item.RequirementQty);
-      });
-      var timestamp = Date.parse(new Date());
-      var _data = [header, dataSource];
-      const ws = XLSX.utils.aoa_to_sheet(_data);
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, "物联需求总计划明细");
-      /* save to file */
-      try {
-        let name = `'物联需求总计划明细_${timestamp}'` + ".xlsx";
-        XLSX.writeFile(wb, name);
-        this.$message.success("导出数据成功!");
-      } catch (error) {
-        console.log(error);
-        this.$message.error("导出数据失败");
-      }
     },
   },
 };
 </script>
 
-<style scoped lang="less">
-</style>
+<style scoped lang="less"></style>

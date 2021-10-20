@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-10-14 17:24:19
+ * @LastEditTime: 2021-10-20 16:22:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Exception.vue
@@ -155,7 +155,7 @@
         </div>
       </template>
     </a-table>
-    <matching v-if="isMatching" :matchingData="matchingData" :plantList="plantList" @closeModal="closeModal" @succeed="getListAll"></matching>
+    <matching v-if="isMatching" :matchingData="matchingData" :isEdit="true" :plantList="plantList" @closeModal="closeModal" @succeed="getListAll"></matching>
     <!-- 查看详情 -->
     <div>
       <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
@@ -196,8 +196,8 @@ const columns = [
   },
   {
     title: "PMC",
-    dataIndex: "UserCreated",
-    scopedSlots: { customRender: "UserCreated" },
+    dataIndex: "UserName",
+    scopedSlots: { customRender: "UserName" },
     align: "center",
   },
   {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-14 14:39:27
+ * @LastEditTime: 2021-10-20 10:18:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
@@ -166,6 +166,11 @@
                <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.Status === 'CANNOT_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
             </div>
           </a-descriptions-item>
+          <a-descriptions-item label="错误信息">
+            <div>
+               <span>{{drawerItem.Msg}}</span>
+            </div>
+          </a-descriptions-item>
         </a-descriptions>
       </a-drawer>
     </div>
@@ -191,8 +196,8 @@ const columns = [
   },
   {
     title: "PMC",
-    dataIndex: "UserCreated",
-    scopedSlots: { customRender: "UserCreated" },
+    dataIndex: "UserName",
+    scopedSlots: { customRender: "UserName" },
     align: "center",
   },
   {
@@ -351,7 +356,7 @@ export default {
     },
     filterData() {
       return this.columns.filter((obj) => {
-        if (obj.dataIndex !== "Status" && obj.dataIndex !== "MatchStatus") {
+        if (obj.dataIndex !== "StatusName" && obj.dataIndex !== "MatchStatusName") {
           return obj.dataIndex;
         }
       });

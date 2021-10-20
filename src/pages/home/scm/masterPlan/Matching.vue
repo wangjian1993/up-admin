@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 15:09:41
- * @LastEditTime: 2021-10-14 17:32:01
+ * @LastEditTime: 2021-10-20 16:27:33
  * @LastEditors: max
  * @Description: 手动匹配
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Matching.vue
@@ -18,16 +18,16 @@
             </a-button>
           </a-form-model-item>
           <a-form-model-item ref="MitemCode" has-feedback label="物料编码" prop="MitemCode">
-            <a-select v-model="form.MitemCode" placeholder="请选择物料编码" @change="mitemChange">
+            <a-select v-model="form.MitemCode" placeholder="请选择物料编码" :disabled="isEdit" @change="mitemChange">
               <a-select-option v-for="item in materialData" :key="item.MitemCode" :value="item.MitemCode">{{ item.MitemCode }}</a-select-option>
             </a-select>
           </a-form-model-item>
           <a-form-model-item has-feedback label="物料名称">
-            <span>{{ mitemData.MitemName }}</span>
+            <span>{{ mitemList.MitemName }}</span>
           </a-form-model-item>
           <a-form-model-item ref="RequirementDate" has-feedback label="需求日期" prop="RequirementDate">
-            <a-select v-model="form.RequirementDate" placeholder="请选择需求日期" @change="dateChange">
-              <a-select-option v-for="(item, index) in materialDates" :key="index" :value="item.RequirementDate">{{ item.RequirementDate }}</a-select-option>
+            <a-select v-model="form.RequirementDate" placeholder="请选择需求日期" :disabled="isEdit" @change="dateChange">
+              <a-select-option v-for="(item, index) in materialDates" :key="index" :value="item.RequirementDate">{{ splitData(item.RequirementDate) }}</a-select-option>
             </a-select>
           </a-form-model-item>
           <a-form-model-item has-feedback label="需求数量">
@@ -61,7 +61,7 @@
       </div>
     </a-modal>
     <batch-no v-if="isBatchNo" :plantList="plantList" @closeModal="closeModal" @batchNoItem="batchNoItem"></batch-no>
-    <mitem-order v-if="isOrder" :plantList="plantList" @closeModal="closeModal" @orderItem="orderItem" :MitemCode="mitemData.MitemCode"></mitem-order>
+    <mitem-order v-if="isOrder" :plantList="plantList" @closeModal="closeModal" @orderItem="orderItem" :MitemCode="mitemList.MitemCode"></mitem-order>
   </div>
 </template>
 
@@ -69,9 +69,10 @@
 import { getScmAction, setScmAction } from "@/services/web.js";
 import BatchNo from "./BatchNo.vue";
 import MitemOrder from "./MitemOrder.vue";
+import { splitData } from "@/utils/util.js";
 export default {
   components: { BatchNo, MitemOrder },
-  props: ["plantList", "matchingData"],
+  props: ["plantList", "matchingData",'isEdit'],
   data() {
     return {
       size: "small",
@@ -135,20 +136,21 @@ export default {
       isOrder: false,
       batchnoData: [],
       materialData: [],
+      mitemList:[],
       mitemData: [],
       materialDates: [],
       orderData: [],
     };
   },
   created() {
-    console.log(this.matchingData);
     if (this.matchingData.BatchNo) {
       this.form.BatchNo = this.matchingData.BatchNo;
       this.form.BatchId = this.matchingData.Id;
-      this.mitemData.MitemCode = this.matchingData.MitemCode;
-      this.mitemData.MitemName = this.matchingData.MitemName;
+      this.form.MitemCode = this.matchingData.MitemCode;
+      this.mitemList.MitemCode = this.matchingData.MitemCode;
+      this.mitemList.MitemName = this.matchingData.MitemName;
       this.mitemData.RequirementQty = this.matchingData.RequirementQty;
-      this.form.RequirementDate = this.matchingData.RequirementDate;
+      this.form.RequirementDate = splitData(this.matchingData.RequirementDate);
       this.batchnoData.BatchId = this.matchingData.Id;
       this.batchnoData.BatchNo = this.matchingData.BatchNo;
       this.batchnoData.PlantName = this.matchingData.PlantName;
@@ -158,6 +160,7 @@ export default {
     }
   },
   methods: {
+    splitData,
     batchno() {
       this.isBatchNo = true;
     },
@@ -203,22 +206,22 @@ export default {
     getRequirementDates() {
       let parmas = {
         batchid: this.batchnoData.BatchId,
-        mitemcode: this.mitemData.MitemCode,
+        mitemcode: this.mitemList.MitemCode,
       };
       getScmAction(parmas, "manualmatch/getrequirementdates").then((res) => {
         if (res.data.success) {
           this.materialDates = res.data.data;
-          console.log(res.data.data)
+          console.log(res.data.data);
         }
       });
     },
     //选择物料信息
     mitemChange(e) {
-      this.mitemData = this.materialData.find((item) => (item.MitemCode = e));
+      this.mitemList = this.materialData.find((item) => (item.MitemCode = e));
       this.getRequirementDates();
     },
     dateChange(e) {
-      this.mitemData = this.materialDates.find((item) => (item.RequirementDate == e));
+      this.mitemData = this.materialDates.find((item) => item.RequirementDate == e);
     },
     //查看详情
     onClose() {

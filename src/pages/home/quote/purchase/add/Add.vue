@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-19 17:38:48
+ * @LastEditTime: 2021-10-20 15:57:34
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -98,6 +98,7 @@
       <!-- 填写报价单 -->
       <a-card class="card" title="填写报价单" :bordered="false" :bodyStyle="{ padding: '5px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
         <div class="input-box" v-if="costList.length">
+          <p style="color:red;padding:10px 0;" v-if=" costInfo.ItemOtherInfo && costInfo.ItemOtherInfo.QuotedTips != ''">{{costInfo.ItemOtherInfo.QuotedTips}}</p>
           <a-row v-for="(item, index) in costList" :key="index + 'cost'" class="cost-list">
             <a-col :md="2" :lg="2" :xl="2">
               <p class="input-title">{{ item.CostSort }}</p>
@@ -580,6 +581,9 @@ export default {
                 item.Remark = item.SupplierName + data[0];
               });
               this.costInfo = res.data.data.ItemInfo;
+              // if(this.costInfo.ItemOtherInfo.QuotedTips != ""){
+              //   this.$message.success(this.costInfo.ItemOtherInfo.QuotedTips);
+              // }
               this.costList = res.data.data.CostBaseList;
               this.countCost();
             }

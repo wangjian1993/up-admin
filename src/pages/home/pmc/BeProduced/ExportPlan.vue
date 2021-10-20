@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:39:23
- * @LastEditTime: 2021-10-19 17:58:50
+ * @LastEditTime: 2021-10-20 17:14:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ExportPlan.vue
@@ -167,32 +167,20 @@ const columns = [
     width: 100,
   },
 ];
-import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import UserList from "@/components/app-user/UserList";
+import {PublicVar} from '@/mixins/publicVar.js';
 export default {
+  mixins:[PublicVar],
   components: { UserList },
   props: ["batchid"],
   data() {
     return {
-      scrollY: "",
-      loading: false,
+     
       advanced: true,
       columns: columns,
       dataSource: [],
       isDrawer: false,
-      selectedRowKeys: [],
-      pagination: {
-        current: 1,
-        total: 0,
-        pageSize: 20, //每页中显示10条数据
-        showSizeChanger: true,
-        showLessItems: true,
-        showQuickJumper: true,
-        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
-      },
-      searchForm: this.$form.createForm(this),
       plantList: [],
       plantid: "",
       week: "",
@@ -200,9 +188,6 @@ export default {
       isSearch: false,
       isUserList: false,
     };
-  },
-  updated() {
-    renderStripe();
   },
   created() {
     this.$nextTick(() => {
@@ -217,11 +202,6 @@ export default {
         });
       });
     }
-  },
-  computed: {
-    hasSelected() {
-      return this.selectedRowKeys.length > 0;
-    },
   },
   methods: {
     splitData,
@@ -333,6 +313,17 @@ export default {
         }
       });
     },
+    getCellWidth(value) {
+      // 判断是否为null或undefined
+      if (value == null) {
+        return 10;
+      } else if (/.*[\u4e00-\u9fa5]+.*$/.test(value)) {
+        // 判断是否包含中文
+        return value.toString().length * 2.1;
+      } else {
+        return value.toString().length * 1.1;
+      }
+    },
     exportExcel() {
       let inputData = this.searchForm.getFieldsValue();
       let parmas = {
@@ -345,6 +336,7 @@ export default {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {
+            let colWidth = [];
             Object.keys(item).forEach((key) => {
               // 后端传null node写入会有问题
               if (item[key] === null) {
@@ -353,6 +345,7 @@ export default {
               if (Array.isArray(item[key])) {
                 item[key] = item[key].join(",");
               }
+              colWidth.push(this.getCellWidth(item[key]));
               item.RequirementDate = splitData(item.RequirementDate);
             });
             return item;
@@ -367,7 +360,7 @@ export default {
             ExportExcel(header, dataSource, `物料需求计划_${inputData.batchno}.xlsx`);
             this.$message.success("导出数据成功!");
           } catch (error) {
-            // console.log(error);
+            console.log(error);
             this.$message.error("导出数据失败");
           }
         }
