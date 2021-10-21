@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 14:39:13
- * @LastEditTime: 2021-10-11 16:42:21
+ * @LastEditTime: 2021-10-21 15:39:01
  * @LastEditors: max
  * @Description: 生成部门配置
  * @FilePath: /up-admin/src/pages/home/pmc/department/Department.vue
@@ -30,6 +30,7 @@
                 <div>
                   <a-form-item>
                     <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
+                      <a-select-option value="">全部</a-select-option>
                       <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                     </a-select>
                   </a-form-item>

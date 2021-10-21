@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:40:45
- * @LastEditTime: 2021-10-19 16:44:20
+ * @LastEditTime: 2021-10-21 15:38:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/Result.vue
@@ -14,6 +14,7 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
+                <a-select-option value="">全部</a-select-option>
                 <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
               </a-select>
             </a-form-item>

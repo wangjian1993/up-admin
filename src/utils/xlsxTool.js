@@ -85,22 +85,47 @@ export const export_array_to_excel = ({ key, data, title, filename, autoWidth })
     XLSX.utils.book_append_sheet(wb, ws, filename);
     XLSX.writeFile(wb, filename + '.xlsx');
 }
-
 export const read = (data, type) => {
     /* if type == 'base64' must fix data first */
     // const fixedData = fixdata(data)
     // const workbook = XLSX.read(btoa(fixedData), { type: 'base64' })
     const workbook = XLSX.read(data, { type: type });
+    console.log(workbook.SheetNames)
     const firstSheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[firstSheetName];
     const header = get_header_row(worksheet);
     const results = XLSX.utils.sheet_to_json(worksheet);
     return { header, results };
 }
+export const readAll = (data, type) => {
+    /* if type == 'base64' must fix data first */
+    // const fixedData = fixdata(data)
+    // const workbook = XLSX.read(btoa(fixedData), { type: 'base64' })
+    const workbook = XLSX.read(data, { type: type });
+    let sheetList = workbook.SheetNames;
+    let excelJson = [];
+    console.log(sheetList)
+    for (let i = 0; i < sheetList.length; i++) {
+        let obj = {}
+        const firstSheetName = workbook.SheetNames[i];
+        const worksheet = workbook.Sheets[firstSheetName];
+        console.log("worksheet", worksheet.length);
+        const header = get_header_row(worksheet);
+        const results = XLSX.utils.sheet_to_json(worksheet);
+        console.log("header", header);
+        console.log("results", results);
+        obj.header = header;
+        obj.results = results;
+        excelJson.push(obj)
+        console.log("excelJson", excelJson);
+    }
+    return excelJson;
+}
 
 export default {
     export_table_to_excel,
     export_array_to_excel,
     export_json_to_excel,
-    read
+    read,
+    readAll
 }

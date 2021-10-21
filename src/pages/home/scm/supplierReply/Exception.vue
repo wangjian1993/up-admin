@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-20 10:21:22
+ * @LastEditTime: 2021-10-21 15:48:59
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
@@ -14,6 +14,7 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
+                <a-select-option value="">全部</a-select-option>
                 <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
               </a-select>
             </a-form-item>
@@ -49,6 +50,7 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="计划状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['status']" placeholder="请选择计划状态" style="width: 200px">
+                <a-select-option value="">全部</a-select-option>
                 <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
                   {{ item.ParamName }}
                 </a-select-option>

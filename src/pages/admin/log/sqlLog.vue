@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-08-25 17:20:17
+ * @LastEditTime: 2021-10-21 15:46:53
  * @LastEditors: max
  * @Description: API日志
  * @FilePath: /up-admin/src/pages/admin/log/sqlLog.vue
@@ -38,6 +38,7 @@
               <a-form-item>
                 <a-form-item>
                   <a-select v-decorator="['type']" placeholder="请选择执行状态" style="width: 100px">
+                    <a-select-option value="">全部</a-select-option>
                     <a-select-option :value="item.ParamValue" v-for="(item, index) in sqlState" :key="index">
                       {{ item.ParamName }}
                     </a-select-option>

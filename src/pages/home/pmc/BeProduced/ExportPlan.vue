@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:39:23
- * @LastEditTime: 2021-10-20 17:14:17
+ * @LastEditTime: 2021-10-21 16:59:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ExportPlan.vue
@@ -11,16 +11,17 @@
     <a-form layout="horizontal" :form="searchForm">
       <div :class="advanced ? null : 'fold'">
         <a-row>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
-                <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
-              </a-select>
+           <a-col :md="6" :sm="24">
+            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" allowClear placeholder="请输入计划批号" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入计划批号" v-decorator="['batchno']" />
+            <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
+                <a-select-option value="">全部</a-select-option>
+                <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
         </a-row>
@@ -31,7 +32,9 @@
       </span>
     </a-form>
     <div class="operator">
-      <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
+      <!-- <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button> -->
+      <a-button v-if="hasPerm('export')" :disabled="!isExport" type="primary" @click="exportExcel" icon="export">导出</a-button>
+       <a-button v-else type="primary" disabled @click="exportExcel" icon="export">导出</a-button>
     </div>
     <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
       <template slot="index" slot-scope="text, record, index">
@@ -187,11 +190,12 @@ export default {
       drawerItem: [],
       isSearch: false,
       isUserList: false,
+      isExport:false
     };
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(30);
+      this.scrollY = getTableScroll(20);
     });
     this.getListAll();
     this.getPlant();
@@ -231,6 +235,7 @@ export default {
     reset() {
       this.getListAll();
       this.week = "";
+      this.isExport =true;
       this.searchForm.resetFields();
     },
     weekChange(date, dateString) {
@@ -307,6 +312,7 @@ export default {
               this.pagination = pagination;
               this.loading = false;
               this.isSearch = true;
+              this.isExport =true;
             }
           });
           // do something

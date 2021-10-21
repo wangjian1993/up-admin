@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-08 10:57:09
- * @LastEditTime: 2021-10-20 17:26:42
+ * @LastEditTime: 2021-10-21 15:43:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/buyer/Buyer.vue
@@ -30,6 +30,7 @@
                 <div>
                   <a-form-item>
                     <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
+                      <a-select-option value="">全部</a-select-option>
                       <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                     </a-select>
                   </a-form-item>
@@ -370,10 +371,9 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            workshop: values.workshop,
-            line: values.line,
+            user: values.user,
           };
-          getBuyerAction(parmas).then((res) => {
+          getBuyerAction(parmas,'getall').then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };

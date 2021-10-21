@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-10-12 14:57:05
+ * @LastEditTime: 2021-10-21 15:45:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/admin/user/add.vue
@@ -41,6 +41,7 @@
 							<a-col :md="8" :sm="24">
 								<a-form-item label="使用状态" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1 }">
 									<a-select placeholder="请选择">
+										<a-select-option value="">全部</a-select-option>
 										<a-select-option value="1">关闭</a-select-option>
 										<a-select-option value="2">运行中</a-select-option>
 									</a-select>

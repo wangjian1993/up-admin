@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 10:40:23
- * @LastEditTime: 2021-10-16 09:08:49
+ * @LastEditTime: 2021-10-21 15:36:36
  * @LastEditors: max
  * @Description: 采购质检
  * @FilePath: /up-admin/src/pages/home/scm/quality/Quality.vue
@@ -15,6 +15,7 @@
             <a-col :md="6" :sm="24">
               <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
+                  <a-select-option value="">全部</a-select-option>
                   <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -24,7 +25,7 @@
                 <a-input style="width: 200px" allowClear placeholder="请输入计划批号" v-decorator="['orderno']" />
               </a-form-item>
             </a-col>
-             <a-col :md="6" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入BOM号" v-decorator="['mitemcode']" />
               </a-form-item>
@@ -46,15 +47,18 @@
                 <a-input style="width: 200px" placeholder="请输入BOM号" v-decorator="['mitemcode']" />
               </a-form-item>
             </a-col> -->
-            <!-- <a-col :md="6" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['status']" placeholder="请选择状态" style="width: 200px">
+                  <a-select-option value="">
+                    全部
+                  </a-select-option>
                   <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
                     {{ item.ParamName }}
                   </a-select-option>
                 </a-select>
               </a-form-item>
-            </a-col> -->
+            </a-col>
           </a-row>
         </div>
         <span style="float: right; margin-top: 3px;">
@@ -81,13 +85,13 @@
         <div>
           <a-row type="flex" justify="center">
             <a-col :span="6"
-              ><div class="statistic" @click="getStatisticList('Y','')">
+              ><div class="statistic" @click="getStatisticList('Y', '')">
                 <a-statistic title="今日来料总数:" :value="statistic.TodayInComingQty"
                   ><template #suffix>
                     <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template
                 ></a-statistic></div
             ></a-col>
-            <a-col :span="6" class="statistic" @click="getStatisticList('Y','N')">
+            <a-col :span="6" class="statistic" @click="getStatisticList('Y', 'N')">
               <a-statistic title="今日未处理批数:" :value-style="{ color: '#cf1322' }" :value="statistic.TodayNoApprovedQty"
                 ><template #suffix>
                   <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
@@ -114,7 +118,7 @@
         :pagination="pagination"
         @change="handleTableChange"
         :row-selection="{
-          columnWidth:40,
+          columnWidth: 40,
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
           getCheckboxProps: getCheckboxProps,
@@ -126,9 +130,25 @@
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
-        
+
         <template slot="OrderDate" slot-scope="text">
-          <span>{{splitData(text) }}</span>
+          <span>{{ splitData(text) }}</span>
+        </template>
+        <template slot="QTQty" slot-scope="text, record">
+          <a-input-number size="small" v-model="record.QTQty" style="width:80px" :min="0" v-if="record.QtStatusName === '待检' || record.QtStatusName === '待审批'" type="text" />
+          <span v-else>{{ text }}</span>
+        </template>
+        <template slot="QualifiedQty" slot-scope="text, record">
+          <a-input-number size="small" v-model="record.QualifiedQty" :min="0" style="width:80px" v-if="record.QtStatusName === '待检' || record.QtStatusName === '待审批'" type="text" />
+          <span v-else>{{ text }}</span>
+        </template>
+        <template slot="ReturnQty" slot-scope="text, record">
+          <a-input-number size="small" v-model="record.ReturnQty" :min="0" style="width:80px" v-if="record.QtStatusName === '待检' || record.QtStatusName === '待审批'" type="text" />
+          <span v-else>{{ text }}</span>
+        </template>
+        <template slot="ScrapQty" slot-scope="text, record">
+          <a-input-number size="small" v-model="record.ScrapQty" :min="0" style="width:80px" v-if="record.QtStatusName === '待检' || record.QtStatusName === '待审批'" type="text" />
+          <span v-else>{{ text }}</span>
         </template>
         <template slot="QtStatusName" slot-scope="text">
           <div>
@@ -138,7 +158,11 @@
         </template>
         <template slot="action" slot-scope="text, record">
           <div>
-            <a style="margin-right: 8px" @click="check(record)" v-if="record.QtStatusName === '待检'" :disabled="!hasPerm('approve')">
+            <a style="margin-right: 8px" @click="save(record)" v-if="record.QtStatusName === '待检' || record.QtStatusName === '待审批'">
+              <a-icon type="save" />
+              保存
+            </a>
+            <a style="margin-right: 8px" @click="check(record)" v-if="record.QtStatusName === '待审批'" :disabled="!hasPerm('approve')">
               <a-icon type="profile" />
               审批
             </a>
@@ -152,8 +176,8 @@
 </template>
 
 <script>
-import { getQualityAction } from "@/services/web.js";
-import Approve from './Approve.vue'
+import { getQualityAction, setQualityAction } from "@/services/web.js";
+import Approve from "./Approve.vue";
 const columns = [
   {
     title: "序号",
@@ -211,35 +235,35 @@ const columns = [
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
-    width: "80px",
+    width: "120px",
   },
   {
     title: "检验数量",
     dataIndex: "QTQty",
     scopedSlots: { customRender: "QTQty" },
     align: "center",
-    width: "80px",
+    width: "120px",
   },
   {
     title: "合格数量",
     dataIndex: "QualifiedQty",
     scopedSlots: { customRender: "QualifiedQty" },
     align: "center",
-    width: "80px",
+    width: "120px",
   },
   {
     title: "退货数量",
     dataIndex: "ReturnQty",
     scopedSlots: { customRender: "ReturnQty" },
     align: "center",
-    width: "80px",
+    width: "120px",
   },
   {
     title: "报废数量",
     dataIndex: "ScrapQty",
     scopedSlots: { customRender: "ScrapQty" },
     align: "center",
-    width: "80px",
+    width: "120px",
   },
   {
     title: "质检人员",
@@ -260,6 +284,7 @@ const columns = [
     scopedSlots: { customRender: "QtStatusName" },
     align: "center",
     width: "70px",
+    fixed: "right",
   },
   {
     title: "操作",
@@ -272,10 +297,10 @@ const columns = [
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { getParamData } from "@/services/admin.js";
-import BatchApprove from './BatchApprove.vue'
-import { splitData} from "@/utils/util.js";
+import BatchApprove from "./BatchApprove.vue";
+import { splitData } from "@/utils/util.js";
 export default {
-  components: {Approve,BatchApprove},
+  components: { Approve, BatchApprove },
   data() {
     return {
       scrollY: "",
@@ -284,7 +309,7 @@ export default {
       columns: columns,
       dataSource: [],
       isApprove: false,
-      isAllApprove:false,
+      isAllApprove: false,
       selectedRowKeys: [],
       pagination: {
         current: 1,
@@ -304,8 +329,8 @@ export default {
       statistic: [],
       stateList: [],
       plantList: [],
-      approveData:[],
-      batchData:[]
+      approveData: [],
+      batchData: [],
     };
   },
   updated() {
@@ -318,7 +343,7 @@ export default {
     this.getListAll();
     this.getStatistic();
     this.getPlant();
-    // this.getParamData();
+    this.getParamData();
   },
   computed: {
     hasSelected() {
@@ -327,24 +352,79 @@ export default {
   },
   methods: {
     splitData,
+    save(item) {
+      let parmas = {
+        PlantCode: item.PlantCode,
+        OrderNo: item.OrderNo,
+        MitemCode: item.MitemCode,
+        SequenceNumber: item.SequenceNumber,
+        QTQty: item.QTQty,
+        QualifiedQty: item.QualifiedQty,
+        ReturnQty: item.ReturnQty,
+        ScrapQty: item.ScrapQty,
+      };
+      setQualityAction(parmas, "saved").then((res) => {
+        if (res.data.success) {
+          this.$message.success("保存成功!");
+          this.getListAll();
+          this.getStatistic();
+        }
+      });
+    },
     check(item) {
-      this.isApprove =true;
-      this.approveData =item
+      console.log(item);
+      let parmas = {
+        PlantCode: item.PlantCode,
+        OrderNo: item.OrderNo,
+        MitemCode: item.MitemCode,
+        SequenceNumber: item.SequenceNumber,
+        QTQty: item.QTQty,
+        QualifiedQty: item.QualifiedQty,
+        ReturnQty: item.ReturnQty,
+        ScrapQty: item.ScrapQty,
+      };
+      setQualityAction(parmas, "approved").then((res) => {
+        if (res.data.success) {
+          this.$message.success("保存成功!");
+          this.getListAll();
+          this.getStatistic();
+        }
+      });
+      // this.approveData = item;
     },
-    closeModal(){
-      this.isApprove =false;
+    closeModal() {
+      this.isApprove = false;
       this.isAllApprove = false;
-      this.batchData = []
+      this.batchData = [];
     },
-    checkAll(){
-      this.isAllApprove =true;
+    checkAll() {
       this.selectedRowKeys.forEach((item) => {
-          this.batchData.push(this.dataSource[item])
-      })
-      console.log(this.batchData);
+        this.batchData.push(this.dataSource[item]);
+      });
+      let parmas = [];
+      this.batchData.forEach((item) => {
+        parmas.push({
+          PlantCode: item.PlantCode,
+          OrderNo: item.OrderNo,
+          MitemCode: item.MitemCode,
+          SequenceNumber: item.SequenceNumber,
+          QTQty: item.QTQty || 0,
+          QualifiedQty: item.QualifiedQty || 0,
+          ReturnQty: item.ReturnQty || 0,
+          ScrapQty: item.ScrapQty || 0,
+        });
+      });
+      setQualityAction(parmas, "approvedmultiple").then((res) => {
+        if (res.data.success) {
+          this.$message.success("审核成功!");
+          this.getListAll();
+          this.getStatistic();
+          this.selectedRowKeys =[];
+        }
+      });
     },
-    succeed(){
-      this.isApprove =false;
+    succeed() {
+      this.isApprove = false;
       this.getListAll();
       this.getStatistic();
     },
@@ -360,7 +440,7 @@ export default {
     },
     getParamData() {
       let parmas = {
-        groupcode: "MATCH_STATUS",
+        groupcode: "PURCHASE_QT_STATUS",
       };
       getParamData(parmas).then((res) => {
         if (res.data.success) {
@@ -380,6 +460,7 @@ export default {
     //重置搜索
     reset() {
       this.getListAll();
+      this.getStatistic();
       this.week = "";
       this.searchForm.resetFields();
     },
@@ -425,8 +506,8 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        istoday:istoday,
-        isapproaved:isapproaved,
+        istoday: istoday,
+        isapproaved: isapproaved,
       };
       getQualityAction(parmas, "getall").then((res) => {
         if (res.data.success) {
@@ -443,7 +524,7 @@ export default {
     },
     getCheckboxProps: (record) => ({
       props: {
-        disabled: record.QtStatusName === '待检', // Column configuration not to be checked
+        disabled: record.QtStatusName === "待检" || record.QtStatusName === "审批待处理", // Column configuration not to be checked
       },
     }),
     //分页
@@ -473,6 +554,7 @@ export default {
             orderno: values.orderno,
             mitemcode: values.mitemcode,
             mitemname: values.mitemname,
+            status:values.status,
             istoday: "",
             isapproaved: "",
           };
@@ -512,13 +594,13 @@ export default {
 /deep/.ant-statistic {
   display: flex;
   align-items: center;
-  justify-content:center;
+  justify-content: center;
   cursor: pointer;
 }
-/deep/.ant-statistic-title{
-  margin-bottom:0;
+/deep/.ant-statistic-title {
+  margin-bottom: 0;
   font-size: 18px;
   // font-weight: 700;
-  color:#000;
+  color: #000;
 }
 </style>
