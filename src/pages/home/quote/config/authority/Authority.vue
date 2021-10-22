@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-10-11 15:48:24
+ * @LastEditTime: 2021-10-22 14:21:47
  * @LastEditors: max
  * @Description: 权限
  * @FilePath: /up-admin/src/pages/home/quote/config/authority/Authority.vue
@@ -106,6 +106,12 @@
           </a-form-model-item>
           <a-form-model-item ref="" label="操作权限">
             <a-checkbox-group v-model="actionValue" :options="actionList" :default-value="actionValue" @change="actionChange" />
+          </a-form-model-item>
+          <a-form-model-item ref="" label="品号筛选">
+            <a-select v-model="form.ProNameScreens" mode="tags" style="width: 100%" placeholder="输入物品号筛选" :token-separators="[',']"> </a-select>
+          </a-form-model-item>
+          <a-form-model-item ref="" label="规格筛选">
+            <a-select v-model="form.SpecNameScreens" mode="tags" style="width: 100%" placeholder="输入规格筛选" :token-separators="[',']"> </a-select>
           </a-form-model-item>
           <a-form-model-item ref="Remarks" label="描述">
             <a-textarea v-model="form.Remarks" placeholder="请输入权限描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
@@ -267,7 +273,7 @@ export default {
   components: { AuthoType, Category },
   data() {
     return {
-      scrollY:"",
+      scrollY: "",
       data: [],
       columns,
       isEdit: false,
@@ -329,7 +335,7 @@ export default {
       actionList: [],
       actionStr: [],
       actionValue: [],
-      isSearch:false
+      isSearch: false,
     };
   },
   updated() {
@@ -422,7 +428,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
-              this.isSearch =true
+              this.isSearch = true;
             }
           });
           // do something
@@ -431,7 +437,7 @@ export default {
     },
     //获取机构类型列表
     getAuthoData() {
-      this.loading =true
+      this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
@@ -443,7 +449,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch =false
+          this.isSearch = false;
         } else {
           this.loading = false;
         }
@@ -457,9 +463,9 @@ export default {
     },
     //初始化表单
     defaultForm() {
-      this.form.PermissionOrgOrUserList =[];
-       this.form.PermissionMitemCategoryList =[];
-       this.actionValue =[];
+      this.form.PermissionOrgOrUserList = [];
+      this.form.PermissionMitemCategoryList = [];
+      this.actionValue = [];
       this.form = {
         EnterId: "",
         PermissionTypeCode: "",
@@ -487,6 +493,20 @@ export default {
         if (res.data.success) {
           this.form = res.data.data;
           //获取名称,大类编辑id
+          console.log(res.data.data)
+          if (this.form.ProNameScreens != null && this.form.ProNameScreens.length > 0) {
+            this.form.ProNameScreens = this.form.ProNameScreens.split(",");
+          } else {
+            this.form.ProNameScreens = [];
+          }
+          if ( this.form.SpecNameScreens != null && this.form.SpecNameScreens.length > 0) {
+            console.log("111")
+            this.form.SpecNameScreens = this.form.SpecNameScreens.split(",");
+          } else {
+            console.log("222")
+            this.form.SpecNameScreens = [];
+          }
+          console.log(this.form.ProNameScreens);
           let MitemCategoryIds = this.form.MitemCategoryIds.split(",");
           let PermissionIds = this.form.PermissionIds.split(",");
           let MitemCategoryNames = this.form.MitemCategoryNames.split(",");
@@ -520,9 +540,9 @@ export default {
     },
     //弹框确认按钮
     handleOk() {
-       this.form.PermissionOrgOrUserList =[];
-       this.form.PermissionMitemCategoryList =[];
-       this.actionValue =[];
+      this.form.PermissionOrgOrUserList = [];
+      this.form.PermissionMitemCategoryList = [];
+      this.actionValue = [];
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           //编辑
@@ -548,6 +568,8 @@ export default {
               Enable: this.form.Enable,
               PermissionOrgOrUserList: [],
               PermissionMitemCategoryList: [],
+              ProNameScreens: this.form.ProNameScreens.join(","),
+              SpecNameScreens: this.form.SpecNameScreens.join(","),
             };
             this.nametags.forEach((item) => {
               editForm.PermissionOrgOrUserList.push({
@@ -579,6 +601,17 @@ export default {
                 MitemCategoryId: item.MitemCategoryId,
               });
             });
+            console.log(this.form.ProNameScreens);
+            if (this.form.ProNameScreens !== undefined) {
+              this.form.ProNameScreens = this.form.ProNameScreens.join(",");
+            } else {
+              this.form.ProNameScreens = "";
+            }
+            if (this.form.SpecNameScreens !== undefined) {
+              this.form.SpecNameScreens = this.form.SpecNameScreens.join(",");
+            } else {
+              this.form.SpecNameScreens = "";
+            }
             quotePermissionAction(this.form, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");
@@ -623,7 +656,7 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if(this.isSearch){
+      if (this.isSearch) {
         this.search();
         return;
       }

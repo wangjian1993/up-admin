@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-10-21 15:44:11
+ * @LastEditTime: 2021-10-22 10:04:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Exception.vue
@@ -145,7 +145,7 @@
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" @click="matching(record)">
+          <a style="margin-right: 8px" @click="matching(record)" v-if="record.MatchStatusName === '未匹配' || record.MatchStatusName == '匹配异常' || record.MatchStatusName == '推送异常' || record.MatchStatusName == '匹配错误'">
             <a-icon type="profile" />
             手动匹配
           </a>

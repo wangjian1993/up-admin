@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 15:09:41
- * @LastEditTime: 2021-10-20 16:27:33
+ * @LastEditTime: 2021-10-22 10:02:49
  * @LastEditors: max
  * @Description: 手动匹配
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Matching.vue
@@ -150,6 +150,7 @@ export default {
       this.mitemList.MitemCode = this.matchingData.MitemCode;
       this.mitemList.MitemName = this.matchingData.MitemName;
       this.mitemData.RequirementQty = this.matchingData.RequirementQty;
+      // this.form.MatchQty = this.matchingData.RequirementQty;
       this.form.RequirementDate = splitData(this.matchingData.RequirementDate);
       this.batchnoData.BatchId = this.matchingData.Id;
       this.batchnoData.BatchNo = this.matchingData.BatchNo;
@@ -184,13 +185,13 @@ export default {
     },
     //采购订单选择
     orderItem(item) {
-      console.log(item);
       this.orderData = item;
       this.isOrder = false;
       this.form.PurchaseOrderNo = item.PurchaseOrderNo;
       this.form.SupplierCode = item.SupplierCode;
       this.form.LineItem = item.LineItem;
       this.form.LineItemNum = item.lineItemNum;
+      this.form.MatchQty = this.matchingData.RequirementQty;
     },
     //获取物料信息
     getMitemsByBatch() {
