@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-15 15:39:45
- * @LastEditTime: 2021-10-15 11:48:10
+ * @LastEditTime: 2021-10-25 16:24:16
  * @LastEditors: max
  * @Description: 用量统计
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Dosage.vue
@@ -151,12 +151,12 @@ export default {
     },
     remove(index, list) {
       this.searchDosage.map((item,i) => {
-        if (item.ChildCode == list.ChildCode) {
+        if (item.CodeId == list.CodeId) {
           this.searchDosage.splice(i, 1);
           this.dosage = this.dosage - item.Yl;
           let c = this.radix * this.dosage;
           this.cost = parseFloat(c.toFixed(4));
-          this.$emit("remove", item.ChildCode);
+          this.$emit("remove", item.CodeId);
         }
       });
     },

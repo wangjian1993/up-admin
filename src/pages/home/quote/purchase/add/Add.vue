@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-20 15:57:34
+ * @LastEditTime: 2021-10-25 16:23:55
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -98,7 +98,7 @@
       <!-- 填写报价单 -->
       <a-card class="card" title="填写报价单" :bordered="false" :bodyStyle="{ padding: '5px 24px' }" :headStyle="{ padding: '5px 24px', minHeight: '30px' }">
         <div class="input-box" v-if="costList.length">
-          <p style="color:red;padding:10px 0;" v-if=" costInfo.ItemOtherInfo && costInfo.ItemOtherInfo.QuotedTips != ''">{{costInfo.ItemOtherInfo.QuotedTips}}</p>
+          <p style="color:red;padding:10px 0;" v-if="costInfo.ItemOtherInfo && costInfo.ItemOtherInfo.QuotedTips != ''">{{ costInfo.ItemOtherInfo.QuotedTips }}</p>
           <a-row v-for="(item, index) in costList" :key="index + 'cost'" class="cost-list">
             <a-col :md="2" :lg="2" :xl="2">
               <p class="input-title">{{ item.CostSort }}</p>
@@ -187,7 +187,7 @@
           size="small"
           :columns="columns"
           :data-source="searchList"
-          :rowKey="(searchList) => searchList.ChildCode"
+          :rowKey="(searchList) => searchList.CodeId"
           :row-class-name="rowClassName"
           :row-selection="{
             columnWidth: 40,
@@ -479,7 +479,7 @@ export default {
     toAosage() {
       this.isDosage = true;
       this.searchDosage = this.tableData.filter((product) => {
-        return this.selectedRowKeys.includes(product.ChildCode);
+        return this.selectedRowKeys.includes(product.CodeId);
       });
     },
     //复制发布
@@ -492,6 +492,9 @@ export default {
       getCostConfig(parmas, "getbomdetail2").then((res) => {
         if (res.data.success) {
           this.tableData = res.data.data.ItemInfo.ItemChildList;
+          this.tableData.forEach((item) => {
+              item.CodeId = item.ChildCode + "_" + item.LastCode;
+          });
           this.searchList = this.tableData;
           this.costInfo = res.data.data.ItemInfo;
           this.costList = res.data.data.CostBaseList;
@@ -542,7 +545,7 @@ export default {
     },
     onSelect(record, selected) {
       if (selected) {
-        this.tableCurrRowId = record.ChildCode;
+        this.tableCurrRowId = record.CodeId;
       }
     },
     //重置数据
@@ -575,15 +578,16 @@ export default {
           getCostConfig(values, "getbomdetail").then((res) => {
             if (res.data.success) {
               this.tableData = res.data.data.ItemInfo.ItemChildList;
+              this.tableData.forEach((item) => {
+                item.CodeId = item.ChildCode + "_" + item.LastCode;
+              });
               this.searchList = this.tableData;
               this.searchList.forEach((item) => {
                 let data = item.PriceEffectiveDate.split(" ");
                 item.Remark = item.SupplierName + data[0];
               });
+              console.log(this.searchList);
               this.costInfo = res.data.data.ItemInfo;
-              // if(this.costInfo.ItemOtherInfo.QuotedTips != ""){
-              //   this.$message.success(this.costInfo.ItemOtherInfo.QuotedTips);
-              // }
               this.costList = res.data.data.CostBaseList;
               this.countCost();
             }
@@ -607,9 +611,9 @@ export default {
             items.Amount = 0;
           }
         });
-        console.log("sum",sum);
+        console.log("sum", sum);
         let totalSum = Number(sum);
-        console.log("totalSum",totalSum);
+        console.log("totalSum", totalSum);
         item.total = parseFloat(totalSum.toFixed(4));
       });
       this.costTotal = total;
@@ -675,7 +679,7 @@ export default {
       });
       this.costTotal = total;
       //最终费用
-      let expenses =Number(this.cost.materialTotal + this.costTotal);
+      let expenses = Number(this.cost.materialTotal + this.costTotal);
       this.cost.ultimatelyTotal = parseFloat(expenses.toFixed(4));
     },
     arrayGroup(arr) {
@@ -704,8 +708,8 @@ export default {
     //修改单价
     priceNumber(item, index) {
       this.tableData.find((items) => {
-        if (items.ChildCode == item.ChildCode) {
-          let a =item.Price * item.Yl;
+        if (items.CodeId == item.CodeId) {
+          let a = item.Price * item.Yl;
           items.Price = item.Price;
           items.Amount = parseFloat(a.toFixed(4));
           if (item.Price === null) {
@@ -737,70 +741,79 @@ export default {
     },
     //保存报价单
     costSave() {
-      this.searchData = this.searchForm.getFieldsValue();
-      if (this.costList.length == 0) {
-        this.$message.warning("请先查询物料信息!");
-        return;
-      }
-      if (this.searchData.enterpriseid == undefined) {
-        this.$message.warning("请先选择需求公司!");
-        return;
-      }
-      if (this.searchData.plantid == undefined) {
-        this.$message.warning("请先选择生产工厂!");
-        return;
-      }
-      this.costLoading = true;
-      //添加备注信息
-      this.tableData.forEach((item) => {
-        if (!item.Remark) {
-          item.Remark = "";
+      try {
+        this.searchData = this.searchForm.getFieldsValue();
+        if (this.costList.length == 0) {
+          this.$message.warning("请先查询物料信息!");
+          return;
         }
-      });
-      // var obj = Object.assign(this.tableData, this.searchList);
-      let cost = [];
-      this.costList.map((item) => {
-        cost = cost.concat(item.list);
-      });
-      let parmas = {
-        CostBaseList: cost,
-        ItemChildList: this.tableData,
-        EnterpriseId: this.searchData.enterpriseid,
-        PlantId: this.searchData.plantid,
-        ItemCode: this.costInfo.ItemCode,
-        ItemName: this.costInfo.ItemName,
-        ItemSpecification: this.costInfo.ItemSpecification,
-        ItemSort: this.costInfo.ItemSort,
-        MaterialCost: this.cost.materialTotal,
-        MaterialCostDescription: "价格不全*" + this.priceNone.length,
-        FinalCost: this.cost.ultimatelyTotal,
-        Remark: this.quoteRemark,
-      };
-      addCost(parmas, "addnewquote").then((res) => {
-        if (res.data.success) {
-          this.$message.success("保存成功!");
-          this.reset();
-          this.$router.push({ path: "/purchase/list", query: { type: 2 } });
+        if (this.searchData.enterpriseid == undefined) {
+          this.$message.warning("请先选择需求公司!");
+          return;
         }
-        this.costLoading = false;
-      });
+        if (this.searchData.plantid == undefined) {
+          this.$message.warning("请先选择生产工厂!");
+          return;
+        }
+        this.costLoading = true;
+        //添加备注信息
+        this.tableData.forEach((item) => {
+          if (!item.Remark) {
+            item.Remark = "";
+          }
+        });
+        // var obj = Object.assign(this.tableData, this.searchList);
+        let cost = [];
+        this.costList.map((item) => {
+          cost = cost.concat(item.list);
+        });
+        let parmas = {
+          CostBaseList: cost,
+          ItemChildList: this.tableData,
+          EnterpriseId: this.searchData.enterpriseid,
+          PlantId: this.searchData.plantid,
+          ItemCode: this.costInfo.ItemCode,
+          ItemName: this.costInfo.ItemName,
+          ItemSpecification: this.costInfo.ItemSpecification,
+          ItemSort: this.costInfo.ItemSort,
+          MaterialCost: this.cost.materialTotal,
+          MaterialCostDescription: "价格不全*" + this.priceNone.length,
+          FinalCost: this.cost.ultimatelyTotal,
+          Remark: this.quoteRemark,
+        };
+        addCost(parmas, "addnewquote").then((res) => {
+          if (res.data.success) {
+            this.$message.success("保存成功!");
+            this.reset();
+            this.$router.push({ path: "/purchase/list", query: { type: 2 } });
+          }
+          this.costLoading = false;
+        });
+      } catch (error) {
+        this.$message.success(error);
+      }
     },
     //列表搜索
     listSearch(e) {
-      let keyword = e.target.value;
-      this.searchList = this.tableData.filter((product) => {
-        return Object.keys(product).some((key) => {
-          return (
-            String(product[key])
-              .toLowerCase()
-              .indexOf(keyword.toLowerCase()) > -1
-          );
+      console.log(e);
+      try {
+        let keyword = e.target.value;
+        this.searchList = this.tableData.filter((product) => {
+          return Object.keys(product).some((key) => {
+            return (
+              String(product[key])
+                .toLowerCase()
+                .indexOf(keyword.toLowerCase()) > -1
+            );
+          });
         });
-      });
+      } catch (error) {
+        this.searchList = this.tableData;
+      }
     },
-    removeDosage(ChildCode) {
+    removeDosage(CodeId) {
       this.selectedRowKeys.map((item, i) => {
-        if (item == ChildCode) {
+        if (item == CodeId) {
           this.selectedRowKeys.splice(i, 1);
         }
       });
@@ -813,11 +826,11 @@ export default {
         on: {
           // 鼠标单击行
           click: () => {
-            if (this.selectedRowKeys.indexOf(record.ChildCode) > -1) {
+            if (this.selectedRowKeys.indexOf(record.CodeId) > -1) {
               // console.log("deleting...");
-              this.selectedRowKeys.splice(this.selectedRowKeys.indexOf(record.ChildCode), 1);
+              this.selectedRowKeys.splice(this.selectedRowKeys.indexOf(record.CodeId), 1);
             } else {
-              this.selectedRowKeys.push(record.ChildCode);
+              this.selectedRowKeys.push(record.CodeId);
             }
             this.rowClassName(record);
           },
@@ -827,7 +840,7 @@ export default {
     rowClassName(record) {
       //选择行后设置颜色
       //return 'white'
-      return this.selectedRowKeys.includes(record.ChildCode) ? "blue" : "white";
+      return this.selectedRowKeys.includes(record.CodeId) ? "blue" : "white";
       // return this.selectedRowKeys.includes(record.ChildCode) ? "litigationInfoListredRow" : ""
     },
     //导出excel

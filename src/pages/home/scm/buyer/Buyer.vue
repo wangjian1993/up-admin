@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-08 10:57:09
- * @LastEditTime: 2021-10-21 15:43:25
+ * @LastEditTime: 2021-10-25 18:17:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/buyer/Buyer.vue

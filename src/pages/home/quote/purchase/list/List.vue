@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:59:02
- * @LastEditTime: 2021-10-19 15:57:27
+ * @LastEditTime: 2021-10-25 10:29:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/List.vue
@@ -10,8 +10,12 @@
   <div>
     <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
       <a-tabs type="card" v-model="activeKey" default-active-key="1">
-        <a-tab-pane key="1" tab="列表查询(公共端)" v-if="hasPerm('search_public')"><list-public :categoryList="categoryList"></list-public></a-tab-pane>
-        <a-tab-pane key="2" tab="列表查询(采购端)" v-if="hasPerm('search_purchase')"><list-search :categoryList="categoryList"></list-search></a-tab-pane>
+        <a-tab-pane key="1" tab="列表查询(公共端)" v-if="hasPerm('search_public')"
+          ><keep-alive><list-public :categoryList="categoryList"></list-public></keep-alive
+        ></a-tab-pane>
+        <a-tab-pane key="2" tab="列表查询(采购端)" v-if="hasPerm('search_purchase')"
+          ><keep-alive><list-search :categoryList="categoryList"></list-search></keep-alive
+        ></a-tab-pane>
         <!-- <a-tab-pane key="3" tab="销售要求报价"> </a-tab-pane>
         <a-tab-pane key="4" tab="物料价格变动"> </a-tab-pane>
         <a-tab-pane key="5" tab="有Bom无成本价"> </a-tab-pane> -->
@@ -28,23 +32,23 @@ export default {
   components: { ListSearch, ListPublic },
   data() {
     return {
-      categoryList:[],
+      categoryList: [],
       activeKey: "1",
     };
   },
   created() {
     this.getCategory();
-    console.log(this.$route.query.type)
-    console.log(this.hasPerm('search_purchase'))
-    if(this.$route.query.type == 2 && this.hasPerm('search_purchase')){
-      this.activeKey= "2";
+    console.log(this.$route.query.type);
+    console.log(this.hasPerm("search_purchase"));
+    if (this.$route.query.type == 2 && this.hasPerm("search_purchase")) {
+      this.activeKey = "2";
     }
   },
   methods: {
     getCategory() {
       getCostConfig("", "getcategoryoptions").then((res) => {
         if (res.data.success) {
-          this.categoryList =res.data.data;
+          this.categoryList = res.data.data;
         }
       });
     },
