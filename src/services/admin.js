@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-14 08:51:07
- * @LastEditTime: 2021-09-04 09:58:42
+ * @LastEditTime: 2021-10-26 16:54:49
  * @LastEditors: max
  * @Description: 后台接口
  * @FilePath: /up-admin/src/services/admin.js
@@ -154,6 +154,9 @@ export async function uploadFile(params) {
  */
 export async function getMenuList(params) {
 	return request(`${UP_ADMIN}/module/getall`, METHOD.GET, params);
+}
+export async function getMenuInfo(params) {
+	return request(`${UP_ADMIN}/module/getsingle`, METHOD.GET, params);
 }
 export async function menuAction(params, action) {
 	return request(`${UP_ADMIN}/module/${action}`, METHOD.POST, params);

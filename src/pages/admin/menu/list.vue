@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-09-14 09:51:02
+ * @LastEditTime: 2021-10-26 16:59:22
  * @LastEditors: max
  * @Description: 菜单管理
  * @FilePath: /up-admin/src/pages/admin/menu/list.vue
@@ -347,7 +347,7 @@ const columns = [
     width: "20%",
   },
 ];
-import { getMenuList, menuAction, getAppInfoList, getAppTypeList, getParamData } from "@/services/admin.js";
+import { getMenuList, menuAction, getAppInfoList, getAppTypeList, getParamData, getMenuInfo } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import AppIcon from "@/components/app-icon/AppIcon.vue";
 import getTableScroll from "@/utils/setTableHeight";
@@ -531,7 +531,7 @@ export default {
       this.isIcon = false;
     },
     iconClick(item) {
-      if(item == '无'){
+      if (item == "无") {
         this.form.ModuleLogo = "";
       }
       this.form.ModuleLogo = item;
@@ -658,22 +658,33 @@ export default {
     //关闭对话框
     handleCancel() {
       this.visible = false;
+      this.form = [];
     },
     edit(item) {
-      this.visible = true;
-      this.isEdit = true;
-      this.title = "编辑菜单";
-      this.form = item;
-      if (this.form.AccessTypeCode == "BlankView") {
-        this.form.component = "BlankView";
-        this.form.AccessTypeCode = "module";
-      } else {
-        if (this.form.AccessTypeCode != "external_links" || this.form.AccessTypeCode != "nternal_link" || this.form.AccessTypeCode != "null") {
-          this.form.component = this.form.AccessTypeCode;
-          this.form.buttonType = this.form.AccessTypeCode;
-          this.form.AccessTypeCode = "module";
+      console.log(item);
+      let parmas = {
+        id: item.ModuleId
+      };
+      getMenuInfo(parmas).then((res) => {
+        if (res.data.success) {
+          this.visible = true;
+          this.isEdit = true;
+          this.title = "编辑菜单";
+          this.form = res.data.data;
+          if (this.form.AccessTypeCode == "BlankView") {
+            this.form.component = "BlankView";
+            this.form.AccessTypeCode = "module";
+            console.log("111");
+          } else {
+            if (this.form.AccessTypeCode != "external_links" || this.form.AccessTypeCode != "nternal_link" || this.form.AccessTypeCode != "null") {
+              console.log("222", this.form.AccessTypeCode);
+              this.form.component = this.form.AccessTypeCode;
+              this.form.buttonType = this.form.AccessTypeCode;
+              this.form.AccessTypeCode = "module";
+            }
+          }
         }
-      }
+      });
     },
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {

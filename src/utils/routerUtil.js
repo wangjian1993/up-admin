@@ -76,9 +76,9 @@ function parseRoutes(routesConfig, routerMap) {
 			} : item
 		}
 		//按钮权限
-		if(routeCfg.buttons){
-			let authority=[]
-			routeCfg.buttons.forEach(item=>{
+		if (routeCfg.buttons) {
+			let authority = []
+			routeCfg.buttons.forEach(item => {
 				authority.push(item.component)
 			})
 			routeCfg.permission = authority;
@@ -95,8 +95,8 @@ function parseRoutes(routesConfig, routerMap) {
 				icon: routeCfg.icon || router.icon || routeCfg.meta?.icon || router.meta?.icon,
 				page: routeCfg.page || router.page || routeCfg.meta?.page || router.meta?.page,
 				link: routeCfg.link || router.link || routeCfg.meta?.link || router.meta?.link,
-				permission:routeCfg.permission || [],
-				invisible:routeCfg.invisible || router.invisible
+				permission: routeCfg.permission || [],
+				invisible: routeCfg.invisible || router.invisible
 			}
 		};
 		if (routeCfg.invisible || router.invisible) {
@@ -138,10 +138,16 @@ function loadRoutes(routesConfig) {
 	} = appOptions
 
 	// 如果 routesConfig 有值，则更新到本地，否则从本地获取
+	console.log(routesConfig);
 	if (routesConfig) {
+		console.log("有路由信息")
 		store.commit('account/setRoutesConfig', routesConfig)
 	} else {
-		routesConfig = store.getters['account/routesConfig']
+		console.log("没有路由信息")
+		routesConfig = store.getters['account/routesConfig'];
+		// this.$message.error('token失效,请重新登陆!');
+		// this.$message.error("添加成功!");
+		// window.location.href = "./"
 	}
 	// 如果开启了异步路由，则加载异步路由配置
 	const asyncRoutes = store.state.setting.asyncRoutes
