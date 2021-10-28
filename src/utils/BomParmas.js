@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-10-16 10:20:48
- * @LastEditTime: 2021-10-16 17:34:39
+ * @LastEditTime: 2021-10-28 10:30:10
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/BomParmas.js
@@ -42,7 +42,7 @@ export function variationType(type) {
         },
         {
             type: 4,
-            name: "失败"
+            name: "失效"
         },
     ];
     let codeName = "";

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2021-10-20 14:32:17
+ * @LastEditTime: 2021-10-28 17:53:18
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
@@ -11,12 +11,15 @@
     <a-modal class="bom-detail" v-model="visible" title="BOM信息" @cancel="close" width="90%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
-          <a-descriptions :column="5" bordered size="small">
+          <a-descriptions :column="3" bordered size="small">
             <a-descriptions-item label="品号">
               {{ info.ITEM_CODE }}
             </a-descriptions-item>
             <a-descriptions-item label="品号群组">
               {{ info.FEATURE_GROUP_NAME }}
+            </a-descriptions-item>
+            <a-descriptions-item label="启用特征码">
+              <a-checkbox :checked="info.ITEM_FEATURE_CONTROL"></a-checkbox>
             </a-descriptions-item>
             <a-descriptions-item label="快捷码">
               {{ info.SHORTCUT }}
@@ -25,10 +28,13 @@
               {{ info.DESCRIPTION }}
             </a-descriptions-item>
             <a-descriptions-item label="周期种类">
-              {{ info.CYCLEL_STATUS }}
+              {{ info.CYCLEL_STATUS == "1" ? "1.新建" : info.CYCLEL_STATUS == "2" ? "2.发行" : "3.终止" }}
             </a-descriptions-item>
             <a-descriptions-item label="产品型号" :span="2">
-              {{ info.ITEM_NAME }}
+              {{ info.FILENAME }}
+            </a-descriptions-item>
+            <a-descriptions-item label="状态">
+              {{ info.ApproveStatus == "Y" ? "Y.已生效" : info.ApproveStatus == "N" ? "N.未生效" : "V.已失效" }}
             </a-descriptions-item>
             <a-descriptions-item label=" 图号">
               {{ info.DRAWING_NO }}
@@ -45,58 +51,61 @@
           </a-descriptions>
         </div>
         <div>
-          <a-tabs type="card">
+          <a-tabs type="card" style="width:70%">
             <a-tab-pane key="1" tab="通用属性值信息">
               <a-table :columns="columns" size="small" :data-source="data">
                 <a slot="name" slot-scope="text">{{ text }}</a>
               </a-table>
             </a-tab-pane>
             <a-tab-pane key="2" tab="通用信息">
-              <a-descriptions :column="5" bordered size="small">
+              <a-descriptions :column="3" bordered size="small">
                 <a-descriptions-item v-for="(item, index) in general" :key="index" :label="item.title">
-                  <span v-if="!item.checkbox">{{ info[item.dataIndex] }}</span>
-                  <a-checkbox v-else :checked="info[item.dataIndex]"></a-checkbox>
+                  <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
+                  <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
+                  <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
                 </a-descriptions-item>
               </a-descriptions>
             </a-tab-pane>
             <a-tab-pane key="3" tab="仓储信息">
-              <a-descriptions :column="5" bordered size="small">
+              <a-descriptions :column="3" bordered size="small">
                 <a-descriptions-item v-for="(item, index) in storage" :key="index" :label="item.title">
-                  <span v-if="!item.checkbox">{{ info[item.dataIndex] }}</span>
-                  <a-checkbox v-else :checked="info[item.dataIndex]"></a-checkbox>
+                  <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
+                  <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
+                  <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
                 </a-descriptions-item>
               </a-descriptions>
             </a-tab-pane>
             <a-tab-pane key="4" tab="生产信息">
-              <a-descriptions :column="5" bordered size="small">
+              <a-descriptions :column="3" bordered size="small">
                 <a-descriptions-item v-for="(item, index) in production" :key="index" :label="item.title">
-                  <span v-if="!item.checkbox">{{ info[item.dataIndex] }}</span>
-                  <a-checkbox v-else :checked="info[item.dataIndex]"></a-checkbox>
+                  <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
+                  <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
+                  <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
                 </a-descriptions-item>
               </a-descriptions>
             </a-tab-pane>
             <a-tab-pane key="5" tab="计划信息">
-              <a-descriptions :column="5" bordered size="small">
+              <a-descriptions :column="3" bordered size="small">
                 <a-descriptions-item v-for="(item, index) in plant" :key="index" :label="item.title">
-                  <span v-if="!item.checkbox">{{ info[item.dataIndex] }}</span>
-                  <a-checkbox v-else :checked="info[item.dataIndex]"></a-checkbox>
+                  <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
+                  <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
+                  <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
                 </a-descriptions-item>
               </a-descriptions>
             </a-tab-pane>
             <a-tab-pane key="6" tab="财务信息">
-              <a-descriptions :column="5" bordered size="small">
+              <a-descriptions :column="3" bordered size="small">
                 <a-descriptions-item v-for="(item, index) in finance" :key="index" :label="item.title">
-                  <span v-if="!item.checkbox">{{ info[item.dataIndex] }}</span>
-                  <a-checkbox v-else :checked="info[item.dataIndex]"></a-checkbox>
+                  <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
+                  <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
+                  <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
                 </a-descriptions-item>
               </a-descriptions>
             </a-tab-pane>
             <a-tab-pane key="7" tab="品号图片">
-              <img :src="imgUrl" alt="">
+              <img style="width:100%" :src="imgUrl" alt="" />
             </a-tab-pane>
-            <a-tab-pane key="8" tab="品号附件">
-              
-            </a-tab-pane>
+            <a-tab-pane key="8" tab="品号附件"> </a-tab-pane>
           </a-tabs>
         </div>
       </a-spin>
@@ -108,7 +117,8 @@
 const columns = [
   {
     title: "序号",
-    scopedSlots: { customRender: "index" },
+    dataIndex: "SECTION_NO",
+    scopedSlots: { customRender: "SECTION_NO" },
     align: "center",
     width: 50,
   },
@@ -162,7 +172,7 @@ export default {
       production,
       plant,
       finance,
-      imgUrl:""
+      imgUrl: "",
     };
   },
   created() {
@@ -176,25 +186,27 @@ export default {
     close() {
       this.$emit("closeModal");
     },
-    getImg(){
+    getImg() {
       let parmas = {
-        itemcode: this.modelData.ITEM_CODE,
+        itemcode: this.modelData.ITEM_CODE || this.modelData.itemcode,
       };
-      getERPReportAction(parmas, "getbomchildlevel").then((res) => {
+      getERPReportAction(parmas, "getitemimage").then((res) => {
         if (res.data.success) {
-          this.imgUrl = res.data.data
+          this.imgUrl = res.data.data.imgUrl;
         }
       });
     },
     getList() {
       this.loading = true;
+      console.log(this.modelData);
       let parmas = {
-        plantid: this.modelData.Owner_Org_ROid,
-        itemcode: this.modelData.ITEM_CODE,
+        plantid: this.modelData.Owner_Org_ROid || this.modelData.plantid,
+        itemcode: this.modelData.ITEM_CODE || this.modelData.itemcode,
       };
       getERPReportAction(parmas, "getbomdetailinfo").then((res) => {
         if (res.data.success) {
-          this.info = res.data.data.info[0];
+          this.info = Object.assign(res.data.data.info_1[0], res.data.data.info_2[0]);
+          console.log(this.info);
           this.data = res.data.data.firstPageInfo;
           this.loading = false;
           this.isSearch = false;
@@ -238,10 +250,10 @@ export default {
   -khtml-user-select: none; /*早期浏览器*/
   user-select: none;
 }
-/deep/.ant-modal{
-    height:100%;
+/deep/.ant-modal {
+  height: 100%;
 }
-/deep/.ant-modal-content{
-    height:100%;
+/deep/.ant-modal-content {
+  height: 100%;
 }
 </style>

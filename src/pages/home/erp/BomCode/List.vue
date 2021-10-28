@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-28 16:59:36
+ * @LastEditTime: 2021-10-28 17:01:25
  * @LastEditors: max
  * @Description: BOM查询
- * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
+ * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
 -->
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
@@ -44,7 +44,7 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow" :rowClassName="tableRowClass">
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 3800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_BUSINESS_ID" bordered :customRow="handleClickRow">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -75,7 +75,7 @@
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
-    <erp-dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></erp-dosage>
+    <model-info v-if="isModelInfo" :modelData="mitemcodeData" @closeModal="closeModal"></model-info>
   </a-card>
 </template>
 <script>
@@ -84,14 +84,28 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width: 50,
   },
   {
-    title: "主件品号",
+    title: "品号",
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
     align: "center",
     width: 250,
+  },
+  {
+    title: "工厂编号",
+    dataIndex: "PLANT_CODE_P",
+    scopedSlots: { customRender: "PLANT_CODE_P" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "工厂/储运",
+    dataIndex: "PLANT_NAME_P",
+    scopedSlots: { customRender: "PLANT_NAME_P" },
+    align: "center",
+    width: 80,
   },
   {
     title: "快捷码",
@@ -118,6 +132,13 @@ const columns = [
     ellipsis: true,
   },
   {
+    title: "状态",
+    dataIndex: "ApproveStatus",
+    scopedSlots: { customRender: "ApproveStatus" },
+    align: "center",
+    width: 120,
+  },
+  {
     title: "图号",
     dataIndex: "DRAWING_NO",
     scopedSlots: { customRender: "DRAWING_NO" },
@@ -126,104 +147,133 @@ const columns = [
     ellipsis: true,
   },
   {
-    title: "单位",
+    title: "库存单位",
     dataIndex: "UNIT_NAME",
     scopedSlots: { customRender: "UNIT_NAME" },
     align: "center",
-    width: 50,
+    width: 80,
+  },
+  {
+    title: "采购单位",
+    dataIndex: "UNIT_NAME_S",
+    scopedSlots: { customRender: "UNIT_NAME_S" },
+    align: "center",
+    width: 80,
   },
   {
     title: "品号类型",
     dataIndex: "ITEM_PROPERTY",
     scopedSlots: { customRender: "ITEM_PROPERTY" },
     align: "center",
-    width: "5%",
-  },
-  {
-    title: "BOM生效状态",
-    dataIndex: "ApproveStatus",
-    scopedSlots: { customRender: "ApproveStatus" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "工厂",
-    dataIndex: "PLANT_CODE_P",
-    scopedSlots: { customRender: "PLANT_CODE_P" },
-    align: "center",
-  },
-   {
-    title: "工厂名称",
-    dataIndex: "PLANT_NAME_P",
-    scopedSlots: { customRender: "PLANT_NAME_P" },
-    align: "center",
     width: 80,
   },
   {
-    title: "引用工厂",
-    dataIndex: "PLANT_CODE_R",
-    scopedSlots: { customRender: "PLANT_CODE_R" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "引用工厂名称",
-    dataIndex: "PLANT_NAME_R",
-    scopedSlots: { customRender: "PLANT_NAME_R" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "版次",
-    dataIndex: "VERSION_TIMES",
-    scopedSlots: { customRender: "VERSION_TIMES" },
-    align: "center",
-  },
-  {
-    title: "生效日期",
-    dataIndex: "ApproveDate",
-    scopedSlots: { customRender: "ApproveDate" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "生效审核人员",
-    dataIndex: "EMPLOYEE_NAME_A",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_A" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "创建日期",
-    dataIndex: "CreateDate",
-    scopedSlots: { customRender: "CreateDate" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "创建人员",
-    dataIndex: "EMPLOYEE_NAME_C",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_C" },
-    align: "center",
-  },
-  {
-    title: "最后修改日期",
-    dataIndex: "LastModifiedDate",
-    scopedSlots: { customRender: "LastModifiedDate" },
+    title: "默认入库仓库",
+    dataIndex: "WAREHOUSE_CODE_I",
+    scopedSlots: { customRender: "WAREHOUSE_CODE_I" },
     align: "center",
     width: 150,
   },
   {
-    title: "最后修改人员",
-    dataIndex: "EMPLOYEE_NAME_L",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_L" },
+    title: "默认入库仓库名称",
+    dataIndex: "WAREHOUSE_NAME_I",
+    scopedSlots: { customRender: "WAREHOUSE_NAME_I" },
     align: "center",
     width: 150,
   },
   {
-    title: "备注",
-    dataIndex: "REMARK",
-    scopedSlots: { customRender: "REMARK" },
+    title: "默认出库仓库",
+    dataIndex: "WAREHOUSE_CODE_O",
+    scopedSlots: { customRender: "WAREHOUSE_CODE_O" },
+    align: "center",
+    width: 150,
+  },
+  {
+    title: "默认出库仓库名称",
+    dataIndex: "WAREHOUSE_NAME_O",
+    scopedSlots: { customRender: "WAREHOUSE_NAME_O" },
+    align: "center",
+    width: 150,
+  },
+  {
+    title: "批号管理",
+    dataIndex: "LOT_CONTROL",
+    scopedSlots: { customRender: "LOT_CONTROL" },
+    align: "center",
+    width: 80,
+    customRender: (text) => {
+      return text == "N" ? "需要" : text == "T" ? " 需要且检查库存量" : "需要不检查库存量";
+    },
+  },
+  {
+    title: "品控模式",
+    dataIndex: "INSPECT_MODE",
+    scopedSlots: { customRender: "INSPECT_MODE" },
+    align: "center",
+    width: 120,
+    customRender: (text) => {
+      return text == 1 ? "免检" : text == 2 ? "执行质检流程" : "仅记录质检结果";
+    },
+  },
+  {
+    title: "工艺管理",
+    dataIndex: "ITEM_ROUTING_CONTROL",
+    scopedSlots: { customRender: "ITEM_ROUTING_CONTROL" },
+    align: "center",
+    width: 80,
+    customRender: (text) => {
+      return text == 0 ? "不启用" : text == 1 ? "按品号设置" : "按特征码设置";
+    },
+  },
+  {
+    title: "是否并批开单",
+    dataIndex: "IS_CONSOLIDATED",
+    scopedSlots: { customRender: "IS_CONSOLIDATED" },
+    align: "center",
+    width: 120,
+    customRender: (text) => {
+      return text == 'N' ? "否" : "是";
+    },
+  },
+  {
+    title: "标准工艺路线",
+    dataIndex: "ROUTING_CODE",
+    scopedSlots: { customRender: "ROUTING_CODE" },
+    align: "center",
+    width: 120,
+  },
+  {
+    title: "标准工艺路线说明位",
+    dataIndex: "ROUTING_DES",
+    scopedSlots: { customRender: "ROUTING_DES" },
+    align: "center",
+    width: 200,
+  },
+  {
+    title: "工作中心编号",
+    dataIndex: "WORK_CENTER_CODE",
+    scopedSlots: { customRender: "WORK_CENTER_CODE" },
+    align: "center",
+    width: 150,
+  },
+  {
+    title: "工作中心名称",
+    dataIndex: "WORK_CENTER_NAME",
+    scopedSlots: { customRender: "WORK_CENTER_NAME" },
+    align: "center",
+    width: 150,
+  },
+  {
+    title: "生产部门编号",
+    dataIndex: "ADMIN_UNIT_CODE",
+    scopedSlots: { customRender: "ADMIN_UNIT_CODE" },
+    align: "center",
+    width: 150,
+  },
+  {
+    title: "生产部门名称",
+    dataIndex: "ADMIN_UNIT_NAME",
+    scopedSlots: { customRender: "ADMIN_UNIT_NAME" },
     align: "center",
   },
   {
@@ -238,15 +288,15 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData, modelType } from "@/utils/util.js";
-import ErpDosage from "../components/ErpDosage.vue";
+import ModelInfo from "../components/ModelInfo.vue";
 export default {
-  components: { ErpDosage },
+  components: { ModelInfo },
   data() {
     return {
       data: [],
       columns,
       loading: false,
-      isDosage: false,
+      isModelInfo: false,
       pagination: {
         current: 1,
         total: 0,
@@ -288,11 +338,11 @@ export default {
     splitData,
     modelType,
     closeModal() {
-      this.isDosage = false;
+      this.isModelInfo = false;
     },
     //物料需求详情
     detail(item) {
-      this.isDosage = true;
+      this.isModelInfo = true;
       this.mitemcodeData = item;
     },
     getPlant() {
@@ -321,7 +371,7 @@ export default {
         itemname: "",
         itemspecification: "",
       };
-      getERPReportAction(parmas, "getbomlist").then((res) => {
+      getERPReportAction(parmas, "getbominfo").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -336,11 +386,9 @@ export default {
     },
     //重置搜索
     reset() {
-      // this.getListAll();
-      this.data =[];
+      this.getListAll();
       this.week = "";
       this.searchForm.resetFields();
-      this.getPlant();
     },
     //关键词搜索
     search() {
@@ -358,7 +406,7 @@ export default {
             itemname: values.itemname || "",
             itemspecification: values.itemspecification || "",
           };
-          getERPReportAction(parmas, "getbomlist").then((res) => {
+          getERPReportAction(parmas, "getbominfo").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -380,8 +428,9 @@ export default {
         },
         on: {
           dblclick: () => {
-            this.isDosage = true;
-            this.mitemcodeData = record;
+            console.log(record);
+            this.isModelInfo = true;
+            this.mitemcodeData = this.searchForm.getFieldsValue();
           },
         },
       };

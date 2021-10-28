@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-10-16 18:06:47
+ * @LastEditTime: 2021-10-28 16:48:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
@@ -81,10 +81,10 @@
               <template slot="ITEM_TYPE" slot-scope="text">
                 <span>{{ feedSystem(text) }}</span>
               </template>
-              <template slot="APPROVEDATE_ECN" slot-scope="text">
+              <template slot="APPROVEDATE_ECN" slot-scope="text" v-if="text == '1900-01-01T00:00:00'">
                 <span>{{ splitData(text) }}</span>
               </template>
-              <template slot="ApproveDate" slot-scope="text">
+              <template slot="EFFECTIVE_DATE" slot-scope="text">
                 <span>{{ splitData(text) }}</span>
               </template>
               <template slot="EXPRITY_DATE" slot-scope="text">
@@ -108,7 +108,7 @@ const columns = [
     width: 50,
   },
   {
-    title: "主件品号",
+    title: "元件品号",
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
     align: "center",
@@ -187,7 +187,7 @@ const columns = [
     width: 50,
   },
   {
-    title: "ECN变更状态",
+    title: "ECN变更",
     dataIndex: "ECNSTATUS",
     scopedSlots: { customRender: "ECNSTATUS" },
     align: "center",
@@ -251,8 +251,8 @@ const columns = [
   },
   {
     title: "生效日期",
-    dataIndex: "ApproveDate",
-    scopedSlots: { customRender: "ApproveDate" },
+    dataIndex: "EFFECTIVE_DATE",
+    scopedSlots: { customRender: "EFFECTIVE_DATE" },
     align: "center",
     width: 120,
   },
@@ -331,7 +331,7 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        bomid: this.info.BOM_ID,
+        bomid: this.info.BOM_ID || this.info.ITEM_BUSINESS_ID,
       };
       getERPReportAction(parmas, "getbomusinginfo").then((res) => {
         if (res.data.success) {

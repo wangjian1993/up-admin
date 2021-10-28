@@ -1,9 +1,9 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-18 10:47:39
+ * @LastEditTime: 2021-10-28 14:06:24
  * @LastEditors: max
- * @Description: 
+ * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
 -->
 <template>
@@ -373,7 +373,7 @@ export default {
           this.searchForm.setFieldsValue({
             plantid: this.plantList[0].PlantId,
           });
-          this.getListAll();
+          // this.getListAll();
         }
       });
     },
@@ -430,9 +430,10 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
+      this.data =[];
       this.week = "";
       this.searchForm.resetFields();
+      this.getPlant();
     },
     //关键词搜索
     search() {

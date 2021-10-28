@@ -1,9 +1,9 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-16 17:36:27
+ * @LastEditTime: 2021-10-28 14:07:07
  * @LastEditors: max
- * @Description: 
+ * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
 -->
 <template>
@@ -86,7 +86,7 @@
         </div>
       </template>
       <template slot="ApproveStatus" slot-scope="text">
-        <a-tag :color="text !== 'Y' ? 'red' : 'green'">{{ text == "Y" ? "生效" : "不生效" }}</a-tag>
+        <a-tag :color="text !== 'Y' ? 'red' : 'green'">{{ text == "Y" ? "已审核" : "未审核" }}</a-tag>
       </template>
       <template slot="ITEM_PROPERTY" slot-scope="text">
         <span>{{ modelType(text) }}</span>
@@ -321,8 +321,10 @@ export default {
     },
     //重置搜索
     reset() {
+      this.data =[];
+      this.week = "";
       this.searchForm.resetFields();
-      this.data = [];
+      this.getPlant();
     },
     //关键词搜索
     search() {

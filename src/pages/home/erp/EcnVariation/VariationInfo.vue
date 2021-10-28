@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-10-18 10:55:02
+ * @LastEditTime: 2021-10-27 09:29:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/VariationInfo.vue
@@ -269,8 +269,8 @@ const columns1 = [
   },
   {
     title: "元件品号",
-    dataIndex: "SOURCE_ID_ROid",
-    scopedSlots: { customRender: "SOURCE_ID_ROid" },
+    dataIndex: "ITEM_CODE",
+    scopedSlots: { customRender: "ITEM_CODE" },
     align: "center",
     width: 250,
   },

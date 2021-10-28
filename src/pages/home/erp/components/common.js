@@ -1,20 +1,32 @@
 /*
  * @Author: max
  * @Date: 2021-10-16 14:23:43
- * @LastEditTime: 2021-10-16 15:13:52
+ * @LastEditTime: 2021-10-28 16:33:13
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/erp/BomList/common.js
+ * @FilePath: /up-admin/src/pages/home/erp/components/common.js
  */
 export const general = [
     {
         title: "计量体系",
         dataIndex: "UNIT_MODE",
         span: 1,
+        filter: (text) => {
+            return text == "S" ? "S.单一计量" : "D.双存货计量";
+        },
     },
     {
         title: "批号管理",
         dataIndex: "LOT_CONTROL",
+        span: 1,
+        filter: (text) => {
+            return text == "N" ? "N.不需要" : text == 'T' ? 'T.需要且检查库存量' : 'Y.需要不检查库存量';
+        },
+    },
+    {
+        title: "序列号管理",
+        dataIndex: "ITEM_SN_MANAGEMENT",
+        checkbox: true,
         span: 1,
     },
     {
@@ -41,11 +53,17 @@ export const general = [
         title: "修改批号有效日期",
         dataIndex: "LOT_FAILURE_CONTROL",
         span: 1,
+        filter: (text) => {
+            return text == "0" ? "0.不控制" : text == '1' ? '1.固定天数' : '2.User自定日期';
+        },
     },
     {
         title: "特征码产生模式",
         dataIndex: "FEATURE_GENERATE_MODE",
         span: 1,
+        filter: (text) => {
+            return text == 1 ? "1.事先定义" : "2.CTO产品配置产生";
+        },
     },
     {
         title: "物流单位",
@@ -66,6 +84,9 @@ export const general = [
         title: "库存检查方式",
         dataIndex: "INVENTORY_CHECK_BY",
         span: 1,
+        filter: (text) => {
+            return text == 1 ? "1.库存数量" : text == 2 ? '2.第二数量' : '3.两者';
+        },
     },
     {
         title: "批号复检天数",
@@ -78,8 +99,9 @@ export const general = [
         span: 1,
     },
     {
-        title: "库存检查方式",
-        dataIndex: "INVENTORY_CHECK_BY",
+        title: "存货管理",
+        dataIndex: "INVENTORY_MANAGEMENT",
+        checkbox: true,
         span: 1,
     },
     {
@@ -98,32 +120,32 @@ export const general = [
         span: 1,
     },
     {
+        title: "认证检查",
+        dataIndex: "NEED_CERTIFICATION",
+        checkbox: true,
+        span: 1,
+    },
+    {
+        title: "多产出",
+        dataIndex: "JOINT_PRODUCT_CONTROL",
+        checkbox: true,
+        span: 1,
+    },
+    {
         title: "惠州存储位置",
         dataIndex: "UDF025",
         span: 1,
-    },
-    {
-        title: "序列号管理",
-        dataIndex: "ITEM_SN_MANAGEMENT",
-        checkbox:true,
-        span: 1,
-    },
-    {
-        title: "存货管理",
-        dataIndex: "INVENTORY_MANAGEMENT",
-        checkbox:true,
-        span: 1,
-    },
+    }
 ];
 export const storage = [
     {
         title: "工厂/储运",
-        dataIndex: "PLANT_NAME_O",
+        dataIndex: "PLANT_NAME_P",
         span: 1,
     },
     {
         title: "默认入库仓库",
-        dataIndex: "WAREHOUSE_CODE_I",
+        dataIndex: "WAREHOUSE_NAME_I",
         span: 1,
     },
     {
@@ -150,6 +172,9 @@ export const storage = [
         title: "批号管理",
         dataIndex: "LOT_CONTROL",
         span: 1,
+        filter: (text) => {
+            return text == "N" ? "N.不需要" : text == 'T' ? 'T.需要且检查库存量' : 'Y.需要不检查库存量';
+        },
     },
     {
         title: "默认调出工厂/储运",
@@ -160,11 +185,17 @@ export const storage = [
         title: "保留控制",
         dataIndex: "RESERVED_CONTROL",
         span: 1,
+        filter: (text) => {
+            return text ? "1" : "0";
+        },
     },
     {
         title: "出库策略",
         dataIndex: "WAREHOUSE_CONTROL",
         span: 1,
+        filter: (text) => {
+            return text == "1" ? "1.生效日期先进先出" : text == '2' ? '2.生效日期后进先出' : text == '4' ? '4.先到期者先出' : text == '6' ? '5.允许出库日早者先出' : '6.可用量少者先出';
+        },
     },
     {
         title: "运输天数",
@@ -180,10 +211,18 @@ export const storage = [
         title: "品号类型",
         dataIndex: "ITEM_PROPERTY",
         span: 1,
+        filter: (text) => {
+            return text == "P" ? "P.采购件" : text == 'M' ? 'M.自制件' : text == 'S' ? 'S.委外加工件' : text == 'Y' ? 'Y.虚设件' : text == 'F' ? 'F.产品系列' : text == 'O' ? 'O.配送件' : 'T.调拨件';
+        },
     },
     {
         title: "备注",
         dataIndex: "REMARK",
+        span: 1,
+    },
+    {
+        title: "保留有效天数",
+        dataIndex: "RESERVED_VALID_DAY",
         span: 1,
     },
     {
@@ -205,18 +244,24 @@ export const storage = [
 export const production = [
     {
         title: "工厂/储运",
-        dataIndex: "PLANT_NAME_O",
+        dataIndex: "PLANT_NAME_P",
         span: 1,
     },
     {
         title: "质检模式",
         dataIndex: "INSPECT_MODE",
         span: 1,
+        filter: (text) => {
+            return text == "1" ? "1.免检" : text == '2' ? '2.执行质检流程' : '3.仅记录质检结果';
+        },
     },
     {
         title: "工艺管理",
         dataIndex: "ITEM_ROUTING_CONTROL",
         span: 1,
+        filter: (text) => {
+            return text == "0" ? "0.不启用" : text == '1' ? '1.按品号设置' : '2.按特征码设置';
+        },
     },
     {
         title: "工作中心",
@@ -226,6 +271,11 @@ export const production = [
     {
         title: "品管类别",
         dataIndex: "QC_CATEGORY_NAME",
+        span: 1,
+    },
+    {
+        title: "标准工艺路线",
+        dataIndex: "ROUTING_CODE",
         span: 1,
     },
     {
@@ -277,6 +327,9 @@ export const production = [
         title: "领料模式",
         dataIndex: "ISSUE_TYPE",
         span: 1,
+        filter: (text) => {
+            return text == "0" ? "0.直接发料" : text == '1' ? '1.领料申请' : '2.自动扣料';
+        },
     },
     {
         title: "前置天数计算批量",
@@ -292,6 +345,9 @@ export const production = [
         title: "领料对象类型",
         dataIndex: "ISSUE_DESTINATION_TYPE",
         span: 1,
+        filter: (text) => {
+            return text == "1" ? "1.工艺" : text == '2' ? '2.工作中心/委外供应商' : text == '3' ? '3.自定义' : '4.工单';
+        },
     },
     {
         title: "缺领率",
@@ -311,21 +367,30 @@ export const production = [
     {
         title: "领料关键料",
         dataIndex: "ISSUE_CRITICAL",
-        checkbox:true,
+        checkbox: true,
         span: 1,
     },
 ];
 export const plant = [
     {
         title: "工厂/储运:",
-        dataIndex: "PLANT_NAME_O",
+        dataIndex: "PLANT_NAME_P",
         span: 1,
     },
     {
         title: "补货政策",
         dataIndex: "ORDER_POLICY",
         span: 1,
-    }, {
+        filter: (text) => {
+            return text == "R" ? "R.依补货点" : text == 'P' ? 'P.依计划需求' : text == 'N' ? 'N.不需' : 'S.周期法';
+        },
+    },
+    {
+        title: "是否并批开单",
+        dataIndex: "IS_CONSOLIDATED",
+        span: 1,
+    },
+    {
         title: "工单单据类型",
         dataIndex: "DOC_NAME_MO",
         span: 1,
@@ -345,6 +410,18 @@ export const plant = [
         span: 1,
     },
     {
+        title: "采购件由计划考虑补货机制",
+        dataIndex: "PURCHASE_CONSIDER_ORDER",
+        span: 1,
+        checkbox: true
+    },
+    {
+        title: "关键料",
+        dataIndex: "ISSUE_CRITICAL",
+        span: 1,
+        checkbox: true
+    },
+    {
         title: "内部订单单据类型",
         dataIndex: "DOC_NAME_IN",
         span: 1,
@@ -353,7 +430,14 @@ export const plant = [
         title: "最小补量",
         dataIndex: "MIN_ORDER_QTY",
         span: 1,
-    }, {
+    },
+    {
+        title: "整数规划",
+        dataIndex: "IS_INTEGER",
+        span: 1,
+        checkbox: true
+    },
+    {
         title: "调拨申请单单据类型",
         dataIndex: "DOC_NAME_TW",
         span: 1,
@@ -367,7 +451,8 @@ export const plant = [
         title: "最优库存量",
         dataIndex: "BEST_STOCK",
         span: 1,
-    }, {
+    },
+    {
         title: "最大补量",
         dataIndex: "MAX_ORDER_QTY",
         span: 1,
@@ -392,32 +477,10 @@ export const plant = [
         span: 1,
     },
     {
-        title: "是否并批开单",
-        dataIndex: "IS_CONSOLIDATED",
-        span: 1,
-    }, {
-        title: "采购件由计划考虑补货机制",
-        dataIndex: "PURCHASE_CONSIDER_ORDER",
-        span: 1,
-        checkbox:true
-    },
-    {
-        title: "关键料",
-        dataIndex: "ISSUE_CRITICAL",
-        span: 1,
-        checkbox:true
-    },
-    {
-        title: "整数规划",
-        dataIndex: "IS_INTEGER",
-        span: 1,
-        checkbox:true
-    },
-    {
         title: "独立需求",
         dataIndex: "IS_INDEPENDENT_DEMAND",
         span: 1,
-        checkbox:true
+        checkbox: true
     }
 ];
 export const finance = [

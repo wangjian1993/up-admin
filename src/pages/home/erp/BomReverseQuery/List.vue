@@ -1,9 +1,9 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-16 16:35:04
+ * @LastEditTime: 2021-10-27 09:39:37
  * @LastEditors: max
- * @Description: 
+ * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
 -->
 <template>
@@ -69,7 +69,7 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow">
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -122,20 +122,19 @@ const columns = [
     width: 250,
   },
   {
-    title: "快捷码",
-    dataIndex: "SHORTCUT",
-    scopedSlots: { customRender: "SHORTCUT" },
-    align: "center",
-    width: 150,
-    ellipsis: true,
-  },
-  {
     title: "产品型号",
     dataIndex: "ITEM_NAME",
     scopedSlots: { customRender: "ITEM_NAME" },
     align: "center",
     width: 250,
     ellipsis: true,
+  },
+  {
+    title: "图号",
+    dataIndex: "DRAWING_NO",
+    scopedSlots: { customRender: "DRAWING_NO" },
+    align: "center",
+    width: 150,
   },
   {
     title: "规格",
@@ -146,28 +145,6 @@ const columns = [
     ellipsis: true,
   },
   {
-    title: "组成用量",
-    dataIndex: "QTY_PER",
-    scopedSlots: { customRender: "QTY_PER" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "插件位置",
-    dataIndex: "COMPONENT_LOCATION",
-    scopedSlots: { customRender: "COMPONENT_LOCATION" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "图号",
-    dataIndex: "DRAWING_NO",
-    scopedSlots: { customRender: "DRAWING_NO" },
-    align: "center",
-    width: 150,
-    ellipsis: true,
-  },
-  {
     title: "单位",
     dataIndex: "UNIT_NAME",
     scopedSlots: { customRender: "UNIT_NAME" },
@@ -175,39 +152,16 @@ const columns = [
     width: 50,
   },
   {
-    title: "品号类型",
-    dataIndex: "ITEM_PROPERTY",
-    scopedSlots: { customRender: "ITEM_PROPERTY" },
+    title: "组成用量",
+    dataIndex: "QTY_PER",
+    scopedSlots: { customRender: "QTY_PER" },
     align: "center",
-    width: "5%",
-  },
-  {
-    title: "供料方式",
-    dataIndex: "ITEM_TYPE",
-    scopedSlots: { customRender: "ITEM_TYPE" },
-    align: "center",
-    width: 80,
   },
   {
     title: "底数",
     dataIndex: "DENOMINATOR",
     scopedSlots: { customRender: "DENOMINATOR" },
     align: "center",
-    width: 50,
-  },
-  {
-    title: "ECN变更状态",
-    dataIndex: "ECNSTATUS",
-    scopedSlots: { customRender: "ECNSTATUS" },
-    align: "center",
-    width: 110,
-  },
-  {
-    title: "ECN变更日期",
-    dataIndex: "APPROVEDATE_ECN",
-    scopedSlots: { customRender: "APPROVEDATE_ECN" },
-    align: "center",
-    width: 110,
   },
   {
     title: "固定损耗量",
@@ -222,55 +176,6 @@ const columns = [
     scopedSlots: { customRender: "DYNAMIC_LOSS_RATE" },
     align: "center",
     width: 80,
-  },
-  {
-    title: "超领率",
-    dataIndex: "ISSUE_OVERRUN_RATE",
-    scopedSlots: { customRender: "ISSUE_OVERRUN_RATE" },
-    align: "center",
-    width: 60,
-  },
-  {
-    title: "缺领率",
-    dataIndex: "ISSUE_SHORTAGE_RATE",
-    scopedSlots: { customRender: "ISSUE_SHORTAGE_RATE" },
-    align: "center",
-    width: 60,
-  },
-  {
-    title: "默认仓库",
-    dataIndex: "WAREHOUSE_CODE",
-    scopedSlots: { customRender: "WAREHOUSE_CODE" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "仓库名称",
-    dataIndex: "WAREHOUSE_NAME",
-    scopedSlots: { customRender: "WAREHOUSE_NAME" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "仓库库存",
-    dataIndex: "INVENTORY_QTY",
-    scopedSlots: { customRender: "INVENTORY_QTY" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "生效日期",
-    dataIndex: "ApproveDate",
-    scopedSlots: { customRender: "ApproveDate" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "失效时间",
-    dataIndex: "EXPRITY_DATE",
-    scopedSlots: { customRender: "EXPRITY_DATE" },
-    align: "center",
-    width: 120,
   },
   {
     title: "备注",

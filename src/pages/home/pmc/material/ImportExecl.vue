@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-10-18 17:10:48
+ * @LastEditTime: 2021-10-28 11:42:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -84,11 +84,13 @@ export default {
       fileList: [],
     };
   },
-  created() {},
+  created() {
+
+  },
   methods: {
     //移除文件
     removeFile() {
-      this.fileList =[]
+      this.fileList = [];
     },
     close() {
       this.$emit("closeModal");
@@ -104,8 +106,20 @@ export default {
       let str = dateString.split("-");
       this.week = str[1].replace("周", "");
     },
+    //时间格式化
+    formatDate(numb, format = "-") {
+      const time = new Date((numb - 1) * 24 * 3600000 + 1);
+      time.setYear(time.getFullYear() - 70);
+      const year = time.getFullYear() + "";
+      const month = time.getMonth() + 1 + "";
+      const date = time.getDate() - 1 + "";
+      if (format && format.length === 1) {
+        return year + format + month + format + date;
+      }
+      return year + (month < 10 ? "0" + month : month) + (date < 10 ? "0" + date : date);
+    },
     handleOk() {
-      this.errorList =[];
+      this.errorList = [];
       //提交的数据格式
       if (this.plantId == "") {
         this.$message.warning("请先选择生产工厂!");
@@ -119,7 +133,11 @@ export default {
         this.$message.warning("请先导入excel文件!");
         return;
       }
-      let parmas = [];
+      let parmas = {
+        PlantId: this.plantId,
+        Week: this.week,
+        RequirementList: [],
+      };
       //合并表格头部和内容数据
       let arr = [];
       let table = this.tableData;
@@ -131,54 +149,46 @@ export default {
         });
         arr.push(obj);
       }
-      console.log("arr=", arr);
-      //获取年
-      var date = new Date();
-      var y = date.getFullYear();
       //拼接后台数据
       arr.forEach((item, index) => {
-        let data = {
-          PlantId: this.plantId,
-          Week: this.week,
-          MitemCode: "",
-          MitemName: "",
-          Spec: "",
-          Remarks: "",
-          RequirementList: [],
-        };
+        let list = {};
         for (let key in item) {
           switch (key) {
-            case "品号":
-              data.MitemCode = item[key];
+            case "材料品号":
+              list.MitemCode = item[key];
               break;
-            case "品名":
-              data.MitemName = item[key];
+            case "材料品名":
+              list.MitemName = item[key];
               break;
-            case "规格":
-              data.Spec = item[key];
+            case "材料规格":
+              list.MitemSpec = item[key];
               break;
-            case "备注":
-              data.Remarks = item[key];
+            case "交货数量":
+              if (typeof item[key] !== "number" && item[key] !== "") {
+                this.errorList.push({
+                  content: `第${index + 1}行,交货数量:数据'${item[key]}'错误,必须为数字`,
+                });
+              } else {
+                list.RequirementQty = item[key];
+              }
+              break;
+            case "交货日期":
+              // eslint-disable-next-line no-case-declarations
+              let time =this.formatDate(item[key]);
+              if (!time) {
+                this.errorList.push({
+                  content: `第${index + 1}行,交货日期:数据'${time}'错误,日期格式为:2008-08-08`,
+                });
+              } else {
+                list.RequirementDate = time;
+              }
               break;
             default:
               break;
           }
-          if (key.indexOf("/") > -1) {
-            if (typeof item[key] !== "number" && item[key] !== "") {
-              this.errorList.push({
-                content: `第${index + 1}行,日期${key}数据'${item[key]}'错误,必须为数字`,
-              });
-            } else {
-              data.RequirementList.push({
-                RequirementDate: y + "/" + key,
-                RequirementQty: item[key] || "",
-              });
-            }
-          }
         }
-        parmas.push(data);
+        parmas.RequirementList.push(list);
       });
-      console.log(this.errorList);
       if (this.errorList.length == 0) {
         this.submitExecl(parmas);
       } else {
@@ -186,7 +196,7 @@ export default {
       }
     },
     submitExecl(parmas) {
-      mitemrequirementAction(parmas, "import").then((res) => {
+      mitemrequirementAction(parmas, "importv2").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.close();
@@ -194,6 +204,15 @@ export default {
           this.$message.info(res.data.message.content);
         }
       });
+    },
+    IsDate(mystring) {
+      var reg = /^(\d{4})-(\d{2})-(\d{2})$/;
+      var str = mystring;
+      if (str == "") return true;
+      if (!reg.test(str) && RegExp.$2 <= 12 && RegExp.$3 <= 31) {
+        return false;
+      }
+      return true;
     },
     //导入execl
     beforeUpload(file) {
@@ -221,8 +240,6 @@ export default {
         const tableTitle = header.map((item) => {
           return { title: item, key: item };
         });
-        // console.log("导入数据===",results)
-        // console.log("导入数据===",tableTitle)
         this.tableData = results; //这里的tableData就是拿到的excel表格中的数据
         this.tableTitle = tableTitle;
       };

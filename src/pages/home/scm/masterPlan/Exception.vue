@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-10-22 10:04:47
+ * @LastEditTime: 2021-10-28 17:56:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Exception.vue
@@ -156,7 +156,8 @@
         </div>
       </template>
     </a-table>
-    <matching v-if="isMatching" :matchingData="matchingData" :isEdit="true" :plantList="plantList" @closeModal="closeModal" @succeed="getListAll"></matching>
+    <!-- <matching v-if="isMatching" :matchingData="matchingData" :isEdit="true" :plantList="plantList" @closeModal="closeModal" @succeed="getListAll"></matching> -->
+    <batch-approve v-if="isMatching" :matchingData="matchingData" :isEdit="true" :plantList="plantList" @closeModal="closeModal" @succeed="getListAll"></batch-approve>
     <!-- 查看详情 -->
     <div>
       <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
@@ -301,11 +302,11 @@ const columns = [
 ];
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
-import Matching from "./Matching";
 import { splitData } from "@/utils/util.js";
 import UserList from '@/components/app-user/UserList'
+import BatchApprove from './BatchApprove.vue'
 export default {
-  components: { Matching,UserList},
+  components: {UserList,BatchApprove},
   props: ["stateList"],
   data() {
     return {
