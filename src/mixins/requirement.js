@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-10-20 16:38:03
- * @LastEditTime: 2021-10-20 17:08:04
+ * @LastEditTime: 2021-10-29 10:50:58
  * @LastEditors: max
  * @Description: 合并明细mixin
  * @FilePath: /up-admin/src/mixins/requirement.js
@@ -38,14 +38,14 @@ export const dColumns = {
                     width: 50,
                 },
                 {
-                    title: "BOM号",
+                    title: "品号",
                     dataIndex: "MitemCode",
                     scopedSlots: { customRender: "MitemCode" },
                     align: "center",
                     width: 200,
                 },
                 {
-                    title: "产品型号",
+                    title: "品名",
                     dataIndex: "MitemName",
                     scopedSlots: { customRender: "MitemName" },
                     align: "center",
@@ -82,8 +82,9 @@ export const dColumns = {
             this.isExport = false;
             this.week = "";
             this.data = [];
-            this.columns = this.dColumns
+            this.columns =[];
             this.searchForm.resetFields();
+            console.log("重置====",this.columns)
         },
         //日期转换
         formatDateTime(inputTime) {

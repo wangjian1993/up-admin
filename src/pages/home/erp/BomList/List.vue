@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-28 16:59:36
+ * @LastEditTime: 2021-10-29 15:59:30
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -19,13 +19,13 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['itemcode']" />
+            <a-form-item label="元件品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入元件品号" allowClear style="width: 200px" v-decorator="['itemcode']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入产品型号" allowClear style="width: 200px" v-decorator="['itemname']" />
+            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['itemname']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -102,7 +102,7 @@ const columns = [
     ellipsis: true,
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "ITEM_NAME",
     scopedSlots: { customRender: "ITEM_NAME" },
     align: "center",
@@ -364,9 +364,9 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.loading = false;
               this.isSearch = true;
             }
+            this.loading = false;
           });
           // do something
         }

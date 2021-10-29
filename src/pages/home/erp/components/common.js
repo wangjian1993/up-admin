@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-10-16 14:23:43
- * @LastEditTime: 2021-10-28 16:33:13
+ * @LastEditTime: 2021-10-29 11:22:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/common.js
@@ -120,7 +120,7 @@ export const general = [
         span: 1,
     },
     {
-        title: "认证检查",
+        title: "认样检查",
         dataIndex: "NEED_CERTIFICATION",
         checkbox: true,
         span: 1,
@@ -190,14 +190,6 @@ export const storage = [
         },
     },
     {
-        title: "出库策略",
-        dataIndex: "WAREHOUSE_CONTROL",
-        span: 1,
-        filter: (text) => {
-            return text == "1" ? "1.生效日期先进先出" : text == '2' ? '2.生效日期后进先出' : text == '4' ? '4.先到期者先出' : text == '6' ? '5.允许出库日早者先出' : '6.可用量少者先出';
-        },
-    },
-    {
         title: "运输天数",
         dataIndex: "TRANSPORT_DAYS",
         span: 1,
@@ -233,11 +225,6 @@ export const storage = [
     {
         title: "内部协同关系",
         dataIndex: "SUPPLY_SYNERGY_NAME",
-        span: 1,
-    },
-    {
-        title: "储存限制编号",
-        dataIndex: "",
         span: 1,
     },
 ];
@@ -340,6 +327,7 @@ export const production = [
         title: "超领率",
         dataIndex: "ISSUE_OVERRUN_RATE",
         span: 1,
+        layout:"%"
     },
     {
         title: "领料对象类型",
@@ -353,11 +341,13 @@ export const production = [
         title: "缺领率",
         dataIndex: "ISSUE_SHORTAGE_RATE",
         span: 1,
+        layout:"%"
     },
     {
         title: "超入率",
         dataIndex: "RECEIPT_OVERRUN_RATE",
         span: 1,
+        layout:"%"
     },
     {
         title: "领用倍量",
@@ -389,6 +379,9 @@ export const plant = [
         title: "是否并批开单",
         dataIndex: "IS_CONSOLIDATED",
         span: 1,
+        filter :(text) =>{
+            return text == 'N' ? "是" : "否";
+        }
     },
     {
         title: "工单单据类型",

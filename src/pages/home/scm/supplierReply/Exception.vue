@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-21 15:48:59
+ * @LastEditTime: 2021-10-29 17:06:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
@@ -38,12 +38,12 @@
         </a-row>
         <a-row v-if="advanced">
           <a-col :md="6" :sm="24">
-            <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input style="width: 200px" allowClear placeholder="请输入产品型号" v-decorator="['mitemname']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input style="width: 200px" allowClear placeholder="请输入产品型号" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
@@ -164,18 +164,18 @@
         </div>
       </template>
       <template slot="action" slot-scope="text, record" >
-        <div v-if="record.SupplierReplyQty > 0">
+        <div>
           <a style="margin-right: 8px" @click="consent(record)" :disabled="!hasPerm('consent')">
-            <a-icon type="profile" />
-            同意供应商交期
+            <a-icon type="check-square" />
+            交期确认处理
           </a>
         </div>
-        <div v-if="record.PurchaseId != undefined || record.PurchaseId != null">
+        <!-- <div v-if="record.PurchaseId != undefined || record.PurchaseId != null">
           <a style="margin-right: 8px" @click="adjustDate(record)" :disabled="!hasPerm('adjust')">
             <a-icon type="profile" />
             调整供应商交期
           </a>
-        </div>
+        </div> -->
         <div>
           <a style="margin-right: 8px" @click="details(record)">
             <a-icon type="profile" />
@@ -184,7 +184,7 @@
         </div>
       </template>
     </a-table>
-    <adjust-date v-if="isAdjust" :adjustData="adjustData" @closeModal="closeModal"></adjust-date>
+    <!-- <adjust-date v-if="isAdjust" :adjustData="adjustData" @closeModal="closeModal"></adjust-date> -->
     <!-- 查看详情 -->
     <div>
       <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
@@ -209,11 +209,12 @@
       </a-drawer>
     </div>
     <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
+    <delivery-process v-if="isDispose" :disposeData="disposeData" @closeModal="closeModal"></delivery-process>
   </div>
 </template>
 
 <script>
-import { getSupplierAction, setSupplierAction } from "@/services/web.js";
+import { getSupplierAction } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcel";
 const columns = [
   {
@@ -248,13 +249,13 @@ const columns = [
     width: "50px",
   },
   {
-    title: "BOM号",
+    title: "品号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
@@ -364,11 +365,12 @@ const columns = [
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { getParamData } from "@/services/admin.js";
-import AdjustDate from "./AdjustDate.vue";
+// import AdjustDate from "./AdjustDate.vue";
 import { splitData } from "@/utils/util.js";
 import UserList from '@/components/app-user/UserList'
+import DeliveryProcess from './DeliveryProcess.vue'
 export default {
-  components: { AdjustDate,UserList},
+  components: {UserList,DeliveryProcess},
   props: ["plantList"],
   data() {
     return {
@@ -398,7 +400,9 @@ export default {
       statistic: [],
       stateList: [],
       adjustData: [],
-      isUserList:false
+      isUserList:false,
+      isDispose:false,
+      disposeData:[]
     };
   },
   updated() {
@@ -453,6 +457,7 @@ export default {
     },
     closeModal() {
       this.isAdjust = false;
+      this.isDispose =false;
     },
     adjustDate(item) {
       this.isAdjust = true;
@@ -693,16 +698,18 @@ export default {
     },
     //同意供应商交期
     consent(item) {
-      let parmas = {
-        BatchId: item.BatchId,
-        DetailId: item.Id,
-        PurchaseId: item.PurchaseId,
-      };
-      setSupplierAction(parmas, "reply/agree").then((res) => {
-        if (res.data.success) {
-          this.$message.success("同意供应商交期成功!");
-        }
-      });
+      this.isDispose = true;
+      this.disposeData =item
+      // let parmas = {
+      //   BatchId: item.BatchId,
+      //   DetailId: item.Id,
+      //   PurchaseId: item.PurchaseId,
+      // };
+      // setSupplierAction(parmas, "reply/agree").then((res) => {
+      //   if (res.data.success) {
+      //     this.$message.success("同意供应商交期成功!");
+      //   }
+      // });
     },
   },
 };

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 15:16:07
- * @LastEditTime: 2021-10-28 18:26:55
+ * @LastEditTime: 2021-10-29 18:15:30
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/BatchApprove.vue
@@ -14,79 +14,97 @@
           <a-col :lg="24">
             <a-form layout="inline" :form="searchForm" class="form-box">
               <a-row>
-                <a-col :xl="6" :lg="8" :md="6" :sm="24"
-                  ><div style="margin-left:20px">
+                <a-col :xl="8" :lg="12"
+                  ><div style="margin-left:10px">
                     <a-form-item label="生产工厂:">
-                      <a-select style="width: 200px" v-decorator="['plantid']" placeholder="请选择生产工厂">
-                        <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                      <span>{{ PlantName }}</span>
+                    </a-form-item>
+                  </div></a-col
+                >
+                <a-col :xl="8" :lg="12"
+                  ><div style="margin-left:10px">
+                    <a-form-item label="计划批次:">
+                      <a-input placeholder="物料需求计划批次号" disabled allowClear style="width:150px" v-decorator="['BatchNo']" />
+                      <a-button @click="batchno" :disabled="isEdit" style="margin-left: 8px" shape="circle" icon="search" />
+                    </a-form-item></div
+                ></a-col>
+
+                <a-col :xl="8" :lg="12"
+                  ><div style="margin-left:10px">
+                    <a-form-item label="物料编码:">
+                      <!-- <a-input placeholder="请选择物料编码" :disabled="isEdit" allowClear style="width:200px" v-decorator="['MitemCode']" /> -->
+                      <a-select v-decorator="['MitemCode']" placeholder="请选择物料编码" style="width:200px" :disabled="isEdit" @change="mitemChange">
+                        <a-select-option v-for="item in materialData" :key="item.MitemCode" :value="item.MitemCode">{{ item.MitemCode }}</a-select-option>
                       </a-select>
                     </a-form-item>
                   </div></a-col
                 >
-                <a-col :xl="6" :lg="8" :md="6" :sm="6"
-                  ><div style="margin-left:20px">
-                    <a-form-item label="计划批次:">
-                      <a-input placeholder="物料需求计划批次号" allowClear style="width:200px" v-decorator="['BatchNo']" />
-                    </a-form-item></div
-                ></a-col>
 
-                <a-col :xl="6" :lg="8" :md="6" :sm="6"
-                  ><div style="margin-left:20px">
-                    <a-form-item label="物料编码:">
-                      <a-input placeholder="请选择物料编码" allowClear style="width:200px" v-decorator="['MitemCode']" />
-                    </a-form-item></div
-                ></a-col>
-
-                <a-col :xl="6" :lg="8" :md="6" :sm="6">
-                  <div style="margin-left:20px">
+                <a-col :xl="8" :lg="12">
+                  <div style="margin-left:10px">
                     <a-form-item label="物料名称:">
                       <span>{{ mitemList.MitemName }}</span>
                     </a-form-item>
-                  </div></a-col 
+                  </div></a-col
                 >
-                <a-col :xl="6" :lg="8" :md="6" :sm="6">
-                  <div style="margin-left:20px">
+                <a-col :xl="8" :lg="12">
+                  <div style="margin-left:10px">
                     <a-form-item label="需求日期:">
-                      <span>{{ mitemList.RequirementDate }}</span>
+                      <a-select v-if="!isEdit" v-decorator="['RequirementDate']" placeholder="请选择需求日期" :disabled="isEdit" @change="dateChange" style="width:200px">
+                        <a-select-option v-for="(item, index) in materialDates" :key="index" :value="item.RequirementDate">{{ splitData(item.RequirementDate) }}</a-select-option>
+                      </a-select>
+                      <span v-else>{{ mitemData.RequirementDate }}</span>
                     </a-form-item>
                   </div></a-col
                 >
-                <a-col :xl="6" :lg="8" :md="6" :sm="6">
-                  <div style="margin-left:20px">
-                    <a-form-item label="需求数量:"> 
-                      <span>{{ mitemList.RequirementQty }}</span>
+                <a-col :xl="8" :lg="12">
+                  <div style="margin-left:10px">
+                    <a-form-item label="需求数量:">
+                      <span>{{ mitemData.RequirementQty }}</span>
                     </a-form-item>
                   </div></a-col
                 >
-                <a-col :xl="6" :lg="8" :md="6" :sm="6"
-                  ><span style="margin-left:20px;margin-top:-5px">
+                <!-- <a-col :xl="6" :lg="8" :md="6" :sm="6"
+                  ><span style="margin-left:20px;margin-top:-5px" v-if="!isEdit">
                     <a-button type="primary" @click="search">查询</a-button>
                     <a-button style="margin-left: 8px" @click="reset">重置</a-button>
                   </span></a-col
-                >
+                > -->
               </a-row>
             </a-form>
           </a-col>
         </a-row>
       </div>
       <div>
-        <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-          <a-table :columns="columns" :data-source="batchData" :size="size" :pagination="pagination" bordered>
-            <div slot="QTQty" slot-scope="text, record">
-              <a-input-number allowClear :min="0" :value="record.QTQty" v-model="record.QTQty" />
-            </div>
-            <div slot="QualifiedQty" slot-scope="text, record">
-              <a-input-number allowClear :min="0" :value="record.QualifiedQty" v-model="record.QualifiedQty" />
-            </div>
-            <div slot="ReturnQty" slot-scope="text, record">
-              <a-input-number allowClear :min="0" :value="record.ReturnQty" v-model="record.ReturnQty" />
-            </div>
-            <div slot="ScrapQty" slot-scope="text, record">
-              <a-input-number allowClear :min="0" :value="record.ScrapQty" v-model="record.ScrapQty" />
+        <div class="tab">
+          <a-table
+            :columns="columns"
+            :data-source="list"
+            size="small"
+            :scroll="{ y: 600 }"
+            :pagination="pagination"
+            @change="handleTableChange"
+            :rowKey="(list) => list.PurchaseOrderNo"
+            :row-selection="{
+              selectedRowKeys: selectedRowKeys,
+              onChange: onSelectChange,
+            }"
+            bordered
+          >
+            <template slot="index" slot-scope="text, record, index">
+              <div>
+                <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+              </div>
+            </template>
+            <div slot="MatchQty" slot-scope="text, record">
+              {{ record.isInput }}
+              <!-- <a-input-number allowClear :min="0" size="small" @change="(e) => handleChange(e.target.value, record)" :value="record.MatchQty" /> -->
+              <a-input-number v-model="record.MatchQty" />
             </div>
           </a-table>
-        </a-card>
+        </div>
       </div>
+      <batch-no v-if="isBatchNo" :plantList="plantList" @closeModal="closeModal" @batchNoItem="batchNoItem"></batch-no>
     </a-modal>
   </div>
 </template>
@@ -95,144 +113,251 @@ const columns = [
   {
     title: "序号",
     scopedSlots: { customRender: "index" },
-    align: "center",
     width: "5%",
-  },
-  {
-    title: "生产工厂",
-    dataIndex: "PlantName",
-    scopedSlots: { customRender: "PlantName" },
     align: "center",
-    width: "100px",
   },
   {
-    title: "供应商",
-    dataIndex: "SupplierName",
-    scopedSlots: { customRender: "SupplierName" },
-    align: "center",
-    width: "10%",
-  },
-  {
-    title: "BOM号",
+    title: "物料编码",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "产品型号",
+    title: "物料名称",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
   },
   {
-    title: " 产品规格",
-    dataIndex: "MitemSpec",
+    title: "供应商编码",
+    dataIndex: "SupplierCode",
+    scopedSlots: { customRender: "SupplierCode" },
     align: "center",
-    width: "20%",
   },
   {
-    title: "行项目",
-    dataIndex: "SequenceNumber",
-    scopedSlots: { customRender: "SequenceNumber" },
+    title: "生产工厂",
+    dataIndex: "PlantErpName",
+    scopedSlots: { customRender: "PlantErpName" },
     align: "center",
-    width: "80px",
   },
   {
-    title: "到货数量",
-    dataIndex: "Qty",
-    scopedSlots: { customRender: "Qty" },
+    title: "采购订单号",
+    dataIndex: "PurchaseOrderNo",
+    scopedSlots: { customRender: "PurchaseOrderNo" },
     align: "center",
-    width: "80px",
   },
   {
-    title: "检验数量",
-    dataIndex: "QTQty",
-    scopedSlots: { customRender: "QTQty" },
+    title: "行项目号",
+    dataIndex: "lineItemNum",
+    scopedSlots: { customRender: "lineItemNum" },
     align: "center",
-    width: "80px",
   },
   {
-    title: "合格数量",
-    dataIndex: "QualifiedQty",
-    scopedSlots: { customRender: "QualifiedQty" },
+    title: "采购名称",
+    dataIndex: "EmployeeName",
+    scopedSlots: { customRender: "EmployeeName" },
     align: "center",
-    width: "80px",
   },
   {
-    title: "退货数量",
-    dataIndex: "ReturnQty",
-    scopedSlots: { customRender: "ReturnQty" },
+    title: "在途数量",
+    dataIndex: "QtyTransit",
+    scopedSlots: { customRender: "QtyTransit" },
     align: "center",
-    width: "80px",
   },
   {
-    title: "报废数量",
-    dataIndex: "ScrapQty",
-    scopedSlots: { customRender: "ScrapQty" },
+    title: "匹配数量",
+    dataIndex: "MatchQty",
+    scopedSlots: { customRender: "MatchQty" },
     align: "center",
-    width: "80px",
   },
 ];
-import { setQualityAction } from "@/services/web.js";
+import { getScmAction, setScmAction } from "@/services/web.js";
+import { splitData } from "@/utils/util.js";
+import BatchNo from "./BatchNo.vue";
 export default {
+  components: { BatchNo },
   props: ["plantList", "matchingData", "isEdit"],
   data() {
     return {
       columns,
       size: "small",
       visible: true,
-      pagination: false,
+      list: [],
       searchForm: this.$form.createForm(this),
       mitemList: [],
       mitemData: [],
+      batchData: [],
+      batchnoData: [],
+      selectedRowKeys: [],
+      pagination: {
+        current: 1,
+        total: 0,
+        pageSize: 20, //每页中显示10条数据
+        showSizeChanger: true,
+        showLessItems: true,
+        showQuickJumper: true,
+        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
+        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
+      },
+      isBatchNo: false,
+      materialData: [],
+      materialDates: [],
+      PlantName: "",
     };
   },
   created() {
-    console.log(this.matchingData);
     if (this.matchingData.BatchNo) {
-      this.searchForm.setFieldsValue({
-        plantid: this.matchingData.PlantId,
-        BatchNo: this.matchingData.BatchNo,
-        MitemCode: this.matchingData.MitemCode,
+      this.$nextTick(() => {
+        this.searchForm.setFieldsValue({
+          BatchNo: this.matchingData.BatchNo,
+          MitemCode: this.matchingData.MitemCode,
+        });
       });
-      // this.form.BatchNo = this.matchingData.BatchNo;
-      // this.form.BatchId = this.matchingData.Id;
-      // this.form.MitemCode = this.matchingData.MitemCode;
+      this.PlantName = this.matchingData.PlantName;
       this.mitemList.MitemCode = this.matchingData.MitemCode;
       this.mitemList.MitemName = this.matchingData.MitemName;
       this.mitemData.RequirementQty = this.matchingData.RequirementQty;
-      // // this.form.MatchQty = this.matchingData.RequirementQty;
-      // this.form.RequirementDate = splitData(this.matchingData.RequirementDate);
-      // this.batchnoData.BatchId = this.matchingData.Id;
-      // this.batchnoData.BatchNo = this.matchingData.BatchNo;
-      // this.batchnoData.PlantName = this.matchingData.PlantName;
-      // this.batchnoData.PlantId = this.matchingData.PlantId;
-      // console.log(this.mitemData);
-      // this.getMitemsByBatch();
+      this.mitemData.RequirementDate = splitData(this.matchingData.RequirementDate);
+      this.batchnoData.BatchId = this.matchingData.Id;
+      this.batchnoData.BatchNo = this.matchingData.BatchNo;
+      this.batchnoData.PlantName = this.matchingData.PlantName;
+      this.batchnoData.PlantId = this.matchingData.PlantId;
+    }
+    if (this.isEdit) {
+      this.getList();
+    } else {
+      this.getMitemsByBatch();
     }
   },
   methods: {
+    splitData,
+    handleChange(e, record, index) {
+      console.log(e);
+      this.list[index].MatchQty = e;
+    },
     close() {
       this.$emit("closeModal");
     },
+    reset() {
+      this.MitemCode = "";
+      this.getList();
+      this.searchForm.resetFields();
+    },
+    //计划批次号
+    batchNoItem(item) {
+      this.batchnoData = item;
+      this.isBatchNo = false;
+      this.form.BatchNo = item.BatchNo;
+      this.form.BatchId = item.BatchId;
+      this.getMitemsByBatch();
+    },
+    //获取物料信息
+    getMitemsByBatch() {
+      let parmas = {
+        batchid: this.batchnoData.BatchId,
+      };
+      getScmAction(parmas, "manualmatch/getmitemsbybatch").then((res) => {
+        if (res.data.success) {
+          this.materialData = res.data.data;
+        }
+      });
+    },
+    //选择物料信息
+    mitemChange(e) {
+      this.mitemList = this.materialData.find((item) => (item.MitemCode = e));
+      this.getRequirementDates();
+      this.getList();
+    },
+    getRequirementDates() {
+      let parmas = {
+        batchid: this.batchnoData.BatchId,
+        mitemcode: this.mitemList.MitemCode,
+      };
+      getScmAction(parmas, "manualmatch/getrequirementdates").then((res) => {
+        if (res.data.success) {
+          this.materialDates = res.data.data;
+          console.log(res.data.data);
+        }
+      });
+    },
+    //需求时间选择
+    dateChange(e) {
+      this.mitemData = this.materialDates.find((item) => item.RequirementDate == e);
+    },
+    getList() {
+      this.loading = true;
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.pageSize,
+        mitemcode: this.mitemList.MitemCode,
+      };
+      getScmAction(parmas, "manualmatch/getpurchaseorders").then((res) => {
+        if (res.data.success) {
+          this.list = res.data.data.list;
+          // this.list.map((item) => {
+          //   item.MatchQty = 0;
+          // });
+          const pagination = { ...this.pagination };
+          pagination.total = res.data.data.recordsTotal;
+          this.pagination = pagination;
+          this.loading = false;
+        }
+      });
+    },
+    //多选
+    onSelectChange(selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys;
+      // console.log(this.selectedRowKeys);
+      // this.selectedRowKeys.map((item) => {
+      //   this.setIsInput(item);
+      // });
+    },
+    setIsInput(id) {
+      this.list.map((items) => {
+        console.log(id);
+        if (items.PurchaseOrderNo === id) {
+          items.isInput = true;
+           console.log("是");
+        } else {
+          items.isInput = false;
+          console.log("不是");
+        }
+      });
+      console.log(this.list);
+    },
+    handleTableChange(pagination) {
+      this.pagination.current = pagination.current;
+      this.pagination.pageSize = pagination.pageSize;
+      if (this.isSearch) {
+        this.search();
+        return;
+      }
+      this.getList();
+    },
+    search() {},
+    batchno() {
+      this.isBatchNo = true;
+    },
     handleOk() {
-      let parmas = [];
-      this.batchData.forEach((item) => {
-        console.log(item);
-        parmas.push({
-          PlantCode: item.PlantCode,
-          OrderNo: item.OrderNo,
-          MitemCode: item.MitemCode,
-          SequenceNumber: item.SequenceNumber,
-          QTQty: item.QTQty || 0,
-          QualifiedQty: item.QualifiedQty || 0,
-          ReturnQty: item.ReturnQty || 0,
-          ScrapQty: item.ScrapQty || 0,
+      let parmas = {
+        PlantId: this.batchnoData.PlantId,
+        BatchId: this.batchnoData.BatchId,
+        MitemCode: this.mitemList.MitemCode,
+        RequirementDate: this.mitemData.RequirementDate,
+        MatchList: [],
+      };
+      this.selectedRowKeys.forEach((item) => {
+        parmas.MatchList.push({
+          PurchaseOrderNo: this.list[item].PurchaseOrderNo,
+          SupplierCode: this.list[item].SupplierCode,
+          LineItem: this.list[item].LineItem,
+          LineItemNum: this.list[item].lineItemNum,
+          MatchQty: this.list[item].MatchQty,
         });
       });
-      setQualityAction(parmas, "approvedmultiple").then((res) => {
+      setScmAction(parmas, "manualmatch/addv2").then((res) => {
         if (res.data.success) {
-          this.$message.success("审核成功!");
+          this.$message.success("手动匹配成功!");
           this.$emit("succeed");
           this.$emit("closeModal");
         }

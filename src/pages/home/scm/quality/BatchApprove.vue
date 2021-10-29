@@ -53,13 +53,13 @@ const columns = [
     width: "10%",
   },
   {
-    title: "BOM号",
+    title: "品号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-10-28 17:56:40
+ * @LastEditTime: 2021-10-29 17:20:27
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Exception.vue
@@ -38,12 +38,12 @@
         </a-row>
         <a-row v-if="advanced">
           <a-col :md="6" :sm="24">
-            <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" allowClear placeholder="请输入产品型号" v-decorator="['mitemname']" />
+            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input style="width: 200px" allowClear placeholder="请输入BOM号" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
@@ -173,6 +173,9 @@
                <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.Status === 'CANNOT_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
             </div>
           </a-descriptions-item>
+          <a-descriptions-item label="错误信息">
+            {{drawerItem.Msg}}
+          </a-descriptions-item>
         </a-descriptions>
       </a-drawer>
     </div>
@@ -216,13 +219,13 @@ const columns = [
     width: "50px",
   },
   {
-    title: "BOM号",
+    title: "品号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
@@ -356,7 +359,7 @@ export default {
     },
     filterData() {
       return this.columns.filter((obj) => {
-        if (obj.dataIndex !== "Status" && obj.dataIndex !== "MatchStatus") {
+        if (obj.dataIndex !== "StatusName" && obj.dataIndex !== "MatchStatusName") {
           return obj.dataIndex;
         }
       });

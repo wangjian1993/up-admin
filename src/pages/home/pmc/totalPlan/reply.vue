@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-21 15:42:07
+ * @LastEditTime: 2021-10-29 11:04:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Reply.vue
@@ -30,15 +30,15 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
         </a-row>
         <a-row>
           <a-col :md="6" :sm="24">
-            <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入产品型号" allowClear style="width: 200px" v-decorator="['mitemname']" />
+            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['mitemname']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -62,15 +62,15 @@
        <a-button v-if="hasPerm('export')" :disabled="!isExport" type="primary" @click="handleExcel" icon="export">导出</a-button>
        <a-button v-else type="primary" disabled @click="handleExcel" icon="export">导出</a-button>
     </div>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 4000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BatchId" bordered>
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 4000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data,index) => data.BatchId +'_'+ index" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="StatusName" slot-scope="text">
+      <template slot="Status" slot-scope="text, record">
         <div>
-          <a-tag :color="text === '待审' || text === '匹配错误' || text === '部分推送' || text === '推送异常' || text === '有差异_未确认' ? 'red' : 'green'">{{ text }}</a-tag>
+          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="time" slot-scope="text">
@@ -114,14 +114,14 @@ const columns = [
     width: 50,
   },
   {
-    title: "BOM号",
+    title: "品号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
     width: 200,
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
@@ -143,8 +143,8 @@ const columns = [
   },
   {
     title: "计划状态",
-    dataIndex: "StatusName",
-    scopedSlots: { customRender: "StatusName" },
+    dataIndex: "Status",
+    scopedSlots: { customRender: "Status" },
     align: "center",
     width: 80,
   },
@@ -258,6 +258,7 @@ export default {
         if (!err) {
           console.log("Received values of form: ", values.week);
           this.data = [];
+          this.columns = JSON.parse(JSON.stringify(this.dColumns));
           this.pagination.total = 0;
           if (this.week != "") {
             var w = this.week;

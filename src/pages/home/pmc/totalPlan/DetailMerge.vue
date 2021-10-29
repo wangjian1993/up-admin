@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-21 15:42:01
+ * @LastEditTime: 2021-10-29 11:00:23
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/DetailMerge.vue
@@ -31,13 +31,13 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入产品型号" allowClear style="width: 200px" v-decorator="['mitemname']" />
+            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['mitemname']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -53,8 +53,8 @@
       </span>
     </a-form>
     <div class="operator">
-       <a-button v-if="hasPerm('export')" :disabled="!isExport" type="primary" @click="handleExcel" icon="export">导出</a-button>
-       <a-button v-else type="primary" disabled @click="handleExcel" icon="export">导出</a-button>
+      <a-button v-if="hasPerm('export')" :disabled="!isExport" type="primary" @click="handleExcel" icon="export">导出</a-button>
+      <a-button v-else type="primary" disabled @click="handleExcel" icon="export">导出</a-button>
     </div>
     <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 4000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" bordered>
       <template slot="index" slot-scope="text, record, index">
@@ -108,13 +108,13 @@ const columns = [
     width: 50,
   },
   {
-    title: "BOM号",
+    title: "品号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
@@ -145,16 +145,16 @@ import { renderStripe } from "@/utils/stripe.js";
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 import Requirement from "@/components/requirement/Requirement.vue";
 import XLSX from "xlsx";
-import {dColumns} from '@/mixins/requirement.js'
+import { dColumns } from "@/mixins/requirement.js";
 export default {
-  mixins:[dColumns],
+  mixins: [dColumns],
   components: { Requirement },
   props: ["plantList", "batchid"],
   data() {
     return {
       data: [],
       columns,
-      columns1:columns,
+      columns1: columns,
       loading: true,
       pagination: {
         current: 1,
@@ -176,7 +176,6 @@ export default {
       isDetail: false,
       detailData: [],
       isExport: false,
-
     };
   },
   updated() {
@@ -266,16 +265,15 @@ export default {
     //重置搜索
     reset() {
       this.week = "";
-      this.data =[];
+      this.data = [];
       this.isExport = false;
       this.searchForm.resetFields();
-      this.columns.forEach((item,index) => {
-        if(item.dataIndex && item.scopedSlots.customRender === 'time'){
+      this.columns.forEach((item, index) => {
+        if (item.dataIndex && item.scopedSlots.customRender === "time") {
           console.log(index);
-          this.columns.splice(index,1);
+          this.columns.splice(index, 1);
         }
-      })
-      console.log(this.columns);
+      });
     },
     //日期转换
     formatDateTime(inputTime) {
@@ -300,6 +298,7 @@ export default {
         if (!err) {
           console.log("Received values of form: ", values.week);
           this.data = [];
+          this.columns = JSON.parse(JSON.stringify(this.dColumns));
           this.pagination.total = 0;
           if (values["range-time-picker"] != undefined) {
             var begindt = this.formatDateTime(values["range-time-picker"][0]);

@@ -47,8 +47,8 @@
         <a-descriptions title="详情" :column="1">
           <a-descriptions-item label="计划批号">{{ drawerItem.BatchNo }}</a-descriptions-item>
           <a-descriptions-item label="生产工厂">{{ drawerItem.PlantName }}</a-descriptions-item>
-          <a-descriptions-item label="BOM号">{{ drawerItem.MitemCode }}</a-descriptions-item>
-          <a-descriptions-item label="产品型号">{{ drawerItem.MitemName }}</a-descriptions-item>
+          <a-descriptions-item label="品号">{{ drawerItem.MitemCode }}</a-descriptions-item>
+          <a-descriptions-item label="品名">{{ drawerItem.MitemName }}</a-descriptions-item>
           <a-descriptions-item label=" 产品规格">{{ drawerItem.Spec }}</a-descriptions-item>
           <a-descriptions-item label="需求日期">{{ drawerItem.RequirementDate }}</a-descriptions-item>
           <a-descriptions-item label="需求数量">{{ drawerItem.Qty }}</a-descriptions-item>

@@ -18,10 +18,10 @@
             <a-descriptions-item label="计划批号">
               {{ detailData.BatchNo }}
             </a-descriptions-item>
-            <a-descriptions-item label="BOM号">
+            <a-descriptions-item label="品号">
               {{ detailData.MitemCode }}
             </a-descriptions-item>
-            <a-descriptions-item label="产品型号">
+            <a-descriptions-item label="品名">
               {{ detailData.MitemName }}
             </a-descriptions-item>
           </a-descriptions>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-16 15:47:55
- * @LastEditTime: 2021-10-12 15:58:20
+ * @LastEditTime: 2021-10-29 16:08:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/components/requirement/Requirement.vue
@@ -18,10 +18,10 @@
             <a-descriptions-item label="计划批号">
               {{ detailData.BatchNo }}
             </a-descriptions-item>
-            <a-descriptions-item label="BOM号">
+            <a-descriptions-item label="品号">
               {{ detailData.MitemCode }}
             </a-descriptions-item>
-            <a-descriptions-item label="产品型号">
+            <a-descriptions-item label="品名">
               {{ detailData.MitemName }}
             </a-descriptions-item>
           </a-descriptions>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-28 14:06:24
+ * @LastEditTime: 2021-10-29 15:59:52
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -19,13 +19,13 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['itemcode']" />
+            <a-form-item label="主件品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="主件品号" allowClear style="width: 200px" v-decorator="['itemcode']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入产品型号" allowClear style="width: 200px" v-decorator="['itemname']" />
+            <a-form-item label="主键品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入主键品名" allowClear style="width: 200px" v-decorator="['itemname']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -103,7 +103,7 @@ const columns = [
     ellipsis: true,
   },
   {
-    title: "产品型号",
+    title: "主件品号",
     dataIndex: "ITEM_NAME",
     scopedSlots: { customRender: "ITEM_NAME" },
     align: "center",
@@ -111,7 +111,7 @@ const columns = [
     ellipsis: true,
   },
   {
-    title: "规格",
+    title: "主件规格",
     dataIndex: "ITEM_SPECIFICATION",
     scopedSlots: { customRender: "ITEM_SPECIFICATION" },
     align: "center",
@@ -119,7 +119,7 @@ const columns = [
     ellipsis: true,
   },
   {
-    title: "图号",
+    title: "主件图号",
     dataIndex: "DRAWING_NO",
     scopedSlots: { customRender: "DRAWING_NO" },
     align: "center",
@@ -212,38 +212,9 @@ const columns = [
     scopedSlots: { customRender: "EMPLOYEE_NAME_L" },
     align: "center",
     width: 150,
-  },
-  {
-    title: "备注",
-    dataIndex: "REMARK",
-    scopedSlots: { customRender: "REMARK" },
-    align: "center",
-  },
+  }
 ];
 const innerColumns = [
-  {
-    title: "主件品号",
-    dataIndex: "MAIN_ITEM_CODE",
-    scopedSlots: { customRender: "MAIN_ITEM_CODE" },
-    align: "center",
-    width: 180,
-  },
-  {
-    title: "主件型号",
-    dataIndex: "MAIN_ITEM_NAME",
-    scopedSlots: { customRender: "MAIN_ITEM_NAME" },
-    align: "center",
-    width: 250,
-    ellipsis: true,
-  },
-  {
-    title: "主件规格",
-    dataIndex: "MAIN_ITEM_SPECIFICATION",
-    scopedSlots: { customRender: "MAIN_ITEM_SPECIFICATION" },
-    align: "center",
-    width: 300,
-    ellipsis: true,
-  },
   {
     title: "序号",
     dataIndex: "INDEX",
@@ -252,22 +223,14 @@ const innerColumns = [
     width: 60,
   },
   {
-    title: "上阶品号",
-    dataIndex: "LAST_ITEM_CODE",
-    scopedSlots: { customRender: "LAST_ITEM_CODE" },
+    title: "阶次",
+    dataIndex: "LV",
+    scopedSlots: { customRender: "LV" },
     align: "center",
-    width: 250,
-    ellipsis: true,
+    width: 50,
   },
-  {
-    title: "上阶品名",
-    dataIndex: "LAST_ITEM_NAME",
-    scopedSlots: { customRender: "LAST_ITEM_NAME" },
-    align: "center",
-    width: 180,
-  },
-  {
-    title: "材料品号",
+   {
+    title: "元件品号",
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
     align: "center",
@@ -288,14 +251,7 @@ const innerColumns = [
     align: "center",
     width: 300,
     ellipsis: true,
-  },
-  {
-    title: "层级",
-    dataIndex: "LV",
-    scopedSlots: { customRender: "LV" },
-    align: "center",
-    width: 80,
-  },
+  }
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
@@ -457,9 +413,9 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.loading = false;
               this.isSearch = true;
             }
+            this.loading = false;
           });
           // do something
         }

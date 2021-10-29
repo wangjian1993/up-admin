@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-27 09:39:37
+ * @LastEditTime: 2021-10-29 11:12:27
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -19,7 +19,7 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['itemcode', { rules: [{ required: true, message: '请输入BOM号' }] }]" />
             </a-form-item>
           </a-col>
@@ -122,7 +122,7 @@ const columns = [
     width: 250,
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "ITEM_NAME",
     scopedSlots: { customRender: "ITEM_NAME" },
     align: "center",
@@ -342,9 +342,9 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.loading = false;
               this.isSearch = true;
             }
+             this.loading = false;
           });
           // do something
         }

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:33
- * @LastEditTime: 2021-10-21 15:44:23
+ * @LastEditTime: 2021-10-29 14:51:41
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Plan.vue
@@ -97,8 +97,9 @@
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
-    <matching v-if="isMatching" :matchingData="matchingData" :plantList="plantList" @closeModal="closeModal" @succeed="getListAll"></matching>
+    <!-- <matching v-if="isMatching" :matchingData="matchingData" :plantList="plantList" @closeModal="closeModal" @succeed="getListAll"></matching> -->
      <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
+     <batch-approve v-if="isMatching" :matchingData="matchingData" :isEdit="false" :plantList="plantList" @closeModal="closeModal" @succeed="getListAll"></batch-approve>
   </div>
 </template>
 
@@ -162,10 +163,11 @@ const columns = [
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getScmAction, setScmAction } from "@/services/web.js";
-import Matching from "./Matching";
+// import Matching from "./Matching";
+import BatchApprove from './BatchApprove.vue'
 import UserList from '@/components/app-user/UserList'
 export default {
-  components: { Matching,UserList},
+  components: { BatchApprove,UserList},
   props: ["plantList",'stateList'],
   data() {
     return {

@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-10-27 09:29:40
+ * @LastEditTime: 2021-10-29 11:42:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/VariationInfo.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="BOM变更信息" @cancel="close" width="90%" :footer="null" centered>
+    <a-modal v-model="visible" title="工程变更单" @cancel="close" width="90%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-descriptions :column="5" bordered size="small">
@@ -123,7 +123,7 @@
 <script>
 const columns = [
   {
-    title: "序号",
+    title: "变更序号",
     scopedSlots: { customRender: "index" },
     align: "center",
     width: "3%",
@@ -143,7 +143,7 @@ const columns = [
     width: 250,
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "ITEM_NAME",
     scopedSlots: { customRender: "ITEM_NAME" },
     align: "center",
@@ -241,7 +241,7 @@ const columns = [
 ];
 const columns1 = [
   {
-    title: "序号",
+    title: "变更序号",
     scopedSlots: { customRender: "index" },
     align: "center",
     width: "3%",

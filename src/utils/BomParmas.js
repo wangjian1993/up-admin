@@ -57,7 +57,7 @@ export function modelType(type) {
     let obj = [
         {
             type: "P",
-            name: "采购价"
+            name: "采购件"
         },
         {
             type: "M",
@@ -69,19 +69,19 @@ export function modelType(type) {
         },
         {
             type: "Y",
-            name: "采购价"
+            name: "虚设件"
         },
         {
             type: "F",
-            name: "采购价"
+            name: "产品系列"
         },
         {
             type: "O",
-            name: "采购价"
+            name: "配送件"
         },
         {
             type: "T",
-            name: "采购价"
+            name: "调拨件"
         },
     ];
     let codeName = "";

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-10-21 15:43:45
+ * @LastEditTime: 2021-10-29 10:58:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/DetailMerge.vue
@@ -31,15 +31,15 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
         </a-row>
         <a-row>
           <a-col :md="6" :sm="24">
-            <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入产品型号" allowClear style="width: 200px" v-decorator="['mitemname']" />
+            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['mitemname']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -120,14 +120,14 @@ const columns = [
     width: 50,
   },
   {
-    title: "BOM号",
+    title: "品号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
     width: 200,
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
@@ -207,7 +207,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    console.log(this.dColumns);
+    console.log("this.dColumns",this.dColumns);
     // this.getListAll();
   },
   methods: {
@@ -265,12 +265,14 @@ export default {
     },
     //关键词搜索
     search() {
+      this.columns =[];
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
           console.log("Received values of form: ", values.week);
           this.data = [];
           this.pagination.total = 0;
+          this.columns = JSON.parse(JSON.stringify(this.dColumns));
           if (values["range-time-picker"] != undefined) {
             var begindt = this.formatDateTime(values["range-time-picker"][0]);
             var enddt = this.formatDateTime(values["range-time-picker"][1]);

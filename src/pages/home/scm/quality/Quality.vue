@@ -26,24 +26,24 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入BOM号" v-decorator="['mitemcode']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入产品型号" v-decorator="['mitemname']" />
+              <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
               </a-form-item>
             </a-col>
           </a-row>
           <a-row v-if="advanced">
             <!-- <a-col :md="6" :sm="24">
-              <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" placeholder="请输入产品型号" v-decorator="['mitemname']" />
+              <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" placeholder="请输入品名" v-decorator="['mitemname']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" placeholder="请输入BOM号" v-decorator="['mitemcode']" />
               </a-form-item>
             </a-col> -->
@@ -213,13 +213,13 @@ const columns = [
     align: "center",
   },
   {
-    title: "BOM号",
+    title: "品号",
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",

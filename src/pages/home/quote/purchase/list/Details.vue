@@ -18,13 +18,13 @@
             <a-descriptions-item label="需求工厂">
               {{ info.PlantName }}
             </a-descriptions-item>
-            <a-descriptions-item label="BOM号">
+            <a-descriptions-item label="品号">
               {{ info.ItemCode }}
             </a-descriptions-item>
             <a-descriptions-item label="产品大类">
               {{ info.ItemSort }}
             </a-descriptions-item>
-            <a-descriptions-item label="产品型号" :span="2">
+            <a-descriptions-item label="品名" :span="2">
               {{ info.ItemName }}
             </a-descriptions-item>
             <a-descriptions-item :span="2">
@@ -90,7 +90,7 @@
 <script>
 const columns = [
   {
-    title: "BOM号",
+    title: "品号",
     dataIndex: "ChildCode",
     width: "14%",
     align: "left",
@@ -120,7 +120,7 @@ const columns = [
     align: "center",
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "ChildName",
     align: "center",
   },

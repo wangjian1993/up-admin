@@ -20,10 +20,10 @@
           <a-form-model-item has-feedback label="供应商">
             <span>{{ approveData.SupplierName }}</span>
           </a-form-model-item>
-          <a-form-model-item has-feedback label="BOM号">
+          <a-form-model-item has-feedback label="品号">
             <span>{{ approveData.MitemCode }}</span>
           </a-form-model-item>
-          <a-form-model-item has-feedback label="产品型号">
+          <a-form-model-item has-feedback label="品名">
             <span>{{ approveData.MitemName }}</span>
           </a-form-model-item>
           <a-form-model-item has-feedback label="到货数量">

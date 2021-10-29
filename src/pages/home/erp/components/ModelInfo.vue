@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2021-10-28 17:53:18
+ * @LastEditTime: 2021-10-29 11:32:06
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
@@ -30,8 +30,8 @@
             <a-descriptions-item label="周期种类">
               {{ info.CYCLEL_STATUS == "1" ? "1.新建" : info.CYCLEL_STATUS == "2" ? "2.发行" : "3.终止" }}
             </a-descriptions-item>
-            <a-descriptions-item label="产品型号" :span="2">
-              {{ info.FILENAME }}
+            <a-descriptions-item label="品名" :span="2">
+              {{ info.ITEM_NAME }}
             </a-descriptions-item>
             <a-descriptions-item label="状态">
               {{ info.ApproveStatus == "Y" ? "Y.已生效" : info.ApproveStatus == "N" ? "N.未生效" : "V.已失效" }}
@@ -51,7 +51,7 @@
           </a-descriptions>
         </div>
         <div>
-          <a-tabs type="card" style="width:70%">
+          <a-tabs type="card" style="width:70%;height:100%;">
             <a-tab-pane key="1" tab="通用属性值信息">
               <a-table :columns="columns" size="small" :data-source="data">
                 <a slot="name" slot-scope="text">{{ text }}</a>
@@ -78,9 +78,10 @@
             <a-tab-pane key="4" tab="生产信息">
               <a-descriptions :column="3" bordered size="small">
                 <a-descriptions-item v-for="(item, index) in production" :key="index" :label="item.title">
-                  <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
-                  <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
-                  <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
+                  <span v-if="item.layout">{{ info[item.dataIndex] + item.layout }}</span>
+                  <span v-else-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
+                  <span v-else-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
+                  <a-checkbox v-else-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
                 </a-descriptions-item>
               </a-descriptions>
             </a-tab-pane>
@@ -103,7 +104,9 @@
               </a-descriptions>
             </a-tab-pane>
             <a-tab-pane key="7" tab="品号图片">
-              <img style="width:100%" :src="imgUrl" alt="" />
+              <div style="width:100%">
+                  <img style="width:100%;height:100%;" :src="imgUrl" alt="" />
+              </div>
             </a-tab-pane>
             <a-tab-pane key="8" tab="品号附件"> </a-tab-pane>
           </a-tabs>
@@ -116,7 +119,7 @@
 <script>
 const columns = [
   {
-    title: "序号",
+    title: "段号",
     dataIndex: "SECTION_NO",
     scopedSlots: { customRender: "SECTION_NO" },
     align: "center",
@@ -243,17 +246,12 @@ export default {
 /deep/.ant-card-head {
   padding: 0;
 }
-/deep/div {
-  -moz-user-select: none; /*火狐*/
-  -webkit-user-select: none; /*webkit浏览器*/
-  -ms-user-select: none; /*IE10*/
-  -khtml-user-select: none; /*早期浏览器*/
-  user-select: none;
-}
-/deep/.ant-modal {
-  height: 100%;
-}
 /deep/.ant-modal-content {
-  height: 100%;
+  height:100%;
+}
+/deep/ .ant-modal{
+  height:auto;
+  min-height:600px;
+  max-height:auto;
 }
 </style>

@@ -64,12 +64,12 @@ const columns = [
     width: 50,
   },
   {
-    title: "BOM号",
+    title: "品号",
     dataIndex: "ItemCode",
     align: "center",
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "ItemName",
     align: "center",
   },

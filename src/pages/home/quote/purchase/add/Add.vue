@@ -27,7 +27,7 @@
             <div :class="advanced ? null : 'fold'">
               <a-row>
                 <a-col :lg="8" :md="12" :sm="24">
-                  <a-form-item label="BOM号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-form-item label="品号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-input
                       placeholder="请输入产品BOM号"
                       :disabled="isSearch"
@@ -76,7 +76,7 @@
               </a-row>
               <a-row>
                 <a-col :lg="8" :md="12" :sm="24">
-                  <a-form-item label="产品型号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-form-item label="品名" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-input :disabled="isSearch" v-model="costInfo.ItemName" />
                   </a-form-item>
                 </a-col>
@@ -177,7 +177,7 @@
             </span>
           </a-space>
           <a-form layout="inline" :form="keywordForm">
-            <a-form-item label="(BOM号,产品型号, 产品规格,提示)关键字匹配">
+            <a-form-item label="(品号,品名, 产品规格,提示)关键字匹配">
               <a-input v-model="keyword" allowClear @change="listSearch" />
             </a-form-item>
           </a-form>
@@ -253,12 +253,12 @@ const excelHead = [
     align: "center",
   },
   {
-    title: "BOM号",
+    title: "品号",
     dataIndex: "ChildCode",
     align: "center",
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "ChildName",
     align: "center",
   },
@@ -345,12 +345,12 @@ export default {
           align: "center",
         },
         {
-          title: "BOM号",
+          title: "品号",
           dataIndex: "ChildCode",
           align: "center",
         },
         {
-          title: "产品型号",
+          title: "品名",
           dataIndex: "ChildName",
           align: "center",
           width: "10%",
@@ -642,13 +642,13 @@ export default {
         if (this.costInfo.ItemOtherInfo && item.CostName === "电源贴片费") {
           if (item.Description == "") {
             item.Amount = 0;
-            item.Description = `产品型号带有“贴片”关键字(0)行)，用量(0)*0`;
+            item.Description = `品名带有“贴片”关键字(0)行)，用量(0)*0`;
             return;
           }
           let str = item.Description.split("*");
           let price1 = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * str[1];
           item.Amount = parseFloat(price1.toFixed(4));
-          item.Description = `产品型号带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
+          item.Description = `品名带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
         }
         //计算损耗费用
         if (item.CostName === "损耗") {
@@ -867,8 +867,8 @@ export default {
       let pl = this.plantList.find((item) => item.EnterId === enterInfo.plantid);
       _data.push(["需求公司", en.EnterName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
       _data.push(["需求工厂", pl.EnterName || 0, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-      _data.push(["BOM号", info.ItemCode, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-      _data.push(["产品型号", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["品号", info.ItemCode, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
       _data.push(["大类", info.ItemSort, null, null, null, null, null, null, null, null, null, null, null, null, null]);
       _data.push([" 产品规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null, null]);
       let cost = [];
@@ -946,7 +946,7 @@ export default {
         { wch: 5 }, // 阶次
         { wch: 8 }, // 类型
         { wch: 10 }, // 上阶BOM号
-        { wch: 10 }, // BOM号
+        { wch: 10 }, // 品号
         { wch: 18 }, // 料名
         { wch: 20 }, //  产品规格
         { wch: 6 }, // 单位

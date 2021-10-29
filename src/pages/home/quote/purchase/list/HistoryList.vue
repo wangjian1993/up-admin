@@ -18,7 +18,7 @@
             <a-descriptions-item label="需求工厂">
               {{ historyData.PlantName }}
             </a-descriptions-item>
-            <a-descriptions-item label="BOM号">
+            <a-descriptions-item label="品号">
               {{ historyData.ItemCode }}
             </a-descriptions-item>
           </a-descriptions>
@@ -118,12 +118,12 @@ const columns = [
     align: "center",
   },
   {
-    title: "BOM号",
+    title: "品号",
     dataIndex: "ItemCode",
     align: "center",
   },
   {
-    title: "产品型号",
+    title: "品名",
     dataIndex: "ItemName",
     align: "center",
   },
