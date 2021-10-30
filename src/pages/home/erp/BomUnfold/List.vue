@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-29 15:59:52
+ * @LastEditTime: 2021-10-30 14:29:42
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -13,18 +13,18 @@
         <a-row>
           <a-col :md="6" :sm="24">
             <a-form-item label="需求工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择需求工厂">
+              <a-select v-decorator="['plantid',{ rules: [{ required: true, message: '请选择需求工厂' }] }]" style="width: 200px" placeholder="请选择需求工厂">
                 <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="主件品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="主件品号" allowClear style="width: 200px" v-decorator="['itemcode']" />
+              <a-input placeholder="主件品号" allowClear style="width: 200px" v-decorator="['itemcode',{ rules: [{ required: true, message: '请输入主键品号' }] }]" />
             </a-form-item>
           </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="主键品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+          <!-- <a-col :md="6" :sm="24">
+            <a-form-item label="主件品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入主键品名" allowClear style="width: 200px" v-decorator="['itemname']" />
             </a-form-item>
           </a-col>
@@ -32,7 +32,7 @@
             <a-form-item label="产品规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入产品规格" allowClear style="width: 200px" v-decorator="['itemspecification']" />
             </a-form-item>
-          </a-col>
+          </a-col> -->
         </a-row>
         <a-row>
           <a-col :md="24" :sm="24">
@@ -60,7 +60,7 @@
         </div>
       </template>
       <template slot="ApproveStatus" slot-scope="text">
-        <a-tag :color="text !== 'Y' ? 'red' : 'green'">{{ text == "Y" ? "生效" : "不生效" }}</a-tag>
+        <a-tag :color="text === 'Y' ? 'green' : text === 'N' ? '#0000ff' : 'red'">{{ text == "Y" ? "生效" : text == "N" ? "未生效" : "失效" }}</a-tag>
       </template>
       <template slot="ITEM_PROPERTY" slot-scope="text">
         <span>{{ modelType(text) }}</span>
@@ -230,7 +230,22 @@ const innerColumns = [
     width: 50,
   },
    {
-    title: "元件品号",
+    title: "上阶品号",
+    dataIndex: "LAST_ITEM_CODE",
+    scopedSlots: { customRender: "LAST_ITEM_CODE" },
+    align: "center",
+    width: 180,
+  },
+  {
+    title: "上阶品名",
+    dataIndex: "LAST_ITEM_NAME",
+    scopedSlots: { customRender: "LAST_ITEM_NAME" },
+    align: "center",
+    width: 250,
+    ellipsis: true,
+  },
+   {
+    title: "材料品号",
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
     align: "center",
@@ -393,9 +408,9 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           // console.log("Received values of form: ", values.week);
           this.data = [];
           this.pagination.total = 0;

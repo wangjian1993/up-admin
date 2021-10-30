@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-29 15:59:30
+ * @LastEditTime: 2021-10-30 14:27:47
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -13,14 +13,14 @@
         <a-row>
           <a-col :md="6" :sm="24">
             <a-form-item label="需求工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择需求工厂">
+              <a-select v-decorator="['plantid', { rules: [{ required: true, message: '请选择需求工厂' }] }]" style="width: 200px" placeholder="请选择需求工厂">
                 <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="元件品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入元件品号" allowClear style="width: 200px" v-decorator="['itemcode']" />
+            <a-form-item label="主件品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入主件品号" allowClear style="width: 200px" v-decorator="['itemcode']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -44,7 +44,7 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow" :rowClassName="tableRowClass">
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow" :rowClassName="rowClassName">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -59,7 +59,7 @@
         </div>
       </template>
       <template slot="ApproveStatus" slot-scope="text">
-        <a-tag :color="text !== 'Y' ? 'red' : 'green'">{{ text == "Y" ? "生效" : "不生效" }}</a-tag>
+        <a-tag :color="text === 'Y' ? 'green' : text === 'N' ? '#0000ff' : 'red'">{{ text == "Y" ? "生效" : text == "N" ? "未生效" : "失效" }}</a-tag>
       </template>
       <template slot="ITEM_PROPERTY" slot-scope="text">
         <span>{{ modelType(text) }}</span>
@@ -152,7 +152,7 @@ const columns = [
     scopedSlots: { customRender: "PLANT_CODE_P" },
     align: "center",
   },
-   {
+  {
     title: "工厂名称",
     dataIndex: "PLANT_NAME_P",
     scopedSlots: { customRender: "PLANT_NAME_P" },
@@ -337,7 +337,7 @@ export default {
     //重置搜索
     reset() {
       // this.getListAll();
-      this.data =[];
+      this.data = [];
       this.week = "";
       this.searchForm.resetFields();
       this.getPlant();
@@ -348,6 +348,11 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           // console.log("Received values of form: ", values.week);
+          if (values.itemcode == undefined && values.itemname == undefined && values.itemspecification == undefined) {
+            this.$message.warning("请输入查询条件:品号,品名.规格");
+            this.loading = false;
+            return;
+          }
           this.data = [];
           this.pagination.total = 0;
           let parmas = {
@@ -396,6 +401,9 @@ export default {
       }
       this.getListAll();
     },
+    rowClassName(record) {
+      return record.ApproveStatus == "V" ? "color2" : record.ApproveStatus == "N" ? "color1" : "";
+    },
   },
 };
 </script>
@@ -403,5 +411,11 @@ export default {
 <style scoped lang="less">
 .ant-form-item {
   margin-bottom: 5px;
+}
+/deep/.color2 {
+  color: red;
+}
+/deep/.color1 {
+  color: #0000ff;
 }
 </style>

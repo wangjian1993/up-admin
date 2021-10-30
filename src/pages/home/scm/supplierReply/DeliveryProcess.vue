@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-29 15:55:46
- * @LastEditTime: 2021-10-29 17:17:41
+ * @LastEditTime: 2021-10-30 15:09:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/DeliveryProcess.vue
@@ -135,7 +135,7 @@ import { getSupplierAction, setSupplierAction } from "@/services/web.js";
 import { splitData } from "@/utils/util.js";
 import AdjustDate from "./AdjustDate.vue";
 export default {
-  components: {AdjustDate},
+  components: { AdjustDate },
   props: ["disposeData"],
   data() {
     return {
@@ -153,8 +153,8 @@ export default {
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
-      isAdjust:false,
-      adjustItem:[]
+      isAdjust: false,
+      adjustItem: [],
     };
   },
   created() {
@@ -167,12 +167,14 @@ export default {
     },
     closeModal() {
       this.isAdjust = false;
+      this.$emit("succeed");
+      this.$emit("closeModal");
     },
     adjustDate(item) {
       this.isAdjust = true;
       this.adjustItem = item;
-      this.adjustItem.BatchNo =this.disposeData.BatchNo;
-      console.log(this.adjustItem)
+      this.adjustItem.BatchNo = this.disposeData.BatchNo;
+      console.log(this.adjustItem);
     },
     //获取物料信息
     getDatile() {
@@ -197,6 +199,8 @@ export default {
       setSupplierAction(parmas, "reply/agree").then((res) => {
         if (res.data.success) {
           this.$message.success("同意供应商交期成功!");
+          this.$emit("succeed");
+          this.$emit("closeModal");
         }
       });
     },

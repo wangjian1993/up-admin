@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-28 14:07:07
+ * @LastEditTime: 2021-10-30 14:30:15
  * @LastEditors: max
  * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
@@ -13,7 +13,7 @@
         <a-row>
           <a-col :md="6" :sm="24">
             <a-form-item label="需求工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择需求工厂">
+              <a-select v-decorator="['plantid',{ rules: [{ required: true, message: '请选择需求工厂' }] }]" style="width: 200px" placeholder="请选择需求工厂">
                 <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
               </a-select>
             </a-form-item>
@@ -24,12 +24,12 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="主件BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="主件品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入主件BOM号" allowClear style="width: 200px" v-decorator="['itemcodep']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="元件BOM号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="元件品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入元件BOM号" allowClear style="width: 200px" v-decorator="['itemcodec']" />
             </a-form-item>
           </a-col>
@@ -86,7 +86,7 @@
         </div>
       </template>
       <template slot="ApproveStatus" slot-scope="text">
-        <a-tag :color="text !== 'Y' ? 'red' : 'green'">{{ text == "Y" ? "已审核" : "未审核" }}</a-tag>
+        <a-tag :color="text === 'Y' ? 'green' : text === 'N' ? '#0000ff' : 'red'">{{ text == "Y" ? "生效" : text == "N" ? "未生效" : "失效" }}</a-tag>
       </template>
       <template slot="ITEM_PROPERTY" slot-scope="text">
         <span>{{ modelType(text) }}</span>
@@ -330,6 +330,11 @@ export default {
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          if(values.itemcodep == undefined && values.itemcodec == undefined && values.ecnchangeorder == undefined){
+            this.$message.warning("请输入查询条件:ECN变更单号,主件品号,元件品号")
+            this.loading = false;
+            return;
+          }
           this.loading = true;
           this.pagination.total = 0;
           if (values["range-time-picker1"]) {
@@ -361,9 +366,9 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.loading = false;
               this.isSearch = true;
             }
+            this.loading = false;
           });
           // do something
         }

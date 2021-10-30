@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-21 15:41:02
+ * @LastEditTime: 2021-10-30 16:54:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
@@ -428,4 +428,7 @@ export default {
 </script>
 
 <style scoped lang="less">
+/deep/.ant-table{
+  min-height:60vh;
+}
 </style>

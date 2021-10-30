@@ -1,17 +1,17 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-10-29 16:00:13
+ * @LastEditTime: 2021-10-30 15:00:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="品号信息" @cancel="close" width="90%" :footer="null" centered>
+    <a-modal v-model="visible" title="BOM信息" @cancel="close" width="90%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
-          <a-descriptions :column="5" bordered size="small">
+          <a-descriptions :column="5" bordered size="small" :class="antDescriptionsRow">
             <a-descriptions-item label="主件品号">
               {{ info.ITEM_CODE }}
             </a-descriptions-item>
@@ -61,7 +61,7 @@
         </div>
         <div>
           <a-card title="BOM用量信息" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 500, x: 2700 }" :pagination="pagination" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered>
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 500, x: 2700 }" :pagination="pagination" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName">
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -279,7 +279,7 @@ const columns = [
 ];
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
-import { feedSystem, modelType,stateType} from "@/utils/BomParmas.js";
+import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
 import ModelInfo from "./ModelInfo.vue";
 export default {
   components: { ModelInfo },
@@ -305,10 +305,13 @@ export default {
       treeData: [],
       isModelInfo: false,
       modelData: [],
+      antDescriptionsRow: "",
     };
   },
   created() {
     this.getList();
+    //设置详情字体颜色
+    this.info.ApproveStatus == "N" ? (this.antDescriptionsRow = "rowColor1") : this.info.ApproveStatus == "V" ? (this.antDescriptionsRow = "rowColor2") : "";
   },
   methods: {
     splitData,
@@ -323,7 +326,7 @@ export default {
     },
     //物料需求详情
     detail(item) {
-       this.isModelInfo = true;
+      this.isModelInfo = true;
       this.modelData = item;
     },
     getList() {
@@ -373,6 +376,9 @@ export default {
     handleCancel() {
       this.isAddModal = false;
     },
+    rowClassName(record) {
+      return record.ApproveStatus == "V" ? "color2" : record.ApproveStatus == "N" ? "color1" : "";
+    },
   },
 };
 </script>
@@ -399,7 +405,28 @@ export default {
   -khtml-user-select: none; /*早期浏览器*/
   user-select: none;
 }
-/deep/.ant-modal{
-    height:100%;
+/deep/.color2 {
+  color: red;
+}
+/deep/.color1 {
+  color: #0000ff;
+}
+/deep/.rowColor1 {
+  color: #0000ff;
+  th {
+    color: #0000ff;
+  }
+  td {
+    color: #0000ff;
+  }
+}
+/deep/.rowColor2 {
+  color: red;
+  td {
+    color: red;
+  }
+  th {
+    color: red;
+  }
 }
 </style>

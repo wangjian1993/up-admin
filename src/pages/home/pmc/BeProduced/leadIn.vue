@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-21 15:38:25
+ * @LastEditTime: 2021-10-30 16:53:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/leadIn.vue
@@ -417,7 +417,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table-body {
-  min-height: 0vh;
+/deep/.ant-table{
+  min-height:65vh;
 }
 </style>

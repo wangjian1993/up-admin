@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-19 18:23:39
+ * @LastEditTime: 2021-10-30 16:01:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -108,7 +108,7 @@ const columns = [
     width: "4%",
   },
   {
-    title: "上阶BOM号",
+    title: "上阶品号",
     dataIndex: "LastCode",
     align: "center",
   },

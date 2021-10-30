@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-10-16 10:20:48
- * @LastEditTime: 2021-10-28 10:30:10
+ * @LastEditTime: 2021-10-30 09:16:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/BomParmas.js
@@ -82,6 +82,10 @@ export function modelType(type) {
         {
             type: "T",
             name: "调拨件"
+        },
+        {
+            type: "I",
+            name: "内部采购件"
         },
     ];
     let codeName = "";

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-25 16:23:55
+ * @LastEditTime: 2021-10-30 16:36:12
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -493,7 +493,7 @@ export default {
         if (res.data.success) {
           this.tableData = res.data.data.ItemInfo.ItemChildList;
           this.tableData.forEach((item) => {
-              item.CodeId = item.ChildCode + "_" + item.LastCode;
+            item.CodeId = item.ChildCode + "_" + item.LastCode;
           });
           this.searchList = this.tableData;
           this.costInfo = res.data.data.ItemInfo;
@@ -843,6 +843,33 @@ export default {
       return this.selectedRowKeys.includes(record.CodeId) ? "blue" : "white";
       // return this.selectedRowKeys.includes(record.ChildCode) ? "litigationInfoListredRow" : ""
     },
+    calField(tree) {
+      tree.forEach((node) => {
+        if (node.children && node.children.length > 0) {
+          // console.log(node.children)
+          this.calField(node.children);
+          node.Amount = node.children.reduce((sum, item) => ((sum += item.Amount), parseFloat(sum.toFixed(4))), 0);
+        } else {
+          let sum = node.Amount * 1;
+          node.Amount = parseFloat(sum.toFixed(4));
+          delete node.children;
+        }
+      });
+      return tree;
+    },
+    initTree(parent_id) {
+      // jsonArray 变量数据
+      // 第一次以后：根据id去查询parent_id相同的（相同为子数据）
+      // 第一次：查找所有parent_id为-1的数据组成第一级
+      const child = this.tableData.filter((item) => item.LastCode == parent_id);
+      // 第一次：循环parent_id为-1数组
+      return child.map((item) => ({
+        ...item,
+        // 当前存在id（id与parent_id应该是必须有的）调用initTree() 查找所有parent_id为本id的数据
+        // childs字段写入
+        children: this.initTree(item.ChildCode),
+      }));
+    },
     //导出excel
     handleExcel() {
       if (this.tableData.length == 0) {
@@ -925,11 +952,16 @@ export default {
         });
         _data.push(array);
       });
-      this.exportData.map((item) => {
+      let tree = this.initTree(info.ItemCode);
+      let treeData = this.calField(tree);
+      console.log(treeData);
+      treeData.map((item) => {
         let array1 = [];
-        if (item.LvNo != 2) {
+        if (item.LvNo == 2) {
           Object.keys(item).forEach((key) => {
-            array1.push(item[key]);
+            if (key !== "children") {
+              array1.push(item[key]);
+            }
           });
           _data1.push(array1);
         }

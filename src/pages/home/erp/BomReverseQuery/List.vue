@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-29 11:12:27
+ * @LastEditTime: 2021-10-30 10:37:45
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -19,8 +19,8 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['itemcode', { rules: [{ required: true, message: '请输入BOM号' }] }]" />
+            <a-form-item label="元件品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="请输入元件品号" allowClear style="width: 200px" v-decorator="['itemcode', { rules: [{ required: true, message: '请输入元件品号' }] }]" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -130,19 +130,19 @@ const columns = [
     ellipsis: true,
   },
   {
-    title: "图号",
-    dataIndex: "DRAWING_NO",
-    scopedSlots: { customRender: "DRAWING_NO" },
-    align: "center",
-    width: 150,
-  },
-  {
     title: "规格",
     dataIndex: "ITEM_SPECIFICATION",
     scopedSlots: { customRender: "ITEM_SPECIFICATION" },
     align: "center",
     width: 300,
     ellipsis: true,
+  },
+  {
+    title: "图号",
+    dataIndex: "DRAWING_NO",
+    scopedSlots: { customRender: "DRAWING_NO" },
+    align: "center",
+    width: 150,
   },
   {
     title: "单位",
@@ -176,12 +176,6 @@ const columns = [
     scopedSlots: { customRender: "DYNAMIC_LOSS_RATE" },
     align: "center",
     width: 80,
-  },
-  {
-    title: "备注",
-    dataIndex: "REMARK",
-    scopedSlots: { customRender: "REMARK" },
-    align: "center",
   },
   {
     title: "操作",
@@ -306,11 +300,10 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+           this.loading = true;
           this.pagination.total = 0;
-          console.log(values["bomdate"]);
           if (values["bomdate"]) {
             var bomdate = values["bomdate"].format("YYYY-MM-DD");
           }

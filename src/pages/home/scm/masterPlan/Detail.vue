@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-21 15:43:38
+ * @LastEditTime: 2021-10-30 16:49:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
@@ -611,5 +611,8 @@ export default {
   font-size: 18px;
   // font-weight: 700;
   color: #000;
+}
+/deep/.ant-table{
+  min-height:55vh;
 }
 </style>

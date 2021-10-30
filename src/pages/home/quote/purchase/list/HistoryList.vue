@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-18 17:18:24
+ * @LastEditTime: 2021-10-30 16:18:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/HistoryList.vue
@@ -66,7 +66,7 @@
                       <a-icon type="down" />
                     </a>
                     <a-menu slot="overlay">
-                      <a-menu-item key="0" @click="handleExcel(record.Id)">导出</a-menu-item>
+                      <a-menu-item key="0" @click="handleExcel(record.Id,record.ItemCode)">导出</a-menu-item>
                       <a-menu-item key="1" @click="reloadCost(record.Id, 'COPY')">复制报价</a-menu-item>
                       <a-menu-item key="2" @click="reloadCost(record.Id, 'ANEW')">重新报价</a-menu-item>
                     </a-menu>
@@ -77,7 +77,7 @@
                     <a-icon type="profile" />
                     详情
                   </a>
-                  <a style="margin-right: 8px" @click="handleExcel(record.Id)">
+                  <a style="margin-right: 8px" @click="handleExcel(record.Id,record.ItemCode)">
                     <a-icon type="export" />
                     导出
                   </a>
@@ -213,8 +213,8 @@ export default {
       this.$emit("details", id);
     },
     //导出
-    handleExcel(id) {
-      this.$emit("handleExcel", id);
+    handleExcel(id,LastCode) {
+      this.$emit("handleExcel", id,LastCode);
     },
     close() {
       this.$emit("closeModal");

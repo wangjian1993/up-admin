@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 15:16:07
- * @LastEditTime: 2021-10-29 18:15:30
+ * @LastEditTime: 2021-10-30 14:01:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/BatchApprove.vue
@@ -97,9 +97,8 @@
               </div>
             </template>
             <div slot="MatchQty" slot-scope="text, record">
-              {{ record.isInput }}
               <!-- <a-input-number allowClear :min="0" size="small" @change="(e) => handleChange(e.target.value, record)" :value="record.MatchQty" /> -->
-              <a-input-number v-model="record.MatchQty" />
+              <a-input-number v-model="record.MatchQty" :disabled="!record.isInput" />
             </div>
           </a-table>
         </div>
@@ -307,23 +306,19 @@ export default {
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
-      // console.log(this.selectedRowKeys);
-      // this.selectedRowKeys.map((item) => {
-      //   this.setIsInput(item);
-      // });
+      console.log(this.selectedRowKeys);
+      if (selectedRowKeys.length > 0) {
+        this.list.map((items) => {
+          items.isInput = this.setIsInput(items.PurchaseOrderNo);
+        });
+      } else {
+        this.list.map((items) => {
+          items.isInput = false;
+        });
+      }
     },
     setIsInput(id) {
-      this.list.map((items) => {
-        console.log(id);
-        if (items.PurchaseOrderNo === id) {
-          items.isInput = true;
-           console.log("是");
-        } else {
-          items.isInput = false;
-          console.log("不是");
-        }
-      });
-      console.log(this.list);
+      return this.selectedRowKeys.includes(id);
     },
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
@@ -346,14 +341,16 @@ export default {
         RequirementDate: this.mitemData.RequirementDate,
         MatchList: [],
       };
-      this.selectedRowKeys.forEach((item) => {
-        parmas.MatchList.push({
-          PurchaseOrderNo: this.list[item].PurchaseOrderNo,
-          SupplierCode: this.list[item].SupplierCode,
-          LineItem: this.list[item].LineItem,
-          LineItemNum: this.list[item].lineItemNum,
-          MatchQty: this.list[item].MatchQty,
-        });
+      this.list.map((items) => {
+        if (this.selectedRowKeys.indexOf(items.PurchaseOrderNo) > -1) {
+          parmas.MatchList.push({
+            PurchaseOrderNo: items.PurchaseOrderNo,
+            SupplierCode: items.SupplierCode,
+            LineItem: items.LineItem,
+            LineItemNum: items.lineItemNum,
+            MatchQty: items.MatchQty || 0,
+          });
+        }
       });
       setScmAction(parmas, "manualmatch/addv2").then((res) => {
         if (res.data.success) {

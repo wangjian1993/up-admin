@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-10-29 17:20:27
+ * @LastEditTime: 2021-10-30 16:51:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Exception.vue
@@ -636,5 +636,8 @@ export default {
   font-size: 18px;
   // font-weight: 700;
   color: #000;
+}
+/deep/.ant-table{
+  min-height:55vh;
 }
 </style>

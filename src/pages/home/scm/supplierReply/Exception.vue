@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-29 17:06:55
+ * @LastEditTime: 2021-10-30 16:51:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
@@ -164,7 +164,7 @@
         </div>
       </template>
       <template slot="action" slot-scope="text, record" >
-        <div>
+        <div  v-if="record.SupplierReplyQty > 0">
           <a style="margin-right: 8px" @click="consent(record)" :disabled="!hasPerm('consent')">
             <a-icon type="check-square" />
             交期确认处理
@@ -209,7 +209,7 @@
       </a-drawer>
     </div>
     <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
-    <delivery-process v-if="isDispose" :disposeData="disposeData" @closeModal="closeModal"></delivery-process>
+    <delivery-process v-if="isDispose" :disposeData="disposeData" @closeModal="closeModal" @succeed="getListAll"></delivery-process>
   </div>
 </template>
 
@@ -738,5 +738,8 @@ export default {
   font-size: 18px;
   // font-weight: 700;
   color: #000;
+}
+/deep/.ant-table{
+  min-height:55vh;
 }
 </style>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-10-19 15:57:37
+ * @LastEditTime: 2021-10-30 16:35:10
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -71,7 +71,7 @@
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-input placeholder="请输入产品BOM号" allowClear v-decorator="['itemcode']" />
+                  <a-input placeholder="请输入产品品号" allowClear v-decorator="['itemcode']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -134,7 +134,7 @@
               <a-icon type="profile" />
               详情
             </a>
-            <a style="margin-right: 8px" @click="handleExcel(record.Id)">
+            <a style="margin-right: 8px" @click="handleExcel(record.Id, record.ItemCode)">
               <a-icon type="export" />
               导出
             </a>
@@ -257,7 +257,7 @@ const excelHead = [
     width: "5%",
   },
   {
-    title: "上阶BOM号",
+    title: "上阶品号",
     dataIndex: "LastCode",
     width: "10%",
   },
@@ -561,8 +561,37 @@ export default {
       }
       return dest;
     },
+    calField(tree) {
+      tree.forEach((node) => {
+        if (node.children && node.children.length > 0) {
+          // console.log(node.children)
+          this.calField(node.children);
+          node.Amount = node.children.reduce((sum, item) => ((sum += item.Amount), parseFloat(sum.toFixed(4))), 0);
+        } else {
+          let sum = node.Amount * 1;
+          node.Amount = parseFloat(sum.toFixed(4));
+          delete node.children;
+        }
+      });
+      return tree;
+    },
+    initTree(parent_id) {
+      // jsonArray 变量数据
+      // 第一次以后：根据id去查询parent_id相同的（相同为子数据）
+      // 第一次：查找所有parent_id为-1的数据组成第一级
+      // console.log(this.exportData);
+      // console.log(parent_id);
+      const child = this.exportData.filter((item) => item.LastCode == parent_id);
+      // 第一次：循环parent_id为-1数组
+      return child.map((item) => ({
+        ...item,
+        // 当前存在id（id与parent_id应该是必须有的）调用initTree() 查找所有parent_id为本id的数据
+        // childs字段写入
+        children: this.initTree(item.ChildCode),
+      }));
+    },
     //导出数据
-    handleExcel(id) {
+    handleExcel(id, LastCode) {
       let parmas = {
         Id: id,
       };
@@ -590,7 +619,7 @@ export default {
           ConfigList.map((item) => {
             cost = cost.concat(item.list);
           });
-          console.log("ConfigList===", ConfigList);
+          // console.log("ConfigList===", ConfigList);
           cost.map((item, index) => {
             let array = [item.CostSort, item.CostName, null, item.Amount, null, null, null, null, null, null, null, null, null, null, null];
             _data.push(array);
@@ -637,6 +666,7 @@ export default {
           });
           columns.splice(8, 0, "价格来源");
           _data.push(columns);
+          //展开数据
           let _data1 = [..._data];
           list.map((item) => {
             let array = [];
@@ -645,11 +675,17 @@ export default {
             });
             _data.push(array);
           });
-          this.exportData.map((item) => {
+          //收缩数据
+          let tree = this.initTree(LastCode);
+          let treeData = this.calField(tree);
+          console.log(treeData);
+          treeData.map((item) => {
             let array1 = [];
-            if (item.LvNo != 2) {
+            if (item.LvNo == 2) {
               Object.keys(item).forEach((key) => {
-                array1.push(item[key]);
+                if (key !== "children") {
+                  array1.push(item[key]);
+                }
               });
               _data1.push(array1);
             }

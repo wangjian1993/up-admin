@@ -1,115 +1,117 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2021-10-29 11:32:06
+ * @LastEditTime: 2021-10-30 10:45:54
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
 -->
 <template>
   <div>
-    <a-modal class="bom-detail" v-model="visible" title="BOM信息" @cancel="close" width="90%" :footer="null" centered>
+    <a-modal class="bom-detail" v-model="visible" title="品号信息" @cancel="close" width="90%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
-        <div>
-          <a-descriptions :column="3" bordered size="small">
-            <a-descriptions-item label="品号">
-              {{ info.ITEM_CODE }}
-            </a-descriptions-item>
-            <a-descriptions-item label="品号群组">
-              {{ info.FEATURE_GROUP_NAME }}
-            </a-descriptions-item>
-            <a-descriptions-item label="启用特征码">
-              <a-checkbox :checked="info.ITEM_FEATURE_CONTROL"></a-checkbox>
-            </a-descriptions-item>
-            <a-descriptions-item label="快捷码">
-              {{ info.SHORTCUT }}
-            </a-descriptions-item>
-            <a-descriptions-item label="生命周期">
-              {{ info.DESCRIPTION }}
-            </a-descriptions-item>
-            <a-descriptions-item label="周期种类">
-              {{ info.CYCLEL_STATUS == "1" ? "1.新建" : info.CYCLEL_STATUS == "2" ? "2.发行" : "3.终止" }}
-            </a-descriptions-item>
-            <a-descriptions-item label="品名" :span="2">
-              {{ info.ITEM_NAME }}
-            </a-descriptions-item>
-            <a-descriptions-item label="状态">
-              {{ info.ApproveStatus == "Y" ? "Y.已生效" : info.ApproveStatus == "N" ? "N.未生效" : "V.已失效" }}
-            </a-descriptions-item>
-            <a-descriptions-item label=" 图号">
-              {{ info.DRAWING_NO }}
-            </a-descriptions-item>
-            <a-descriptions-item label="品号描述">
-              {{ info.ITEM_DESC }}
-            </a-descriptions-item>
-            <a-descriptions-item label=" 品号图片">
-              {{ modelType(info.ITEM_DESC) }}
-            </a-descriptions-item>
-            <a-descriptions-item label=" 规格">
-              {{ info.ITEM_SPECIFICATION }}
-            </a-descriptions-item>
-          </a-descriptions>
-        </div>
-        <div>
-          <a-tabs type="card" style="width:70%;height:100%;">
-            <a-tab-pane key="1" tab="通用属性值信息">
-              <a-table :columns="columns" size="small" :data-source="data">
-                <a slot="name" slot-scope="text">{{ text }}</a>
-              </a-table>
-            </a-tab-pane>
-            <a-tab-pane key="2" tab="通用信息">
-              <a-descriptions :column="3" bordered size="small">
-                <a-descriptions-item v-for="(item, index) in general" :key="index" :label="item.title">
-                  <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
-                  <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
-                  <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
-                </a-descriptions-item>
-              </a-descriptions>
-            </a-tab-pane>
-            <a-tab-pane key="3" tab="仓储信息">
-              <a-descriptions :column="3" bordered size="small">
-                <a-descriptions-item v-for="(item, index) in storage" :key="index" :label="item.title">
-                  <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
-                  <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
-                  <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
-                </a-descriptions-item>
-              </a-descriptions>
-            </a-tab-pane>
-            <a-tab-pane key="4" tab="生产信息">
-              <a-descriptions :column="3" bordered size="small">
-                <a-descriptions-item v-for="(item, index) in production" :key="index" :label="item.title">
-                  <span v-if="item.layout">{{ info[item.dataIndex] + item.layout }}</span>
-                  <span v-else-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
-                  <span v-else-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
-                  <a-checkbox v-else-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
-                </a-descriptions-item>
-              </a-descriptions>
-            </a-tab-pane>
-            <a-tab-pane key="5" tab="计划信息">
-              <a-descriptions :column="3" bordered size="small">
-                <a-descriptions-item v-for="(item, index) in plant" :key="index" :label="item.title">
-                  <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
-                  <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
-                  <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
-                </a-descriptions-item>
-              </a-descriptions>
-            </a-tab-pane>
-            <a-tab-pane key="6" tab="财务信息">
-              <a-descriptions :column="3" bordered size="small">
-                <a-descriptions-item v-for="(item, index) in finance" :key="index" :label="item.title">
-                  <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
-                  <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
-                  <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
-                </a-descriptions-item>
-              </a-descriptions>
-            </a-tab-pane>
-            <a-tab-pane key="7" tab="品号图片">
-              <div style="width:100%">
+        <div class="info-box">
+          <div>
+            <a-descriptions :column="3" bordered size="small">
+              <a-descriptions-item label="品号">
+                {{ info.ITEM_CODE }}
+              </a-descriptions-item>
+              <a-descriptions-item label="品号群组">
+                {{ info.FEATURE_GROUP_NAME }}
+              </a-descriptions-item>
+              <a-descriptions-item label="启用特征码">
+                <a-checkbox :checked="info.ITEM_FEATURE_CONTROL"></a-checkbox>
+              </a-descriptions-item>
+              <a-descriptions-item label="快捷码">
+                {{ info.SHORTCUT }}
+              </a-descriptions-item>
+              <a-descriptions-item label="生命周期">
+                {{ info.DESCRIPTION }}
+              </a-descriptions-item>
+              <a-descriptions-item label="周期种类">
+                {{ info.CYCLEL_STATUS == "1" ? "1.新建" : info.CYCLEL_STATUS == "2" ? "2.发行" : "3.终止" }}
+              </a-descriptions-item>
+              <a-descriptions-item label="品名" :span="2">
+                {{ info.ITEM_NAME }}
+              </a-descriptions-item>
+              <a-descriptions-item label="状态">
+                {{ info.ApproveStatus == "Y" ? "Y.已生效" : info.ApproveStatus == "N" ? "N.未生效" : "V.已失效" }}
+              </a-descriptions-item>
+              <a-descriptions-item label=" 图号">
+                {{ info.DRAWING_NO }}
+              </a-descriptions-item>
+              <a-descriptions-item label="品号描述">
+                {{ info.ITEM_DESC }}
+              </a-descriptions-item>
+              <a-descriptions-item label=" 品号图片">
+                {{ modelType(info.ITEM_DESC) }}
+              </a-descriptions-item>
+              <a-descriptions-item label=" 规格">
+                {{ info.ITEM_SPECIFICATION }}
+              </a-descriptions-item>
+            </a-descriptions>
+          </div>
+          <div>
+            <a-tabs type="card" style="width:70%;height:100%;">
+              <a-tab-pane key="1" tab="通用属性值信息">
+                <a-table :columns="columns" size="small" :data-source="data">
+                  <a slot="name" slot-scope="text">{{ text }}</a>
+                </a-table>
+              </a-tab-pane>
+              <a-tab-pane key="2" tab="通用信息">
+                <a-descriptions :column="3" bordered size="small">
+                  <a-descriptions-item v-for="(item, index) in general" :key="index" :label="item.title">
+                    <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
+                    <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
+                    <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
+                  </a-descriptions-item>
+                </a-descriptions>
+              </a-tab-pane>
+              <a-tab-pane key="3" tab="仓储信息">
+                <a-descriptions :column="3" bordered size="small">
+                  <a-descriptions-item v-for="(item, index) in storage" :key="index" :label="item.title">
+                    <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
+                    <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
+                    <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
+                  </a-descriptions-item>
+                </a-descriptions>
+              </a-tab-pane>
+              <a-tab-pane key="4" tab="生产信息">
+                <a-descriptions :column="3" bordered size="small">
+                  <a-descriptions-item v-for="(item, index) in production" :key="index" :label="item.title">
+                    <span v-if="item.layout">{{ info[item.dataIndex] + item.layout }}</span>
+                    <span v-else-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
+                    <span v-else-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
+                    <a-checkbox v-else-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
+                  </a-descriptions-item>
+                </a-descriptions>
+              </a-tab-pane>
+              <a-tab-pane key="5" tab="计划信息">
+                <a-descriptions :column="3" bordered size="small">
+                  <a-descriptions-item v-for="(item, index) in plant" :key="index" :label="item.title">
+                    <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
+                    <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
+                    <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
+                  </a-descriptions-item>
+                </a-descriptions>
+              </a-tab-pane>
+              <a-tab-pane key="6" tab="财务信息">
+                <a-descriptions :column="3" bordered size="small">
+                  <a-descriptions-item v-for="(item, index) in finance" :key="index" :label="item.title">
+                    <span v-if="!item.checkbox && item.filter">{{ item.filter(info[item.dataIndex]) }}</span>
+                    <span v-if="!item.checkbox && !item.filter">{{ info[item.dataIndex] }}</span>
+                    <a-checkbox v-if="item.checkbox" :checked="info[item.dataIndex]"></a-checkbox>
+                  </a-descriptions-item>
+                </a-descriptions>
+              </a-tab-pane>
+              <a-tab-pane key="7" tab="品号图片">
+                <div style="width:100%">
                   <img style="width:100%;height:100%;" :src="imgUrl" alt="" />
-              </div>
-            </a-tab-pane>
-            <a-tab-pane key="8" tab="品号附件"> </a-tab-pane>
-          </a-tabs>
+                </div>
+              </a-tab-pane>
+              <a-tab-pane key="8" tab="品号附件"> </a-tab-pane>
+            </a-tabs>
+          </div>
         </div>
       </a-spin>
     </a-modal>
@@ -247,11 +249,16 @@ export default {
   padding: 0;
 }
 /deep/.ant-modal-content {
-  height:100%;
+  height: 100%;
 }
-/deep/ .ant-modal{
-  height:auto;
-  min-height:600px;
-  max-height:auto;
+/deep/ .ant-modal {
+  height: auto;
+  min-height: 600px;
+  max-height: auto;
+}
+.info-box {
+  width: 100%;
+  height: 600px;
+  overflow-y: auto;
 }
 </style>
