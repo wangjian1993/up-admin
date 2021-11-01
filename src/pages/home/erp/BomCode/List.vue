@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-30 14:31:38
+ * @LastEditTime: 2021-11-01 13:37:40
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
@@ -152,9 +152,9 @@ const columns = [
     scopedSlots: { customRender: "UNIT_NAME" },
     align: "center",
     width: 80,
-    customRender: (text,record) => {
-      return record.UNIT_NAME_S
-    }
+    customRender: (text, record) => {
+      return record.UNIT_NAME_S;
+    },
   },
   {
     title: "采购单位",
@@ -235,7 +235,7 @@ const columns = [
     align: "center",
     width: 120,
     customRender: (text) => {
-      return text == 'N' ? "是" : "否";
+      return text == "N" ? "是" : "否";
     },
   },
   {
@@ -344,9 +344,10 @@ export default {
       this.isModelInfo = false;
     },
     //物料需求详情
-    detail() {
+    detail(record) {
       this.isModelInfo = true;
-      this.mitemcodeData = this.searchForm.getFieldsValue();
+      this.mitemcodeData.ITEM_CODE = record.ITEM_CODE;
+      this.mitemcodeData.plantid = this.searchForm.getFieldsValue().plantid;
     },
     getPlant() {
       let parmas = {
@@ -388,7 +389,7 @@ export default {
     },
     //重置搜索
     reset() {
-      this.data =[];
+      this.data = [];
       this.week = "";
       this.searchForm.resetFields();
       this.getPlant();
@@ -401,8 +402,8 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          if(values.itemcode == undefined && values.itemname == undefined && values.itemspecification == undefined){
-            this.$message.warning("请输入查询条件:品号,品名.规格")
+          if (values.itemcode == undefined && values.itemname == undefined && values.itemspecification == undefined) {
+            this.$message.warning("请输入查询条件:品号,品名.规格");
             this.loading = false;
             return;
           }
@@ -410,7 +411,7 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            itemcode: values.itemcode,
+            itemcode: values.itemcode || "",
             itemname: values.itemname || "",
             itemspecification: values.itemspecification || "",
           };
@@ -438,7 +439,8 @@ export default {
           dblclick: () => {
             console.log(record);
             this.isModelInfo = true;
-            this.mitemcodeData = this.searchForm.getFieldsValue();
+            this.mitemcodeData.ITEM_CODE = record.ITEM_CODE;
+            this.mitemcodeData.plantid = this.searchForm.getFieldsValue().plantid;
           },
         },
       };
@@ -453,7 +455,7 @@ export default {
       }
       this.getListAll();
     },
-     rowClassName(record) {
+    rowClassName(record) {
       return record.ApproveStatus == "V" ? "color2" : record.ApproveStatus == "N" ? "color1" : "";
     },
   },

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-30 16:49:39
+ * @LastEditTime: 2021-11-01 14:50:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
@@ -51,7 +51,7 @@
             <a-form-item label="计划状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['planstatus']" placeholder="请选择计划状态" style="width: 200px">
                 <a-select-option value="">全部</a-select-option>
-                <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
                   {{ item.ParamName }}
                 </a-select-option>
               </a-select>
@@ -285,6 +285,7 @@ const columns = [
     scopedSlots: { customRender: "StatusName" },
     align: "center",
     fixed: "right",
+    width: 130,
   },
   {
     title: "物料状态",
@@ -292,6 +293,7 @@ const columns = [
     scopedSlots: { customRender: "MatchStatusName" },
     align: "center",
     fixed: "right",
+    width: 130,
   },
   {
     title: "操作",

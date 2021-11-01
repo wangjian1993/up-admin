@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-30 14:27:47
+ * @LastEditTime: 2021-11-01 09:08:23
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -359,7 +359,7 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            itemcode: values.itemcode,
+            itemcode: values.itemcode || "",
             itemname: values.itemname || "",
             itemspecification: values.itemspecification || "",
           };

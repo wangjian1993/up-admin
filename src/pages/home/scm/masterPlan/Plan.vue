@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:33
- * @LastEditTime: 2021-10-29 14:51:41
+ * @LastEditTime: 2021-11-01 15:00:47
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Plan.vue
@@ -32,9 +32,9 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="计划状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['planstatus']" placeholder="请选择状态" style="width: 200px">
+              <a-select v-decorator="['status']" placeholder="请选择状态" style="width: 200px">
                  <a-select-option value="">全部</a-select-option>
-                  <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                  <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
                     {{ item.ParamName }}
                   </a-select-option>
                 </a-select>
@@ -286,7 +286,7 @@ export default {
             plantid: values.plantid,
             week: w,
             pmc: values.pmc,
-            planstatus:values.planstatus
+            status:values.status
           };
           getScmAction(parmas, "requirement/getall").then((res) => {
             if (res.data.success) {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-10-18 17:12:36
+ * @LastEditTime: 2021-11-01 11:12:46
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
@@ -9,59 +9,61 @@
 <template>
   <div>
     <a-modal v-model="visible" title="导入生产日计划" @cancel="close" @ok="handleOk" centered :width="800">
-      <div>
-        <a-form layout="horizontal">
-          <div>
-            <a-row>
-              <a-col :md="8" :sm="24">
-                <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
-                    <a-select-option v-for="item in plantArray" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['workshop']" style="width: 200px" placeholder="请选择生产车间" @change="workshopChange">
-                    <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['line']" style="width: 200px" placeholder="请选择生产产线" @change="lineChange">
-                    <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input-number placeholder="请输入人数" :min="0" allowClear style="width: 200px" v-model="people" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
-                  <div style="display:flex;">
-                    <a-upload name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload" :remove="removeFile" :fileList="fileList">
-                      <a-button> <a-icon type="upload" />添加execl文件 </a-button>
-                    </a-upload>
-                  </div>
-                </a-form-item>
-              </a-col>
-            </a-row>
+      <a-spin tip="导入中..." :spinning="isUpload">
+        <div>
+          <a-form layout="horizontal">
+            <div>
+              <a-row>
+                <a-col :md="8" :sm="24">
+                  <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                      <a-select-option v-for="item in plantArray" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-select v-decorator="['workshop']" style="width: 200px" placeholder="请选择生产车间" @change="workshopChange">
+                      <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-select v-decorator="['line']" style="width: 200px" placeholder="请选择生产产线" @change="lineChange">
+                      <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-input-number placeholder="请输入人数" :min="0" allowClear style="width: 200px" v-model="people" />
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
+                    <div style="display:flex;">
+                      <a-upload name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload" :remove="removeFile" :fileList="fileList">
+                        <a-button> <a-icon type="upload" />添加execl文件 </a-button>
+                      </a-upload>
+                    </div>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </div>
+          </a-form>
+          <!-- 列表 -->
+          <div class="tab" v-if="this.errorList.length != 0">
+            <a-table :columns="columns" :data-source="errorList" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(errorList) => errorList.Id" bordered>
+              <template slot="index" slot-scope="text, record, index">
+                <div>
+                  <span>{{ index + 1 }}</span>
+                </div>
+              </template>
+            </a-table>
           </div>
-        </a-form>
-        <!-- 列表 -->
-        <div class="tab" v-if="this.errorList.length != 0">
-          <a-table :columns="columns" :data-source="errorList" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(errorList) => errorList.Id" bordered>
-            <template slot="index" slot-scope="text, record, index">
-              <div>
-                <span>{{ index + 1 }}</span>
-              </div>
-            </template>
-          </a-table>
         </div>
-      </div>
+      </a-spin>
     </a-modal>
   </div>
 </template>
@@ -101,13 +103,14 @@ export default {
       lineId: "",
       people: "",
       fileList: [],
+      isUpload: false,
     };
   },
   created() {},
   methods: {
     //移除文件
-    removeFile(){
-      this.fileList =[]
+    removeFile() {
+      this.fileList = [];
     },
     close() {
       this.$emit("closeModal");
@@ -181,6 +184,9 @@ export default {
       return toTransition(list);
     },
     handleOk() {
+      if(this.isUpload){
+        return;
+      }
       //提交的数据格式
       if (this.plantId == "") {
         this.$message.warning("请先选择生产工厂!");
@@ -290,6 +296,7 @@ export default {
       if (fileExt === "xlsx" || fileExt === "xls") {
         this.readFile(file);
         this.file = file;
+        this.isUpload =true
       } else {
         this.$Notice.warning({
           title: "文件类型错误",
@@ -311,6 +318,7 @@ export default {
         });
         this.tableData = results; //这里的tableData就是拿到的excel表格中的数据
         this.tableTitle = tableTitle;
+        this.isUpload =false
       };
     },
   },
@@ -329,5 +337,8 @@ export default {
 }
 /deep/.ant-table {
   min-height: 0vh;
+}
+/deep/.ant-upload-list-item-name {
+  white-space: normal;
 }
 </style>

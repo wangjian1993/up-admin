@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-08-26 16:00:51
+ * @LastEditTime: 2021-11-01 16:57:38
  * @LastEditors: max
  * @Description: API日志
  * @FilePath: /up-admin/src/pages/admin/log/apiLog.vue
@@ -301,11 +301,11 @@ export default {
       this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-          if (values.elapsetime == undefined && values.apiurl == undefined && values.orderdesc == undefined && values["range-time-picker"] == undefined) {
-            this.$message.warning("请输入要查询内容!");
-            this.loading = false;
-            return;
-          }
+          // if (values.elapsetime == undefined && values.apiurl == undefined && values.orderdesc == undefined && values["range-time-picker"] == undefined) {
+          //   this.$message.warning("请输入要查询内容!");
+          //   this.loading = false;
+          //   return;
+          // }
           if (values["range-time-picker"] != undefined) {
             var begindt = this.formatDateTime(values["range-time-picker"][0]);
             var enddt = this.formatDateTime(values["range-time-picker"][1]);

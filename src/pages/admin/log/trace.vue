@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-23 15:07:06
- * @LastEditTime: 2021-08-23 15:57:56
+ * @LastEditTime: 2021-11-01 16:56:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/admin/log/trace.vue
@@ -15,7 +15,7 @@
         <p>API执行用户:{{ traceInfo.UserName }}</p>
       </div>
       <div>
-        <a-table :columns="columns" :data-source="data" size="small" :loading="loading" :pagination="pagination" bordered>
+        <a-table :columns="columns" :data-source="data" size="small" :loading="loading" :pagination="pagination" bordered @change="handleTableChange">
           <template slot="index" slot-scope="text, record, index">
             <div>
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -112,7 +112,16 @@ export default {
       visible: true,
       data: [],
       traceInfo: [],
-      pagination: { current: 1, pageSize: 20 }, //每页中显示10条数据},
+      pagination: {
+        current: 1,
+        total: 0,
+        pageSize: 20, //每页中显示10条数据
+        showSizeChanger: true,
+        showLessItems: true,
+        showQuickJumper: true,
+        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
+        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
+      }, //每页中显示10条数据},
       loading: true,
       columns,
     };
@@ -125,6 +134,10 @@ export default {
     handleCancel() {
       this.$emit("close");
     },
+    handleTableChange(pagination) {
+       this.pagination.current = pagination.current;
+      this.pagination.pageSize = pagination.pageSize;
+    },
     getLoTraceList() {
       console.log("this.TraceId", this.traceId);
       let parmas = {
@@ -135,6 +148,9 @@ export default {
           this.data = res.data.data.SqlExecuLogs;
           this.traceInfo = res.data.data;
           this.loading = false;
+          const pagination = { ...this.pagination };
+          pagination.total =  this.data.length;
+          this.pagination = pagination;
         }
       });
     },

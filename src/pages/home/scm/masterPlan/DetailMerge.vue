@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-10-29 10:58:35
+ * @LastEditTime: 2021-11-01 15:03:44
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/DetailMerge.vue
@@ -46,7 +46,7 @@
             <a-form-item label="计划状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['planstatus']" placeholder="请选择计划状态" style="width: 200px">
                 <a-select-option value="">全部</a-select-option>
-                <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
                   {{ item.ParamName }}
                 </a-select-option>
               </a-select>
@@ -405,5 +405,8 @@ export default {
 <style scoped lang="less">
 /deep/.ant-form-item {
   margin-bottom: 0px;
+}
+/deep/.ant-table{
+  min-height:61vh;
 }
 </style>

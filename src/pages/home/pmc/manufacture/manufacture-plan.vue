@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-06-17 17:28:49
- * @LastEditTime: 2021-10-14 16:59:26
+ * @LastEditTime: 2021-11-01 14:56:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/manufacture-plan.vue
@@ -13,10 +13,10 @@
         <lead-in @toDetail="toDetail"></lead-in>
       </a-tab-pane>
       <a-tab-pane key="2" tab="生产日计划明细" v-if="hasPerm('manufacture_tab2')">
-        <detail :detailData="detailData" ref="myDeatils"></detail>
+        <detail :detailData="detailData" ref="myDeatils" :stateList="stateList"></detail>
       </a-tab-pane>
       <a-tab-pane key="3" tab="生产日计划达成情况" v-if="hasPerm('manufacture_tab3')">
-        <achievement></achievement>
+        <achievement :stateList="stateList"></achievement>
       </a-tab-pane>
     </a-tabs>
   </a-card>
@@ -25,6 +25,7 @@
 import LeadIn from "./leadIn.vue";
 import Detail from "./detail.vue";
 import Achievement from "./achievement.vue";
+import { getParamData } from "@/services/admin.js";
 export default {
   components: { LeadIn, Detail, Achievement },
   data() {
@@ -33,12 +34,25 @@ export default {
       detailData: [],
     };
   },
+  created() {
+    this.getParamData();
+  },
   methods: {
     toDetail(item) {
       this.detailData = item;
       this.activeKey = "2";
       this.$nextTick(() => {
         this.$refs.myDeatils.getListAll();
+      });
+    },
+    getParamData() {
+      let parmas = {
+        groupcode: "DAILY_PRODUCTION_PLAN_STATUS",
+      };
+      getParamData(parmas).then((res) => {
+        if (res.data.success) {
+          this.stateList = res.data.data;
+        }
       });
     },
     callback(key) {

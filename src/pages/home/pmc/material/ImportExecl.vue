@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-10-28 11:42:49
+ * @LastEditTime: 2021-11-01 13:47:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -9,45 +9,47 @@
 <template>
   <div>
     <a-modal v-model="visible" title="导入物料需求计划" @cancel="close" @ok="handleOk" centered :width="800">
-      <div>
-        <a-form layout="horizontal">
-          <div>
-            <a-row>
-              <a-col :md="8" :sm="24">
-                <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
-                    <a-select-option v-for="item in plantArray" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-week-picker placeholder="选择周" @change="weekChange" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="8" :sm="24">
-                <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
-                  <div style="display:flex;">
-                    <a-upload name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload" :remove="removeFile" :fileList="fileList">
-                      <a-button> <a-icon type="upload" />添加execl文件 </a-button>
-                    </a-upload>
-                  </div>
-                </a-form-item>
-              </a-col>
-            </a-row>
+      <a-spin tip="导入中..." :spinning="isUpload">
+        <div>
+          <a-form layout="horizontal">
+            <div>
+              <a-row>
+                <a-col :md="8" :sm="24">
+                  <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                      <a-select-option v-for="item in plantArray" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
+                    <a-week-picker placeholder="选择周" @change="weekChange" />
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
+                    <div style="display:flex;">
+                      <a-upload name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload" :remove="removeFile" :fileList="fileList">
+                        <a-button> <a-icon type="upload" />添加execl文件 </a-button>
+                      </a-upload>
+                    </div>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </div>
+          </a-form>
+          <!-- 列表 -->
+          <div class="tab" v-if="this.errorList.length != 0">
+            <a-table :columns="columns" :data-source="errorList" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(errorList) => errorList.Id" bordered>
+              <template slot="index" slot-scope="text, record, index">
+                <div>
+                  <span>{{ index + 1 }}</span>
+                </div>
+              </template>
+            </a-table>
           </div>
-        </a-form>
-        <!-- 列表 -->
-        <div class="tab" v-if="this.errorList.length != 0">
-          <a-table :columns="columns" :data-source="errorList" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(errorList) => errorList.Id" bordered>
-            <template slot="index" slot-scope="text, record, index">
-              <div>
-                <span>{{ index + 1 }}</span>
-              </div>
-            </template>
-          </a-table>
         </div>
-      </div>
+      </a-spin>
     </a-modal>
   </div>
 </template>
@@ -82,11 +84,10 @@ export default {
       plantId: "",
       week: "",
       fileList: [],
+      isUpload: false,
     };
   },
-  created() {
-
-  },
+  created() {},
   methods: {
     //移除文件
     removeFile() {
@@ -119,6 +120,9 @@ export default {
       return year + (month < 10 ? "0" + month : month) + (date < 10 ? "0" + date : date);
     },
     handleOk() {
+      if(this.isUpload){
+        return
+      }
       this.errorList = [];
       //提交的数据格式
       if (this.plantId == "") {
@@ -174,7 +178,7 @@ export default {
               break;
             case "交货日期":
               // eslint-disable-next-line no-case-declarations
-              let time =this.formatDate(item[key]);
+              let time = this.formatDate(item[key]);
               if (!time) {
                 this.errorList.push({
                   content: `第${index + 1}行,交货日期:数据'${time}'错误,日期格式为:2008-08-08`,
@@ -223,8 +227,10 @@ export default {
       let fileList = [...this.fileList, file];
       this.fileList = fileList.slice(-1);
       if (fileExt === "xlsx" || fileExt === "xls") {
+        this.isUpload = true;
         this.readFile(file);
         this.file = file;
+        console.log("上传====111")
       } else {
         this.$message.warning("文件类型错误,请重新上传");
       }
@@ -242,6 +248,8 @@ export default {
         });
         this.tableData = results; //这里的tableData就是拿到的excel表格中的数据
         this.tableTitle = tableTitle;
+        console.log("上传====222")
+        this.isUpload = false;
       };
     },
   },
@@ -260,5 +268,8 @@ export default {
 }
 /deep/.ant-table {
   min-height: 0vh;
+}
+/deep/.ant-upload-list-item-name{
+  white-space: normal;
 }
 </style>

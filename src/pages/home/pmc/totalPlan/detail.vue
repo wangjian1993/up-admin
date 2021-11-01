@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-21 15:41:50
+ * @LastEditTime: 2021-11-01 14:50:27
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Detail.vue
@@ -29,7 +29,7 @@
             <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['planstatus']" placeholder="请选择状态" style="width: 200px">
                 <a-select-option value="">全部</a-select-option>
-                <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
                   {{ item.ParamName }}
                 </a-select-option>
               </a-select>

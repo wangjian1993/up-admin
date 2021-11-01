@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-10-21 15:48:50
+ * @LastEditTime: 2021-11-01 14:51:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Detail.vue
@@ -51,7 +51,7 @@
             <a-form-item label="计划状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['planstatus']" placeholder="请选择计划状态" style="width: 200px">
                 <a-select-option value="">全部</a-select-option>
-                <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
+                <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
                   {{ item.ParamName }}
                 </a-select-option>
               </a-select>
