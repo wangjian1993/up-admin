@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-11-01 14:56:51
+ * @LastEditTime: 2021-11-02 16:31:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/detail.vue
@@ -36,11 +36,11 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['status']" placeholder="请选择状态" style="width: 200px">
-                 <a-select-option value="">全部</a-select-option>
-                  <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
-                    {{ item.ParamName }}
-                  </a-select-option>
-                </a-select>
+                <a-select-option value="">全部</a-select-option>
+                <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
+                  {{ item.ParamName }}
+                </a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
         </a-row>
@@ -104,10 +104,10 @@
         </div>
       </template>
       <template slot="OrderDeliveryDate" slot-scope="text">
-        <span>{{splitData(text)}}</span>
+        <span>{{ splitData(text) }}</span>
       </template>
       <template slot="OrderDate" slot-scope="text">
-        <span>{{splitData(text)}}</span>
+        <span>{{ splitData(text) }}</span>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
@@ -266,7 +266,7 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 export default {
-  props: ["detailData",'stateList'],
+  props: ["detailData", "stateList"],
   data() {
     return {
       scrollY: "",
@@ -307,14 +307,6 @@ export default {
     });
     this.getListAll();
     this.getPlant();
-    if (this.detailData) {
-      this.$nextTick(() => {
-        this.searchForm.setFieldsValue({
-          plantid: this.detailData.PlantId,
-          batchno: this.detailData.BatchNo,
-        });
-      });
-    }
   },
   computed: {
     hasSelected() {
@@ -401,6 +393,10 @@ export default {
         batchno: this.detailData.BatchNo || "",
         PlantId: this.detailData.PlantId,
       };
+      this.searchForm.setFieldsValue({
+        plantid: this.detailData.PlantId,
+        batchno: this.detailData.BatchNo,
+      });
       getDailyPlan(parmas, "detail/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
@@ -495,10 +491,10 @@ export default {
         });
         return item;
       });
-      const header = []
+      const header = [];
       this.columns.map((item) => {
-        if( item.dataIndex){
-          header.push({ key: item.dataIndex, title: item.title })
+        if (item.dataIndex) {
+          header.push({ key: item.dataIndex, title: item.title });
         }
       });
       var timestamp = Date.parse(new Date());
@@ -518,7 +514,7 @@ export default {
 .ant-form-item {
   margin-bottom: 5px;
 }
-/deep/ .ant-table{
-  min-height:60vh;
+/deep/ .ant-table {
+  min-height: 60vh;
 }
 </style>

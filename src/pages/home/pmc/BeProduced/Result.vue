@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:40:45
- * @LastEditTime: 2021-10-21 15:38:35
+ * @LastEditTime: 2021-11-02 16:30:26
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/Result.vue
@@ -162,7 +162,7 @@ const columns = [
     dataIndex: "PurchaseQty",
     scopedSlots: { customRender: "PurchaseQty" },
     align: "center",
-    width:100,
+    width: 100,
   },
 ];
 import { renderStripe } from "@/utils/stripe.js";
@@ -210,11 +210,6 @@ export default {
     this.getPlant();
     if (this.batchid) {
       this.getListAll();
-      this.$nextTick(() => {
-        this.searchForm.setFieldsValue({
-          batchno: this.batchid,
-        });
-      });
     }
   },
   computed: {
@@ -279,6 +274,9 @@ export default {
         pagesize: this.pagination.pageSize,
         batchno: this.batchid || "",
       };
+      this.searchForm.setFieldsValue({
+        batchno: this.batchid,
+      });
       getMitemPlanAction(parmas, "result/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-01 14:49:43
+ * @LastEditTime: 2021-11-02 16:49:04
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Total.vue
@@ -21,18 +21,23 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
+            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" placeholder="请输入计划批号" v-decorator="['batchno']" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
             <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-week-picker placeholder="选择周" @change="weekChange" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['planstatus']" placeholder="请选择状态" style="width: 200px">
-                 <a-select-option value="">全部</a-select-option>
-                  <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
-                    {{ item.ParamName }}
-                  </a-select-option>
-                </a-select>
+            <a-form-item label="发布状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-select v-decorator="['publishstatus']" placeholder="请选择状态" style="width: 200px">
+                <a-select-option value="">全部</a-select-option>
+                <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
+                  {{ item.ParamName }}
+                </a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
@@ -49,8 +54,10 @@
       </span>
     </a-form>
     <div class="operator">
-      <a-button v-if="hasPerm('create')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">审核发布</a-button>
-      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">审核发布</a-button>
+      <a-button v-if="hasPerm('push')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">推送携客云</a-button>
+      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">推送携客云</a-button>
+      <a-button v-if="hasPerm('issue')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allPublish" style="margin-left: 8px">发布采购</a-button>
+      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">发布采购</a-button>
       <!-- <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
       <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button> -->
       <span style="margin-left: 8px">
@@ -80,26 +87,36 @@
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
         </div>
       </template>
-      <template slot="Status" slot-scope="text,record">
+      <template slot="Status" slot-scope="text, record">
         <div>
-          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' || record.StatusName === '有差异_未确认'? 'red' : 'green'">{{ record.StatusName }}</a-tag>
+          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' || record.StatusName === '有差异_未确认' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
+        </div>
+      </template>
+      <template slot="PublishStatus" slot-scope="text, record">
+        <div>
+          <a-tag :color="record.PublishStatusName === '待审' || record.PublishStatusName === '匹配错误' || record.PublishStatusName === '部分推送' || record.PublishStatusName === '推送异常' || record.PublishStatusName === '有差异_未确认' ? 'red' : 'green'">{{ record.PublishStatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" @click="detail(record.BatchNo,'3')">
+          <a style="margin-right: 8px" @click="detail(record.BatchNo, '3')">
             <a-icon type="profile" />
-            查看明细
+            明细
           </a>
-          <a style="margin-right: 8px" @click="detail(record.BatchNo,'4')">
+          <a style="margin-right: 8px" @click="detail(record.BatchNo, '4')">
             <a-icon type="profile" />
-            查看合并明细
+            合并明细
+          </a>
+          <a style="margin-right: 8px" @click="manage(record.Id, '4')" :disabled="!hasPerm('manage')">
+            <a-icon type="tool" />
+            异常处理
           </a>
         </div>
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
     <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
+    <batch-approve v-if="isApprove" :batchid="batchid"  @closeModal="closeUserModal" @succeed="getListAll"></batch-approve>
     <!-- 查看详情 -->
   </div>
 </template>
@@ -151,6 +168,12 @@ const columns = [
     width: "5%",
   },
   {
+    title: "发布状态",
+    dataIndex: "PublishStatus",
+    scopedSlots: { customRender: "PublishStatus" },
+    align: "center",
+  },
+  {
     title: "计划状态",
     dataIndex: "Status",
     scopedSlots: { customRender: "Status" },
@@ -164,11 +187,13 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getMitemrequirement,setScmAction } from "@/services/web.js";
-import UserList from '@/components/app-user/UserList'
+import { getMitemrequirement, setScmAction,mitemrequirementAction} from "@/services/web.js";
+import UserList from "@/components/app-user/UserList";
+import { getParamData } from "@/services/admin.js";
+import BatchApprove from './BatchApprove.vue'
 export default {
-  components: {UserList},
-  props: ["plantList",'stateList'],
+  components: { UserList,BatchApprove},
+  props: ["plantList"],
   data() {
     return {
       data: [],
@@ -190,8 +215,11 @@ export default {
       scrollY: "",
       searchForm: this.$form.createForm(this),
       week: "",
-      isSearch:false,
-       isUserList:false
+      isSearch: false,
+      isUserList: false,
+      stateList: [],
+      batchid:"",
+      isApprove:false
     };
   },
   updated() {
@@ -207,23 +235,41 @@ export default {
       this.scrollY = getTableScroll();
     });
     this.getListAll();
+    this.getParamData();
   },
   methods: {
-    //pmc选择
-    userSearch(){
-      this.isUserList =true
-    },
-    closeUserModal(){
-      this.isUserList =false
-    },
-    okUserModal(item){
-      this.isUserList =false;
-      this.searchForm.setFieldsValue({
-        pmc:item.Name
+    getParamData() {
+      let parmas = {
+        groupcode: "MITEM_REQUIREMENT_PLAN_PUBLISH",
+      };
+      getParamData(parmas).then((res) => {
+        if (res.data.success) {
+          this.stateList = res.data.data;
+        }
       });
     },
-    detail(id,tab) {
-      this.$emit("toDetail",id,tab);
+    //异常处理
+    manage(BatchNo){
+      console.log("111")
+      this.isApprove =true;
+      this.batchid = BatchNo
+    },
+    //pmc选择
+    userSearch() {
+      this.isUserList = true;
+    },
+    closeUserModal() {
+      this.isUserList = false;
+      this.isApprove = false;
+    },
+    okUserModal(item) {
+      this.isUserList = false;
+      this.searchForm.setFieldsValue({
+        pmc: item.Name,
+      });
+    },
+    detail(id, tab) {
+      this.$emit("toDetail", id, tab);
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");
@@ -243,7 +289,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch =false
+          this.isSearch = false;
         } else {
           this.loading = false;
         }
@@ -256,7 +302,7 @@ export default {
     //重置搜索
     reset() {
       this.getListAll();
-      this.week =""
+      this.week = "";
       this.searchForm.resetFields();
     },
     //关键词搜索
@@ -267,8 +313,8 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          if(this.week != ""){
-            var w =this.week
+          if (this.week != "") {
+            var w = this.week;
           }
           let parmas = {
             pageindex: this.pagination.current,
@@ -276,7 +322,8 @@ export default {
             plantid: values.plantid,
             week: w,
             pmc: values.pmc,
-            planstatus:values.planstatus
+            publishstatus: values.publishstatus,
+            batchno: values.batchno,
           };
           getMitemrequirement(parmas, "masterplan/getgrenatelist").then((res) => {
             if (res.data.success) {
@@ -285,7 +332,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
-              this.isSearch =true
+              this.isSearch = true;
             }
           });
           // do something
@@ -296,7 +343,7 @@ export default {
     allCheck() {
       let self = this;
       self.$confirm({
-        title: "确定要审核发布选中内容",
+        title: "确定要推送选中内容到携客云",
         onOk() {
           setScmAction(self.selectedRowKeys, "requirement/release").then((res) => {
             if (res.data.success) {
@@ -309,11 +356,27 @@ export default {
         onCancel() {},
       });
     },
+    allPublish() {
+      let self = this;
+      self.$confirm({
+        title: "确定要发布选中内容",
+        onOk() {
+          mitemrequirementAction(self.selectedRowKeys, "masterplan/publish").then((res) => {
+            if (res.data.success) {
+              self.selectedRowKeys = [];
+              self.$message.success("物料需求总计划发布采购成功!");
+              self.getListAll();
+            }
+          });
+        },
+        onCancel() {},
+      });
+    },
     //分页
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if(this.isSearch){
+      if (this.isSearch) {
         this.search();
         return;
       }
@@ -324,4 +387,7 @@ export default {
 </script>
 
 <style scoped lang="less">
+/deep/.ant-table {
+  min-height: 60vh;
+}
 </style>

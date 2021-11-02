@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 15:16:07
- * @LastEditTime: 2021-10-30 14:01:17
+ * @LastEditTime: 2021-11-02 15:48:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/BatchApprove.vue
@@ -128,9 +128,9 @@ const columns = [
     align: "center",
   },
   {
-    title: "供应商编码",
-    dataIndex: "SupplierCode",
-    scopedSlots: { customRender: "SupplierCode" },
+    title: "供应商名称",
+    dataIndex: "SupplierName",
+    scopedSlots: { customRender: "SupplierName" },
     align: "center",
   },
   {

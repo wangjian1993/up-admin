@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-30 16:54:48
+ * @LastEditTime: 2021-11-02 16:33:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
@@ -255,13 +255,6 @@ export default {
     });
     this.getListAll();
     this.getPlant();
-    if (this.batchid) {
-      this.$nextTick(() => {
-        this.searchForm.setFieldsValue({
-          batchid: this.batchid,
-        });
-      });
-    }
   },
   computed: {
     hasSelected() {
@@ -325,6 +318,9 @@ export default {
         pagesize: this.pagination.pageSize,
         batchid: this.batchid || "",
       };
+      this.searchForm.setFieldsValue({
+          batchid: this.batchid,
+        });
       getMitemrequirement(parmas, "getdetails").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;

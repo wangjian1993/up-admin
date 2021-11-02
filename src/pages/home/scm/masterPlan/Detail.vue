@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-01 14:50:38
+ * @LastEditTime: 2021-11-02 16:23:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
@@ -164,12 +164,12 @@
           </a-descriptions-item>
           <a-descriptions-item label="物料状态">
             <div>
-               <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.Status === 'CANNOT_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
+              <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.Status === 'CANNOT_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
             </div>
           </a-descriptions-item>
           <a-descriptions-item label="错误信息">
             <div>
-               <span>{{drawerItem.Msg}}</span>
+              <span>{{ drawerItem.Msg }}</span>
             </div>
           </a-descriptions-item>
         </a-descriptions>
@@ -306,9 +306,9 @@ const columns = [
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
-import UserList from '@/components/app-user/UserList'
+import UserList from "@/components/app-user/UserList";
 export default {
-  components: {UserList},
+  components: { UserList },
   props: ["batchid", "stateList"],
   data() {
     return {
@@ -336,7 +336,7 @@ export default {
       drawerItem: [],
       isSearch: false,
       statistic: [],
-      isUserList:false
+      isUserList: false,
     };
   },
   updated() {
@@ -346,7 +346,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(180);
       this.searchForm.setFieldsValue({
-          batchid: this.batchid,
+        batchid: this.batchid,
       });
     });
     this.getListAll();
@@ -368,16 +368,16 @@ export default {
   methods: {
     splitData,
     //pmc选择
-    userSearch(){
-      this.isUserList =true
+    userSearch() {
+      this.isUserList = true;
     },
-    closeUserModal(){
-      this.isUserList =false
+    closeUserModal() {
+      this.isUserList = false;
     },
-    okUserModal(item){
-      this.isUserList =false;
+    okUserModal(item) {
+      this.isUserList = false;
       this.searchForm.setFieldsValue({
-        pmc:item.Name
+        pmc: item.Name,
       });
     },
     //关闭弹出框
@@ -423,7 +423,7 @@ export default {
     },
     setPurchaseOrderMatchList() {
       this.dataSource.forEach((item) => {
-         if (item.PurchaseOrderMatchList !== null && item.PurchaseOrderMatchList.length > 0) {
+        if (item.PurchaseOrderMatchList !== null && item.PurchaseOrderMatchList.length > 0) {
           let PurchaseUserName = [];
           let SupplierName = [];
           let PurchaseOrderNo = [];
@@ -452,6 +452,9 @@ export default {
         pagesize: this.pagination.pageSize,
         batchid: this.batchid || "",
       };
+      this.searchForm.setFieldsValue({
+        batchid: this.batchid,
+      });
       getScmAction(parmas, "requirement/detail/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
@@ -566,7 +569,7 @@ export default {
               item.LineItem = LineItem;
               item.TransitQty = TransitQty;
             }
-            item.RequirementDate = splitData(item.RequirementDate)
+            item.RequirementDate = splitData(item.RequirementDate);
           });
           const dataSource = list.map((item) => {
             Object.keys(item).forEach((key) => {
@@ -614,7 +617,7 @@ export default {
   // font-weight: 700;
   color: #000;
 }
-/deep/.ant-table{
-  min-height:55vh;
+/deep/.ant-table {
+  min-height: 55vh;
 }
 </style>

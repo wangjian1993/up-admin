@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-29 11:00:23
+ * @LastEditTime: 2021-11-02 16:27:58
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/DetailMerge.vue
@@ -267,6 +267,7 @@ export default {
       this.week = "";
       this.data = [];
       this.isExport = false;
+      this.loading = false;
       this.searchForm.resetFields();
       this.columns.forEach((item, index) => {
         if (item.dataIndex && item.scopedSlots.customRender === "time") {
@@ -460,4 +461,8 @@ export default {
 };
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+/deep/.ant-table {
+  min-height: 60vh;
+}
+</style>

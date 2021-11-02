@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-31 09:36:32
- * @LastEditTime: 2021-10-09 11:01:29
+ * @LastEditTime: 2021-11-02 14:17:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/TotalPlan.vue
@@ -9,10 +9,10 @@
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <a-tabs type="card" v-model="activeKey" default-active-key="1" @change="callback">
-      <a-tab-pane key="1" tab="处理物料计划" v-if="hasPerm('plan_tab1')">
+      <a-tab-pane key="1" tab="生成物料需求总计划" v-if="hasPerm('plan_tab1')">
         <action :plantList="plantList" @toDetail="toDetail" :stateList="stateList"></action>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="物料需求总计划" v-if="hasPerm('plan_tab2')">
+      <a-tab-pane key="2" tab="发布物料需求总计划" v-if="hasPerm('plan_tab2')">
         <total :plantList="plantList" @toDetail="toDetail" :stateList="stateList"></total>
       </a-tab-pane>
       <a-tab-pane key="3" tab="物料需求总计划明细" v-if="hasPerm('plan_tab3')">

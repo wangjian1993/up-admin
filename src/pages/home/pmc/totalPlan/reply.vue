@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-29 11:04:16
+ * @LastEditTime: 2021-11-02 16:28:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Reply.vue
@@ -414,4 +414,8 @@ export default {
 };
 </script>
 
-<style scoped lang="less"></style>
+<style scoped lang="less">
+/deep/.ant-table {
+  min-height: 60vh;
+}
+</style>

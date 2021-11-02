@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-11-01 14:50:48
+ * @LastEditTime: 2021-11-02 16:21:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Exception.vue
@@ -145,7 +145,7 @@
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" @click="matching(record)" v-if="record.MatchStatusName === '未匹配' || record.MatchStatusName == '匹配异常' || record.MatchStatusName == '推送异常' || record.MatchStatusName == '匹配错误'">
+          <a style="margin-right: 8px" @click="matching(record)" v-if="record.MatchStatusName === '未匹配' || record.MatchStatusName == '匹配异常' || record.MatchStatusName == '推送异常' || record.MatchStatusName == '匹配错误'|| record.MatchStatusName == '多供应商无法匹配'">
             <a-icon type="profile" />
             手动匹配
           </a>
@@ -616,12 +616,6 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table {
-  min-height: 0vh;
-}
-/deep/.ant-table-body {
-  min-height: 0vh;
-}
 .statistic {
   display: flex;
   justify-content: center;

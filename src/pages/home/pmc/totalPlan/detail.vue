@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-01 14:50:27
+ * @LastEditTime: 2021-11-02 16:25:56
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Detail.vue
@@ -119,7 +119,7 @@
           </a-descriptions-item>
           <a-descriptions-item label="物料状态">
             <div>
-               <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.MatchStatus === 'CANNOT_MATCH' || drawerItem.MatchStatusName === '推送异常' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
+              <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.MatchStatus === 'CANNOT_MATCH' || drawerItem.MatchStatusName === '推送异常' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
             </div>
           </a-descriptions-item>
         </a-descriptions>
@@ -253,13 +253,6 @@ export default {
     if (this.batchid == "") {
       this.getListAll();
     }
-    if (this.batchid) {
-      this.$nextTick(() => {
-        this.searchForm.setFieldsValue({
-          batchno: this.batchid,
-        });
-      });
-    }
   },
   methods: {
     splitData,
@@ -285,6 +278,13 @@ export default {
         pagesize: this.pagination.pageSize,
         batchno: this.batchid || "",
       };
+      if (this.batchid) {
+        this.$nextTick(() => {
+          this.searchForm.setFieldsValue({
+            batchno: this.batchid,
+          });
+        });
+      }
       getMitemrequirement(parmas, "masterplan/getdetails").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
@@ -413,4 +413,7 @@ export default {
 </script>
 
 <style scoped lang="less">
+/deep/.ant-table {
+  min-height: 60vh;
+}
 </style>
