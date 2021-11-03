@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-30 14:30:15
+ * @LastEditTime: 2021-11-03 09:21:59
  * @LastEditors: max
  * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
@@ -13,12 +13,12 @@
         <a-row>
           <a-col :md="6" :sm="24">
             <a-form-item label="需求工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['plantid',{ rules: [{ required: true, message: '请选择需求工厂' }] }]" style="width: 200px" placeholder="请选择需求工厂">
+              <a-select v-decorator="['plantid', { rules: [{ required: true, message: '请选择需求工厂' }] }]" style="width: 200px" placeholder="请选择需求工厂">
                 <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
-           <a-col :md="6" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item label="ECN变更单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入ECN变更单号" allowClear style="width: 200px" v-decorator="['ecnchangeorder']" />
             </a-form-item>
@@ -71,7 +71,7 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY,x:2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ECN_ID" bordered :customRow="handleClickRow">
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ECN_ID" bordered :customRow="handleClickRow">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -216,7 +216,7 @@ import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
 import VariationInfo from "./VariationInfo.vue";
-import { feedSystem, modelType,stateType} from "@/utils/BomParmas.js";
+import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
 export default {
   components: { VariationInfo },
   data() {
@@ -321,19 +321,25 @@ export default {
     },
     //重置搜索
     reset() {
-      this.data =[];
+      this.data = [];
       this.week = "";
+      this.loading = false;
       this.searchForm.resetFields();
       this.getPlant();
+      this.searchForm.setFieldsValue({
+        approvestatus: "A",
+      });
     },
     //关键词搜索
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-          if(values.itemcodep == undefined && values.itemcodec == undefined && values.ecnchangeorder == undefined){
-            this.$message.warning("请输入查询条件:ECN变更单号,主件品号,元件品号")
-            this.loading = false;
-            return;
+          if (values.ecnchangeorder !== undefined) {
+            if (values.itemcodep !== undefined || values.itemcodec !== undefined) {
+              this.$message.warning("查询条件:ECN变更单号与元件品号不能同时查询");
+              this.loading = false;
+              return;
+            }
           }
           this.loading = true;
           this.pagination.total = 0;

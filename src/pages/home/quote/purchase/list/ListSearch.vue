@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-10-30 16:35:51
+ * @LastEditTime: 2021-11-03 10:05:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -340,7 +340,7 @@ import { getDemandEnter, getCostConfig, addCost } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import ADetails from "./Details.vue";
-import { exportjsontoexcelMore } from "./exportExcel";
+import { exportjsontoexcelMore } from "@/utils/exportExcel";
 import HistoryList from "./HistoryList";
 export default {
   components: { ADetails, HistoryList },

@@ -1,3 +1,11 @@
+/*
+ * @Author: max
+ * @Date: 2021-11-03 10:00:48
+ * @LastEditTime: 2021-11-03 10:03:43
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/home/quote/purchase/list/exportExcel.js
+ */
 // Export2Excel.js
 /* eslint-disable */
 import 'script-loader!file-saver';

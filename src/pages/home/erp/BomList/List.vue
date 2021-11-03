@@ -1,82 +1,156 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-01 09:08:23
+ * @LastEditTime: 2021-11-03 18:21:23
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
 -->
 <template>
-  <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-    <a-form layout="horizontal" :form="searchForm">
-      <div>
-        <a-row>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="需求工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['plantid', { rules: [{ required: true, message: '请选择需求工厂' }] }]" style="width: 200px" placeholder="请选择需求工厂">
-                <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="主件品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入主件品号" allowClear style="width: 200px" v-decorator="['itemcode']" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['itemname']" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="产品规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入产品规格" allowClear style="width: 200px" v-decorator="['itemspecification']" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row>
-          <a-col :md="24" :sm="24">
-            <span style="float: right; margin-top: 3px;">
-              <a-button type="primary" @click="search">查询</a-button>
-              <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-            </span>
-          </a-col>
-        </a-row>
+  <div>
+    <div style="width: 0;height: 0;overflow: hidden">
+      <div class="content" ref="printTest">
+        <div v-for="(item) in printList" :key="item.BOM_ID">
+          <a-row>
+            <a-col :span="8"
+              ><div class="head-img"><img src="@/assets/img/mb.png" alt="" /></div
+            ></a-col>
+            <a-col :span="8"
+              ><div class="head-title">
+                <p>深圳民爆光电股份有限公司</p>
+                <p>BOM物料表</p>
+              </div></a-col
+            >
+          </a-row>
+          <div class="info">
+            <a-descriptions columns="3">
+              <a-descriptions-item label="主件品号">
+                {{ item.ITEM_CODE }}
+              </a-descriptions-item>
+              <a-descriptions-item label="版次">
+                {{ item.VERSION_TIMES }}
+              </a-descriptions-item>
+              <a-descriptions-item label="品号类型">
+                {{ modelType(item.ITEM_PROPERTY) }}
+              </a-descriptions-item>
+              <a-descriptions-item label="主件品名">
+                {{ item.ITEM_NAME }}
+              </a-descriptions-item>
+              <a-descriptions-item label="快捷码">
+                {{ item.SHORTCUT }}
+              </a-descriptions-item>
+              <a-descriptions-item label="修改日期">
+                {{ item.LastModifiedDate }}
+              </a-descriptions-item>
+              <a-descriptions-item label="主件规格" :span="3">
+                {{ item.ITEM_SPECIFICATION }}
+              </a-descriptions-item>
+            </a-descriptions>
+          </div>
+          <a-table :columns="columnsPrint" :data-source="item.children" size="small" :loading="loading" :pagination="false" :rowKey="(data) => data.Id" bordered style="page-break-after:always">
+            <template slot="index" slot-scope="text, record, index">
+              <div>
+                <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+              </div>
+            </template>
+          </a-table>
+        </div>
       </div>
-    </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow" :rowClassName="rowClassName">
-      <template slot="index" slot-scope="text, record, index">
+    </div>
+    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+      <a-form layout="horizontal" :form="searchForm">
         <div>
-          <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+          <a-row>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="需求工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['plantid', { rules: [{ required: true, message: '请选择需求工厂' }] }]" style="width: 200px" placeholder="请选择需求工厂">
+                  <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="主件品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input placeholder="请输入主件品号" allowClear style="width: 200px" v-decorator="['itemcode']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['itemname']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="产品规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input placeholder="请输入产品规格" allowClear style="width: 200px" v-decorator="['itemspecification']" />
+              </a-form-item>
+            </a-col>
+          </a-row>
         </div>
-      </template>
-      <template slot="action" slot-scope="text, record">
-        <div>
-          <a style="margin-right: 8px" @click="detail(record)">
-            <a-icon type="profile" />
-            查看
-          </a>
-        </div>
-      </template>
-      <template slot="ApproveStatus" slot-scope="text">
-        <a-tag :color="text === 'Y' ? 'green' : text === 'N' ? '#0000ff' : 'red'">{{ text == "Y" ? "生效" : text == "N" ? "未生效" : "失效" }}</a-tag>
-      </template>
-      <template slot="ITEM_PROPERTY" slot-scope="text">
-        <span>{{ modelType(text) }}</span>
-      </template>
-      <template slot="ApproveDate" slot-scope="text">
-        <span>{{ splitData(text) }}</span>
-      </template>
-      <template slot="LastModifiedDate" slot-scope="text">
-        <span>{{ splitData(text) }}</span>
-      </template>
-      <template slot="CreateDate" slot-scope="text">
-        <span>{{ splitData(text) }}</span>
-      </template>
-    </a-table>
-    <a-empty v-else description="暂无权限" />
-    <erp-dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></erp-dosage>
-  </a-card>
+        <span style="float: right; margin-top: 3px;">
+          <a-button type="primary" @click="search">查询</a-button>
+          <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+        </span>
+      </a-form>
+      <div class="operator">
+        <a-button icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
+        <a-button icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
+        <span style="margin-left: 8px">
+          <template v-if="hasSelected">
+            {{ `共选中 ${selectedRowKeys.length} 条` }}
+          </template>
+        </span>
+      </div>
+      <a-table
+        id="DomPdf"
+        v-if="hasPerm('search')"
+        :columns="columns"
+        :data-source="data"
+        size="small"
+        :scroll="{ y: scrollY, x: 2800 }"
+        :loading="loading"
+        :pagination="pagination"
+        @change="handleTableChange"
+        :rowKey="(data) => data.BOM_ID"
+        bordered
+        :customRow="handleClickRow"
+        :rowClassName="rowClassName"
+        :row-selection="{
+          selectedRowKeys: selectedRowKeys,
+          onChange: onSelectChange,
+        }"
+      >
+        <template slot="index" slot-scope="text, record, index">
+          <div>
+            <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+          </div>
+        </template>
+        <template slot="action" slot-scope="text, record">
+          <div>
+            <a style="margin-right: 8px" @click="detail(record)">
+              <a-icon type="profile" />
+              查看
+            </a>
+          </div>
+        </template>
+        <template slot="ApproveStatus" slot-scope="text">
+          <a-tag :color="text === 'Y' ? 'green' : text === 'N' ? '#0000ff' : 'red'">{{ text == "Y" ? "生效" : text == "N" ? "未生效" : "失效" }}</a-tag>
+        </template>
+        <template slot="ITEM_PROPERTY" slot-scope="text">
+          <span>{{ modelType(text) }}</span>
+        </template>
+        <template slot="ApproveDate" slot-scope="text">
+          <span>{{ splitData(text) }}</span>
+        </template>
+        <template slot="LastModifiedDate" slot-scope="text">
+          <span>{{ splitData(text) }}</span>
+        </template>
+        <template slot="CreateDate" slot-scope="text">
+          <span>{{ splitData(text) }}</span>
+        </template>
+      </a-table>
+      <a-empty v-else description="暂无权限" />
+      <erp-dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></erp-dosage>
+    </a-card>
+  </div>
 </template>
 <script>
 const columns = [
@@ -234,17 +308,92 @@ const columns = [
     width: 100,
   },
 ];
+const columnsPrint = [
+  {
+    title: "序号",
+    scopedSlots: { customRender: "index" },
+    align: "center",
+    width: 50,
+  },
+  {
+    title: "元件品号",
+    dataIndex: "ITEM_CODE",
+    scopedSlots: { customRender: "ITEM_CODE" },
+    align: "center",
+    width: 250,
+  },
+  {
+    title: "品名",
+    dataIndex: "ITEM_NAME",
+    scopedSlots: { customRender: "ITEM_NAME" },
+    align: "center",
+    width: 250,
+    ellipsis: true,
+  },
+  {
+    title: "规格",
+    dataIndex: "ITEM_SPECIFICATION",
+    scopedSlots: { customRender: "ITEM_SPECIFICATION" },
+    align: "center",
+    width: 300,
+    ellipsis: true,
+  },
+  {
+    title: "单位",
+    dataIndex: "UNIT_NAME",
+    scopedSlots: { customRender: "UNIT_NAME" },
+    align: "center",
+    width: 50,
+  },
+  {
+    title: "用量",
+    dataIndex: "QTY_PER",
+    scopedSlots: { customRender: "QTY_PER" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "底数",
+    dataIndex: "DENOMINATOR",
+    scopedSlots: { customRender: "DENOMINATOR" },
+    align: "center",
+    width: 50,
+  },
+  {
+    title: "备注",
+    dataIndex: "REMARK",
+    scopedSlots: { customRender: "REMARK" },
+    align: "center",
+  },
+  {
+    title: "图号",
+    dataIndex: "DRAWING_NO",
+    scopedSlots: { customRender: "DRAWING_NO" },
+    align: "center",
+    width: 200,
+  },
+
+  {
+    title: "位置",
+    dataIndex: "COMPONENT_LOCATION",
+    scopedSlots: { customRender: "COMPONENT_LOCATION" },
+    align: "center",
+    width: 80,
+  },
+];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData, modelType } from "@/utils/util.js";
 import ErpDosage from "../components/ErpDosage.vue";
+import { exportjsontoexcelMore } from "@/utils/exportExcel";
 export default {
   components: { ErpDosage },
   data() {
     return {
       data: [],
       columns,
+      columnsPrint,
       loading: false,
       isDosage: false,
       pagination: {
@@ -268,6 +417,9 @@ export default {
       detailData: [],
       plantList: [],
       mitemcodeData: [],
+      excelData: [],
+      printData: [],
+      printList: [],
     };
   },
   updated() {
@@ -287,6 +439,28 @@ export default {
   methods: {
     splitData,
     modelType,
+    printClick() {
+      // this.printData = this.data.find((item) => item.BOM_ID == this.selectedRowKeys[0]);
+      // let parmas = {
+      //   pageindex: 1,
+      //   pagesize: 500,
+      //   bomid: this.printData.BOM_ID,
+      // };
+      // getERPReportAction(parmas, "getbomusinginfo").then((res) => {
+      //   this.printList = res.data.data.list;
+      //   console.log(this.$refs.printId);
+      //   print(this.$refs.printId, { "no-print": ".className" });
+      // });
+      this.getExcelData().then((res) => {
+        this.printList = res;
+        console.log(this.$refs.printTest);
+        print(this.$refs.printTest, { "no-print": ".className" });
+      });
+    },
+    //多选
+    onSelectChange(selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys;
+    },
     closeModal() {
       this.isDosage = false;
     },
@@ -404,6 +578,111 @@ export default {
     rowClassName(record) {
       return record.ApproveStatus == "V" ? "color2" : record.ApproveStatus == "N" ? "color1" : "";
     },
+    getExcelData() {
+      return new Promise((resolve) => {
+        //   /* 你的逻辑代码 */
+        let excelData = [];
+        this.selectedRowKeys.forEach((item) => {
+          this.data.find((items) => {
+            if (items.BOM_ID == item) {
+              let parmas = {
+                pageindex: 1,
+                pagesize: 500,
+                bomid: item,
+              };
+              getERPReportAction(parmas, "getbomusinginfo").then((res) => {
+                let children = res.data.data.list;
+                items.children = children;
+                excelData.push(items);
+                resolve(excelData);
+              });
+            }
+          });
+        });
+      });
+    },
+    async formattingExcel(excelData) {
+      return new Promise((resolve) => {
+        let excelArray = [];
+        let formStyle = {};
+        const sheetCols = [
+          { wch: 10 }, // 序号
+          { wch: 15 }, // 阶次
+          { wch: 15 }, // 类型
+          { wch: 20 }, // 上阶BOM号
+          { wch: 15 }, // 品号
+          { wch: 5 }, // 料名
+          { wch: 5 }, //  产品规格
+          { wch: 5 }, // 单位
+          { wch: 8 }, // 价格来源
+          { wch: 15 }, // E10单价
+        ];
+        console.log(excelData);
+        console.log(excelData.length);
+        excelData.forEach((item) => {
+          let _data = [];
+          let mergeTitle = []; //合并单元格
+          console.log("遍历====", item);
+          for (let i = 0; i < 3; i++) {
+            mergeTitle.push({
+              s: { r: i, c: 1 },
+              e: { r: i, c: 9 },
+            });
+          }
+          _data.push(["产品代码：", `${item.ITEM_CODE}`, null, null, null, null, null, null, null, null]);
+          _data.push(["产品名称", `${item.ITEM_NAME}`, null, null, null, null, null, null, null, null]);
+          _data.push(["产品规格", `${item.ITEM_SPECIFICATION}`, null, null, null, null, null, null, null, null]);
+          _data.push(["阶层", "元件品号", "元件品名", "元件规格", "元件图号", "单位", "组成用量", "底数", "插件位置", "元件快捷码"]);
+          item.children.map((items) => {
+            let array = [];
+            array.push(items.ROWNUMBER);
+            array.push(items.ITEM_CODE);
+            array.push(items.ITEM_NAME);
+            array.push(items.ITEM_SPECIFICATION);
+            array.push(items.DRAWING_NO);
+            array.push(items.UNIT_NAME);
+            array.push(items.QTY_PER);
+            array.push(items.DENOMINATOR);
+            array.push(items.COMPONENT_LOCATION);
+            array.push(items.SHORTCUT);
+            _data.push(array);
+          });
+          _data.push([null, "制单:", null, "审核:", null, "核准:", null, null, null, "日期:", null]);
+          let merges2 = [];
+          let merges = [...mergeTitle, ...merges2]; // 合并单元格
+          excelArray.push({
+            Sheet: item.ITEM_CODE, // 下方tab切换名称
+            data: _data, // 表格数据
+            merges, //  合并单元格
+            autoWidth: false, // 自适应宽度
+            formStyle: formStyle, // 特殊行或列样式
+            sheetCols,
+          });
+          console.log(excelArray);
+        });
+        resolve(excelArray);
+      });
+    },
+    //导出数据
+    async handleExcel() {
+      await this.getExcelData().then((res) => {
+        setTimeout(() => {
+          this.formattingExcel(res).then((r) => {
+            try {
+              exportjsontoexcelMore({
+                dataList: r,
+                bookType: "xlsx", // 导出类型
+                filename: "BOM多级展开", // 导出标题名
+              });
+              this.$message.success("导出数据成功!");
+              this.selectedRowKeys = [];
+            } catch (error) {
+              this.$message.error("导出数据失败");
+            }
+          });
+        }, 100);
+      });
+    },
   },
 };
 </script>
@@ -417,5 +696,55 @@ export default {
 }
 /deep/.color1 {
   color: #0000ff;
+}
+/deep/html {
+  background-color: #ffffff;
+  margin: 0; /* this affects the margin on the html before sending to printer */
+}
+
+/deep/body {
+  border: solid 1px blue;
+  margin: 10mm 15mm 10mm 15mm; /* margin you want for the content */
+}
+/*去除页眉页脚*/
+.content {
+  width: 800px;
+  margin: 0 auto;
+}
+.head-img {
+  text-align: center;
+  width: 200px;
+  height: 50px;
+  margin: 0 auto;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+.head-qr {
+  text-align: center;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+.head-title {
+  text-align: center;
+  p {
+    padding: 0;
+    margin: 0;
+    font-size: 20px;
+    color: #000;
+    font-weight: 700;
+  }
+}
+.info {
+  width: 800px;
+  margin: 0 auto;
+  border: 1px #000 solid;
+  padding: 10px 10px;
 }
 </style>

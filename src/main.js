@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-10-26 11:16:32
+ * @LastEditTime: 2021-11-03 16:24:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/main.js
@@ -22,6 +22,9 @@ import 'moment/locale/zh-cn';
 const router = initRouter(store.state.setting.asyncRoutes);
 const i18n = initI18n('CN', 'US')
 import { hasBtnPermission } from './utils/permissions';
+//将DOM转为PDF
+import htmlToPdf from './utils/htmlToPdf';
+Vue.use(htmlToPdf);
 Vue.prototype.hasPerm = hasBtnPermission;
 Vue.use(Antd);
 Vue.config.productionTip = false;
