@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-05 08:44:47
+ * @LastEditTime: 2021-11-04 18:22:28
  * @LastEditors: max
  * @Description: BOM查询
- * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
+ * @FilePath: /up-admin/src/pages/home/erp/BomInventory/List.vue
 -->
 <template>
   <div>
@@ -42,7 +42,6 @@
         </span>
       </a-form>
       <div class="operator">
-        <a-button icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
         <a-button icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
@@ -60,7 +59,7 @@
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(data) => data.BOM_ID"
+        :rowKey="(data) => data.ITEM_ID"
         bordered
         :customRow="handleClickRow"
         :rowClassName="rowClassName"
@@ -99,8 +98,7 @@
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
-      <erp-dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></erp-dosage>
-      <print v-if="isPrint" :printList="printList" @closeModal="closeModal"></print>
+      <dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></dosage>
     </a-card>
   </div>
 </template>
@@ -110,14 +108,14 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width: 50,
   },
   {
-    title: "主件品号",
+    title: "品号",
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
     align: "center",
-    width: 250,
+    width: 200,
   },
   {
     title: "快捷码",
@@ -144,112 +142,149 @@ const columns = [
     ellipsis: true,
   },
   {
-    title: "图号",
-    dataIndex: "DRAWING_NO",
-    scopedSlots: { customRender: "DRAWING_NO" },
+    title: "库存数量",
+    dataIndex: "INVENTORY_QTY",
+    scopedSlots: { customRender: "INVENTORY_QTY" },
     align: "center",
     width: 150,
     ellipsis: true,
   },
   {
-    title: "单位",
+    title: "工厂编号",
+    dataIndex: "PLANT_CODE",
+    scopedSlots: { customRender: "PLANT_CODE" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "工厂/储运",
+    dataIndex: "PLANT_NAME",
+    scopedSlots: { customRender: "PLANT_NAME" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "仓库代号",
+    dataIndex: "WAREHOUSE_CODE",
+    scopedSlots: { customRender: "WAREHOUSE_CODE" },
+    align: "center",
+    width: 120,
+  },
+  {
+    title: "仓库名称",
+    dataIndex: "WAREHOUSE_NAME",
+    scopedSlots: { customRender: "WAREHOUSE_NAME" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "仓库单位",
     dataIndex: "UNIT_NAME",
     scopedSlots: { customRender: "UNIT_NAME" },
     align: "center",
-    width: 50,
+    width: 80,
+  },
+  {
+    title: "仓库属性",
+    dataIndex: "WAREHOUSE_CHARACTER",
+    scopedSlots: { customRender: "WAREHOUSE_CHARACTER" },
+    align: "center",
+    width: 80,
+    customRender: (text) => {
+      return text == 1 ? "1.普通仓" : text == 2 ? "2.VMI仓" : text == 3 ? "3.寄售客户仓" : text == 4 ? "4.客户寄库仓" : text == 5 ? "5.在途仓" : "6.客供料仓";
+    },
+  },
+  {
+    title: "仓库性质",
+    dataIndex: "WAREHOUSE_PROPERTY",
+    scopedSlots: { customRender: "WAREHOUSE_PROPERTY" },
+    align: "center",
+    width: 120,
+    customRender: (text) => {
+      return text == "1" ? "1.存货仓" : "2.非存货仓";
+    },
+  },
+  {
+    title: "库位管理",
+    dataIndex: "BIN_CONTROL",
+    scopedSlots: { customRender: "BIN_CONTROL" },
+    align: "center",
+    width: 80,
+    customRender: (text) => {
+      return text == 1 ? "1.启用" : "0.不启用";
+    },
+  },
+  {
+    title: "纳入可用量计算",
+    dataIndex: "INCLUDED_AVAILABLE_QTY",
+    scopedSlots: { customRender: "INCLUDED_AVAILABLE_QTY" },
+    align: "center",
+    width: 120,
+    customRender: (text) => {
+      return text ? "Y" : "N";
+    },
+  },
+  {
+    title: "库存量不足准许出库",
+    dataIndex: "NEGATIVE_INVENTORY_ALLOWED",
+    scopedSlots: { customRender: "NEGATIVE_INVENTORY_ALLOWED" },
+    align: "center",
+    width: 150,
+    customRender: (text) => {
+      return text ? "Y" : "N";
+    },
+  },
+  {
+    title: "首次入库日",
+    dataIndex: "ORIGINIAL_RECEIPT_DATE",
+    scopedSlots: { customRender: "ORIGINIAL_RECEIPT_DATE" },
+    align: "center",
+    width: 120,
+    customRender: (text) => {
+      return splitData(text);
+    },
+  },
+  {
+    title: "最后入库日",
+    dataIndex: "LAST_RECEIPT_DATE",
+    scopedSlots: { customRender: "LAST_RECEIPT_DATE" },
+    align: "center",
+    width: 100,
+    customRender: (text) => {
+      return splitData(text);
+    },
+  },
+  {
+    title: "最后出库日",
+    dataIndex: "LAST_ISSUE_DATE",
+    scopedSlots: { customRender: "LAST_ISSUE_DATE" },
+    align: "center",
+    width: 100,
+    customRender: (text) => {
+      return splitData(text);
+    },
   },
   {
     title: "品号类型",
     dataIndex: "ITEM_PROPERTY",
     scopedSlots: { customRender: "ITEM_PROPERTY" },
     align: "center",
-    width: "5%",
+    width: 100,
   },
   {
-    title: "BOM生效状态",
-    dataIndex: "ApproveStatus",
-    scopedSlots: { customRender: "ApproveStatus" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "工厂",
-    dataIndex: "PLANT_CODE_P",
-    scopedSlots: { customRender: "PLANT_CODE_P" },
-    align: "center",
-  },
-  {
-    title: "工厂名称",
-    dataIndex: "PLANT_NAME_P",
-    scopedSlots: { customRender: "PLANT_NAME_P" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "引用工厂",
-    dataIndex: "PLANT_CODE_R",
-    scopedSlots: { customRender: "PLANT_CODE_R" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "引用工厂名称",
-    dataIndex: "PLANT_NAME_R",
-    scopedSlots: { customRender: "PLANT_NAME_R" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "版次",
-    dataIndex: "VERSION_TIMES",
-    scopedSlots: { customRender: "VERSION_TIMES" },
-    align: "center",
-  },
-  {
-    title: "生效日期",
-    dataIndex: "ApproveDate",
-    scopedSlots: { customRender: "ApproveDate" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "生效审核人员",
-    dataIndex: "EMPLOYEE_NAME_A",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_A" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "创建日期",
-    dataIndex: "CreateDate",
-    scopedSlots: { customRender: "CreateDate" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "创建人员",
-    dataIndex: "EMPLOYEE_NAME_C",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_C" },
-    align: "center",
-  },
-  {
-    title: "最后修改日期",
-    dataIndex: "LastModifiedDate",
-    scopedSlots: { customRender: "LastModifiedDate" },
+    title: "批次控制",
+    dataIndex: "LOT_CONTROL",
+    scopedSlots: { customRender: "LOT_CONTROL" },
     align: "center",
     width: 150,
+    customRender: (text) => {
+      return text == "N" ? "N.不需求" : text == "T" ? "T.需要且检查库存量" : "Y.需要不检查库存量";
+    },
   },
   {
-    title: "最后修改人员",
-    dataIndex: "EMPLOYEE_NAME_L",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_L" },
-    align: "center",
-    width: 150,
-  },
-  {
-    title: "备注",
-    dataIndex: "REMARK",
-    scopedSlots: { customRender: "REMARK" },
+    title: "图号",
+    dataIndex: "DRAWING_NO",
+    scopedSlots: { customRender: "DRAWING_NO" },
     align: "center",
   },
   {
@@ -260,19 +295,92 @@ const columns = [
     width: 100,
   },
 ];
+const columnsPrint = [
+  {
+    title: "序号",
+    scopedSlots: { customRender: "index" },
+    align: "center",
+    width: 50,
+  },
+  {
+    title: "元件品号",
+    dataIndex: "ITEM_CODE",
+    scopedSlots: { customRender: "ITEM_CODE" },
+    align: "center",
+    width: 250,
+  },
+  {
+    title: "品名",
+    dataIndex: "ITEM_NAME",
+    scopedSlots: { customRender: "ITEM_NAME" },
+    align: "center",
+    width: 250,
+    ellipsis: true,
+  },
+  {
+    title: "规格",
+    dataIndex: "ITEM_SPECIFICATION",
+    scopedSlots: { customRender: "ITEM_SPECIFICATION" },
+    align: "center",
+    width: 300,
+    ellipsis: true,
+  },
+  {
+    title: "单位",
+    dataIndex: "UNIT_NAME",
+    scopedSlots: { customRender: "UNIT_NAME" },
+    align: "center",
+    width: 50,
+  },
+  {
+    title: "用量",
+    dataIndex: "QTY_PER",
+    scopedSlots: { customRender: "QTY_PER" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "底数",
+    dataIndex: "DENOMINATOR",
+    scopedSlots: { customRender: "DENOMINATOR" },
+    align: "center",
+    width: 50,
+  },
+  {
+    title: "备注",
+    dataIndex: "REMARK",
+    scopedSlots: { customRender: "REMARK" },
+    align: "center",
+  },
+  {
+    title: "图号",
+    dataIndex: "DRAWING_NO",
+    scopedSlots: { customRender: "DRAWING_NO" },
+    align: "center",
+    width: 200,
+  },
+
+  {
+    title: "位置",
+    dataIndex: "COMPONENT_LOCATION",
+    scopedSlots: { customRender: "COMPONENT_LOCATION" },
+    align: "center",
+    width: 80,
+  },
+];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData, modelType } from "@/utils/util.js";
-import ErpDosage from "../components/ErpDosage.vue";
-import { exportjsontoexcelMore } from "@/utils/exportExcel";
-import Print from "../components/Print.vue";
+import Dosage from './Dosage.vue'
+import ExportExcel from "@/utils/ExportExcelJS";
 export default {
-  components: { ErpDosage, Print },
+  components: { Dosage },
   data() {
     return {
       data: [],
       columns,
+      columnsPrint,
       loading: false,
       isDosage: false,
       pagination: {
@@ -299,7 +407,6 @@ export default {
       excelData: [],
       printData: [],
       printList: [],
-      isPrint: false,
     };
   },
   updated() {
@@ -319,24 +426,19 @@ export default {
   methods: {
     splitData,
     modelType,
-    printClick() {
-      this.getExcelData().then((res) => {
-        setTimeout(() => {
-          this.printList = res;
-          this.isPrint = true;
-        }, 100);
-      });
-    },
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
     closeModal() {
       this.isDosage = false;
-      this.isPrint =false
     },
     //物料需求详情
     detail(item) {
+      if (item.INVENTORY_QTY < 1) {
+        this.$message.warning(`品号:[${item.ITEM_CODE}],当前暂无库存`, 5);
+        return;
+      }
       this.isDosage = true;
       this.mitemcodeData = item;
     },
@@ -408,7 +510,7 @@ export default {
             itemname: values.itemname || "",
             itemspecification: values.itemspecification || "",
           };
-          getERPReportAction(parmas, "getbomlist").then((res) => {
+          getERPReportAction(parmas, "getwarehousestockinfo").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -430,6 +532,10 @@ export default {
         },
         on: {
           dblclick: () => {
+            if (record.INVENTORY_QTY < 1) {
+              this.$message.warning(`品号:[${record.ITEM_CODE}],当前暂无库存`, 5);
+              return;
+            }
             this.isDosage = true;
             this.mitemcodeData = record;
           },
@@ -453,106 +559,48 @@ export default {
       return new Promise((resolve) => {
         //   /* 你的逻辑代码 */
         let excelData = [];
+        let list = JSON.parse(JSON.stringify(this.data));
         this.selectedRowKeys.forEach((item) => {
-          this.data.find((items) => {
-            if (items.BOM_ID == item) {
-              let parmas = {
-                pageindex: 1,
-                pagesize: 500,
-                bomid: item,
-              };
-              getERPReportAction(parmas, "getbomusinginfo").then((res) => {
-                let children = res.data.data.list;
-                items.childrenArray = children;
-                excelData.push(items);
-                resolve(excelData);
-              });
+          list.find((items) => {
+            if (items.ITEM_ID == item) {
+              items.ORIGINIAL_RECEIPT_DATE = splitData(items.ORIGINIAL_RECEIPT_DATE);
+              items.LAST_RECEIPT_DATE = splitData(items.LAST_RECEIPT_DATE);
+              items.LAST_ISSUE_DATE = splitData(items.LAST_ISSUE_DATE);
+              items.WAREHOUSE_CHARACTER = items.WAREHOUSE_CHARACTER == 1 ? "1.普通仓" : items.WAREHOUSE_CHARACTER == 2 ? "2.VMI仓" : items.WAREHOUSE_CHARACTER == 3 ? "3.寄售客户仓" : items.WAREHOUSE_CHARACTER == 4 ? "4.客户寄库仓" : items.WAREHOUSE_CHARACTER == 5 ? "5.在途仓" : "6.客供料仓";
+              items.WAREHOUSE_PROPERTY = items.WAREHOUSE_PROPERTY == "1" ? "1.存货仓" : "2.非存货仓";
+              items.BIN_CONTROL = items.BIN_CONTROL == 1 ? "1.启用" : "0.不启用";
+              items.LOT_CONTROL = items.LOT_CONTROL == "N" ? "N.不需求" : items.LOT_CONTROL == "T" ? "T.需要且检查库存量" : "Y.需要不检查库存量";
+              items.ITEM_PROPERTY = modelType(items.ITEM_PROPERTY);
+              items.INCLUDED_AVAILABLE_QTY = items.INCLUDED_AVAILABLE_QTY ? "Y" : "N";
+              items.NEGATIVE_INVENTORY_ALLOWED = items.NEGATIVE_INVENTORY_ALLOWED ? "Y" : "N";
+              excelData.push(items);
+              resolve(excelData);
             }
           });
         });
-      });
-    },
-    async formattingExcel(excelData) {
-      return new Promise((resolve) => {
-        let excelArray = [];
-        let formStyle = {};
-        const sheetCols = [
-          { wch: 10 }, // 序号
-          { wch: 15 }, // 阶次
-          { wch: 15 }, // 类型
-          { wch: 20 }, // 上阶BOM号
-          { wch: 15 }, // 品号
-          { wch: 5 }, // 料名
-          { wch: 5 }, //  产品规格
-          { wch: 5 }, // 单位
-          { wch: 8 }, // 价格来源
-          { wch: 15 }, // E10单价
-        ];
-        console.log(excelData);
-        console.log(excelData.length);
-        excelData.forEach((item) => {
-          let _data = [];
-          let mergeTitle = []; //合并单元格
-          console.log("遍历====", item);
-          for (let i = 0; i < 3; i++) {
-            mergeTitle.push({
-              s: { r: i, c: 1 },
-              e: { r: i, c: 9 },
-            });
-          }
-          _data.push(["产品代码：", `${item.ITEM_CODE}`, null, null, null, null, null, null, null, null]);
-          _data.push(["产品名称", `${item.ITEM_NAME}`, null, null, null, null, null, null, null, null]);
-          _data.push(["产品规格", `${item.ITEM_SPECIFICATION}`, null, null, null, null, null, null, null, null]);
-          _data.push(["阶层", "元件品号", "元件品名", "元件规格", "元件图号", "单位", "组成用量", "底数", "插件位置", "元件快捷码"]);
-          item.childrenArray.map((items) => {
-            let array = [];
-            array.push(items.ROWNUMBER);
-            array.push(items.ITEM_CODE);
-            array.push(items.ITEM_NAME);
-            array.push(items.ITEM_SPECIFICATION);
-            array.push(items.DRAWING_NO);
-            array.push(items.UNIT_NAME);
-            array.push(items.QTY_PER);
-            array.push(items.DENOMINATOR);
-            array.push(items.COMPONENT_LOCATION);
-            array.push(items.SHORTCUT);
-            _data.push(array);
-          });
-          _data.push([null, "制单:", null, "审核:", null, "核准:", null, null, null, "日期:", null]);
-          let merges2 = [];
-          let merges = [...mergeTitle, ...merges2]; // 合并单元格
-          excelArray.push({
-            Sheet: item.ITEM_CODE, // 下方tab切换名称
-            data: _data, // 表格数据
-            merges, //  合并单元格
-            autoWidth: false, // 自适应宽度
-            formStyle: formStyle, // 特殊行或列样式
-            sheetCols,
-          });
-          console.log(excelArray);
-        });
-        resolve(excelArray);
       });
     },
     //导出数据
     async handleExcel() {
+      console.log("导出====");
       await this.getExcelData().then((res) => {
-        setTimeout(() => {
-          this.formattingExcel(res).then((r) => {
-            try {
-              var timestamp = Date.parse(new Date());
-              exportjsontoexcelMore({
-                dataList: r,
-                bookType: "xlsx", // 导出类型
-                filename: `BOM清单_${timestamp}`, // 导出标题名
-              });
-              this.$message.success("导出数据成功!");
-              this.selectedRowKeys = [];
-            } catch (error) {
-              this.$message.error("导出数据失败");
-            }
-          });
-        }, 100);
+        console.log(res);
+        this.isExportLod = true;
+        const header = [];
+        this.columns.map((item) => {
+          if (item.dataIndex) {
+            header.push({ key: item.dataIndex, title: item.title });
+          }
+        });
+        var timestamp = Date.parse(new Date());
+        try {
+          ExportExcel(header, res, `品号仓库存货信息_${timestamp}.xlsx`);
+          this.$message.success("导出数据成功!");
+        } catch (error) {
+          console.log(error);
+          this.$message.error("导出数据失败");
+        }
+        this.isExportLod = false;
       });
     },
   },

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-10-30 10:37:45
+ * @LastEditTime: 2021-11-05 09:11:44
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -297,6 +297,10 @@ export default {
     reset() {
       this.searchForm.resetFields();
       this.data = [];
+      this.getPlant();
+      this.searchForm.setFieldsValue({
+        approvestatus: "A",
+      });
     },
     //关键词搜索
     search() {
@@ -307,12 +311,12 @@ export default {
           if (values["bomdate"]) {
             var bomdate = values["bomdate"].format("YYYY-MM-DD");
           }
-          if (values["range-time-picker1"]) {
+          if (values["range-time-picker1"] && values["range-time-picker1"].length == 2) {
             const rangeValue1 = values["range-time-picker1"];
             var createdatestart = rangeValue1[0].format("YYYY-MM-DD");
             var createdateend = rangeValue1[1].format("YYYY-MM-DD");
           }
-          if (values["range-time-picker2"]) {
+          if (values["range-time-picker2"] && values["range-time-picker2"].length == 2) {
             const rangeValue2 = values["range-time-picker2"];
             var lastmodifieddatestart = rangeValue2[0].format("YYYY-MM-DD");
             var lastmodifieddateend = rangeValue2[1].format("YYYY-MM-DD");

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-11-01 14:57:53
+ * @LastEditTime: 2021-11-04 10:23:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/achievement.vue
@@ -131,7 +131,7 @@
 
 <script>
 import { getDailyPlan, getWorkshopList, getLineList } from "@/services/web.js";
-import ExportExcel from "@/utils/ExportExcel";
+import ExportExcel from "@/utils/ExportExcelJS";
 const columns = [
   {
     title: "序号",

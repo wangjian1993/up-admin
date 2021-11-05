@@ -1,13 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-11-02 16:31:39
+ * @LastEditTime: 2021-11-04 11:22:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/detail.vue
 -->
 <template>
   <div>
+    <a-spin tip="导出中..." :spinning="isExportLod">
     <a-form layout="horizontal" :form="searchForm">
       <div :class="advanced ? null : 'fold'">
         <a-row>
@@ -126,12 +127,13 @@
         </a-descriptions>
       </a-drawer>
     </div>
+    </a-spin>
   </div>
 </template>
 
 <script>
 import { getDailyPlan, getWorkshopList, getLineList } from "@/services/web.js";
-import ExportExcel from "@/utils/ExportExcel";
+import ExportExcel from "@/utils/ExportExcelJS";
 const columns = [
   {
     title: "序号",
@@ -296,6 +298,7 @@ export default {
       lineId: "",
       week: "",
       drawerItem: [],
+      isExportLod:false
     };
   },
   updated() {
@@ -479,6 +482,7 @@ export default {
       });
     },
     exportExcel() {
+      this.isExportLod =true
       const dataSource = this.dataSource.map((item) => {
         Object.keys(item).forEach((key) => {
           // 后端传null node写入会有问题
@@ -505,6 +509,7 @@ export default {
         console.log(error);
         this.$message.error("导出数据失败");
       }
+      this.isExportLod =false
     },
   },
 };

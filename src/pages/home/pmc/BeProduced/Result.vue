@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:40:45
- * @LastEditTime: 2021-11-02 16:30:26
+ * @LastEditTime: 2021-11-05 09:08:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/Result.vue
@@ -71,7 +71,7 @@
 
 <script>
 import { getMitemPlanAction } from "@/services/web.js";
-import ExportExcel from "@/utils/ExportExcel";
+import ExportExcel from "@/utils/ExportExcelJS";
 import { splitData } from "@/utils/util.js";
 const columns = [
   {
@@ -105,6 +105,13 @@ const columns = [
     title: "子件品名",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
+    align: "center",
+    width: 180,
+  },
+  {
+    title: "子件规格",
+    dataIndex: "MitemSpec",
+    scopedSlots: { customRender: "MitemSpec" },
     align: "center",
     width: 180,
   },
@@ -161,6 +168,13 @@ const columns = [
     title: "待采购数量",
     dataIndex: "PurchaseQty",
     scopedSlots: { customRender: "PurchaseQty" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "采购在途数量",
+    dataIndex: "TransitQty",
+    scopedSlots: { customRender: "TransitQty" },
     align: "center",
     width: 100,
   },

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-10-21 15:41:39
+ * @LastEditTime: 2021-11-05 17:58:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Action.vue
@@ -121,9 +121,9 @@ const columns = [
     align: "center",
   },
   {
-    title: "导入人员",
-    dataIndex: "UserCreated",
-    scopedSlots: { customRender: "UserCreated" },
+    title: "PMC",
+    dataIndex: "UserName",
+    scopedSlots: { customRender: "UserName" },
     align: "center",
   },
   {
@@ -225,7 +225,7 @@ export default {
       });
     },
     detail(item) {
-      this.$emit("toDetail", item.Id,'3');
+      this.$emit("toDetail", item.BatchNo,'3');
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");

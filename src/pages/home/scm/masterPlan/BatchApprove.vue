@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 15:16:07
- * @LastEditTime: 2021-11-02 15:48:50
+ * @LastEditTime: 2021-11-04 18:09:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/BatchApprove.vue
@@ -62,6 +62,12 @@
                     <a-form-item label="需求数量:">
                       <span>{{ mitemData.RequirementQty }}</span>
                     </a-form-item>
+                    <a-form-item label="已匹配数量:" style="margin-left:20px">
+                      <span>{{ alreadyQty }}</span>
+                    </a-form-item>
+                    <a-form-item label="未匹配数量:" style="margin-left:20px">
+                      <span>{{ notQty }}</span>
+                    </a-form-item>
                   </div></a-col
                 >
                 <!-- <a-col :xl="6" :lg="8" :md="6" :sm="6"
@@ -98,7 +104,7 @@
             </template>
             <div slot="MatchQty" slot-scope="text, record">
               <!-- <a-input-number allowClear :min="0" size="small" @change="(e) => handleChange(e.target.value, record)" :value="record.MatchQty" /> -->
-              <a-input-number v-model="record.MatchQty" :disabled="!record.isInput" />
+              <a-input-number v-model="record.MatchQty" :disabled="!record.isInput" @change="countQty" :min="0" :max="mitemData.RequirementQty" />
             </div>
           </a-table>
         </div>
@@ -202,6 +208,8 @@ export default {
       materialData: [],
       materialDates: [],
       PlantName: "",
+      alreadyQty: 0,
+      notQty: 0,
     };
   },
   created() {
@@ -221,6 +229,7 @@ export default {
       this.batchnoData.BatchNo = this.matchingData.BatchNo;
       this.batchnoData.PlantName = this.matchingData.PlantName;
       this.batchnoData.PlantId = this.matchingData.PlantId;
+      this.notQty = this.matchingData.RequirementQty;
     }
     if (this.isEdit) {
       this.getList();
@@ -231,11 +240,19 @@ export default {
   methods: {
     splitData,
     handleChange(e, record, index) {
-      console.log(e);
       this.list[index].MatchQty = e;
     },
     close() {
       this.$emit("closeModal");
+    },
+    countQty() {
+      this.alreadyQty = 0;
+      this.list.map((item) => {
+        if (item.isInput) {
+          this.alreadyQty += item.MatchQty;
+          this.notQty = this.mitemData.RequirementQty - this.alreadyQty;
+        }
+      });
     },
     reset() {
       this.MitemCode = "";

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-10-21 17:57:38
+ * @LastEditTime: 2021-11-04 17:55:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ImportExecl.vue
@@ -91,7 +91,9 @@ export default {
       fileList2: [],
     };
   },
-  created() {},
+  created() {
+    console.log(this.formatDate(44530));
+  },
   methods: {
     //移除文件
     removeFile() {
@@ -114,9 +116,34 @@ export default {
       let str = dateString.split("-");
       this.week = str[1].replace("周", "");
     },
+    formatLongDate(date) {
+      let myyear = date.getFullYear();
+      let mymonth = date.getMonth() + 1;
+      let myweekday = date.getDate();
+      let myHour = date.getHours();
+      let myMin = date.getMinutes();
+      let mySec = date.getSeconds();
+      if (mymonth < 10) {
+        mymonth = "0" + mymonth;
+      }
+      if (myweekday < 10) {
+        myweekday = "0" + myweekday;
+      }
+      if (myHour < 10) {
+        myHour = "0" + myHour;
+      }
+      if (myMin < 10) {
+        myMin = "0" + myMin;
+      }
+      if (mySec < 10) {
+        mySec = "0" + mySec;
+      }
+      return myyear + "/" + mymonth + "/" + myweekday;
+    },
     //时间格式化
     formatDate(numb, format = "/") {
       const time = new Date((numb - 1) * 24 * 3600000 + 1);
+      console.log(time);
       time.setYear(time.getFullYear() - 70);
       const year = time.getFullYear() + "";
       const month = time.getMonth() + 1 + "";
@@ -209,10 +236,18 @@ export default {
               }
               break;
             case "开工日期":
-              list.CommencementDate = this.formatDate(item[key], "-");
+              if (item[key] != "") {
+                list.CommencementDate = this.formatLongDate(item[key], "-");
+              } else {
+                list.CommencementDate = "";
+              }
               break;
             case "需求日期":
-              list.RequirementDate = this.formatDate(item[key], "-");
+              if (item[key] != "") {
+                list.RequirementDate = this.formatLongDate(item[key], "-");
+              } else {
+                list.RequirementDate = "";
+              }
               break;
             case "周":
               if ((typeof item[key] !== "number" && item[key] !== "") || item[key] < 0 || item[key] > 53) {
@@ -273,10 +308,12 @@ export default {
           return { title: item, key: item };
         });
         if (type == 1) {
+          console.log(results);
           this.tableData1 = results; //这里的tableData就是拿到的excel表格中的数据
           this.tableTitle1 = tableTitle;
         }
         if (type == 2) {
+          console.log(results);
           this.tableData2 = results; //这里的tableData就是拿到的excel表格中的数据
           this.tableTitle2 = tableTitle;
         }

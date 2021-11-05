@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-03 09:21:59
+ * @LastEditTime: 2021-11-05 08:55:38
  * @LastEditors: max
  * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
@@ -333,9 +333,11 @@ export default {
     //关键词搜索
     search() {
       this.searchForm.validateFields((err, values) => {
+        console.log(values);
         if (!err) {
-          if (values.ecnchangeorder !== undefined) {
-            if (values.itemcodep !== undefined || values.itemcodec !== undefined) {
+          console.log(values.ecnchangeorder);
+          if (values.ecnchangeorder !== "" && values.ecnchangeorder !== undefined) {
+            if ((values.itemcodep !== undefined && values.itemcodep !== "") || (values.itemcodec !== undefined && values.itemcodec !== "")) {
               this.$message.warning("查询条件:ECN变更单号与元件品号不能同时查询");
               this.loading = false;
               return;
@@ -343,12 +345,12 @@ export default {
           }
           this.loading = true;
           this.pagination.total = 0;
-          if (values["range-time-picker1"]) {
+          if (values["range-time-picker1"] && values["range-time-picker1"].length == 2) {
             const rangeValue1 = values["range-time-picker1"];
             var docdatestart = rangeValue1[0].format("YYYY-MM-DD");
             var docdateend = rangeValue1[1].format("YYYY-MM-DD");
           }
-          if (values["range-time-picker2"]) {
+          if (values["range-time-picker2"] && values["range-time-picker2"].length == 2) {
             const rangeValue2 = values["range-time-picker2"];
             var approvedatestart = rangeValue2[0].format("YYYY-MM-DD");
             var approvedateend = rangeValue2[1].format("YYYY-MM-DD");

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 15:16:07
- * @LastEditTime: 2021-11-02 15:27:23
+ * @LastEditTime: 2021-11-05 17:49:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/BatchApprove.vue
@@ -11,17 +11,31 @@
     <a-modal v-model="visible" title="匹配异常处理" @cancel="close" @ok="handleOk" centered width="90%">
       <div>
         <div class="tab">
-          <a-table :columns="columns" :data-source="list" size="small" :scroll="{ y: 600 }" :pagination="false" @change="handleTableChange" :rowKey="(list) => list.Id" :loading="loading" bordered>
+          <a-table
+            :columns="columns"
+            :data-source="list"
+            size="small"
+            :scroll="{ y: 600 }"
+            :pagination="false"
+            @change="handleTableChange"
+            :rowKey="(list) => list.Id"
+            :loading="loading"
+            bordered
+            :row-selection="{
+              selectedRowKeys: selectedRowKeys,
+              onChange: onSelectChange,
+            }"
+          >
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
               </div>
             </template>
             <div slot="UpdateQty" slot-scope="text, record">
-              <a-input-number v-model="record.UpdateQty" :min="0" />
+              <a-input-number v-model="record.UpdateQty" :min="0" :disabled="!record.isInput" />
             </div>
             <div slot="IsDel" slot-scope="text, record">
-              <a-checkbox v-model="record.IsDel"> </a-checkbox>
+              <a-checkbox v-model="record.IsDel" :disabled="!record.isInput"></a-checkbox>
             </div>
           </a-table>
         </div>
@@ -105,7 +119,7 @@ const columns = [
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 import { splitData } from "@/utils/util.js";
 export default {
-  props: ["batchid"],
+  props: ["batchid","BatchNo"],
   data() {
     return {
       columns,
@@ -168,6 +182,19 @@ export default {
         }
       });
     },
+    //多选
+    onSelectChange(selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys;
+      if (selectedRowKeys.length > 0) {
+        this.list.map((items) => {
+          items.isInput = this.setIsInput(items.Id);
+        });
+      } else {
+        this.list.map((items) => {
+          items.isInput = false;
+        });
+      }
+    },
     setIsInput(id) {
       return this.selectedRowKeys.includes(id);
     },
@@ -182,17 +209,17 @@ export default {
     handleOk() {
       let parmas = [];
       this.list.map((items) => {
-        console.log(items);
-        parmas.push({
-          Id: items.Id,
-          UpdateQty: items.UpdateQty,
-          IsDel: items.IsDel ? "Y" : "N",
-        });
+        if (items.isInput) {
+          parmas.push({
+            Id: items.Id,
+            UpdateQty: items.UpdateQty,
+            IsDel: items.IsDel ? "Y" : "N",
+          });
+        }
       });
-      console.log(parmas);
       mitemrequirementAction(parmas, "masterplan/errupdate").then((res) => {
         if (res.data.success) {
-          this.$message.success(`提示批次号【${this.batchid}】异常匹配信息处理成功!`);
+          this.$message.success(`提示批次号【${this.BatchNo}】异常匹配信息处理成功!`);
           this.$emit("succeed");
           this.$emit("closeModal");
         }

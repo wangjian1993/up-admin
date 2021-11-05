@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-02 16:36:35
+ * @LastEditTime: 2021-11-05 09:35:28
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -47,8 +47,8 @@
     <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow" @expand="fatherExpand" :expandedRowKeys="expandedRowKeys">
       <a-table slot="expandedRowRender" :loading="expandLoading" size="small" :rowKey="(data) => data.ITEM_ID" :columns="innerColumns" :data-source="innerData" :pagination="false" bordered>
         <template slot="ITEM_PROPERTY" slot-scope="text">
-        <span>{{ modelType(text) }}</span>
-      </template>
+          <span>{{ modelType(text) }}</span>
+        </template>
       </a-table>
       <template slot="index" slot-scope="text, record, index">
         <div>
@@ -220,6 +220,13 @@ const columns = [
 ];
 const innerColumns = [
   {
+    title: "阶层",
+    dataIndex: "LOWLEVEL",
+    scopedSlots: { customRender: "LOWLEVEL" },
+    align: "left",
+    width: 100,
+  },
+  {
     title: "序号",
     dataIndex: "INDEX",
     scopedSlots: { customRender: "INDEX" },
@@ -227,11 +234,11 @@ const innerColumns = [
     width: 60,
   },
   {
-    title: "阶层",
-    dataIndex: "LOWLEVEL",
-    scopedSlots: { customRender: "LOWLEVEL" },
+    title: "上阶品号",
+    dataIndex: "LAST_ITEM_CODE",
+    scopedSlots: { customRender: "LAST_ITEM_CODE" },
     align: "center",
-    width: 80,
+    width: 180,
   },
   {
     title: "元件品号",
@@ -415,6 +422,7 @@ export default {
       mitemcodeData: [],
       expandLoading: false,
       expandedRowKeys: [],
+      treeList: [],
     };
   },
   updated() {
@@ -456,6 +464,33 @@ export default {
           // this.getListAll();
         }
       });
+    },
+    calField(tree) {
+      tree.forEach((node) => {
+        if (node.children && node.children.length > 0) {
+          // console.log(node.children)
+          this.calField(node.children);
+          // node.Amount = node.children.reduce((sum, item) => ((sum += item.Amount), parseFloat(sum.toFixed(4))), 0);
+        } else {
+          // let sum = node.Amount * 1;
+          // node.Amount = parseFloat(sum.toFixed(4));
+          delete node.children;
+        }
+      });
+      return tree;
+    },
+    initTree(parent_id) {
+      // jsonArray 变量数据
+      // 第一次以后：根据id去查询parent_id相同的（相同为子数据）
+      // 第一次：查找所有parent_id为-1的数据组成第一级
+      const child = this.treeList.filter((item) => item.LAST_ITEM_CODE == parent_id);
+      // 第一次：循环parent_id为-1数组
+      return child.map((item) => ({
+        ...item,
+        // 当前存在id（id与parent_id应该是必须有的）调用initTree() 查找所有parent_id为本id的数据
+        // childs字段写入
+        children: this.initTree(item.ITEM_CODE),
+      }));
     },
     //获取列表数据
     getListAll() {
@@ -505,7 +540,10 @@ export default {
       };
       getERPReportAction(parmas, "getbomchildlevel").then((res) => {
         if (res.data.success) {
-          this.innerData = res.data.data.list;
+          this.treeList = res.data.data.list;
+          console.log(this.treeList);
+          this.innerData = this.initTree(record.ITEM_CODE);
+          this.calField(this.innerData);
         }
         this.expandLoading = false;
       });

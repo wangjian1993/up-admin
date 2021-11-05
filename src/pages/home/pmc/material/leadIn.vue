@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-21 15:41:26
+ * @LastEditTime: 2021-11-05 16:06:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/leadIn.vue
@@ -117,7 +117,7 @@ const columns = [
     align: "center",
   },
   {
-    title: "导入人员",
+    title: "PMC",
     dataIndex: "UserName",
     scopedSlots: { customRender: "UserName" },
     align: "center",

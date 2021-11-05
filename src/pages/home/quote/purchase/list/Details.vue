@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-30 16:01:57
+ * @LastEditTime: 2021-11-05 13:36:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -163,6 +163,12 @@ const columns = [
     width: "5%",
   },
   {
+    title: "最新金额",
+    dataIndex: "Amount2",
+    align: "center",
+    width: "5%",
+  },
+  {
     title: "提示",
     dataIndex: "Tips",
     scopedSlots: { customRender: "Tips" },
@@ -256,9 +262,12 @@ export default {
           // console.log(node.children)
           this.calField(node.children);
           node.Amount = node.children.reduce((sum, item) => ((sum += item.Amount), parseFloat(sum.toFixed(4))), 0);
+          node.Amount2 = node.children.reduce((sum, item) => ((sum += item.Amount2), parseFloat(sum.toFixed(4))), 0);
         } else {
           let sum = node.Amount * 1;
           node.Amount = parseFloat(sum.toFixed(4));
+          let sum2 = node.Amount2 * 1;
+          node.Amount2 = parseFloat(sum2.toFixed(4));
           delete node.children;
         }
       });

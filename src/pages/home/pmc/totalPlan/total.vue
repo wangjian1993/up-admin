@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-02 16:49:04
+ * @LastEditTime: 2021-11-05 17:49:26
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Total.vue
@@ -107,7 +107,7 @@
             <a-icon type="profile" />
             合并明细
           </a>
-          <a style="margin-right: 8px" @click="manage(record.Id, '4')" :disabled="!hasPerm('manage')">
+          <a style="margin-right: 8px" @click="manage(record.Id,record.BatchNo, '4')" :disabled="!hasPerm('manage')">
             <a-icon type="tool" />
             异常处理
           </a>
@@ -116,7 +116,7 @@
     </a-table>
     <a-empty v-else description="暂无权限" />
     <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
-    <batch-approve v-if="isApprove" :batchid="batchid"  @closeModal="closeUserModal" @succeed="getListAll"></batch-approve>
+    <batch-approve v-if="isApprove" :batchid="batchid" :BatchNo="BatchNo"  @closeModal="closeUserModal" @succeed="getListAll"></batch-approve>
     <!-- 查看详情 -->
   </div>
 </template>
@@ -219,7 +219,8 @@ export default {
       isUserList: false,
       stateList: [],
       batchid:"",
-      isApprove:false
+      isApprove:false,
+      BatchNo:""
     };
   },
   updated() {
@@ -249,10 +250,11 @@ export default {
       });
     },
     //异常处理
-    manage(BatchNo){
+    manage(BatchId,BatchNo){
       console.log("111")
       this.isApprove =true;
-      this.batchid = BatchNo
+      this.batchid = BatchId;
+      this.BatchNo =BatchNo
     },
     //pmc选择
     userSearch() {

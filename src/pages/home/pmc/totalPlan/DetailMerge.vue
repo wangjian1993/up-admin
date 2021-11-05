@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-02 16:27:58
+ * @LastEditTime: 2021-11-04 11:23:12
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/DetailMerge.vue
@@ -9,72 +9,74 @@
 
 <template>
   <div>
-    <a-form layout="horizontal" :form="searchForm">
-      <div>
-        <a-row>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入计划批号" allowClear style="width: 200px" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
-                <a-select-option value="">全部</a-select-option>
-                <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-week-picker placeholder="选择周" @change="weekChange" v-decorator="['week']" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['mitemcode']" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['mitemname']" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="导入时间选择" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-range-picker style="width: 400px" v-decorator="['range-time-picker']" show-time format="YYYY-MM-DD HH:mm:ss" />
-            </a-form-item>
-          </a-col>
-        </a-row>
+    <a-spin tip="导出中..." :spinning="isExportLod">
+      <a-form layout="horizontal" :form="searchForm">
+        <div>
+          <a-row>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input placeholder="请输入计划批号" allowClear style="width: 200px" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
+                  <a-select-option value="">全部</a-select-option>
+                  <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-week-picker placeholder="选择周" @change="weekChange" v-decorator="['week']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['mitemcode']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['mitemname']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="导入时间选择" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-range-picker style="width: 400px" v-decorator="['range-time-picker']" show-time format="YYYY-MM-DD HH:mm:ss" />
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </div>
+        <span style="float: right; margin-top: 3px;">
+          <a-button type="primary" @click="search">查询</a-button>
+          <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+        </span>
+      </a-form>
+      <div class="operator">
+        <a-button v-if="hasPerm('export')" :disabled="!isExport" type="primary" @click="handleExcel" icon="export">导出</a-button>
+        <a-button v-else type="primary" disabled @click="handleExcel" icon="export">导出</a-button>
       </div>
-      <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search">查询</a-button>
-        <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-      </span>
-    </a-form>
-    <div class="operator">
-      <a-button v-if="hasPerm('export')" :disabled="!isExport" type="primary" @click="handleExcel" icon="export">导出</a-button>
-      <a-button v-else type="primary" disabled @click="handleExcel" icon="export">导出</a-button>
-    </div>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 4000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" bordered>
-      <template slot="index" slot-scope="text, record, index">
-        <div>
-          <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-        </div>
-      </template>
-      <template slot="StatusName" slot-scope="text">
-        <div>
-          <a-tag :color="text === '待审' || text === '匹配错误' || text === '部分推送' || text === '推送异常' || text === '有差异_未确认' ? 'red' : 'green'">{{ text }}</a-tag>
-        </div>
-      </template>
-      <template slot="time" slot-scope="text">
-        <div v-if="text.RequirementQty > 0">
-          <span :style="{ color: 'red', fontWeight: '700' }">{{ text.RequirementQty }}</span>
-        </div>
-      </template>
-    </a-table>
-    <a-empty v-else description="暂无权限" />
-    <requirement v-if="isDetail" :detailData="detailData" @closeModal="closeModal"></requirement>
+      <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 4000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" bordered>
+        <template slot="index" slot-scope="text, record, index">
+          <div>
+            <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+          </div>
+        </template>
+        <template slot="StatusName" slot-scope="text">
+          <div>
+            <a-tag :color="text === '待审' || text === '匹配错误' || text === '部分推送' || text === '推送异常' || text === '有差异_未确认' ? 'red' : 'green'">{{ text }}</a-tag>
+          </div>
+        </template>
+        <template slot="time" slot-scope="text">
+          <div v-if="text.RequirementQty > 0">
+            <span :style="{ color: 'red', fontWeight: '700' }">{{ text.RequirementQty }}</span>
+          </div>
+        </template>
+      </a-table>
+      <a-empty v-else description="暂无权限" />
+      <requirement v-if="isDetail" :detailData="detailData" @closeModal="closeModal"></requirement>
+    </a-spin>
   </div>
 </template>
 
@@ -176,6 +178,7 @@ export default {
       isDetail: false,
       detailData: [],
       isExport: false,
+      isExportLod:false
     };
   },
   updated() {
@@ -403,6 +406,7 @@ export default {
     },
     //导出excel数据
     handleExcel() {
+      this.isExportLod =true
       let inputData = this.searchForm.getFieldsValue();
       let parmas = {
         pageindex: this.pagination.current,
@@ -454,6 +458,7 @@ export default {
             console.log(error);
             this.$message.error("导出数据失败");
           }
+          this.isExportLod =false
         }
       });
     },

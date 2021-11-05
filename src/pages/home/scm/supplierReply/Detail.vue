@@ -1,207 +1,209 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-01 14:51:01
+ * @LastEditTime: 2021-11-04 11:29:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Detail.vue
 -->
 <template>
   <div>
-    <a-form layout="horizontal" :form="searchForm">
-      <div :class="advanced ? null : 'fold'">
-        <a-row>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
-                <a-select-option value="">全部</a-select-option>
-                <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
-              <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-week-picker placeholder="选择周" @change="weekChange" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" allowClear placeholder="请输入计划批号" v-decorator="['batchid']" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-        <a-row v-if="advanced">
-          <a-col :md="6" :sm="24">
-            <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" allowClear placeholder="请输入BOM号" v-decorator="['mitemcode']" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="计划状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['planstatus']" placeholder="请选择计划状态" style="width: 200px">
-                <a-select-option value="">全部</a-select-option>
-                <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
-                  {{ item.ParamName }}
-                </a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </div>
-      <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search">查询</a-button>
-        <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-        <a @click="toggleAdvanced" style="margin-left: 8px">
-          {{ advanced ? "收起" : "展开" }}
-          <a-icon :type="advanced ? 'up' : 'down'" />
-        </a>
-      </span>
-    </a-form>
-    <div class="operator">
-      <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
-    </div>
-    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-      <div>
-        <a-row type="flex" justify="center">
-          <a-col :xxl="5" :xl="8" :lg="12"
-            ><div class="statistic" @click="getStatisticList('10000')">
-              <a-statistic title="已回复笔数:" :value="statistic.ReplyQty"
-                ><template #suffix>
-                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template
-              ></a-statistic></div
-          ></a-col>
-          <a-col  :xxl="5" :xl="8" :lg="12" class="statistic" @click="getStatisticList('01000')">
-            <a-statistic title="有差异笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.DiffQty"
-              ><template #suffix>
-                <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
-          ></a-col>
-          <a-col  :xxl="5" :xl="8" :lg="12"   class="statistic" @click="getStatisticList('00100')">
-            <a-statistic title="有差异属于我的笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.MeDiffQty"
-              ><template #suffix>
-                <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
-          ></a-col>
-          <a-col  :xxl="5" :xl="8" :lg="12"  class="statistic" @click="getStatisticList('00010')">
-            <a-statistic title="归属于我的未回复笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.MeNoReplyQty"
-              ><template #suffix>
-                <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
-          ></a-col>
-          <a-col  :xxl="4" :xl="8" :lg="12"   class="statistic" @click="getListAll">
-            <a-statistic title="总笔数:" :value="statistic.AllQty"
-              ><template #suffix>
-                <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
-          ></a-col>
-        </a-row>
-      </div>
-    </a-card>
-    <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2200 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource,index) => dataSource.Id + index" bordered>
-      <template slot="index" slot-scope="text, record, index">
-        <div>
-          <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+    <a-spin tip="导出中..." :spinning="isExportLod">
+      <a-form layout="horizontal" :form="searchForm">
+        <div :class="advanced ? null : 'fold'">
+          <a-row>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
+                  <a-select-option value="">全部</a-select-option>
+                  <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
+                <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-week-picker placeholder="选择周" @change="weekChange" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入计划批号" v-decorator="['batchid']" />
+              </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row v-if="advanced">
+            <a-col :md="6" :sm="24">
+              <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入BOM号" v-decorator="['mitemcode']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="计划状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['planstatus']" placeholder="请选择计划状态" style="width: 200px">
+                  <a-select-option value="">全部</a-select-option>
+                  <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
+                    {{ item.ParamName }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+          </a-row>
         </div>
-      </template>
-      <template slot="Status" slot-scope="text, record">
-        <div>
-          <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
-        </div>
-      </template>
-      <template slot="MatchStatus" slot-scope="text, record">
-        <div>
-          <a-tag :color="text === 'PUSHED_ERR' || text === 'ERR_MATCH' ? 'red' : 'green'">{{ record.MatchStatusName }}</a-tag>
-        </div>
-      </template>
-      <template slot="RequirementDate" slot-scope="text">
-        <p>{{ splitData(text) }}</p>
-      </template>
-      <template slot="PurchaseUserName" slot-scope="text">
-        <div>
-          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-        </div>
-      </template>
-      <template slot="SupplierReplyDate" slot-scope="text">
-        <div>
-          <p v-for="(item, index) in text" :key="index">{{ splitData(item) }}</p>
-        </div>
-      </template>
-      <template slot="SupplierReplyQty" slot-scope="text">
-        <div>
-          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-        </div>
-      </template>
-      <template slot="SupplierReplyDate" slot-scope="text">
-        <div>
-          <p v-for="(item, index) in text" :key="index">{{splitData(item) }}</p>
-        </div>
-      </template>
-      <template slot="PurchaseReplyResult" slot-scope="text">
-        <div>
-          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-        </div>
-      </template>
-      <template slot="SupplierName" slot-scope="text">
-        <div>
-          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-        </div>
-      </template>
-      <template slot="PurchaseOrderNo" slot-scope="text">
-        <div>
-          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-        </div>
-      </template>
-      <template slot="LineItem" slot-scope="text">
-        <div>
-          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-        </div>
-      </template>
-      <template slot="TransitQty" slot-scope="text">
-        <div>
-          <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-        </div>
-      </template>
-      <template slot="action" slot-scope="text, record">
-        <div>
-          <a style="margin-right: 8px" @click="details(record)">
-            <a-icon type="profile" />
-            详情
+        <span style="float: right; margin-top: 3px;">
+          <a-button type="primary" @click="search">查询</a-button>
+          <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+          <a @click="toggleAdvanced" style="margin-left: 8px">
+            {{ advanced ? "收起" : "展开" }}
+            <a-icon :type="advanced ? 'up' : 'down'" />
           </a>
+        </span>
+      </a-form>
+      <div class="operator">
+        <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
+      </div>
+      <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+        <div>
+          <a-row type="flex" justify="center">
+            <a-col :xxl="5" :xl="8" :lg="12"
+              ><div class="statistic" @click="getStatisticList('10000')">
+                <a-statistic title="已回复笔数:" :value="statistic.ReplyQty"
+                  ><template #suffix>
+                    <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template
+                ></a-statistic></div
+            ></a-col>
+            <a-col :xxl="5" :xl="8" :lg="12" class="statistic" @click="getStatisticList('01000')">
+              <a-statistic title="有差异笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.DiffQty"
+                ><template #suffix>
+                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+            ></a-col>
+            <a-col :xxl="5" :xl="8" :lg="12" class="statistic" @click="getStatisticList('00100')">
+              <a-statistic title="有差异属于我的笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.MeDiffQty"
+                ><template #suffix>
+                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+            ></a-col>
+            <a-col :xxl="5" :xl="8" :lg="12" class="statistic" @click="getStatisticList('00010')">
+              <a-statistic title="归属于我的未回复笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.MeNoReplyQty"
+                ><template #suffix>
+                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+            ></a-col>
+            <a-col :xxl="4" :xl="8" :lg="12" class="statistic" @click="getListAll">
+              <a-statistic title="总笔数:" :value="statistic.AllQty"
+                ><template #suffix>
+                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
+            ></a-col>
+          </a-row>
         </div>
-      </template>
-    </a-table>
-    <!-- 查看详情 -->
-    <div>
-      <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
-        <a-descriptions title="详情" :column="1">
-          <a-descriptions-item v-for="(item, index) in filterData" :key="index" :label="item.title">{{ drawerItem[item.dataIndex] || [] }}</a-descriptions-item>
-          <a-descriptions-item label="计划状态">
-            <div>
-              <a-tag :color="drawerItem.StatusName === '待审' || drawerItem.StatusName === '匹配错误' || drawerItem.StatusName === '部分推送' || drawerItem.StatusName === '推送异常' ? 'red' : 'green'">{{ drawerItem.StatusName }}</a-tag>
-            </div>
-          </a-descriptions-item>
-          <a-descriptions-item label="物料状态">
-            <div>
-              <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.Status === 'CANNOT_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
-            </div>
-          </a-descriptions-item>
-        </a-descriptions>
-      </a-drawer>
-    </div>
-     <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
+      </a-card>
+      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2400 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.Id + index" bordered>
+        <template slot="index" slot-scope="text, record, index">
+          <div>
+            <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+          </div>
+        </template>
+        <template slot="Status" slot-scope="text, record">
+          <div>
+            <a-tag :color="record.StatusName === '待审' || record.StatusName === '匹配错误' || record.StatusName === '部分推送' || record.StatusName === '推送异常' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
+          </div>
+        </template>
+        <template slot="MatchStatus" slot-scope="text, record">
+          <div>
+            <a-tag :color="text === 'PUSHED_ERR' || text === 'ERR_MATCH' ? 'red' : 'green'">{{ record.MatchStatusName }}</a-tag>
+          </div>
+        </template>
+        <template slot="RequirementDate" slot-scope="text">
+          <p>{{ splitData(text) }}</p>
+        </template>
+        <template slot="PurchaseUserName" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+          </div>
+        </template>
+        <template slot="SupplierReplyDate" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ splitData(item) }}</p>
+          </div>
+        </template>
+        <template slot="SupplierReplyQty" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+          </div>
+        </template>
+        <template slot="SupplierReplyDate" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ splitData(item) }}</p>
+          </div>
+        </template>
+        <template slot="PurchaseReplyResult" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+          </div>
+        </template>
+        <template slot="SupplierName" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+          </div>
+        </template>
+        <template slot="PurchaseOrderNo" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+          </div>
+        </template>
+        <template slot="LineItem" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+          </div>
+        </template>
+        <template slot="TransitQty" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+          </div>
+        </template>
+        <template slot="action" slot-scope="text, record">
+          <div>
+            <a style="margin-right: 8px" @click="details(record)">
+              <a-icon type="profile" />
+              详情
+            </a>
+          </div>
+        </template>
+      </a-table>
+      <!-- 查看详情 -->
+      <div>
+        <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
+          <a-descriptions title="详情" :column="1">
+            <a-descriptions-item v-for="(item, index) in filterData" :key="index" :label="item.title">{{ drawerItem[item.dataIndex] || [] }}</a-descriptions-item>
+            <a-descriptions-item label="计划状态">
+              <div>
+                <a-tag :color="drawerItem.StatusName === '待审' || drawerItem.StatusName === '匹配错误' || drawerItem.StatusName === '部分推送' || drawerItem.StatusName === '推送异常' ? 'red' : 'green'">{{ drawerItem.StatusName }}</a-tag>
+              </div>
+            </a-descriptions-item>
+            <a-descriptions-item label="物料状态">
+              <div>
+                <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.Status === 'CANNOT_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
+              </div>
+            </a-descriptions-item>
+          </a-descriptions>
+        </a-drawer>
+      </div>
+      <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
+    </a-spin>
   </div>
 </template>
 
 <script>
 import { getSupplierAction } from "@/services/web.js";
-import ExportExcel from "@/utils/ExportExcel";
+import ExportExcel from "@/utils/ExportExcelJS";
 const columns = [
   {
     title: "序号",
@@ -332,6 +334,7 @@ const columns = [
     scopedSlots: { customRender: "Status" },
     align: "center",
     fixed: "right",
+    width: 100,
   },
   {
     title: "物料状态",
@@ -339,20 +342,23 @@ const columns = [
     scopedSlots: { customRender: "MatchStatus" },
     align: "center",
     fixed: "right",
+    width: 100,
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
     fixed: "right",
+    align: "center",
+    width: 100,
   },
 ];
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { getParamData } from "@/services/admin.js";
 import { splitData } from "@/utils/util.js";
-import UserList from '@/components/app-user/UserList'
+import UserList from "@/components/app-user/UserList";
 export default {
-  components: {UserList},
+  components: { UserList },
   props: ["plantList"],
   data() {
     return {
@@ -380,7 +386,8 @@ export default {
       isSearch: false,
       statistic: [],
       stateList: [],
-      isUserList:false
+      isUserList: false,
+      isExportLod: false,
     };
   },
   updated() {
@@ -409,16 +416,16 @@ export default {
   methods: {
     splitData,
     //pmc选择
-    userSearch(){
-      this.isUserList =true
+    userSearch() {
+      this.isUserList = true;
     },
-    closeUserModal(){
-      this.isUserList =false
+    closeUserModal() {
+      this.isUserList = false;
     },
-    okUserModal(item){
-      this.isUserList =false;
+    okUserModal(item) {
+      this.isUserList = false;
       this.searchForm.setFieldsValue({
-        pmc:item.Name
+        pmc: item.Name,
       });
     },
     getParamData() {
@@ -440,7 +447,7 @@ export default {
       this.isDrawer = true;
       this.drawerItem = list;
       for (const key in this.drawerItem) {
-         return this.drawerItem[key].length > 0;
+        return this.drawerItem[key].length > 0;
       }
     },
     //重置搜索
@@ -569,7 +576,7 @@ export default {
           let SupplierReplyDate = [];
           let SupplierReplyQty = [];
           let PurchaseReplyResult = [];
-          let PurchaseChangeDate =[]
+          let PurchaseChangeDate = [];
           item.PurchaseOrderMatchList.map((items) => {
             PurchaseUserName.push(items.PurchaseUserName);
             SupplierName.push(items.SupplierName);
@@ -579,7 +586,7 @@ export default {
             SupplierReplyDate.push(items.SupplierReplyDate);
             SupplierReplyQty.push(items.SupplierReplyQty);
             PurchaseReplyResult.push(items.PurchaseReplyResult);
-            PurchaseChangeDate.push(items.PurchaseChangeDate)
+            PurchaseChangeDate.push(items.PurchaseChangeDate);
           });
           item.PurchaseUserName = PurchaseUserName;
           item.SupplierName = SupplierName;
@@ -589,12 +596,13 @@ export default {
           item.SupplierReplyDate = SupplierReplyDate;
           item.SupplierReplyQty = SupplierReplyQty;
           item.PurchaseReplyResult = PurchaseReplyResult;
-          item.PurchaseChangeDate =PurchaseChangeDate;
+          item.PurchaseChangeDate = PurchaseChangeDate;
         }
       });
       console.log(this.dataSource);
     },
     exportExcel() {
+      this.isExportLod = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
@@ -603,7 +611,7 @@ export default {
         if (res.data.success) {
           let list = res.data.data.list;
           list.forEach((item) => {
-             if (item.PurchaseOrderMatchList !== null && item.PurchaseOrderMatchList.length > 0) {
+            if (item.PurchaseOrderMatchList !== null && item.PurchaseOrderMatchList.length > 0) {
               let PurchaseUserName = [];
               let SupplierName = [];
               let PurchaseOrderNo = [];
@@ -631,9 +639,9 @@ export default {
               item.SupplierReplyQty = SupplierReplyQty;
               item.PurchaseReplyResult = PurchaseReplyResult;
             }
-            item.Status =item.StatusName;
-            item.MatchStatus =item.MatchStatusName;
-            item.RequirementDate = splitData(item.RequirementDate)
+            item.Status = item.StatusName;
+            item.MatchStatus = item.MatchStatusName;
+            item.RequirementDate = splitData(item.RequirementDate);
           });
           const dataSource = list.map((item) => {
             Object.keys(item).forEach((key) => {
@@ -661,6 +669,7 @@ export default {
             // console.log(error);
             this.$message.error("导出数据失败");
           }
+          this.isExportLod = false;
         }
       });
     },

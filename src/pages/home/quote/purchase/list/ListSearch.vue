@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-11-03 10:05:16
+ * @LastEditTime: 2021-11-05 14:19:52
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -151,7 +151,7 @@
                 <a-icon type="down" />
               </a>
               <a-menu slot="overlay">
-                <a-menu-item key="0" @click="handleExcel(record.Id,record.ItemCode)" :disabled="!hasPerm('export')">导出</a-menu-item>
+                <a-menu-item key="0" @click="handleExcel(record.Id, record.ItemCode)" :disabled="!hasPerm('export')">导出</a-menu-item>
                 <a-menu-item key="1" @click="reloadCost(record.Id, 'COPY')" :disabled="!hasPerm('copy')">复制报价</a-menu-item>
                 <a-menu-item key="2" @click="reloadCost(record.Id, 'ANEW')" :disabled="!hasPerm('again')">重新报价</a-menu-item>
                 <a-menu-item key="3" @click="history(record)" :disabled="!hasPerm('history')">历史版本</a-menu-item>
@@ -300,6 +300,11 @@ const excelHead = [
     align: "center",
   },
   {
+    title: "价格来源",
+    dataIndex: "PriceErpSource",
+    width: "5%",
+  },
+  {
     title: "E10单价",
     dataIndex: "PriceErp",
     scopedSlots: { customRender: "e10" },
@@ -321,6 +326,11 @@ const excelHead = [
   {
     title: "金额",
     dataIndex: "Amount",
+    align: "center",
+  },
+  {
+    title: "最新金额",
+    dataIndex: "Amount2",
     align: "center",
   },
   {
@@ -648,9 +658,12 @@ export default {
           // console.log(node.children)
           this.calField(node.children);
           node.Amount = node.children.reduce((sum, item) => ((sum += item.Amount), parseFloat(sum.toFixed(4))), 0);
+          node.Amount2 = node.children.reduce((sum, item) => ((sum += item.Amount2), parseFloat(sum.toFixed(4))), 0);
         } else {
           let sum = node.Amount * 1;
           node.Amount = parseFloat(sum.toFixed(4));
+          let sum2 = node.Amount2 * 1;
+          node.Amount2 = parseFloat(sum2.toFixed(4));
           delete node.children;
         }
       });
@@ -660,8 +673,6 @@ export default {
       // jsonArray 变量数据
       // 第一次以后：根据id去查询parent_id相同的（相同为子数据）
       // 第一次：查找所有parent_id为-1的数据组成第一级
-      console.log(this.exportData);
-      console.log(parent_id);
       const child = this.exportData.filter((item) => item.LastCode == parent_id);
       // 第一次：循环parent_id为-1数组
       return child.map((item) => ({
@@ -672,7 +683,7 @@ export default {
       }));
     },
     //导出数据
-    handleExcel(id,LastCode) {
+    handleExcel(id, LastCode) {
       let parmas = {
         Id: id,
       };
@@ -687,7 +698,7 @@ export default {
           for (let i = 0; i < 6; i++) {
             mergeTitle.push({
               s: { r: i, c: 1 },
-              e: { r: i, c: 14 },
+              e: { r: i, c: 15 },
             });
           }
           _data.push(["需求公司", info.EnterpriseName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
@@ -709,7 +720,7 @@ export default {
             });
             mergeTitle.push({
               s: { r: 6 + index, c: 3 },
-              e: { r: 6 + index, c: 14 },
+              e: { r: 6 + index, c: 15 },
             });
           });
           ConfigList.map((item, index) => {
@@ -734,37 +745,33 @@ export default {
           _data.push(["最终成本", info.FinalCost, null, null, null, null, null, null, null, null, null, null, null, null, null]);
           mergeTitle.push({
             s: { r: 6 + cost.length, c: 1 },
-            e: { r: 6 + cost.length, c: 14 },
+            e: { r: 6 + cost.length, c: 15 },
           });
           mergeTitle.push({
             s: { r: 7 + cost.length, c: 1 },
-            e: { r: 7 + cost.length, c: 14 },
+            e: { r: 7 + cost.length, c: 15 },
           });
           const columns = [];
           this.excelHead.map((item) => {
             columns.push(item.title);
           });
-          columns.splice(8, 0, "价格来源");
           _data.push(columns);
           let _data1 = [..._data];
           list.map((item) => {
             let array = [];
-            Object.keys(item).forEach((key) => {
-              array.push(item[key]);
+            this.excelHead.map((items) => {
+              array.push(item[items.dataIndex]);
             });
             _data.push(array);
           });
           let tree = this.initTree(LastCode);
-          console.log(tree);
           let treeData = this.calField(tree);
           console.log(treeData);
           treeData.map((item) => {
             let array1 = [];
             if (item.LvNo == 2) {
-              Object.keys(item).forEach((key) => {
-                if (key !== "children") {
-                  array1.push(item[key]);
-                }
+              this.excelHead.map((items) => {
+                array1.push(item[items.dataIndex]);
               });
               _data1.push(array1);
             }

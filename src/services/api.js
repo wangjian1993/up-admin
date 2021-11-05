@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-10-14 13:51:48
+ * @LastEditTime: 2021-11-05 14:38:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/api.js
@@ -10,14 +10,21 @@
 // const API_PROXY_PREFIX='/api'
 // const BASE_URL = process.env.NODE_ENV === 'production' ? process.env.VUE_APP_API_BASE_URL : API_PROXY_PREFIX
 // console.log("BASE_URL===",BASE_URL)
-var BASE_URL_MOCK = process.env.VUE_APP_API_BASE_URL;
+
 // if (process.env.NODE_ENV === 'production') {//生产环境地址
 //   BASE_URL_MOCK = 'http://192.168.0.240:8081'
 // } else {//开发环境地址
 //   BASE_URL_MOCK = 'http://192.168.1.245:6688'
 // }
-console.log("process.env.NODE_ENV",process.env)
-console.log("BASE_URL_MOCK==", BASE_URL_MOCK);
+var BASE_URL_MOCK;
+console.log(window.location);
+if (process.env.NODE_ENV == 'production') {
+  //正式服
+  BASE_URL_MOCK = window.location.host === '218.17.19.58:7003' ? 'http://218.17.19.58:7004' : 'http://192.168.0.240:8081';
+} else {
+  //测试
+  BASE_URL_MOCK = process.env.VUE_APP_API_BASE_URL;
+}
 const BASE_URL = "http://172.16.0.20"
 module.exports = {
   LOGIN: `${BASE_URL_MOCK}/login`,
