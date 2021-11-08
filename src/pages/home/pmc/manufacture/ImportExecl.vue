@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-11-01 11:12:46
+ * @LastEditTime: 2021-11-08 09:00:08
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
@@ -80,7 +80,7 @@ const columns = [
   },
   {
     title: "错误信息",
-    dataIndex: "content",
+    dataIndex: "ErrorMsg",
     align: "center",
   },
 ];
@@ -183,6 +183,30 @@ export default {
       }
       return toTransition(list);
     },
+    formatLongDate(date) {
+      let myyear = date.getFullYear();
+      let mymonth = date.getMonth() + 1;
+      let myweekday = date.getDate();
+      let myHour = date.getHours();
+      let myMin = date.getMinutes();
+      let mySec = date.getSeconds();
+      if (mymonth < 10) {
+        mymonth = "0" + mymonth;
+      }
+      if (myweekday < 10) {
+        myweekday = "0" + myweekday;
+      }
+      if (myHour < 10) {
+        myHour = "0" + myHour;
+      }
+      if (myMin < 10) {
+        myMin = "0" + myMin;
+      }
+      if (mySec < 10) {
+        mySec = "0" + mySec;
+      }
+      return myyear + "/" + mymonth + "/" + myweekday;
+    },
     handleOk() {
       if(this.isUpload){
         return;
@@ -235,22 +259,22 @@ export default {
         //错误信息判断
         if (typeof item.OrderQty !== "number" || item.OrderQty === "") {
           this.errorList.push({
-            content: `第${index + 1}行,"订单数量"数据(${item.OrderQty})错误,必须为数字`,
+            ErrorMsg: `第${index + 1}行,"订单数量"数据(${item.OrderQty})错误,必须为数字`,
           });
         }
         if (typeof item.PlanQty !== "number" || item.PlanQty === "") {
           this.errorList.push({
-            content: `第${index + 1}行,"计划数量"数据(${item.PlanQty})错误,必须为数字`,
+            ErrorMsg: `第${index + 1}行,"计划数量"数据(${item.PlanQty})错误,必须为数字`,
           });
         }
         if (typeof item.WorkHour !== "number" || item.WorkHour === "") {
           this.errorList.push({
-            content: `第${index + 1}行,"工时"数据(${item.WorkHour})错误,必须为数字`,
+            ErrorMsg: `第${index + 1}行,"工时"数据(${item.WorkHour})错误,必须为数字`,
           });
         }
         if (typeof item.PerCapiteCapacity !== "number" || item.PerCapiteCapacity === "") {
           this.errorList.push({
-            content: `第${index + 1}行,"人均标准产值"数据(${item.PerCapiteCapacity})错误,必须为数字`,
+            ErrorMsg: `第${index + 1}行,"人均标准产值"数据(${item.PerCapiteCapacity})错误,必须为数字`,
           });
         }
         //数据添加
@@ -281,7 +305,8 @@ export default {
           this.$message.success("导入成功!");
           this.close();
         } else {
-          this.$message.info(res.data.message.content);
+          this.errorList = res.data.data.list;
+          // this.$message.info(res.data.message.content);
         }
       });
     },
@@ -311,7 +336,7 @@ export default {
       reader.readAsArrayBuffer(file);
       reader.onload = (e) => {
         const data = e.target.result;
-        const { header, results } = excel.read(data, "array");
+        const { header, results } = excel.read1(data, "array");
         const tableTitle = header.map((item) => {
           let key = item.replace(/[\r\n]/g, "");
           return { key: key };

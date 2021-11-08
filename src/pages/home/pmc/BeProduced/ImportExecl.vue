@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-11-04 17:55:45
+ * @LastEditTime: 2021-11-08 14:20:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ImportExecl.vue
@@ -68,7 +68,7 @@ const columns = [
   },
   {
     title: "错误信息",
-    dataIndex: "content",
+    dataIndex: "ErrorMsg",
     align: "center",
   },
 ];
@@ -99,9 +99,11 @@ export default {
     removeFile() {
       this.fileList1 = [];
     },
+    //删除excel
     removeFile2() {
       this.fileList2 = [];
     },
+    //关闭弹窗
     close() {
       this.$emit("closeModal");
     },
@@ -109,13 +111,16 @@ export default {
     onClose() {
       this.isDrawer = false;
     },
+    //工厂选择
     plantChange(e) {
       this.plantId = e;
     },
+    //周选择
     weekChange(date, dateString) {
       let str = dateString.split("-");
       this.week = str[1].replace("周", "");
     },
+    //时间格式化
     formatLongDate(date) {
       let myyear = date.getFullYear();
       let mymonth = date.getMonth() + 1;
@@ -153,6 +158,7 @@ export default {
       }
       return year + (month < 10 ? "0" + month : month) + (date < 10 ? "0" + date : date);
     },
+    //确认提交
     handleOk() {
       this.errorList = [];
       //提交的数据格式
@@ -207,16 +213,19 @@ export default {
         this.$message.error("计划格式错误,请修改");
       }
     },
+    //上传导入数据
     submitExecl(parmas) {
       setMitemPlanAction(parmas, "import").then((res) => {
         if (res.data.success) {
           this.$message.success("导入成功!");
           this.close();
         } else {
-          this.$message.info(res.data.message.content);
+          // this.$message.info(res.data.message.content);
+           this.errorList = res.data.data.list;
         }
       });
     },
+    //格式excel数据
     paramsList(arr, content) {
       let totalArray = [];
       arr.forEach((item, index) => {
@@ -229,7 +238,7 @@ export default {
             case "需求数量":
               if (typeof item[key] !== "number" && item[key] !== "") {
                 this.errorList.push({
-                  content: `${content},第${index + 1}行,需求数量:数据'${item[key]}'错误,必须为数字`,
+                  ErrorMsg: `${content},第${index + 1}行,需求数量:数据'${item[key]}'错误,必须为数字`,
                 });
               } else {
                 list.RequirementQty = item[key];
@@ -252,7 +261,7 @@ export default {
             case "周":
               if ((typeof item[key] !== "number" && item[key] !== "") || item[key] < 0 || item[key] > 53) {
                 this.errorList.push({
-                  content: `${content},第${index + 1}行,周:数据'${item[key]}'错误`,
+                  ErrorMsg: `${content},第${index + 1}行,周:数据'${item[key]}'错误`,
                 });
               } else {
                 list.Week = item[key];
@@ -282,6 +291,7 @@ export default {
       }
       return false;
     },
+    //导入待产计划excel
     beforeUpload2(file) {
       const fileExt = file.name
         .split(".")

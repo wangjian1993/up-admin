@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-05 08:44:47
+ * @LastEditTime: 2021-11-08 15:42:14
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -518,8 +518,9 @@ export default {
             array.push(items.SHORTCUT);
             _data.push(array);
           });
-          _data.push([null, "制单:", null, "审核:", null, "核准:", null, null, null, "日期:", null]);
+          _data.push(["", "制单:", "", "审核:", "", "核准:", "", "", "日期:", ""]);
           let merges2 = [];
+          console.log(_data);
           let merges = [...mergeTitle, ...merges2]; // 合并单元格
           excelArray.push({
             Sheet: item.ITEM_CODE, // 下方tab切换名称

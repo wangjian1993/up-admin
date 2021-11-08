@@ -97,6 +97,18 @@ export const read = (data, type) => {
     const results = XLSX.utils.sheet_to_json(worksheet);
     return { header, results };
 }
+export const read1 = (data, type) => {
+    /* if type == 'base64' must fix data first */
+    // const fixedData = fixdata(data)
+    // const workbook = XLSX.read(btoa(fixedData), { type: 'base64' })
+    const workbook = XLSX.read(data, { type: type});
+    console.log(workbook.SheetNames)
+    const firstSheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[firstSheetName];
+    const header = get_header_row(worksheet);
+    const results = XLSX.utils.sheet_to_json(worksheet);
+    return { header, results };
+}
 export const readAll = (data, type) => {
     /* if type == 'base64' must fix data first */
     // const fixedData = fixdata(data)
@@ -127,5 +139,6 @@ export default {
     export_array_to_excel,
     export_json_to_excel,
     read,
+    read1,
     readAll
 }

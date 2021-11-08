@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-11-01 13:47:35
+ * @LastEditTime: 2021-11-08 15:32:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -66,7 +66,7 @@ const columns = [
   },
   {
     title: "错误信息",
-    dataIndex: "content",
+    dataIndex: "ErrorMsg",
     align: "center",
   },
 ];
@@ -119,9 +119,33 @@ export default {
       }
       return year + (month < 10 ? "0" + month : month) + (date < 10 ? "0" + date : date);
     },
+    formatLongDate(date) {
+      let myyear = date.getFullYear();
+      let mymonth = date.getMonth() + 1;
+      let myweekday = date.getDate();
+      let myHour = date.getHours();
+      let myMin = date.getMinutes();
+      let mySec = date.getSeconds();
+      if (mymonth < 10) {
+        mymonth = "0" + mymonth;
+      }
+      if (myweekday < 10) {
+        myweekday = "0" + myweekday;
+      }
+      if (myHour < 10) {
+        myHour = "0" + myHour;
+      }
+      if (myMin < 10) {
+        myMin = "0" + myMin;
+      }
+      if (mySec < 10) {
+        mySec = "0" + mySec;
+      }
+      return myyear + "/" + mymonth + "/" + myweekday;
+    },
     handleOk() {
-      if(this.isUpload){
-        return
+      if (this.isUpload) {
+        return;
       }
       this.errorList = [];
       //提交的数据格式
@@ -170,7 +194,7 @@ export default {
             case "交货数量":
               if (typeof item[key] !== "number" && item[key] !== "") {
                 this.errorList.push({
-                  content: `第${index + 1}行,交货数量:数据'${item[key]}'错误,必须为数字`,
+                  ErrorMsg: `第${index + 1}行,交货数量:数据'${item[key]}'错误,必须为数字`,
                 });
               } else {
                 list.RequirementQty = item[key];
@@ -178,10 +202,11 @@ export default {
               break;
             case "交货日期":
               // eslint-disable-next-line no-case-declarations
-              let time = this.formatDate(item[key]);
+              let time = this.formatLongDate(item[key]);
+              console.log(time);
               if (!time) {
                 this.errorList.push({
-                  content: `第${index + 1}行,交货日期:数据'${time}'错误,日期格式为:2008-08-08`,
+                  ErrorMsg: `第${index + 1}行,交货日期:数据'${time}'错误,日期格式为:2008-08-08`,
                 });
               } else {
                 list.RequirementDate = time;
@@ -199,16 +224,19 @@ export default {
         this.$message.error("物料信息格式错误,请修改");
       }
     },
+    //提交
     submitExecl(parmas) {
       mitemrequirementAction(parmas, "importv2").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.close();
         } else {
-          this.$message.info(res.data.message.content);
+          // this.$message.info(res.data.message.content);
+          this.errorList = res.data.data.list;
         }
       });
     },
+    //判断是否是日期
     IsDate(mystring) {
       var reg = /^(\d{4})-(\d{2})-(\d{2})$/;
       var str = mystring;
@@ -230,7 +258,7 @@ export default {
         this.isUpload = true;
         this.readFile(file);
         this.file = file;
-        console.log("上传====111")
+        console.log("上传====111");
       } else {
         this.$message.warning("文件类型错误,请重新上传");
       }
@@ -248,7 +276,7 @@ export default {
         });
         this.tableData = results; //这里的tableData就是拿到的excel表格中的数据
         this.tableTitle = tableTitle;
-        console.log("上传====222")
+        console.log("上传====222", this.tableData);
         this.isUpload = false;
       };
     },
@@ -269,7 +297,7 @@ export default {
 /deep/.ant-table {
   min-height: 0vh;
 }
-/deep/.ant-upload-list-item-name{
+/deep/.ant-upload-list-item-name {
   white-space: normal;
 }
 </style>
