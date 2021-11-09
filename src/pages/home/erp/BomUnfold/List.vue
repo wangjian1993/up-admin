@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-05 09:35:28
+ * @LastEditTime: 2021-11-09 10:15:53
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -617,11 +617,9 @@ export default {
 .ant-form-item {
   margin-bottom: 5px;
 }
-/deep/div {
-  -moz-user-select: none; /*火狐*/
-  -webkit-user-select: none; /*webkit浏览器*/
-  -ms-user-select: none; /*IE10*/
-  -khtml-user-select: none; /*早期浏览器*/
-  user-select: none;
+/deep/.ant-table-row-expand-icon{
+  width:22px;
+  height:22px;
+  line-height:17px;
 }
 </style>

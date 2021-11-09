@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-05 08:55:38
+ * @LastEditTime: 2021-11-09 09:46:21
  * @LastEditors: max
  * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
@@ -413,12 +413,5 @@ export default {
 <style scoped lang="less">
 .ant-form-item {
   margin-bottom: 5px;
-}
-/deep/div {
-  -moz-user-select: none; /*火狐*/
-  -webkit-user-select: none; /*webkit浏览器*/
-  -ms-user-select: none; /*IE10*/
-  -khtml-user-select: none; /*早期浏览器*/
-  user-select: none;
 }
 </style>

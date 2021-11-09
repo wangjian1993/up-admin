@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-08 10:57:09
- * @LastEditTime: 2021-10-25 18:17:06
+ * @LastEditTime: 2021-11-09 13:34:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/buyer/Buyer.vue
@@ -14,8 +14,10 @@
         <a-col :span="8">
           <div>
             <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="form">添加</a-button>
-            <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+            <a-button  v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 10px">删除</a-button>
             <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+            <a-button  :disabled="!hasPerm('import')" @click="importExcel" type="primary" icon="import" style="margin-left:10px">导入</a-button>
+            <a-button :disabled="!hasPerm('down')" @click="downloadExcel" type="primary" icon="download" style="margin-left:10px">模板下载</a-button>
             <span style="margin-left: 8px">
               <template v-if="hasSelected">
                 {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -147,6 +149,7 @@
     </div>
     <buyer-user v-if="isAddUser" @okModal="setUser" @closeModal="onClose"></buyer-user>
     <buyer-category v-if="isAddCategory" @okModal="okModal" @closeModal="onClose" :modelTypes="modelTypes"></buyer-category>
+    <import-execl v-if="isExecl" @closeModal="excelClose"></import-execl>
   </a-card>
 </template>
 <script>
@@ -176,6 +179,7 @@ const columns = [
     dataIndex: "MitemCategoryCodes",
     scopedSlots: { customRender: "MitemCategoryCodes" },
     align: "center",
+    width:"50%"
   },
   {
     title: "物料编码",
@@ -184,22 +188,11 @@ const columns = [
     align: "center",
   },
   {
-    title: "创建时间",
+    title: "导入时间",
     dataIndex: "DateTimeCreated",
     scopedSlots: { customRender: "DateTimeCreated" },
     align: "center",
-  },
-  {
-    title: "备注",
-    dataIndex: "Remarks",
-    scopedSlots: { customRender: "Remarks" },
-    align: "center",
-  },
-  {
-    title: "创建人",
-    dataIndex: "UserCreated",
-    scopedSlots: { customRender: "UserCreated" },
-    align: "center",
+    width:200
   },
   {
     title: "操作",
@@ -211,8 +204,9 @@ import { getBuyerAction, setBuyerAction } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
 import BuyerUser from "./BuyerUser.vue";
 import BuyerCategory from "./BuyerCategory.vue";
+import ImportExecl from './ImportExecl.vue'
 export default {
-  components: { BuyerUser, BuyerCategory },
+  components: { BuyerUser, BuyerCategory ,ImportExecl},
   data() {
     return {
       data: [],
@@ -270,6 +264,7 @@ export default {
       categorytags: [],
       modelTypes: "",
       categorysList: [],
+      isExecl:false
     };
   },
   updated() {
@@ -286,6 +281,13 @@ export default {
     // this.getCategorysList();
   },
   methods: {
+    importExcel(){
+      this.isExecl =true
+    },
+    excelClose(){
+      this.isExecl =false;
+      this.getListAll();
+    },
     //获取生产工厂
     getDemandEnter() {
       let parmas = {
@@ -567,6 +569,14 @@ export default {
         return;
       }
       this.getListAll();
+    },
+     //下载模板
+    downloadExcel() {
+      // window.location.open = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
+      window.open("./Upload/excel/20211008/采购负责物料导入模板.xlsx", '_blank');
+      // let a = document.createElement("a");
+      // a.href = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
+      // a.click();
     },
   },
 };

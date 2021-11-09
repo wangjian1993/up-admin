@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-10-30 15:00:20
+ * @LastEditTime: 2021-11-09 18:34:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
@@ -61,7 +61,7 @@
         </div>
         <div>
           <a-card title="BOM用量信息" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 500, x: 2700 }" :pagination="pagination" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName">
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 500, x: 2700 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName">
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -332,15 +332,13 @@ export default {
     getList() {
       this.loading = true;
       let parmas = {
-        pageindex: this.pagination.current,
-        pagesize: this.pagination.pageSize,
         bomid: this.info.BOM_ID || this.info.ITEM_BUSINESS_ID,
       };
       getERPReportAction(parmas, "getbomusinginfo").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
-          pagination.total = res.data.data.recordsTotal;
+          pagination.total = this.list.length;
           this.pagination = pagination;
           this.loading = false;
           this.isSearch = false;
@@ -397,13 +395,6 @@ export default {
 }
 /deep/.ant-card-head {
   padding: 0;
-}
-/deep/div {
-  -moz-user-select: none; /*火狐*/
-  -webkit-user-select: none; /*webkit浏览器*/
-  -ms-user-select: none; /*IE10*/
-  -khtml-user-select: none; /*早期浏览器*/
-  user-select: none;
 }
 /deep/.color2 {
   color: red;
