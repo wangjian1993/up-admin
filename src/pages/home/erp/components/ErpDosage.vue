@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-11-09 18:34:22
+ * @LastEditTime: 2021-11-10 16:17:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="BOM信息" @cancel="close" width="90%" :footer="null" centered>
+    <a-modal v-model="visible" title="BOM信息" @cancel="close" width="100%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-descriptions :column="5" bordered size="small" :class="antDescriptionsRow">
@@ -112,7 +112,7 @@ const columns = [
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
     align: "center",
-    width: 250,
+    width: 180,
   },
   {
     title: "快捷码",
@@ -126,7 +126,7 @@ const columns = [
     dataIndex: "ITEM_NAME",
     scopedSlots: { customRender: "ITEM_NAME" },
     align: "center",
-    width: 250,
+    width: 200,
     ellipsis: true,
   },
   {
@@ -156,7 +156,7 @@ const columns = [
     dataIndex: "DRAWING_NO",
     scopedSlots: { customRender: "DRAWING_NO" },
     align: "center",
-    width: 200,
+    width: 180,
   },
   {
     title: "单位",

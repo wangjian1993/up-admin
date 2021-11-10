@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-10-30 16:36:12
+ * @LastEditTime: 2021-11-10 16:05:43
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -886,24 +886,24 @@ export default {
       for (let i = 0; i < 6; i++) {
         mergeTitle.push({
           s: { r: i, c: 1 },
-          e: { r: i, c: 14 },
+          e: { r: i, c: 13 },
         });
       }
       let enterInfo = this.searchForm.getFieldsValue();
       let en = this.enterList.find((item) => item.EnterId === enterInfo.enterpriseid);
       let pl = this.plantList.find((item) => item.EnterId === enterInfo.plantid);
-      _data.push(["需求公司", en.EnterName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-      _data.push(["需求工厂", pl.EnterName || 0, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-      _data.push(["品号", info.ItemCode, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-      _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-      _data.push(["大类", info.ItemSort, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-      _data.push([" 产品规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["需求公司", en.EnterName, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["需求工厂", pl.EnterName || 0, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["品号", info.ItemCode, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["大类", info.ItemSort, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push([" 产品规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null]);
       let cost = [];
       ConfigList.map((item) => {
         cost = cost.concat(item.list);
       });
       cost.map((item, index) => {
-        let array = [item.CostSort, item.CostName, null, item.Amount || 0, null, null, null, null, null, null, null, null, null, null, null];
+        let array = [item.CostSort, item.CostName, null, item.Amount || 0, null, null, null, null, null, null, null, null, null, null];
         _data.push(array);
         mergeTitle.push({
           s: { r: 6 + index, c: 1 },
@@ -911,7 +911,7 @@ export default {
         });
         mergeTitle.push({
           s: { r: 6 + index, c: 3 },
-          e: { r: 6 + index, c: 14 },
+          e: { r: 6 + index, c: 13 },
         });
       });
       ConfigList.map((item, index) => {
@@ -928,40 +928,36 @@ export default {
           });
         }
       });
-      _data.push(["物料成本", this.cost.materialTotal, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-      _data.push(["最终成本", this.cost.ultimatelyTotal, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["物料成本", this.cost.materialTotal, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["最终成本", this.cost.ultimatelyTotal, null, null, null, null, null, null, null, null, null, null, null, null]);
       mergeTitle.push({
         s: { r: 6 + cost.length, c: 1 },
-        e: { r: 6 + cost.length, c: 14 },
+        e: { r: 6 + cost.length, c: 13},
       });
       mergeTitle.push({
         s: { r: 7 + cost.length, c: 1 },
-        e: { r: 7 + cost.length, c: 14 },
+        e: { r: 7 + cost.length, c: 13 },
       });
       const columns = [];
       this.excelHead.map((item) => {
         columns.push(item.title);
       });
-      columns.splice(8, 0, "价格来源");
       _data.push(columns);
       let _data1 = [..._data];
       list.map((item) => {
         let array = [];
-        Object.keys(item).forEach((key) => {
-          array.push(item[key]);
+        this.excelHead.map((items) => {
+          array.push(item[items.dataIndex]);
         });
         _data.push(array);
       });
       let tree = this.initTree(info.ItemCode);
       let treeData = this.calField(tree);
-      console.log(treeData);
       treeData.map((item) => {
         let array1 = [];
         if (item.LvNo == 2) {
-          Object.keys(item).forEach((key) => {
-            if (key !== "children") {
-              array1.push(item[key]);
-            }
+          this.excelHead.map((items) => {
+            array1.push(item[items.dataIndex]);
           });
           _data1.push(array1);
         }
@@ -991,6 +987,7 @@ export default {
         { wch: 10 }, // 备注
       ];
       let formStyle = {};
+      console.log(aoa);
       excelArray.push({
         Sheet: `展开显示`, // 下方tab切换名称
         data: aoa, // 表格数据
