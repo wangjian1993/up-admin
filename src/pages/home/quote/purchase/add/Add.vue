@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-11-10 16:05:43
+ * @LastEditTime: 2021-11-12 10:18:28
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -493,7 +493,7 @@ export default {
         if (res.data.success) {
           this.tableData = res.data.data.ItemInfo.ItemChildList;
           this.tableData.forEach((item) => {
-            item.CodeId = item.ChildCode + "_" + item.LastCode;
+            item.CodeId = item.ChildCode + "_" + item.LastCode + "_" + item.IndexNo;
           });
           this.searchList = this.tableData;
           this.costInfo = res.data.data.ItemInfo;
@@ -579,7 +579,7 @@ export default {
             if (res.data.success) {
               this.tableData = res.data.data.ItemInfo.ItemChildList;
               this.tableData.forEach((item) => {
-                item.CodeId = item.ChildCode + "_" + item.LastCode;
+                item.CodeId = item.ChildCode + "_" + item.LastCode +"_" + item.IndexNo;
               });
               this.searchList = this.tableData;
               this.searchList.forEach((item) => {

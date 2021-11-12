@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:40:45
- * @LastEditTime: 2021-11-05 09:08:03
+ * @LastEditTime: 2021-11-11 15:22:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/Result.vue
@@ -165,7 +165,7 @@ const columns = [
     width: "5%",
   },
   {
-    title: "待采购数量",
+    title: "需求数量",
     dataIndex: "PurchaseQty",
     scopedSlots: { customRender: "PurchaseQty" },
     align: "center",

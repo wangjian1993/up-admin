@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-11-08 09:00:08
+ * @LastEditTime: 2021-11-11 16:14:04
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
@@ -300,12 +300,15 @@ export default {
       }
     },
     submitExecl(parmas) {
+      this.isUpload =true
       dailyPlanAction(parmas, "import").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.close();
+          this.isUpload =false
         } else {
           this.errorList = res.data.data.list;
+          this.isUpload =false
           // this.$message.info(res.data.message.content);
         }
       });

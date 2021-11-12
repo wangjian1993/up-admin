@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-11-08 15:32:02
+ * @LastEditTime: 2021-11-12 10:00:10
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -202,14 +202,30 @@ export default {
               break;
             case "交货日期":
               // eslint-disable-next-line no-case-declarations
-              let time = this.formatLongDate(item[key]);
-              console.log(time);
-              if (!time) {
-                this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,交货日期:数据'${time}'错误,日期格式为:2008-08-08`,
-                });
-              } else {
-                list.RequirementDate = time;
+              console.log(typeof item[key])
+              //判断上传日期是否正确
+              //日期格式
+              if (typeof item[key] === "object") {
+                list.RequirementDate = this.formatLongDate(item[key]);
+              }
+              //字符串格式
+              if (typeof item[key] === "string") {
+                try {
+                  //字符串转换为日期
+                  let date = new Date(item[key]);
+                  let formatDate = this.formatLongDate(date);
+                  if (formatDate !== "NaN/NaN/NaN") {
+                    list.RequirementDate = formatDate;
+                  } else {
+                    this.errorList.push({
+                      ErrorMsg: `第${index + 1}行,交货日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                    });
+                  }
+                } catch (error) {
+                  this.errorList.push({
+                    ErrorMsg: `第${index + 1}行,交货日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                  });
+                }
               }
               break;
             default:
@@ -226,13 +242,16 @@ export default {
     },
     //提交
     submitExecl(parmas) {
+      this.isUpload = true;
       mitemrequirementAction(parmas, "importv2").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.close();
+          this.isUpload = false;
         } else {
           // this.$message.info(res.data.message.content);
           this.errorList = res.data.data.list;
+          this.isUpload = false;
         }
       });
     },

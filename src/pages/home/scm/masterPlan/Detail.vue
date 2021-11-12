@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-04 11:25:41
+ * @LastEditTime: 2021-11-12 18:04:05
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
@@ -72,7 +72,7 @@
       <div class="operator">
         <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
       </div>
-      <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+      <a-card class="card" :bordered="false" style="margin-top: 10px;" :bodyStyle="{ padding: '5px' }">
         <div>
           <a-row type="flex" justify="center">
             <a-col :sm="12" :md="12" :xl="6"
@@ -92,7 +92,7 @@
                 ><template #suffix>
                   <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
             ></a-col>
-            <a-col :sm="12" :md="12" :xl="6" class="statistic" @click="getListAll">
+            <a-col :sm="12" :md="12" :xl="6" class="statistic" @click="getListAll('statistic')">
               <a-statistic title="总笔数:" :value="statistic.AllQty"
                 ><template #suffix>
                   <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
@@ -100,7 +100,7 @@
           </a-row>
         </div>
       </a-card>
-      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
+      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2200 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -140,6 +140,11 @@
           </div>
         </template>
         <template slot="TransitQty" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+          </div>
+        </template>
+        <template slot="MatchedQty" slot-scope="text">
           <div>
             <p v-for="(item, index) in text" :key="index">{{ item }}</p>
           </div>
@@ -272,12 +277,19 @@ const columns = [
     dataIndex: "LineItem",
     scopedSlots: { customRender: "LineItem" },
     align: "center",
-    width: "50px",
+    width: "60px",
   },
   {
     title: "采购订单数量",
     dataIndex: "TransitQty",
     scopedSlots: { customRender: "TransitQty" },
+    align: "center",
+    width: "120px",
+  },
+   {
+    title: "已匹配数量",
+    dataIndex: "MatchedQty",
+    scopedSlots: { customRender: "MatchedQty" },
     align: "center",
     width: "100px",
   },
@@ -336,10 +348,11 @@ export default {
       plantid: "",
       week: "",
       drawerItem: [],
-      isSearch: false,
+      isSearch: 0,
       statistic: [],
       isUserList: false,
       isExportLod: false,
+      statisticType: "",
     };
   },
   updated() {
@@ -396,6 +409,7 @@ export default {
     reset() {
       this.getListAll();
       this.week = "";
+      this.isSearch = 0;
       this.searchForm.resetFields();
     },
     weekChange(date, dateString) {
@@ -432,24 +446,31 @@ export default {
           let PurchaseOrderNo = [];
           let LineItem = [];
           let TransitQty = [];
+          let MatchedQty =[]
           item.PurchaseOrderMatchList.map((items) => {
             PurchaseUserName.push(items.PurchaseUserName);
             SupplierName.push(items.SupplierName);
             PurchaseOrderNo.push(items.PurchaseOrderNo);
             LineItem.push(items.LineItem);
             TransitQty.push(items.TransitQty);
+            MatchedQty.push(items.RequirementQty);
           });
           item.PurchaseUserName = PurchaseUserName;
           item.SupplierName = SupplierName;
           item.PurchaseOrderNo = PurchaseOrderNo;
           item.LineItem = LineItem;
           item.TransitQty = TransitQty;
+          item.MatchedQty = MatchedQty
         }
       });
     },
     //获取列表
-    getListAll() {
+    getListAll(type) {
       this.loading = true;
+      if(type == "statistic"){
+        this.pagination.current = 1
+      }
+      this.statisticType = "";
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
@@ -466,19 +487,22 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch = false;
+          this.isSearch = 0;
         } else {
           this.loading = false;
         }
       });
     },
     getStatisticList(type) {
-      // console.log("111");
       this.loading = true;
+      this.statisticType = type;
+      if(this.statisticType !== type){
+        this.pagination.current = 1
+      }
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        fastcondition: type,
+        fastcondition: this.statisticType,
       };
       getScmAction(parmas, "requirement/detail/getall").then((res) => {
         if (res.data.success) {
@@ -488,7 +512,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch = false;
+          this.isSearch = 1;
         } else {
           this.loading = false;
         }
@@ -498,8 +522,12 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if (this.isSearch) {
+      if (this.isSearch == 2) {
         this.search();
+        return;
+      }
+      if(this.isSearch == 1){
+        this.getStatisticList(this.statisticType);
         return;
       }
       this.getListAll();
@@ -537,7 +565,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
-              this.isSearch = true;
+              this.isSearch = 2;
             }
           });
           // do something
@@ -560,18 +588,21 @@ export default {
               let PurchaseOrderNo = [];
               let LineItem = [];
               let TransitQty = [];
+              let MatchedQty = [];
               item.PurchaseOrderMatchList.map((items) => {
                 PurchaseUserName.push(items.PurchaseUserName);
                 SupplierName.push(items.SupplierName);
                 PurchaseOrderNo.push(items.PurchaseOrderNo);
                 LineItem.push(items.LineItem);
                 TransitQty.push(items.TransitQty);
+                 MatchedQty.push(items.RequirementQty);
               });
               item.PurchaseUserName = PurchaseUserName;
               item.SupplierName = SupplierName;
               item.PurchaseOrderNo = PurchaseOrderNo;
               item.LineItem = LineItem;
               item.TransitQty = TransitQty;
+              item.MatchedQty = MatchedQty
             }
             item.RequirementDate = splitData(item.RequirementDate);
           });

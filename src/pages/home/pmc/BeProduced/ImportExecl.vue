@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-11-08 14:20:58
+ * @LastEditTime: 2021-11-12 09:54:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ImportExecl.vue
@@ -221,7 +221,7 @@ export default {
           this.close();
         } else {
           // this.$message.info(res.data.message.content);
-           this.errorList = res.data.data.list;
+          this.errorList = res.data.data.list;
         }
       });
     },
@@ -246,14 +246,53 @@ export default {
               break;
             case "开工日期":
               if (item[key] != "") {
-                list.CommencementDate = this.formatLongDate(item[key], "-");
+                if (typeof item[key] === "object") {
+                  list.CommencementDate = this.formatLongDate(item[key]);
+                }
+                if (typeof item[key] === "string") {
+                  try {
+                    let date = new Date(item[key]);
+                    let formatDate = this.formatLongDate(date);
+                    console.log(Date);
+                    if (formatDate !== "NaN/NaN/NaN") {
+                      list.CommencementDate = formatDate;
+                    } else {
+                      this.errorList.push({
+                        ErrorMsg: `${content},第${index + 1}行,开工日期:数据'${item[key]}'错误,必须为2020-01-01或2020/01/01`,
+                      });
+                    }
+                  } catch (error) {
+                    this.errorList.push({
+                      ErrorMsg: `${content},第${index + 1}行,开工日期:数据'${item[key]}'错误,必须为2020-01-01或2020/01/01`,
+                    });
+                  }
+                }
               } else {
                 list.CommencementDate = "";
               }
               break;
             case "需求日期":
               if (item[key] != "") {
-                list.RequirementDate = this.formatLongDate(item[key], "-");
+                if (typeof item[key] === "object") {
+                  list.RequirementDate = this.formatLongDate(item[key]);
+                }
+                if (typeof item[key] === "string") {
+                  try {
+                    let date = new Date(item[key]);
+                    let formatDate = this.formatLongDate(date);
+                    if (formatDate !== "NaN/NaN/NaN") {
+                      list.CommencementDate = formatDate;
+                    } else {
+                      this.errorList.push({
+                        ErrorMsg: `${content},第${index + 1}行,需求日期:数据'${item[key]}'错误,必须为2020-01-01或2020/01/01`,
+                      });
+                    }
+                  } catch (error) {
+                    this.errorList.push({
+                      ErrorMsg: `${content},第${index + 1}行,需求日期:数据'${item[key]}'错误,必须为2020-01-01或2020/01/01`,
+                    });
+                  }
+                }
               } else {
                 list.RequirementDate = "";
               }

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2021-10-30 10:45:54
+ * @LastEditTime: 2021-11-11 15:25:23
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
@@ -106,7 +106,9 @@
               </a-tab-pane>
               <a-tab-pane key="7" tab="品号图片">
                 <div style="width:100%">
-                  <img style="width:100%;height:100%;" :src="imgUrl" alt="" />
+                  <viewer :images="images">
+                    <img style="width:100%;height:100%;" :src="imgUrl" alt="" />
+                  </viewer>
                 </div>
               </a-tab-pane>
               <a-tab-pane key="8" tab="品号附件"> </a-tab-pane>

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-11-03 16:24:57
+ * @LastEditTime: 2021-11-11 15:24:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/main.js
@@ -33,7 +33,13 @@ Vue.use(Plugins);
 import Print from 'vue-print-nb'
 Vue.use(Print); //注册
 bootstrap({ router, store, i18n, message: Vue.prototype.$message });
-
+import Viewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
+Vue.use(Viewer, {
+  defaultOptions: {
+    zIndex: 9999
+  }
+})
 new Vue({
   router,
   store,

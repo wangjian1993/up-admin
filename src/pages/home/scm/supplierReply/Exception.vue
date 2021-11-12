@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-04 11:30:42
+ * @LastEditTime: 2021-11-12 18:03:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
@@ -72,7 +72,7 @@
       <div class="operator">
         <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
       </div>
-      <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+      <a-card class="card" :bordered="false" style="margin-top: 10px;" :bodyStyle="{ padding: '5px' }">
         <div>
           <a-row type="flex" justify="center">
             <a-col :xxl="5" :xl="8" :lg="12"
@@ -97,7 +97,7 @@
                 ><template #suffix>
                   <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
             ></a-col>
-            <a-col :xxl="4" :xl="8" :lg="12" class="statistic" @click="getListAll">
+            <a-col :xxl="4" :xl="8" :lg="12" class="statistic" @click="getListAll('statistic')">
               <a-statistic title="总笔数:" :value="statistic.AllQty"
                 ><template #suffix>
                   <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
@@ -160,6 +160,11 @@
           </div>
         </template>
         <template slot="TransitQty" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+          </div>
+        </template>
+        <template slot="MatchedQty" slot-scope="text">
           <div>
             <p v-for="(item, index) in text" :key="index">{{ item }}</p>
           </div>
@@ -340,7 +345,14 @@ const columns = [
     dataIndex: "TransitQty",
     scopedSlots: { customRender: "TransitQty" },
     align: "center",
-    width: "60px",
+    width: "120px",
+  },
+  {
+    title: "已匹配数量",
+    dataIndex: "MatchedQty",
+    scopedSlots: { customRender: "MatchedQty" },
+    align: "center",
+    width: "100px",
   },
   {
     title: "计划状态",
@@ -400,7 +412,7 @@ export default {
       plantid: "",
       week: "",
       drawerItem: [],
-      isSearch: false,
+      isSearch: 0,
       statistic: [],
       stateList: [],
       adjustData: [],
@@ -408,6 +420,7 @@ export default {
       isDispose: false,
       disposeData: [],
       isExportLod: false,
+      statisticType: "",
     };
   },
   updated() {
@@ -501,8 +514,12 @@ export default {
       this.selectedRowKeys = selectedRowKeys;
     },
     //获取列表
-    getListAll() {
+    getListAll(type) {
       this.loading = true;
+      if (type == "statistic") {
+        this.pagination.current = 1;
+      }
+      this.statisticType = "";
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
@@ -515,7 +532,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch = false;
+          this.isSearch = 0;
         } else {
           this.loading = false;
         }
@@ -524,6 +541,10 @@ export default {
     getStatisticList(type) {
       // console.log("111");
       this.loading = true;
+      if (this.statisticType !== type) {
+        this.pagination.current = 1;
+      }
+      this.statisticType = type;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
@@ -537,7 +558,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch = false;
+          this.isSearch = 1;
         } else {
           this.loading = false;
         }
@@ -556,6 +577,7 @@ export default {
           let PurchaseReplyResult = [];
           let PurchaseChangeDate = [];
           let SumSupplierReplyQty = 0;
+          let MatchedQty = [];
           item.PurchaseOrderMatchList.map((items) => {
             PurchaseUserName.push(items.PurchaseUserName);
             SupplierName.push(items.SupplierName);
@@ -567,6 +589,7 @@ export default {
             PurchaseReplyResult.push(items.PurchaseReplyResult);
             PurchaseChangeDate.push(items.PurchaseChangeDate);
             SumSupplierReplyQty += items.SupplierReplyQty;
+            MatchedQty.push(items.RequirementQty);
           });
           item.PurchaseUserName = PurchaseUserName;
           item.SupplierName = SupplierName;
@@ -578,6 +601,7 @@ export default {
           item.SumSupplierReplyQty = SumSupplierReplyQty;
           item.PurchaseReplyResult = PurchaseReplyResult;
           item.PurchaseChangeDate = PurchaseChangeDate;
+          item.MatchedQty = MatchedQty;
         }
       });
     },
@@ -585,8 +609,12 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if (this.isSearch) {
+      if (this.isSearch == 2) {
         this.search();
+        return;
+      }
+      if (this.isSearch == 1) {
+        this.getStatisticList(this.statisticType);
         return;
       }
       this.getListAll();
@@ -624,7 +652,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
-              this.isSearch = true;
+              this.isSearch = 2;
             }
           });
           // do something
@@ -651,6 +679,7 @@ export default {
               let SupplierReplyQty = [];
               let PurchaseReplyResult = [];
               let PurchaseChangeDate = [];
+              let MatchedQty = [];
               item.PurchaseOrderMatchList.map((items) => {
                 PurchaseUserName.push(items.PurchaseUserName);
                 SupplierName.push(items.SupplierName);
@@ -661,6 +690,7 @@ export default {
                 SupplierReplyQty.push(items.SupplierReplyQty);
                 PurchaseReplyResult.push(items.PurchaseReplyResult);
                 PurchaseChangeDate.push(item.PurchaseChangeDate);
+                MatchedQty.push(items.RequirementQty);
               });
               item.PurchaseUserName = PurchaseUserName;
               item.SupplierName = SupplierName;
@@ -671,6 +701,7 @@ export default {
               item.SupplierReplyQty = SupplierReplyQty;
               item.PurchaseReplyResult = PurchaseReplyResult;
               item.PurchaseChangeDate = PurchaseChangeDate;
+              item.MatchedQty = MatchedQty;
             }
             item.Status = item.StatusName;
             item.MatchStatus = item.MatchStatusName;
