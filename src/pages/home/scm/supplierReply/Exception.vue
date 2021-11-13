@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-12 18:03:31
+ * @LastEditTime: 2021-11-13 16:24:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
@@ -105,7 +105,7 @@
           </a-row>
         </div>
       </a-card>
-      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2400 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
+      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2600 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -165,6 +165,11 @@
           </div>
         </template>
         <template slot="MatchedQty" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+          </div>
+        </template>
+        <template slot="SalesNos" slot-scope="text">
           <div>
             <p v-for="(item, index) in text" :key="index">{{ item }}</p>
           </div>
@@ -353,6 +358,13 @@ const columns = [
     scopedSlots: { customRender: "MatchedQty" },
     align: "center",
     width: "100px",
+  },
+   {
+    title: "关联销售订单",
+    dataIndex: "SalesNos",
+    scopedSlots: { customRender: "SalesNos" },
+    align: "center",
+    width: "120px",
   },
   {
     title: "计划状态",
@@ -578,6 +590,7 @@ export default {
           let PurchaseChangeDate = [];
           let SumSupplierReplyQty = 0;
           let MatchedQty = [];
+          let SalesNos =[]
           item.PurchaseOrderMatchList.map((items) => {
             PurchaseUserName.push(items.PurchaseUserName);
             SupplierName.push(items.SupplierName);
@@ -590,6 +603,7 @@ export default {
             PurchaseChangeDate.push(items.PurchaseChangeDate);
             SumSupplierReplyQty += items.SupplierReplyQty;
             MatchedQty.push(items.RequirementQty);
+            SalesNos.push(items.SalesNos)
           });
           item.PurchaseUserName = PurchaseUserName;
           item.SupplierName = SupplierName;
@@ -602,6 +616,7 @@ export default {
           item.PurchaseReplyResult = PurchaseReplyResult;
           item.PurchaseChangeDate = PurchaseChangeDate;
           item.MatchedQty = MatchedQty;
+          item.SalesNos =SalesNos
         }
       });
     },
@@ -680,6 +695,7 @@ export default {
               let PurchaseReplyResult = [];
               let PurchaseChangeDate = [];
               let MatchedQty = [];
+              let SalesNos =[]
               item.PurchaseOrderMatchList.map((items) => {
                 PurchaseUserName.push(items.PurchaseUserName);
                 SupplierName.push(items.SupplierName);
@@ -691,6 +707,7 @@ export default {
                 PurchaseReplyResult.push(items.PurchaseReplyResult);
                 PurchaseChangeDate.push(item.PurchaseChangeDate);
                 MatchedQty.push(items.RequirementQty);
+                SalesNos.push(items.SalesNos)
               });
               item.PurchaseUserName = PurchaseUserName;
               item.SupplierName = SupplierName;
@@ -702,6 +719,7 @@ export default {
               item.PurchaseReplyResult = PurchaseReplyResult;
               item.PurchaseChangeDate = PurchaseChangeDate;
               item.MatchedQty = MatchedQty;
+              item.SalesNos =SalesNos
             }
             item.Status = item.StatusName;
             item.MatchStatus = item.MatchStatusName;

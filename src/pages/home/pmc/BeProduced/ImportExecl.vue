@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-11-12 09:54:42
+ * @LastEditTime: 2021-11-13 17:17:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ImportExecl.vue
@@ -98,10 +98,14 @@ export default {
     //移除文件
     removeFile() {
       this.fileList1 = [];
+      this.tableData1 = []; //这里的tableData就是拿到的excel表格中的数据
+      this.tableTitle1 = [];
     },
     //删除excel
     removeFile2() {
       this.fileList2 = [];
+      this.tableData2 = []; //这里的tableData就是拿到的excel表格中的数据
+      this.tableTitle2 = [];
     },
     //关闭弹窗
     close() {
@@ -166,10 +170,10 @@ export default {
         this.$message.warning("请先选择生产工厂!");
         return;
       }
-      if (this.tableData1.length === 0) {
-        this.$message.warning("请先导入待产计划!");
-        return;
-      }
+      // if (this.tableData1.length === 0) {
+      //   this.$message.warning("请先导入待产计划!");
+      //   return;
+      // }
       if (this.tableData2.length === 0) {
         this.$message.warning("请先导入待排产计划!");
         return;
@@ -191,22 +195,23 @@ export default {
       for (let i = 0; i < table2.length; i++) {
         let res = table2[i];
         let obj = {};
-        this.tableTitle1.forEach((item) => {
+        this.tableTitle2.forEach((item) => {
           obj[item["key"]] = res[item["key"]] || "";
         });
         arr2.push(obj);
       }
-      console.log("arr=", arr1);
-      console.log("arr=", arr2);
       //拼接后台数据
+      console.log("arr1", arr1);
+      console.log("arr2", arr2);
       let WaitProctionDatas = this.paramsList(arr1, "待产计划");
       let WaitSchecduleDatas = this.paramsList(arr2, "待排产计划");
+      console.log(WaitProctionDatas);
+      console.log(WaitSchecduleDatas);
       let data = {
         PlantId: this.plantId,
         WaitProctionDatas: WaitProctionDatas,
         WaitSchecduleDatas: WaitSchecduleDatas,
       };
-      console.log(data);
       if (this.errorList.length == 0) {
         this.submitExecl(data);
       } else {

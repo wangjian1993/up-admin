@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-11-12 18:05:04
+ * @LastEditTime: 2021-11-13 16:22:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Exception.vue
@@ -100,7 +100,7 @@
           </a-row>
         </div>
       </a-card>
-      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
+      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2400 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -145,6 +145,11 @@
           </div>
         </template>
         <template slot="MatchedQty" slot-scope="text">
+          <div>
+            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+          </div>
+        </template>
+        <template slot="SalesNos" slot-scope="text">
           <div>
             <p v-for="(item, index) in text" :key="index">{{ item }}</p>
           </div>
@@ -275,6 +280,13 @@ const columns = [
     align: "center",
     width: "150px",
   },
+   {
+    title: "关联销售订单",
+    dataIndex: "SalesNos",
+    scopedSlots: { customRender: "SalesNos" },
+    align: "center",
+    width: "120px",
+  },
   {
     title: "行项目",
     dataIndex: "LineItem",
@@ -295,6 +307,13 @@ const columns = [
     scopedSlots: { customRender: "MatchedQty" },
     align: "center",
     width: "100px",
+  },
+   {
+    title: "关联销售订单",
+    dataIndex: "SalesNos",
+    scopedSlots: { customRender: "SalesNos" },
+    align: "center",
+    width: "120px",
   },
   {
     title: "计划状态",
@@ -460,21 +479,24 @@ export default {
           let PurchaseOrderNo = [];
           let LineItem = [];
           let TransitQty = [];
-          let MatchedQty= [];
+          let MatchedQty = [];
+          let SalesNos =[]
           item.PurchaseOrderMatchList.map((items) => {
             PurchaseUserName.push(items.PurchaseUserName);
             SupplierName.push(items.SupplierName);
             PurchaseOrderNo.push(items.PurchaseOrderNo);
             LineItem.push(items.LineItem);
             TransitQty.push(items.TransitQty);
-            MatchedQty.push(items.RequirementQty)
+            MatchedQty.push(items.RequirementQty);
+            SalesNos.push(items.SalesNos)
           });
           item.PurchaseUserName = PurchaseUserName;
           item.SupplierName = SupplierName;
           item.PurchaseOrderNo = PurchaseOrderNo;
           item.LineItem = LineItem;
           item.TransitQty = TransitQty;
-          item.MatchedQty =MatchedQty
+          item.MatchedQty = MatchedQty;
+          item.SalesNos =SalesNos
         }
       });
     },
@@ -601,13 +623,15 @@ export default {
               let LineItem = [];
               let TransitQty = [];
               let MatchedQty = [];
+              let SalesNos = [];
               item.PurchaseOrderMatchList.map((items) => {
                 PurchaseUserName.push(items.PurchaseUserName);
                 SupplierName.push(items.SupplierName);
                 PurchaseOrderNo.push(items.PurchaseOrderNo);
                 LineItem.push(items.LineItem);
                 TransitQty.push(items.TransitQty);
-                 MatchedQty.push(items.RequirementQty);
+                MatchedQty.push(items.RequirementQty);
+                SalesNos.push(items.SalesNos);
               });
               item.PurchaseUserName = PurchaseUserName;
               item.SupplierName = SupplierName;
@@ -615,6 +639,7 @@ export default {
               item.LineItem = LineItem;
               item.TransitQty = TransitQty;
               item.MatchedQty = MatchedQty;
+              item.SalesNos = SalesNos;
             }
             item.RequirementDate = splitData(item.RequirementDate);
           });

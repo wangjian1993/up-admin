@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-13 16:19:18
+ * @LastEditTime: 2021-11-13 16:01:21
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
+ * @FilePath: /up-admin/src/pages/home/production/dailyPlan/list.vue
 -->
 <template>
   <div>
@@ -14,9 +14,22 @@
           <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
-                  <a-select-option value="">全部</a-select-option>
+                <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
                   <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['workshopid']" style="width: 200px" placeholder="请选择生产车间" @change="workshopChange">
+                  <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产产线">
+                  <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -26,18 +39,13 @@
                 <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
               </a-form-item>
             </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-week-picker placeholder="选择周" @change="weekChange" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入计划批号" v-decorator="['batchid']" />
-              </a-form-item>
-            </a-col>
           </a-row>
-          <a-row v-if="advanced">
+          <a-row>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入生产批号" v-decorator="['batchno']" />
+              </a-form-item>
+            </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
@@ -49,13 +57,20 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="计划状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['planstatus']" placeholder="请选择计划状态" style="width: 200px">
+              <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['status']" placeholder="请选择计划状态" style="width: 200px">
                   <a-select-option value="">全部</a-select-option>
                   <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
                     {{ item.ParamName }}
                   </a-select-option>
                 </a-select>
+              </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row v-if="advanced">
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
               </a-form-item>
             </a-col>
           </a-row>
@@ -71,36 +86,29 @@
       </a-form>
       <div class="operator">
         <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
+        <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+        <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+        <span style="margin-left: 8px">
+          <template v-if="hasSelected">
+            {{ `共选中 ${selectedRowKeys.length} 条` }}
+          </template>
+        </span>
       </div>
-      <a-card class="card" :bordered="false" style="margin-top: 10px;" :bodyStyle="{ padding: '5px' }">
-        <div>
-          <a-row type="flex" justify="center">
-            <a-col :sm="12" :md="12" :xl="6"
-              ><div class="statistic" @click="getStatisticList('1000')">
-                <a-statistic title="已匹配笔数:" :value="statistic.MatchedQty"
-                  ><template #suffix>
-                    <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template
-                ></a-statistic></div
-            ></a-col>
-            <a-col :sm="12" :md="12" :xl="6" class="statistic" @click="getStatisticList('0100')">
-              <a-statistic title="未匹配笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.NoMatchQty"
-                ><template #suffix>
-                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
-            ></a-col>
-            <a-col :sm="12" :md="12" :xl="6" class="statistic" @click="getStatisticList('0010')">
-              <a-statistic title="未匹配属于我的笔数:" :value-style="{ color: '#cf1322' }" :value="statistic.MeQty"
-                ><template #suffix>
-                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
-            ></a-col>
-            <a-col :sm="12" :md="12" :xl="6" class="statistic" @click="getListAll('statistic')">
-              <a-statistic title="总笔数:" :value="statistic.AllQty"
-                ><template #suffix>
-                  <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
-            ></a-col>
-          </a-row>
-        </div>
-      </a-card>
-      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2200 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
+      <a-table
+        :columns="columns"
+        :data-source="dataSource"
+        size="small"
+        :scroll="{ y: scrollY, x: 2800 }"
+        :loading="loading"
+        :pagination="pagination"
+        @change="handleTableChange"
+        :rowKey="(dataSource) => dataSource.Id"
+        bordered
+        :row-selection="{
+          selectedRowKeys: selectedRowKeys,
+          onChange: onSelectChange,
+        }"
+      >
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -108,54 +116,21 @@
         </template>
         <template slot="StatusName" slot-scope="text">
           <div>
-            <a-tag :color="text === '待审' || text === '匹配错误' || text === '部分推送' || text === '推送异常' ? 'red' : 'green'">{{ text }}</a-tag>
-          </div>
-        </template>
-        <template slot="MatchStatusName" slot-scope="text">
-          <div>
-            <a-tag :color="text === '未匹配' || text === '多供应商无法匹配' || text === '匹配错误' || text === '推送异常' ? 'red' : 'green'">{{ text }}</a-tag>
-          </div>
-        </template>
-        <template slot="RequirementDate" slot-scope="text">
-          <p>{{ splitData(text) }}</p>
-        </template>
-        <template slot="PurchaseUserName" slot-scope="text">
-          <div>
-            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-          </div>
-        </template>
-        <template slot="SupplierName" slot-scope="text">
-          <div>
-            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-          </div>
-        </template>
-        <template slot="PurchaseOrderNo" slot-scope="text">
-          <div>
-            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-          </div>
-        </template>
-        <template slot="LineItem" slot-scope="text">
-          <div>
-            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-          </div>
-        </template>
-        <template slot="TransitQty" slot-scope="text">
-          <div>
-            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-          </div>
-        </template>
-        <template slot="MatchedQty" slot-scope="text">
-          <div>
-            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
-          </div>
-        </template>
-        <template slot="SalesNos" slot-scope="text">
-          <div>
-            <p v-for="(item, index) in text" :key="index">{{ item }}</p>
+            <a-tag :color="text === '待审' || text === '返工' ? 'red' : 'green'">{{ text }}</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">
           <div>
+            <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
+              <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+                <a-icon type="delete" />
+                删除
+              </a>
+            </a-popconfirm>
+            <a style="margin-right: 8px" :disabled="!hasPerm('edit')" @click="edit(record)">
+              <a-icon type="edit" />
+              编辑
+            </a>
             <a style="margin-right: 8px" @click="details(record)">
               <a-icon type="profile" />
               详情
@@ -168,31 +143,22 @@
         <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
           <a-descriptions title="详情" :column="1">
             <a-descriptions-item v-for="(item, index) in filterData" :key="index" :label="item.title">{{ drawerItem[item.dataIndex] }}</a-descriptions-item>
-            <a-descriptions-item label="计划状态">
+            <a-descriptions-item label="状态">
               <div>
-                <a-tag :color="drawerItem.StatusName === '待审' || drawerItem.StatusName === '匹配错误' || drawerItem.StatusName === '部分推送' || drawerItem.StatusName === '推送异常' ? 'red' : 'green'">{{ drawerItem.StatusName }}</a-tag>
-              </div>
-            </a-descriptions-item>
-            <a-descriptions-item label="物料状态">
-              <div>
-                <a-tag :color="drawerItem.MatchStatusName === '未匹配' || drawerItem.MatchStatusName === '匹配错误' || drawerItem.Status === 'CANNOT_MATCH' ? 'red' : 'green'">{{ drawerItem.MatchStatusName }}</a-tag>
-              </div>
-            </a-descriptions-item>
-            <a-descriptions-item label="错误信息">
-              <div>
-                <span>{{ drawerItem.Msg }}</span>
+                <a-tag :color="drawerItem.StatusName === '待审' || drawerItem.StatusName === '返工' ? 'red' : 'green'">{{ drawerItem.StatusName }}</a-tag>
               </div>
             </a-descriptions-item>
           </a-descriptions>
         </a-drawer>
       </div>
       <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
+      <edit v-if="isEdit" :editData="editData" @closeModal="closeEditModal" @succeed="getListAll"></edit>
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getScmAction } from "@/services/web.js";
+import { getDailyPlanAction, getWorkshopList, getLineList, setDailyPlanAction } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 const columns = [
   {
@@ -202,15 +168,9 @@ const columns = [
     width: "3%",
   },
   {
-    title: "计划批号",
+    title: "生产日计划批号",
     dataIndex: "BatchNo",
     scopedSlots: { customRender: "BatchNo" },
-    align: "center",
-  },
-  {
-    title: "PMC",
-    dataIndex: "UserName",
-    scopedSlots: { customRender: "UserName" },
     align: "center",
   },
   {
@@ -220,11 +180,44 @@ const columns = [
     align: "center",
   },
   {
-    title: "周",
-    dataIndex: "Week",
-    scopedSlots: { customRender: "Week" },
+    title: "生产车间",
+    dataIndex: "WorkShopName",
+    scopedSlots: { customRender: "WorkShopName" },
     align: "center",
-    width: "50px",
+  },
+  {
+    title: "产线",
+    dataIndex: "LineName",
+    scopedSlots: { customRender: "LineName" },
+    align: "center",
+  },
+  {
+    title: "PMC",
+    dataIndex: "UserName",
+    scopedSlots: { customRender: "UserName" },
+    align: "center",
+  },
+  {
+    title: "计划生产日期",
+    dataIndex: "PlanDate",
+    scopedSlots: { customRender: "PlanDate" },
+    align: "center",
+    width: "120px",
+    customRender: (text) => {
+      return splitData(text);
+    },
+  },
+  {
+    title: "工单号",
+    dataIndex: "WorkOrderNo",
+    scopedSlots: { customRender: "WorkOrderNo" },
+    align: "center",
+  },
+  {
+    title: "业务订单号",
+    dataIndex: "WorkOrderNo1",
+    scopedSlots: { customRender: "WorkOrderNo1" },
+    align: "center",
   },
   {
     title: "品号",
@@ -237,105 +230,106 @@ const columns = [
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
-    width: "150px",
+    width: "200px",
   },
   {
-    title: " 产品规格",
-    dataIndex: "Spec",
+    title: " 订单交期",
+    dataIndex: "OrderDeliveryDate",
     align: "center",
-    width: "350px",
+    width: "120px",
+    customRender: (text) => {
+      return splitData(text);
+    },
   },
   {
-    title: "需求日期",
-    dataIndex: "RequirementDate",
-    scopedSlots: { customRender: "RequirementDate" },
+    title: "下单日期",
+    dataIndex: "OrderDate",
+    scopedSlots: { customRender: "OrderDate" },
+    align: "center",
+    customRender: (text) => {
+      return splitData(text);
+    },
+  },
+  {
+    title: "订单数量",
+    dataIndex: "OrderQty",
+    scopedSlots: { customRender: "OrderQty" },
     align: "center",
   },
   {
-    title: "需求数量",
-    dataIndex: "RequirementQty",
-    scopedSlots: { customRender: "RequirementQty" },
+    title: "计划数量",
+    dataIndex: "PlanQty",
+    scopedSlots: { customRender: "PlanQty" },
     align: "center",
     width: "100px",
   },
   {
-    title: "负责采购",
-    dataIndex: "PurchaseUserName",
-    scopedSlots: { customRender: "PurchaseUserName" },
+    title: "人均标准产能",
+    dataIndex: "PerCapiteCapacity",
+    scopedSlots: { customRender: "PerCapiteCapacity" },
     align: "center",
   },
   {
-    title: "供应商",
-    dataIndex: "SupplierName",
-    scopedSlots: { customRender: "SupplierName" },
+    title: "工时",
+    dataIndex: "WorkHour",
+    scopedSlots: { customRender: "WorkHour" },
     align: "center",
   },
   {
-    title: "采购订单号",
-    dataIndex: "PurchaseOrderNo",
-    scopedSlots: { customRender: "PurchaseOrderNo" },
+    title: "物料库存情况",
+    dataIndex: "MaterialShortage",
+    scopedSlots: { customRender: "MaterialShortage" },
     align: "center",
     width: "150px",
   },
   {
-    title: "行项目",
-    dataIndex: "LineItem",
-    scopedSlots: { customRender: "LineItem" },
+    title: "开工日期",
+    dataIndex: "StartDateTime",
+    scopedSlots: { customRender: "StartDateTime" },
     align: "center",
-    width: "60px",
+    width: "100px",
+    customRender: (text) => {
+      return splitData(text);
+    },
   },
   {
-    title: "采购订单数量",
-    dataIndex: "TransitQty",
-    scopedSlots: { customRender: "TransitQty" },
+    title: "生产进度",
+    dataIndex: "ProductionSchedule",
+    scopedSlots: { customRender: "ProductionSchedule" },
     align: "center",
     width: "120px",
   },
   {
-    title: "已匹配数量",
-    dataIndex: "MatchedQty",
-    scopedSlots: { customRender: "MatchedQty" },
+    title: "备注",
+    dataIndex: "Remarks",
+    scopedSlots: { customRender: "Remarks" },
     align: "center",
     width: "100px",
   },
   {
-    title: "关联销售订单",
-    dataIndex: "SalesNos",
-    scopedSlots: { customRender: "SalesNos" },
-    align: "center",
-    width: "120px",
-  },
-  {
-    title: "计划状态",
+    title: "状态",
     dataIndex: "StatusName",
     scopedSlots: { customRender: "StatusName" },
     align: "center",
     fixed: "right",
-    width: 130,
-  },
-  {
-    title: "物料状态",
-    dataIndex: "MatchStatusName",
-    scopedSlots: { customRender: "MatchStatusName" },
-    align: "center",
-    fixed: "right",
-    width: 130,
+    width: 80,
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
     align: "center",
     fixed: "right",
-    width: 100,
+    width: 190,
   },
 ];
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import UserList from "@/components/app-user/UserList";
+import { getParamData } from "@/services/admin.js";
+import Edit from "./edit.vue";
 export default {
-  components: { UserList },
-  props: ["batchid", "stateList"],
+  components: { UserList, Edit },
   data() {
     return {
       scrollY: "",
@@ -365,6 +359,12 @@ export default {
       isUserList: false,
       isExportLod: false,
       statisticType: "",
+      stateList: [],
+      workshopList: [],
+      lineList: [],
+      workshopId: "",
+      editData: [],
+      isEdit: false,
     };
   },
   updated() {
@@ -372,14 +372,14 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(180);
+      this.scrollY = getTableScroll(70);
       this.searchForm.setFieldsValue({
         batchid: this.batchid,
       });
     });
     this.getListAll();
     this.getPlant();
-    this.getStatistic();
+    this.getParamData();
   },
   computed: {
     hasSelected() {
@@ -398,6 +398,9 @@ export default {
     //pmc选择
     userSearch() {
       this.isUserList = true;
+    },
+    closeEditModal() {
+      this.isEdit = false;
     },
     closeUserModal() {
       this.isUserList = false;
@@ -424,25 +427,74 @@ export default {
       this.isSearch = 0;
       this.searchForm.resetFields();
     },
+    //编辑
+    edit(item) {
+      this.isEdit = true;
+      this.editData = item;
+    },
     weekChange(date, dateString) {
       let str = dateString.split("-");
       this.week = str[1].replace("周", "");
+    },
+    getParamData() {
+      let parmas = {
+        groupcode: "DAILY_PRODUCTION_PLAN_STATUS",
+      };
+      getParamData(parmas).then((res) => {
+        if (res.data.success) {
+          this.stateList = res.data.data;
+        }
+      });
+    },
+    plantChange(e) {
+      if (e == "") return;
+      this.plantId = e;
+      this.searchForm.setFieldsValue({
+        workshopid: "",
+        lineid: "",
+      });
+      this.getWorkshopList();
+    },
+    //车间选择
+    workshopChange(e) {
+      if (e == "") return;
+      this.workshopId = e;
+      this.searchForm.setFieldsValue({
+        lineid: "",
+      });
+      this.getLineList();
     },
     getPlant() {
       let parmas1 = {
         entertypecode: "PLANT",
       };
-      getScmAction(parmas1, "requirement/getlistbytypecode").then((res) => {
+      getDailyPlanAction(parmas1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
         }
       });
     },
-    getStatistic() {
-      getScmAction("", "requirement/detail/gettotal").then((res) => {
+    //获取车间
+    getWorkshopList() {
+      let parmas = {
+        plantid: this.plantId,
+      };
+      getWorkshopList(parmas, "getlist").then((res) => {
         if (res.data.success) {
-          this.statistic = res.data.data;
+          this.workshopList = res.data.data;
+        }
+      });
+    },
+    //获取产线
+    getLineList() {
+      let parmas = {
+        plantid: this.plantId,
+        workshopId: this.workshopId,
+      };
+      getLineList(parmas).then((res) => {
+        if (res.data.success) {
+          this.lineList = res.data.data;
         }
       });
     },
@@ -450,84 +502,21 @@ export default {
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
-    setPurchaseOrderMatchList() {
-      this.dataSource.forEach((item) => {
-        if (item.PurchaseOrderMatchList !== null && item.PurchaseOrderMatchList.length > 0) {
-          let PurchaseUserName = [];
-          let SupplierName = [];
-          let PurchaseOrderNo = [];
-          let LineItem = [];
-          let TransitQty = [];
-          let MatchedQty = [];
-          let SalesNos = [];
-          item.PurchaseOrderMatchList.map((items) => {
-            PurchaseUserName.push(items.PurchaseUserName);
-            SupplierName.push(items.SupplierName);
-            PurchaseOrderNo.push(items.PurchaseOrderNo);
-            LineItem.push(items.LineItem);
-            TransitQty.push(items.TransitQty);
-            MatchedQty.push(items.RequirementQty);
-            SalesNos.push(items.SalesNos);
-          });
-          item.PurchaseUserName = PurchaseUserName;
-          item.SupplierName = SupplierName;
-          item.PurchaseOrderNo = PurchaseOrderNo;
-          item.LineItem = LineItem;
-          item.TransitQty = TransitQty;
-          item.MatchedQty = MatchedQty;
-          item.SalesNos = SalesNos;
-        }
-      });
-    },
     //获取列表
-    getListAll(type) {
+    getListAll() {
       this.loading = true;
-      if (type == "statistic") {
-        this.pagination.current = 1;
-      }
-      this.statisticType = "";
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        batchid: this.batchid || "",
       };
-      this.searchForm.setFieldsValue({
-        batchid: this.batchid,
-      });
-      getScmAction(parmas, "requirement/detail/getall").then((res) => {
+      getDailyPlanAction(parmas, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
-          this.setPurchaseOrderMatchList();
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
           this.isSearch = 0;
-        } else {
-          this.loading = false;
-        }
-      });
-    },
-    getStatisticList(type) {
-      this.loading = true;
-      this.statisticType = type;
-      if (this.statisticType !== type) {
-        this.pagination.current = 1;
-      }
-      let parmas = {
-        pageindex: this.pagination.current,
-        pagesize: this.pagination.pageSize,
-        fastcondition: this.statisticType,
-      };
-      getScmAction(parmas, "requirement/detail/getall").then((res) => {
-        if (res.data.success) {
-          this.dataSource = res.data.data.list;
-          this.setPurchaseOrderMatchList();
-          const pagination = { ...this.pagination };
-          pagination.total = res.data.data.recordsTotal;
-          this.pagination = pagination;
-          this.loading = false;
-          this.isSearch = 1;
         } else {
           this.loading = false;
         }
@@ -541,10 +530,6 @@ export default {
         this.search();
         return;
       }
-      if (this.isSearch == 1) {
-        this.getStatisticList(this.statisticType);
-        return;
-      }
       this.getListAll();
     },
     //收起展开
@@ -556,26 +541,28 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           console.log("Received values of form: ", values);
-          this.dataSourcedata = [];
-          this.pagination.total = 0;
-          if (this.week != "") {
-            var w = this.week;
+          if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
+            const rangeValue = values["range-time-picker"];
+            var begindate = rangeValue[0].format("YYYY-MM-DD");
+            var enddate = rangeValue[1].format("YYYY-MM-DD");
           }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            batchid: values.batchid,
-            week: w,
+            workshopid: values.workshopid,
+            lineid: values.lineid,
+            status: values.status,
             pmc: values.pmc,
-            planstatus: values.planstatus,
+            batchno: values.batchno,
             mitemcode: values.mitemcode,
             mitemname: values.mitemname,
+            begindate: begindate,
+            enddate: enddate,
           };
-          getScmAction(parmas, "requirement/detail/getall").then((res) => {
+          getDailyPlanAction(parmas, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
-              this.setPurchaseOrderMatchList();
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
@@ -587,13 +574,41 @@ export default {
         }
       });
     },
+    //单个删除
+    onDelete(item) {
+      let parmas = [];
+      parmas.push(item.Id);
+      setDailyPlanAction(parmas, "delete").then((res) => {
+        if (res.data.success) {
+          this.$message.success("删除成功!");
+          this.getParamGroupList();
+        }
+      });
+    },
+    //多选删除
+    allDel() {
+      let self = this;
+      self.$confirm({
+        title: "确定要删除选中内容",
+        onOk() {
+          setDailyPlanAction(self.selectedRowKeys, "delete").then((res) => {
+            if (res.data.success) {
+              self.selectedRowKeys = [];
+              self.$message.success("删除成功!");
+              self.getParamGroupList();
+            }
+          });
+        },
+        onCancel() {},
+      });
+    },
     exportExcel() {
       this.isExportLod = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
       };
-      getScmAction(parmas, "requirement/detail/getall").then((res) => {
+      getDailyPlanAction(parmas, "requirement/detail/getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           list.forEach((item) => {
@@ -604,7 +619,6 @@ export default {
               let LineItem = [];
               let TransitQty = [];
               let MatchedQty = [];
-              let SalesNos =[]
               item.PurchaseOrderMatchList.map((items) => {
                 PurchaseUserName.push(items.PurchaseUserName);
                 SupplierName.push(items.SupplierName);
@@ -612,7 +626,6 @@ export default {
                 LineItem.push(items.LineItem);
                 TransitQty.push(items.TransitQty);
                 MatchedQty.push(items.RequirementQty);
-                SalesNos.push(items.SalesNos)
               });
               item.PurchaseUserName = PurchaseUserName;
               item.SupplierName = SupplierName;
@@ -620,7 +633,6 @@ export default {
               item.LineItem = LineItem;
               item.TransitQty = TransitQty;
               item.MatchedQty = MatchedQty;
-              item.SalesNos = SalesNos;
             }
             item.RequirementDate = splitData(item.RequirementDate);
           });
@@ -672,6 +684,6 @@ export default {
   color: #000;
 }
 /deep/.ant-table {
-  min-height: 55vh;
+  min-height: 62vh;
 }
 </style>
