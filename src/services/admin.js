@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-14 08:51:07
- * @LastEditTime: 2021-10-26 16:54:49
+ * @LastEditTime: 2021-11-15 16:06:15
  * @LastEditors: max
  * @Description: 后台接口
  * @FilePath: /up-admin/src/services/admin.js
@@ -112,6 +112,10 @@ export async function getUserRoles(params) {
 }
 export async function userAction(params, action) {
 	return request(`${UP_ADMIN}/user/${action}`, METHOD.POST, params);
+}
+//同步用户信息
+export async function pullUserList(params) {
+	return request(`${UP_ADMIN}/user/sync/synctobase`, METHOD.POST, params);
 }
 
 /**

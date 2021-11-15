@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:39:23
- * @LastEditTime: 2021-11-11 15:23:02
+ * @LastEditTime: 2021-11-15 18:22:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ExportPlan.vue
@@ -78,7 +78,8 @@
 
 <script>
 import { getMitemPlanAction } from "@/services/web.js";
-import ExportExcel from "@/utils/ExportExcelJS";
+// import ExportExcel from "@/utils/ExportExcelJS";
+import { exportjsontoexcelMore } from "@/utils/exportExcel";
 import { splitData } from "@/utils/util.js";
 const columns = [
   {
@@ -115,7 +116,107 @@ const columns = [
     align: "center",
     width: 180,
   },
-   {
+  {
+    title: "子件规格",
+    dataIndex: "MitemSpec",
+    scopedSlots: { customRender: "MitemSpec" },
+    align: "center",
+    width: 180,
+  },
+  {
+    title: "需求日期",
+    dataIndex: "RequirementDate",
+    scopedSlots: { customRender: "RequirementDate" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "库存数量",
+    dataIndex: "StockQty",
+    scopedSlots: { customRender: "StockQty" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "待排产需求总数量",
+    dataIndex: "WaitScheduleQty",
+    scopedSlots: { customRender: "WaitScheduleQty" },
+    align: "center",
+    width: 160,
+  },
+  {
+    title: "待产需求总数量",
+    dataIndex: "WaitProductionQty",
+    scopedSlots: { customRender: "WaitProductionQty" },
+    align: "center",
+    width: 160,
+  },
+  {
+    title: "未来可用需求总量",
+    dataIndex: "FutureAvailableQty",
+    scopedSlots: { customRender: "FutureAvailableQty" },
+    align: "center",
+    width: 160,
+  },
+  {
+    title: "已预留总数",
+    dataIndex: "TotalReservedQty",
+    scopedSlots: { customRender: "TotalReservedQty" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "可用总数",
+    dataIndex: "AvailableQty",
+    scopedSlots: { customRender: "AvailableQty" },
+    align: "center",
+    width: "5%",
+  },
+  {
+    title: "需求数量",
+    dataIndex: "PurchaseQty",
+    scopedSlots: { customRender: "PurchaseQty" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "采购在途数量",
+    dataIndex: "TransitQty",
+    scopedSlots: { customRender: "TransitQty" },
+    align: "center",
+    width: 100,
+  },
+];
+const excelHead = [
+  {
+    title: "计划批号",
+    dataIndex: "BatchNo",
+    scopedSlots: { customRender: "BatchNo" },
+    align: "center",
+    width: 180,
+  },
+  {
+    title: "生产工厂",
+    dataIndex: "PlantName",
+    scopedSlots: { customRender: "PlantName" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "子件BOM号",
+    dataIndex: "MitemCode",
+    scopedSlots: { customRender: "MitemCode" },
+    align: "center",
+    width: 180,
+  },
+  {
+    title: "子件品名",
+    dataIndex: "MitemName",
+    scopedSlots: { customRender: "MitemName" },
+    align: "center",
+    width: 180,
+  },
+  {
     title: "子件规格",
     dataIndex: "MitemSpec",
     scopedSlots: { customRender: "MitemSpec" },
@@ -206,7 +307,7 @@ export default {
       isSearch: false,
       isUserList: false,
       isExport: false,
-      isExportLod :false
+      isExportLod: false,
     };
   },
   created() {
@@ -252,7 +353,7 @@ export default {
       this.getListAll();
       this.week = "";
       this.isExport = false;
-      this.isExportLod =false
+      this.isExportLod = false;
       this.searchForm.resetFields();
     },
     weekChange(date, dateString) {
@@ -329,7 +430,7 @@ export default {
               this.pagination = pagination;
               this.loading = false;
               this.isSearch = true;
-              this.isExport =true;
+              this.isExport = true;
             }
           });
           // do something
@@ -347,49 +448,127 @@ export default {
         return value.toString().length * 1.1;
       }
     },
+    getExcelList() {
+      let inputData = this.searchForm.getFieldsValue();
+      return new Promise((resolve, reject) => {
+        let parmas = {
+          pageindex: this.pagination.current,
+          pagesize: 500,
+          plantid: inputData.plantid,
+          batchno: inputData.batchno,
+        };
+        getMitemPlanAction(parmas, "result/getexport").then((res) => {
+          if (res.data.success) {
+            let list = res.data.data.list;
+            resolve(list);
+          } else {
+            reject();
+          }
+        });
+      });
+    },
+    async waitData() {
+      let n = await this.getExcelList();
+      return n;
+    },
+    exportFn(list) {
+      let inputData = this.searchForm.getFieldsValue();
+      let _data = [];
+      let excelArray = [];
+      let mergeTitle = [];
+      const hear = ["计划批号", "生产工厂", "子件BOM号", "子件品名", "子件规格", "需求日期", "库存数量", "待排产需求总数量", "待产需求总数量", "未来可用需求总量", "已预留总数", "可用总数", "需求数量", "采购在途数量"];
+      _data.push(hear);
+      list.map((item) => {
+        let array = [];
+        excelHead.map((items) => {
+          array.push(item[items.dataIndex]);
+        });
+        _data.push(array);
+      });
+      console.log(_data);
+      const sheetCols = [
+        { wch: 18 }, // 序号
+        { wch: 15 }, // 阶次
+        { wch: 18 }, // 类型
+        { wch: 20 }, // 上阶BOM号
+        { wch: 20 }, // 品号
+        { wch: 20 }, // 料名
+        { wch: 8 }, //  产品规格
+        { wch: 8 }, // 单位
+        { wch: 8 }, // 价格来源
+        { wch: 8 }, // E10单价
+        { wch: 8 }, // 单价
+        { wch: 8 }, // 用量
+        { wch: 8 }, // 金额
+        { wch: 8 }, // 提示
+        { wch: 8 }, // 备注
+      ];
+      let contentList = [];
+      let merges2 = []; // 设置表格内容单元格合并
+      let aoa = [..._data, ...contentList]; // 导出的数据
+      let merges = [...mergeTitle, ...merges2]; // 合并单元格
+      let formStyle = {};
+      excelArray.push({
+        Sheet: `物料需求计划`, // 下方tab切换名称
+        data: aoa, // 表格数据
+        merges, //  合并单元格
+        autoWidth: false, // 自适应宽度
+        formStyle: formStyle, // 特殊行或列样式
+        sheetCols,
+      });
+      try {
+        exportjsontoexcelMore({
+          dataList: excelArray,
+          bookType: "xlsx", // 导出类型
+          filename: `物料需求计划_${inputData.batchno}`, // 导出标题名
+        });
+        this.$message.success("导出数据成功!");
+      } catch (error) {
+        this.$message.error("导出数据失败");
+      }
+      // const dataSource = list;
+      // const header = [];
+      // this.columns.map((item) => {
+      //   if (item.dataIndex) {
+      //     header.push({ key: item.dataIndex, title: item.title });
+      //   }
+      // });
+      // try {
+      //   console.log("header", header);
+      //   console.log("dataSource", dataSource);
+      //   ExportExcel(header, dataSource, `物料需求计划_${inputData.batchno}.xlsx`);
+      //   this.$message.success("导出数据成功!");
+      // } catch (error) {
+      //   console.log(error);
+      //   this.$message.error("导出数据失败");
+      // }
+      this.isExportLod = false;
+    },
     exportExcel() {
       this.isExportLod = true;
-      let inputData = this.searchForm.getFieldsValue();
-      let parmas = {
-        pageindex: this.pagination.current,
-        pagesize: this.pagination.total,
-        plantid: inputData.plantid,
-        batchno: inputData.batchno,
-      };
-      getMitemPlanAction(parmas, "result/getexport").then((res) => {
-        if (res.data.success) {
-          let list = res.data.data.list;
-          const dataSource = list.map((item) => {
-            let colWidth = [];
-            Object.keys(item).forEach((key) => {
-              // 后端传null node写入会有问题
-              if (item[key] === null) {
-                item[key] = "";
-              }
-              if (Array.isArray(item[key])) {
-                item[key] = item[key].join(",");
-              }
-              colWidth.push(this.getCellWidth(item[key]));
-              item.RequirementDate = splitData(item.RequirementDate);
-            });
-            return item;
-          });
-          const header = [];
-          this.columns.map((item) => {
-            if (item.dataIndex) {
-              header.push({ key: item.dataIndex, title: item.title });
-            }
-          });
-          try {
-            ExportExcel(header, dataSource, `物料需求计划_${inputData.batchno}.xlsx`);
-            this.$message.success("导出数据成功!");
-          } catch (error) {
-            console.log(error);
-            this.$message.error("导出数据失败");
-          }
-          this.isExportLod = false;
+      let total = this.pagination.total;
+      if (total <= 500) {
+        this.getExcelList().then((res) => {
+          console.log(res);
+          this.exportFn(res);
+        });
+      } else {
+        let ssidTimes = Math.ceil(total / 500);
+        let arr = [];
+        for (let i = 0; i < ssidTimes; ++i) {
+          arr.push(this.waitData());
         }
-      });
+        Promise.all(arr)
+          .then((res) => {
+            let list = res.flat();
+            this.exportFn(list);
+            // loading.close();
+          })
+          .catch((err) => {
+            //  loading.close();
+            console.log("error", err);
+          });
+      }
     },
   },
 };

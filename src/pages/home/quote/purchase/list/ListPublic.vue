@@ -1,95 +1,93 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-11-05 14:20:14
+ * @LastEditTime: 2021-11-15 14:36:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
 -->
 <template>
   <div>
-    <div>
-      <div :class="advanced ? 'search' : null">
-        <a-form layout="horizontal" :form="searchForm">
-          <div :class="advanced ? null : 'fold'">
-            <a-row>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="需求公司" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-select
-                    placeholder="请选择需求公司"
-                    v-decorator="[
-                      'enterpriseid',
-                      {
-                        rules: [{ required: true, message: '请选择需求公司' }],
-                      },
-                    ]"
-                  >
-                    <a-select-option v-for="item in enterList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-select
-                    placeholder="请选择生产工厂"
-                    v-decorator="[
-                      'plantid',
-                      {
-                        rules: [{ required: true, message: '请选择生产工厂' }],
-                      },
-                    ]"
-                  >
-                    <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-select default-value="1" disabled>
-                    <a-select-option value="1">
-                      已审核
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <!-- <a-input placeholder="请输入产品大类" allowClear v-decorator="['itemsort']" /> -->
-                  <a-select show-search placeholder="请选择大类" option-filter-prop="children" style="width: 200px" :filter-option="filterOption" v-decorator="['itemsort']">
-                    <a-select-option v-for="(item, index) in categoryList" :value="item" :key="index">
-                      {{ item }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-            </a-row>
-            <a-row v-if="advanced">
-              <a-col :md="6" :sm="24">
-                <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-input placeholder="请输入品名" allowClear v-decorator="['itemname']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
-                  <a-input placeholder="请输入产品品号" allowClear v-decorator="['itemcode']" />
-                </a-form-item>
-              </a-col>
-            </a-row>
-            <a-row>
-              <a-col :md="24" :sm="24">
-                <span style="float: right; margin-top: 3px;">
-                  <a-button type="primary" :disabled="!hasPerm('search_public')" @click="search">查询</a-button>
-                  <a-button style="margin-left: 8px" :disabled="!hasPerm('search_public')" @click="reset">重置</a-button>
-                  <a @click="toggleAdvanced" style="margin-left: 8px">
-                    {{ advanced ? "收起" : "展开" }}
-                    <a-icon :type="advanced ? 'up' : 'down'" />
-                  </a>
-                </span>
-              </a-col>
-            </a-row>
-          </div>
-        </a-form>
-      </div>
+    <div :class="advanced ? 'search' : null" style="margin-bottom: 8px">
+      <a-form layout="horizontal" :form="searchForm">
+        <div :class="advanced ? null : 'fold'">
+          <a-row>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="需求公司" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-select
+                  placeholder="请选择需求公司"
+                  v-decorator="[
+                    'enterpriseid',
+                    {
+                      rules: [{ required: true, message: '请选择需求公司' }],
+                    },
+                  ]"
+                >
+                  <a-select-option v-for="item in enterList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-select
+                  placeholder="请选择生产工厂"
+                  v-decorator="[
+                    'plantid',
+                    {
+                      rules: [{ required: true, message: '请选择生产工厂' }],
+                    },
+                  ]"
+                >
+                  <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-select default-value="1" disabled>
+                  <a-select-option value="1">
+                    已审核
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <!-- <a-input placeholder="请输入产品大类" allowClear v-decorator="['itemsort']" /> -->
+                <a-select show-search placeholder="请选择大类" option-filter-prop="children" style="width: 200px" :filter-option="filterOption" v-decorator="['itemsort']">
+                  <a-select-option v-for="(item, index) in categoryList" :value="item" :key="index">
+                    {{ item }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row v-if="advanced">
+            <a-col :md="6" :sm="24">
+              <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-input placeholder="请输入品名" allowClear v-decorator="['itemname']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-input placeholder="请输入产品品号" allowClear v-decorator="['itemcode']" />
+              </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col :md="24" :sm="24">
+              <span style="float: right; margin-top: 3px;">
+                <a-button type="primary" :disabled="!hasPerm('search_public')" @click="search">查询</a-button>
+                <a-button style="margin-left: 8px" :disabled="!hasPerm('search_public')" @click="reset">重置</a-button>
+                <a @click="toggleAdvanced" style="margin-left: 8px">
+                  {{ advanced ? "收起" : "展开" }}
+                  <a-icon :type="advanced ? 'up' : 'down'" />
+                </a>
+              </span>
+            </a-col>
+          </a-row>
+        </div>
+      </a-form>
     </div>
     <div>
       <!-- <a-space class="operator">

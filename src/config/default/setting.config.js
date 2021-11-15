@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-23 17:17:47
- * @LastEditTime: 2021-08-26 15:53:04
+ * @LastEditTime: 2021-11-15 14:57:10
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/config/default/setting.config.js
@@ -10,7 +10,7 @@
 module.exports = {
     lang: 'CN', //语言，可选 CN(简体)、HK(繁体)、US(英语)，也可扩展其它语言
     theme: { //主题
-        color: '#1890ff', //主题色
+        color: '#0963BD', //主题色
         mode: 'dark', //主题模式 可选 dark、 light 和 night
         success: '#52c41a', //成功色
         warning: '#faad14', //警告色

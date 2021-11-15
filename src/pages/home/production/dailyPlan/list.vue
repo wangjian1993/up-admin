@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-13 16:01:21
+ * @LastEditTime: 2021-11-15 09:04:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/list.vue
@@ -165,13 +165,14 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width:50,
   },
   {
     title: "生产日计划批号",
     dataIndex: "BatchNo",
     scopedSlots: { customRender: "BatchNo" },
     align: "center",
+    width:120
   },
   {
     title: "生产工厂",
@@ -608,34 +609,9 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
       };
-      getDailyPlanAction(parmas, "requirement/detail/getall").then((res) => {
+      getDailyPlanAction(parmas, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
-          list.forEach((item) => {
-            if (item.PurchaseOrderMatchList !== null && item.PurchaseOrderMatchList.length > 0) {
-              let PurchaseUserName = [];
-              let SupplierName = [];
-              let PurchaseOrderNo = [];
-              let LineItem = [];
-              let TransitQty = [];
-              let MatchedQty = [];
-              item.PurchaseOrderMatchList.map((items) => {
-                PurchaseUserName.push(items.PurchaseUserName);
-                SupplierName.push(items.SupplierName);
-                PurchaseOrderNo.push(items.PurchaseOrderNo);
-                LineItem.push(items.LineItem);
-                TransitQty.push(items.TransitQty);
-                MatchedQty.push(items.RequirementQty);
-              });
-              item.PurchaseUserName = PurchaseUserName;
-              item.SupplierName = SupplierName;
-              item.PurchaseOrderNo = PurchaseOrderNo;
-              item.LineItem = LineItem;
-              item.TransitQty = TransitQty;
-              item.MatchedQty = MatchedQty;
-            }
-            item.RequirementDate = splitData(item.RequirementDate);
-          });
           const dataSource = list.map((item) => {
             Object.keys(item).forEach((key) => {
               // 后端传null node写入会有问题
@@ -656,7 +632,7 @@ export default {
           });
           var timestamp = Date.parse(new Date());
           try {
-            ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
+            ExportExcel(header, dataSource, `产线生产日计划_${timestamp}.xlsx`);
             this.$message.success("导出数据成功!");
           } catch (error) {
             // console.log(error);

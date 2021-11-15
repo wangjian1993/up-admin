@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-13 15:51:44
+ * @LastEditTime: 2021-11-15 09:04:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/kanban.vue
@@ -138,13 +138,14 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width:50,
   },
   {
     title: "生产日计划批号",
     dataIndex: "BatchNo",
     scopedSlots: { customRender: "BatchNo" },
     align: "center",
+    width:120
   },
   {
     title: "生产工厂",

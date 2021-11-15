@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-10-14 11:03:26
+ * @LastEditTime: 2021-11-15 14:46:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/App.vue
@@ -102,5 +102,8 @@ export default {
 }
 .ant-input[disabled],.ant-select-disabled,.ant-input-number-disabled{
   color:rgba(0,0,0,.5);
+}
+.operator{
+  margin-bottom: 10px;
 }
 </style>
