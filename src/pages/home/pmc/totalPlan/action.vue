@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-05 17:58:54
+ * @LastEditTime: 2021-11-16 13:53:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Action.vue
@@ -263,9 +263,9 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;

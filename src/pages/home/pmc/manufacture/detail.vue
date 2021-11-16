@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-11-04 11:22:43
+ * @LastEditTime: 2021-11-16 13:53:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/detail.vue
@@ -444,9 +444,9 @@ export default {
       return y + "-" + m + "-" + d + " " + h + ":" + minute + ":" + second;
     },
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           console.log("Received values of form: ", values);
           this.dataSourcedata = [];
           this.pagination.total = 0;

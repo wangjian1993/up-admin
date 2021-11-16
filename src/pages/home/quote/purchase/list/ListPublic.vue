@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-11-15 14:36:31
+ * @LastEditTime: 2021-11-16 13:55:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -454,9 +454,9 @@ export default {
     },
     //搜素
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+           this.loading = true;
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,

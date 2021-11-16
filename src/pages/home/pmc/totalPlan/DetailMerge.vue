@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-04 11:23:12
+ * @LastEditTime: 2021-11-16 13:54:11
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/DetailMerge.vue
@@ -297,9 +297,9 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           console.log("Received values of form: ", values.week);
           this.data = [];
           this.columns = JSON.parse(JSON.stringify(this.dColumns));

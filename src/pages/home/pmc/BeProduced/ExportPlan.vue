@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:39:23
- * @LastEditTime: 2021-11-15 18:22:16
+ * @LastEditTime: 2021-11-16 14:16:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ExportPlan.vue
@@ -72,6 +72,16 @@
         </a-drawer>
       </div>
       <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
+      <div>
+        <a-modal title="下载进度" :width="400" centered :closable="false" :visible="processVisible" :footer="null">
+          <div class="baseinfo">
+            <a-progress :percent="percent" class="baseProgess" />
+          </div>
+          <div class="baseinfoFoot">
+            <span class="baseinfoing"> {{ progressUp }}</span>
+          </div>
+        </a-modal>
+      </div>
     </a-spin>
   </div>
 </template>
@@ -308,6 +318,9 @@ export default {
       isUserList: false,
       isExport: false,
       isExportLod: false,
+      processVisible: false,
+      percent: 100,
+      progressUp: "下载中,请稍候.......",
     };
   },
   created() {
@@ -410,9 +423,9 @@ export default {
       this.advanced = !this.advanced;
     },
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           console.log("Received values of form: ", values);
           this.dataSourcedata = [];
           this.pagination.total = 0;
@@ -523,6 +536,9 @@ export default {
           filename: `物料需求计划_${inputData.batchno}`, // 导出标题名
         });
         this.$message.success("导出数据成功!");
+        this.percent = 100;
+        this.progressUp = "下载已完成";
+        this.processVisible = false;
       } catch (error) {
         this.$message.error("导出数据失败");
       }
@@ -545,7 +561,16 @@ export default {
       this.isExportLod = false;
     },
     exportExcel() {
+      setInterval(() => {
+        this.percent++;
+        if (this.percent == 90) {
+          this.percent = 90;
+          this.progressUp = "下载中,请稍候.......";
+        }
+      }, 500);
       this.isExportLod = true;
+      this.processVisible = true;
+      this.percent = 0;
       let total = this.pagination.total;
       if (total <= 500) {
         this.getExcelList().then((res) => {

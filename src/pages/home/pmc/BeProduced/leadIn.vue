@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-10-30 16:53:18
+ * @LastEditTime: 2021-11-16 13:52:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/leadIn.vue
@@ -322,9 +322,9 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+           this.loading = true;
           console.log("Received values of form: ", values);
           this.pagination.total = 0;
           if (this.week != "") {

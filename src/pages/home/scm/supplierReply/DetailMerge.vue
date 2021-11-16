@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:02:00
- * @LastEditTime: 2021-11-04 11:32:58
+ * @LastEditTime: 2021-11-16 13:57:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/DetailMerge.vue
@@ -261,9 +261,9 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           this.columns = JSON.parse(JSON.stringify(this.dColumns));
           this.data = [];
           this.pagination.total = 0;

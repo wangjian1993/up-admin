@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 10:40:23
- * @LastEditTime: 2021-11-12 15:52:07
+ * @LastEditTime: 2021-11-16 13:57:19
  * @LastEditors: max
  * @Description: 采购质检
  * @FilePath: /up-admin/src/pages/home/scm/quality/Quality.vue
@@ -556,9 +556,9 @@ export default {
       this.advanced = !this.advanced;
     },
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           this.dataSourcedata = [];
           this.pagination.total = 0;
           let parmas = {

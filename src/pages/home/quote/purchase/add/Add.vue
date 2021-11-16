@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-11-12 10:18:28
+ * @LastEditTime: 2021-11-16 13:55:44
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -571,9 +571,9 @@ export default {
     },
     //关键词搜索
     search() {
-      this.costLoading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.costLoading = true;
           this.searchData = values;
           getCostConfig(values, "getbomdetail").then((res) => {
             if (res.data.success) {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-04 18:22:28
+ * @LastEditTime: 2021-11-16 13:35:10
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/List.vue
@@ -491,9 +491,9 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           // console.log("Received values of form: ", values.week);
           if (values.itemcode == undefined && values.itemname == undefined && values.itemspecification == undefined) {
             this.$message.warning("请输入查询条件:品号,品名.规格");

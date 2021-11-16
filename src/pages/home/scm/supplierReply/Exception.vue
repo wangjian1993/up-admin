@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-13 16:24:12
+ * @LastEditTime: 2021-11-16 13:57:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
@@ -639,9 +639,9 @@ export default {
       this.advanced = !this.advanced;
     },
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           // console.log("Received values of form: ", values);
           this.dataSourcedata = [];
           this.pagination.total = 0;

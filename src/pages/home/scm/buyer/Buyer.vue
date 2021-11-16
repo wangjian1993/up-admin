@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-08 10:57:09
- * @LastEditTime: 2021-11-09 13:34:38
+ * @LastEditTime: 2021-11-16 13:56:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/buyer/Buyer.vue
@@ -363,9 +363,9 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 14:39:13
- * @LastEditTime: 2021-10-21 15:39:01
+ * @LastEditTime: 2021-11-16 13:52:54
  * @LastEditors: max
  * @Description: 生成部门配置
  * @FilePath: /up-admin/src/pages/home/pmc/department/Department.vue
@@ -389,9 +389,9 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;

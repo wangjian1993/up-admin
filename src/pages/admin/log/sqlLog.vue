@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-10-21 15:46:53
+ * @LastEditTime: 2021-11-16 13:51:16
  * @LastEditors: max
  * @Description: API日志
  * @FilePath: /up-admin/src/pages/admin/log/sqlLog.vue
@@ -270,9 +270,9 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           console.log(values.elapsetime);
           if (values.elapsetime == undefined && values.execumehtod == undefined && values.orderdesc == undefined && values["range-time-picker"] == undefined && values.type == undefined) {
             this.$message.warning("请输入要查询内容!");

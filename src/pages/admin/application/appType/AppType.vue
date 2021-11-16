@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-10-11 17:30:55
+ * @LastEditTime: 2021-11-16 13:50:37
  * @LastEditors: max
  * @Description: 应用类型
  * @FilePath: /up-admin/src/pages/admin/application/appType/AppType.vue
@@ -295,9 +295,9 @@ export default {
     },
     //关键词搜索
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;

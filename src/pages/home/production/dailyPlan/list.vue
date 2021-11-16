@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-15 09:04:12
+ * @LastEditTime: 2021-11-16 13:54:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/list.vue
@@ -538,9 +538,9 @@ export default {
       this.advanced = !this.advanced;
     },
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           console.log("Received values of form: ", values);
           if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
             const rangeValue = values["range-time-picker"];

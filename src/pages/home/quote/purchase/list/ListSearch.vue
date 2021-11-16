@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-11-05 14:19:52
+ * @LastEditTime: 2021-11-16 13:56:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -473,9 +473,9 @@ export default {
       });
     },
     search() {
-      this.loading = true;
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          this.loading = true;
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
