@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:39:23
- * @LastEditTime: 2021-11-16 14:16:28
+ * @LastEditTime: 2021-11-17 10:38:26
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ExportPlan.vue
@@ -37,7 +37,7 @@
         <a-button v-if="hasPerm('export')" :disabled="!isExport" type="primary" @click="exportExcel" icon="export">导出</a-button>
         <a-button v-else type="primary" disabled @click="exportExcel" icon="export">导出</a-button>
       </div>
-      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
+      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2300 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -196,6 +196,20 @@ const columns = [
     align: "center",
     width: 100,
   },
+  {
+    title: "PMC",
+    dataIndex: "Pmcs",
+    scopedSlots: { customRender: "Pmcs" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "业务单号",
+    dataIndex: "SalesOrderNos",
+    scopedSlots: { customRender: "SalesOrderNos" },
+    align: "center",
+    width: 100,
+  },
 ];
 const excelHead = [
   {
@@ -293,6 +307,20 @@ const excelHead = [
     title: "采购在途数量",
     dataIndex: "TransitQty",
     scopedSlots: { customRender: "TransitQty" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "PMC",
+    dataIndex: "Pmcs",
+    scopedSlots: { customRender: "Pmcs" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "业务单号",
+    dataIndex: "SalesOrderNos",
+    scopedSlots: { customRender: "SalesOrderNos" },
     align: "center",
     width: 100,
   },
@@ -489,7 +517,7 @@ export default {
       let _data = [];
       let excelArray = [];
       let mergeTitle = [];
-      const hear = ["计划批号", "生产工厂", "子件BOM号", "子件品名", "子件规格", "需求日期", "库存数量", "待排产需求总数量", "待产需求总数量", "未来可用需求总量", "已预留总数", "可用总数", "需求数量", "采购在途数量"];
+      const hear = ["计划批号", "生产工厂", "子件BOM号", "子件品名", "子件规格", "需求日期", "库存数量", "待排产需求总数量", "待产需求总数量", "未来可用需求总量", "已预留总数", "可用总数", "需求数量", "采购在途数量","PMC","业务单号"];
       _data.push(hear);
       list.map((item) => {
         let array = [];
@@ -514,7 +542,8 @@ export default {
         { wch: 8 }, // 用量
         { wch: 8 }, // 金额
         { wch: 8 }, // 提示
-        { wch: 8 }, // 备注
+        { wch: 20 }, // 备注
+        { wch: 20 }, // 备注
       ];
       let contentList = [];
       let merges2 = []; // 设置表格内容单元格合并

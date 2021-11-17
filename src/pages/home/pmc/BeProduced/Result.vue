@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:40:45
- * @LastEditTime: 2021-11-16 13:52:45
+ * @LastEditTime: 2021-11-17 09:40:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/Result.vue
@@ -31,7 +31,7 @@
         <a-button style="margin-left: 8px" @click="reset">重置</a-button>
       </span>
     </a-form>
-    <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
+    <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2200 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -175,6 +175,20 @@ const columns = [
     title: "采购在途数量",
     dataIndex: "TransitQty",
     scopedSlots: { customRender: "TransitQty" },
+    align: "center",
+    width: 100,
+  },
+   {
+    title: "PMC",
+    dataIndex: "Pmcs",
+    scopedSlots: { customRender: "Pmcs" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "业务单号",
+    dataIndex: "SalesOrderNos",
+    scopedSlots: { customRender: "SalesOrderNos" },
     align: "center",
     width: 100,
   },

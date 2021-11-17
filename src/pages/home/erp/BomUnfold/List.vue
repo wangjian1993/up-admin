@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-09 10:15:53
+ * @LastEditTime: 2021-11-17 18:24:09
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -45,7 +45,7 @@
       </div>
     </a-form>
     <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow" @expand="fatherExpand" :expandedRowKeys="expandedRowKeys">
-      <a-table slot="expandedRowRender" :loading="expandLoading" size="small" :rowKey="(data) => data.ITEM_ID" :columns="innerColumns" :data-source="innerData" :pagination="false" bordered>
+      <a-table slot="expandedRowRender" :loading="expandLoading" size="small" :rowKey="(data) => data.ITEM_ID" :columns="innerColumns" :data-source="innerData" :customRow="handleClickRow2" :pagination="false" bordered>
         <template slot="ITEM_PROPERTY" slot-scope="text">
           <span>{{ modelType(text) }}</span>
         </template>
@@ -81,6 +81,7 @@
     </a-table>
     <a-empty v-else description="暂无权限" />
     <erp-dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></erp-dosage>
+    <model-info v-if="isModelInfo" :modelData="modelData" @closeModal="closeModal"></model-info>
   </a-card>
 </template>
 <script>
@@ -389,8 +390,9 @@ import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData, modelType } from "@/utils/util.js";
 import ErpDosage from "../components/ErpDosage.vue";
+import ModelInfo from "../components/ModelInfo.vue";
 export default {
-  components: { ErpDosage },
+  components: { ErpDosage,ModelInfo},
   data() {
     return {
       data: [],
@@ -423,6 +425,8 @@ export default {
       expandLoading: false,
       expandedRowKeys: [],
       treeList: [],
+      isModelInfo:false,
+      modelData:[]
     };
   },
   updated() {
@@ -444,6 +448,7 @@ export default {
     modelType,
     closeModal() {
       this.isDosage = false;
+      this.isModelInfo =false
     },
     //物料需求详情
     detail(item) {
@@ -595,6 +600,22 @@ export default {
           dblclick: () => {
             this.isDosage = true;
             this.mitemcodeData = record;
+          },
+        },
+      };
+    },
+    handleClickRow2(record) {
+      return {
+        style: {
+          // 行背景色
+          cursor: "pointer",
+        },
+        on: {
+          dblclick: () => {
+            console.log(record);
+            this.isModelInfo = true;
+            this.modelData.ITEM_CODE = record.ITEM_CODE;
+            this.modelData.plantid = this.searchForm.getFieldsValue().plantid;
           },
         },
       };

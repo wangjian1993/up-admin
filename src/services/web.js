@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-11-13 09:26:06
+ * @LastEditTime: 2021-11-17 16:26:29
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -180,6 +180,12 @@ export function setMitemPlanAction(params,action) {
  */
  export function getDailyPlanAction(params,action) {
     return request(`${UP_WEB}/production/dailyplan/${action}`, METHOD.GET, params);
+}
+export function getPrintInfo(params,action) {
+    return request(`${UP_WEB}/production/print/${action}`, METHOD.GET, params);
+}
+export function setPrintInfo(params,action) {
+    return request(`${UP_WEB}/production/print/${action}`, METHOD.POST, params);
 }
 export function setDailyPlanAction(params,action) {
     return request(`${UP_WEB}/production/dailyplan/${action}`, METHOD.POST, params);

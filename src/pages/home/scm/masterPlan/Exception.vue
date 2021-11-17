@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 14:01:20
- * @LastEditTime: 2021-11-16 13:56:55
+ * @LastEditTime: 2021-11-17 16:13:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Exception.vue
@@ -279,13 +279,6 @@ const columns = [
     scopedSlots: { customRender: "PurchaseOrderNo" },
     align: "center",
     width: "150px",
-  },
-   {
-    title: "关联销售订单",
-    dataIndex: "SalesNos",
-    scopedSlots: { customRender: "SalesNos" },
-    align: "center",
-    width: "120px",
   },
   {
     title: "行项目",

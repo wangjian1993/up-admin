@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2021-11-11 15:25:23
+ * @LastEditTime: 2021-11-17 17:07:45
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
@@ -164,6 +164,7 @@ import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
 import { feedSystem, modelType } from "@/utils/BomParmas.js";
 import { general, storage, production, plant, finance } from "./common";
+import { uploadFile } from "@/services/admin.js";
 export default {
   props: ["modelData"],
   data() {
@@ -199,7 +200,24 @@ export default {
       };
       getERPReportAction(parmas, "getitemimage").then((res) => {
         if (res.data.success) {
-          this.imgUrl = res.data.data.imgUrl;
+          if (res.data.data.Status == -1 || res.data.data.Status == -2) {
+            this.updated(res.data.data);
+          } else {
+            this.imgUrl = res.data.data.ImgUrl;
+          }
+        }
+      });
+    },
+    updated(info) {
+      let parmas = {
+        FileName: info.FileName,
+        FileContent: info.FileContent,
+        FileSuffix: info.FileSuffix,
+      };
+      uploadFile(parmas).then((res) => {
+        if (res.data.success) {
+          // this.$message.success("上传成功!");
+          this.imgUrl = res.data.data.ImgUrl;
         }
       });
     },

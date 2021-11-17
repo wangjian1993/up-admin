@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-11-13 17:17:33
+ * @LastEditTime: 2021-11-17 09:19:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ImportExecl.vue
@@ -310,6 +310,9 @@ export default {
               } else {
                 list.Week = item[key];
               }
+              break;
+            case "PMC":
+              list.Pmc = item[key];
               break;
             default:
               break;

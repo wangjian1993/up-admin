@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-16 13:54:44
+ * @LastEditTime: 2021-11-17 16:56:23
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/kanban.vue
@@ -112,8 +112,8 @@
         </template>
         <template slot="action" slot-scope="text, record">
           <div>
-            <a style="margin-right: 8px" :disabled="!hasPerm('edit')" @click="edit(record)">
-              <a-icon type="edit" />
+            <a style="margin-right: 8px" :disabled="!hasPerm('print')" @click="handlePrint(record)">
+              <a-icon type="printer" />
               打印工单
             </a>
             <a style="margin-right: 8px" @click="details(record)">
@@ -126,192 +126,14 @@
       <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
       <remarks v-if="isEdit" :editData="editData" @closeModal="closeEditModal"></remarks>
       <a-details v-if="isDrawer" :detailsId="drawerItem.WorkOrderNo" @closeModal="closeEditModal"></a-details>
+      <print v-if="isPrint" :printData="printData" @closeModal="closeEditModal"></print>
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getDailyPlanAction, getWorkshopList, getLineList, setDailyPlanAction } from "@/services/web.js";
+import { getDailyPlanAction, getWorkshopList, getLineList, setDailyPlanAction,getPrintInfo} from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcelJS";
-const columns = [
-  {
-    title: "序号",
-    scopedSlots: { customRender: "index" },
-    align: "center",
-    width:50,
-  },
-  {
-    title: "生产日计划批号",
-    dataIndex: "BatchNo",
-    scopedSlots: { customRender: "BatchNo" },
-    align: "center",
-    width:120
-  },
-  {
-    title: "生产工厂",
-    dataIndex: "PlantName",
-    scopedSlots: { customRender: "PlantName" },
-    align: "center",
-  },
-  {
-    title: "生产车间",
-    dataIndex: "WorkShopName",
-    scopedSlots: { customRender: "WorkShopName" },
-    align: "center",
-  },
-  {
-    title: "产线",
-    dataIndex: "LineName",
-    scopedSlots: { customRender: "LineName" },
-    align: "center",
-  },
-  {
-    title: "PMC",
-    dataIndex: "UserName",
-    scopedSlots: { customRender: "UserName" },
-    align: "center",
-  },
-  {
-    title: "计划生产日期",
-    dataIndex: "PlanDate",
-    scopedSlots: { customRender: "PlanDate" },
-    align: "center",
-    width: "120px",
-    customRender: (text) => {
-      return splitData(text);
-    },
-  },
-  {
-    title: "工单号",
-    dataIndex: "WorkOrderNo",
-    scopedSlots: { customRender: "WorkOrderNo" },
-    align: "center",
-  },
-  {
-    title: "业务订单号",
-    dataIndex: "WorkOrderNo1",
-    scopedSlots: { customRender: "WorkOrderNo1" },
-    align: "center",
-  },
-  {
-    title: "品号",
-    dataIndex: "MitemCode",
-    scopedSlots: { customRender: "MitemCode" },
-    align: "center",
-  },
-  {
-    title: "品名",
-    dataIndex: "MitemName",
-    scopedSlots: { customRender: "MitemName" },
-    align: "center",
-    width: "200px",
-  },
-  {
-    title: " 订单交期",
-    dataIndex: "OrderDeliveryDate",
-    align: "center",
-    width: "120px",
-    customRender: (text) => {
-      return splitData(text);
-    },
-  },
-  {
-    title: "下单日期",
-    dataIndex: "OrderDate",
-    scopedSlots: { customRender: "OrderDate" },
-    align: "center",
-    customRender: (text) => {
-      return splitData(text);
-    },
-  },
-  {
-    title: "订单数量",
-    dataIndex: "OrderQty",
-    scopedSlots: { customRender: "OrderQty" },
-    align: "center",
-  },
-  {
-    title: "计划数量",
-    dataIndex: "PlanQty",
-    scopedSlots: { customRender: "PlanQty" },
-    align: "center",
-    width: "100px",
-  },
-  {
-    title: "人均标准产能",
-    dataIndex: "PerCapiteCapacity",
-    scopedSlots: { customRender: "PerCapiteCapacity" },
-    align: "center",
-  },
-  {
-    title: "工时",
-    dataIndex: "WorkHour",
-    scopedSlots: { customRender: "WorkHour" },
-    align: "center",
-  },
-  {
-    title: "物料库存情况",
-    dataIndex: "MaterialShortage",
-    scopedSlots: { customRender: "MaterialShortage" },
-    align: "center",
-    width: "150px",
-  },
-  {
-    title: "开工日期",
-    dataIndex: "StartDateTime",
-    scopedSlots: { customRender: "StartDateTime" },
-    align: "center",
-    width: "100px",
-    customRender: (text) => {
-      return splitData(text);
-    },
-  },
-  {
-    title: "生产进度",
-    dataIndex: "ProductionSchedule",
-    scopedSlots: { customRender: "ProductionSchedule" },
-    align: "center",
-    width: "120px",
-  },
-  {
-    title: "备注",
-    dataIndex: "Remarks",
-    scopedSlots: { customRender: "Remarks" },
-    align: "center",
-    width: "100px",
-  },
-  {
-    title: "物料领料情况",
-    dataIndex: "material",
-    scopedSlots: { customRender: "material" },
-    align: "center",
-    fixed: "right",
-    width: 110,
-  },
-  {
-    title: "生产备注",
-    dataIndex: "production_remarks",
-    scopedSlots: { customRender: "production_remarks" },
-    align: "center",
-    fixed: "right",
-    width: 130,
-  },
-  {
-    title: "状态",
-    dataIndex: "StatusName",
-    scopedSlots: { customRender: "StatusName" },
-    align: "center",
-    fixed: "right",
-    width: 80,
-  },
-  {
-    title: "操作",
-    scopedSlots: { customRender: "action" },
-    align: "center",
-    fixed: "right",
-    width: 100,
-  },
-];
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
@@ -319,8 +141,10 @@ import UserList from "@/components/app-user/UserList";
 import { getParamData } from "@/services/admin.js";
 import Remarks from "./remarks.vue";
 import ADetails from "./details.vue";
+import { columns } from "./data";
+import Print from "./print.vue";
 export default {
-  components: { UserList, Remarks, ADetails },
+  components: { UserList, Remarks, ADetails, Print },
   data() {
     return {
       scrollY: "",
@@ -356,6 +180,8 @@ export default {
       workshopId: "",
       editData: [],
       isEdit: false,
+      isPrint: false,
+      printData:[]
     };
   },
   updated() {
@@ -386,14 +212,26 @@ export default {
   },
   methods: {
     splitData,
+    handlePrint(item) {
+      let parmas = {
+        id: item.Id,
+      };
+      getPrintInfo(parmas, "getprintinfo").then((res) => {
+        if (res.data.success) {
+          this.isPrint = true;
+          this.printData = res.data.data
+        }
+      });
+    },
     //pmc选择
     userSearch() {
       this.isUserList = true;
     },
     closeEditModal() {
-      console.log("关闭")
+      console.log("关闭");
       this.isEdit = false;
-      this.isDrawer =false;
+      this.isDrawer = false;
+      this.isPrint =false;
     },
     closeUserModal() {
       this.isUserList = false;
@@ -513,11 +351,11 @@ export default {
         }
       });
     },
-    addListParmas(){
-      this.dataSource.map((item)=>{
-        item.material =""
-        item.production_remarks = ""
-      })
+    addListParmas() {
+      this.dataSource.map((item) => {
+        item.material = "";
+        item.production_remarks = "";
+      });
     },
     //分页
     handleTableChange(pagination) {
