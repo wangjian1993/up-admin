@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-09 09:45:52
+ * @LastEditTime: 2021-11-18 09:05:08
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -107,115 +107,24 @@
   </a-card>
 </template>
 <script>
-const columns = [
-  {
-    title: "序号",
-    scopedSlots: { customRender: "index" },
-    align: "center",
-    width: "3%",
-  },
-  {
-    title: "主件品号",
-    dataIndex: "ITEM_CODE",
-    scopedSlots: { customRender: "ITEM_CODE" },
-    align: "center",
-    width: 250,
-  },
-  {
-    title: "品名",
-    dataIndex: "ITEM_NAME",
-    scopedSlots: { customRender: "ITEM_NAME" },
-    align: "center",
-    width: 250,
-    ellipsis: true,
-  },
-  {
-    title: "规格",
-    dataIndex: "ITEM_SPECIFICATION",
-    scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-    align: "center",
-    width: 300,
-    ellipsis: true,
-  },
-  {
-    title: "图号",
-    dataIndex: "DRAWING_NO",
-    scopedSlots: { customRender: "DRAWING_NO" },
-    align: "center",
-    width: 150,
-  },
-  {
-    title: "单位",
-    dataIndex: "UNIT_NAME",
-    scopedSlots: { customRender: "UNIT_NAME" },
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "组成用量",
-    dataIndex: "QTY_PER",
-    scopedSlots: { customRender: "QTY_PER" },
-    align: "center",
-  },
-  {
-    title: "底数",
-    dataIndex: "DENOMINATOR",
-    scopedSlots: { customRender: "DENOMINATOR" },
-    align: "center",
-  },
-  {
-    title: "固定损耗量",
-    dataIndex: "FIXED_LOSS_RATE",
-    scopedSlots: { customRender: "FIXED_LOSS_RATE" },
-    align: "center",
-    width: 100,
-  },
-  {
-    title: "变动损耗",
-    dataIndex: "DYNAMIC_LOSS_RATE",
-    scopedSlots: { customRender: "DYNAMIC_LOSS_RATE" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "操作",
-    scopedSlots: { customRender: "action" },
-    align: "center",
-    fixed: "right",
-    width: 100,
-  },
-];
+
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
 import ErpDosage from "../components/ErpDosage.vue";
 import { feedSystem, modelType,stateType} from "@/utils/BomParmas.js";
+import {columns} from './data'
+import { PublicVar } from "@/mixins/publicVar.js";
 export default {
   components: { ErpDosage },
+  mixins: [PublicVar],
   data() {
     return {
       data: [],
       columns,
-      loading: false,
       isDosage: false,
-      pagination: {
-        current: 1,
-        total: 0,
-        pageSize: 20, //每页中显示10条数据
-        showSizeChanger: true,
-        showLessItems: true,
-        showQuickJumper: true,
-        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
-      },
-      selectedRows: [],
       isExecl: false,
-      selectedRowKeys: [],
-      scrollY: "",
-      searchForm: this.$form.createForm(this),
-      week: "",
-      isSearch: false,
       isDetail: false,
       detailData: [],
       plantList: [],

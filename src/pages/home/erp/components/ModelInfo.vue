@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2021-11-17 17:07:45
+ * @LastEditTime: 2021-11-18 10:49:50
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
@@ -200,11 +200,7 @@ export default {
       };
       getERPReportAction(parmas, "getitemimage").then((res) => {
         if (res.data.success) {
-          if (res.data.data.Status == -1 || res.data.data.Status == -2) {
-            this.updated(res.data.data);
-          } else {
-            this.imgUrl = res.data.data.ImgUrl;
-          }
+          this.imgUrl = res.data.data.ImgUrl;
         }
       });
     },

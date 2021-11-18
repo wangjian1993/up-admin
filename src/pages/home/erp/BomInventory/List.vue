@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-16 13:35:10
+ * @LastEditTime: 2021-11-18 09:03:20
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/List.vue
@@ -103,303 +103,24 @@
   </div>
 </template>
 <script>
-const columns = [
-  {
-    title: "序号",
-    scopedSlots: { customRender: "index" },
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "品号",
-    dataIndex: "ITEM_CODE",
-    scopedSlots: { customRender: "ITEM_CODE" },
-    align: "center",
-    width: 200,
-  },
-  {
-    title: "快捷码",
-    dataIndex: "SHORTCUT",
-    scopedSlots: { customRender: "SHORTCUT" },
-    align: "center",
-    width: 150,
-    ellipsis: true,
-  },
-  {
-    title: "品名",
-    dataIndex: "ITEM_NAME",
-    scopedSlots: { customRender: "ITEM_NAME" },
-    align: "center",
-    width: 250,
-    ellipsis: true,
-  },
-  {
-    title: "规格",
-    dataIndex: "ITEM_SPECIFICATION",
-    scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-    align: "center",
-    width: 300,
-    ellipsis: true,
-  },
-  {
-    title: "库存数量",
-    dataIndex: "INVENTORY_QTY",
-    scopedSlots: { customRender: "INVENTORY_QTY" },
-    align: "center",
-    width: 150,
-    ellipsis: true,
-  },
-  {
-    title: "工厂编号",
-    dataIndex: "PLANT_CODE",
-    scopedSlots: { customRender: "PLANT_CODE" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "工厂/储运",
-    dataIndex: "PLANT_NAME",
-    scopedSlots: { customRender: "PLANT_NAME" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "仓库代号",
-    dataIndex: "WAREHOUSE_CODE",
-    scopedSlots: { customRender: "WAREHOUSE_CODE" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "仓库名称",
-    dataIndex: "WAREHOUSE_NAME",
-    scopedSlots: { customRender: "WAREHOUSE_NAME" },
-    align: "center",
-    width: 100,
-  },
-  {
-    title: "仓库单位",
-    dataIndex: "UNIT_NAME",
-    scopedSlots: { customRender: "UNIT_NAME" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "仓库属性",
-    dataIndex: "WAREHOUSE_CHARACTER",
-    scopedSlots: { customRender: "WAREHOUSE_CHARACTER" },
-    align: "center",
-    width: 80,
-    customRender: (text) => {
-      return text == 1 ? "1.普通仓" : text == 2 ? "2.VMI仓" : text == 3 ? "3.寄售客户仓" : text == 4 ? "4.客户寄库仓" : text == 5 ? "5.在途仓" : "6.客供料仓";
-    },
-  },
-  {
-    title: "仓库性质",
-    dataIndex: "WAREHOUSE_PROPERTY",
-    scopedSlots: { customRender: "WAREHOUSE_PROPERTY" },
-    align: "center",
-    width: 120,
-    customRender: (text) => {
-      return text == "1" ? "1.存货仓" : "2.非存货仓";
-    },
-  },
-  {
-    title: "库位管理",
-    dataIndex: "BIN_CONTROL",
-    scopedSlots: { customRender: "BIN_CONTROL" },
-    align: "center",
-    width: 80,
-    customRender: (text) => {
-      return text == 1 ? "1.启用" : "0.不启用";
-    },
-  },
-  {
-    title: "纳入可用量计算",
-    dataIndex: "INCLUDED_AVAILABLE_QTY",
-    scopedSlots: { customRender: "INCLUDED_AVAILABLE_QTY" },
-    align: "center",
-    width: 120,
-    customRender: (text) => {
-      return text ? "Y" : "N";
-    },
-  },
-  {
-    title: "库存量不足准许出库",
-    dataIndex: "NEGATIVE_INVENTORY_ALLOWED",
-    scopedSlots: { customRender: "NEGATIVE_INVENTORY_ALLOWED" },
-    align: "center",
-    width: 150,
-    customRender: (text) => {
-      return text ? "Y" : "N";
-    },
-  },
-  {
-    title: "首次入库日",
-    dataIndex: "ORIGINIAL_RECEIPT_DATE",
-    scopedSlots: { customRender: "ORIGINIAL_RECEIPT_DATE" },
-    align: "center",
-    width: 120,
-    customRender: (text) => {
-      return splitData(text);
-    },
-  },
-  {
-    title: "最后入库日",
-    dataIndex: "LAST_RECEIPT_DATE",
-    scopedSlots: { customRender: "LAST_RECEIPT_DATE" },
-    align: "center",
-    width: 100,
-    customRender: (text) => {
-      return splitData(text);
-    },
-  },
-  {
-    title: "最后出库日",
-    dataIndex: "LAST_ISSUE_DATE",
-    scopedSlots: { customRender: "LAST_ISSUE_DATE" },
-    align: "center",
-    width: 100,
-    customRender: (text) => {
-      return splitData(text);
-    },
-  },
-  {
-    title: "品号类型",
-    dataIndex: "ITEM_PROPERTY",
-    scopedSlots: { customRender: "ITEM_PROPERTY" },
-    align: "center",
-    width: 100,
-  },
-  {
-    title: "批次控制",
-    dataIndex: "LOT_CONTROL",
-    scopedSlots: { customRender: "LOT_CONTROL" },
-    align: "center",
-    width: 150,
-    customRender: (text) => {
-      return text == "N" ? "N.不需求" : text == "T" ? "T.需要且检查库存量" : "Y.需要不检查库存量";
-    },
-  },
-  {
-    title: "图号",
-    dataIndex: "DRAWING_NO",
-    scopedSlots: { customRender: "DRAWING_NO" },
-    align: "center",
-  },
-  {
-    title: "操作",
-    scopedSlots: { customRender: "action" },
-    align: "center",
-    fixed: "right",
-    width: 100,
-  },
-];
-const columnsPrint = [
-  {
-    title: "序号",
-    scopedSlots: { customRender: "index" },
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "元件品号",
-    dataIndex: "ITEM_CODE",
-    scopedSlots: { customRender: "ITEM_CODE" },
-    align: "center",
-    width: 250,
-  },
-  {
-    title: "品名",
-    dataIndex: "ITEM_NAME",
-    scopedSlots: { customRender: "ITEM_NAME" },
-    align: "center",
-    width: 250,
-    ellipsis: true,
-  },
-  {
-    title: "规格",
-    dataIndex: "ITEM_SPECIFICATION",
-    scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-    align: "center",
-    width: 300,
-    ellipsis: true,
-  },
-  {
-    title: "单位",
-    dataIndex: "UNIT_NAME",
-    scopedSlots: { customRender: "UNIT_NAME" },
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "用量",
-    dataIndex: "QTY_PER",
-    scopedSlots: { customRender: "QTY_PER" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "底数",
-    dataIndex: "DENOMINATOR",
-    scopedSlots: { customRender: "DENOMINATOR" },
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "备注",
-    dataIndex: "REMARK",
-    scopedSlots: { customRender: "REMARK" },
-    align: "center",
-  },
-  {
-    title: "图号",
-    dataIndex: "DRAWING_NO",
-    scopedSlots: { customRender: "DRAWING_NO" },
-    align: "center",
-    width: 200,
-  },
-
-  {
-    title: "位置",
-    dataIndex: "COMPONENT_LOCATION",
-    scopedSlots: { customRender: "COMPONENT_LOCATION" },
-    align: "center",
-    width: 80,
-  },
-];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData, modelType } from "@/utils/util.js";
-import Dosage from './Dosage.vue'
+import Dosage from "./Dosage.vue";
 import ExportExcel from "@/utils/ExportExcelJS";
+import { columns, columnsPrint } from "./data";
+import { PublicVar } from "@/mixins/publicVar.js";
 export default {
   components: { Dosage },
+  mixins: [PublicVar],
   data() {
     return {
       data: [],
       columns,
       columnsPrint,
-      loading: false,
       isDosage: false,
-      pagination: {
-        current: 1,
-        total: 0,
-        pageSize: 20, //每页中显示10条数据
-        showSizeChanger: true,
-        showLessItems: true,
-        showQuickJumper: true,
-        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
-      },
-      selectedRows: [],
       isExecl: false,
-      selectedRowKeys: [],
-      scrollY: "",
-      searchForm: this.$form.createForm(this),
-      week: "",
-      isSearch: false,
       isDetail: false,
       detailData: [],
       plantList: [],

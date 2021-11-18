@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-16 16:40:22
+ * @LastEditTime: 2021-11-18 09:04:17
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -44,10 +44,10 @@
       <div class="operator">
         <!-- <a-button icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
         <a-button icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button> -->
-         <a-button v-if="hasPerm('print')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
+        <a-button v-if="hasPerm('print')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
         <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
         <a-button v-if="hasPerm('export')" icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
-         <a-button v-else icon="export" type="primary" disabled :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
+        <a-button v-else icon="export" type="primary" disabled :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
             {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -109,161 +109,6 @@
   </div>
 </template>
 <script>
-const columns = [
-  {
-    title: "序号",
-    scopedSlots: { customRender: "index" },
-    align: "center",
-    width: "3%",
-  },
-  {
-    title: "主件品号",
-    dataIndex: "ITEM_CODE",
-    scopedSlots: { customRender: "ITEM_CODE" },
-    align: "center",
-    width: 250,
-  },
-  {
-    title: "快捷码",
-    dataIndex: "SHORTCUT",
-    scopedSlots: { customRender: "SHORTCUT" },
-    align: "center",
-    width: 150,
-    ellipsis: true,
-  },
-  {
-    title: "品名",
-    dataIndex: "ITEM_NAME",
-    scopedSlots: { customRender: "ITEM_NAME" },
-    align: "center",
-    width: 250,
-    ellipsis: true,
-  },
-  {
-    title: "规格",
-    dataIndex: "ITEM_SPECIFICATION",
-    scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-    align: "center",
-    width: 300,
-    ellipsis: true,
-  },
-  {
-    title: "图号",
-    dataIndex: "DRAWING_NO",
-    scopedSlots: { customRender: "DRAWING_NO" },
-    align: "center",
-    width: 150,
-    ellipsis: true,
-  },
-  {
-    title: "单位",
-    dataIndex: "UNIT_NAME",
-    scopedSlots: { customRender: "UNIT_NAME" },
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "品号类型",
-    dataIndex: "ITEM_PROPERTY",
-    scopedSlots: { customRender: "ITEM_PROPERTY" },
-    align: "center",
-    width: "5%",
-  },
-  {
-    title: "BOM生效状态",
-    dataIndex: "ApproveStatus",
-    scopedSlots: { customRender: "ApproveStatus" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "工厂",
-    dataIndex: "PLANT_CODE_P",
-    scopedSlots: { customRender: "PLANT_CODE_P" },
-    align: "center",
-  },
-  {
-    title: "工厂名称",
-    dataIndex: "PLANT_NAME_P",
-    scopedSlots: { customRender: "PLANT_NAME_P" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "引用工厂",
-    dataIndex: "PLANT_CODE_R",
-    scopedSlots: { customRender: "PLANT_CODE_R" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "引用工厂名称",
-    dataIndex: "PLANT_NAME_R",
-    scopedSlots: { customRender: "PLANT_NAME_R" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "版次",
-    dataIndex: "VERSION_TIMES",
-    scopedSlots: { customRender: "VERSION_TIMES" },
-    align: "center",
-  },
-  {
-    title: "生效日期",
-    dataIndex: "ApproveDate",
-    scopedSlots: { customRender: "ApproveDate" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "生效审核人员",
-    dataIndex: "EMPLOYEE_NAME_A",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_A" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "创建日期",
-    dataIndex: "CreateDate",
-    scopedSlots: { customRender: "CreateDate" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "创建人员",
-    dataIndex: "EMPLOYEE_NAME_C",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_C" },
-    align: "center",
-  },
-  {
-    title: "最后修改日期",
-    dataIndex: "LastModifiedDate",
-    scopedSlots: { customRender: "LastModifiedDate" },
-    align: "center",
-    width: 150,
-  },
-  {
-    title: "最后修改人员",
-    dataIndex: "EMPLOYEE_NAME_L",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_L" },
-    align: "center",
-    width: 150,
-  },
-  {
-    title: "备注",
-    dataIndex: "REMARK",
-    scopedSlots: { customRender: "REMARK" },
-    align: "center",
-  },
-  {
-    title: "操作",
-    scopedSlots: { customRender: "action" },
-    align: "center",
-    fixed: "right",
-    width: 100,
-  },
-];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
@@ -271,31 +116,17 @@ import { splitData, modelType } from "@/utils/util.js";
 import ErpDosage from "../components/ErpDosage.vue";
 import { exportjsontoexcelMore } from "@/utils/exportExcel";
 import Print from "../components/Print.vue";
+import { columns } from "./data";
+import { PublicVar } from "@/mixins/publicVar.js";
 export default {
   components: { ErpDosage, Print },
+  mixins: [PublicVar],
   data() {
     return {
       data: [],
       columns,
-      loading: false,
       isDosage: false,
-      pagination: {
-        current: 1,
-        total: 0,
-        pageSize: 20, //每页中显示10条数据
-        showSizeChanger: true,
-        showLessItems: true,
-        showQuickJumper: true,
-        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
-      },
-      selectedRows: [],
-      isExecl: false,
-      selectedRowKeys: [],
-      scrollY: "",
-      searchForm: this.$form.createForm(this),
-      week: "",
-      isSearch: false,
+      isExecl: false,     
       isDetail: false,
       detailData: [],
       plantList: [],
@@ -337,7 +168,7 @@ export default {
     },
     closeModal() {
       this.isDosage = false;
-      this.isPrint =false
+      this.isPrint = false;
     },
     //物料需求详情
     detail(item) {

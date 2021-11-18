@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-17 16:56:23
+ * @LastEditTime: 2021-11-18 09:12:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/kanban.vue
@@ -143,31 +143,20 @@ import Remarks from "./remarks.vue";
 import ADetails from "./details.vue";
 import { columns } from "./data";
 import Print from "./print.vue";
+import { PublicVar } from "@/mixins/publicVar.js";
 export default {
   components: { UserList, Remarks, ADetails, Print },
+  mixins: [PublicVar],
   data() {
     return {
       scrollY: "",
-      loading: false,
+     
       advanced: true,
-      columns: columns,
+      columns,
       dataSource: [],
       isDrawer: false,
-      selectedRowKeys: [],
-      pagination: {
-        current: 1,
-        total: 0,
-        pageSize: 20, //每页中显示10条数据
-        showSizeChanger: true,
-        showLessItems: true,
-        showQuickJumper: true,
-        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
-      },
-      searchForm: this.$form.createForm(this),
       plantList: [],
       plantid: "",
-      week: "",
       drawerItem: [],
       isSearch: 0,
       statistic: [],

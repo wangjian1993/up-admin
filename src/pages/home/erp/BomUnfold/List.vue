@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-17 18:24:09
+ * @LastEditTime: 2021-11-18 09:05:43
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -85,339 +85,25 @@
   </a-card>
 </template>
 <script>
-const columns = [
-  {
-    title: "序号",
-    scopedSlots: { customRender: "index" },
-    align: "center",
-    width: "3%",
-  },
-  {
-    title: "主件品号",
-    dataIndex: "ITEM_CODE",
-    scopedSlots: { customRender: "ITEM_CODE" },
-    align: "center",
-    width: 250,
-  },
-  {
-    title: "快捷码",
-    dataIndex: "SHORTCUT",
-    scopedSlots: { customRender: "SHORTCUT" },
-    align: "center",
-    width: 150,
-    ellipsis: true,
-  },
-  {
-    title: "主件品号",
-    dataIndex: "ITEM_NAME",
-    scopedSlots: { customRender: "ITEM_NAME" },
-    align: "center",
-    width: 250,
-    ellipsis: true,
-  },
-  {
-    title: "主件规格",
-    dataIndex: "ITEM_SPECIFICATION",
-    scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-    align: "center",
-    width: 300,
-    ellipsis: true,
-  },
-  {
-    title: "主件图号",
-    dataIndex: "DRAWING_NO",
-    scopedSlots: { customRender: "DRAWING_NO" },
-    align: "center",
-    width: 150,
-    ellipsis: true,
-  },
-  {
-    title: "单位",
-    dataIndex: "UNIT_NAME",
-    scopedSlots: { customRender: "UNIT_NAME" },
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "品号类型",
-    dataIndex: "ITEM_PROPERTY",
-    scopedSlots: { customRender: "ITEM_PROPERTY" },
-    align: "center",
-    width: "5%",
-  },
-  {
-    title: "BOM生效状态",
-    dataIndex: "ApproveStatus",
-    scopedSlots: { customRender: "ApproveStatus" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "工厂",
-    dataIndex: "PLANT_NAME_P",
-    scopedSlots: { customRender: "PLANT_NAME_P" },
-    align: "center",
-  },
-  {
-    title: "引用工厂",
-    dataIndex: "PLANT_CODE_R",
-    scopedSlots: { customRender: "PLANT_CODE_R" },
-    align: "center",
-  },
-  {
-    title: "引用工厂名称",
-    dataIndex: "PLANT_NAME_R",
-    scopedSlots: { customRender: "PLANT_NAME_R" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "版次",
-    dataIndex: "VERSION_TIMES",
-    scopedSlots: { customRender: "VERSION_TIMES" },
-    align: "center",
-  },
-  {
-    title: "生效日期",
-    dataIndex: "ApproveDate",
-    scopedSlots: { customRender: "ApproveDate" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "生效审核人员",
-    dataIndex: "EMPLOYEE_NAME_A",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_A" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "创建日期",
-    dataIndex: "CreateDate",
-    scopedSlots: { customRender: "CreateDate" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "创建人员",
-    dataIndex: "EMPLOYEE_NAME_C",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_C" },
-    align: "center",
-  },
-  {
-    title: "最后修改日期",
-    dataIndex: "LastModifiedDate",
-    scopedSlots: { customRender: "LastModifiedDate" },
-    align: "center",
-    width: 150,
-  },
-  {
-    title: "最后修改人员",
-    dataIndex: "EMPLOYEE_NAME_L",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_L" },
-    align: "center",
-    width: 150,
-  },
-];
-const innerColumns = [
-  {
-    title: "阶层",
-    dataIndex: "LOWLEVEL",
-    scopedSlots: { customRender: "LOWLEVEL" },
-    align: "left",
-    width: 100,
-  },
-  {
-    title: "序号",
-    dataIndex: "INDEX",
-    scopedSlots: { customRender: "INDEX" },
-    align: "center",
-    width: 60,
-  },
-  {
-    title: "上阶品号",
-    dataIndex: "LAST_ITEM_CODE",
-    scopedSlots: { customRender: "LAST_ITEM_CODE" },
-    align: "center",
-    width: 180,
-  },
-  {
-    title: "元件品号",
-    dataIndex: "ITEM_CODE",
-    scopedSlots: { customRender: "ITEM_CODE" },
-    align: "center",
-    width: 180,
-  },
-  {
-    title: "快捷码",
-    dataIndex: "SHORTCUT",
-    scopedSlots: { customRender: "SHORTCUT" },
-    align: "center",
-    width: 180,
-  },
-  {
-    title: "元件品名",
-    dataIndex: "ITEM_NAME",
-    scopedSlots: { customRender: "ITEM_NAME" },
-    align: "center",
-    width: 250,
-    ellipsis: true,
-  },
-  {
-    title: "元件规格",
-    dataIndex: "ITEM_SPECIFICATION",
-    scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-    align: "center",
-    width: 300,
-    ellipsis: true,
-  },
-  {
-    title: "单位",
-    dataIndex: "UNIT_NAME",
-    scopedSlots: { customRender: "UNIT_NAME" },
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "组成用量",
-    dataIndex: "QTY_PER",
-    scopedSlots: { customRender: "QTY_PER" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "底数",
-    dataIndex: "DENOMINATOR",
-    scopedSlots: { customRender: "DENOMINATOR" },
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "插件位置",
-    dataIndex: "COMPONENT_LOCATION",
-    scopedSlots: { customRender: "COMPONENT_LOCATION" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "变动损耗",
-    dataIndex: "DYNAMIC_LOSS_RATE",
-    scopedSlots: { customRender: "DYNAMIC_LOSS_RATE" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "生效日期",
-    dataIndex: "EFFECTIVE_DATE",
-    scopedSlots: { customRender: "EFFECTIVE_DATE" },
-    align: "center",
-    width: 120,
-    customRender: (text) => {
-      return splitData(text);
-    },
-  },
-  {
-    title: "失效时间",
-    dataIndex: "EXPRITY_DATE",
-    scopedSlots: { customRender: "EXPRITY_DATE" },
-    align: "center",
-    width: 120,
-    customRender: (text) => {
-      return splitData(text);
-    },
-  },
-  {
-    title: "备注",
-    dataIndex: "REMARK",
-    scopedSlots: { customRender: "REMARK" },
-    align: "center",
-  },
-  {
-    title: "BOM生效状态",
-    dataIndex: "ApproveStatus",
-    scopedSlots: { customRender: "ApproveStatus" },
-    align: "center",
-    width: 120,
-    customRender: (text) => {
-      return text == "Y" ? "已生效" : text == "N" ? "未生效" : "失效";
-    },
-  },
-  {
-    title: "图号",
-    dataIndex: "DRAWING_NO",
-    scopedSlots: { customRender: "DRAWING_NO" },
-    align: "center",
-    width: 150,
-    ellipsis: true,
-  },
-  {
-    title: "品号类型",
-    dataIndex: "ITEM_PROPERTY",
-    scopedSlots: { customRender: "ITEM_PROPERTY" },
-    align: "center",
-    width: "5%",
-  },
-  {
-    title: "BOM生效日期",
-    dataIndex: "ApproveDate",
-    scopedSlots: { customRender: "ApproveDate" },
-    align: "center",
-    width: 120,
-    customRender: (text) => {
-      return splitData(text);
-    },
-  },
-  {
-    title: "BOM生效者",
-    dataIndex: "EMPLOYEE_NAME_A",
-    scopedSlots: { customRender: "EMPLOYEE_NAME_A" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "BOM创建日期",
-    dataIndex: "CreateDate",
-    scopedSlots: { customRender: "CreateDate" },
-    align: "center",
-    width: 120,
-    customRender: (text) => {
-      return splitData(text);
-    },
-  },
-];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData, modelType } from "@/utils/util.js";
 import ErpDosage from "../components/ErpDosage.vue";
 import ModelInfo from "../components/ModelInfo.vue";
+import { columns, innerColumns } from "./data";
+import { PublicVar } from "@/mixins/publicVar.js";
 export default {
-  components: { ErpDosage,ModelInfo},
+  components: { ErpDosage, ModelInfo },
+  mixins: [PublicVar],
   data() {
     return {
       data: [],
       columns,
       innerColumns,
       innerData: [],
-      loading: false,
       isDosage: false,
-      pagination: {
-        current: 1,
-        total: 0,
-        pageSize: 20, //每页中显示10条数据
-        showSizeChanger: true,
-        showLessItems: true,
-        showQuickJumper: true,
-        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
-      },
-      selectedRows: [],
       isExecl: false,
-      selectedRowKeys: [],
-      scrollY: "",
-      searchForm: this.$form.createForm(this),
-      week: "",
-      isSearch: false,
       isDetail: false,
       detailData: [],
       plantList: [],
@@ -425,8 +111,8 @@ export default {
       expandLoading: false,
       expandedRowKeys: [],
       treeList: [],
-      isModelInfo:false,
-      modelData:[]
+      isModelInfo: false,
+      modelData: [],
     };
   },
   updated() {
@@ -448,7 +134,7 @@ export default {
     modelType,
     closeModal() {
       this.isDosage = false;
-      this.isModelInfo =false
+      this.isModelInfo = false;
     },
     //物料需求详情
     detail(item) {
@@ -638,9 +324,9 @@ export default {
 .ant-form-item {
   margin-bottom: 5px;
 }
-/deep/.ant-table-row-expand-icon{
-  width:22px;
-  height:22px;
-  line-height:17px;
+/deep/.ant-table-row-expand-icon {
+  width: 22px;
+  height: 22px;
+  line-height: 17px;
 }
 </style>
