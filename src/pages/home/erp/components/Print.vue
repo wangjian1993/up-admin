@@ -1,13 +1,13 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-05 18:08:46
+ * @LastEditTime: 2021-11-19 11:49:02
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/erp/components/Print.vue
 -->
 <template>
-  <a-modal class="bom-detail" v-model="visible" title="打印预览" @cancel="close" width="80%" :footer="null" centered>
+  <a-modal class="bom-detail" v-model="visible" title="打印预览" @cancel="close" width="60%" :footer="null" centered>
     <a-button type="primary" class="no-print" v-print="'#printTest'">打印</a-button>
     <div id="printTest">
       <div v-for="item in printList" :key="item.BOM_ID" style="page-break-after:always">
@@ -19,7 +19,7 @@
             <a-col :span="8"
               ><div class="head-title">
                 <p>深圳民爆光电股份有限公司</p>
-                <p>生产投料单</p>
+                <p>BOM清单</p>
               </div></a-col
             >
           </a-row>
@@ -66,62 +66,63 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width:50
+    width: 50,
   },
   {
     title: "元件品号",
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
     align: "center",
-    width:100
+    width: 100,
   },
   {
     title: "品名",
     dataIndex: "ITEM_NAME",
     scopedSlots: { customRender: "ITEM_NAME" },
     align: "center",
-    width:100
+    width: 100,
   },
   {
     title: "规格",
     dataIndex: "ITEM_SPECIFICATION",
     scopedSlots: { customRender: "ITEM_SPECIFICATION" },
     align: "center",
-    width:200
+    width: 200,
   },
   {
     title: "单位",
     dataIndex: "UNIT_NAME",
     scopedSlots: { customRender: "UNIT_NAME" },
     align: "center",
-    width:60
+    width: 60,
   },
   {
     title: "用量",
     dataIndex: "QTY_PER",
     scopedSlots: { customRender: "QTY_PER" },
     align: "center",
-    width:60
+    width: 60,
   },
   {
     title: "底数",
     dataIndex: "DENOMINATOR",
     scopedSlots: { customRender: "DENOMINATOR" },
     align: "center",
-    width:60
+    width: 60,
   },
   {
     title: "备注",
     dataIndex: "REMARK",
     scopedSlots: { customRender: "REMARK" },
     align: "center",
-    width:60
+    width: 60,
   },
   {
     title: "图号",
     dataIndex: "DRAWING_NO",
     scopedSlots: { customRender: "DRAWING_NO" },
     align: "center",
+    width: 100,
   },
 
   {
@@ -129,7 +130,7 @@ const columns = [
     dataIndex: "COMPONENT_LOCATION",
     scopedSlots: { customRender: "COMPONENT_LOCATION" },
     align: "center",
-     width:60
+    width: 60,
   },
 ];
 import { splitData, modelType } from "@/utils/util.js";
@@ -165,7 +166,6 @@ export default {
   },
 };
 </script>
-
 <style scoped lang="less">
 .ant-form-item {
   margin-bottom: 5px;
@@ -223,7 +223,7 @@ export default {
   // border-top: none;
   // border-bottom: none;
 }
-/deep/.ant-table-bordered .ant-table-thead > tr > th{
+/deep/.ant-table-bordered .ant-table-thead > tr > th {
   // border: 1px #000 solid;
 }
 /deep/.ant-table-bordered .ant-table-tbody > tr > td {
@@ -233,19 +233,20 @@ export default {
 /deep/.ant-table-body {
   margin: 0;
 }
-/deep/.ant-table-column-title{
+/deep/.ant-table-column-title {
   font-size: 10px;
 }
-/deep/.ant-table-thead > tr > th{
+/deep/.ant-table-thead > tr > th {
   border-bottom: 1px #000 solid;
 }
-/deep/.ant-table-bordered .ant-table-thead > tr > th, .ant-table-bordered .ant-table-tbody > tr > td{
+/deep/.ant-table-bordered .ant-table-thead > tr > th,
+.ant-table-bordered .ant-table-tbody > tr > td {
   border-right: 1px #000 solid;
 }
-/deep/.ant-table-tbody > tr > td{
-  border-bottom:1px #000 solid;
+/deep/.ant-table-tbody > tr > td {
+  border-bottom: 1px #000 solid;
 }
-/deep/.ant-table-small > .ant-table-content > .ant-table-body{
-  margin: 0
+/deep/.ant-table-small > .ant-table-content > .ant-table-body {
+  margin: 0;
 }
 </style>

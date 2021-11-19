@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-11-16 13:55:44
+ * @LastEditTime: 2021-11-19 14:49:23
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -579,7 +579,7 @@ export default {
             if (res.data.success) {
               this.tableData = res.data.data.ItemInfo.ItemChildList;
               this.tableData.forEach((item) => {
-                item.CodeId = item.ChildCode + "_" + item.LastCode +"_" + item.IndexNo;
+                item.CodeId = item.ChildCode + "_" + item.LastCode + "_" + item.IndexNo;
               });
               this.searchList = this.tableData;
               this.searchList.forEach((item) => {
@@ -639,16 +639,24 @@ export default {
       //只有添加才计算
       this.costList.forEach((item) => {
         //计算电源贴片费用
-        if (this.costInfo.ItemOtherInfo && item.CostName === "电源贴片费") {
-          if (item.Description == "") {
-            item.Amount = 0;
-            item.Description = `品名带有“贴片”关键字(0)行)，用量(0)*0`;
-            return;
+        if (this.costInfo.ItemOtherInfo) {
+          if (item.CostName === "电源贴片费") {
+            if (item.Description == "") {
+              item.Amount = 0;
+              item.Description = `品名带有“贴片”关键字(0)行)，用量(0)*0`;
+              return;
+            }
+            let str = item.Description.split("*");
+            let price1 = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * str[1];
+            item.Amount = parseFloat(price1.toFixed(4));
+            item.Description = `品名带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
           }
-          let str = item.Description.split("*");
-          let price1 = this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing * str[1];
-          item.Amount = parseFloat(price1.toFixed(4));
-          item.Description = `品名带有“贴片”关键字(${this.costInfo.ItemOtherInfo.TpKeyWordRowsNum})行)，用量(${this.costInfo.ItemOtherInfo.TpKeyWordRowsTotalUsing})*${str[1]}`;
+          if (item.CostName == "电源插件费") {
+            let str = item.Description.split("*");
+            item.Description =  `插件数量(${this.costInfo.ItemOtherInfo.DycjNum})*${str[1]} `;
+            let price1 = this.costInfo.ItemOtherInfo.DycjNum * str[1];
+            item.Amount = parseFloat(price1.toFixed(4));
+          }
         }
         //计算损耗费用
         if (item.CostName === "损耗") {
@@ -932,7 +940,7 @@ export default {
       _data.push(["最终成本", this.cost.ultimatelyTotal, null, null, null, null, null, null, null, null, null, null, null, null]);
       mergeTitle.push({
         s: { r: 6 + cost.length, c: 1 },
-        e: { r: 6 + cost.length, c: 13},
+        e: { r: 6 + cost.length, c: 13 },
       });
       mergeTitle.push({
         s: { r: 7 + cost.length, c: 1 },

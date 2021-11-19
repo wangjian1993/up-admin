@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-18 09:04:17
+ * @LastEditTime: 2021-11-19 11:46:58
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -44,8 +44,8 @@
       <div class="operator">
         <!-- <a-button icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
         <a-button icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button> -->
-        <a-button v-if="hasPerm('print')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
-        <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
+        <a-button v-if="hasPerm('print')" icon="printer" type="primary" :disabled="!hasSelected" :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
+        <a-button v-else icon="printer" type="primary" disabled :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
         <a-button v-if="hasPerm('export')" icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
         <a-button v-else icon="export" type="primary" disabled :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
         <span style="margin-left: 8px">
