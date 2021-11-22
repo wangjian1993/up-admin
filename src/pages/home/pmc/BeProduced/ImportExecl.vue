@@ -1,26 +1,26 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-11-17 09:19:39
+ * @LastEditTime: 2021-11-22 15:42:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ImportExecl.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="导入待产计划与待排计划需求" @cancel="close" @ok="handleOk" centered :width="800">
+    <a-modal v-model="visible" title="导入待产计划与待排计划需求" @cancel="close" @ok="handleOk" centered width="60%">
       <div>
         <a-form layout="horizontal">
           <div>
             <a-row>
-              <a-col :md="8" :sm="24">
+              <a-col :md="6" :sm="24">
                 <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                  <a-select v-decorator="['plantid']" style="width: 150px" placeholder="请选择生产工厂" @change="plantChange">
                     <a-select-option v-for="item in plantArray" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
+              <a-col :md="6" :sm="24">
                 <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
                   <div style="display:flex;">
                     <a-upload name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload" :remove="removeFile" :fileList="fileList1">
@@ -29,11 +29,20 @@
                   </div>
                 </a-form-item>
               </a-col>
-              <a-col :md="8" :sm="24">
+              <a-col :md="6" :sm="24">
                 <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
                   <div style="display:flex;">
                     <a-upload name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload2" :remove="removeFile2" :fileList="fileList2">
                       <a-button> <a-icon type="upload" />导入待排产计划 </a-button>
+                    </a-upload>
+                  </div>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
+                  <div style="display:flex;">
+                    <a-upload name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload3" :remove="removeFile3" :fileList="fileList3">
+                      <a-button> <a-icon type="upload" />销售订单原材料导入 </a-button>
                     </a-upload>
                   </div>
                 </a-form-item>
@@ -85,10 +94,13 @@ export default {
       tableData1: [],
       tableTitle2: [],
       tableData2: [],
+      tableTitle3: [],
+      tableData3: [],
       plantId: "",
       week: "",
       fileList1: [],
       fileList2: [],
+      fileList3: [],
     };
   },
   created() {
@@ -106,6 +118,11 @@ export default {
       this.fileList2 = [];
       this.tableData2 = []; //这里的tableData就是拿到的excel表格中的数据
       this.tableTitle2 = [];
+    },
+    removeFile3() {
+      this.fileList3 = [];
+      this.tableData3 = []; //这里的tableData就是拿到的excel表格中的数据
+      this.tableTitle3 = [];
     },
     //关闭弹窗
     close() {
@@ -200,17 +217,27 @@ export default {
         });
         arr2.push(obj);
       }
+      let arr3 = [];
+      let table3 = this.tableData3;
+      for (let i = 0; i < table3.length; i++) {
+        let res = table3[i];
+        let obj = {};
+        this.tableTitle3.forEach((item) => {
+          obj[item["key"]] = res[item["key"]] || "";
+        });
+        arr3.push(obj);
+      }
       //拼接后台数据
-      console.log("arr1", arr1);
-      console.log("arr2", arr2);
       let WaitProctionDatas = this.paramsList(arr1, "待产计划");
       let WaitSchecduleDatas = this.paramsList(arr2, "待排产计划");
+      let SalesSchacduleDatas = this.paramsList(arr3, "销售订单原材料");
       console.log(WaitProctionDatas);
       console.log(WaitSchecduleDatas);
       let data = {
         PlantId: this.plantId,
         WaitProctionDatas: WaitProctionDatas,
         WaitSchecduleDatas: WaitSchecduleDatas,
+        SalesSchacduleDatas: SalesSchacduleDatas,
       };
       if (this.errorList.length == 0) {
         this.submitExecl(data);
@@ -241,6 +268,7 @@ export default {
               list.MoCode = item[key];
               break;
             case "需求数量":
+            case "数量":
               if (typeof item[key] !== "number" && item[key] !== "") {
                 this.errorList.push({
                   ErrorMsg: `${content},第${index + 1}行,需求数量:数据'${item[key]}'错误,必须为数字`,
@@ -314,6 +342,12 @@ export default {
             case "PMC":
               list.Pmc = item[key];
               break;
+            case "销售订单号":
+              list.SalesNo = item[key];
+              break;
+            case "材料品号":
+              list.MitemCode = item[key];
+              break;
             default:
               break;
           }
@@ -354,6 +388,22 @@ export default {
       }
       return false;
     },
+    //导入待产计划excel
+    beforeUpload3(file) {
+      const fileExt = file.name
+        .split(".")
+        .pop()
+        .toLocaleLowerCase();
+      let fileList = [...this.fileList3, file];
+      this.fileList3 = fileList.slice(-1);
+      if (fileExt === "xlsx" || fileExt === "xls") {
+        this.readFile(file, 3);
+        this.file = file;
+      } else {
+        this.$message.warning("文件类型错误,请重新上传");
+      }
+      return false;
+    },
     // 读取文件
     readFile(file, type) {
       const reader = new FileReader();
@@ -373,6 +423,11 @@ export default {
           console.log(results);
           this.tableData2 = results; //这里的tableData就是拿到的excel表格中的数据
           this.tableTitle2 = tableTitle;
+        }
+        if (type == 3) {
+          console.log(results);
+          this.tableData3 = results; //这里的tableData就是拿到的excel表格中的数据
+          this.tableTitle3 = tableTitle;
         }
       };
     },

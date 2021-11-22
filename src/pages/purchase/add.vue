@@ -5,7 +5,7 @@
 				<div class="">
 					<a-row>
 						<a-col :md="8" :sm="24">
-							<a-form-item label="产品BOM号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1}">
+							<a-form-item label="产品品号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1}">
 								<a-input placeholder="请输入" v-decorator="['username', { rules: [{ required: true, message: 'Please input your name' }] }]" />
 							</a-form-item>
 						</a-col>

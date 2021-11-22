@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-11-19 14:49:23
+ * @LastEditTime: 2021-11-22 10:16:14
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -29,7 +29,7 @@
                 <a-col :lg="8" :md="12" :sm="24">
                   <a-form-item label="品号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
                     <a-input
-                      placeholder="请输入产品BOM号"
+                      placeholder="请输入产品品号号"
                       :disabled="isSearch"
                       allowClear
                       v-decorator="[
@@ -247,7 +247,7 @@ const excelHead = [
     align: "center",
   },
   {
-    title: "上阶BOM号",
+    title: "上阶品号",
     dataIndex: "LastCode",
     width: "9%",
     align: "center",
@@ -340,7 +340,7 @@ export default {
           align: "center",
         },
         {
-          title: "上阶BOM号",
+          title: "上阶品号",
           dataIndex: "LastCode",
           align: "center",
         },

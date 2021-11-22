@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-16 13:54:11
+ * @LastEditTime: 2021-11-22 10:15:46
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/DetailMerge.vue
@@ -33,7 +33,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input placeholder="请输入BOM号" allowClear style="width: 200px" v-decorator="['mitemcode']" />
+                <a-input placeholder="请输入品号号" allowClear style="width: 200px" v-decorator="['mitemcode']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">

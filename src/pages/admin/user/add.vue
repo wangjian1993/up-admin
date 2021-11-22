@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-10-21 15:45:58
+ * @LastEditTime: 2021-11-22 10:17:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/admin/user/add.vue
@@ -14,7 +14,7 @@
 					<div class="">
 						<a-row>
 							<a-col :md="8" :sm="24">
-								<a-form-item label="产品BOM号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1 }">
+								<a-form-item label="产品品号" :labelCol="{ span: 4 }" :wrapperCol="{ span: 12, offset: 1 }">
 									<a-input placeholder="请输入" v-decorator="['username', { rules: [{ required: true, message: 'Please input your name' }] }]" />
 								</a-form-item>
 							</a-col>

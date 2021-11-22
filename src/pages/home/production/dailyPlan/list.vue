@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-18 09:10:25
+ * @LastEditTime: 2021-11-22 10:16:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/list.vue
@@ -53,7 +53,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入BOM号" v-decorator="['mitemcode']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入品号号" v-decorator="['mitemcode']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">

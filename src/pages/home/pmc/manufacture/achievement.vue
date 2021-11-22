@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-11-16 13:53:05
+ * @LastEditTime: 2021-11-22 10:15:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/achievement.vue
@@ -52,7 +52,7 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入BOM号" v-decorator="['mitemcode']" />
+              <a-input style="width: 200px" placeholder="请输入品号号" v-decorator="['mitemcode']" />
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
