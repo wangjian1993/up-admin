@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-11-05 13:36:17
+ * @LastEditTime: 2021-11-24 08:57:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -261,8 +261,9 @@ export default {
         if (node.children && node.children.length > 0) {
           // console.log(node.children)
           this.calField(node.children);
-          node.Amount = node.children.reduce((sum, item) => ((sum += item.Amount), parseFloat(sum.toFixed(4))), 0);
-          node.Amount2 = node.children.reduce((sum, item) => ((sum += item.Amount2), parseFloat(sum.toFixed(4))), 0);
+          node.Amount = node.Amount * 1 + node.children.reduce((sum, item) => ((sum += item.Amount), parseFloat(sum.toFixed(4))), 0);
+          node.Amount2 = node.Amount2 * 1 + node.children.reduce((sum, item) => ((sum += item.Amount2), parseFloat(sum.toFixed(4))), 0);
+          console.log("node.Amount===", node.Amount);
         } else {
           let sum = node.Amount * 1;
           node.Amount = parseFloat(sum.toFixed(4));
@@ -271,10 +272,11 @@ export default {
           delete node.children;
         }
       });
+      console.log("tree===", tree);
       return tree;
     },
     initTree(parent_id) {
-      console.log(parent_id)
+      console.log(parent_id);
       // jsonArray 变量数据
       // 第一次以后：根据id去查询parent_id相同的（相同为子数据）
       // 第一次：查找所有parent_id为-1的数据组成第一级

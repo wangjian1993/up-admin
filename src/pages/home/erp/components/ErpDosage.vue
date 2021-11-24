@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-11-10 16:17:35
+ * @LastEditTime: 2021-11-23 16:32:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
@@ -61,7 +61,7 @@
         </div>
         <div>
           <a-card title="BOM用量信息" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 500, x: 2700 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName">
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 500, x: true }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName">
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -112,51 +112,49 @@ const columns = [
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
     align: "center",
-    width: 180,
+    width: 110,
   },
   {
     title: "快捷码",
     dataIndex: "SHORTCUT",
     scopedSlots: { customRender: "SHORTCUT" },
     align: "center",
-    width: 150,
+    width: 80,
   },
   {
     title: "品名",
     dataIndex: "ITEM_NAME",
     scopedSlots: { customRender: "ITEM_NAME" },
     align: "center",
-    width: 200,
-    ellipsis: true,
+    width: 100,
   },
   {
     title: "规格",
     dataIndex: "ITEM_SPECIFICATION",
     scopedSlots: { customRender: "ITEM_SPECIFICATION" },
     align: "center",
-    width: 300,
-    ellipsis: true,
+    width: 200,
   },
   {
     title: "组成用量",
     dataIndex: "QTY_PER",
     scopedSlots: { customRender: "QTY_PER" },
     align: "center",
-    width: 80,
+    width: 75,
   },
   {
     title: "插件位置",
     dataIndex: "COMPONENT_LOCATION",
     scopedSlots: { customRender: "COMPONENT_LOCATION" },
     align: "center",
-    width: 80,
+    width: 75,
   },
   {
     title: "图号",
     dataIndex: "DRAWING_NO",
     scopedSlots: { customRender: "DRAWING_NO" },
     align: "center",
-    width: 180,
+    width: 80,
   },
   {
     title: "单位",
@@ -191,28 +189,28 @@ const columns = [
     dataIndex: "ECNSTATUS",
     scopedSlots: { customRender: "ECNSTATUS" },
     align: "center",
-    width: 110,
+    width: 80,
   },
   {
     title: "ECN变更日期",
     dataIndex: "APPROVEDATE_ECN",
     scopedSlots: { customRender: "APPROVEDATE_ECN" },
     align: "center",
-    width: 110,
+    width: 105,
   },
   {
     title: "固定损耗量",
     dataIndex: "FIXED_LOSS_RATE",
     scopedSlots: { customRender: "FIXED_LOSS_RATE" },
     align: "center",
-    width: 100,
+    width: 90,
   },
   {
     title: "变动损耗",
     dataIndex: "DYNAMIC_LOSS_RATE",
     scopedSlots: { customRender: "DYNAMIC_LOSS_RATE" },
     align: "center",
-    width: 80,
+    width: 75,
   },
   {
     title: "超领率",
@@ -240,7 +238,7 @@ const columns = [
     dataIndex: "WAREHOUSE_NAME",
     scopedSlots: { customRender: "WAREHOUSE_NAME" },
     align: "center",
-    width: 120,
+    width: 80,
   },
   {
     title: "仓库库存",
@@ -254,20 +252,21 @@ const columns = [
     dataIndex: "EFFECTIVE_DATE",
     scopedSlots: { customRender: "EFFECTIVE_DATE" },
     align: "center",
-    width: 120,
+    width: 80,
   },
   {
     title: "失效时间",
     dataIndex: "EXPRITY_DATE",
     scopedSlots: { customRender: "EXPRITY_DATE" },
     align: "center",
-    width: 120,
+    width: 80,
   },
   {
     title: "备注",
     dataIndex: "REMARK",
     scopedSlots: { customRender: "REMARK" },
     align: "center",
+    width: 80,
   },
   {
     title: "操作",

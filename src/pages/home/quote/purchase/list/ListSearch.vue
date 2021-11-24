@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-11-16 13:56:09
+ * @LastEditTime: 2021-11-24 09:00:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -657,8 +657,8 @@ export default {
         if (node.children && node.children.length > 0) {
           // console.log(node.children)
           this.calField(node.children);
-          node.Amount = node.children.reduce((sum, item) => ((sum += item.Amount), parseFloat(sum.toFixed(4))), 0);
-          node.Amount2 = node.children.reduce((sum, item) => ((sum += item.Amount2), parseFloat(sum.toFixed(4))), 0);
+          node.Amount = node.Amount * 1 + node.children.reduce((sum, item) => ((sum += item.Amount), parseFloat(sum.toFixed(4))), 0);
+          node.Amount2 = node.Amount2 * 1 + node.children.reduce((sum, item) => ((sum += item.Amount2), parseFloat(sum.toFixed(4))), 0);
         } else {
           let sum = node.Amount * 1;
           node.Amount = parseFloat(sum.toFixed(4));

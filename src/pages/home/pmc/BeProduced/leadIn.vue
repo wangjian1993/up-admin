@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-11-16 13:52:35
+ * @LastEditTime: 2021-11-23 08:55:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/leadIn.vue
@@ -177,6 +177,13 @@ const columns = [
     scopedSlots: { customRender: "WaitScheduleQty" },
     align: "center",
     width: 120,
+  },
+  {
+    title: "销售订单原材料数量",
+    dataIndex: "SalesScheduleQty",
+    scopedSlots: { customRender: "SalesScheduleQty" },
+    align: "center",
+    width: 150,
   },
   {
     title: "计划状态",
