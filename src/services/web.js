@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-11-17 16:26:29
+ * @LastEditTime: 2021-11-25 15:15:53
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -189,4 +189,8 @@ export function setPrintInfo(params,action) {
 }
 export function setDailyPlanAction(params,action) {
     return request(`${UP_WEB}/production/dailyplan/${action}`, METHOD.POST, params);
+}
+//订单管理
+export function getOrderApi(params,action) {
+    return request(`${UP_WEB}/trace/order/${action}`, METHOD.GET, params);
 }

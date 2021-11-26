@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-11-24 08:57:04
+ * @LastEditTime: 2021-11-26 17:46:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -70,18 +70,33 @@
                   <div slot="e10" slot-scope="text, record">
                     <p>{{ record.PriceErpSource == "" ? text : text + `(${record.PriceErpSource})` }}</p>
                   </div>
+                  <div slot="Amount2" slot-scope="text, record">
+                    <p>{{ text }}</p>
+                    <a style="margin-right: 8px" @click="historyAmount(record,1)">
+                      <a-icon type="history" />
+                      历史价格
+                    </a>
+                  </div>
                 </a-table>
               </a-tab-pane>
               <a-tab-pane key="2" tab="收缩显示">
                 <a-table :columns="columns" :data-source="treeData" :size="size" :scroll="{ y: 600 }" :pagination="pagination" :rowKey="(treeData) => treeData.IndexNo + 'tab2'" bordered>
                   <div slot="e10" slot-scope="text, record">
-                    <p>{{ record.PriceErpSource == "" ? text : text + `(${record.PriceErpSource})` }}</p>
+                    <span>{{ record.PriceErpSource == "" ? text : text + `(${record.PriceErpSource})` }}</span>
+                  </div>
+                  <div slot="Amount2" slot-scope="text, record">
+                    <p>{{ text }}</p>
+                    <a style="margin-right: 8px" @click="historyAmount(record,2)">
+                      <a-icon type="history" />
+                      历史价格
+                    </a>
                   </div>
                 </a-table>
               </a-tab-pane>
             </a-tabs>
           </a-card>
         </div>
+        <HistoryAmount v-if="isHistoryAmount" :historyAmountData="historyAmountData" :info="info" @closeModal="closeModal" :amounType="amounType"/>
       </a-spin>
     </a-modal>
   </div>
@@ -165,8 +180,9 @@ const columns = [
   {
     title: "最新金额",
     dataIndex: "Amount2",
+    scopedSlots: { customRender: "Amount2" },
     align: "center",
-    width: "5%",
+    width: 100,
   },
   {
     title: "提示",
@@ -183,7 +199,9 @@ const columns = [
   },
 ];
 import { getCostConfig } from "@/services/web.js";
+import HistoryAmount from "./HistoryAmount.vue";
 export default {
+  components: { HistoryAmount },
   props: ["detailsId"],
   data() {
     return {
@@ -199,14 +217,25 @@ export default {
       keywordForm: this.$form.createForm(this),
       searchList: [],
       keyword: "",
+      isHistoryAmount: false,
+      historyAmountData: [],
+      amounType:""
     };
   },
   created() {
     this.getList();
   },
   methods: {
+    historyAmount(item,type) {
+      this.isHistoryAmount = true;
+      this.historyAmountData = item;
+      this.amounType =type
+    },
     close() {
       this.$emit("closeModal");
+    },
+    closeModal() {
+      this.isHistoryAmount = false;
     },
     arrayGroup(arr) {
       var map = {},
@@ -314,7 +343,6 @@ export default {
       });
     },
   },
-  components: {},
 };
 </script>
 

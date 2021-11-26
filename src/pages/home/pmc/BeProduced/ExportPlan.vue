@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:39:23
- * @LastEditTime: 2021-11-24 18:19:19
+ * @LastEditTime: 2021-11-25 11:49:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ExportPlan.vue
@@ -572,22 +572,6 @@ export default {
       } catch (error) {
         this.$message.error("导出数据失败");
       }
-      // const dataSource = list;
-      // const header = [];
-      // this.columns.map((item) => {
-      //   if (item.dataIndex) {
-      //     header.push({ key: item.dataIndex, title: item.title });
-      //   }
-      // });
-      // try {
-      //   console.log("header", header);
-      //   console.log("dataSource", dataSource);
-      //   ExportExcel(header, dataSource, `物料需求计划_${inputData.batchno}.xlsx`);
-      //   this.$message.success("导出数据成功!");
-      // } catch (error) {
-      //   console.log(error);
-      //   this.$message.error("导出数据失败");
-      // }
       this.isExportLod = false;
     },
     exportExcel() {

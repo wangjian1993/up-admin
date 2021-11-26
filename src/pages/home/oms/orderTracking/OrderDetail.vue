@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-11-24 18:31:08
+ * @Date: 2021-11-25 15:10:49
+ * @LastEditTime: 2021-11-25 15:12:25
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/leadIn.vue
+ * @FilePath: /up-admin/src/pages/home/oms/orderTracking/OrderDetail.vue
 -->
 <template>
   <div>
@@ -26,23 +26,8 @@
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
-            <a-form-item label="计划批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input style="width: 200px" placeholder="请输入计划批号" v-decorator="['batchno']" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['status']" placeholder="请选择状态" style="width: 200px">
-                <a-select-option value="">全部</a-select-option>
-                <a-select-option :value="item.ParamValue" v-for="(item, index) in stateList" :key="index">
-                  {{ item.ParamName }}
-                </a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="导入时间选择" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-range-picker style="width: 400px" v-decorator="['range-time-picker']" show-time format="YYYY-MM-DD HH:mm:ss" />
+            <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-week-picker placeholder="选择周" @change="weekChange" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -55,6 +40,8 @@
       </span>
     </a-form>
     <div class="operator">
+      <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
+      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
       <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
       <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
       <span style="margin-left: 8px">
@@ -76,6 +63,7 @@
       :row-selection="{
         selectedRowKeys: selectedRowKeys,
         onChange: onSelectChange,
+        getCheckboxProps: getCheckboxProps,
       }"
       bordered
     >
@@ -86,48 +74,30 @@
       </template>
       <template slot="Status" slot-scope="text, record">
         <div>
-          <a-tag :color="text === 'PROCESSING' || text === 'PENDING' || text === 'IMPORT_EXCEPTION' || text === 'CALCULATION_EXCEPTION' ? 'red' : 'green'">{{ record.StatusName }}</a-tag>
+          <a-tag :color="text === 'APPROVAL' || text === 'PUSHED_ERR' ?'red':'green'">{{ record.StatusName }}</a-tag>
         </div>
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a-popconfirm title="确定删除?" v-if="record.Status === 'IMPORT_EXCEPTION' || record.Status === 'CALCULATION_EXCEPTION'" @confirm="() => actionBnt(record, 'delete')">
+          <a-popconfirm v-if="record.Status === 'APPROVAL'" title="确定删除?" @confirm="() => actionBnt(record, 'delete')">
             <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
               <a-icon type="delete" />
               删除
             </a>
           </a-popconfirm>
-          <a style="margin-right: 8px" @click="showInfo(record)">
-            <a-icon type="profile" />
-            详情
+          <a :disabled="!hasPerm('approve')" v-if="record.Status === 'APPROVAL'" style="margin-right: 8px" @click="actionBnt(record, 'approved')">
+            <a-icon type="check-circle" />
+            审批
           </a>
-          <a style="margin-right: 8px" @click="errorInfo(record)" v-if="record.Status === 'CALCULATION_EXCEPTION' || record.Status === 'IMPORT_EXCEPTION'">
+          <a style="margin-right: 8px" @click="detail(record)">
             <a-icon type="profile" />
-            异常信息
-          </a>
-          <a style="margin-right: 8px" @click="detail(record)" v-if="record.Status === 'CALCULATION_COMPLETED'">
-            <a-icon type="profile" />
-            计算结果
+            查看
           </a>
         </div>
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
-    <div>
-      <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
-        <a-descriptions title="详情" :column="1">
-          <a-descriptions-item v-for="(item, index) in filterData" :key="index" :label="item.title">{{ drawerItem[item.dataIndex] }}</a-descriptions-item>
-          <a-descriptions-item label="状态">
-            <div>
-              <a-tag :color="drawerItem.Status === 'PROCESSING' || drawerItem.MatchStatusName === 'PENDING' || drawerItem.Status === 'IMPORT_EXCEPTION' || drawerItem.MatchStatusName === 'CALCULATION_EXCEPTION' ? 'red' : 'green'">{{ drawerItem.StatusName }}</a-tag>
-            </div>
-          </a-descriptions-item>
-        </a-descriptions>
-      </a-drawer>
-    </div>
-    <import-execl v-if="isExecl" :plantArray="plantList" @closeModal="closeModal"></import-execl>
     <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
-    <error-info v-if="isError" :errorData="errorData" @closeModal="closeErrorModal"></error-info>
   </div>
 </template>
 
@@ -147,8 +117,8 @@ const columns = [
   },
   {
     title: "PMC",
-    dataIndex: "PMCName",
-    scopedSlots: { customRender: "PMCName" },
+    dataIndex: "UserName",
+    scopedSlots: { customRender: "UserName" },
     align: "center",
   },
   {
@@ -158,31 +128,23 @@ const columns = [
     align: "center",
   },
   {
+    title: "周",
+    dataIndex: "Week",
+    scopedSlots: { customRender: "Week" },
+    align: "center",
+    width: "5%",
+  },
+  {
     title: "导入时间",
-    dataIndex: "ImportDate",
-    scopedSlots: { customRender: "ImportDate" },
+    dataIndex: "DateTimeCreated",
+    scopedSlots: { customRender: "DateTimeCreated" },
     align: "center",
   },
   {
-    title: "待产计划数量",
-    dataIndex: "WaitProductionQty",
-    scopedSlots: { customRender: "WaitProductionQty" },
+    title: "导入数量",
+    dataIndex: "Qty",
+    scopedSlots: { customRender: "Qty" },
     align: "center",
-    width: 120,
-  },
-  {
-    title: "待排产计划数量",
-    dataIndex: "WaitScheduleQty",
-    scopedSlots: { customRender: "WaitScheduleQty" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "销售订单原材料数量",
-    dataIndex: "SalesScheduleQty",
-    scopedSlots: { customRender: "SalesScheduleQty" },
-    align: "center",
-    width: 150,
   },
   {
     title: "计划状态",
@@ -196,15 +158,12 @@ const columns = [
     align: "center",
   },
 ];
-import ImportExecl from "./ImportExecl.vue";
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getMitemPlanAction, setMitemPlanAction } from "@/services/web.js";
-import UserList from "@/components/app-user/UserList";
-import ErrorInfo from "./ErrorInfo.vue";
+import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
+import UserList from '@/components/app-user/UserList'
 export default {
-  components: { ImportExecl, UserList, ErrorInfo },
-  props: ["plantList", "stateList"],
+  components: {UserList},
   data() {
     return {
       data: [],
@@ -221,17 +180,14 @@ export default {
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       selectedRows: [],
+      plantList: [],
       isExecl: false,
       selectedRowKeys: [],
       scrollY: "",
       searchForm: this.$form.createForm(this),
       week: "",
       isSearch: false,
-      isUserList: false,
-      isError: false,
-      errorData: [],
-      isDrawer: false,
-      drawerItem: [],
+      isUserList:false
     };
   },
   updated() {
@@ -241,43 +197,26 @@ export default {
     hasSelected() {
       return this.selectedRowKeys.length > 0;
     },
-    filterData() {
-      return this.columns.filter((obj) => {
-        if (obj.dataIndex !== "Status") {
-          return obj.dataIndex;
-        }
-      });
-    },
   },
   created() {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
     });
+    this.getPlant();
     this.getListAll();
   },
   methods: {
-    errorInfo(record) {
-      this.isError = true;
-      this.errorData = record;
-    },
-    closeErrorModal() {
-      this.isError = false;
-    },
-    showInfo(item) {
-      this.isDrawer = true;
-      this.drawerItem = item;
-    },
     //pmc选择
-    userSearch() {
-      this.isUserList = true;
+    userSearch(){
+      this.isUserList =true
     },
-    closeUserModal() {
-      this.isUserList = false;
+    closeUserModal(){
+      this.isUserList =false
     },
-    okUserModal(item) {
-      this.isUserList = false;
+    okUserModal(item){
+      this.isUserList =false;
       this.searchForm.setFieldsValue({
-        pmc: item.Name,
+        pmc:item.Name
       });
     },
     detail(item) {
@@ -299,7 +238,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getMitemPlanAction(parmas, "getall").then((res) => {
+      getMitemrequirement(parmas, "getall").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -309,6 +248,18 @@ export default {
           this.isSearch = false;
         } else {
           this.loading = false;
+        }
+      });
+    },
+    //获取需求工厂
+    getPlant() {
+      let parmas1 = {
+        entertypecode: "PLANT",
+      };
+      getMitemrequirement(parmas1, "getlistbytypecode").then((res) => {
+        if (res.data.success) {
+          this.plantList = res.data.data;
+          this.plantid = this.plantList[0].EnterId;
         }
       });
     },
@@ -330,29 +281,21 @@ export default {
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-           this.loading = true;
+          this.loading = true;
           console.log("Received values of form: ", values);
+          this.data = [];
           this.pagination.total = 0;
           if (this.week != "") {
             var w = this.week;
-          }
-          if (values["range-time-picker"]) {
-            const rangeValue = values["range-time-picker"];
-            var begindate = rangeValue[0].format("YYYY-MM-DD HH:mm:ss");
-            var enddate = rangeValue[1].format("YYYY-MM-DD HH:mm:ss");
           }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            batchno: values.batchno,
             week: w,
-            status: values.status,
             pmc: values.pmc,
-            begindate: begindate,
-            enddate: enddate,
           };
-          getMitemPlanAction(parmas, "getall").then((res) => {
+          getMitemrequirement(parmas, "getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -366,13 +309,18 @@ export default {
         }
       });
     },
+    getCheckboxProps: (record) => ({
+      props: {
+        disabled: record.Status !== "APPROVAL", // Column configuration not to be checked
+      },
+    }),
     //多选删除
     allDel() {
       let self = this;
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          setMitemPlanAction(self.selectedRowKeys, "delete").then((res) => {
+          mitemrequirementAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -383,16 +331,36 @@ export default {
         onCancel() {},
       });
     },
+    //多选审批
+    allCheck() {
+      let self = this;
+      self.$confirm({
+        title: "确定要审批选中内容",
+        onOk() {
+          mitemrequirementAction(self.selectedRowKeys, "approved").then((res) => {
+            if (res.data.success) {
+              self.selectedRowKeys = [];
+              self.$message.success("审批成功!");
+              self.getListAll();
+            }
+          });
+        },
+        onCancel() {},
+      });
+    },
     //单个删除
-    actionBnt(item) {
+    actionBnt(item, type) {
+      console.log(item);
       let parmas = [];
       parmas.push(item.Id);
-      setMitemPlanAction(parmas, "delete").then((res) => {
+      mitemrequirementAction(parmas, type).then((res) => {
         if (res.data.success) {
-          this.$message.success("删除成功!");
+          if (type == "approved") {
+            this.$message.success("审批成功!");
+          } else {
+            this.$message.success("删除成功!");
+          }
           this.getListAll();
-        } else {
-          this.$message.error(res.data.message.content);
         }
       });
     },
@@ -409,21 +377,20 @@ export default {
       }
       this.getListAll();
     },
-    // getCheckboxProps: (record) => ({
-    //   props: {
-    //     disabled: record.Status !== "IMPORT_EXCEPTION" && record.Status !== "CALCULATION_EXCEPTION", // Column configuration not to be checked
-    //   },
-    // }),
     //下载模板
     downloadExcel() {
-      window.open("./Upload/rar/20211019/待产计划与待排产计划导入模板.rar", "_blank");
+      // window.location.open = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
+      window.open("./Upload/excel/20211008/物料需求计划导入模板.xlsx", '_blank');
+      // let a = document.createElement("a");
+      // a.href = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
+      // a.click();
     },
   },
 };
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table{
-  min-height:65vh;
+/deep/.ant-table-body {
+  min-height: 0vh;
 }
 </style>
