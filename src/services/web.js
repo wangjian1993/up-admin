@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-11-27 16:47:08
+ * @LastEditTime: 2021-11-29 14:05:38
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -63,10 +63,10 @@ export function costAction(params, action) {
  * @return {*}
  */
 //获取器物料配置项
-export function getCostConfig(params,action) {
+export function getCostConfig(params, action) {
     return request(`${UP_WEB}/quote/${action}`, METHOD.GET, params);
 }
-export function addCost(params,action) {
+export function addCost(params, action) {
     return request(`${UP_WEB}/quote/${action}`, METHOD.POST, params);
 }
 /**
@@ -74,10 +74,10 @@ export function addCost(params,action) {
  * @param {*} params
  * @return {*}
  */
-export function getQuotePermission(params,action) {
+export function getQuotePermission(params, action) {
     return request(`${UP_WEB}/quote/permission/${action}`, METHOD.GET, params);
 }
-export function quotePermissionAction(params,action) {
+export function quotePermissionAction(params, action) {
     return request(`${UP_WEB}/quote/permission/${action}`, METHOD.POST, params);
 }
 
@@ -87,10 +87,10 @@ export function quotePermissionAction(params,action) {
  * @return {*}
  */
 
-export function getMitemrequirement(params,action) {
+export function getMitemrequirement(params, action) {
     return request(`${UP_WEB}/mitemrequirement/${action}`, METHOD.GET, params);
 }
-export function mitemrequirementAction(params,action) {
+export function mitemrequirementAction(params, action) {
     return request(`${UP_WEB}/mitemrequirement/${action}`, METHOD.POST, params);
 }
 
@@ -100,10 +100,10 @@ export function mitemrequirementAction(params,action) {
  * @param {*} action
  * @return {*}
  */
-export function getDailyPlan(params,action) {
+export function getDailyPlan(params, action) {
     return request(`${UP_WEB}/dailyproductplan/${action}`, METHOD.GET, params);
 }
-export function dailyPlanAction(params,action) {
+export function dailyPlanAction(params, action) {
     return request(`${UP_WEB}/dailyproductplan/${action}`, METHOD.POST, params);
 }
 
@@ -114,10 +114,10 @@ export function dailyPlanAction(params,action) {
  * @param {*} action
  * @return {*}
  */
-export function getScmAction(params,action) {
+export function getScmAction(params, action) {
     return request(`${UP_WEB}/scm/${action}`, METHOD.GET, params);
 }
-export function setScmAction(params,action) {
+export function setScmAction(params, action) {
     return request(`${UP_WEB}/scm/${action}`, METHOD.POST, params);
 }
 
@@ -127,10 +127,10 @@ export function setScmAction(params,action) {
  * @param {*} action
  * @return {*}
  */
-export function getSupplierAction(params,action) {
+export function getSupplierAction(params, action) {
     return request(`${UP_WEB}/scm/supplier/${action}`, METHOD.GET, params);
 }
-export function setSupplierAction(params,action) {
+export function setSupplierAction(params, action) {
     return request(`${UP_WEB}/scm/supplier/${action}`, METHOD.POST, params);
 }
 /**
@@ -139,10 +139,10 @@ export function setSupplierAction(params,action) {
  * @param {*} action
  * @return {*}
  */
-export function getQualityAction(params,action) {
+export function getQualityAction(params, action) {
     return request(`${UP_WEB}/purchase/qt/${action}`, METHOD.GET, params);
 }
-export function setQualityAction(params,action) {
+export function setQualityAction(params, action) {
     return request(`${UP_WEB}/purchase/qt/${action}`, METHOD.POST, params);
 }
 
@@ -152,10 +152,10 @@ export function setQualityAction(params,action) {
  * @param {*} action
  * @return {*}
  */
- export function getBuyerAction(params,action) {
+export function getBuyerAction(params, action) {
     return request(`${UP_WEB}/purchase/reset/${action}`, METHOD.GET, params);
 }
-export function setBuyerAction(params,action) {
+export function setBuyerAction(params, action) {
     return request(`${UP_WEB}/purchase/reset/${action}`, METHOD.POST, params);
 }
 
@@ -165,10 +165,10 @@ export function setBuyerAction(params,action) {
  * @param {*} action
  * @return {*}
  */
- export function getMitemPlanAction(params,action) {
+export function getMitemPlanAction(params, action) {
     return request(`${UP_WEB}/mitemplan/${action}`, METHOD.GET, params);
 }
-export function setMitemPlanAction(params,action) {
+export function setMitemPlanAction(params, action) {
     return request(`${UP_WEB}/mitemplan/${action}`, METHOD.POST, params);
 }
 
@@ -178,22 +178,29 @@ export function setMitemPlanAction(params,action) {
  * @param {*} action
  * @return {*}
  */
- export function getDailyPlanAction(params,action) {
+export function getDailyPlanAction(params, action) {
     return request(`${UP_WEB}/production/dailyplan/${action}`, METHOD.GET, params);
 }
-export function getPrintInfo(params,action) {
+export function getPrintInfo(params, action) {
     return request(`${UP_WEB}/production/print/${action}`, METHOD.GET, params);
 }
-export function setPrintInfo(params,action) {
+export function setPrintInfo(params, action) {
     return request(`${UP_WEB}/production/print/${action}`, METHOD.POST, params);
 }
-export function setDailyPlanAction(params,action) {
+export function setDailyPlanAction(params, action) {
     return request(`${UP_WEB}/production/dailyplan/${action}`, METHOD.POST, params);
 }
+//生产人员配置
+export function getProductionPersonnel(params, action) {
+    return request(`${UP_WEB}/production/dept/${action}`, METHOD.GET, params);
+}
+export function setProductionPersonnel(params, action) {
+    return request(`${UP_WEB}/production/dept/${action}`, METHOD.POST, params);
+}
 //订单管理
-export function getOrderApi(params,action) {
+export function getOrderApi(params, action) {
     return request(`${UP_WEB}/trace/order/${action}`, METHOD.GET, params);
 }
-export function setOrderApi(params,action) {
+export function setOrderApi(params, action) {
     return request(`${UP_WEB}/trace/order/${action}`, METHOD.POST, params);
 }

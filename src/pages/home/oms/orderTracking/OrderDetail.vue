@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:49
- * @LastEditTime: 2021-11-27 10:43:41
+ * @LastEditTime: 2021-11-29 08:48:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/OrderDetail.vue
@@ -35,121 +35,9 @@
 </template>
 
 <script>
-const columns = [
-  {
-    title: "序号",
-    scopedSlots: { customRender: "index" },
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "生产工厂",
-    dataIndex: "PlantName",
-    align: "center",
-    width: 100,
-  },
-  {
-    title: "物料品号",
-    dataIndex: "MitemCode",
-    scopedSlots: { customRender: "MitemCode" },
-    align: "center",
-    width: 100,
-  },
-  {
-    title: "物料品名",
-    dataIndex: "MitemName",
-    align: "center",
-  },
-  {
-    title: "欠数数量",
-    dataIndex: "DeficiencyQty",
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "标准用量",
-    dataIndex: "StandardQty",
-    align: "center",
-  },
-  {
-    title: " 总需求数量",
-    dataIndex: "RequirementQty",
-    align: "center",
-    width: 100,
-  },
-  {
-    title: "总库存数量",
-    dataIndex: "InventoryQty",
-    align: "center",
-    width: 100,
-  },
-  {
-    title: "预留用量",
-    dataIndex: "ReservedQty",
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "可用用量",
-    dataIndex: "AvailableQty",
-    scopedSlots: { customRender: "AvailableQty" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "总欠数量",
-    dataIndex: "TotalDeficiencyQty",
-    scopedSlots: { customRender: "TotalDeficiencyQty" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "采购在途总数",
-    dataIndex: "PurchaseTransitQty",
-    scopedSlots: { customRender: "PurchaseTransitQty" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "采购在途预留用量",
-    dataIndex: "PurchaseTransitReservedQty",
-    scopedSlots: { customRender: "PurchaseTransitReservedQty" },
-    align: "center",
-    width: 135,
-  },
-  {
-    title: "采购在途可用用量",
-    dataIndex: "PurchaseTransitAvailableQty",
-    scopedSlots: { customRender: "PurchaseTransitAvailableQty" },
-    align: "center",
-    width: 135,
-  },
-  {
-    title: "预计最早到货时间",
-    dataIndex: "EstimatedEarliestArrivalDateTime",
-    scopedSlots: { customRender: "EstimatedEarliestArrivalDateTime" },
-    align: "center",
-    customRender: (text) => {
-      return splitData(text);
-    },
-    width: 135,
-  },
-  {
-    title: "采购欠数",
-    dataIndex: "PurchaseDeficiencyQty",
-    scopedSlots: { customRender: "PurchaseDeficiencyQty" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "采购在途明细",
-    scopedSlots: { customRender: "action" },
-    width: 110,
-  },
-];
 import { getOrderApi } from "@/services/web.js";
-import { splitData } from "@/utils/util.js";
 import PassageDetail from "./PassageDetail.vue";
+import { detailColumns } from "./order.data";
 export default {
   components: { PassageDetail },
   props: ["detailData"],
@@ -157,7 +45,7 @@ export default {
     return {
       size: "small",
       visible: true,
-      columns,
+      columns: detailColumns,
       dataSource: [],
       loading: false,
       pagination: {
