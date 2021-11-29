@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-11-25 15:15:53
+ * @LastEditTime: 2021-11-27 16:47:08
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -193,4 +193,7 @@ export function setDailyPlanAction(params,action) {
 //订单管理
 export function getOrderApi(params,action) {
     return request(`${UP_WEB}/trace/order/${action}`, METHOD.GET, params);
+}
+export function setOrderApi(params,action) {
+    return request(`${UP_WEB}/trace/order/${action}`, METHOD.POST, params);
 }

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:02:21
- * @LastEditTime: 2021-11-25 15:23:26
+ * @LastEditTime: 2021-11-27 08:37:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/index.vue
@@ -12,18 +12,18 @@
       <a-tab-pane key="1" tab="未产订单跟踪" v-if="hasPerm('order_tracking_tab1')">
         <NoOrderTracking :companyList="companyList" :plantList="plantList" />
       </a-tab-pane>
-      <a-tab-pane key="2" tab="物料及采购明细" v-if="hasPerm('order_tracking_tab2')">
+      <!-- <a-tab-pane key="2" tab="物料及采购明细" v-if="hasPerm('order_tracking_tab2')">
         <OrderDetail :companyList="companyList" :plantList="plantList" />
-      </a-tab-pane>
+      </a-tab-pane> -->
     </a-tabs>
   </a-card>
 </template>
 <script>
 import NoOrderTracking from "./NoOrderTracking.vue";
-import OrderDetail from "./OrderDetail.vue";
+// import OrderDetail from "./OrderDetail.vue";
 import { getOrderApi } from "@/services/web.js";
 export default {
-  components: { NoOrderTracking, OrderDetail },
+  components: { NoOrderTracking },
   data() {
     return {
       activeKey: "1",

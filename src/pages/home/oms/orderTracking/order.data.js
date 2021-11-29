@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-25 15:13:13
- * @LastEditTime: 2021-11-25 16:09:43
+ * @LastEditTime: 2021-11-27 16:42:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/order.data.js
@@ -93,17 +93,17 @@ export const columns = [
     },
     {
         title: "订单欠数",
-        dataIndex: "MoDeficiencyQty",
-        scopedSlots: { customRender: "MoDeficiencyQty" },
+        dataIndex: "OrderDeficiencyQty",
+        scopedSlots: { customRender: "OrderDeficiencyQty" },
         align: "center",
         width: 80,
     },
     {
         title: "预计交期",
-        dataIndex: "Status",
-        scopedSlots: { customRender: "Status" },
+        dataIndex: "PlanShipDate",
+        scopedSlots: { customRender: "PlanShipDate" },
         align: "center",
-        width: 80,
+        width: 150,
     },
     {
         title: "生产工厂",
@@ -128,8 +128,8 @@ export const columns = [
     },
     {
         title: "可用库存数",
-        dataIndex: "InProductionQty",
-        scopedSlots: { customRender: "InProductionQty" },
+        dataIndex: "AvailableInvQty",
+        scopedSlots: { customRender: "AvailableInvQty" },
         align: "center",
         width: 100,
     },
@@ -166,8 +166,7 @@ export const columns = [
     },
     {
         title: "生产中数量",
-        dataIndex: "OrderDeficiencyQty",
-        scopedSlots: { customRender: "OrderDeficiencyQty" },
+        dataIndex: "InProductionQty",
         align: "center",
         width: 100,
     },
@@ -186,13 +185,6 @@ export const columns = [
         width: 150,
     },
     {
-        title: "物料及采购情况",
-        dataIndex: "condition",
-        scopedSlots: { customRender: "condition" },
-        align: "center",
-        width: 150,
-    },
-    {
         title: "预警信息",
         dataIndex: "EarlyWarningInfo",
         scopedSlots: { customRender: "EarlyWarningInfo" },
@@ -200,8 +192,18 @@ export const columns = [
         width: 80,
     },
     {
+        title: "物料及采购情况",
+        dataIndex: "condition",
+        scopedSlots: { customRender: "condition" },
+        align: "center",
+        width: 150,
+        fixed: "right",
+    },
+    {
         title: "操作",
         scopedSlots: { customRender: "action" },
         align: "center",
+        fixed: "right",
+        width: 80,
     },
 ];

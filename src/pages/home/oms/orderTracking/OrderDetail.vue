@@ -1,103 +1,36 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:49
- * @LastEditTime: 2021-11-25 15:12:25
+ * @LastEditTime: 2021-11-27 10:43:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/OrderDetail.vue
 -->
 <template>
   <div>
-    <a-form layout="horizontal" :form="searchForm">
-      <div>
-        <a-row>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
-                <a-select-option value="">全部</a-select-option>
-                <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
-              <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-week-picker placeholder="选择周" @change="weekChange" />
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </div>
-      <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
-        <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
-        <a-button style="margin-left: 8px" type="primary" @click="importExcel" :disabled="!hasPerm('import')"><a-icon type="import" />导入</a-button>
-        <a-button style="margin-left: 8px" type="primary" @click="downloadExcel" :disabled="!hasPerm('down')"><a-icon type="download" />下载模板</a-button>
-      </span>
-    </a-form>
-    <div class="operator">
-      <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
-      <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allCheck" style="margin-left: 8px">审批</a-button>
-      <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-      <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-      <span style="margin-left: 8px">
-        <template v-if="hasSelected">
-          {{ `共选中 ${selectedRowKeys.length} 条` }}
-        </template>
-      </span>
-    </div>
-    <a-table
-      v-if="hasPerm('search')"
-      :columns="columns"
-      :data-source="data"
-      size="small"
-      :scroll="{ y: scrollY }"
-      :loading="loading"
-      :pagination="pagination"
-      @change="handleTableChange"
-      :rowKey="(data) => data.Id"
-      :row-selection="{
-        selectedRowKeys: selectedRowKeys,
-        onChange: onSelectChange,
-        getCheckboxProps: getCheckboxProps,
-      }"
-      bordered
-    >
-      <template slot="index" slot-scope="text, record, index">
+    <a-modal v-model="visible" :title="`销售订单:${detailData.MoCode}`" @cancel="close" width="100%" :footer="null" centered>
+      <a-spin tip="loading..." :spinning="loading">
         <div>
-          <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+          <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+            <a-table :columns="columns" :data-source="dataSource" :size="size" :scroll="{ y: 600 }" :pagination="pagination" :rowKey="(dataSource, index) => dataSource.ErpPlantId + index" @change="handleTableChange" bordered>
+              <template slot="index" slot-scope="text, record, index">
+                <div>
+                  <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+                </div>
+              </template>
+              <template slot="action" slot-scope="text, record">
+                <div>
+                  <a style="margin-right: 8px" @click="detail(record)">
+                    查看在途明细
+                  </a>
+                </div>
+              </template>
+            </a-table>
+          </a-card>
         </div>
-      </template>
-      <template slot="Status" slot-scope="text, record">
-        <div>
-          <a-tag :color="text === 'APPROVAL' || text === 'PUSHED_ERR' ?'red':'green'">{{ record.StatusName }}</a-tag>
-        </div>
-      </template>
-      <template slot="action" slot-scope="text, record">
-        <div>
-          <a-popconfirm v-if="record.Status === 'APPROVAL'" title="确定删除?" @confirm="() => actionBnt(record, 'delete')">
-            <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
-              <a-icon type="delete" />
-              删除
-            </a>
-          </a-popconfirm>
-          <a :disabled="!hasPerm('approve')" v-if="record.Status === 'APPROVAL'" style="margin-right: 8px" @click="actionBnt(record, 'approved')">
-            <a-icon type="check-circle" />
-            审批
-          </a>
-          <a style="margin-right: 8px" @click="detail(record)">
-            <a-icon type="profile" />
-            查看
-          </a>
-        </div>
-      </template>
-    </a-table>
-    <a-empty v-else description="暂无权限" />
-    <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
+      </a-spin>
+    </a-modal>
+    <PassageDetail v-if="isDetail" :detailList="detailList" @closeModal="closeModal" />
   </div>
 </template>
 
@@ -107,68 +40,126 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "5%",
-  },
-  {
-    title: "计划批号",
-    dataIndex: "BatchNo",
-    scopedSlots: { customRender: "BatchNo" },
-    align: "center",
-  },
-  {
-    title: "PMC",
-    dataIndex: "UserName",
-    scopedSlots: { customRender: "UserName" },
-    align: "center",
+    width: 50,
   },
   {
     title: "生产工厂",
     dataIndex: "PlantName",
-    scopedSlots: { customRender: "PlantName" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "物料品号",
+    dataIndex: "MitemCode",
+    scopedSlots: { customRender: "MitemCode" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "物料品名",
+    dataIndex: "MitemName",
     align: "center",
   },
   {
-    title: "周",
-    dataIndex: "Week",
-    scopedSlots: { customRender: "Week" },
+    title: "欠数数量",
+    dataIndex: "DeficiencyQty",
     align: "center",
-    width: "5%",
+    width: 80,
   },
   {
-    title: "导入时间",
-    dataIndex: "DateTimeCreated",
-    scopedSlots: { customRender: "DateTimeCreated" },
+    title: "标准用量",
+    dataIndex: "StandardQty",
     align: "center",
   },
   {
-    title: "导入数量",
-    dataIndex: "Qty",
-    scopedSlots: { customRender: "Qty" },
+    title: " 总需求数量",
+    dataIndex: "RequirementQty",
     align: "center",
+    width: 100,
   },
   {
-    title: "计划状态",
-    dataIndex: "Status",
-    scopedSlots: { customRender: "Status" },
+    title: "总库存数量",
+    dataIndex: "InventoryQty",
     align: "center",
+    width: 100,
   },
   {
-    title: "操作",
+    title: "预留用量",
+    dataIndex: "ReservedQty",
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "可用用量",
+    dataIndex: "AvailableQty",
+    scopedSlots: { customRender: "AvailableQty" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "总欠数量",
+    dataIndex: "TotalDeficiencyQty",
+    scopedSlots: { customRender: "TotalDeficiencyQty" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "采购在途总数",
+    dataIndex: "PurchaseTransitQty",
+    scopedSlots: { customRender: "PurchaseTransitQty" },
+    align: "center",
+    width: 120,
+  },
+  {
+    title: "采购在途预留用量",
+    dataIndex: "PurchaseTransitReservedQty",
+    scopedSlots: { customRender: "PurchaseTransitReservedQty" },
+    align: "center",
+    width: 135,
+  },
+  {
+    title: "采购在途可用用量",
+    dataIndex: "PurchaseTransitAvailableQty",
+    scopedSlots: { customRender: "PurchaseTransitAvailableQty" },
+    align: "center",
+    width: 135,
+  },
+  {
+    title: "预计最早到货时间",
+    dataIndex: "EstimatedEarliestArrivalDateTime",
+    scopedSlots: { customRender: "EstimatedEarliestArrivalDateTime" },
+    align: "center",
+    customRender: (text) => {
+      return splitData(text);
+    },
+    width: 135,
+  },
+  {
+    title: "采购欠数",
+    dataIndex: "PurchaseDeficiencyQty",
+    scopedSlots: { customRender: "PurchaseDeficiencyQty" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "采购在途明细",
     scopedSlots: { customRender: "action" },
-    align: "center",
+    width: 110,
   },
 ];
-import getTableScroll from "@/utils/setTableHeight";
-import { renderStripe } from "@/utils/stripe.js";
-import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
-import UserList from '@/components/app-user/UserList'
+import { getOrderApi } from "@/services/web.js";
+import { splitData } from "@/utils/util.js";
+import PassageDetail from "./PassageDetail.vue";
 export default {
-  components: {UserList},
+  components: { PassageDetail },
+  props: ["detailData"],
   data() {
     return {
-      data: [],
+      size: "small",
+      visible: true,
       columns,
-      loading: true,
+      dataSource: [],
+      loading: false,
       pagination: {
         current: 1,
         total: 0,
@@ -179,218 +170,58 @@ export default {
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
-      selectedRows: [],
-      plantList: [],
-      isExecl: false,
-      selectedRowKeys: [],
-      scrollY: "",
-      searchForm: this.$form.createForm(this),
-      week: "",
-      isSearch: false,
-      isUserList:false
+      isDetail: false,
+      detailList: [],
     };
   },
-  updated() {
-    renderStripe();
-  },
-  computed: {
-    hasSelected() {
-      return this.selectedRowKeys.length > 0;
-    },
-  },
   created() {
-    this.$nextTick(() => {
-      this.scrollY = getTableScroll(70);
-    });
-    this.getPlant();
-    this.getListAll();
+    this.getList();
   },
   methods: {
-    //pmc选择
-    userSearch(){
-      this.isUserList =true
-    },
-    closeUserModal(){
-      this.isUserList =false
-    },
-    okUserModal(item){
-      this.isUserList =false;
-      this.searchForm.setFieldsValue({
-        pmc:item.Name
-      });
-    },
-    detail(item) {
-      // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
-      this.$emit("toDetail", item.BatchNo);
-    },
-    weekChange(date, dateString) {
-      let str = dateString.split("-");
-      this.week = str[1].replace("周", "");
+    close() {
+      this.$emit("closeModal");
     },
     closeModal() {
-      this.isExecl = false;
-      this.getListAll();
+      this.isDetail = false;
     },
-    //获取列表数据
-    getListAll() {
+    detail(item) {
+      this.isDetail = true;
+      this.detailList = item;
+    },
+    getList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        cacheid: this.detailData.CacheId,
       };
-      getMitemrequirement(parmas, "getall").then((res) => {
+      getOrderApi(params, "getmobomlist").then((res) => {
         if (res.data.success) {
-          this.data = res.data.data.list;
+          this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
-          this.loading = false;
-          this.isSearch = false;
-        } else {
-          this.loading = false;
         }
+        this.loading = false;
       });
-    },
-    //获取需求工厂
-    getPlant() {
-      let parmas1 = {
-        entertypecode: "PLANT",
-      };
-      getMitemrequirement(parmas1, "getlistbytypecode").then((res) => {
-        if (res.data.success) {
-          this.plantList = res.data.data;
-          this.plantid = this.plantList[0].EnterId;
-        }
-      });
-    },
-    //关闭弹窗
-    onClose() {
-      this.isDrawer = false;
-    },
-    //多选
-    onSelectChange(selectedRowKeys) {
-      this.selectedRowKeys = selectedRowKeys;
-    },
-    //重置搜索
-    reset() {
-      this.getListAll();
-      this.week = "";
-      this.searchForm.resetFields();
-    },
-    //关键词搜索
-    search() {
-      this.searchForm.validateFields((err, values) => {
-        if (!err) {
-          this.loading = true;
-          console.log("Received values of form: ", values);
-          this.data = [];
-          this.pagination.total = 0;
-          if (this.week != "") {
-            var w = this.week;
-          }
-          let parmas = {
-            pageindex: this.pagination.current,
-            pagesize: this.pagination.pageSize,
-            plantid: values.plantid,
-            week: w,
-            pmc: values.pmc,
-          };
-          getMitemrequirement(parmas, "getall").then((res) => {
-            if (res.data.success) {
-              this.data = res.data.data.list;
-              const pagination = { ...this.pagination };
-              pagination.total = res.data.data.recordsTotal;
-              this.pagination = pagination;
-              this.loading = false;
-              this.isSearch = true;
-            }
-          });
-          // do something
-        }
-      });
-    },
-    getCheckboxProps: (record) => ({
-      props: {
-        disabled: record.Status !== "APPROVAL", // Column configuration not to be checked
-      },
-    }),
-    //多选删除
-    allDel() {
-      let self = this;
-      self.$confirm({
-        title: "确定要删除选中内容",
-        onOk() {
-          mitemrequirementAction(self.selectedRowKeys, "delete").then((res) => {
-            if (res.data.success) {
-              self.selectedRowKeys = [];
-              self.$message.success("删除成功!");
-              self.getListAll();
-            }
-          });
-        },
-        onCancel() {},
-      });
-    },
-    //多选审批
-    allCheck() {
-      let self = this;
-      self.$confirm({
-        title: "确定要审批选中内容",
-        onOk() {
-          mitemrequirementAction(self.selectedRowKeys, "approved").then((res) => {
-            if (res.data.success) {
-              self.selectedRowKeys = [];
-              self.$message.success("审批成功!");
-              self.getListAll();
-            }
-          });
-        },
-        onCancel() {},
-      });
-    },
-    //单个删除
-    actionBnt(item, type) {
-      console.log(item);
-      let parmas = [];
-      parmas.push(item.Id);
-      mitemrequirementAction(parmas, type).then((res) => {
-        if (res.data.success) {
-          if (type == "approved") {
-            this.$message.success("审批成功!");
-          } else {
-            this.$message.success("删除成功!");
-          }
-          this.getListAll();
-        }
-      });
-    },
-    importExcel() {
-      this.isExecl = true;
     },
     //分压
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if (this.isSearch) {
-        this.search();
-        return;
-      }
-      this.getListAll();
-    },
-    //下载模板
-    downloadExcel() {
-      // window.location.open = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
-      window.open("./Upload/excel/20211008/物料需求计划导入模板.xlsx", '_blank');
-      // let a = document.createElement("a");
-      // a.href = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
-      // a.click();
+      this.getList();
     },
   },
 };
 </script>
 
-<style scoped lang="less">
-/deep/.ant-table-body {
-  min-height: 0vh;
+<style lang="less" scoped>
+.rowActive {
+  background: #000;
+}
+.form-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 }
 </style>
