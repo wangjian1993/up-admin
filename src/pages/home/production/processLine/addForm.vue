@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 15:04:20
- * @LastEditTime: 2021-11-30 16:43:30
+ * @LastEditTime: 2021-11-30 17:46:43
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/production/personnel/addForm.vue
+ * @FilePath: /up-admin/src/pages/home/production/processLine/addForm.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="添加人员配置" @cancel="close" @ok="handleOk" centered :width="600">
+    <a-modal v-model="visible" :title="isEdit?'编辑工序产线':'添加工序产线'" @cancel="close" @ok="handleOk" centered :width="600">
       <div>
         <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-form-model-item ref="PlantId" has-feedback label="生产工厂" prop="PlantId">
@@ -21,16 +21,15 @@
               <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
             </a-select>
           </a-form-model-item>
-          <a-form-model-item ref="Lines" has-feedback label="生产产线" prop="Lines">
-            <a-select v-model="form.Lines" mode="multiple" placeholder="请选择生产产线" style="width: 200px">
+          <a-form-model-item ref="LineCodes" has-feedback label="生产产线" prop="LineCodes">
+            <a-select v-model="form.LineCodes" mode="multiple" placeholder="请选择生产产线">
               <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineCode">{{ item.LineName }}</a-select-option>
             </a-select>
           </a-form-model-item>
-          <a-form-model-item ref="UserCode" has-feedback label="用户" prop="UserId">
-            <a-input v-model="form.UserCode" style="width: 150px" disabled placeholder="请选择用户" />
-            <a-button type="primary" style="margin-left:10px" icon="plus" @click="addUser">
-              添加
-            </a-button>
+          <a-form-model-item ref="ProcessId" has-feedback label="工序" prop="ProcessId">
+            <a-select v-model="form.ProcessId" placeholder="请选择工序">
+              <a-select-option v-for="item in processList" :key="item.Id" :value="item.Id">{{ item.ProcessName }}</a-select-option>
+            </a-select>
           </a-form-model-item>
           <a-form-model-item ref="Enable" label="是否启用">
             <a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
@@ -40,33 +39,30 @@
           </a-form-model-item>
         </a-form-model>
       </div>
-      <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
     </a-modal>
   </div>
 </template>
 
 <script>
-import { getWorkshopList, getLineList, setProductionPersonnel } from "@/services/web.js";
-import UserList from "@/components/app-user/UserList";
+import { getWorkshopList, getLineList, setProcessLine, getProcessLine } from "@/services/web.js";
 export default {
-  components: { UserList },
-  props: ["plantList"],
+  props: ["plantList", "editData", "isEdit"],
   data() {
     return {
       labelCol: { span: 7 },
       wrapperCol: { span: 14 },
       form: {
-        UserCode: "",
         PlantId: "",
+        ProcessId: "",
         WorkshopId: "",
-        Lines: [],
+        LineCodes: [],
         Enable: "Y",
       },
       rules: {
-        UserCode: [
+        ProcessId: [
           {
             required: true,
-            message: "请选择用户",
+            message: "请选择工序",
             trigger: "blur",
           },
         ],
@@ -84,7 +80,7 @@ export default {
             trigger: "blur",
           },
         ],
-        Lines: [
+        LineCodes: [
           {
             required: true,
             message: "请选择生产产线",
@@ -100,24 +96,28 @@ export default {
       lineList: [],
       lineId: "",
       isUserList: false,
+      processList: [],
     };
   },
-  created() {},
+  created() {
+    this.getListAll();
+    if(this.isEdit){
+      this.form = this.editData;
+      this.plantId = this.editData.PlantId
+      this.getWorkshopList();
+    }
+  },
   methods: {
-    closeUserModal() {
-      this.isUserList = false;
-    },
-    okUserModal(item) {
-      this.isUserList = false;
-      this.form.UserCode = item.Code;
-    },
-    //添加车间
-    addUser() {
-      this.isUserList = true;
-    },
-    //移除文件
-    removeFile() {
-      this.fileList = [];
+    getListAll() {
+      let parmas = {
+        pageindex: 1,
+        pagesize: 100,
+      };
+      getProcessLine(parmas, "getall").then((res) => {
+        if (res.data.success) {
+          this.processList = res.data.data.list;
+        }
+      });
     },
     close() {
       this.$emit("closeModal");
@@ -150,14 +150,14 @@ export default {
     plantChange(e) {
       this.plantId = e;
       this.getWorkshopList();
-      this.form.WorkshopId ='';
-      this.form.Lines =[]
+      this.form.WorkshopId = "";
+      this.form.LineCodes = [];
     },
     //车间选择
     workshopChange(e) {
       this.workshopId = e;
       this.getLineList();
-      this.form.Lines =[]
+      this.form.LineCodes = [];
     },
     //产线选择
     lineChange(e) {
@@ -171,33 +171,26 @@ export default {
         if (valid) {
           //编辑
           if (this.isEdit) {
-            let categoryArray = [];
-            this.categorytags.forEach((item) => {
-              categoryArray.push(item.MitemCategoryCode);
-            });
-            let codeArray = [];
-            this.codeTags.forEach((item) => {
-              codeArray.push(item.MitemCode);
-            });
+            console.log(this.form);
             let editForm = {
               PlantId: this.form.PlantId,
-              UserId: this.form.UserId,
-              MitemCategoryCodes: this.form.MitemCategoryCodes.join(","),
-              MitemCodes: codeArray.join(","),
+              ProcessId: this.form.ProcessId,
+              WorkshopId: this.form.WorkshopId,
+              LineCodes: this.form.LineCodes.join(","),
+              Enable:this.form.Enable
             };
-            setProductionPersonnel(editForm, "update").then((res) => {
+            console.log("编辑====",editForm)
+            setProcessLine(editForm, "line/update").then((res) => {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
-                this.defaultForm();
-                this.visible = false;
-                this.getListAll();
+                this.$emit("closeModal");
+                this.$emit("success");
               }
             });
           } else {
             //添加
-            console.log(this.form.Lines.join(","));
-            this.form.Lines = this.form.Lines.join(",");
-            setProductionPersonnel(this.form, "add").then((res) => {
+            this.form.LineCodes = this.form.LineCodes.join(",");
+            setProcessLine(this.form, "line/add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");
                 this.$emit("closeModal");
