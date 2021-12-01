@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-30 15:41:07
- * @LastEditTime: 2021-11-30 16:29:41
+ * @LastEditTime: 2021-12-01 11:23:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/TotalQty.vue
@@ -11,6 +11,20 @@
     <a-modal v-model="visible" title="生产总数量" @cancel="close" width="80%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
+          <a-descriptions columns="4">
+            <a-descriptions-item label="销售公司">
+              {{totalQtyData.CompanyName}}
+            </a-descriptions-item>
+            <a-descriptions-item label="品号">
+              {{totalQtyData.MitemCode}}
+            </a-descriptions-item>
+            <a-descriptions-item label="销售订单">
+              {{totalQtyData.SalesOrderNo}}
+            </a-descriptions-item>
+            <a-descriptions-item label="工单">
+              {{totalQtyData.MoCode}}
+            </a-descriptions-item>
+          </a-descriptions>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
             <a-table :columns="columns" :data-source="dataSource" :size="size" :scroll="{ y: 600 }" :pagination="false" :rowKey="(dataSource, index) => dataSource.ErpPlantId + index" @change="handleTableChange" bordered>
               <template slot="index" slot-scope="text, record, index">

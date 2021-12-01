@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-11-11 16:14:04
+ * @LastEditTime: 2021-12-01 16:55:07
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
@@ -283,8 +283,8 @@ export default {
           WorkOrderNo: item.WorkOrderNo || "",
           MitemCode: item.MitemCode || "",
           MitemName: item.MitemName || "",
-          OrderQty: item.OrderQty || "",
-          PlanQty: item.PlanQty || "",
+          OrderQty: item.OrderQty || 0,
+          PlanQty: item.PlanQty || 0,
           DateOrder: this.formatDate(item.DateOrder) || "",
           DateDeliveryOrder: this.formatDate(item.DateDeliveryOrder) || "",
           PerCapiteCapacity: item.PerCapiteCapacity || "",

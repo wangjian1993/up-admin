@@ -1,16 +1,30 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:49
- * @LastEditTime: 2021-11-29 08:48:33
+ * @LastEditTime: 2021-12-01 11:20:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/OrderDetail.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" :title="`销售订单:${detailData.MoCode}`" @cancel="close" width="100%" :footer="null" centered>
+    <a-modal v-model="visible" title="物料及采购详情" @cancel="close" width="100%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
+          <a-descriptions columns="4">
+            <a-descriptions-item label="销售公司">
+              {{detailData.CompanyName}}
+            </a-descriptions-item>
+            <a-descriptions-item label="品号">
+              {{detailData.MitemCode}}
+            </a-descriptions-item>
+            <a-descriptions-item label="销售订单">
+              {{detailData.SalesOrderNo}}
+            </a-descriptions-item>
+            <a-descriptions-item label="工单">
+              {{detailData.MoCode}}
+            </a-descriptions-item>
+          </a-descriptions>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
             <a-table :columns="columns" :data-source="dataSource" :size="size" :scroll="{ y: 600 }" :pagination="pagination" :rowKey="(dataSource, index) => dataSource.ErpPlantId + index" @change="handleTableChange" bordered>
               <template slot="index" slot-scope="text, record, index">
@@ -37,7 +51,7 @@
 <script>
 import { getOrderApi } from "@/services/web.js";
 import PassageDetail from "./PassageDetail.vue";
-import { detailColumns } from "./order.data";
+import { detailColumns, detailColumnsP } from "./order.data";
 export default {
   components: { PassageDetail },
   props: ["detailData"],
@@ -45,7 +59,7 @@ export default {
     return {
       size: "small",
       visible: true,
-      columns: detailColumns,
+      columns: [],
       dataSource: [],
       loading: false,
       pagination: {
@@ -64,6 +78,7 @@ export default {
   },
   created() {
     this.getList();
+    this.columns = this.detailData.MitemProperty === "P" ? detailColumnsP : detailColumns;
   },
   methods: {
     close() {
@@ -83,7 +98,8 @@ export default {
         pagesize: this.pagination.pageSize,
         cacheid: this.detailData.CacheId,
       };
-      getOrderApi(params, "getmobomlist").then((res) => {
+      let url = this.detailData.MitemProperty === "P" ? "getrawmaters" : "getmobomlist";
+      getOrderApi(params, url).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };

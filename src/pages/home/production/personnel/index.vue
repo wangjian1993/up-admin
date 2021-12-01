@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 13:54:43
- * @LastEditTime: 2021-11-29 17:35:47
+ * @LastEditTime: 2021-12-01 10:54:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/personnel/index.vue
@@ -81,7 +81,7 @@
         </template>
         <template slot="Enable" slot-scope="text">
           <div>
-            <a-tag :color="text == 'Y'?'green':'red'">{{text=='Y'?'启用':'禁用'}}</a-tag>
+            <a-tag :color="text == 'Y' ? 'green' : 'red'">{{ text == "Y" ? "启用" : "禁用" }}</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">
@@ -100,7 +100,7 @@
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
-      <addForm v-if="visible" :plantList="plantList" @closeModal="closeModal" @success="getListAll"/>
+      <addForm v-if="visible" :plantList="plantList" @closeModal="closeModal" @success="getListAll" :editData="editData" :isEdit="isEdit" />
     </div>
   </a-card>
 </template>
@@ -155,6 +155,7 @@ export default {
       workshopList: [],
       workshopId: "",
       lineList: [],
+      editData: [],
     };
   },
   updated() {
@@ -253,6 +254,8 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
+            workshop: values.workshop,
+            line: values.line,
             user: values.user,
           };
           getProductionPersonnel(parmas, "getall").then((res) => {
@@ -294,6 +297,12 @@ export default {
       this.isEdit = false;
       this.visible = true;
     },
+    //编辑
+    edit(item) {
+      this.visible = true;
+      this.isEdit = true;
+      this.editData = item;
+    },
     //多选删除
     allDel() {
       let self = this;
@@ -304,7 +313,8 @@ export default {
           self.selectedRowKeys.forEach((item) => {
             parmas.push({
               PlantId: self.data[item].PlantId,
-              UserId: self.data[item].UserId,
+              UserCode:  self.data[item].UserCode,
+              WorkshopId:  self.data[item].WorkshopId,
             });
           });
           setProductionPersonnel(parmas, "delete").then((res) => {
@@ -322,8 +332,9 @@ export default {
     onDelete(item) {
       let parmas = [];
       parmas.push({
+        UserCode: item.UserCode,
         PlantId: item.PlantId,
-        UserId: item.UserId,
+        WorkshopId: item.WorkshopId,
       });
       setProductionPersonnel(parmas, "delete").then((res) => {
         if (res.data.success) {
@@ -358,8 +369,8 @@ export default {
   margin-bottom: 5px;
 }
 /deep/.ant-table {
-  min-height: 77vh;
-  max-height: 77vh;
+  min-height: 71vh;
+  max-height: 71vh;
   overflow: auto;
 }
 </style>

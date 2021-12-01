@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 15:04:20
- * @LastEditTime: 2021-11-30 16:43:30
+ * @LastEditTime: 2021-12-01 10:46:51
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/personnel/addForm.vue
@@ -50,7 +50,7 @@ import { getWorkshopList, getLineList, setProductionPersonnel } from "@/services
 import UserList from "@/components/app-user/UserList";
 export default {
   components: { UserList },
-  props: ["plantList"],
+  props: ["plantList", "editData", "isEdit"],
   data() {
     return {
       labelCol: { span: 7 },
@@ -102,7 +102,16 @@ export default {
       isUserList: false,
     };
   },
-  created() {},
+  created() {
+    if (this.isEdit) {
+      this.form = this.editData;
+      this.form.Lines = this.editData.Lines.split(",");
+      this.plantId = this.editData.PlantId;
+      this.workshopId = this.editData.WorkshopId;
+      this.getWorkshopList();
+      this.getLineList();
+    }
+  },
   methods: {
     closeUserModal() {
       this.isUserList = false;
@@ -150,14 +159,14 @@ export default {
     plantChange(e) {
       this.plantId = e;
       this.getWorkshopList();
-      this.form.WorkshopId ='';
-      this.form.Lines =[]
+      this.form.WorkshopId = "";
+      this.form.Lines = [];
     },
     //车间选择
     workshopChange(e) {
       this.workshopId = e;
       this.getLineList();
-      this.form.Lines =[]
+      this.form.Lines = [];
     },
     //产线选择
     lineChange(e) {
@@ -171,26 +180,18 @@ export default {
         if (valid) {
           //编辑
           if (this.isEdit) {
-            let categoryArray = [];
-            this.categorytags.forEach((item) => {
-              categoryArray.push(item.MitemCategoryCode);
-            });
-            let codeArray = [];
-            this.codeTags.forEach((item) => {
-              codeArray.push(item.MitemCode);
-            });
             let editForm = {
+              UserCode: this.form.UserCode,
               PlantId: this.form.PlantId,
-              UserId: this.form.UserId,
-              MitemCategoryCodes: this.form.MitemCategoryCodes.join(","),
-              MitemCodes: codeArray.join(","),
+              WorkshopId: this.form.WorkshopId,
+              Lines: this.form.Lines.join(","),
+              Enable: this.form.Enable,
             };
             setProductionPersonnel(editForm, "update").then((res) => {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
-                this.defaultForm();
-                this.visible = false;
-                this.getListAll();
+                this.$emit("closeModal");
+                this.$emit("success");
               }
             });
           } else {

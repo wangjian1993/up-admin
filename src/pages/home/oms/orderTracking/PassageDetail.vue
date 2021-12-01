@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-11-27 10:14:45
- * @LastEditTime: 2021-11-27 11:09:34
+ * @LastEditTime: 2021-12-01 11:22:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/PassageDetail.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="采购在途明细" @cancel="close" width="80%" :footer="null" centered>
+    <a-modal v-model="visible" :title="`采购在途明细:${detailList.MitemCode}`" @cancel="close" width="80%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">

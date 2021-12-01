@@ -83,10 +83,6 @@
               <a-icon type="edit" />
               编辑
             </a>
-            <!-- <a style="margin-right: 8px" @click="detail(record)">
-              <a-icon type="profile" />
-              查看
-            </a> -->
           </div>
         </template>
       </a-table>
@@ -110,16 +106,16 @@
         </a-descriptions>
       </a-drawer>
     </div>
-     <addForm v-if="visible" :plantList="plantList" @closeModal="closeModal" :editData="editData" :isEdit="isEdit" @success="getListAll"/>
+    <addForm v-if="visible" :plantList="plantList" @closeModal="closeModal" :editData="editData" :isEdit="isEdit" @success="getListAll" />
   </a-card>
 </template>
 <script>
 import { getProcessLine, setProcessLine, getWorkshopList } from "@/services/web.js";
 import { columnsLine } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
-import addForm from './addForm.vue'
+import addForm from "./addForm.vue";
 export default {
-  components: {addForm},
+  components: { addForm },
   mixins: [PublicVar],
   data() {
     return {
@@ -143,7 +139,7 @@ export default {
         Step: 1,
         Enable: "Y",
       },
-      workshopList:[],
+      workshopList: [],
       rules: {
         PlantId: [
           {
@@ -174,7 +170,7 @@ export default {
           },
         ],
       },
-      editData:[]
+      editData: [],
     };
   },
   computed: {
@@ -187,10 +183,10 @@ export default {
     this.getPlant();
   },
   methods: {
-    closeModal(){
+    closeModal() {
       this.visible = false;
     },
-     plantChange(e) {
+    plantChange(e) {
       this.plantid = e;
       this.getWorkshopList();
       this.searchForm.setFieldsValue({
@@ -252,6 +248,7 @@ export default {
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             process: values.process,
+            workshop:values.workshop
           };
           getProcessLine(parmas, "line/getall").then((res) => {
             if (res.data.success) {
@@ -286,24 +283,8 @@ export default {
     },
     //打开对话框
     add() {
-      this.defaultForm();
       this.isEdit = false;
       this.visible = true;
-    },
-    //初始化表单
-    defaultForm() {
-      this.form = {
-        PlantId: "",
-        ProcessCode: "",
-        ProcessName: "",
-        ProcessDesc: "",
-        Step: 1,
-        Enable: "Y",
-      };
-    },
-    //关闭对话框
-    handleCancel() {
-      this.visible = false;
     },
     //编辑
     edit(item) {
@@ -317,7 +298,17 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          setProcessLine(self.selectedRowKeys, "line/delete").then((res) => {
+          let parmas = [];
+          self.data.forEach((item) => {
+            if (self.selectedRowKeys.includes(item.ProcessId)) {
+              parmas.push({
+                PlantId: item.PlantId,
+                ProcessId: item.ProcessId,
+                WorkshopId: item.WorkshopId,
+              });
+            }
+          });
+          setProcessLine(parmas, "line/delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -331,7 +322,11 @@ export default {
     //单个删除
     onDelete(item) {
       let parmas = [];
-      parmas.push(item.ProcessId);
+      parmas.push({
+        PlantId: item.PlantId,
+        ProcessId: item.ProcessId,
+        WorkshopId: item.WorkshopId,
+      });
       setProcessLine(parmas, "line/delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");

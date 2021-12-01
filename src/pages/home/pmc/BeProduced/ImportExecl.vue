@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-11-22 15:42:01
+ * @LastEditTime: 2021-12-01 16:53:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ImportExecl.vue
@@ -274,7 +274,7 @@ export default {
                   ErrorMsg: `${content},第${index + 1}行,需求数量:数据'${item[key]}'错误,必须为数字`,
                 });
               } else {
-                list.RequirementQty = item[key];
+                list.RequirementQty = Number(item[key]);
               }
               break;
             case "开工日期":

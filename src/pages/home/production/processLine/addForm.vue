@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 15:04:20
- * @LastEditTime: 2021-11-30 17:46:43
+ * @LastEditTime: 2021-12-01 09:40:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/processLine/addForm.vue
@@ -103,8 +103,11 @@ export default {
     this.getListAll();
     if(this.isEdit){
       this.form = this.editData;
-      this.plantId = this.editData.PlantId
+      this.form.LineCodes = this.editData.LineCodes.split(",")
+      this.plantId = this.editData.PlantId;
+      this.workshopId =this.editData.WorkshopId
       this.getWorkshopList();
+      this.getLineList();
     }
   },
   methods: {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-11-12 10:00:10
+ * @LastEditTime: 2021-12-01 16:53:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -197,7 +197,7 @@ export default {
                   ErrorMsg: `第${index + 1}行,交货数量:数据'${item[key]}'错误,必须为数字`,
                 });
               } else {
-                list.RequirementQty = item[key];
+                list.RequirementQty = Number(item[key]);
               }
               break;
             case "交货日期":

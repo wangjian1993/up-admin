@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:14
- * @LastEditTime: 2021-11-30 16:25:51
+ * @LastEditTime: 2021-12-01 14:57:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/NoOrderTracking.vue
@@ -50,7 +50,7 @@
       <a-button v-if="hasPerm('export')" :disabled="!isExport" type="primary" @click="exportExcel" icon="export">导出</a-button>
       <a-button v-else type="primary" disabled @click="exportExcel" icon="export">导出</a-button>
     </div>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 3000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.Id" bordered>
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: true }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.Id" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -68,7 +68,7 @@
         </div>
       </template>
       <template slot="TotalProductionQty" slot-scope="text, record">
-        <a style="margin-right: 8px" @click="totalQty(record)">
+        <a style="font-weight: 800;text-decoration: underline" @click="totalQty(record)">
           {{ text }}
         </a>
       </template>

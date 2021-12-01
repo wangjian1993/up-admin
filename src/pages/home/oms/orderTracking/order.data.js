@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-25 15:13:13
- * @LastEditTime: 2021-11-30 16:30:22
+ * @LastEditTime: 2021-12-01 08:48:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/order.data.js
@@ -40,14 +40,14 @@ export const columns = [
     dataIndex: "ApproveDatetime",
     scopedSlots: { customRender: "ApproveDatetime" },
     align: "center",
-    width: 120,
+    width: 180,
   },
   {
     title: "销售订单",
     dataIndex: "SalesOrderNo",
     scopedSlots: { customRender: "SalesOrderNo" },
     align: "center",
-    width: 80,
+    width: 120,
   },
   {
     title: "项目号",
@@ -61,14 +61,14 @@ export const columns = [
     dataIndex: "MitemCode",
     scopedSlots: { customRender: "MitemCode" },
     align: "center",
-    width: 110,
+    width: 140,
   },
   {
     title: "品名",
     dataIndex: "MitemName",
     scopedSlots: { customRender: "MitemName" },
     align: "center",
-    width: 100,
+    width: 200,
   },
   {
     title: "规格",
@@ -275,6 +275,51 @@ export const detailColumns = [
     align: "center",
     width: 80,
   },
+  {
+    title: "采购在途总数",
+    dataIndex: "PurchaseTransitQty",
+    scopedSlots: { customRender: "PurchaseTransitQty" },
+    align: "center",
+    width: 120,
+  },
+  {
+    title: "采购在途预留用量",
+    dataIndex: "PurchaseTransitReservedQty",
+    scopedSlots: { customRender: "PurchaseTransitReservedQty" },
+    align: "center",
+    width: 135,
+  },
+  {
+    title: "采购在途可用用量",
+    dataIndex: "PurchaseTransitAvailableQty",
+    scopedSlots: { customRender: "PurchaseTransitAvailableQty" },
+    align: "center",
+    width: 135,
+  },
+  {
+    title: "预计最早到货时间",
+    dataIndex: "EstimatedEarliestArrivalDateTime",
+    scopedSlots: { customRender: "EstimatedEarliestArrivalDateTime" },
+    align: "center",
+    customRender: (text) => {
+      return splitData(text);
+    },
+    width: 135,
+  },
+  {
+    title: "采购欠数",
+    dataIndex: "PurchaseDeficiencyQty",
+    scopedSlots: { customRender: "PurchaseDeficiencyQty" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "采购在途明细",
+    scopedSlots: { customRender: "action" },
+    width: 110,
+  },
+];
+export const detailColumnsP = [
   {
     title: "采购在途总数",
     dataIndex: "PurchaseTransitQty",

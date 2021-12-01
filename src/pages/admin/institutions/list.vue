@@ -44,9 +44,20 @@
     </div>
     <!-- 添加 -->
     <div>
-      <a-modal :title="isEdit?'编辑机构':'添加机构'" :visible="visible" v-if="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel" :width="840">
+      <a-modal :title="isEdit ? '编辑机构' : '添加机构'" :visible="visible" v-if="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel" :width="840">
         <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-row>
+            <a-col :span="12">
+              <a-form-model-item ref="EnterLogo" label="机构logo">
+                <a-upload name="avatar" list-type="picture-card" class="avatar-uploader" :show-upload-list="false" :before-upload="beforeUpload" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" @change="handleChange" :custom-request="uploadImg" accept="image/png, image/jpeg">
+                  <img v-if="imageUrl" :src="imageUrl" alt="avatar" class="head" />
+                  <div v-else>
+                    <a-icon :type="loading ? 'loading' : 'plus'" />
+                    <div class="ant-upload-text">Upload</div>
+                  </div>
+                </a-upload>
+              </a-form-model-item>
+            </a-col>
             <a-col :span="12">
               <a-form-model-item ref="EnterCode" has-feedback label="机构编码" prop="EnterCode" :labelCol="{ span: 6 }">
                 <a-input
@@ -218,6 +229,7 @@
     <div>
       <a-drawer width="700" placement="right" :visible="isDrawer" @close="onClose">
         <a-descriptions title="机构列表详情" :column="2">
+           <a-descriptions-item label="机构logo"><a-avatar shape="square" :size="80" :src="`./${drawerItem.EnterLogo}`"/></a-descriptions-item>
           <a-descriptions-item label="机构中文名">{{ drawerItem.EnterName }}</a-descriptions-item>
           <a-descriptions-item label="管理员邮箱">{{ drawerItem.EnterEMail }}</a-descriptions-item>
           <a-descriptions-item label="机构英文名">{{ drawerItem.EnterEnName }}</a-descriptions-item>
@@ -262,8 +274,8 @@ const columns = [
     dataIndex: "EnterName",
     scopedSlots: { customRender: "name" },
     align: "center",
-     width: "15%",
-     ellipsis: true,
+    width: "15%",
+    ellipsis: true,
   },
   {
     title: "机构编号",
@@ -291,7 +303,7 @@ const columns = [
     scopedSlots: { customRender: "SuperiorEnterName" },
     align: "center",
     width: "15%",
-     ellipsis: true,
+    ellipsis: true,
   },
   {
     title: "排序号",
@@ -306,7 +318,7 @@ const columns = [
     scopedSlots: { customRender: "address" },
     align: "center",
     width: "10%",
-     ellipsis: true,
+    ellipsis: true,
   },
   {
     title: "创建人",
@@ -320,9 +332,14 @@ const columns = [
     align: "center",
   },
 ];
-import { getEnterList, getInstitutionList,enterAction} from "@/services/admin.js";
+import { getEnterList, getInstitutionList, enterAction, uploadFile } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
-import getTableScroll from '@/utils/setTableHeight'
+import getTableScroll from "@/utils/setTableHeight";
+function getBase64(img, callback) {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result));
+  reader.readAsDataURL(img);
+}
 export default {
   data() {
     return {
@@ -374,6 +391,7 @@ export default {
         SuperiorEnterName: "",
         Enable: "Y",
         SortNo: 1,
+        EnterLogo: "",
       },
       rules: {
         EnterCode: [
@@ -414,6 +432,7 @@ export default {
       },
       scrollY: "",
       isSearch: false,
+      imageUrl: "",
     };
   },
   updated() {
@@ -432,6 +451,46 @@ export default {
     this.getInstitutionList();
   },
   methods: {
+    uploadImg(info) {
+      getBase64(info.file, (imageUrl) => {
+        this.imageUrl = imageUrl;
+        console.log(info.file);
+        let typeArray = info.file.type.split("/");
+        let fileType = typeArray[1].toUpperCase();
+        let parmas = {
+          FileName: info.file.name,
+          FileContent: imageUrl,
+          FileSuffix: "." + fileType,
+        };
+        uploadFile(parmas).then((res) => {
+          if (res.data.success) {
+            this.$message.success("上传成功!");
+            this.fileData = res.data.data;
+          } else {
+            this.$message.error(`上传失败`);
+          }
+        });
+        this.loading = false;
+      });
+    },
+    handleChange(info) {
+      if (info.file.status === "error") {
+        this.loading = true;
+        this.$message.error(`上传失败`);
+        return;
+      }
+    },
+    beforeUpload(file) {
+      const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+      if (!isJpgOrPng) {
+        this.$message.error("请选择jpg或者png格式图片");
+      }
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        this.$message.error("图片太大了.请上传小于2M图片");
+      }
+      return isJpgOrPng && isLt2M;
+    },
     //设置是否默认
     enableChange(value) {
       this.form.Enable = value.target.value;
@@ -482,7 +541,7 @@ export default {
     },
     //重置搜索
     reset() {
-      this.pagination.current =1
+      this.pagination.current = 1;
       this.getEnterList();
       this.searchForm.resetFields();
     },
@@ -504,7 +563,7 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.isSearch =true;
+              this.isSearch = true;
             }
           });
           // do something
@@ -527,7 +586,7 @@ export default {
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
-          this.isSearch =false;
+          this.isSearch = false;
         }
       });
     },
@@ -561,6 +620,7 @@ export default {
         SuperiorEnterName: "",
         Enable: "Y",
         SortNo: 1,
+        EnterLogo: "",
       };
     },
     //关闭对话框
@@ -622,8 +682,9 @@ export default {
               SuperiorEnterName: this.form.SuperiorEnterName,
               Enable: this.form.Enable,
               SortNo: this.form.SortNo,
+              EnterLogo: this.fileData.ResourceId || this.form.EnterLogo,
             };
-            enterAction(editForm,'update').then((res) => {
+            enterAction(editForm, "update").then((res) => {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
                 this.defaultForm();
@@ -633,7 +694,8 @@ export default {
             });
           } else {
             //添加数据
-            enterAction(this.form,'add').then((res) => {
+            this.form.EnterLogo = this.fileData.ResourceId || "";
+            enterAction(this.form, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");
                 this.getEnterList();
@@ -651,7 +713,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          enterAction(self.selectedRowKeys,'delete').then((res) => {
+          enterAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -666,7 +728,7 @@ export default {
     onDelete(item) {
       let parmas = [];
       parmas.push(item.EnterId);
-      enterAction(parmas,'delete').then((res) => {
+      enterAction(parmas, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getEnterList();
@@ -677,7 +739,7 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if( this.isSearch){
+      if (this.isSearch) {
         this.search();
         return;
       }
@@ -692,5 +754,17 @@ export default {
 }
 .tab {
   min-height: 50vh;
+}
+.head {
+  width: 104px;
+  height: 104px;
+}
+.ant-upload.ant-upload-select-picture-card {
+  width: 104px;
+  height: 104px;
+}
+.avatar-uploader > .ant-upload {
+  width: 104px;
+  height: 104px;
 }
 </style>

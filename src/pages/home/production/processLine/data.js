@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-30 14:42:25
- * @LastEditTime: 2021-11-30 17:24:02
+ * @LastEditTime: 2021-12-01 10:01:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/processLine/data.js
@@ -53,6 +53,7 @@ export const columns = [
         dataIndex: "DateTimeCreated",
         scopedSlots: { customRender: "DateTimeCreated" },
         align: "center",
+        width:200
     },
     {
         title: "创建人",
@@ -107,6 +108,7 @@ export const columnsLine = [
         dataIndex: "DateTimeCreated",
         scopedSlots: { customRender: "DateTimeCreated" },
         align: "center",
+        width:200
     },
     {
         title: "创建人",
