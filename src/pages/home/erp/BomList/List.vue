@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-23 16:54:14
+ * @LastEditTime: 2021-12-02 17:52:50
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -126,7 +126,7 @@ export default {
       data: [],
       columns,
       isDosage: false,
-      isExecl: false,     
+      isExecl: false,
       isDetail: false,
       detailData: [],
       plantList: [],
@@ -172,8 +172,11 @@ export default {
     },
     //物料需求详情
     detail(item) {
+      let values = this.searchForm.getFieldsValue();
       this.isDosage = true;
       this.mitemcodeData = item;
+      this.mitemcodeData.plantId = values.plantid;
+      console.log("this.mitemcodeData", this.mitemcodeData);
     },
     getPlant() {
       let parmas = {
@@ -267,6 +270,9 @@ export default {
           dblclick: () => {
             this.isDosage = true;
             this.mitemcodeData = record;
+            let values = this.searchForm.getFieldsValue();
+            this.mitemcodeData.plantId = values.plantid;
+            console.log("this.mitemcodeData", this.mitemcodeData);
           },
         },
       };

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-11-23 16:32:13
+ * @LastEditTime: 2021-12-02 17:42:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
@@ -14,6 +14,7 @@
           <a-descriptions :column="5" bordered size="small" :class="antDescriptionsRow">
             <a-descriptions-item label="主件品号">
               {{ info.ITEM_CODE }}
+              <a @click="unfold" style="margin-left: 8px">展开</a>
             </a-descriptions-item>
             <a-descriptions-item label="快捷码">
               {{ info.SHORTCUT }}
@@ -96,6 +97,7 @@
       </a-spin>
     </a-modal>
     <model-info v-if="isModelInfo" :modelData="modelData" @closeModal="closeModal"></model-info>
+    <BomUnfold v-if="isUnfold" :ModelInfo="info" @closeModal="closeModal"/>
   </div>
 </template>
 
@@ -280,8 +282,9 @@ import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
 import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
 import ModelInfo from "./ModelInfo.vue";
+import BomUnfold from "./BomUnfold.vue";
 export default {
-  components: { ModelInfo },
+  components: { ModelInfo, BomUnfold },
   props: ["info"],
   data() {
     return {
@@ -305,6 +308,7 @@ export default {
       isModelInfo: false,
       modelData: [],
       antDescriptionsRow: "",
+      isUnfold: false,
     };
   },
   created() {
@@ -372,9 +376,13 @@ export default {
     //关闭对话框
     handleCancel() {
       this.isAddModal = false;
+      this.isUnfold = false;
     },
     rowClassName(record) {
       return record.ApproveStatus == "V" ? "color2" : record.ApproveStatus == "N" ? "color1" : "";
+    },
+    unfold() {
+      this.isUnfold = true;
     },
   },
 };

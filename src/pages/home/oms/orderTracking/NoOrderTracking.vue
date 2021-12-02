@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:14
- * @LastEditTime: 2021-12-01 14:57:07
+ * @LastEditTime: 2021-12-02 18:23:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/NoOrderTracking.vue
@@ -20,21 +20,24 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
-                <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                <a-select-option value="">全部</a-select-option>
+                <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterCode">{{ item.EnterName }}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="销售部" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['department']" style="width: 200px" placeholder="请选择销售部" @change="departmentChange">
+                <a-select-option value="">全部</a-select-option>
                 <a-select-option v-for="item in departmentList" :key="item.DepartmentName" :value="item.DepartmentCode">{{ item.DepartmentName }}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="销售员" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['salesuser']" style="width: 200px" placeholder="请选择销售部">
+              <a-select v-decorator="['salesuser']" style="width: 200px" placeholder="请选择销售部" @change="userChange">
+                <a-select-option value="">全部</a-select-option>
                 <a-select-option v-for="item in salesmanList" :key="item.UserCode" :value="item.UserCode">{{ item.UserName }}</a-select-option>
               </a-select>
             </a-form-item>
@@ -67,6 +70,9 @@
           </a>
         </div>
       </template>
+      <!-- <span slot="MoDeficiencyQty" slot-scope="text">
+        <div :class="text > 0 ? 'MoDeficiencyQtyBg' : ''">{{ text }}</div>
+      </span> -->
       <template slot="TotalProductionQty" slot-scope="text, record">
         <a style="font-weight: 800;text-decoration: underline" @click="totalQty(record)">
           {{ text }}
@@ -83,9 +89,9 @@
     </a-table>
     <a-empty v-else description="暂无权限" />
     <div>
-      <a-modal title="下载进度" :width="400" centered :closable="false" :visible="processVisible" :footer="null">
+      <a-modal :width="300" centered :closable="false" :visible="processVisible" :footer="null">
         <div class="baseinfo">
-          <a-progress :percent="percent" class="baseProgess" />
+          <a-progress size="small" :percent="percent" class="baseProgess" />
         </div>
         <div class="baseinfoFoot">
           <span class="baseinfoing"> {{ progressUp }}</span>
@@ -129,8 +135,14 @@ export default {
       isExport: false,
       isExportLod: false,
       processVisible: false,
-      percent: 100,
-      progressUp: "下载中,请稍候.......",
+      percent: 0,
+      progressUp: "",
+      requestTime: 0,
+      cacheallData: {
+        plant: "",
+        department: "",
+        salesuser: "",
+      },
     };
   },
   updated() {
@@ -165,6 +177,8 @@ export default {
       this.searchForm.setFieldsValue({
         salesuser: "",
       });
+      this.cacheallData.department = e;
+      this.getPaginationList();
     },
     //pmc选择
     getDepartment() {
@@ -208,10 +222,6 @@ export default {
       this.isDetail = true;
       this.detailData = item;
     },
-    weekChange(date, dateString) {
-      let str = dateString.split("-");
-      this.week = str[1].replace("周", "");
-    },
     closeModal() {
       this.isDetail = false;
       this.isTotalQty = false;
@@ -230,11 +240,22 @@ export default {
         }
       });
     },
+    plantChange(e) {
+      this.cacheallData.plant = e;
+      this.getPaginationList();
+    },
+    userChange(e) {
+      this.cacheallData.salesuser = e;
+      this.getPaginationList();
+    },
     getPaginationList() {
       this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        plant: this.cacheallData.plant,
+        department: this.cacheallData.department,
+        salesuser: this.cacheallData.salesuser,
       };
       getOrderApi(parmas, "getcacheall").then((res) => {
         if (res.data.success) {
@@ -270,8 +291,17 @@ export default {
     //关键词搜索
     search() {
       this.searchForm.validateFields((err, values) => {
+        this.percent = 1;
         if (!err) {
           this.loading = true;
+          this.progressUp = "数据提取中.请稍等...";
+          this.processVisible = true;
+          this.requestTime = setInterval(() => {
+            this.percent += 1;
+          }, 1400);
+          this.cacheallData.plant = values.plant
+          this.cacheallData.department = values.department
+          this.cacheallData.salesuser = values.salesuser
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
@@ -289,6 +319,9 @@ export default {
               this.loading = false;
               this.isSearch = true;
               this.isExport = true;
+              this.processVisible = false;
+              this.percent = 100;
+              clearInterval(this.requestTime);
             }
           });
           // do something
@@ -388,11 +421,11 @@ export default {
       this.isExportLod = false;
     },
     exportExcel() {
+      this.progressUp = "下载中.请稍等...";
       setInterval(() => {
         this.percent++;
         if (this.percent == 90) {
           this.percent = 90;
-          this.progressUp = "下载中,请稍候.......";
         }
       }, 500);
       this.isExportLod = true;
@@ -430,5 +463,11 @@ export default {
 <style scoped lang="less">
 /deep/.ant-table-body {
   min-height: 0vh;
+}
+.MoDeficiencyQtyBg {
+  width: 100%;
+  height: 100%;
+  background: #ee0707;
+  color: #fff;
 }
 </style>

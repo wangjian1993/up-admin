@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-25 15:13:13
- * @LastEditTime: 2021-12-01 08:48:58
+ * @LastEditTime: 2021-12-02 16:38:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/order.data.js
@@ -176,13 +176,11 @@ export const columns = [
     scopedSlots: { customRender: "MoDeficiencyQty" },
     align: "center",
     width: 80,
-  },
-  {
-    title: "欠数物料齐套数量",
-    dataIndex: "DeficiencyMitemCompleteQty",
-    scopedSlots: { customRender: "DeficiencyMitemCompleteQty" },
-    align: "center",
-    width: 150,
+    customCell: (record) => {		//在此处定义
+      if (record.MoDeficiencyQty > 0) {
+        return { style: { 'background': 'red', 'color': "#ffffff" } }
+      }
+    }
   },
   {
     title: "预警信息",
@@ -576,13 +574,6 @@ export const excelHead = [
     scopedSlots: { customRender: "MoDeficiencyQty" },
     align: "center",
     width: 80,
-  },
-  {
-    title: "欠数物料齐套数量",
-    dataIndex: "DeficiencyMitemCompleteQty",
-    scopedSlots: { customRender: "DeficiencyMitemCompleteQty" },
-    align: "center",
-    width: 150,
   },
   {
     title: "预警信息",

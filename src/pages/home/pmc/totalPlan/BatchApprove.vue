@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 15:16:07
- * @LastEditTime: 2021-11-05 17:49:47
+ * @LastEditTime: 2021-12-02 09:57:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/BatchApprove.vue
@@ -26,6 +26,7 @@
               onChange: onSelectChange,
             }"
           >
+            <span slot="IsDel"><a-icon type="delete"/>是否删除<a-checkbox style="margin-left:5px" @click="allCheckbox"></a-checkbox></span>
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -34,7 +35,7 @@
             <div slot="UpdateQty" slot-scope="text, record">
               <a-input-number v-model="record.UpdateQty" :min="0" :disabled="!record.isInput" />
             </div>
-            <div slot="IsDel" slot-scope="text, record">
+            <div slot="IsDelChacek" slot-scope="text, record">
               <a-checkbox v-model="record.IsDel" :disabled="!record.isInput"></a-checkbox>
             </div>
           </a-table>
@@ -110,16 +111,16 @@ const columns = [
     align: "center",
   },
   {
-    title: "是否删除",
     dataIndex: "IsDel",
-    scopedSlots: { customRender: "IsDel" },
+    scopedSlots: { customRender: "IsDelChacek" },
+    slots: { title: "IsDel" },
     align: "center",
   },
 ];
 import { getMitemrequirement, mitemrequirementAction } from "@/services/web.js";
 import { splitData } from "@/utils/util.js";
 export default {
-  props: ["batchid","BatchNo"],
+  props: ["batchid", "BatchNo"],
   data() {
     return {
       columns,
@@ -205,6 +206,15 @@ export default {
     search() {},
     batchno() {
       this.isBatchNo = true;
+    },
+    allCheckbox(e) {
+      this.list.map((items) => {
+        if (e.target.checked && items.isInput) {
+          items.IsDel = true;
+        } else {
+          items.IsDel = false;
+        }
+      });
     },
     handleOk() {
       let parmas = [];

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-12-01 16:53:22
+ * @LastEditTime: 2021-12-02 15:59:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ImportExecl.vue
@@ -104,7 +104,7 @@ export default {
     };
   },
   created() {
-    console.log(this.formatDate(44530));
+    // console.log(this.formatDate("2021-11-30T15:59:17.000Z"));
   },
   methods: {
     //移除文件
@@ -143,6 +143,9 @@ export default {
     },
     //时间格式化
     formatLongDate(date) {
+      let dateTime = date.setDate(date.getDate() + 1);
+      date = new Date(dateTime);
+      console.log("date-====", date);
       let myyear = date.getFullYear();
       let mymonth = date.getMonth() + 1;
       let myweekday = date.getDate();

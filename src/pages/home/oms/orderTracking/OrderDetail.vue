@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:49
- * @LastEditTime: 2021-12-01 11:20:19
+ * @LastEditTime: 2021-12-02 11:25:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/OrderDetail.vue
@@ -23,6 +23,9 @@
             </a-descriptions-item>
             <a-descriptions-item label="工单">
               {{detailData.MoCode}}
+            </a-descriptions-item>
+            <a-descriptions-item label="欠数物料齐套数量">
+              {{MinMitemCompleteQty}}
             </a-descriptions-item>
           </a-descriptions>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
@@ -74,6 +77,7 @@ export default {
       },
       isDetail: false,
       detailList: [],
+      MinMitemCompleteQty:0
     };
   },
   created() {
@@ -101,6 +105,7 @@ export default {
       let url = this.detailData.MitemProperty === "P" ? "getrawmaters" : "getmobomlist";
       getOrderApi(params, url).then((res) => {
         if (res.data.success) {
+          this.MinMitemCompleteQty = res.data.data.MinMitemCompleteQty || 0
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;

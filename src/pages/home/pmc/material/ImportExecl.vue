@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-12-01 16:53:57
+ * @LastEditTime: 2021-12-02 16:01:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -120,6 +120,9 @@ export default {
       return year + (month < 10 ? "0" + month : month) + (date < 10 ? "0" + date : date);
     },
     formatLongDate(date) {
+      let dateTime = date.setDate(date.getDate() + 1);
+      date = new Date(dateTime);
+      console.log("date-====", date);
       let myyear = date.getFullYear();
       let mymonth = date.getMonth() + 1;
       let myweekday = date.getDate();
@@ -202,7 +205,7 @@ export default {
               break;
             case "交货日期":
               // eslint-disable-next-line no-case-declarations
-              console.log(typeof item[key])
+              console.log(typeof item[key]);
               //判断上传日期是否正确
               //日期格式
               if (typeof item[key] === "object") {
