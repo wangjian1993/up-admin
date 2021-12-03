@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-18 09:05:43
+ * @LastEditTime: 2021-12-03 09:27:27
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -140,6 +140,8 @@ export default {
     detail(item) {
       this.isDosage = true;
       this.mitemcodeData = item;
+      let values = this.searchForm.getFieldsValue();
+      this.mitemcodeData.plantId = values.plantid;
     },
     getPlant() {
       let parmas = {
@@ -286,6 +288,8 @@ export default {
           dblclick: () => {
             this.isDosage = true;
             this.mitemcodeData = record;
+            let values = this.searchForm.getFieldsValue();
+            this.mitemcodeData.plantId = values.plantid;
           },
         },
       };

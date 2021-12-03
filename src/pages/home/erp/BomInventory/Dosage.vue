@@ -1,9 +1,9 @@
 <!--
  * @Author: max
  * @Date: 2021-11-04 14:55:52
- * @LastEditTime: 2021-11-04 15:06:22
+ * @LastEditTime: 2021-12-03 16:53:12
  * @LastEditors: max
- * @Description: 
+ * @Description: 存量余额明细信息
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/Dosage.vue
 -->
 <template>
@@ -162,6 +162,7 @@ export default {
     close() {
       this.$emit("closeModal");
     },
+    //关闭modal
     closeModal() {
       this.isModelInfo = false;
     },
@@ -170,6 +171,7 @@ export default {
       this.isModelInfo = true;
       this.modelData = item;
     },
+    //获取列表数据
     getList() {
       this.loading = true;
       let parmas = {
@@ -193,11 +195,13 @@ export default {
     onClose() {
       this.isDrawer = false;
     },
+    //分页
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
       this.getList();
     },
+    //行数据双击
     handleClickRow(record) {
       return {
         style: {
@@ -216,6 +220,7 @@ export default {
     handleCancel() {
       this.isAddModal = false;
     },
+    //设置行数据背景色
     rowClassName(record) {
       return record.ApproveStatus == "V" ? "color2" : record.ApproveStatus == "N" ? "color1" : "";
     },

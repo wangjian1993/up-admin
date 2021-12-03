@@ -1,32 +1,18 @@
 <!--
  * @Author: max
  * @Date: 2021-12-02 17:34:40
- * @LastEditTime: 2021-12-02 17:55:26
+ * @LastEditTime: 2021-12-03 14:28:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/BomUnfold.vue
 -->
-<!--
- * @Author: max
- * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-12-02 17:32:53
- * @LastEditors: max
- * @Description: 
- * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
--->
 <template>
   <div>
-    <a-modal v-model="visible" title="BOM展开" @cancel="close" width="100%" :footer="null" centered>
+    <a-modal v-model="visible" title="BOM展开" @cancel="close" width="90%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 500, x: true }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName">
-              <template slot="index" slot-scope="text, record, index">
-                <div>
-                  <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-                </div>
-              </template>
-            </a-table>
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 600, x: true }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName"> </a-table>
           </a-card>
         </div>
       </a-spin>
@@ -38,24 +24,167 @@
 <script>
 const columns = [
   {
+    title: "阶层",
+    dataIndex: "LOWLEVEL",
+    scopedSlots: { customRender: "LOWLEVEL" },
+    align: "left",
+    width: 100,
+  },
+  {
     title: "序号",
-    scopedSlots: { customRender: "index" },
+    dataIndex: "INDEX",
+    scopedSlots: { customRender: "INDEX" },
+    align: "center",
+    width: 60,
+  },
+  {
+    title: "上阶品号",
+    dataIndex: "LAST_ITEM_CODE",
+    scopedSlots: { customRender: "LAST_ITEM_CODE" },
+    align: "center",
+    width: 150,
+  },
+  {
+    title: "元件品号",
+    dataIndex: "ITEM_CODE",
+    scopedSlots: { customRender: "ITEM_CODE" },
+    align: "center",
+    width: 150,
+  },
+  {
+    title: "快捷码",
+    dataIndex: "SHORTCUT",
+    scopedSlots: { customRender: "SHORTCUT" },
+    align: "center",
+    width: 150,
+  },
+  {
+    title: "元件品名",
+    dataIndex: "ITEM_NAME",
+    scopedSlots: { customRender: "ITEM_NAME" },
+    align: "center",
+    width: 200,
+  },
+  {
+    title: "元件规格",
+    dataIndex: "ITEM_SPECIFICATION",
+    scopedSlots: { customRender: "ITEM_SPECIFICATION" },
+    align: "center",
+    width: 300,
+  },
+  {
+    title: "单位",
+    dataIndex: "UNIT_NAME",
+    scopedSlots: { customRender: "UNIT_NAME" },
     align: "center",
     width: 50,
   },
   {
-    title: "品号",
-    dataIndex: "ITEM_CODE",
-    scopedSlots: { customRender: "ITEM_CODE" },
-    align: "center",
-    width: 110,
-  },
-  {
-    title: "品名",
-    dataIndex: "SHORTCUT",
-    scopedSlots: { customRender: "SHORTCUT" },
+    title: "组成用量",
+    dataIndex: "QTY_PER",
+    scopedSlots: { customRender: "QTY_PER" },
     align: "center",
     width: 80,
+  },
+  {
+    title: "底数",
+    dataIndex: "DENOMINATOR",
+    scopedSlots: { customRender: "DENOMINATOR" },
+    align: "center",
+    width: 50,
+  },
+  {
+    title: "插件位置",
+    dataIndex: "COMPONENT_LOCATION",
+    scopedSlots: { customRender: "COMPONENT_LOCATION" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "变动损耗",
+    dataIndex: "DYNAMIC_LOSS_RATE",
+    scopedSlots: { customRender: "DYNAMIC_LOSS_RATE" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "生效日期",
+    dataIndex: "EFFECTIVE_DATE",
+    scopedSlots: { customRender: "EFFECTIVE_DATE" },
+    align: "center",
+    width: 120,
+    customRender: (text) => {
+      return splitData(text);
+    },
+  },
+  {
+    title: "失效时间",
+    dataIndex: "EXPRITY_DATE",
+    scopedSlots: { customRender: "EXPRITY_DATE" },
+    align: "center",
+    width: 120,
+    customRender: (text) => {
+      return splitData(text);
+    },
+  },
+  {
+    title: "备注",
+    dataIndex: "REMARK",
+    scopedSlots: { customRender: "REMARK" },
+    align: "center",
+     width: 80,
+  },
+  {
+    title: "BOM生效状态",
+    dataIndex: "ApproveStatus",
+    scopedSlots: { customRender: "ApproveStatus" },
+    align: "center",
+    width: 120,
+    customRender: (text) => {
+      return text == "Y" ? "已生效" : text == "N" ? "未生效" : "失效";
+    },
+  },
+  {
+    title: "图号",
+    dataIndex: "DRAWING_NO",
+    scopedSlots: { customRender: "DRAWING_NO" },
+    align: "center",
+    width: 150,
+    ellipsis: true,
+  },
+  {
+    title: "品号类型",
+    dataIndex: "ITEM_PROPERTY",
+    scopedSlots: { customRender: "ITEM_PROPERTY" },
+    align: "center",
+    width: 120,
+  },
+  {
+    title: "BOM生效日期",
+    dataIndex: "ApproveDate",
+    scopedSlots: { customRender: "ApproveDate" },
+    align: "center",
+    width: 120,
+    customRender: (text) => {
+      return splitData(text);
+    },
+  },
+  {
+    title: "BOM生效者",
+    dataIndex: "EMPLOYEE_NAME_A",
+    scopedSlots: { customRender: "EMPLOYEE_NAME_A" },
+    align: "center",
+    width: 120,
+  },
+  {
+    title: "BOM创建日期",
+    dataIndex: "CreateDate",
+    scopedSlots: { customRender: "CreateDate" },
+    align: "center",
+    width: 120,
+    customRender: (text) => {
+      return splitData(text);
+    },
   },
 ];
 import { getERPReportAction } from "@/services/erp.js";
@@ -112,25 +241,46 @@ export default {
       console.log(this.ModelInfo);
       this.loading = true;
       let parmas = {
-        pageindex: this.pagination.current,
-        pagesize: this.pagination.pageSize,
         plantid: this.ModelInfo.plantId,
         itemcode: this.ModelInfo.ITEM_CODE,
-        itemname:"",
-        itemspecification:""
       };
-      getERPReportAction(parmas, "getbomlist").then((res) => {
+      getERPReportAction(parmas, "getbomchildlevel").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
-          const pagination = { ...this.pagination };
-          pagination.total = this.list.length;
-          this.pagination = pagination;
+          this.list = this.initTree(this.ModelInfo.ITEM_CODE);
+          this.calField(this.list);
           this.loading = false;
-          this.isSearch = false;
         } else {
           this.loading = false;
         }
       });
+    },
+    calField(tree) {
+      tree.forEach((node) => {
+        if (node.children && node.children.length > 0) {
+          // console.log(node.children)
+          this.calField(node.children);
+          // node.Amount = node.children.reduce((sum, item) => ((sum += item.Amount), parseFloat(sum.toFixed(4))), 0);
+        } else {
+          // let sum = node.Amount * 1;
+          // node.Amount = parseFloat(sum.toFixed(4));
+          delete node.children;
+        }
+      });
+      return tree;
+    },
+    initTree(parent_id) {
+      // jsonArray 变量数据
+      // 第一次以后：根据id去查询parent_id相同的（相同为子数据）
+      // 第一次：查找所有parent_id为-1的数据组成第一级
+      const child = this.list.filter((item) => item.LAST_ITEM_CODE == parent_id);
+      // 第一次：循环parent_id为-1数组
+      return child.map((item) => ({
+        ...item,
+        // 当前存在id（id与parent_id应该是必须有的）调用initTree() 查找所有parent_id为本id的数据
+        // childs字段写入
+        children: this.initTree(item.ITEM_CODE),
+      }));
     },
     //查看详情
     onClose() {
@@ -151,6 +301,7 @@ export default {
           dblclick: () => {
             this.isModelInfo = true;
             this.modelData = record;
+            this.modelData.plantid = this.ModelInfo.plantId;
           },
         },
       };
@@ -159,10 +310,6 @@ export default {
     handleCancel() {
       this.isAddModal = false;
     },
-    rowClassName(record) {
-      return record.ApproveStatus == "V" ? "color2" : record.ApproveStatus == "N" ? "color1" : "";
-    },
-    unfold() {},
   },
 };
 </script>

@@ -54,8 +54,8 @@ export default {
       state.isMobile = isMobile
     },
     setTheme(state, theme) {
+      console.log("theme====", theme)
       state.theme = theme;
-      localStorage.setItem("ADMIN_THEME", JSON.stringify(theme));
     },
     setLayout(state, layout) {
       state.layout = layout

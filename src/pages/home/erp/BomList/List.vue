@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-02 17:52:50
+ * @LastEditTime: 2021-12-03 09:04:57
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -60,7 +60,7 @@
         :columns="columns"
         :data-source="data"
         size="small"
-        :scroll="{ y: scrollY, x: 1500 }"
+        :scroll="{ y: scrollY, x: true }"
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"

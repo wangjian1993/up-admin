@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 15:16:07
- * @LastEditTime: 2021-11-04 18:09:09
+ * @LastEditTime: 2021-12-03 09:20:26
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/BatchApprove.vue
@@ -90,7 +90,7 @@
             :scroll="{ y: 600 }"
             :pagination="pagination"
             @change="handleTableChange"
-            :rowKey="(list) => list.PurchaseOrderNo"
+            :rowKey="(list) => list.Id"
             :row-selection="{
               selectedRowKeys: selectedRowKeys,
               onChange: onSelectChange,
@@ -310,9 +310,9 @@ export default {
       getScmAction(parmas, "manualmatch/getpurchaseorders").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
-          // this.list.map((item) => {
-          //   item.MatchQty = 0;
-          // });
+          this.list.map((item,index) => {
+            item.Id = item.PurchaseOrderNo + "_" +  item.MitemCode + "_" + item.lineItemNum + "_" + index;
+          });
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -326,7 +326,7 @@ export default {
       console.log(this.selectedRowKeys);
       if (selectedRowKeys.length > 0) {
         this.list.map((items) => {
-          items.isInput = this.setIsInput(items.PurchaseOrderNo);
+          items.isInput = this.setIsInput(items.Id);
         });
       } else {
         this.list.map((items) => {
@@ -359,7 +359,7 @@ export default {
         MatchList: [],
       };
       this.list.map((items) => {
-        if (this.selectedRowKeys.indexOf(items.PurchaseOrderNo) > -1) {
+        if (this.selectedRowKeys.indexOf(items.Id) > -1) {
           parmas.MatchList.push({
             PurchaseOrderNo: items.PurchaseOrderNo,
             SupplierCode: items.SupplierCode,

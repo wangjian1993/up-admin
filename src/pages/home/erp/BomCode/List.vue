@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-23 17:31:40
+ * @LastEditTime: 2021-12-03 16:53:02
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
@@ -119,6 +119,7 @@ export default {
       this.mitemcodeData.ITEM_CODE = record.ITEM_CODE;
       this.mitemcodeData.plantid = this.searchForm.getFieldsValue().plantid;
     },
+    //工厂获取
     getPlant() {
       let parmas = {
         entertypecode: "PLANT",
@@ -199,6 +200,7 @@ export default {
         }
       });
     },
+    //行数据双击
     handleClickRow(record) {
       return {
         style: {
@@ -225,6 +227,7 @@ export default {
       }
       this.getListAll();
     },
+    //设置行数据背景
     rowClassName(record) {
       return record.ApproveStatus == "V" ? "color2" : record.ApproveStatus == "N" ? "color1" : "";
     },

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-25 15:13:13
- * @LastEditTime: 2021-12-02 16:38:22
+ * @LastEditTime: 2021-12-03 14:11:23
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/order.data.js
@@ -97,6 +97,11 @@ export const columns = [
     scopedSlots: { customRender: "OrderDeficiencyQty" },
     align: "center",
     width: 80,
+    customCell: (record) => {		//在此处定义
+      if (record.OrderDeficiencyQty > 0) {
+        return { style: { 'background': 'red', 'color': "#ffffff" } }
+      }
+    }
   },
   {
     title: "预计交期",
@@ -310,6 +315,11 @@ export const detailColumns = [
     scopedSlots: { customRender: "PurchaseDeficiencyQty" },
     align: "center",
     width: 80,
+    customCell: (record) => {		//在此处定义
+      if (record.PurchaseDeficiencyQty > 0) {
+        return { style: { 'background': 'red', 'color': "#ffffff" } }
+      }
+    }
   },
   {
     title: "采购在途明细",
@@ -355,6 +365,11 @@ export const detailColumnsP = [
     scopedSlots: { customRender: "PurchaseDeficiencyQty" },
     align: "center",
     width: 80,
+    customCell: (record) => {		//在此处定义
+      if (record.PurchaseDeficiencyQty > 0) {
+        return { style: { 'background': 'red', 'color': "#ffffff" } }
+      }
+    }
   },
   {
     title: "采购在途明细",

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-12-02 17:42:46
+ * @LastEditTime: 2021-12-03 09:08:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
@@ -326,6 +326,7 @@ export default {
     },
     closeModal() {
       this.isModelInfo = false;
+      this.isUnfold =false;
     },
     //物料需求详情
     detail(item) {

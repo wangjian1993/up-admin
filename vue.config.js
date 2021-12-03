@@ -141,7 +141,7 @@ module.exports = {
             'body-background': '#fff',
             'component-background': '#fff',
             'heading-color': 'rgba(0, 0, 0, 0.85)',
-            'text-color': 'rgba(0, 0, 0, 0.65)',
+            'text-color': 'rgba(0, 0, 0, 0.85)',
             'text-color-inverse': '#fff',
             'text-color-secondary': 'rgba(0, 0, 0, 0.45)',
             'shadow-color': 'rgba(0, 0, 0, 0.15)',

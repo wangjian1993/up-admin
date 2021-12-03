@@ -7,7 +7,7 @@
           <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-row>
               <a-col :span="12">
-                <a-form-model-item ref="AppLogo" label="图标">
+                <a-form-model-item ref="AppLogo" label="图标" prop="AppLogo">
                   <a-input style="width: 150px" disabled v-model="form.AppLogo" />
                   <a-button type="primary" @click="iconSelect()">选择</a-button>
                 </a-form-model-item>
@@ -118,7 +118,7 @@
                 </a-form-model-item>
               </a-col>
               <a-col :span="24">
-                <a-form-model-item ref="MouduleUrl" label="组件路径">
+                <a-form-model-item ref="MouduleUrl" label="组件路径"  prop="MouduleUrl">
                   <a-input v-model="form.MouduleUrl" placeholder="组件路径" />
                 </a-form-model-item>
               </a-col>
@@ -162,10 +162,10 @@ export default {
         AppTypeId: "",
         AccessTypeCode: "module",
         AppSortNo: 1,
-        ConfigTypeCode: "",
+        ConfigTypeCode: "VueComponent",
         IsAuth: 1,
         IsShare: 1,
-        LayoutTypeCode: "",
+        LayoutTypeCode: "BlankView",
         MouduleParam: "",
         MouduleUrl: "",
         Enable: "Y",
@@ -199,6 +199,20 @@ export default {
             trigger: "blur",
           },
         ],
+        MouduleUrl:[
+           {
+            required: true,
+            message: "请输入访问路径",
+            trigger: "blur",
+          },
+        ],
+        AppLogo:[
+           {
+            required: true,
+            message: "请选择应用图标",
+            trigger: "blur",
+          },
+        ]
       },
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -269,10 +283,10 @@ export default {
         AppTypeId: "",
         AccessTypeCode: "module",
         AppSortNo: 1,
-        ConfigTypeCode: "",
+        ConfigTypeCode: "VueComponent",
         IsAuth: "",
         IsShare: "",
-        LayoutTypeCode: "",
+        LayoutTypeCode: "BlankView",
         MouduleParam: "",
         MouduleUrl: "",
         Enable: "Y",
@@ -388,6 +402,10 @@ export default {
               }
             });
           } else {
+            if(this.form.MouduleUrl == ''){
+              this.$message.warning("请填写页面路径!");
+              return 
+            }
             appInfoAction(this.form, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");

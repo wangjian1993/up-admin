@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-18 09:05:08
+ * @LastEditTime: 2021-12-03 09:26:14
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -107,14 +107,13 @@
   </a-card>
 </template>
 <script>
-
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
 import ErpDosage from "../components/ErpDosage.vue";
-import { feedSystem, modelType,stateType} from "@/utils/BomParmas.js";
-import {columns} from './data'
+import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
+import { columns } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
 export default {
   components: { ErpDosage },
@@ -160,6 +159,8 @@ export default {
     detail(item) {
       this.isDosage = true;
       this.mitemcodeData = item;
+      let values = this.searchForm.getFieldsValue();
+      this.mitemcodeData.plantId = values.plantid;
     },
     getPlant() {
       let parmas = {
@@ -215,7 +216,7 @@ export default {
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-           this.loading = true;
+          this.loading = true;
           this.pagination.total = 0;
           if (values["bomdate"]) {
             var bomdate = values["bomdate"].format("YYYY-MM-DD");
@@ -250,7 +251,7 @@ export default {
               this.pagination = pagination;
               this.isSearch = true;
             }
-             this.loading = false;
+            this.loading = false;
           });
           // do something
         }
@@ -266,6 +267,8 @@ export default {
           dblclick: () => {
             this.isDosage = true;
             this.mitemcodeData = record;
+            let values = this.searchForm.getFieldsValue();
+            this.mitemcodeData.plantId = values.plantid;
           },
         },
       };

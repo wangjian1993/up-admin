@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 15:04:20
- * @LastEditTime: 2021-12-01 10:46:51
+ * @LastEditTime: 2021-12-03 14:47:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/personnel/addForm.vue
@@ -22,7 +22,7 @@
             </a-select>
           </a-form-model-item>
           <a-form-model-item ref="Lines" has-feedback label="生产产线" prop="Lines">
-            <a-select v-model="form.Lines" mode="multiple" placeholder="请选择生产产线" style="width: 200px">
+            <a-select v-model="form.Lines" placeholder="请选择生产产线">
               <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineCode">{{ item.LineName }}</a-select-option>
             </a-select>
           </a-form-model-item>
@@ -105,7 +105,6 @@ export default {
   created() {
     if (this.isEdit) {
       this.form = this.editData;
-      this.form.Lines = this.editData.Lines.split(",");
       this.plantId = this.editData.PlantId;
       this.workshopId = this.editData.WorkshopId;
       this.getWorkshopList();
@@ -160,13 +159,13 @@ export default {
       this.plantId = e;
       this.getWorkshopList();
       this.form.WorkshopId = "";
-      this.form.Lines = [];
+      this.form.Lines = "";
     },
     //车间选择
     workshopChange(e) {
       this.workshopId = e;
       this.getLineList();
-      this.form.Lines = [];
+      this.form.Lines = "";
     },
     //产线选择
     lineChange(e) {
@@ -184,7 +183,7 @@ export default {
               UserCode: this.form.UserCode,
               PlantId: this.form.PlantId,
               WorkshopId: this.form.WorkshopId,
-              Lines: this.form.Lines.join(","),
+              Lines: this.form.Lines,
               Enable: this.form.Enable,
             };
             setProductionPersonnel(editForm, "update").then((res) => {
@@ -196,8 +195,6 @@ export default {
             });
           } else {
             //添加
-            console.log(this.form.Lines.join(","));
-            this.form.Lines = this.form.Lines.join(",");
             setProductionPersonnel(this.form, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");

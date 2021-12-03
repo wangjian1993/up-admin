@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:14
- * @LastEditTime: 2021-12-02 18:23:06
+ * @LastEditTime: 2021-12-03 14:01:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/NoOrderTracking.vue
@@ -40,6 +40,11 @@
                 <a-select-option value="">全部</a-select-option>
                 <a-select-option v-for="item in salesmanList" :key="item.UserCode" :value="item.UserCode">{{ item.UserName }}</a-select-option>
               </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="有工单欠数" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-switch v-decorator="['ismodeficiency']" checked-children="是" un-checked-children="否" @change="switchChange" />
             </a-form-item>
           </a-col>
         </a-row>
@@ -142,6 +147,7 @@ export default {
         plant: "",
         department: "",
         salesuser: "",
+        ismodeficiency: "N",
       },
     };
   },
@@ -248,6 +254,10 @@ export default {
       this.cacheallData.salesuser = e;
       this.getPaginationList();
     },
+    switchChange(e) {
+      this.cacheallData.ismodeficiency = e ? "Y" : "N";
+      this.getPaginationList();
+    },
     getPaginationList() {
       this.loading = true;
       let parmas = {
@@ -256,6 +266,7 @@ export default {
         plant: this.cacheallData.plant,
         department: this.cacheallData.department,
         salesuser: this.cacheallData.salesuser,
+        ismodeficiency: this.cacheallData.ismodeficiency,
       };
       getOrderApi(parmas, "getcacheall").then((res) => {
         if (res.data.success) {
@@ -299,9 +310,11 @@ export default {
           this.requestTime = setInterval(() => {
             this.percent += 1;
           }, 1400);
-          this.cacheallData.plant = values.plant
-          this.cacheallData.department = values.department
-          this.cacheallData.salesuser = values.salesuser
+          console.log(values);
+          this.cacheallData.plant = values.plant;
+          this.cacheallData.department = values.department;
+          this.cacheallData.salesuser = values.salesuser;
+          this.cacheallData.ismodeficiency = values.ismodeficiency ? "Y" : "N";
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
@@ -309,6 +322,7 @@ export default {
             plant: values.plant,
             department: values.department,
             salesuser: values.salesuser,
+            ismodeficiency: values.ismodeficiency ? "Y" : "N",
           };
           getOrderApi(parmas, "getall").then((res) => {
             if (res.data.success) {
@@ -340,6 +354,10 @@ export default {
         let parmas = {
           pageindex: this.pagination.current,
           pagesize: 500,
+          plant: this.cacheallData.plant,
+          department: this.cacheallData.department,
+          salesuser: this.cacheallData.salesuser,
+          ismodeficiency: this.cacheallData.ismodeficiency,
         };
         getOrderApi(parmas, "getcacheall").then((res) => {
           if (res.data.success) {

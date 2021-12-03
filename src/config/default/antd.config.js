@@ -1,3 +1,11 @@
+/*
+ * @Author: max
+ * @Date: 2021-10-07 09:29:52
+ * @LastEditTime: 2021-12-03 15:11:29
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/config/default/antd.config.js
+ */
 // antd 配置
 const ANTD = {
   primary: {
@@ -21,7 +29,7 @@ const ANTD = {
       'body-background': '#fff',
       'component-background': '#fff',
       'heading-color': 'rgba(0, 0, 0, 0.85)',
-      'text-color': 'rgba(0, 0, 0, 0.65)',
+      'text-color': 'rgba(0, 0, 0, 0.85)',
       'text-color-inverse': '#fff',
       'text-color-secondary': 'rgba(0, 0, 0, 0.45)',
       'shadow-color': 'rgba(0, 0, 0, 0.15)',
@@ -42,7 +50,7 @@ const ANTD = {
       'body-background': '#fff',
       'component-background': '#fff',
       'heading-color': 'rgba(0, 0, 0, 0.85)',
-      'text-color': 'rgba(0, 0, 0, 0.65)',
+      'text-color': 'rgba(0, 0, 0, 0.85)',
       'text-color-inverse': '#fff',
       'text-color-secondary': 'rgba(0, 0, 0, 0.45)',
       'shadow-color': 'rgba(0, 0, 0, 0.15)',

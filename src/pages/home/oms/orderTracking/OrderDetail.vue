@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:49
- * @LastEditTime: 2021-12-02 11:25:06
+ * @LastEditTime: 2021-12-03 11:53:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/OrderDetail.vue
@@ -13,19 +13,22 @@
         <div>
           <a-descriptions columns="4">
             <a-descriptions-item label="销售公司">
-              {{detailData.CompanyName}}
+              {{ detailData.CompanyName }}
             </a-descriptions-item>
             <a-descriptions-item label="品号">
-              {{detailData.MitemCode}}
+              {{ detailData.MitemCode }}
             </a-descriptions-item>
             <a-descriptions-item label="销售订单">
-              {{detailData.SalesOrderNo}}
+              {{ detailData.SalesOrderNo }}
             </a-descriptions-item>
             <a-descriptions-item label="工单">
-              {{detailData.MoCode}}
+              {{ detailData.MoCode }}
             </a-descriptions-item>
             <a-descriptions-item label="欠数物料齐套数量">
-              {{MinMitemCompleteQty}}
+              {{ MinMitemCompleteQty }}
+            </a-descriptions-item>
+            <a-descriptions-item label="欠数预警信息">
+              {{ PurchaseDeficiencyInfo }}
             </a-descriptions-item>
           </a-descriptions>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
@@ -77,7 +80,8 @@ export default {
       },
       isDetail: false,
       detailList: [],
-      MinMitemCompleteQty:0
+      MinMitemCompleteQty: 0,
+      PurchaseDeficiencyInfo: "",
     };
   },
   created() {
@@ -105,7 +109,8 @@ export default {
       let url = this.detailData.MitemProperty === "P" ? "getrawmaters" : "getmobomlist";
       getOrderApi(params, url).then((res) => {
         if (res.data.success) {
-          this.MinMitemCompleteQty = res.data.data.MinMitemCompleteQty || 0
+          this.MinMitemCompleteQty = res.data.data.MinMitemCompleteQty || 0;
+          this.PurchaseDeficiencyInfo = res.data.data.PurchaseDeficiencyInfo || "";
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
