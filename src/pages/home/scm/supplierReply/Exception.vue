@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-16 13:57:48
+ * @LastEditTime: 2021-12-06 16:38:24
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
@@ -359,7 +359,7 @@ const columns = [
     align: "center",
     width: "100px",
   },
-   {
+  {
     title: "关联销售订单",
     dataIndex: "SalesNos",
     scopedSlots: { customRender: "SalesNos" },
@@ -557,9 +557,17 @@ export default {
         this.pagination.current = 1;
       }
       this.statisticType = type;
+      let values = this.searchForm.getFieldsValue();
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        plantid: values.plantid,
+        batchid: values.batchid,
+        week: this.week || "",
+        pmc: values.pmc,
+        status: values.status,
+        mitemcode: values.mitemcode,
+        mitemname: values.mitemname,
         fastcondition: type,
       };
       getSupplierAction(parmas, "reply/getall").then((res) => {
@@ -590,7 +598,7 @@ export default {
           let PurchaseChangeDate = [];
           let SumSupplierReplyQty = 0;
           let MatchedQty = [];
-          let SalesNos =[]
+          let SalesNos = [];
           item.PurchaseOrderMatchList.map((items) => {
             PurchaseUserName.push(items.PurchaseUserName);
             SupplierName.push(items.SupplierName);
@@ -603,7 +611,7 @@ export default {
             PurchaseChangeDate.push(items.PurchaseChangeDate);
             SumSupplierReplyQty += items.SupplierReplyQty;
             MatchedQty.push(items.RequirementQty);
-            SalesNos.push(items.SalesNos)
+            SalesNos.push(items.SalesNos);
           });
           item.PurchaseUserName = PurchaseUserName;
           item.SupplierName = SupplierName;
@@ -616,7 +624,7 @@ export default {
           item.PurchaseReplyResult = PurchaseReplyResult;
           item.PurchaseChangeDate = PurchaseChangeDate;
           item.MatchedQty = MatchedQty;
-          item.SalesNos =SalesNos
+          item.SalesNos = SalesNos;
         }
       });
     },
@@ -676,9 +684,18 @@ export default {
     },
     exportExcel() {
       this.isExportLod = true;
+      let values = this.searchForm.getFieldsValue();
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
+         plantid: values.plantid,
+        batchid: values.batchid,
+        week: this.week || "",
+        pmc: values.pmc,
+        status: values.status,
+        mitemcode: values.mitemcode,
+        mitemname: values.mitemname,
+        fastcondition: this.statisticType,
       };
       getSupplierAction(parmas, "reply/getall").then((res) => {
         if (res.data.success) {
@@ -695,7 +712,7 @@ export default {
               let PurchaseReplyResult = [];
               let PurchaseChangeDate = [];
               let MatchedQty = [];
-              let SalesNos =[]
+              let SalesNos = [];
               item.PurchaseOrderMatchList.map((items) => {
                 PurchaseUserName.push(items.PurchaseUserName);
                 SupplierName.push(items.SupplierName);
@@ -707,7 +724,7 @@ export default {
                 PurchaseReplyResult.push(items.PurchaseReplyResult);
                 PurchaseChangeDate.push(item.PurchaseChangeDate);
                 MatchedQty.push(items.RequirementQty);
-                SalesNos.push(items.SalesNos)
+                SalesNos.push(items.SalesNos);
               });
               item.PurchaseUserName = PurchaseUserName;
               item.SupplierName = SupplierName;
@@ -719,7 +736,7 @@ export default {
               item.PurchaseReplyResult = PurchaseReplyResult;
               item.PurchaseChangeDate = PurchaseChangeDate;
               item.MatchedQty = MatchedQty;
-              item.SalesNos =SalesNos
+              item.SalesNos = SalesNos;
             }
             item.Status = item.StatusName;
             item.MatchStatus = item.MatchStatusName;

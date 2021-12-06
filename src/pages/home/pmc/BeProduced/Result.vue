@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:40:45
- * @LastEditTime: 2021-11-25 13:45:04
+ * @LastEditTime: 2021-12-06 16:13:24
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/Result.vue
@@ -303,12 +303,12 @@ export default {
       let _data = [];
       let excelArray = [];
       let mergeTitle = [];
-      const hear = ["计划批号", "生产工厂", "子件品号", "子件品名", "子件规格", "需求日期", "库存数量", "待排产需求总数量", "待产需求总数量", "未来可用需求总量", "已预留总数", "可用总数", "需求数量", "采购在途数量", "PMC", "业务单号"];
+      const hear = ["计划批号", "生产工厂", "子件品号", "子件品名", "子件规格", "库存数量", "待排产需求总数量", "待产需求总数量", "未来可用需求总量", "已预留总数", "可用总数", "需求数量", "采购在途数量", "PMC", "业务单号"];
       _data.push(hear);
       list.map((item) => {
         let array = [];
         columns.map((items) => {
-          if (items.dataIndex) {
+          if (items.dataIndex && items.dataIndex !== 'RequirementDate') {
             array.push(item[items.dataIndex]);
           }
         });
@@ -321,7 +321,7 @@ export default {
         { wch: 18 }, // 类型
         { wch: 20 }, // 上阶BOM号
         { wch: 20 }, // 品号
-        { wch: 20 }, // 料名
+        { wch: 8 }, // 料名
         { wch: 8 }, //  产品规格
         { wch: 8 }, // 单位
         { wch: 8 }, // 价格来源

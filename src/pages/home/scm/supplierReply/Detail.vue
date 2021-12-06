@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-22 10:17:05
+ * @LastEditTime: 2021-12-06 16:35:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Detail.vue
@@ -72,7 +72,7 @@
       <div class="operator">
         <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
       </div>
-      <a-card class="card" :bordered="false"  style="margin-top: 10px;" :bodyStyle="{ padding: '5px' }">
+      <a-card class="card" :bordered="false" style="margin-top: 10px;" :bodyStyle="{ padding: '5px' }">
         <div>
           <a-row type="flex" justify="center">
             <a-col :xxl="5" :xl="8" :lg="12"
@@ -169,7 +169,7 @@
             <p v-for="(item, index) in text" :key="index">{{ item }}</p>
           </div>
         </template>
-         <template slot="MatchedQty" slot-scope="text">
+        <template slot="MatchedQty" slot-scope="text">
           <div>
             <p v-for="(item, index) in text" :key="index">{{ item }}</p>
           </div>
@@ -345,7 +345,7 @@ const columns = [
     align: "center",
     width: "100px",
   },
-   {
+  {
     title: "关联销售订单",
     dataIndex: "SalesNos",
     scopedSlots: { customRender: "SalesNos" },
@@ -500,8 +500,8 @@ export default {
     //获取列表
     getListAll(type) {
       this.loading = true;
-      if(type == "statistic"){
-        this.pagination.current = 1
+      if (type == "statistic") {
+        this.pagination.current = 1;
       }
       this.statisticType = "";
       let parmas = {
@@ -525,13 +525,21 @@ export default {
     getStatisticList(type) {
       // console.log("111");
       this.loading = true;
-      if(this.statisticType !== type){
-        this.pagination.current = 1
+      if (this.statisticType !== type) {
+        this.pagination.current = 1;
       }
       this.statisticType = type;
+      let values = this.searchForm.getFieldsValue();
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        plantid: values.plantid,
+        batchid: values.batchid,
+        week: this.week || "",
+        pmc: values.pmc,
+        status: values.status,
+        mitemcode: values.mitemcode,
+        mitemname: values.mitemname,
         fastcondition: this.statisticType,
       };
       getSupplierAction(parmas, "reply/getall").then((res) => {
@@ -615,8 +623,8 @@ export default {
           let SupplierReplyQty = [];
           let PurchaseReplyResult = [];
           let PurchaseChangeDate = [];
-          let MatchedQty =[];
-          let SalesNos =[]
+          let MatchedQty = [];
+          let SalesNos = [];
           item.PurchaseOrderMatchList.map((items) => {
             PurchaseUserName.push(items.PurchaseUserName);
             SupplierName.push(items.SupplierName);
@@ -627,8 +635,8 @@ export default {
             SupplierReplyQty.push(items.SupplierReplyQty);
             PurchaseReplyResult.push(items.PurchaseReplyResult);
             PurchaseChangeDate.push(items.PurchaseChangeDate);
-            MatchedQty.push(items.RequirementQty)
-            SalesNos.push(items.SalesNos)
+            MatchedQty.push(items.RequirementQty);
+            SalesNos.push(items.SalesNos);
           });
           item.PurchaseUserName = PurchaseUserName;
           item.SupplierName = SupplierName;
@@ -639,17 +647,26 @@ export default {
           item.SupplierReplyQty = SupplierReplyQty;
           item.PurchaseReplyResult = PurchaseReplyResult;
           item.PurchaseChangeDate = PurchaseChangeDate;
-          item.MatchedQty = MatchedQty
-          item.SalesNos =SalesNos
+          item.MatchedQty = MatchedQty;
+          item.SalesNos = SalesNos;
         }
       });
       console.log(this.dataSource);
     },
     exportExcel() {
       this.isExportLod = true;
+      let values = this.searchForm.getFieldsValue();
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
+        plantid: values.plantid,
+        batchid: values.batchid,
+        week: this.week || "",
+        pmc: values.pmc,
+        status: values.status,
+        mitemcode: values.mitemcode,
+        mitemname: values.mitemname,
+        fastcondition: this.statisticType,
       };
       getSupplierAction(parmas, "reply/getall").then((res) => {
         if (res.data.success) {
@@ -664,8 +681,8 @@ export default {
               let SupplierReplyDate = [];
               let SupplierReplyQty = [];
               let PurchaseReplyResult = [];
-               let MatchedQty = [];
-               let SalesNos =[]
+              let MatchedQty = [];
+              let SalesNos = [];
               item.PurchaseOrderMatchList.map((items) => {
                 PurchaseUserName.push(items.PurchaseUserName);
                 SupplierName.push(items.SupplierName);
@@ -675,8 +692,8 @@ export default {
                 SupplierReplyDate.push(items.SupplierReplyDate);
                 SupplierReplyQty.push(items.SupplierReplyQty);
                 PurchaseReplyResult.push(items.PurchaseReplyResult);
-                 MatchedQty.push(items.RequirementQty);
-                 SalesNos.push(items.SalesNos)
+                MatchedQty.push(items.RequirementQty);
+                SalesNos.push(items.SalesNos);
               });
               item.PurchaseUserName = PurchaseUserName;
               item.SupplierName = SupplierName;
@@ -686,8 +703,8 @@ export default {
               item.SupplierReplyDate = SupplierReplyDate;
               item.SupplierReplyQty = SupplierReplyQty;
               item.PurchaseReplyResult = PurchaseReplyResult;
-               item.MatchedQty = MatchedQty
-               item.SalesNos = SalesNos
+              item.MatchedQty = MatchedQty;
+              item.SalesNos = SalesNos;
             }
             item.Status = item.StatusName;
             item.MatchStatus = item.MatchStatusName;

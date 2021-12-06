@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-22 10:16:45
+ * @LastEditTime: 2021-12-06 18:00:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
@@ -514,9 +514,17 @@ export default {
       if (this.statisticType !== type) {
         this.pagination.current = 1;
       }
+      let values = this.searchForm.getFieldsValue();
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        plantid: values.plantid,
+        batchid: values.batchid,
+        week: this.week,
+        pmc: values.pmc,
+        planstatus: values.planstatus,
+        mitemcode: values.mitemcode,
+        mitemname: values.mitemname,
         fastcondition: this.statisticType,
       };
       getScmAction(parmas, "requirement/detail/getall").then((res) => {
@@ -528,6 +536,7 @@ export default {
           this.pagination = pagination;
           this.loading = false;
           this.isSearch = 1;
+          // this.getStatistic();
         } else {
           this.loading = false;
         }
@@ -589,9 +598,18 @@ export default {
     },
     exportExcel() {
       this.isExportLod = true;
+      let values = this.searchForm.getFieldsValue();
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
+        plantid: values.plantid,
+        batchid: values.batchid,
+        week: this.week,
+        pmc: values.pmc,
+        planstatus: values.planstatus,
+        mitemcode: values.mitemcode,
+        mitemname: values.mitemname,
+        fastcondition: this.statisticType,
       };
       getScmAction(parmas, "requirement/detail/getall").then((res) => {
         if (res.data.success) {
@@ -604,7 +622,7 @@ export default {
               let LineItem = [];
               let TransitQty = [];
               let MatchedQty = [];
-              let SalesNos =[]
+              let SalesNos = [];
               item.PurchaseOrderMatchList.map((items) => {
                 PurchaseUserName.push(items.PurchaseUserName);
                 SupplierName.push(items.SupplierName);
@@ -612,7 +630,7 @@ export default {
                 LineItem.push(items.LineItem);
                 TransitQty.push(items.TransitQty);
                 MatchedQty.push(items.RequirementQty);
-                SalesNos.push(items.SalesNos)
+                SalesNos.push(items.SalesNos);
               });
               item.PurchaseUserName = PurchaseUserName;
               item.SupplierName = SupplierName;

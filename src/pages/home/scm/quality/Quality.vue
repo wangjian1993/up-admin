@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 10:40:23
- * @LastEditTime: 2021-11-16 13:57:19
+ * @LastEditTime: 2021-12-06 17:54:05
  * @LastEditors: max
  * @Description: 采购质检
  * @FilePath: /up-admin/src/pages/home/scm/quality/Quality.vue
@@ -85,23 +85,23 @@
         <div>
           <a-row type="flex" justify="center">
             <a-col :span="6"
-              ><div class="statistic" @click="getStatisticList('Y', '',1)">
+              ><div class="statistic" @click="getStatisticList('Y', '', 1)">
                 <a-statistic title="今日来料总数:" :value="statistic.TodayInComingQty"
                   ><template #suffix>
                     <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template
                 ></a-statistic></div
             ></a-col>
-            <a-col :span="6" class="statistic" @click="getStatisticList('Y', 'N',2)">
+            <a-col :span="6" class="statistic" @click="getStatisticList('Y', 'N', 2)">
               <a-statistic title="今日未处理批数:" :value-style="{ color: '#cf1322' }" :value="statistic.TodayNoApprovedQty"
                 ><template #suffix>
                   <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
             ></a-col>
-            <a-col :span="6" class="statistic" @click="getStatisticList('Y', 'Y',3)">
+            <a-col :span="6" class="statistic" @click="getStatisticList('Y', 'Y', 3)">
               <a-statistic title="今日已处理批数:" :value-style="{ color: '#cf1322' }" :value="statistic.TodayApprovedQty"
                 ><template #suffix>
                   <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
             ></a-col>
-            <a-col :span="6" class="statistic" @click="getStatisticList('', 'N',4)">
+            <a-col :span="6" class="statistic" @click="getStatisticList('', 'N', 4)">
               <a-statistic title="总未处理批数:" :value-style="{ color: '#cf1322' }" :value="statistic.TotalNoApprovedQty"
                 ><template #suffix>
                   <span style="margin-left: 4px;font-size: 10px;">查看详情<a-icon type="double-right" /> </span></template></a-statistic
@@ -331,9 +331,9 @@ export default {
       plantList: [],
       approveData: [],
       batchData: [],
-      statisticType:"",
-      today:"",
-      approved:""
+      statisticType: "",
+      today: "",
+      approved: "",
     };
   },
   updated() {
@@ -422,7 +422,7 @@ export default {
           this.$message.success("审核成功!");
           this.getListAll();
           this.getStatistic();
-          this.selectedRowKeys =[];
+          this.selectedRowKeys = [];
         }
       });
     },
@@ -505,19 +505,25 @@ export default {
         }
       });
     },
-    getStatisticList(istoday, isapproaved,type) {
+    getStatisticList(istoday, isapproaved, type) {
       this.loading = true;
-       if (this.statisticType !== type) {
+      if (this.statisticType !== type) {
         this.pagination.current = 1;
       }
       this.statisticType = type;
-      this.today=istoday;
-      this.approaved =isapproaved;
+      this.today = istoday;
+      this.approaved = isapproaved;
+      let values = this.searchForm.getFieldsValue();
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         istoday: istoday,
         isapproaved: isapproaved,
+        plantid: values.plantid,
+        orderno: values.orderno,
+        mitemcode: values.mitemcode,
+        mitemname: values.mitemname,
+        status: values.status,
       };
       getQualityAction(parmas, "getall").then((res) => {
         if (res.data.success) {
@@ -527,6 +533,7 @@ export default {
           this.pagination = pagination;
           this.loading = false;
           this.isSearch = 1;
+          this.getStatistic();
         } else {
           this.loading = false;
         }
@@ -541,12 +548,12 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-     if (this.isSearch == 2) {
+      if (this.isSearch == 2) {
         this.search();
         return;
       }
       if (this.isSearch == 1) {
-        this.getStatisticList(this.today, this.approaved,this.statisticType);
+        this.getStatisticList(this.today, this.approaved, this.statisticType);
         return;
       }
       this.getListAll();
@@ -568,7 +575,7 @@ export default {
             orderno: values.orderno,
             mitemcode: values.mitemcode,
             mitemname: values.mitemname,
-            status:values.status,
+            status: values.status,
             istoday: "",
             isapproaved: "",
           };

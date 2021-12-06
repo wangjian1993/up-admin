@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-25 15:13:13
- * @LastEditTime: 2021-12-03 14:11:23
+ * @LastEditTime: 2021-12-06 16:05:51
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/order.data.js
@@ -234,6 +234,7 @@ export const detailColumns = [
     title: "物料品名",
     dataIndex: "MitemName",
     align: "center",
+    width: 100,
   },
   {
     title: "欠数数量",
@@ -245,6 +246,7 @@ export const detailColumns = [
     title: "标准用量",
     dataIndex: "StandardQty",
     align: "center",
+    width: 80,
   },
   {
     title: " 总需求数量",

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:14
- * @LastEditTime: 2021-12-03 14:01:09
+ * @LastEditTime: 2021-12-06 18:19:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/NoOrderTracking.vue
@@ -144,6 +144,7 @@ export default {
       progressUp: "",
       requestTime: 0,
       cacheallData: {
+        company: "",
         plant: "",
         department: "",
         salesuser: "",
@@ -170,6 +171,7 @@ export default {
       this.departmentList = [];
       this.salesmanList = [];
       this.companycode = e;
+      this.cacheallData.company = e;
       this.getDepartment();
       this.searchForm.setFieldsValue({
         department: "",
@@ -248,21 +250,28 @@ export default {
     },
     plantChange(e) {
       this.cacheallData.plant = e;
-      this.getPaginationList();
+      if (this.isSearch) {
+        this.getPaginationList();
+      }
     },
     userChange(e) {
       this.cacheallData.salesuser = e;
-      this.getPaginationList();
+      if (this.isSearch) {
+        this.getPaginationList();
+      }
     },
     switchChange(e) {
       this.cacheallData.ismodeficiency = e ? "Y" : "N";
-      this.getPaginationList();
+      if (this.isSearch) {
+        this.getPaginationList();
+      }
     },
     getPaginationList() {
       this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        company: this.cacheallData.company,
         plant: this.cacheallData.plant,
         department: this.cacheallData.department,
         salesuser: this.cacheallData.salesuser,
@@ -276,6 +285,7 @@ export default {
           this.pagination = pagination;
           this.loading = false;
           this.isSearch = false;
+          this.isExport = true;
         } else {
           this.loading = false;
         }
@@ -310,7 +320,7 @@ export default {
           this.requestTime = setInterval(() => {
             this.percent += 1;
           }, 1400);
-          console.log(values);
+          this.cacheallData.company = values.company;
           this.cacheallData.plant = values.plant;
           this.cacheallData.department = values.department;
           this.cacheallData.salesuser = values.salesuser;
@@ -354,6 +364,7 @@ export default {
         let parmas = {
           pageindex: this.pagination.current,
           pagesize: 500,
+          company: this.cacheallData.company,
           plant: this.cacheallData.plant,
           department: this.cacheallData.department,
           salesuser: this.cacheallData.salesuser,
