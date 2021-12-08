@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:55:26
- * @LastEditTime: 2021-11-18 08:55:27
+ * @LastEditTime: 2021-12-08 09:50:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/data.js
@@ -26,7 +26,6 @@ export const columns = [
       scopedSlots: { customRender: "DOC_NAME" },
       align: "center",
       width: 150,
-      ellipsis: true,
     },
     {
       title: "单据日期",
@@ -34,7 +33,6 @@ export const columns = [
       scopedSlots: { customRender: "DOC_DATE" },
       align: "center",
       width: 150,
-      ellipsis: true,
     },
     {
       title: "变更原因",
@@ -42,7 +40,6 @@ export const columns = [
       scopedSlots: { customRender: "DESCRIPTION_1" },
       align: "center",
       width: 200,
-      ellipsis: true,
     },
     {
       title: "变更原因说明",
@@ -64,7 +61,6 @@ export const columns = [
       scopedSlots: { customRender: "EMPLOYEE_NAME_T" },
       align: "center",
       width: 150,
-      ellipsis: true,
     },
     {
       title: "变更范围",

@@ -58,10 +58,6 @@ function parseRoutes(routesConfig, routerMap) {
 			if (item.component == 'BlankView' || item.component == "") {
 				//空白页
 				item.component = view.blank;
-			} else if (item.component === 'OpenView' || item.component === 'IframeView') {
-				item.meta.link = item.path;
-				item.path = item.component;
-				item.component = "";
 			} else {
 				const item_component = item.component;
 				item.component = () => import(`@/pages/${item_component}`)

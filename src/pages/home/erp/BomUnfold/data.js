@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:53:46
- * @LastEditTime: 2021-11-18 08:53:47
+ * @LastEditTime: 2021-12-08 09:49:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/data.js
@@ -27,7 +27,6 @@ export const columns = [
         scopedSlots: { customRender: "SHORTCUT" },
         align: "center",
         width: 150,
-        ellipsis: true,
     },
     {
         title: "主件品号",
@@ -35,7 +34,6 @@ export const columns = [
         scopedSlots: { customRender: "ITEM_NAME" },
         align: "center",
         width: 250,
-        ellipsis: true,
     },
     {
         title: "主件规格",
@@ -43,7 +41,6 @@ export const columns = [
         scopedSlots: { customRender: "ITEM_SPECIFICATION" },
         align: "center",
         width: 300,
-        ellipsis: true,
     },
     {
         title: "主件图号",
@@ -51,7 +48,6 @@ export const columns = [
         scopedSlots: { customRender: "DRAWING_NO" },
         align: "center",
         width: 150,
-        ellipsis: true,
     },
     {
         title: "单位",
@@ -183,7 +179,6 @@ export const innerColumns = [
         scopedSlots: { customRender: "ITEM_NAME" },
         align: "center",
         width: 250,
-        ellipsis: true,
     },
     {
         title: "元件规格",
@@ -191,7 +186,6 @@ export const innerColumns = [
         scopedSlots: { customRender: "ITEM_SPECIFICATION" },
         align: "center",
         width: 300,
-        ellipsis: true,
     },
     {
         title: "单位",
@@ -270,7 +264,6 @@ export const innerColumns = [
         scopedSlots: { customRender: "DRAWING_NO" },
         align: "center",
         width: 150,
-        ellipsis: true,
     },
     {
         title: "品号类型",

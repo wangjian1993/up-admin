@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:52:55
- * @LastEditTime: 2021-11-18 08:52:56
+ * @LastEditTime: 2021-12-08 09:49:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/data.js
@@ -26,7 +26,6 @@ export const columns = [
       scopedSlots: { customRender: "ITEM_NAME" },
       align: "center",
       width: 250,
-      ellipsis: true,
     },
     {
       title: "规格",
@@ -34,7 +33,6 @@ export const columns = [
       scopedSlots: { customRender: "ITEM_SPECIFICATION" },
       align: "center",
       width: 300,
-      ellipsis: true,
     },
     {
       title: "图号",

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:49:42
- * @LastEditTime: 2021-11-18 08:49:43
+ * @LastEditTime: 2021-12-08 09:46:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/data.js
@@ -27,7 +27,6 @@ export const columns = [
         scopedSlots: { customRender: "SHORTCUT" },
         align: "center",
         width: 150,
-        ellipsis: true,
     },
     {
         title: "品名",
@@ -35,7 +34,6 @@ export const columns = [
         scopedSlots: { customRender: "ITEM_NAME" },
         align: "center",
         width: 250,
-        ellipsis: true,
     },
     {
         title: "规格",
@@ -43,7 +41,6 @@ export const columns = [
         scopedSlots: { customRender: "ITEM_SPECIFICATION" },
         align: "center",
         width: 300,
-        ellipsis: true,
     },
     {
         title: "库存数量",
@@ -51,7 +48,6 @@ export const columns = [
         scopedSlots: { customRender: "INVENTORY_QTY" },
         align: "center",
         width: 150,
-        ellipsis: true,
     },
     {
         title: "工厂编号",
@@ -219,7 +215,6 @@ export const columnsPrint = [
         scopedSlots: { customRender: "ITEM_NAME" },
         align: "center",
         width: 250,
-        ellipsis: true,
     },
     {
         title: "规格",
@@ -227,7 +222,6 @@ export const columnsPrint = [
         scopedSlots: { customRender: "ITEM_SPECIFICATION" },
         align: "center",
         width: 300,
-        ellipsis: true,
     },
     {
         title: "单位",
