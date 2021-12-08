@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-11-11 15:24:31
+ * @LastEditTime: 2021-12-07 18:09:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/main.js
@@ -19,6 +19,18 @@ import Plugins from '@/plugins';
 import { initI18n } from '@/utils/i18n';
 import bootstrap from '@/bootstrap';
 import 'moment/locale/zh-cn';
+//datav
+import dataV from '@jiaminghi/data-view';
+// import Icon from 'vue-awesome/components/Icon';
+// import 'vue-awesome/icons/chart-bar.js';
+// import 'vue-awesome/icons/chart-area.js';
+// import 'vue-awesome/icons/chart-pie.js';
+// import 'vue-awesome/icons/chart-line.js';
+// import 'vue-awesome/icons/align-left.js';
+import echarts from 'echarts'
+Vue.prototype.$echarts = echarts
+// Vue.component('icon', Icon);
+Vue.use(dataV);
 const router = initRouter(store.state.setting.asyncRoutes);
 const i18n = initI18n('CN', 'US')
 import { hasBtnPermission } from './utils/permissions';

@@ -51,12 +51,17 @@ function parseRoutes(routesConfig, routerMap) {
 		} else if (typeof item === 'object') {
 			let cp = item.component;
 			//过滤掉按钮类型
+			console.log(item);
 			if (item.component) {
 				if (cp.indexOf("button") != -1) return;
 			}
 			if (item.component == 'BlankView' || item.component == "") {
 				//空白页
 				item.component = view.blank;
+			} else if (item.component === 'OpenView' || item.component === 'IframeView') {
+				item.meta.link = item.path;
+				item.path = item.component;
+				item.component = "";
 			} else {
 				const item_component = item.component;
 				item.component = () => import(`@/pages/${item_component}`)

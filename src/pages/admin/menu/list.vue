@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-10-26 16:59:22
+ * @LastEditTime: 2021-12-08 09:27:02
  * @LastEditors: max
  * @Description: 菜单管理
  * @FilePath: /up-admin/src/pages/admin/menu/list.vue
@@ -106,7 +106,7 @@
             ></a-col>
             <a-col :span="12">
               <a-form-model-item ref="ModuleLogo" label="图标">
-                <a-input style="width: 150px" disabled v-model="form.ModuleLogo" />
+                <a-input style="width: 150px" v-model="form.ModuleLogo" />
                 <a-button type="primary" @click="iconSelect()">选择</a-button>
               </a-form-model-item></a-col
             >
@@ -119,13 +119,13 @@
                 </a-radio-group>
               </a-form-model-item>
             </a-col>
-            <a-col :span="12">
+            <!-- <a-col :span="12">
               <a-form-model-item ref="ConfigTypeCode" label="配置类型" prop="ConfigTypeCode">
                 <a-radio-group v-model="form.ConfigTypeCode" v-for="item in configTypeList" :key="item.ParamId">
                   <a-radio :value="item.ParamCode">{{ item.ParamName }}</a-radio>
                 </a-radio-group>
               </a-form-model-item>
-            </a-col>
+            </a-col> -->
           </a-row>
           <a-row v-if="form.ModuleTypeCode == 'button'">
             <a-col :span="24">
@@ -139,7 +139,7 @@
           <a-row>
             <a-col :span="24">
               <a-form-model-item ref="AccessTypeCode" :labelCol="{ span: 3 }" label="访问方式" prop="AccessTypeCode">
-                <a-radio-group v-model="form.AccessTypeCode" v-for="item in linkTypeList" :key="item.ParamId" :disabled="form.ModuleTypeCode == 'button'">
+                <a-radio-group v-model="form.AccessTypeCode" v-for="item in linkTypeList" :key="item.ParamId" :disabled="form.ModuleTypeCode == 'button'" @change="accessType">
                   <a-radio :value="item.ParamCode">{{ item.ParamName }}</a-radio>
                 </a-radio-group>
               </a-form-model-item>
@@ -155,19 +155,9 @@
             </a-col>
           </a-row>
           <a-row>
-            <a-col :span="12">
+            <!-- <a-col :span="12">
               <a-form-model-item ref="UserTypeName" label="菜单参数"><a-input :disabled="form.ModuleTypeCode == 'button'" v-model="form.ModuleParam" placeholder="请输入菜单参数"/></a-form-model-item>
-            </a-col>
-            <a-col :span="12">
-              <a-form-model-item ref="Enable" label="是否启用">
-                <a-radio-group :value="form.Enable" default-value="Y" button-style="solid" @change="enableChange">
-                  <a-radio-button value="N">否</a-radio-button>
-                  <a-radio-button value="Y">是</a-radio-button>
-                </a-radio-group>
-              </a-form-model-item>
-            </a-col>
-          </a-row>
-          <a-row>
+            </a-col> -->
             <a-col :span="12">
               <a-form-model-item ref="SortNo" has-feedback label="序号">
                 <a-input-number
@@ -183,6 +173,16 @@
                 />
               </a-form-model-item>
             </a-col>
+            <a-col :span="12">
+              <a-form-model-item ref="Enable" label="是否启用">
+                <a-radio-group :value="form.Enable" default-value="Y" button-style="solid" @change="enableChange">
+                  <a-radio-button value="N">否</a-radio-button>
+                  <a-radio-button value="Y">是</a-radio-button>
+                </a-radio-group>
+              </a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-row>
             <a-col :span="12">
               <a-form-model-item ref="ModuleDesc" label="描述">
                 <a-textarea v-model="form.ModuleDesc" placeholder="请输入菜单描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
@@ -478,6 +478,17 @@ export default {
         this.form.component = "";
       }
     },
+    accessType(e) {
+      if(e.target.value == "external_links"){
+        console.log("1111")
+        this.form.component = "OpenView";
+      }else if(e.target.value == "interior_link"){
+        this.form.component = "IframeView";
+      }else if(e.target.value == "null"){
+        this.form.component = "null";
+      }
+       console.log("111",  this.form);
+    },
     //按钮类型
     buttonType(e) {
       if (e.target.value == "else") {
@@ -663,7 +674,7 @@ export default {
     edit(item) {
       console.log(item);
       let parmas = {
-        id: item.ModuleId
+        id: item.ModuleId,
       };
       getMenuInfo(parmas).then((res) => {
         if (res.data.success) {
