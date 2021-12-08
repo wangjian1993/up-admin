@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-03 16:53:02
+ * @LastEditTime: 2021-12-08 17:49:58
  * @LastEditors: max
  * @Description: BOM查询
- * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
+ * @FilePath: /up-admin/src/pages/home/erp/BomCode/List copy.vue
 -->
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
@@ -44,7 +44,7 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_BUSINESS_ID" bordered :customRow="handleClickRow" :rowClassName="rowClassName">
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_BUSINESS_ID" bordered :customRow="handleClickRow" :rowClassName="rowClassName" :components="components">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -85,10 +85,16 @@ import { splitData, modelType } from "@/utils/util.js";
 import ModelInfo from "../components/ModelInfo.vue";
 import { columns } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
+import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
-  components: { ModelInfo },
+  components: { ModelInfo},
   mixins: [PublicVar],
   data() {
+    this.components = {
+      header: {
+        cell: (h, props, children) => resizeableTitle(h, props, children, this.columns),
+      },
+    };
     return {
       data: [],
       columns,
@@ -235,7 +241,7 @@ export default {
 };
 </script>
 
-<style scoped lang="less">
+<style lang="less" scoped>
 .ant-form-item {
   margin-bottom: 5px;
 }

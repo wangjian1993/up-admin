@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:14
- * @LastEditTime: 2021-12-07 09:13:15
+ * @LastEditTime: 2021-12-08 18:11:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/NoOrderTracking.vue
@@ -250,21 +250,15 @@ export default {
     },
     plantChange(e) {
       this.cacheallData.plant = e;
-      if (this.isSearch) {
-        this.getPaginationList();
-      }
+      this.getPaginationList();
     },
     userChange(e) {
       this.cacheallData.salesuser = e;
-      if (this.isSearch) {
-        this.getPaginationList();
-      }
+      this.getPaginationList();
     },
     switchChange(e) {
       this.cacheallData.ismodeficiency = e ? "Y" : "N";
-      if (this.isSearch) {
-        this.getPaginationList();
-      }
+      this.getPaginationList();
     },
     getPaginationList() {
       this.loading = true;

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-08 17:23:22
+ * @LastEditTime: 2021-12-08 18:11:08
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
@@ -241,7 +241,7 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .ant-form-item {
   margin-bottom: 5px;
 }
