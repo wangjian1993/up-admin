@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-18 09:03:20
+ * @LastEditTime: 2021-12-08 17:25:57
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/List.vue
@@ -67,6 +67,7 @@
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
         }"
+        :components="components"
       >
         <template slot="index" slot-scope="text, record, index">
           <div>
@@ -111,10 +112,16 @@ import Dosage from "./Dosage.vue";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { columns, columnsPrint } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
+import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { Dosage },
   mixins: [PublicVar],
   data() {
+    this.components = {
+      header: {
+        cell: (h, props, children) => resizeableTitle(h, props, children, this.columns),
+      },
+    };
     return {
       data: [],
       columns,

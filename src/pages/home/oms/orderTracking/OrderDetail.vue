@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:49
- * @LastEditTime: 2021-12-06 16:03:52
+ * @LastEditTime: 2021-12-08 16:48:05
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/OrderDetail.vue
@@ -9,7 +9,7 @@
 <template>
   <div>
     <a-modal v-model="visible" title="物料及采购详情" @cancel="close" width="100%" :footer="null" centered>
-      <a-spin tip="loading..." :spinning="loading">
+      <a-spin tip="数据提取中..." :spinning="loading">
         <div>
           <a-descriptions columns="4">
             <a-descriptions-item label="销售公司">
@@ -32,7 +32,7 @@
             </a-descriptions-item>
           </a-descriptions>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="dataSource" :size="size" :scroll="{ y: 600,x:true}" :pagination="pagination" :rowKey="(dataSource, index) => dataSource.ErpPlantId + index" @change="handleTableChange" bordered>
+            <a-table :columns="columns" :data-source="dataSource" :size="size" :scroll="{ y: 600, x: true }" :pagination="pagination" :rowKey="(dataSource, index) => dataSource.ErpPlantId + index" @change="handleTableChange" bordered>
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -99,14 +99,19 @@ export default {
       this.isDetail = true;
       this.detailList = item;
     },
-    getList() {
+    getList(type) {
       this.loading = true;
       let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         cacheid: this.detailData.CacheId,
       };
-      let url = this.detailData.MitemProperty === "P" ? "getrawmaters" : "getmobomlist";
+      let url=''
+      if (type == "paging") {
+        url = this.detailData.MitemProperty === "P" ? "getrawmaters" : "getcachemobomlist";
+      } else {
+        url = this.detailData.MitemProperty === "P" ? "getrawmaters" : "getmobomlist";
+      }
       getOrderApi(params, url).then((res) => {
         if (res.data.success) {
           this.MinMitemCompleteQty = res.data.data.MinMitemCompleteQty || 0;
@@ -123,7 +128,7 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      this.getList();
+      this.getList("paging");
     },
   },
 };

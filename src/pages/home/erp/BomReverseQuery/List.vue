@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-03 09:26:14
+ * @LastEditTime: 2021-12-08 17:13:03
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -69,7 +69,7 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow">
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow" :components="components">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -115,10 +115,16 @@ import ErpDosage from "../components/ErpDosage.vue";
 import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
 import { columns } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
+import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { ErpDosage },
   mixins: [PublicVar],
   data() {
+    this.components = {
+      header: {
+        cell: (h, props, children) => resizeableTitle(h, props, children, this.columns),
+      },
+    };
     return {
       data: [],
       columns,

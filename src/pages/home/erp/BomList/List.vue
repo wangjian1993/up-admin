@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-03 09:04:57
+ * @LastEditTime: 2021-12-08 17:24:15
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -60,7 +60,7 @@
         :columns="columns"
         :data-source="data"
         size="small"
-        :scroll="{ y: scrollY, x: true }"
+        :scroll="{ y: scrollY, x: 1500 }"
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
@@ -72,6 +72,7 @@
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
         }"
+        :components="components"
       >
         <template slot="index" slot-scope="text, record, index">
           <div>
@@ -118,10 +119,16 @@ import { exportjsontoexcelMore } from "@/utils/exportExcel";
 import Print from "../components/Print.vue";
 import { columns } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
+import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { ErpDosage, Print },
   mixins: [PublicVar],
   data() {
+    this.components = {
+      header: {
+        cell: (h, props, children) => resizeableTitle(h, props, children, this.columns),
+      },
+    };
     return {
       data: [],
       columns,

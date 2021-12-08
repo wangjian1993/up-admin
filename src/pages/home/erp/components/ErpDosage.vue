@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-12-03 09:08:03
+ * @LastEditTime: 2021-12-08 17:27:26
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
@@ -62,7 +62,7 @@
         </div>
         <div>
           <a-card title="BOM用量信息" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 500, x: true }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName">
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 500, x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName"  :components="components">
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -283,10 +283,16 @@ import { splitData } from "@/utils/util.js";
 import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
 import ModelInfo from "./ModelInfo.vue";
 import BomUnfold from "./BomUnfold.vue";
+import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { ModelInfo, BomUnfold },
   props: ["info"],
   data() {
+    this.components = {
+      header: {
+        cell: (h, props, children) => resizeableTitle(h, props, children, this.columns),
+      },
+    };
     return {
       size: "small",
       columns,

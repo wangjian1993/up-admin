@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-11-18 09:06:58
+ * @LastEditTime: 2021-12-08 17:13:56
  * @LastEditors: max
  * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
@@ -71,7 +71,7 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ECN_ID" bordered :customRow="handleClickRow">
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ECN_ID" bordered :customRow="handleClickRow" :components="components">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -117,10 +117,16 @@ import VariationInfo from "./VariationInfo.vue";
 import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
 import { columns } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
+import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { VariationInfo },
   mixins: [PublicVar],
   data() {
+    this.components = {
+      header: {
+        cell: (h, props, children) => resizeableTitle(h, props, children, this.columns),
+      },
+    };
     return {
       data: [],
       columns,
