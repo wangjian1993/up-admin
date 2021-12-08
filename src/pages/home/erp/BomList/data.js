@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:51:24
- * @LastEditTime: 2021-11-23 16:56:28
+ * @LastEditTime: 2021-12-08 14:42:15
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomList/data.js
@@ -11,7 +11,7 @@ export const columns = [
         title: "序号",
         scopedSlots: { customRender: "index" },
         align: "center",
-        width:40,
+        width:50,
     },
     {
         title: "主件品号",
@@ -67,7 +67,7 @@ export const columns = [
         dataIndex: "ApproveStatus",
         scopedSlots: { customRender: "ApproveStatus" },
         align: "center",
-        width: 60,
+        width: 80,
     },
     {
         title: "工厂",
@@ -81,14 +81,14 @@ export const columns = [
         dataIndex: "PLANT_NAME_P",
         scopedSlots: { customRender: "PLANT_NAME_P" },
         align: "center",
-        width: 40,
+        width: 60,
     },
     {
         title: "引用工厂",
         dataIndex: "PLANT_CODE_R",
         scopedSlots: { customRender: "PLANT_CODE_R" },
         align: "center",
-        width: 40,
+        width: 60,
     },
     {
         title: "引用工厂名称",
@@ -130,7 +130,7 @@ export const columns = [
         dataIndex: "EMPLOYEE_NAME_C",
         scopedSlots: { customRender: "EMPLOYEE_NAME_C" },
         align: "center",
-        width: 40,
+        width: 60,
     },
     {
         title: "最后修改日期",
