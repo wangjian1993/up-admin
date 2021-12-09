@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-11-30 14:46:24
+ * @LastEditTime: 2021-12-09 11:47:56
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -210,4 +210,11 @@ export function getOrderApi(params, action) {
 }
 export function setOrderApi(params, action) {
     return request(`${UP_WEB}/trace/order/${action}`, METHOD.POST, params);
+}
+//订单预处理管理
+export function getPreporcessApi(params, action) {
+    return request(`${UP_WEB}/preporcess/order/${action}`, METHOD.GET, params);
+}
+export function setPreporcessApi(params, action) {
+    return request(`${UP_WEB}/preporcess/order/${action}`, METHOD.POST, params);
 }

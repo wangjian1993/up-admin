@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:14
- * @LastEditTime: 2021-12-08 18:11:57
+ * @LastEditTime: 2021-12-09 18:00:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/NoOrderTracking.vue
@@ -177,6 +177,7 @@ export default {
         department: "",
         salesuser: "",
       });
+      this.getPaginationList();
     },
     departmentChange(e) {
       this.salesmanList = [];
@@ -236,6 +237,7 @@ export default {
     },
     save(item) {
       let parmas = {
+        CompanyId:this.cacheallData.company,
         SalesOrderNo: item.SalesOrderNo,
         LineItem: item.LineItem,
         MitemCode: item.MitemCode,
@@ -244,7 +246,7 @@ export default {
       setOrderApi(parmas, "update").then((res) => {
         if (res.data.success) {
           this.$message.success("保存成功!");
-          this.search();
+          this.getPaginationList();
         }
       });
     },
@@ -327,7 +329,7 @@ export default {
             salesuser: values.salesuser,
             ismodeficiency: values.ismodeficiency ? "Y" : "N",
           };
-          getOrderApi(parmas, "getall").then((res) => {
+          getOrderApi(parmas, "getcacheall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };

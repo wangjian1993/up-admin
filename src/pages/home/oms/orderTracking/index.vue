@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:02:21
- * @LastEditTime: 2021-11-27 08:37:49
+ * @LastEditTime: 2021-12-09 14:29:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/index.vue
@@ -9,21 +9,21 @@
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <a-tabs type="card" v-model="activeKey" default-active-key="1" @change="callback">
-      <a-tab-pane key="1" tab="未产订单跟踪" v-if="hasPerm('order_tracking_tab1')">
-        <NoOrderTracking :companyList="companyList" :plantList="plantList" />
+      <a-tab-pane key="1" tab="订单跟踪预处理" v-if="hasPerm('order_tracking_tab2')">
+        <Pretreatment  @toDetail="toDetail" :companyList="companyList" :plantList="plantList" />
       </a-tab-pane>
-      <!-- <a-tab-pane key="2" tab="物料及采购明细" v-if="hasPerm('order_tracking_tab2')">
-        <OrderDetail :companyList="companyList" :plantList="plantList" />
-      </a-tab-pane> -->
+      <a-tab-pane key="2" tab="未产订单跟踪" v-if="hasPerm('order_tracking_tab1')">
+        <NoOrderTracking :companyList="companyList" :plantList="plantList" ref="myDeatils"/>
+      </a-tab-pane>
     </a-tabs>
   </a-card>
 </template>
 <script>
 import NoOrderTracking from "./NoOrderTracking.vue";
-// import OrderDetail from "./OrderDetail.vue";
+import Pretreatment from "./Pretreatment.vue";
 import { getOrderApi } from "@/services/web.js";
 export default {
-  components: { NoOrderTracking },
+  components: { NoOrderTracking,Pretreatment},
   data() {
     return {
       activeKey: "1",
@@ -38,15 +38,14 @@ export default {
   },
   methods: {
     toDetail(id) {
-      console.log(id);
       this.batchid = id;
       this.activeKey = "2";
-      this.$nextTick(() => {
-        this.$refs.myDeatils.getListAll();
-      });
+      console.log("1111")
+      // this.$nextTick(() => {
+      //   this.$refs.myDeatils.getListAll();
+      // });
     },
     callback(key) {
-      console.log(key);
       this.activeKey = key;
     },
     getCompany() {
