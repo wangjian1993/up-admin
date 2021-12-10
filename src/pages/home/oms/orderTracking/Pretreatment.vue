@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-09 11:25:14
- * @LastEditTime: 2021-12-09 16:14:37
+ * @LastEditTime: 2021-12-10 09:12:10
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/Pretreatment.vue
@@ -150,8 +150,8 @@ const columns = [
   },
   {
     title: "预处理订单数据耗时",
-    dataIndex: "TimeProcess",
-    scopedSlots: { customRender: "TimeProcess" },
+    dataIndex: "MasterTimeProcess",
+    scopedSlots: { customRender: "MasterTimeProcess" },
     align: "center",
     width: 140,
   },
