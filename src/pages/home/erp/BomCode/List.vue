@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-10 09:28:58
+ * @LastEditTime: 2021-12-10 09:55:39
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
@@ -21,16 +21,40 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入品号" allowClear style="width: 200px" v-decorator="['itemcode']" />
+              <a-dropdown>
+                <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                <a-menu slot="overlay">
+                  <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemcode', item)">
+                    <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item}}</a>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['itemname']" />
+              <a-dropdown>
+                <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                <a-menu slot="overlay">
+                  <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemname', item)">
+                   <a href="javascript:;" :class="itemnamesign == item ? 'menuBg' : ''">{{ item}}</a>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="产品规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入产品规格" allowClear style="width: 200px" v-decorator="['itemspecification']" />
+              <a-dropdown>
+                <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                <a-menu slot="overlay">
+                  <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemspecification', item)">
+                   <a href="javascript:;" :class="itemspecificationsign == item ? 'menuBg' : ''">{{ item}}</a>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
             </a-form-item>
           </a-col>
         </a-row>
@@ -73,6 +97,28 @@
       <template slot="CreateDate" slot-scope="text">
         <span>{{ splitData(text) }}</span>
       </template>
+      <!-- <template v-for="(col, i) in ['ITEM_CODE', 'ITEM_NAME', 'ITEM_SPECIFICATION']" :slot="col" slot-scope="text, record, index">
+        <div :key="`col${i}`">
+          <div v-if="index === 0" style="display:flex;align-items: center;">
+            <a-input placeholder="请输入" />
+            <a-dropdown>
+              <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+              <a-menu slot="overlay">
+                <a-menu-item>
+                  <a href="javascript:;">1st menu item</a>
+                </a-menu-item>
+                <a-menu-item>
+                  <a href="javascript:;">2nd menu item</a>
+                </a-menu-item>
+                <a-menu-item>
+                  <a href="javascript:;">3rd menu item</a>
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
+          </div>
+          <span v-else>{{ text }}</span>
+        </div>
+      </template> -->
     </a-table>
     <a-empty v-else description="暂无权限" />
     <model-info v-if="isModelInfo" :modelData="mitemcodeData" @closeModal="closeModal"></model-info>
@@ -87,7 +133,7 @@ import { columns } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
-  components: { ModelInfo},
+  components: { ModelInfo },
   mixins: [PublicVar],
   data() {
     this.components = {
@@ -105,6 +151,9 @@ export default {
       detailData: [],
       plantList: [],
       mitemcodeData: [],
+      itemcodesign: "",
+      itemnamesign: "",
+      itemspecificationsign: "",
     };
   },
   created() {
@@ -118,6 +167,20 @@ export default {
     modelType,
     closeModal() {
       this.isModelInfo = false;
+    },
+    itemFiltrete(type, text) {
+      switch (type) {
+        case "itemcode":
+          this.itemcodesign = text;
+          break;
+        case "itemname":
+          this.itemnamesign = text;
+          break;
+        case "itemspecification":
+          this.itemspecificationsign = text;
+          break;
+      }
+      this.search();
     },
     //物料需求详情
     detail(record) {
@@ -170,9 +233,13 @@ export default {
       this.week = "";
       this.searchForm.resetFields();
       this.getPlant();
+      this.itemcodesign = "";
+      this.itemnamesign = "";
+      this.itemspecificationsign = "";
     },
     //关键词搜索
     search() {
+      console.log(this.data);
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
@@ -191,6 +258,9 @@ export default {
             itemcode: values.itemcode || "",
             itemname: values.itemname || "",
             itemspecification: values.itemspecification || "",
+            itemcodesign:this.itemcodesign,
+            itemspecificationsign:this.itemspecificationsign,
+            itemnamesign:this.itemnamesign,
           };
           getERPReportAction(parmas, "getbominfo").then((res) => {
             if (res.data.success) {
@@ -241,7 +311,7 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .ant-form-item {
   margin-bottom: 5px;
 }
@@ -250,5 +320,9 @@ export default {
 }
 /deep/.color1 {
   color: #0000ff;
+}
+.menuBg {
+  background:#13c2c2;
+  color: #fff;
 }
 </style>

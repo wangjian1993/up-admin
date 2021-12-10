@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2021-11-18 10:49:50
+ * @LastEditTime: 2021-12-10 15:29:19
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
@@ -105,8 +105,16 @@
                 </a-descriptions>
               </a-tab-pane>
               <a-tab-pane key="7" tab="品号图片">
+                <div style="margin:10px 0">
+                  <a-button type="primary" icon="file-image" @click="downImg('img')">
+                    导出图片
+                  </a-button>
+                  <!-- <a-button style="margin-left:10px" type="primary" icon="file-pdf" @click="downImg('pdf')">
+                    导出PDF
+                  </a-button> -->
+                </div>
                 <div style="width:100%">
-                  <viewer :images="images">
+                  <viewer>
                     <img style="width:100%;height:100%;" :src="imgUrl" alt="" />
                   </viewer>
                 </div>
@@ -165,6 +173,7 @@ import { splitData } from "@/utils/util.js";
 import { feedSystem, modelType } from "@/utils/BomParmas.js";
 import { general, storage, production, plant, finance } from "./common";
 import { uploadFile } from "@/services/admin.js";
+// import { jsPDF } from "jspdf";
 export default {
   props: ["modelData"],
   data() {
@@ -180,7 +189,7 @@ export default {
       production,
       plant,
       finance,
-      imgUrl: "",
+      imgUrl: "http://192.168.1.245:8080/Upload/images/20211117/FA0D9F3E37E54191A90783470688113927.jpg",
     };
   },
   created() {
@@ -191,6 +200,42 @@ export default {
     splitData,
     modelType,
     feedSystem,
+    downImg(type) {
+      if (type == "img") {
+        var alink = document.createElement("a");
+        alink.href = this.imgUrl;
+        alink.download = this.info.ITEM_CODE; //图片名
+        alink.click();
+      }
+      if (type == "pdf") {
+        // let self = this;
+        // let img = new Image();
+        // img.setAttribute("crossOrigin", "anonymous");
+        // img.src = self.imgUrl;
+        // img.onload = function() {
+        //   var canvas = document.createElement("canvas");
+        //   console.log("canvas", canvas);
+        //   canvas.width = img.width;
+        //   canvas.height = img.height;
+        //   var context = canvas.getContext("2d");
+        //   console.log(self.imgUrl);
+        //   context.drawImage(self.imgUrl, 0, 0, img.width, img.height);
+        //   var quality = 0.8;
+        //   console.log(canvas);
+        //   //这里的dataurl就是base64类型
+        //   var dataURL = canvas.toDataURL("image/jpeg", quality); //使用toDataUrl将图片转换成jpeg的格式,不要把图片压缩成png，因为压缩成png后base64的字符串可能比不转换前的长！
+        //   console.log(dataURL);
+        //   // console.log("dataURL", dataURL);
+        //   const recordPdf = new jsPDF("", "pt", "a4");
+        //   console.log("recordPdf", recordPdf);
+        //   recordPdf.addImage(dataURL, "JPEG", 0, 0, img.width, img.height);
+        //   recordPdf.save(`"哈哈.pdf"`);
+        // const recordPdf = new jsPDF("l", "pt", "a4");
+        // recordPdf.setFontSize(40);
+        // recordPdf.addImage(pdfImg, "JPEG", 15, 40, 180, 160);
+        // recordPdf.output("datauri");
+      }
+    },
     close() {
       this.$emit("closeModal");
     },

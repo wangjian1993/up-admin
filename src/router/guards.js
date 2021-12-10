@@ -42,9 +42,11 @@ const loginGuard = (to, from, next, options) => {
 		console.log("失效=============");
 		localStorage.removeItem('admin.routes');
 		message.warning('登录已失效，请重新登录');
-		next({
-			path: '/'
-		})
+		setTimeout(() => {
+			next({
+				path: '/'
+			})
+		}, 3000)
 	} else {
 		if (to.path === '/login' && localStorage.getItem('admin.routes') != null) {
 			next({ path: '/dashboard/workplace' });

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:14
- * @LastEditTime: 2021-12-09 18:00:02
+ * @LastEditTime: 2021-12-10 09:47:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/NoOrderTracking.vue
@@ -118,7 +118,7 @@ import { columns, excelHead } from "./order.data";
 import { PublicVar } from "@/mixins/publicVar.js";
 import OrderDetail from "./OrderDetail.vue";
 import TotalQty from "./TotalQty.vue";
-import { exportjsontoexcelMore } from "@/utils/exportExcel";
+import { exportjsontoexcelMore } from "@/utils/ExportExcel";
 export default {
   components: { UserList, OrderDetail, TotalQty },
   props: ["companyList", "plantList"],

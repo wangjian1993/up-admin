@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:39:23
- * @LastEditTime: 2021-12-06 16:13:15
+ * @LastEditTime: 2021-12-10 09:45:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ExportPlan.vue
@@ -89,7 +89,7 @@
 <script>
 import { getMitemPlanAction } from "@/services/web.js";
 // import ExportExcel from "@/utils/ExportExcelJS";
-import { exportjsontoexcelMore } from "@/utils/exportExcel";
+import { exportjsontoexcelMore } from "@/utils/ExportExcel";
 import { splitData } from "@/utils/util.js";
 const columns = [
   {

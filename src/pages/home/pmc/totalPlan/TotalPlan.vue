@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-31 09:36:32
- * @LastEditTime: 2021-11-02 14:17:09
+ * @LastEditTime: 2021-12-10 09:42:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/TotalPlan.vue
@@ -10,19 +10,19 @@
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <a-tabs type="card" v-model="activeKey" default-active-key="1" @change="callback">
       <a-tab-pane key="1" tab="生成物料需求总计划" v-if="hasPerm('plan_tab1')">
-        <action :plantList="plantList" @toDetail="toDetail" :stateList="stateList"></action>
+        <Action :plantList="plantList" @toDetail="toDetail" :stateList="stateList"/>
       </a-tab-pane>
       <a-tab-pane key="2" tab="发布物料需求总计划" v-if="hasPerm('plan_tab2')">
-        <total :plantList="plantList" @toDetail="toDetail" :stateList="stateList"></total>
+        <Total :plantList="plantList" @toDetail="toDetail" :stateList="stateList"/>
       </a-tab-pane>
       <a-tab-pane key="3" tab="物料需求总计划明细" v-if="hasPerm('plan_tab3')">
-        <detail :plantList="plantList" :batchid="batchid" ref="myDeatils" :stateList="stateList"></detail>
+        <Detail :plantList="plantList" :batchid="batchid" ref="myDeatils" :stateList="stateList"/>
       </a-tab-pane>
       <a-tab-pane key="4" tab="物料需求总计划明细合并" v-if="hasPerm('plan_tab4')">
         <detail-merge :plantList="plantList" :batchid="batchid" ref="myDeatils" :stateList="stateList"></detail-merge>
       </a-tab-pane>
       <a-tab-pane key="5" tab="物料需求总计划(供应商回复)">
-        <reply :plantList="plantList" :stateList="stateList"></reply>
+        <Reply :plantList="plantList" :stateList="stateList"/>
       </a-tab-pane>
     </a-tabs>
   </a-card>

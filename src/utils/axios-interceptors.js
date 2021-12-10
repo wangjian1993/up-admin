@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-10-21 17:24:14
+ * @LastEditTime: 2021-12-10 11:12:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/axios-interceptors.js
@@ -28,7 +28,7 @@ const resp401 = {
 			localStorage.removeItem('admin.routes');
 			setTimeout(() => {
 				location.href = './';
-			}, 200)
+			}, 4000)
 		}
 		if (!response.data.success) {
 			message.error(response.data.message.content);
@@ -97,7 +97,7 @@ const reqCommon = {
 			message.warning('认证 token 已过期，请重新登录');
 			setTimeout(() => {
 				location.href = './';
-			}, 200)
+			}, 4000)
 		}
 		return config
 	},

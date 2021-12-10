@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:40:45
- * @LastEditTime: 2021-12-06 16:13:24
+ * @LastEditTime: 2021-12-10 09:47:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/Result.vue
@@ -88,7 +88,7 @@
 
 <script>
 import { getMitemPlanAction } from "@/services/web.js";
-import { exportjsontoexcelMore } from "@/utils/exportExcel";
+import { exportjsontoexcelMore } from "@/utils/ExportExcel";
 import { splitData } from "@/utils/util.js";
 
 import { renderStripe } from "@/utils/stripe.js";

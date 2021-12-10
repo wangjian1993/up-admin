@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-08 17:25:57
+ * @LastEditTime: 2021-12-10 15:32:59
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/List.vue
@@ -22,16 +22,105 @@
             <a-col :md="6" :sm="24">
               <a-form-item label="主件品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input placeholder="请输入主件品号" allowClear style="width: 200px" v-decorator="['itemcode']" />
+                <a-dropdown>
+                  <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                  <a-menu slot="overlay">
+                    <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemcode', item)">
+                      <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item }}</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['itemname']" />
+                <a-dropdown>
+                  <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                  <a-menu slot="overlay">
+                    <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemname', item)">
+                      <a href="javascript:;" :class="itemnamesign == item ? 'menuBg' : ''">{{ item }}</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="产品规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input placeholder="请输入产品规格" allowClear style="width: 200px" v-decorator="['itemspecification']" />
+                <a-dropdown>
+                  <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                  <a-menu slot="overlay">
+                    <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemspecification', item)">
+                      <a href="javascript:;" :class="itemspecificationsign == item ? 'menuBg' : ''">{{ item }}</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="库存数量" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input-number placeholder="请输入库存数量" allowClear style="width: 200px" v-decorator="['inventoryqty']" />
+                <a-dropdown>
+                  <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                  <a-menu slot="overlay">
+                    <a-menu-item v-for="(item, index) in ['不过滤','等于','不等于','小于','小于或等于','大于','大于或等于']" :key="index" @click="itemFiltrete('inventoryqty', item)">
+                      <a href="javascript:;" :class="inventoryqtysign == item ? 'menuBg' : ''">{{ item }}</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="图号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input placeholder="请输入图号" allowClear style="width: 200px" v-decorator="['drawingno']" />
+                <a-dropdown>
+                  <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                  <a-menu slot="overlay">
+                    <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('drawingno', item)">
+                      <a href="javascript:;" :class="drawingnosign == item ? 'menuBg' : ''">{{ item }}</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="首次入库日" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-date-picker placeholder="首次入库日" style="width: 200px" v-decorator="['originialreceiptdate']" />
+                <a-dropdown>
+                  <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                  <a-menu slot="overlay">
+                    <a-menu-item v-for="(item, index) in ['不过滤','等于','不等于','小于','小于或等于','大于','大于或等于']" :key="index" @click="itemFiltrete('originialreceiptdate', item)">
+                      <a href="javascript:;" :class="originialreceiptdatesign == item ? 'menuBg' : ''">{{ item }}</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="最后入库日" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-date-picker placeholder="最后入库日" style="width: 200px" v-decorator="['lastreceiptdate']" />
+                <a-dropdown>
+                  <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                  <a-menu slot="overlay">
+                    <a-menu-item v-for="(item, index) in ['不过滤','等于','不等于','小于','小于或等于','大于','大于或等于']" :key="index" @click="itemFiltrete('lastreceiptdate', item)">
+                      <a href="javascript:;" :class="lastreceiptdatesign == item ? 'menuBg' : ''">{{ item }}</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="最后出库日" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-date-picker placeholder="最后出库日" style="width: 200px" v-decorator="['lastissuedate']" />
+                <a-dropdown>
+                  <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                  <a-menu slot="overlay">
+                    <a-menu-item v-for="(item, index) in ['不过滤','等于','不等于','小于','小于或等于','大于','大于或等于']" :key="index" @click="itemFiltrete('lastissuedate', item)">
+                      <a href="javascript:;" :class="lastissuedatesign == item ? 'menuBg' : ''">{{ item }}</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
               </a-form-item>
             </a-col>
           </a-row>
@@ -135,6 +224,14 @@ export default {
       excelData: [],
       printData: [],
       printList: [],
+      itemcodesign: "",
+      itemnamesign: "",
+      itemspecificationsign: "",
+      inventoryqtysign: "",
+      drawingnosign: "",
+      originialreceiptdatesign: "",
+      lastissuedatesign: "",
+      lastreceiptdatesign: "",
     };
   },
   updated() {
@@ -154,6 +251,35 @@ export default {
   methods: {
     splitData,
     modelType,
+    itemFiltrete(type, text) {
+      switch (type) {
+        case "itemcode":
+          this.itemcodesign = text;
+          break;
+        case "itemname":
+          this.itemnamesign = text;
+          break;
+        case "itemspecification":
+          this.itemspecificationsign = text;
+          break;
+        case "inventoryqty":
+          this.inventoryqtysign = text;
+          break;
+        case "drawingno":
+          this.drawingnosign = text;
+          break;
+        case "originialreceiptdate":
+          this.originialreceiptdatesign = text;
+          break;
+        case "lastreceiptdate":
+          this.lastreceiptdatesign = text;
+          break;
+        case "lastissuedate":
+          this.lastissuedatesign = text;
+          break;
+      }
+      this.search();
+    },
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
@@ -216,17 +342,35 @@ export default {
       this.week = "";
       this.searchForm.resetFields();
       this.getPlant();
+      this.itemcodesign = "";
+      this.itemspecificationsign = "";
+      this.itemnamesign = "";
+      this.originialreceiptdatesign = "";
+      this.lastissuedatesign = "";
+      this.lastreceiptdatesign = "";
+      this.drawingnosign = "";
+      this.inventoryqtysign = "";
     },
     //关键词搜索
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          console.log(values);
           this.loading = true;
           // console.log("Received values of form: ", values.week);
           if (values.itemcode == undefined && values.itemname == undefined && values.itemspecification == undefined) {
             this.$message.warning("请输入查询条件:品号,品名.规格");
             this.loading = false;
             return;
+          }
+          if (values["originialreceiptdate"]) {
+            var originialreceiptdate = values["originialreceiptdate"].format("YYYY-MM-DD");
+          }
+          if (values["lastreceiptdate"]) {
+            var lastreceiptdate = values["lastreceiptdate"].format("YYYY-MM-DD");
+          }
+          if (values["lastissuedate"]) {
+            var lastissuedate = values["lastissuedate"].format("YYYY-MM-DD");
           }
           this.data = [];
           this.pagination.total = 0;
@@ -236,7 +380,20 @@ export default {
             plantid: values.plantid,
             itemcode: values.itemcode || "",
             itemname: values.itemname || "",
+            drawingno: values.drawingno || "",
+            inventoryqty: values.inventoryqty || "",
+            originialreceiptdate: originialreceiptdate || "",
+            lastreceiptdate: lastreceiptdate || "",
+            lastissuedate: lastissuedate || "",
             itemspecification: values.itemspecification || "",
+            itemcodesign: this.itemcodesign,
+            itemspecificationsign: this.itemspecificationsign,
+            itemnamesign: this.itemnamesign,
+            originialreceiptdatesign: this.originialreceiptdatesign,
+            lastissuedatesign: this.lastissuedatesign,
+            lastreceiptdatesign: this.lastreceiptdatesign,
+            drawingnosign: this.drawingnosign,
+            inventoryqtysign: this.inventoryqtysign,
           };
           getERPReportAction(parmas, "getwarehousestockinfo").then((res) => {
             if (res.data.success) {
@@ -392,5 +549,9 @@ export default {
   margin: 0 auto;
   border: 1px #000 solid;
   padding: 10px 10px;
+}
+.menuBg {
+  background:#13c2c2;
+  color: #fff;
 }
 </style>

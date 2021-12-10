@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-08 17:24:15
+ * @LastEditTime: 2021-12-10 09:55:30
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -22,16 +22,40 @@
             <a-col :md="6" :sm="24">
               <a-form-item label="主件品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input placeholder="请输入主件品号" allowClear style="width: 200px" v-decorator="['itemcode']" />
+                <a-dropdown>
+                  <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                  <a-menu slot="overlay">
+                    <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemcode', item)">
+                      <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item }}</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['itemname']" />
+                <a-dropdown>
+                  <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                  <a-menu slot="overlay">
+                    <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemname', item)">
+                      <a href="javascript:;" :class="itemnamesign == item ? 'menuBg' : ''">{{ item }}</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="产品规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input placeholder="请输入产品规格" allowClear style="width: 200px" v-decorator="['itemspecification']" />
+                <a-dropdown>
+                  <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                  <a-menu slot="overlay">
+                    <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemspecification', item)">
+                      <a href="javascript:;" :class="itemspecificationsign == item ? 'menuBg' : ''">{{ item }}</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
               </a-form-item>
             </a-col>
           </a-row>
@@ -115,7 +139,7 @@ import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData, modelType } from "@/utils/util.js";
 import ErpDosage from "../components/ErpDosage.vue";
-import { exportjsontoexcelMore } from "@/utils/exportExcel";
+import { exportjsontoexcelMore } from "@/utils/ExportExcel";
 import Print from "../components/Print.vue";
 import { columns } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
@@ -142,6 +166,9 @@ export default {
       printData: [],
       printList: [],
       isPrint: false,
+      itemcodesign: "",
+      itemnamesign: "",
+      itemspecificationsign: "",
     };
   },
   updated() {
@@ -168,6 +195,20 @@ export default {
           this.isPrint = true;
         }, 100);
       });
+    },
+    itemFiltrete(type, text) {
+      switch (type) {
+        case "itemcode":
+          this.itemcodesign = text;
+          break;
+        case "itemname":
+          this.itemnamesign = text;
+          break;
+        case "itemspecification":
+          this.itemspecificationsign = text;
+          break;
+      }
+      this.search();
     },
     //多选
     onSelectChange(selectedRowKeys) {
@@ -231,6 +272,9 @@ export default {
       this.week = "";
       this.searchForm.resetFields();
       this.getPlant();
+      this.itemcodesign = "";
+      this.itemnamesign = "";
+      this.itemspecificationsign = "";
     },
     //关键词搜索
     search() {
@@ -252,6 +296,9 @@ export default {
             itemcode: values.itemcode || "",
             itemname: values.itemname || "",
             itemspecification: values.itemspecification || "",
+            itemcodesign: this.itemcodesign,
+            itemspecificationsign: this.itemspecificationsign,
+            itemnamesign: this.itemnamesign,
           };
           getERPReportAction(parmas, "getbomlist").then((res) => {
             if (res.data.success) {

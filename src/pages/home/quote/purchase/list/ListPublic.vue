@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-11-24 09:00:17
+ * @LastEditTime: 2021-12-10 09:48:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -323,7 +323,7 @@ import getTableScroll from "@/utils/setTableHeight";
 import ADetails from "./Details.vue";
 // import { funtransformF } from "./excel";
 import HistoryList from "./HistoryList";
-import { exportjsontoexcelMore } from "@/utils/exportExcel";
+import { exportjsontoexcelMore } from "@/utils/ExportExcel";
 export default {
   components: { ADetails, HistoryList },
   props: ["categoryList"],
