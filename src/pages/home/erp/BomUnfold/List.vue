@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-03 09:27:27
+ * @LastEditTime: 2021-12-11 15:36:05
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -113,6 +113,7 @@ export default {
       treeList: [],
       isModelInfo: false,
       modelData: [],
+      itemcodesign: "",
     };
   },
   updated() {
@@ -135,6 +136,20 @@ export default {
     closeModal() {
       this.isDosage = false;
       this.isModelInfo = false;
+    },
+    itemFiltrete(type, text) {
+      switch (type) {
+        case "itemcode":
+          this.itemcodesign = text;
+          break;
+        case "itemname":
+          this.itemnamesign = text;
+          break;
+        case "itemspecification":
+          this.itemspecificationsign = text;
+          break;
+      }
+      this.search();
     },
     //物料需求详情
     detail(item) {
@@ -263,6 +278,9 @@ export default {
             itemcode: values.itemcode,
             itemname: values.itemname || "",
             itemspecification: values.itemspecification || "",
+            itemcodesign: "等于",
+            itemspecificationsign: "",
+            itemnamesign: "",
           };
           getERPReportAction(parmas, "getbomlist").then((res) => {
             if (res.data.success) {

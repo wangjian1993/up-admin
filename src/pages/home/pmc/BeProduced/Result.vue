@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:40:45
- * @LastEditTime: 2021-12-10 09:47:04
+ * @LastEditTime: 2021-12-11 09:30:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/Result.vue
@@ -178,7 +178,7 @@ export default {
       // this.getListAll();
       this.dataSource = [];
       this.pagination.current = 1;
-      this.pagination.total = 0
+      this.pagination.total = 0;
       this.week = "";
       this.isExport = false;
       this.isExportLod = false;
@@ -303,13 +303,18 @@ export default {
       let _data = [];
       let excelArray = [];
       let mergeTitle = [];
-      const hear = ["计划批号", "生产工厂", "子件品号", "子件品名", "子件规格", "库存数量", "待排产需求总数量", "待产需求总数量", "未来可用需求总量", "已预留总数", "可用总数", "需求数量", "采购在途数量", "PMC", "业务单号"];
+      const hear = ["计划批号", "生产工厂", "子件品号", "子件品名", "子件规格", "需求日期", "库存数量", "待排产需求总数量", "待产需求总数量", "未来可用需求总量", "已预留总数", "可用总数", "需求数量", "采购在途数量", "PMC", "业务单号"];
       _data.push(hear);
       list.map((item) => {
         let array = [];
         columns.map((items) => {
-          if (items.dataIndex && items.dataIndex !== 'RequirementDate') {
-            array.push(item[items.dataIndex]);
+          if (items.dataIndex) {
+            if (items.dataIndex === "RequirementDate") {
+              let values = splitData(item[items.dataIndex])
+              array.push(values);
+            } else {
+              array.push(item[items.dataIndex]);
+            }
           }
         });
         _data.push(array);
@@ -320,6 +325,7 @@ export default {
         { wch: 15 }, // 阶次
         { wch: 18 }, // 类型
         { wch: 20 }, // 上阶BOM号
+        { wch: 20 }, // 品号
         { wch: 20 }, // 品号
         { wch: 8 }, // 料名
         { wch: 8 }, //  产品规格

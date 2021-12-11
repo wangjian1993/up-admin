@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-22 10:13:42
+ * @LastEditTime: 2021-12-11 16:23:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/kanban.vue
@@ -142,7 +142,7 @@ import { getParamData } from "@/services/admin.js";
 import Remarks from "./remarks.vue";
 import ADetails from "./details.vue";
 import { columns } from "./data";
-import Print from "./print.vue";
+import Print from "../components/print.vue";
 import { PublicVar } from "@/mixins/publicVar.js";
 export default {
   components: { UserList, Remarks, ADetails, Print },
