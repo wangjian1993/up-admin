@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-12-06 18:00:01
+ * @LastEditTime: 2021-12-13 15:16:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Detail.vue
@@ -28,7 +28,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="周" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-week-picker placeholder="选择周" @change="weekChange" />
+                <a-week-picker placeholder="选择周" @change="weekChange" v-decorator="['week']"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -379,7 +379,6 @@ export default {
     });
     this.getListAll();
     this.getPlant();
-    this.getStatistic();
   },
   computed: {
     hasSelected() {
@@ -419,10 +418,10 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
       this.week = "";
       this.isSearch = 0;
       this.searchForm.resetFields();
+      this.getListAll();
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");
@@ -440,7 +439,17 @@ export default {
       });
     },
     getStatistic() {
-      getScmAction("", "requirement/detail/gettotal").then((res) => {
+      let values = this.searchForm.getFieldsValue();
+      let parmas = {
+        plantid: values.plantid,
+        batchid: values.batchid,
+        week: this.week,
+        pmc: values.pmc,
+        planstatus: values.planstatus,
+        mitemcode: values.mitemcode,
+        mitemname: values.mitemname,
+      };
+      getScmAction(parmas, "requirement/detail/gettotal").then((res) => {
         if (res.data.success) {
           this.statistic = res.data.data;
         }
@@ -484,6 +493,8 @@ export default {
       this.loading = true;
       if (type == "statistic") {
         this.pagination.current = 1;
+        this.search();
+        return;
       }
       this.statisticType = "";
       let parmas = {
@@ -503,6 +514,7 @@ export default {
           this.pagination = pagination;
           this.loading = false;
           this.isSearch = 0;
+           this.getStatistic();
         } else {
           this.loading = false;
         }
@@ -536,7 +548,7 @@ export default {
           this.pagination = pagination;
           this.loading = false;
           this.isSearch = 1;
-          // this.getStatistic();
+          this.getStatistic();
         } else {
           this.loading = false;
         }
@@ -590,6 +602,7 @@ export default {
               this.pagination = pagination;
               this.loading = false;
               this.isSearch = 2;
+              this.getStatistic();
             }
           });
           // do something

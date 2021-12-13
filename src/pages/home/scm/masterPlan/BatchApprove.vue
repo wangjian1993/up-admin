@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 15:16:07
- * @LastEditTime: 2021-12-03 09:20:26
+ * @LastEditTime: 2021-12-13 18:25:44
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/BatchApprove.vue
@@ -153,8 +153,8 @@ const columns = [
   },
   {
     title: "行项目号",
-    dataIndex: "lineItemNum",
-    scopedSlots: { customRender: "lineItemNum" },
+    dataIndex: "LineItemNo",
+    scopedSlots: { customRender: "LineItemNo" },
     align: "center",
   },
   {
@@ -167,6 +167,12 @@ const columns = [
     title: "在途数量",
     dataIndex: "QtyTransit",
     scopedSlots: { customRender: "QtyTransit" },
+    align: "center",
+  },
+  {
+    title: "剩余可匹配数量",
+    dataIndex: "RemainQty",
+    scopedSlots: { customRender: "RemainQty" },
     align: "center",
   },
   {
@@ -220,20 +226,25 @@ export default {
           MitemCode: this.matchingData.MitemCode,
         });
       });
+      console.log(this.matchingData);
       this.PlantName = this.matchingData.PlantName;
       this.mitemList.MitemCode = this.matchingData.MitemCode;
       this.mitemList.MitemName = this.matchingData.MitemName;
       this.mitemData.RequirementQty = this.matchingData.RequirementQty;
       this.mitemData.RequirementDate = splitData(this.matchingData.RequirementDate);
-      this.batchnoData.BatchId = this.matchingData.Id;
+      this.batchnoData.BatchId = this.matchingData.BatchId;
+      this.batchnoData.DetailId = this.matchingData.Id;
       this.batchnoData.BatchNo = this.matchingData.BatchNo;
       this.batchnoData.PlantName = this.matchingData.PlantName;
       this.batchnoData.PlantId = this.matchingData.PlantId;
       this.notQty = this.matchingData.RequirementQty;
+      console.log(this.batchnoData);
     }
     if (this.isEdit) {
+      console.log("1111")
       this.getList();
     } else {
+      console.log("2222")
       this.getMitemsByBatch();
     }
   },
@@ -355,6 +366,7 @@ export default {
         PlantId: this.batchnoData.PlantId,
         BatchId: this.batchnoData.BatchId,
         MitemCode: this.mitemList.MitemCode,
+        DetailId:this.batchnoData.DetailId,
         RequirementDate: this.mitemData.RequirementDate,
         MatchList: [],
       };

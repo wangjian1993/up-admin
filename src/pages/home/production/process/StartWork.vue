@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2021-12-11 17:05:02
+ * @LastEditTime: 2021-12-13 09:49:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/StartWork.vue
@@ -104,6 +104,7 @@ import { renderStripe } from "@/utils/stripe.js";
 import { columns } from "./data.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import Print from "../components/print.vue";
+import { getTimeData } from "@/utils/util";
 export default {
   components: { Print },
   mixins: [PublicVar],
@@ -153,6 +154,16 @@ export default {
     },
     //打印工单
     handlePrint() {
+      console.log(this.orderInfo);
+      if (this.orderInfo.length == 0) {
+        let message = {
+          content: "请先输入工单号，或者扫描工单二维码",
+          time: getTimeData(),
+        };
+        this.IsSuccess = false;
+        this.listData.unshift(message);
+        return;
+      }
       let parmas = {
         id: this.orderInfo.ProPlanId,
       };
@@ -163,38 +174,7 @@ export default {
         }
       });
     },
-    getTimeData() {
-      var date = new Date();
-      var year = date.getFullYear(); //年 ,从 Date 对象以四位数字返回年份
-      var month = date.getMonth() + 1; //月 ,从 Date 对象返回月份 (0 ~ 11) ,date.getMonth()比实际月份少 1 个月
-      var day = date.getDate(); //日 ,从 Date 对象返回一个月中的某一天 (1 ~ 31)
-      var hours = date.getHours(); //小时 ,返回 Date 对象的小时 (0 ~ 23)
-      var minutes = date.getMinutes(); //分钟 ,返回 Date 对象的分钟 (0 ~ 59)
-      var seconds = date.getSeconds(); //秒 ,返回 Date 对象的秒数 (0 ~ 59)
-      //修改月份格式
-      if (month >= 1 && month <= 9) {
-        month = "0" + month;
-      }
-      //修改日期格式
-      if (day >= 0 && day <= 9) {
-        day = "0" + day;
-      }
-      //修改小时格式
-      if (hours >= 0 && hours <= 9) {
-        hours = "0" + hours;
-      }
-      //修改分钟格式
-      if (minutes >= 0 && minutes <= 9) {
-        minutes = "0" + minutes;
-      }
-      //修改秒格式
-      if (seconds >= 0 && seconds <= 9) {
-        seconds = "0" + seconds;
-      }
-      //获取当前系统时间  格式(yyyy-mm-dd hh:mm:ss)
-      let currentFormatDate = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
-      return currentFormatDate;
-    },
+
     pushKeyword(event) {
       if (event.keyCode === 13) {
         event.preventDefault(); // 阻止浏览器默认换行操作
@@ -208,8 +188,14 @@ export default {
     getWorkInfo() {
       setStartWorkApi("", "loaduserline").then((res) => {
         if (res.data.success) {
-          this.processData = res.data.data.Process;
-          this.userLineData = res.data.data.UserLine;
+          this.IsSuccess = res.data.data.IsSuccess;
+          if (res.data.data.IsSuccess) {
+            this.processData = res.data.data.Process;
+            this.userLineData = res.data.data.UserLine;
+          } else {
+            res.data.message.content = res.data.data.Msg;
+            this.listData.unshift(res.data.message);
+          }
         }
       });
     },
@@ -221,7 +207,7 @@ export default {
       if (!this.orderValue) {
         let message = {
           content: "请先输入工单号，或者扫描工单二维码",
-          time: this.getTimeData(),
+          time: getTimeData(),
         };
         this.IsSuccess = false;
         this.listData.unshift(message);
@@ -233,7 +219,7 @@ export default {
         ProcessStatus: "PROCESS_START",
       };
       setStartWorkApi(parmas, "scan").then((res) => {
-        res.data.message.time = this.getTimeData();
+        res.data.message.time = getTimeData();
         if (res.data.success) {
           this.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {

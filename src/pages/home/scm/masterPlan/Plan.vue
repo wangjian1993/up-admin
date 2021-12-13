@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:33
- * @LastEditTime: 2021-11-16 13:57:08
+ * @LastEditTime: 2021-12-13 16:36:15
  * @LastEditors: max
  * @Description: 物料需求总计划
  * @FilePath: /up-admin/src/pages/home/scm/masterPlan/Plan.vue
@@ -85,10 +85,10 @@
       </template>
       <template slot="action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" v-if="record.StatusName === '匹配错误' || record.StatusName === '推送异常'||record.StatusName === '部分推送'||record.StatusName === '部分匹配'" :disabled="!hasPerm('matching')" @click="matching(record)">
+          <!-- <a style="margin-right: 8px" v-if="record.StatusName === '匹配错误' || record.StatusName === '推送异常'||record.StatusName === '部分推送'||record.StatusName === '部分匹配'" :disabled="!hasPerm('matching')" @click="matching(record)">
             <a-icon type="interaction" />
             手动匹配
-          </a>
+          </a> -->
           <a style="margin-right: 8px" @click="detail(record)">
             <a-icon type="profile" />
             查看明细
