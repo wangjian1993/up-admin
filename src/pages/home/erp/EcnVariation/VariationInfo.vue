@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-10-29 11:42:42
+ * @LastEditTime: 2021-12-14 16:56:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/VariationInfo.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="工程变更单" @cancel="close" width="90%" :footer="null" centered>
+    <a-modal v-model="visible" title="工程变更单" @cancel="close" width="100%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-descriptions :column="5" bordered size="small">
@@ -56,7 +56,7 @@
               :columns="columns"
               :data-source="list"
               :size="size"
-              :scroll="{ y: 300, x: 2700 }"
+              :scroll="{ y: 300, x: 1500 }"
               :pagination="pagination"
               :customRow="handleClickRow"
               @change="handleTableChange"
@@ -67,6 +67,7 @@
                   return index === selectIndex ? 'active' : '';
                 }
               "
+              :components="components"
             >
               <template slot="index" slot-scope="text, record, index">
                 <div>
@@ -91,7 +92,7 @@
             </a-table>
           </a-card>
           <a-card title="BOM变更明细" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns1" :data-source="detailData" :loading="dateilLoading" :size="size" :scroll="{ y: 300, x: 2700 }" :pagination="pagination2" @change="handleTableChange2" :rowKey="(list) => list.BOM_D_ID" bordered>
+            <a-table :columns="columns1" :data-source="detailData" :loading="dateilLoading" :size="size" :scroll="{ y: 300, x: 1500 }" :pagination="pagination2" @change="handleTableChange2" :rowKey="(list) => list.BOM_D_ID" bordered :components="components1">
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -126,7 +127,7 @@ const columns = [
     title: "变更序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width: 80,
   },
   {
     title: "变更类型",
@@ -139,24 +140,22 @@ const columns = [
     title: "主件品号",
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
-    align: "center",
-    width: 250,
+    align: "left",
+    width: 150,
   },
   {
     title: "品名",
     dataIndex: "ITEM_NAME",
     scopedSlots: { customRender: "ITEM_NAME" },
-    align: "center",
-    width: 250,
-    ellipsis: true,
+    align: "left",
+    width: 150,
   },
   {
     title: "规格",
     dataIndex: "ITEM_SPECIFICATION",
     scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-    align: "center",
-    width: 300,
-    ellipsis: true,
+    align: "left",
+    width: 200,
   },
   {
     title: "单位",
@@ -170,19 +169,21 @@ const columns = [
     dataIndex: "PLANT_NAME_P",
     scopedSlots: { customRender: "PLANT_NAME_P" },
     align: "center",
+    width: 50,
   },
   {
     title: "原引用工厂",
     dataIndex: "PLANT_NAME_O",
     scopedSlots: { customRender: "PLANT_NAME_O" },
     align: "center",
+    width: 80,
   },
   {
     title: "引用工厂",
     dataIndex: "PLANT_NAME_R",
     scopedSlots: { customRender: "PLANT_NAME_R" },
     align: "center",
-    width: 120,
+    width: 80,
   },
   {
     title: "原版次",
@@ -231,12 +232,14 @@ const columns = [
     dataIndex: "REMARK",
     scopedSlots: { customRender: "REMARK" },
     align: "center",
+    width: 50,
   },
   {
     title: "变更原因",
     dataIndex: "DESCRIPTION",
     scopedSlots: { customRender: "DESCRIPTION" },
     align: "center",
+    width: 150,
   },
 ];
 const columns1 = [
@@ -244,7 +247,7 @@ const columns1 = [
     title: "变更序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width: 80,
   },
   {
     title: "单据类型",
@@ -272,23 +275,21 @@ const columns1 = [
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
     align: "center",
-    width: 250,
+    width: 150,
   },
   {
     title: "元件型号",
     dataIndex: "ITEM_NAME",
     scopedSlots: { customRender: "ITEM_NAME" },
     align: "center",
-    width: 250,
-    ellipsis: true,
+    width: 150,
   },
   {
     title: "元件规格",
     dataIndex: "ITEM_SPECIFICATION",
     scopedSlots: { customRender: "ITEM_SPECIFICATION" },
     align: "center",
-    width: 300,
-    ellipsis: true,
+    width: 200,
   },
   {
     title: "单位",
@@ -302,40 +303,42 @@ const columns1 = [
     dataIndex: "QTY_PER",
     scopedSlots: { customRender: "QTY_PER" },
     align: "center",
+    width: 80,
   },
   {
     title: "底数",
     dataIndex: "DENOMINATOR",
     scopedSlots: { customRender: "DENOMINATOR" },
     align: "center",
+    width: 80,
   },
   {
     title: "插件位置",
     dataIndex: "HANDLE",
     scopedSlots: { customRender: "HANDLE" },
     align: "center",
-    width: 120,
+    width: 80,
   },
   {
     title: "固定损耗量",
     dataIndex: "FIXED_LOSS_RATE",
     scopedSlots: { customRender: "FIXED_LOSS_RATE" },
     align: "center",
-    width: 60,
+    width: 100,
   },
   {
     title: "变动损耗",
     dataIndex: "DYNAMIC_LOSS_RATE",
     scopedSlots: { customRender: "DYNAMIC_LOSS_RATE" },
     align: "center",
-    width: 60,
+    width: 80,
   },
   {
     title: "取替代方式",
     dataIndex: "ALTERNATIVE_REPLACE",
     scopedSlots: { customRender: "ALTERNATIVE_REPLACE" },
     align: "center",
-    width: 80,
+    width: 100,
   },
   {
     title: "超领率",
@@ -363,32 +366,47 @@ const columns1 = [
     dataIndex: "ITEM_TYPE",
     scopedSlots: { customRender: "ITEM_TYPE" },
     align: "center",
+    width: 50,
   },
   {
     title: "变更原因",
     dataIndex: "REASON",
     scopedSlots: { customRender: "REASON" },
     align: "center",
+    width: 50,
   },
   {
     title: "生效日期",
     dataIndex: "EFFECTIVE_DATE",
     scopedSlots: { customRender: "EFFECTIVE_DATE" },
     align: "center",
+    width: 50,
   },
   {
     title: "失效日期",
     dataIndex: "EXPIRY_DATE",
     scopedSlots: { customRender: "EXPIRY_DATE" },
     align: "center",
+    width: 50,
   },
 ];
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
 import { feedSystem, modelType, stateType, variationType } from "@/utils/BomParmas.js";
+import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   props: ["info"],
   data() {
+    this.components = {
+      header: {
+        cell: (h, props, children) => resizeableTitle(h, props, children, this.columns),
+      },
+    };
+    this.components1 = {
+      header: {
+        cell: (h, props, children) => resizeableTitle(h, props, children, this.columns1),
+      },
+    };
     return {
       size: "small",
       columns,
@@ -552,5 +570,12 @@ export default {
 }
 /deep/.active {
   background: rgb(24, 151, 20);
+}
+/deep/.ant-table {
+  font-size: 10px;
+}
+/deep/.ant-table-row-cell-break-word {
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>

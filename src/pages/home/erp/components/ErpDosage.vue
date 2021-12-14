@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-12-08 17:27:26
+ * @LastEditTime: 2021-12-14 15:33:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
@@ -62,7 +62,7 @@
         </div>
         <div>
           <a-card title="BOM用量信息" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 500, x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName"  :components="components">
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName" :components="components">
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -97,7 +97,7 @@
       </a-spin>
     </a-modal>
     <model-info v-if="isModelInfo" :modelData="modelData" @closeModal="closeModal"></model-info>
-    <BomUnfold v-if="isUnfold" :ModelInfo="info" @closeModal="closeModal"/>
+    <BomUnfold v-if="isUnfold" :ModelInfo="info" @closeModal="closeModal" />
   </div>
 </template>
 
@@ -113,28 +113,21 @@ const columns = [
     title: "元件品号",
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
-    align: "center",
+    align: "left",
     width: 110,
-  },
-  {
-    title: "快捷码",
-    dataIndex: "SHORTCUT",
-    scopedSlots: { customRender: "SHORTCUT" },
-    align: "center",
-    width: 80,
   },
   {
     title: "品名",
     dataIndex: "ITEM_NAME",
     scopedSlots: { customRender: "ITEM_NAME" },
-    align: "center",
+    align: "left",
     width: 100,
   },
   {
     title: "规格",
     dataIndex: "ITEM_SPECIFICATION",
     scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-    align: "center",
+    align: "left",
     width: 200,
   },
   {
@@ -143,6 +136,13 @@ const columns = [
     scopedSlots: { customRender: "QTY_PER" },
     align: "center",
     width: 75,
+  },
+  {
+    title: "底数",
+    dataIndex: "DENOMINATOR",
+    scopedSlots: { customRender: "DENOMINATOR" },
+    align: "center",
+    width: 50,
   },
   {
     title: "插件位置",
@@ -178,13 +178,6 @@ const columns = [
     scopedSlots: { customRender: "ITEM_TYPE" },
     align: "center",
     width: 80,
-  },
-  {
-    title: "底数",
-    dataIndex: "DENOMINATOR",
-    scopedSlots: { customRender: "DENOMINATOR" },
-    align: "center",
-    width: 50,
   },
   {
     title: "ECN变更",
@@ -264,6 +257,13 @@ const columns = [
     width: 80,
   },
   {
+    title: "快捷码",
+    dataIndex: "SHORTCUT",
+    scopedSlots: { customRender: "SHORTCUT" },
+    align: "left",
+    width: 80,
+  },
+  {
     title: "备注",
     dataIndex: "REMARK",
     scopedSlots: { customRender: "REMARK" },
@@ -332,7 +332,7 @@ export default {
     },
     closeModal() {
       this.isModelInfo = false;
-      this.isUnfold =false;
+      this.isUnfold = false;
     },
     //物料需求详情
     detail(item) {
@@ -433,5 +433,12 @@ export default {
   th {
     color: red;
   }
+}
+/deep/.ant-table {
+  font-size: 10px;
+}
+/deep/.ant-table-row-cell-break-word {
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-08 17:13:03
+ * @LastEditTime: 2021-12-14 15:06:16
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -296,5 +296,12 @@ export default {
 <style scoped lang="less">
 .ant-form-item {
   margin-bottom: 5px;
+}
+/deep/.ant-table {
+  font-size: 10px;
+}
+/deep/.ant-table-row-cell-break-word {
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-12-08 15:50:57
+ * @LastEditTime: 2021-12-14 15:21:10
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/main.js
@@ -27,6 +27,12 @@ import VueDraggableResizable from 'vue-draggable-resizable'
 Vue.component('vue-draggable-resizable', VueDraggableResizable)
 Vue.prototype.$echarts = echarts
 Vue.use(dataV);
+//easyui
+// import 'vx-easyui/dist/themes/default/easyui.css';
+// import 'vx-easyui/dist/themes/icon.css';
+// import 'vx-easyui/dist/themes/vue.css';
+// import EasyUI from 'vx-easyui';
+// Vue.use(EasyUI);
 const router = initRouter(store.state.setting.asyncRoutes);
 const i18n = initI18n('CN', 'US')
 import { hasBtnPermission } from './utils/permissions';

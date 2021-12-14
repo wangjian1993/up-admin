@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-08 17:13:56
+ * @LastEditTime: 2021-12-14 16:45:43
  * @LastEditors: max
  * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
@@ -9,7 +9,7 @@
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <a-form layout="horizontal" :form="searchForm">
-      <div>
+      <div :class="advanced ? null : 'fold'">
         <a-row>
           <a-col :md="6" :sm="24">
             <a-form-item label="需求工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
@@ -34,7 +34,7 @@
             </a-form-item>
           </a-col>
         </a-row>
-        <a-row>
+        <a-row v-if="advanced">
           <a-col :md="6" :sm="24">
             <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select style="width: 120px" v-decorator="['approvestatus']">
@@ -66,12 +66,16 @@
             <span style="float: right; margin-top: 3px;">
               <a-button type="primary" @click="search">查询</a-button>
               <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+              <a @click="toggleAdvanced" style="margin-left: 8px">
+                {{ advanced ? "收起" : "展开" }}
+                <a-icon :type="advanced ? 'up' : 'down'" />
+              </a>
             </span>
           </a-col>
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ECN_ID" bordered :customRow="handleClickRow" :components="components">
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ECN_ID" bordered :customRow="handleClickRow" :components="components">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -133,6 +137,7 @@ export default {
       isDosage: false,
       isExecl: false,
       isDetail: false,
+      advanced: false,
       detailData: [],
       plantList: [],
       mitemcodeData: [],
@@ -220,6 +225,9 @@ export default {
         approvestatus: "A",
       });
     },
+    toggleAdvanced() {
+      this.advanced = !this.advanced;
+    },
     //关键词搜索
     search() {
       this.searchForm.validateFields((err, values) => {
@@ -303,5 +311,12 @@ export default {
 <style scoped lang="less">
 .ant-form-item {
   margin-bottom: 5px;
+}
+/deep/.ant-table {
+  font-size: 10px;
+}
+/deep/.ant-table-row-cell-break-word {
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>

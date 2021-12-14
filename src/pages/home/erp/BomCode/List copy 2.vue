@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-10 09:26:49
+ * @LastEditTime: 2021-12-14 14:27:18
  * @LastEditors: max
  * @Description: BOM查询
- * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
+ * @FilePath: /up-admin/src/pages/home/erp/BomCode/List copy 2.vue
 -->
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-    <a-form layout="horizontal" :form="searchForm">
+    <!-- <a-form layout="horizontal" :form="searchForm">
       <div>
         <a-row>
           <a-col :md="6" :sm="24">
@@ -25,7 +25,7 @@
                 <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
                 <a-menu slot="overlay">
                   <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemcode', item)">
-                    <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item}}</a>
+                    <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item }}</a>
                   </a-menu-item>
                 </a-menu>
               </a-dropdown>
@@ -38,7 +38,7 @@
                 <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
                 <a-menu slot="overlay">
                   <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemname', item)">
-                   <a href="javascript:;" :class="itemnamesign == item ? 'menuBg' : ''">{{ item}}</a>
+                    <a href="javascript:;" :class="itemnamesign == item ? 'menuBg' : ''">{{ item }}</a>
                   </a-menu-item>
                 </a-menu>
               </a-dropdown>
@@ -51,7 +51,7 @@
                 <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
                 <a-menu slot="overlay">
                   <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemspecification', item)">
-                   <a href="javascript:;" :class="itemspecificationsign == item ? 'menuBg' : ''">{{ item}}</a>
+                    <a href="javascript:;" :class="itemspecificationsign == item ? 'menuBg' : ''">{{ item }}</a>
                   </a-menu-item>
                 </a-menu>
               </a-dropdown>
@@ -67,7 +67,7 @@
           </a-col>
         </a-row>
       </div>
-    </a-form>
+    </a-form> -->
     <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_BUSINESS_ID" bordered :customRow="handleClickRow" :rowClassName="rowClassName" :components="components">
       <template slot="index" slot-scope="text, record, index">
         <div>
@@ -97,28 +97,19 @@
       <template slot="CreateDate" slot-scope="text">
         <span>{{ splitData(text) }}</span>
       </template>
-      <!-- <template v-for="(col, i) in ['ITEM_CODE', 'ITEM_NAME', 'ITEM_SPECIFICATION']" :slot="col" slot-scope="text, record, index">
-        <div :key="`col${i}`">
-          <div v-if="index === 0" style="display:flex;align-items: center;">
-            <a-input placeholder="请输入" />
-            <a-dropdown>
-              <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
-              <a-menu slot="overlay">
-                <a-menu-item>
-                  <a href="javascript:;">1st menu item</a>
-                </a-menu-item>
-                <a-menu-item>
-                  <a href="javascript:;">2nd menu item</a>
-                </a-menu-item>
-                <a-menu-item>
-                  <a href="javascript:;">3rd menu item</a>
-                </a-menu-item>
-              </a-menu>
-            </a-dropdown>
-          </div>
-          <span v-else>{{ text }}</span>
+      <template slot="ITEM_CODE_INPUT">
+        <div style="display:flex;align-items: center;">
+          <a-input placeholder="请输入"/>
+          <a-dropdown>
+            <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+            <a-menu slot="overlay">
+              <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemspecification', item)">
+                <a href="javascript:;" :class="itemspecificationsign == item ? 'menuBg' : ''">{{ item }}</a>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
         </div>
-      </template> -->
+      </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
     <model-info v-if="isModelInfo" :modelData="mitemcodeData" @closeModal="closeModal"></model-info>
@@ -142,7 +133,12 @@ export default {
       },
     };
     return {
-      data: [],
+      data: [
+        {
+          ITEM_NAME: "",
+          ITEM_CODE: "",
+        },
+      ],
       columns,
       isModelInfo: false,
       selectedRows: [],
@@ -208,7 +204,7 @@ export default {
       this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
-        pagesize: this.pagination.pageSize,
+        pagesize: this.pagination.pageSize + 1,
         plantid: this.plantId,
         itemcode: "",
         itemname: "",
@@ -233,6 +229,9 @@ export default {
       this.week = "";
       this.searchForm.resetFields();
       this.getPlant();
+      this.itemcodesign = "";
+      this.itemnamesign = "";
+      this.itemspecificationsign = "";
     },
     //关键词搜索
     search() {
@@ -255,13 +254,20 @@ export default {
             itemcode: values.itemcode || "",
             itemname: values.itemname || "",
             itemspecification: values.itemspecification || "",
-            itemcodesign:this.itemcodesign,
-            itemspecificationsign:this.itemspecificationsign,
-            itemnamesign:this.itemnamesign,
+            itemcodesign: this.itemcodesign,
+            itemspecificationsign: this.itemspecificationsign,
+            itemnamesign: this.itemnamesign,
           };
           getERPReportAction(parmas, "getbominfo").then((res) => {
             if (res.data.success) {
-              this.data = res.data.data.list;
+              let list = res.data.data.list;
+              let aearchArray = [
+                {
+                  ITEM_NAME: "",
+                  ITEM_CODE: "",
+                },
+              ];
+              this.data = [...aearchArray, ...list];
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
@@ -307,8 +313,16 @@ export default {
   },
 };
 </script>
-
-<style lang="less">
+<style src="vx-easyui/dist/themes/default/easyui.css"  scoped>
+</style>
+<style src="vx-easyui/dist/themes/icon.css"  scoped>
+</style>
+<style src="vx-easyui/dist/themes/vue.css"  scoped>
+</style>
+<style lang="less" scoped>
+// @import "vx-easyui/dist/themes/default/easyui.css";
+// @import "vx-easyui/dist/themes/icon.css";
+// @import "vx-easyui/dist/themes/vue.css";
 .ant-form-item {
   margin-bottom: 5px;
 }
@@ -319,7 +333,7 @@ export default {
   color: #0000ff;
 }
 .menuBg {
-  background:#13c2c2;
+  background: #13c2c2;
   color: #fff;
 }
 </style>

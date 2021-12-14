@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:51:24
- * @LastEditTime: 2021-12-08 14:42:15
+ * @LastEditTime: 2021-12-14 15:07:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomList/data.js
@@ -17,28 +17,21 @@ export const columns = [
         title: "主件品号",
         dataIndex: "ITEM_CODE",
         scopedSlots: { customRender: "ITEM_CODE" },
-        align: "center",
+        align: "left",
         width: 90,
-    },
-    {
-        title: "快捷码",
-        dataIndex: "SHORTCUT",
-        scopedSlots: { customRender: "SHORTCUT" },
-        align: "center",
-        width: 60,
     },
     {
         title: "品名",
         dataIndex: "ITEM_NAME",
         scopedSlots: { customRender: "ITEM_NAME" },
-        align: "center",
+        align: "left",
         width: 80,
     },
     {
         title: "规格",
         dataIndex: "ITEM_SPECIFICATION",
         scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-        align: "center",
+        align: "left",
         width: 200,
     },
     {
@@ -60,14 +53,14 @@ export const columns = [
         dataIndex: "ITEM_PROPERTY",
         scopedSlots: { customRender: "ITEM_PROPERTY" },
         align: "center",
-        width: 50,
+        width: 80,
     },
     {
         title: "BOM生效状态",
         dataIndex: "ApproveStatus",
         scopedSlots: { customRender: "ApproveStatus" },
         align: "center",
-        width: 80,
+        width: 120,
     },
     {
         title: "工厂",
@@ -81,21 +74,21 @@ export const columns = [
         dataIndex: "PLANT_NAME_P",
         scopedSlots: { customRender: "PLANT_NAME_P" },
         align: "center",
-        width: 60,
+        width: 80,
     },
     {
         title: "引用工厂",
         dataIndex: "PLANT_CODE_R",
         scopedSlots: { customRender: "PLANT_CODE_R" },
         align: "center",
-        width: 60,
+        width: 80,
     },
     {
         title: "引用工厂名称",
         dataIndex: "PLANT_NAME_R",
         scopedSlots: { customRender: "PLANT_NAME_R" },
         align: "center",
-        width: 60,
+        width: 100,
     },
     {
         title: "版次",
@@ -109,14 +102,14 @@ export const columns = [
         dataIndex: "ApproveDate",
         scopedSlots: { customRender: "ApproveDate" },
         align: "center",
-        width: 60,
+        width: 80,
     },
     {
         title: "生效审核人员",
         dataIndex: "EMPLOYEE_NAME_A",
         scopedSlots: { customRender: "EMPLOYEE_NAME_A" },
         align: "center",
-        width: 60,
+        width: 100,
     },
     {
         title: "创建日期",
@@ -152,6 +145,13 @@ export const columns = [
         scopedSlots: { customRender: "REMARK" },
         align: "center",
         width: 40,
+    },
+    {
+        title: "快捷码",
+        dataIndex: "SHORTCUT",
+        scopedSlots: { customRender: "SHORTCUT" },
+        align: "center",
+        width: 60,
     },
     {
         title: "操作",

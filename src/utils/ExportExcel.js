@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2021-11-03 10:01:32
+ * @LastEditTime: 2021-12-14 16:30:45
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/utils/exportExcel.js
+ * @FilePath: /up-admin/src/utils/ExportExcel.js
  */
 // Export2Excel.js
 /* eslint-disable */
@@ -374,7 +374,7 @@ export function exportjsontoexcelMore({
             "X": 23,
             "Y": 24,
             "Z": 25
-        }
+        };
         const range = dataInfo['!ref'].split(':') // 表格范围区域
         let a1 = range[0].slice(0, 1) // A
         let b1 = +range[0].slice(1) // 1
@@ -391,7 +391,7 @@ export function exportjsontoexcelMore({
                 if (!dataInfo[value + j]) {
                     dataInfo[value + j] = {
                         s: {
-                            border: borderAll,
+                            // border: borderAll,
                         }
                     }
                 }
@@ -400,15 +400,21 @@ export function exportjsontoexcelMore({
         }
 
         for (var i in dataInfo) {
+            console.log("i===",i)
             if (i == '!ref' || i == '!merges' || i == '!cols') {
 
             } else {
                 dataInfo[i + ''].s = {
                     border: borderAll,
                     //居中属性
+                    font:{
+                        name:"宋体",
+                        sz:9
+                    },
                     alignment: {
+                        wrapText: 1,
                         horizontal: "left",
-                        vertical: "left"
+                        vertical: "left",
                     },
                 }
             }

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-12-08 16:36:25
- * @LastEditTime: 2021-12-08 16:52:33
+ * @LastEditTime: 2021-12-14 18:30:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/resizeableTitle.js
@@ -28,7 +28,11 @@ export function resizeableTitle(h, props, children, columns) {
         },
         on: {
             dragging: (x) => {
-                col.width = Math.max(x, 1)
+                if (x > 45) {
+                    col.width = Math.max(x, 1)
+                } else {
+                    col.width = Math.max(45, 1)
+                }
             }
         }
     }

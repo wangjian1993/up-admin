@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:53:46
- * @LastEditTime: 2021-12-08 09:49:16
+ * @LastEditTime: 2021-12-14 15:25:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/data.js
@@ -12,42 +12,35 @@ export const columns = [
         title: "序号",
         scopedSlots: { customRender: "index" },
         align: "center",
-        width: "3%",
+        width:50,
     },
     {
         title: "主件品号",
         dataIndex: "ITEM_CODE",
         scopedSlots: { customRender: "ITEM_CODE" },
-        align: "center",
-        width: 250,
-    },
-    {
-        title: "快捷码",
-        dataIndex: "SHORTCUT",
-        scopedSlots: { customRender: "SHORTCUT" },
-        align: "center",
+        align: "left",
         width: 150,
     },
     {
         title: "主件品号",
         dataIndex: "ITEM_NAME",
         scopedSlots: { customRender: "ITEM_NAME" },
-        align: "center",
-        width: 250,
+        align: "left",
+        width: 150,
     },
     {
         title: "主件规格",
         dataIndex: "ITEM_SPECIFICATION",
         scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-        align: "center",
-        width: 300,
+        align: "left",
+        width: 200,
     },
     {
         title: "主件图号",
         dataIndex: "DRAWING_NO",
         scopedSlots: { customRender: "DRAWING_NO" },
-        align: "center",
-        width: 150,
+        align: "left",
+        width: 100,
     },
     {
         title: "单位",
@@ -61,7 +54,7 @@ export const columns = [
         dataIndex: "ITEM_PROPERTY",
         scopedSlots: { customRender: "ITEM_PROPERTY" },
         align: "center",
-        width: "5%",
+        width: 80,
     },
     {
         title: "BOM生效状态",
@@ -75,12 +68,14 @@ export const columns = [
         dataIndex: "PLANT_NAME_P",
         scopedSlots: { customRender: "PLANT_NAME_P" },
         align: "center",
+        width: 40,
     },
     {
         title: "引用工厂",
         dataIndex: "PLANT_CODE_R",
         scopedSlots: { customRender: "PLANT_CODE_R" },
         align: "center",
+        width: 80,
     },
     {
         title: "引用工厂名称",
@@ -94,47 +89,56 @@ export const columns = [
         dataIndex: "VERSION_TIMES",
         scopedSlots: { customRender: "VERSION_TIMES" },
         align: "center",
+        width: 40,
     },
     {
         title: "生效日期",
         dataIndex: "ApproveDate",
         scopedSlots: { customRender: "ApproveDate" },
         align: "center",
-        width: 120,
+        width: 80,
     },
     {
         title: "生效审核人员",
         dataIndex: "EMPLOYEE_NAME_A",
         scopedSlots: { customRender: "EMPLOYEE_NAME_A" },
         align: "center",
-        width: 120,
+        width: 100,
     },
     {
         title: "创建日期",
         dataIndex: "CreateDate",
         scopedSlots: { customRender: "CreateDate" },
         align: "center",
-        width: 120,
+        width: 80,
     },
     {
         title: "创建人员",
         dataIndex: "EMPLOYEE_NAME_C",
         scopedSlots: { customRender: "EMPLOYEE_NAME_C" },
         align: "center",
+        width: 80,
     },
     {
         title: "最后修改日期",
         dataIndex: "LastModifiedDate",
         scopedSlots: { customRender: "LastModifiedDate" },
         align: "center",
-        width: 150,
+        width: 100,
     },
     {
         title: "最后修改人员",
         dataIndex: "EMPLOYEE_NAME_L",
         scopedSlots: { customRender: "EMPLOYEE_NAME_L" },
         align: "center",
-        width: 150,
+        width: 100,
+    },
+    {
+        title: "快捷码",
+        dataIndex: "SHORTCUT",
+        scopedSlots: { customRender: "SHORTCUT" },
+        align: "center",
+        width: 80,
     },
 ];
 export const innerColumns = [
@@ -143,49 +147,42 @@ export const innerColumns = [
         dataIndex: "LOWLEVEL",
         scopedSlots: { customRender: "LOWLEVEL" },
         align: "left",
-        width: 100,
+        width: 50,
     },
     {
         title: "序号",
         dataIndex: "INDEX",
         scopedSlots: { customRender: "INDEX" },
         align: "center",
-        width: 60,
+        width: 50,
     },
     {
         title: "上阶品号",
         dataIndex: "LAST_ITEM_CODE",
         scopedSlots: { customRender: "LAST_ITEM_CODE" },
-        align: "center",
-        width: 180,
+        align: "left",
+        width: 120,
     },
     {
         title: "元件品号",
         dataIndex: "ITEM_CODE",
         scopedSlots: { customRender: "ITEM_CODE" },
-        align: "center",
-        width: 180,
-    },
-    {
-        title: "快捷码",
-        dataIndex: "SHORTCUT",
-        scopedSlots: { customRender: "SHORTCUT" },
-        align: "center",
-        width: 180,
+        align: "left",
+        width: 80,
     },
     {
         title: "元件品名",
         dataIndex: "ITEM_NAME",
         scopedSlots: { customRender: "ITEM_NAME" },
-        align: "center",
-        width: 250,
+        align: "left",
+        width: 150,
     },
     {
         title: "元件规格",
         dataIndex: "ITEM_SPECIFICATION",
         scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-        align: "center",
-        width: 300,
+        align: "left",
+        width: 200,
     },
     {
         title: "单位",
@@ -227,7 +224,7 @@ export const innerColumns = [
         dataIndex: "EFFECTIVE_DATE",
         scopedSlots: { customRender: "EFFECTIVE_DATE" },
         align: "center",
-        width: 120,
+        width: 80,
         customRender: (text) => {
             return splitData(text);
         },
@@ -237,7 +234,7 @@ export const innerColumns = [
         dataIndex: "EXPRITY_DATE",
         scopedSlots: { customRender: "EXPRITY_DATE" },
         align: "center",
-        width: 120,
+        width: 80,
         customRender: (text) => {
             return splitData(text);
         },
@@ -247,6 +244,7 @@ export const innerColumns = [
         dataIndex: "REMARK",
         scopedSlots: { customRender: "REMARK" },
         align: "center",
+        width: 80,
     },
     {
         title: "BOM生效状态",
@@ -263,14 +261,14 @@ export const innerColumns = [
         dataIndex: "DRAWING_NO",
         scopedSlots: { customRender: "DRAWING_NO" },
         align: "center",
-        width: 150,
+        width: 80,
     },
     {
         title: "品号类型",
         dataIndex: "ITEM_PROPERTY",
         scopedSlots: { customRender: "ITEM_PROPERTY" },
         align: "center",
-        width: "5%",
+        width: 80
     },
     {
         title: "BOM生效日期",
@@ -298,5 +296,12 @@ export const innerColumns = [
         customRender: (text) => {
             return splitData(text);
         },
+    },
+    {
+        title: "快捷码",
+        dataIndex: "SHORTCUT",
+        scopedSlots: { customRender: "SHORTCUT" },
+        align: "left",
+        width: 180,
     },
 ];

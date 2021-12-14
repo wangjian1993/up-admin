@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:49:42
- * @LastEditTime: 2021-12-08 09:46:06
+ * @LastEditTime: 2021-12-14 15:19:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/data.js
@@ -18,36 +18,29 @@ export const columns = [
         title: "品号",
         dataIndex: "ITEM_CODE",
         scopedSlots: { customRender: "ITEM_CODE" },
-        align: "center",
-        width: 200,
-    },
-    {
-        title: "快捷码",
-        dataIndex: "SHORTCUT",
-        scopedSlots: { customRender: "SHORTCUT" },
-        align: "center",
-        width: 150,
+        align: "left",
+        width: 120,
     },
     {
         title: "品名",
         dataIndex: "ITEM_NAME",
         scopedSlots: { customRender: "ITEM_NAME" },
-        align: "center",
-        width: 250,
+        align: "left",
+        width: 150,
     },
     {
         title: "规格",
         dataIndex: "ITEM_SPECIFICATION",
         scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-        align: "center",
-        width: 300,
+        align: "left",
+        width: 200,
     },
     {
         title: "库存数量",
         dataIndex: "INVENTORY_QTY",
         scopedSlots: { customRender: "INVENTORY_QTY" },
         align: "center",
-        width: 150,
+        width: 80,
     },
     {
         title: "工厂编号",
@@ -68,14 +61,14 @@ export const columns = [
         dataIndex: "WAREHOUSE_CODE",
         scopedSlots: { customRender: "WAREHOUSE_CODE" },
         align: "center",
-        width: 120,
+        width: 80,
     },
     {
         title: "仓库名称",
         dataIndex: "WAREHOUSE_NAME",
         scopedSlots: { customRender: "WAREHOUSE_NAME" },
         align: "center",
-        width: 100,
+        width: 80,
     },
     {
         title: "仓库单位",
@@ -186,6 +179,13 @@ export const columns = [
         dataIndex: "DRAWING_NO",
         scopedSlots: { customRender: "DRAWING_NO" },
         align: "center",
+    },
+    {
+        title: "快捷码",
+        dataIndex: "SHORTCUT",
+        scopedSlots: { customRender: "SHORTCUT" },
+        align: "center",
+        width: 150,
     },
     {
         title: "操作",

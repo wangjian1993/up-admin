@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-10-20 17:08:56
- * @LastEditTime: 2021-12-09 17:59:13
+ * @LastEditTime: 2021-12-14 15:04:54
  * @LastEditors: max
  * @Description: 公共 变量
  * @FilePath: /up-admin/src/mixins/publicVar.js
@@ -22,7 +22,7 @@ export const PublicVar = {
                 showSizeChanger: true,
                 showLessItems: true,
                 showQuickJumper: true,
-                pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
+                pageSizeOptions: ["20", "50", "100", "150"], //每页中显示的数据
                 showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
             },
             filtrate: ['不过滤', '包含(A,B,C)', '不包含', '等于', '不等于', '开始于', '结束于', '小于', '小于或等于', '大于', '大于或等于']

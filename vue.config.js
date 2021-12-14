@@ -7,6 +7,7 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin')
 
 const productionGzipExtensions = ['js', 'css']
 const isProd = process.env.NODE_ENV === 'production'
+// vue.config.js
 const assetsCDN = {
   // webpack build externals
   externals: {
@@ -165,5 +166,5 @@ module.exports = {
 
   publicPath: './',
   assetsDir: 'static',
-  productionSourceMap: false
+  productionSourceMap: false,
 }

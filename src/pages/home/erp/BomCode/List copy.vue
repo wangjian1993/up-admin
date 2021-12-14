@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-08 17:49:58
+ * @LastEditTime: 2021-12-14 14:24:00
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List copy.vue
@@ -21,16 +21,40 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入品号" allowClear style="width: 200px" v-decorator="['itemcode']" />
+              <a-dropdown>
+                <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                <a-menu slot="overlay">
+                  <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemcode', item)">
+                    <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item }}</a>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入品名" allowClear style="width: 200px" v-decorator="['itemname']" />
+              <a-dropdown>
+                <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                <a-menu slot="overlay">
+                  <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemname', item)">
+                    <a href="javascript:;" :class="itemnamesign == item ? 'menuBg' : ''">{{ item }}</a>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="产品规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入产品规格" allowClear style="width: 200px" v-decorator="['itemspecification']" />
+              <a-dropdown>
+                <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                <a-menu slot="overlay">
+                  <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemspecification', item)">
+                    <a href="javascript:;" :class="itemspecificationsign == item ? 'menuBg' : ''">{{ item }}</a>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
             </a-form-item>
           </a-col>
         </a-row>
@@ -44,37 +68,11 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_BUSINESS_ID" bordered :customRow="handleClickRow" :rowClassName="rowClassName" :components="components">
-      <template slot="index" slot-scope="text, record, index">
-        <div>
-          <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-        </div>
-      </template>
-      <template slot="action" slot-scope="text, record">
-        <div>
-          <a style="margin-right: 8px" @click="detail(record)">
-            <a-icon type="profile" />
-            查看
-          </a>
-        </div>
-      </template>
-      <template slot="ApproveStatus" slot-scope="text">
-        <a-tag :color="text === 'Y' ? 'green' : text === 'N' ? '#0000ff' : 'red'">{{ text == "Y" ? "生效" : text == "N" ? "未生效" : "失效" }}</a-tag>
-      </template>
-      <template slot="ITEM_PROPERTY" slot-scope="text">
-        <span>{{ modelType(text) }}</span>
-      </template>
-      <template slot="ApproveDate" slot-scope="text">
-        <span>{{ splitData(text) }}</span>
-      </template>
-      <template slot="LastModifiedDate" slot-scope="text">
-        <span>{{ splitData(text) }}</span>
-      </template>
-      <template slot="CreateDate" slot-scope="text">
-        <span>{{ splitData(text) }}</span>
-      </template>
-    </a-table>
-    <a-empty v-else description="暂无权限" />
+    <DataGrid ref="dg" :data="data" :pagination="true" :total="total" :pageSize="pageSize" :pagePosition="pagePosition" :filterable="true" style="width:3000px;height:88vh">
+      <GridColumn v-for="item in columns" :key="item.dataIndex" :field="item.dataIndex" :title="item.title" :filterOperators="operators" :frozen="item.frozen" :width="item.width"
+        ><template slot="filter"> <TextBox style="width:25em"></TextBox> </template
+      ></GridColumn>
+    </DataGrid>
     <model-info v-if="isModelInfo" :modelData="mitemcodeData" @closeModal="closeModal"></model-info>
   </a-card>
 </template>
@@ -87,7 +85,7 @@ import { columns } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
-  components: { ModelInfo},
+  components: { ModelInfo },
   mixins: [PublicVar],
   data() {
     this.components = {
@@ -105,6 +103,13 @@ export default {
       detailData: [],
       plantList: [],
       mitemcodeData: [],
+      itemcodesign: "",
+      itemnamesign: "",
+      itemspecificationsign: "",
+      operators: ["nofilter", "equal", "notequal", "less", "greater"],
+      total: 10000,
+      pageSize: 20,
+      pagePosition: "bottom",
     };
   },
   created() {
@@ -118,6 +123,20 @@ export default {
     modelType,
     closeModal() {
       this.isModelInfo = false;
+    },
+    itemFiltrete(type, text) {
+      switch (type) {
+        case "itemcode":
+          this.itemcodesign = text;
+          break;
+        case "itemname":
+          this.itemnamesign = text;
+          break;
+        case "itemspecification":
+          this.itemspecificationsign = text;
+          break;
+      }
+      this.search();
     },
     //物料需求详情
     detail(record) {
@@ -145,7 +164,7 @@ export default {
       this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
-        pagesize: this.pagination.pageSize,
+        pagesize: this.pagination.pageSize + 1,
         plantid: this.plantId,
         itemcode: "",
         itemname: "",
@@ -170,9 +189,13 @@ export default {
       this.week = "";
       this.searchForm.resetFields();
       this.getPlant();
+      this.itemcodesign = "";
+      this.itemnamesign = "";
+      this.itemspecificationsign = "";
     },
     //关键词搜索
     search() {
+      console.log(this.data);
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
@@ -191,10 +214,20 @@ export default {
             itemcode: values.itemcode || "",
             itemname: values.itemname || "",
             itemspecification: values.itemspecification || "",
+            itemcodesign: this.itemcodesign,
+            itemspecificationsign: this.itemspecificationsign,
+            itemnamesign: this.itemnamesign,
           };
           getERPReportAction(parmas, "getbominfo").then((res) => {
             if (res.data.success) {
-              this.data = res.data.data.list;
+              let list = res.data.data.list;
+              let aearchArray = [
+                {
+                  ITEM_NAME: "",
+                  ITEM_CODE: "",
+                },
+              ];
+              this.data = [...aearchArray, ...list];
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
@@ -240,8 +273,13 @@ export default {
   },
 };
 </script>
-
+<style src="vx-easyui/dist/themes/default/easyui.css" scoped></style>
+<style src="vx-easyui/dist/themes/icon.css" scoped></style>
+<style src="vx-easyui/dist/themes/vue.css" scoped></style>
 <style lang="less" scoped>
+// @import "vx-easyui/dist/themes/default/easyui.css";
+// @import "vx-easyui/dist/themes/icon.css";
+// @import "vx-easyui/dist/themes/vue.css";
 .ant-form-item {
   margin-bottom: 5px;
 }
@@ -250,5 +288,9 @@ export default {
 }
 /deep/.color1 {
   color: #0000ff;
+}
+.menuBg {
+  background: #13c2c2;
+  color: #fff;
 }
 </style>

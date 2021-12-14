@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-10 09:55:30
+ * @LastEditTime: 2021-12-14 16:27:38
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -372,16 +372,16 @@ export default {
         let excelArray = [];
         let formStyle = {};
         const sheetCols = [
-          { wch: 10 }, // 序号
-          { wch: 15 }, // 阶次
-          { wch: 15 }, // 类型
-          { wch: 20 }, // 上阶BOM号
-          { wch: 15 }, // 品号
-          { wch: 5 }, // 料名
-          { wch: 5 }, //  产品规格
-          { wch: 5 }, // 单位
-          { wch: 8 }, // 价格来源
-          { wch: 15 }, // E10单价
+          { wch: 3 }, // 序号
+          { wch: 10 }, // 阶次
+          { wch: 12 }, // 类型
+          { wch: 32 }, // 上阶BOM号
+          { wch: 10 }, // 品号
+          { wch: 3}, // 料名
+          { wch: 3}, //  产品规格
+          { wch: 3}, // 单位
+          { wch: 8}, // 价格来源
+          { wch: 8}, // E10单价
         ];
         console.log(excelData);
         console.log(excelData.length);
@@ -391,13 +391,13 @@ export default {
           console.log("遍历====", item);
           for (let i = 0; i < 3; i++) {
             mergeTitle.push({
-              s: { r: i, c: 1 },
+              s: { r: i, c: 0 },
               e: { r: i, c: 9 },
             });
           }
-          _data.push(["产品代码：", `${item.ITEM_CODE}`, null, null, null, null, null, null, null, null]);
-          _data.push(["产品名称", `${item.ITEM_NAME}`, null, null, null, null, null, null, null, null]);
-          _data.push(["产品规格", `${item.ITEM_SPECIFICATION}`, null, null, null, null, null, null, null, null]);
+          _data.push([`产品代码:  ${item.ITEM_CODE}`,null, null, null, null, null, null, null, null, null]);
+          _data.push([`产品名称:  ${item.ITEM_NAME}`,null, null, null, null, null, null, null, null, null]);
+          _data.push([`产品规格:  ${item.ITEM_SPECIFICATION}`,null, null, null, null, null, null, null, null, null]);
           _data.push(["阶层", "元件品号", "元件品名", "元件规格", "元件图号", "单位", "组成用量", "底数", "插件位置", "元件快捷码"]);
           item.childrenArray.map((items) => {
             let array = [];
@@ -445,6 +445,7 @@ export default {
               this.$message.success("导出数据成功!");
               this.selectedRowKeys = [];
             } catch (error) {
+              console.log(error);
               this.$message.error("导出数据失败");
             }
           });
@@ -512,5 +513,12 @@ export default {
   margin: 0 auto;
   border: 1px #000 solid;
   padding: 10px 10px;
+}
+/deep/.ant-table {
+  font-size: 10px;
+}
+/deep/.ant-table-row-cell-break-word {
+  white-space: nowrap;
+  overflow: hidden;
 }
 </style>

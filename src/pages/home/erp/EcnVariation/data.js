@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:55:26
- * @LastEditTime: 2021-12-08 09:50:16
+ * @LastEditTime: 2021-12-14 15:10:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/data.js
@@ -17,14 +17,14 @@ export const columns = [
       title: "ECN单号",
       dataIndex: "DOC_NO",
       scopedSlots: { customRender: "DOC_NO" },
-      align: "center",
-      width: 200,
+      align: "left",
+      width: 150,
     },
     {
       title: "单据类型",
       dataIndex: "DOC_NAME",
       scopedSlots: { customRender: "DOC_NAME" },
-      align: "center",
+      align: "left",
       width: 150,
     },
     {

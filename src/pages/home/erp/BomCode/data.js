@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:48:13
- * @LastEditTime: 2021-11-23 16:50:18
+ * @LastEditTime: 2021-12-14 15:01:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/data.js
@@ -17,42 +17,35 @@ export const columns = [
         title: "品号",
         dataIndex: "ITEM_CODE",
         scopedSlots: { customRender: "ITEM_CODE" },
-        align: "center",
-        width: 100,
+        align: "left",
+        width: 120,
     },
     {
         title: "工厂编号",
         dataIndex: "PLANT_CODE_P",
         scopedSlots: { customRender: "PLANT_CODE_P" },
-        align: "center",
-        width: 60,
+        align: "left",
+        width: 65,
     },
     {
         title: "工厂/储运",
         dataIndex: "PLANT_NAME_P",
         scopedSlots: { customRender: "PLANT_NAME_P" },
-        align: "center",
-        width: 60,
-    },
-    {
-        title: "快捷码",
-        dataIndex: "SHORTCUT",
-        scopedSlots: { customRender: "SHORTCUT" },
-        align: "center",
-        width: 60,
+        align: "left",
+        width: 70,
     },
     {
         title: "品名",
         dataIndex: "ITEM_NAME",
         scopedSlots: { customRender: "ITEM_NAME" },
-        align: "center",
+        align: "left",
         width: 120,
     },
     {
         title: "规格",
         dataIndex: "ITEM_SPECIFICATION",
         scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-        align: "center",
+        align: "left",
         width: 200,
     },
     {
@@ -74,7 +67,7 @@ export const columns = [
         dataIndex: "UNIT_NAME",
         scopedSlots: { customRender: "UNIT_NAME" },
         align: "center",
-        width: 50,
+        width: 80,
         customRender: (text, record) => {
             return record.UNIT_NAME_S;
         },
@@ -84,21 +77,21 @@ export const columns = [
         dataIndex: "UNIT_NAME_S",
         scopedSlots: { customRender: "UNIT_NAME_S" },
         align: "center",
-        width: 50,
+        width: 80,
     },
     {
         title: "品号类型",
         dataIndex: "ITEM_PROPERTY",
         scopedSlots: { customRender: "ITEM_PROPERTY" },
         align: "center",
-        width: 50,
+        width: 80,
     },
     {
         title: "默认入库仓库",
         dataIndex: "WAREHOUSE_CODE_I",
         scopedSlots: { customRender: "WAREHOUSE_CODE_I" },
         align: "center",
-        width: 60,
+        width: 100,
     },
     {
         title: "默认入库仓库名称",
@@ -200,6 +193,13 @@ export const columns = [
         title: "生产部门名称",
         dataIndex: "ADMIN_UNIT_NAME",
         scopedSlots: { customRender: "ADMIN_UNIT_NAME" },
+        align: "center",
+        width: 60,
+    },
+    {
+        title: "快捷码",
+        dataIndex: "SHORTCUT",
+        scopedSlots: { customRender: "SHORTCUT" },
         align: "center",
         width: 60,
     },

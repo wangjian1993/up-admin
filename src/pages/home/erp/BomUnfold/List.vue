@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-11 15:36:05
+ * @LastEditTime: 2021-12-14 15:27:48
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -44,7 +44,7 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow" @expand="fatherExpand" :expandedRowKeys="expandedRowKeys">
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="false" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow" @expand="fatherExpand" :expandedRowKeys="expandedRowKeys">
       <a-table slot="expandedRowRender" :loading="expandLoading" size="small" :rowKey="(data) => data.ITEM_ID" :columns="innerColumns" :data-source="innerData" :customRow="handleClickRow2" :pagination="false" bordered>
         <template slot="ITEM_PROPERTY" slot-scope="text">
           <span>{{ modelType(text) }}</span>
@@ -93,6 +93,7 @@ import ErpDosage from "../components/ErpDosage.vue";
 import ModelInfo from "../components/ModelInfo.vue";
 import { columns, innerColumns } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
+// import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { ErpDosage, ModelInfo },
   mixins: [PublicVar],
@@ -126,7 +127,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(70);
+      this.scrollY = getTableScroll(25);
     });
     this.getPlant();
   },
@@ -351,4 +352,11 @@ export default {
   height: 22px;
   line-height: 17px;
 }
+/deep/.ant-table {
+  font-size: 10px;
+}
+// /deep/.ant-table-row-cell-break-word {
+//   white-space: nowrap;
+//   overflow: hidden;
+// }
 </style>
