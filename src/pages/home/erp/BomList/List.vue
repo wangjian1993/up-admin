@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-14 16:27:38
+ * @LastEditTime: 2021-12-16 11:53:38
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -9,7 +9,7 @@
 <template>
   <div>
     <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-      <a-form layout="horizontal" :form="searchForm">
+      <!-- <a-form layout="horizontal" :form="searchForm">
         <div>
           <a-row>
             <a-col :md="6" :sm="24">
@@ -64,7 +64,7 @@
           <a-button type="primary" @click="search">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset">重置</a-button>
         </span>
-      </a-form>
+      </a-form> -->
       <div class="operator">
         <!-- <a-button icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
         <a-button icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button> -->
@@ -72,6 +72,7 @@
         <a-button v-else icon="printer" type="primary" disabled :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
         <a-button v-if="hasPerm('export')" icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
         <a-button v-else icon="export" type="primary" disabled :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
+        <a-button style="margin-left: 8px" @click="reset">重置</a-button>
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
             {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -126,6 +127,80 @@
         <template slot="CreateDate" slot-scope="text">
           <span>{{ splitData(text) }}</span>
         </template>
+        <template slot="PLANT_NAME_P_SELECT">
+          <span>
+            <p>工厂/储运</p>
+            <div style="display:flex;">
+              <a-select v-model="searchValue.plantId" size="small" placeholder="请选择需求工厂">
+                <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
+              </a-select>
+            </div>
+          </span>
+        </template>
+        <template slot="ITEM_CODE_INPUT">
+          <span>
+            <p>主件品号</p>
+            <div style="display:flex;">
+              <a-input placeholder="品号" size="small" style="font-size: 10px;" allowClear v-model="searchValue.itemcode" />
+              <a-dropdown>
+                <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
+                <a-menu slot="overlay">
+                  <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemcode', item)">
+                    <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item + itemcodesign }}</a>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
+            </div>
+          </span>
+        </template>
+        <template slot="ITEM_NAME_INPUT">
+          <span>
+            <p>品名</p>
+            <div style="display:flex;">
+              <a-input placeholder="品名" size="small" style="font-size: 10px;" allowClear v-model="searchValue.itemname" />
+              <a-dropdown>
+                <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
+                <a-menu slot="overlay">
+                  <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemname', item)">
+                    <a href="javascript:;" :class="itemnamesign == item ? 'menuBg' : ''">{{ item }}</a>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
+            </div>
+          </span>
+        </template>
+        <template slot="ITEM_SPECIFICATION_INPUT">
+          <span>
+            <p>规格</p>
+            <div style="display:flex;">
+              <a-input placeholder="规格" size="small" style="font-size: 10px;" allowClear v-model="searchValue.itemspecification" />
+              <a-dropdown>
+                <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
+                <a-menu slot="overlay">
+                  <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemspecification', item)">
+                    <a href="javascript:;" :class="itemspecificationsign == item ? 'menuBg' : ''">{{ item }}</a>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
+            </div>
+          </span>
+        </template>
+        <template slot="DRAWING_NO_INPUT">
+          <span>
+            <p>图号</p>
+            <div style="display:flex;">
+              <a-input placeholder="图号" size="small" style="font-size: 10px;" allowClear v-model="searchValue.drawingno" />
+              <a-dropdown>
+                <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
+                <a-menu slot="overlay">
+                  <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('drawingno', item)">
+                    <a href="javascript:;" :class="drawingnosign == item ? 'menuBg' : ''">{{ item }}</a>
+                  </a-menu-item>
+                </a-menu>
+              </a-dropdown>
+            </div>
+          </span>
+        </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
       <erp-dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></erp-dosage>
@@ -169,6 +244,14 @@ export default {
       itemcodesign: "",
       itemnamesign: "",
       itemspecificationsign: "",
+      drawingnosign: "",
+      searchValue: {
+        plantId: "",
+        itemcode: "",
+        itemname: "",
+        drawingno: "",
+        itemspecification: "",
+      },
     };
   },
   updated() {
@@ -207,6 +290,9 @@ export default {
         case "itemspecification":
           this.itemspecificationsign = text;
           break;
+        case "drawingno":
+          this.drawingnosign = text;
+          break;
       }
       this.search();
     },
@@ -220,10 +306,10 @@ export default {
     },
     //物料需求详情
     detail(item) {
-      let values = this.searchForm.getFieldsValue();
+      // let values = this.searchForm.getFieldsValue();
       this.isDosage = true;
       this.mitemcodeData = item;
-      this.mitemcodeData.plantId = values.plantid;
+      this.mitemcodeData.plantId = this.searchValue.plantId;
       console.log("this.mitemcodeData", this.mitemcodeData);
     },
     getPlant() {
@@ -233,10 +319,7 @@ export default {
       getERPReportAction(parmas, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
-          this.plantId = this.plantList[0].PlantId;
-          this.searchForm.setFieldsValue({
-            plantid: this.plantList[0].PlantId,
-          });
+          this.searchValue.plantId = this.plantList[0].PlantId;
           // this.getListAll();
         }
       });
@@ -275,43 +358,49 @@ export default {
       this.itemcodesign = "";
       this.itemnamesign = "";
       this.itemspecificationsign = "";
+      this.searchValue = {
+        plantId: "",
+        itemcode: "",
+        itemname: "",
+        itemspecification: "",
+        drawingno: "",
+      };
     },
     //关键词搜索
     search() {
-      this.searchForm.validateFields((err, values) => {
-        if (!err) {
-          this.loading = true;
-          // console.log("Received values of form: ", values.week);
-          if (values.itemcode == undefined && values.itemname == undefined && values.itemspecification == undefined) {
-            this.$message.warning("请输入查询条件:品号,品名.规格");
-            this.loading = false;
-            return;
-          }
-          this.data = [];
-          this.pagination.total = 0;
-          let parmas = {
-            pageindex: this.pagination.current,
-            pagesize: this.pagination.pageSize,
-            plantid: values.plantid,
-            itemcode: values.itemcode || "",
-            itemname: values.itemname || "",
-            itemspecification: values.itemspecification || "",
-            itemcodesign: this.itemcodesign,
-            itemspecificationsign: this.itemspecificationsign,
-            itemnamesign: this.itemnamesign,
-          };
-          getERPReportAction(parmas, "getbomlist").then((res) => {
-            if (res.data.success) {
-              this.data = res.data.data.list;
-              const pagination = { ...this.pagination };
-              pagination.total = res.data.data.recordsTotal;
-              this.pagination = pagination;
-              this.isSearch = true;
-            }
-            this.loading = false;
-          });
-          // do something
+      if (this.searchValue.plantId == undefined) {
+        this.$message.warning("请选择工厂");
+        return;
+      }
+      if (this.searchValue.itemcode == undefined && this.searchValue.itemname == undefined && this.searchValue.itemspecification == undefined) {
+        this.$message.warning("请输入查询条件:品号,品名.规格");
+        return;
+      }
+      this.loading = true;
+      this.data = [];
+      this.pagination.total = 0;
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.pageSize,
+        plantid: this.searchValue.plantId,
+        itemcode: this.searchValue.itemcode.trim(),
+        itemname: this.searchValue.itemname.trim(),
+        drawingno: this.searchValue.drawingno.trim(),
+        itemspecification: this.searchValue.itemspecification.trim(),
+        itemcodesign: this.itemcodesign,
+        itemspecificationsign: this.itemspecificationsign,
+        itemnamesign: this.itemnamesign,
+        drawingnosign: this.drawingnosign,
+      };
+      getERPReportAction(parmas, "getbomlist").then((res) => {
+        if (res.data.success) {
+          this.data = res.data.data.list;
+          const pagination = { ...this.pagination };
+          pagination.total = res.data.data.recordsTotal;
+          this.pagination = pagination;
+          this.isSearch = true;
         }
+        this.loading = false;
       });
     },
     handleClickRow(record) {
@@ -324,8 +413,8 @@ export default {
           dblclick: () => {
             this.isDosage = true;
             this.mitemcodeData = record;
-            let values = this.searchForm.getFieldsValue();
-            this.mitemcodeData.plantId = values.plantid;
+            // let values = this.searchForm.getFieldsValue();
+            this.mitemcodeData.plantId = this.searchValue.plantId;
             console.log("this.mitemcodeData", this.mitemcodeData);
           },
         },
@@ -373,15 +462,15 @@ export default {
         let formStyle = {};
         const sheetCols = [
           { wch: 3 }, // 序号
-          { wch: 10 }, // 阶次
+          { wch: 12 }, // 阶次
           { wch: 12 }, // 类型
           { wch: 32 }, // 上阶BOM号
           { wch: 10 }, // 品号
-          { wch: 3}, // 料名
-          { wch: 3}, //  产品规格
-          { wch: 3}, // 单位
-          { wch: 8}, // 价格来源
-          { wch: 8}, // E10单价
+          { wch: 3 }, // 料名
+          { wch: 3 }, //  产品规格
+          { wch: 3 }, // 单位
+          { wch: 8 }, // 价格来源
+          { wch: 8 }, // E10单价
         ];
         console.log(excelData);
         console.log(excelData.length);
@@ -392,13 +481,13 @@ export default {
           for (let i = 0; i < 3; i++) {
             mergeTitle.push({
               s: { r: i, c: 0 },
-              e: { r: i, c: 9 },
+              e: { r: i, c: 8 },
             });
           }
-          _data.push([`产品代码:  ${item.ITEM_CODE}`,null, null, null, null, null, null, null, null, null]);
-          _data.push([`产品名称:  ${item.ITEM_NAME}`,null, null, null, null, null, null, null, null, null]);
-          _data.push([`产品规格:  ${item.ITEM_SPECIFICATION}`,null, null, null, null, null, null, null, null, null]);
-          _data.push(["阶层", "元件品号", "元件品名", "元件规格", "元件图号", "单位", "组成用量", "底数", "插件位置", "元件快捷码"]);
+          _data.push([`产品代码:  ${item.ITEM_CODE}`, null, null, null, null, null, null, null, null]);
+          _data.push([`产品名称:  ${item.ITEM_NAME}`, null, null, null, null, null, null, null, null]);
+          _data.push([`产品规格:  ${item.ITEM_SPECIFICATION}`, null, null, null, null, null, null, null, null]);
+          _data.push(["阶层", "元件品号", "元件品名", "元件规格", "元件图号", "单位", "组成用量", "底数", "插件位置"]);
           item.childrenArray.map((items) => {
             let array = [];
             array.push(items.ROWNUMBER);
@@ -410,10 +499,9 @@ export default {
             array.push(items.QTY_PER);
             array.push(items.DENOMINATOR);
             array.push(items.COMPONENT_LOCATION);
-            array.push(items.SHORTCUT);
             _data.push(array);
           });
-          _data.push(["", "制单:", "", "审核:", "", "核准:", "", "", "日期:", ""]);
+          _data.push(["", "制单:", "", "审核:", "", "核准:", "", "日期:", ""]);
           let merges2 = [];
           console.log(_data);
           let merges = [...mergeTitle, ...merges2]; // 合并单元格
@@ -516,6 +604,10 @@ export default {
 }
 /deep/.ant-table {
   font-size: 10px;
+}
+.menuBg {
+  background: #13c2c2;
+  color: #fff;
 }
 /deep/.ant-table-row-cell-break-word {
   white-space: nowrap;

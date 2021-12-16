@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2021-12-16 16:10:16
+ * @Date: 2021-12-15 15:36:17
+ * @LastEditTime: 2021-12-16 16:10:07
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/production/process/StartWork.vue
+ * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
 -->
 <template>
   <!-- 搜索 -->
@@ -30,13 +30,15 @@
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="计划生产时间">{{ orderInfo.PlanDate }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
-        <a-descriptions-item label="开工数量"><a-input-number :min="0" v-model="startWorkQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="接收数量"><a-input-number :min="0" v-model="receiveQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="报废数量"><a-input-number :min="0" v-model="scrapQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="备注"><a-input v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button type="primary" icon="check-circle" @click="startWork" :disabled="!hasPerm('process_scan')">
-            开工
+            进站
           </a-button>
           <a-button style="margin-left:10px" type="primary" icon="export" @click="handlePrint()">
-            打印工单
+            打印标识卡
           </a-button></a-descriptions-item
         >
       </a-descriptions>
@@ -44,20 +46,20 @@
     <div style="margin:10px 0">
       <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
     </div>
-    <WorkTable :orderList="orderList" />
     <!-- 列表 -->
-    <print v-if="isPrint" :printData="printData" @closeModal="closeModal"></print>
+    <WorkTable :orderList="orderList" />
+    <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
   </a-card>
 </template>
 <script>
-import { setStartWorkApi, getPrintInfo } from "@/services/web.js";
+import { setStartWorkApi } from "@/services/web.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import Print from "../components/print.vue";
 import { getTimeData } from "@/utils/util";
 import MsgList from "./components/MsgList.vue";
 import WorkTable from "./components/WorkTable.vue";
+import identification from "./identification.vue";
 export default {
-  components: { Print, MsgList, WorkTable },
+  components: { MsgList, WorkTable, identification },
   mixins: [PublicVar],
   data() {
     return {
@@ -65,12 +67,13 @@ export default {
       processData: [],
       userLineData: [],
       orderValue: "",
-      loading: false,
       orderInfo: [],
       printData: [],
       isPrint: false,
       IsSuccess: false,
-      startWorkQty: 0,
+      remark: "",
+      receiveQty:0,
+      scrapQty: 0,
       orderList: [],
     };
   },
@@ -86,7 +89,6 @@ export default {
     },
     //打印工单
     handlePrint() {
-      console.log(this.orderInfo);
       if (this.orderInfo.length == 0) {
         let message = {
           content: "请先输入工单号，或者扫描工单二维码",
@@ -96,21 +98,19 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      let parmas = {
-        id: this.orderInfo.ProPlanId,
-      };
-      getPrintInfo(parmas, "getprintinfo").then((res) => {
-        if (res.data.success) {
-          this.isPrint = true;
-          this.printData = res.data.data;
-        }
-      });
+      console.log("打印", this.userLineData);
+      this.isPrint = true;
     },
+
     pushKeyword(event) {
       if (event.keyCode === 13) {
         event.preventDefault(); // 阻止浏览器默认换行操作
         return false;
       }
+    },
+    closeModal() {
+      this.visible = false;
+      this.isPrint = false;
     },
     getWorkInfo() {
       setStartWorkApi("", "loaduserline").then((res) => {
@@ -142,7 +142,6 @@ export default {
       }
       let parmas = {
         ScanCode: this.orderValue.trim(),
-        ProcessCode: "ASSEMBLE_PROCESS",
         ProcessStatus: "PROCESS_START",
       };
       setStartWorkApi(parmas, "scan").then((res) => {
@@ -171,9 +170,9 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      if (!this.startWorkQty) {
+      if (!this.receiveQty) {
         let message = {
-          content: "请先输入开工数量",
+          content: "请先输入进站数量",
           time: getTimeData(),
           IsSuccess: false,
         };
@@ -186,11 +185,10 @@ export default {
         LineId: this.orderInfo.LineId,
         ScanCode: this.orderInfo.ScanCode,
         ScanCodeType: this.orderInfo.ScanCodeType,
-        MoCode: this.orderInfo.WorkshopId,
-        ProcessCode: "ASSEMBLE_PROCESS",
+        MoCode: this.orderInfo.MoCode,
         ProcessStatus: "PROCESS_START",
-        ReportQty: this.startWorkQty,
-        ScrapedQty: 0,
+        ReportQty: this.receiveQty,
+        ScrapedQty: this.scrapQty,
       };
       setStartWorkApi(parmas, "submit").then((res) => {
         res.data.message.time = getTimeData();

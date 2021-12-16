@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2021-12-14 16:30:45
+ * @LastEditTime: 2021-12-16 10:51:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/ExportExcel.js
@@ -255,7 +255,7 @@ export function exportjsontoexcelMore({
     dataList,
     filename,
     bookType = 'xlsx',
-}) {
+}, excelStyle) {
     //判断是否有表名、没有则赋予固定表名
     filename = filename || 'excel-list'
     var wb = new Workbook()
@@ -322,7 +322,7 @@ export function exportjsontoexcelMore({
                 }
             }
             ws['!cols'] = result;
-        }else {
+        } else {
             // console.log("不自适应",sheetCols);
             ws['!cols'] = sheetCols;
         }
@@ -400,22 +400,31 @@ export function exportjsontoexcelMore({
         }
 
         for (var i in dataInfo) {
-            console.log("i===",i)
+            console.log("i===", i)
             if (i == '!ref' || i == '!merges' || i == '!cols') {
 
             } else {
-                dataInfo[i + ''].s = {
-                    border: borderAll,
-                    //居中属性
-                    font:{
-                        name:"宋体",
-                        sz:9
-                    },
-                    alignment: {
-                        wrapText: 1,
-                        horizontal: "left",
-                        vertical: "left",
-                    },
+                if (excelStyle) {
+                    dataInfo[i + ''].s = {
+                        //居中属性
+                        ...excelStyle
+                    }
+                } else {
+                    dataInfo[i + ''].s = {
+                        //居中属性
+                        border: borderAll,
+                        //居中属性
+                        font: {
+                            name: "宋体",
+                            sz: 9
+                        },
+                        alignment: {
+                            wrapText: 1,
+                            horizontal: "left",
+                            vertical: "left",
+                            indent: 0,
+                        },
+                    }
                 }
             }
         }

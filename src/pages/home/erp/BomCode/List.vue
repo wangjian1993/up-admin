@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-14 14:59:17
+ * @LastEditTime: 2021-12-16 11:21:06
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
 -->
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-    <a-form layout="horizontal" :form="searchForm">
+    <!-- <a-form layout="horizontal" :form="searchForm">
       <div>
         <a-row>
           <a-col :md="6" :sm="24">
@@ -67,7 +67,15 @@
           </a-col>
         </a-row>
       </div>
-    </a-form>
+    </a-form> -->
+    <a-row>
+      <a-col :md="24" :sm="24">
+        <span>
+          <!-- <a-button type="primary" @click="search">查询</a-button> -->
+          <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+        </span>
+      </a-col>
+    </a-row>
     <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_BUSINESS_ID" bordered :customRow="handleClickRow" :rowClassName="rowClassName" :components="components">
       <template slot="index" slot-scope="text, record, index">
         <div>
@@ -96,6 +104,80 @@
       </template>
       <template slot="CreateDate" slot-scope="text">
         <span>{{ splitData(text) }}</span>
+      </template>
+      <template slot="PLANT_NAME_P_SELECT">
+        <span>
+          <p>工厂/储运</p>
+          <div style="display:flex;">
+            <a-select v-model="searchValue.plantId" size="small" placeholder="请选择需求工厂">
+              <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
+            </a-select>
+          </div>
+        </span>
+      </template>
+      <template slot="ITEM_CODE_INPUT">
+        <span>
+          <p>品号</p>
+          <div style="display:flex;">
+            <a-input placeholder="品号" size="small" style="font-size: 10px;" allowClear v-model="searchValue.itemcode" />
+            <a-dropdown>
+              <a-button shape="circle" icon="unordered-list" size="small" @click="(e) => e.preventDefault()" />
+              <a-menu slot="overlay">
+                <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemcode', item)">
+                  <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item }}</a>
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
+          </div>
+        </span>
+      </template>
+      <template slot="ITEM_NAME_INPUT">
+        <span>
+          <p>品名</p>
+          <div style="display:flex;">
+            <a-input placeholder="品名" size="small" style="font-size: 10px;" allowClear v-model="searchValue.itemname" />
+            <a-dropdown>
+               <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
+              <a-menu slot="overlay">
+                <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemname', item)">
+                  <a href="javascript:;" :class="itemnamesign == item ? 'menuBg' : ''">{{ item }}</a>
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
+          </div>
+        </span>
+      </template>
+      <template slot="ITEM_SPECIFICATION_INPUT">
+        <span>
+          <p>规格</p>
+          <div style="display:flex;">
+            <a-input placeholder="规格" size="small" style="font-size: 10px;" allowClear v-model="searchValue.itemspecification" />
+            <a-dropdown>
+              <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
+              <a-menu slot="overlay">
+                <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemspecification', item)">
+                  <a href="javascript:;" :class="itemspecificationsign == item ? 'menuBg' : ''">{{ item }}</a>
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
+          </div>
+        </span>
+      </template>
+      <template slot="DRAWING_NO_INPUT">
+        <span>
+          <p>图号</p>
+          <div style="display:flex;">
+            <a-input placeholder="图号" size="small" style="font-size: 10px;" allowClear v-model="searchValue.drawingno" />
+            <a-dropdown>
+             <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
+              <a-menu slot="overlay">
+                <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('drawingno', item)">
+                  <a href="javascript:;" :class="drawingnosign == item ? 'menuBg' : ''">{{ item }}</a>
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
+          </div>
+        </span>
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
@@ -132,6 +214,14 @@ export default {
       itemcodesign: "",
       itemnamesign: "",
       itemspecificationsign: "",
+      drawingnosign:"",
+      searchValue: {
+        plantId: "",
+        itemcode: "",
+        itemname: "",
+        itemspecification: "",
+        drawingno:""
+      },
     };
   },
   created() {
@@ -157,6 +247,9 @@ export default {
         case "itemspecification":
           this.itemspecificationsign = text;
           break;
+        case "drawingno":
+          this.drawingnosign = text;
+          break;    
       }
       this.search();
     },
@@ -164,7 +257,7 @@ export default {
     detail(record) {
       this.isModelInfo = true;
       this.mitemcodeData.ITEM_CODE = record.ITEM_CODE;
-      this.mitemcodeData.plantid = this.searchForm.getFieldsValue().plantid;
+      this.mitemcodeData.plantid = this.searchValue.plantId;
     },
     //工厂获取
     getPlant() {
@@ -174,10 +267,10 @@ export default {
       getERPReportAction(parmas, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
-          this.plantId = this.plantList[0].PlantId;
-          this.searchForm.setFieldsValue({
-            plantid: this.plantList[0].PlantId,
-          });
+          this.searchValue.plantId = this.plantList[0].PlantId;
+          // this.searchForm.setFieldsValue({
+          //   plantid: this.plantList[0].PlantId,
+          // });
         }
       });
     },
@@ -214,45 +307,50 @@ export default {
       this.itemcodesign = "";
       this.itemnamesign = "";
       this.itemspecificationsign = "";
+      this.searchValue = {
+        itemcode: "",
+        itemname: "",
+        itemspecification: "",
+        drawingno:""
+      };
     },
     //关键词搜索
     search() {
-      console.log(this.data);
-      this.searchForm.validateFields((err, values) => {
-        if (!err) {
-          this.loading = true;
-          console.log("Received values of form: ", values);
-          this.data = [];
-          this.pagination.total = 0;
-          if (values.itemcode == undefined && values.itemname == undefined && values.itemspecification == undefined) {
-            this.$message.warning("请输入查询条件:品号,品名.规格");
-            this.loading = false;
-            return;
-          }
-          let parmas = {
-            pageindex: this.pagination.current,
-            pagesize: this.pagination.pageSize,
-            plantid: values.plantid,
-            itemcode: values.itemcode || "",
-            itemname: values.itemname || "",
-            itemspecification: values.itemspecification || "",
-            itemcodesign: this.itemcodesign,
-            itemspecificationsign: this.itemspecificationsign,
-            itemnamesign: this.itemnamesign,
-          };
-          getERPReportAction(parmas, "getbominfo").then((res) => {
-            if (res.data.success) {
-              let list = res.data.data.list;
-              this.data = list;
-              const pagination = { ...this.pagination };
-              pagination.total = res.data.data.recordsTotal;
-              this.pagination = pagination;
-              this.isSearch = true;
-            }
-            this.loading = false;
-          });
-          // do something
+      if (this.searchValue.itemcode == undefined && this.searchValue.itemname == undefined && this.searchValue.itemspecification == undefined && this.searchValue.drawingno == undefined) {
+        this.$message.warning("请输入查询条件:品号,品名.规格");
+        return;
+      }
+      if (this.searchValue.plantId == undefined) {
+        this.$message.warning("请选择工厂");
+        return;
+      }
+      this.loading = true;
+      this.data = [];
+      this.pagination.total = 0;     
+      console.log(this.searchValue);
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.pageSize,
+        plantid: this.searchValue.plantId,
+        itemcode: this.searchValue.itemcode.trim(),
+        itemname: this.searchValue.itemname.trim(),
+        drawingno:this.searchValue.drawingno.trim(),
+        itemspecification: this.searchValue.itemspecification.trim(),
+        itemcodesign: this.itemcodesign,
+        itemspecificationsign: this.itemspecificationsign,
+        itemnamesign: this.itemnamesign,
+        drawingnosign:this.drawingnosign
+      };
+      getERPReportAction(parmas, "getbominfo").then((res) => {
+        if (res.data.success) {
+          let list = res.data.data.list;
+          this.data = list;
+          const pagination = { ...this.pagination };
+          pagination.total = res.data.data.recordsTotal;
+          this.pagination = pagination;
+          this.isSearch = true;
         }
+        this.loading = false;
       });
     },
     //行数据双击
@@ -267,7 +365,7 @@ export default {
             console.log(record);
             this.isModelInfo = true;
             this.mitemcodeData.ITEM_CODE = record.ITEM_CODE;
-            this.mitemcodeData.plantid = this.searchForm.getFieldsValue().plantid;
+            this.mitemcodeData.plantid = this.searchValue.plantId;
           },
         },
       };

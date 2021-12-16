@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:48:13
- * @LastEditTime: 2021-12-14 15:01:38
+ * @LastEditTime: 2021-12-15 17:49:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/data.js
@@ -14,11 +14,10 @@ export const columns = [
         width: 50,
     },
     {
-        title: "品号",
         dataIndex: "ITEM_CODE",
-        scopedSlots: { customRender: "ITEM_CODE" },
         align: "left",
-        width: 120,
+        width: 150,
+        slots: { title: "ITEM_CODE_INPUT" }
     },
     {
         title: "工厂编号",
@@ -28,25 +27,25 @@ export const columns = [
         width: 65,
     },
     {
-        title: "工厂/储运",
         dataIndex: "PLANT_NAME_P",
         scopedSlots: { customRender: "PLANT_NAME_P" },
         align: "left",
-        width: 70,
+        width: 100,
+        slots: { title: "PLANT_NAME_P_SELECT" }
     },
     {
-        title: "品名",
         dataIndex: "ITEM_NAME",
         scopedSlots: { customRender: "ITEM_NAME" },
         align: "left",
-        width: 120,
+        width: 150,
+        slots: { title: "ITEM_NAME_INPUT" }
     },
     {
-        title: "规格",
         dataIndex: "ITEM_SPECIFICATION",
         scopedSlots: { customRender: "ITEM_SPECIFICATION" },
         align: "left",
         width: 200,
+        slots: { title: "ITEM_SPECIFICATION_INPUT" }
     },
     {
         title: "状态",
@@ -56,11 +55,11 @@ export const columns = [
         width: 50,
     },
     {
-        title: "图号",
         dataIndex: "DRAWING_NO",
         scopedSlots: { customRender: "DRAWING_NO" },
-        align: "center",
-        width: 110,
+        align: "left",
+        width: 150,
+        slots: { title: "DRAWING_NO_INPUT" }
     },
     {
         title: "库存单位",

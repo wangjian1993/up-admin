@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:51:24
- * @LastEditTime: 2021-12-14 15:07:28
+ * @LastEditTime: 2021-12-15 18:06:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomList/data.js
@@ -14,32 +14,38 @@ export const columns = [
         width:50,
     },
     {
-        title: "主件品号",
         dataIndex: "ITEM_CODE",
-        scopedSlots: { customRender: "ITEM_CODE" },
         align: "left",
-        width: 90,
+        width: 150,
+        slots: { title: "ITEM_CODE_INPUT" }
     },
     {
-        title: "品名",
+        dataIndex: "PLANT_NAME_P",
+        scopedSlots: { customRender: "PLANT_NAME_P" },
+        align: "left",
+        width: 100,
+        slots: { title: "PLANT_NAME_P_SELECT" }
+    },
+    {
         dataIndex: "ITEM_NAME",
         scopedSlots: { customRender: "ITEM_NAME" },
         align: "left",
-        width: 80,
+        width: 150,
+        slots: { title: "ITEM_NAME_INPUT" }
     },
     {
-        title: "规格",
         dataIndex: "ITEM_SPECIFICATION",
         scopedSlots: { customRender: "ITEM_SPECIFICATION" },
         align: "left",
         width: 200,
+        slots: { title: "ITEM_SPECIFICATION_INPUT" }
     },
     {
-        title: "图号",
         dataIndex: "DRAWING_NO",
         scopedSlots: { customRender: "DRAWING_NO" },
-        align: "center",
-        width: 80,
+        align: "left",
+        width: 120,
+        slots: { title: "DRAWING_NO_INPUT" }
     },
     {
         title: "单位",
@@ -68,13 +74,6 @@ export const columns = [
         scopedSlots: { customRender: "PLANT_CODE_P" },
         align: "center",
         width: 60,
-    },
-    {
-        title: "工厂名称",
-        dataIndex: "PLANT_NAME_P",
-        scopedSlots: { customRender: "PLANT_NAME_P" },
-        align: "center",
-        width: 80,
     },
     {
         title: "引用工厂",

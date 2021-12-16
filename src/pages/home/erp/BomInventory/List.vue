@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-14 16:41:10
+ * @LastEditTime: 2021-12-16 11:29:30
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/List.vue
@@ -388,14 +388,14 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            itemcode: values.itemcode || "",
-            itemname: values.itemname || "",
-            drawingno: values.drawingno || "",
-            inventoryqty: values.inventoryqty || "",
-            originialreceiptdate: originialreceiptdate || "",
+            itemcode: values.itemcode.trim(),
+            itemname: values.itemname.trim(),
+            drawingno: values.drawingno.trim(),
+            inventoryqty: values.inventoryqty.trim(),
+            originialreceiptdate: originialreceiptdate.trim(),
             lastreceiptdate: lastreceiptdate || "",
             lastissuedate: lastissuedate || "",
-            itemspecification: values.itemspecification || "",
+            itemspecification: values.itemspecification.trim(),
             itemcodesign: this.itemcodesign,
             itemspecificationsign: this.itemspecificationsign,
             itemnamesign: this.itemnamesign,

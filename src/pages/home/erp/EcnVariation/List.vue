@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-14 16:45:43
+ * @LastEditTime: 2021-12-16 11:51:46
  * @LastEditors: max
  * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
@@ -37,7 +37,18 @@
         <a-row v-if="advanced">
           <a-col :md="6" :sm="24">
             <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select style="width: 120px" v-decorator="['approvestatus']">
+              <!-- <a-select style="width: 120px" default-value="A" v-decorator="['approvestatus']">
+                <a-select-option value="A">
+                  全部
+                </a-select-option>
+                <a-select-option value="N">
+                  未审核
+                </a-select-option>
+                <a-select-option value="Y">
+                  已审核
+                </a-select-option>
+              </a-select> -->
+              <a-select default-value="全部" style="width: 120px" v-decorator="['approvestatus',{initialValue:'A'}]">
                 <a-select-option value="A">
                   全部
                 </a-select-option>
@@ -75,7 +86,7 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ECN_ID" bordered :customRow="handleClickRow" :components="components">
+    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ECN_ID" bordered :customRow="handleClickRow" :components="components">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -154,9 +165,6 @@ export default {
   created() {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
-      this.searchForm.setFieldsValue({
-        approvestatus: "A",
-      });
     });
     this.getPlant();
   },
@@ -260,7 +268,7 @@ export default {
             itemcodep: values.itemcodep || "",
             itemcodec: values.itemcodec || "",
             ecnchangeorder: values.ecnchangeorder || "",
-            approvestatus: values.approvestatus,
+            approvestatus: values.approvestatus || "A",
             docdatestart: docdatestart || "",
             docdateend: docdateend || "",
             approvedatestart: approvedatestart || "",
