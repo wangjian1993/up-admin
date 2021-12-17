@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2021-12-17 14:43:21
+ * @Date: 2021-12-17 09:09:51
+ * @LastEditTime: 2021-12-17 16:46:03
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/production/process/outbound.vue
+ * @FilePath: /up-admin/src/pages/home/production/rework/record.vue
 -->
 <template>
   <!-- 搜索 -->
@@ -18,10 +18,14 @@
           {{ userLineData.PlantName }}
         </a-descriptions-item>
         <a-descriptions-item label="生产车间">
-          {{ userLineData.WorkshopName }}
+          <a-select style="width: 200px" v-model="ReworkWorkshopId" placeholder="请选择生产车间" @change="workshopChange">
+            <a-select-option v-for="item in workshopList" :key="item.WorkshopId" :value="item.WorkshopId">{{ item.WorkshopName }}</a-select-option>
+          </a-select>
         </a-descriptions-item>
         <a-descriptions-item label="生产产线">
-          {{ userLineData.LineName }}
+          <a-select style="width: 200px" v-model="ReworkLineId" placeholder="请选择生产产线">
+            <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
+          </a-select>
         </a-descriptions-item>
         <a-descriptions-item label="填单人/填单时间">
           {{ userLineData.UserName }}
@@ -30,17 +34,13 @@
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="计划生产时间">{{ orderInfo.PlanDate }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
-        <a-descriptions-item label="出站数量"><a-input-number :min="0" v-model="receiveQty" style="width:200px"/></a-descriptions-item>
-        <a-descriptions-item label="报废数量"><a-input-number :min="0" v-model="scrapQty" style="width:200px"/></a-descriptions-item>
-        <a-descriptions-item label="备注"><a-input v-model="remark" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="返工数量"><a-input-number :min="0" v-model="reworkQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="返工原因"><a-input v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
-          <a-button type="primary" icon="check-circle" @click="startWork" :disabled="!hasPerm('process_scan')">
-            出站
+          <a-button type="primary" icon="check-circle" @click="startWork" :disabled="!hasPerm('save')">
+            返工提交
           </a-button>
-          <a-button style="margin-left:10px" type="primary" icon="export" @click="handlePrint()">
-            打印标识卡
-          </a-button></a-descriptions-item
-        >
+        </a-descriptions-item>
       </a-descriptions>
     </a-card>
     <div style="margin:10px 0">
@@ -48,18 +48,18 @@
     </div>
     <!-- 列表 -->
     <WorkTable :orderList="orderList" />
-     <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
+    <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
   </a-card>
 </template>
 <script>
-import { setStartWorkApi } from "@/services/web.js";
+import { setReworkApi, getReworkApi } from "@/services/web.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { getTimeData } from "@/utils/util";
 import MsgList from "../components/MsgList.vue";
 import WorkTable from "../components/WorkTable.vue";
-import identification from './identification.vue'
+import identification from "../process/identification.vue";
 export default {
-  components: { identification, MsgList, WorkTable },
+  components: { MsgList, WorkTable, identification },
   mixins: [PublicVar],
   data() {
     return {
@@ -72,13 +72,18 @@ export default {
       isPrint: false,
       IsSuccess: false,
       remark: "",
-      receiveQty:0,
-      scrapQty: 0,
+      reworkQty: 0,
       orderList: [],
+      workshopList: [],
+      workshopId: "",
+      lineList: [],
+      ReworkWorkshopId: "",
+      ReworkLineId: "",
     };
   },
   created() {
     this.getWorkInfo();
+    this.getWorkshopList();
   },
   mounted() {
     this.$refs.orderValue.focus();
@@ -87,21 +92,28 @@ export default {
     closeListData() {
       this.listData = [];
     },
-    //打印工单
-    handlePrint() {
-      console.log(this.orderInfo);
-      if (this.orderInfo.length == 0) {
-        let message = {
-          content: "请先输入工单号，或者扫描工单二维码",
-          time: getTimeData(),
-          IsSuccess: false,
-        };
-        this.listData.unshift(message);
-        return;
-      }
-      this.isPrint = true;
+    getWorkshopList() {
+      getReworkApi("", "getworkshop").then((res) => {
+        if (res.data.success) {
+          console.log(res.data.data.result);
+          this.workshopList = res.data.data.result;
+        }
+      });
     },
-
+    getLineList() {
+      let parmas = {
+        workshopid: this.workshopId,
+      };
+      getReworkApi(parmas, "getline").then((res) => {
+        if (res.data.success) {
+          this.lineList = res.data.data.result;
+        }
+      });
+    },
+    workshopChange(e) {
+      this.workshopId = e;
+      this.getLineList();
+    },
     pushKeyword(event) {
       if (event.keyCode === 13) {
         event.preventDefault(); // 阻止浏览器默认换行操作
@@ -113,7 +125,7 @@ export default {
       this.isPrint = false;
     },
     getWorkInfo() {
-      setStartWorkApi("", "loaduserline").then((res) => {
+      setReworkApi("", "loaduserline").then((res) => {
         if (res.data.success) {
           res.data.message.time = getTimeData();
           res.data.message.IsSuccess = res.data.data.IsSuccess;
@@ -141,10 +153,10 @@ export default {
         return;
       }
       let parmas = {
-        ScanCode: this.orderValue.trim(),
-        ProcessStatus: "PROCESS_FINISHED",
+        ScanCode: this.orderValue,
+        ProcessStatus: "PROCESS_REWORK",
       };
-      setStartWorkApi(parmas, "scan").then((res) => {
+      setReworkApi(parmas, "scan").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
@@ -170,9 +182,27 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      if (!this.receiveQty) {
+      if (!this.reworkQty) {
         let message = {
-          content: "请先输入出站数量",
+          content: "请先输入进站数量",
+          time: getTimeData(),
+          IsSuccess: false,
+        };
+        this.listData.unshift(message);
+        return;
+      }
+      if (this.ReworkWorkshopId === "") {
+        let message = {
+          content: "请先选择返工生产车间",
+          time: getTimeData(),
+          IsSuccess: false,
+        };
+        this.listData.unshift(message);
+        return;
+      }
+      if (this.ReworkLineId === "") {
+        let message = {
+          content: "请先选择返工生产产线",
           time: getTimeData(),
           IsSuccess: false,
         };
@@ -180,17 +210,15 @@ export default {
         return;
       }
       let parmas = {
-        PlantId: this.orderInfo.PlantId,
-        WorkshopId: this.orderInfo.WorkshopId,
-        LineId: this.orderInfo.LineId,
-        ScanCode: this.orderInfo.ScanCode,
+        ReworkWorkshopId: this.ReworkWorkshopId,
+        ReworkLineId: this.ReworkLineId,
+        ReworkQty: this.reworkQty,
+        Remarks: this.remark,
         ScanCodeType: this.orderInfo.ScanCodeType,
         MoCode: this.orderInfo.MoCode,
-        ProcessStatus: "PROCESS_FINISHED",
-        ReportQty: this.receiveQty,
-        ScrapedQty: this.scrapQty,
+        ScanCode: this.orderInfo.ScanCode,
       };
-      setStartWorkApi(parmas, "submit").then((res) => {
+      setReworkApi(parmas, "submit").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           console.log(res);

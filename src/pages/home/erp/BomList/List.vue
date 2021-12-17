@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-16 11:53:38
+ * @LastEditTime: 2021-12-17 13:53:35
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -127,6 +127,19 @@
         <template slot="CreateDate" slot-scope="text">
           <span>{{ splitData(text) }}</span>
         </template>
+         <template slot="ApproveStatus_SELECT">
+        <span>
+          <p>BOM生效状态</p>
+          <div style="display:flex;">
+            <a-select v-model="searchValue.approvestatus" style="width: 80px" defaultValue="ALL" size="small" @change="search" placeholder="">
+              <a-select-option value="">All</a-select-option>
+              <a-select-option value="Y">已生效</a-select-option>
+              <a-select-option value="N">未生效</a-select-option>
+              <a-select-option value="V">失效</a-select-option>
+            </a-select>
+          </div>
+        </span>
+      </template>
         <template slot="PLANT_NAME_P_SELECT">
           <span>
             <p>工厂/储运</p>
@@ -251,6 +264,7 @@ export default {
         itemname: "",
         drawingno: "",
         itemspecification: "",
+        approvestatus:""
       },
     };
   },
@@ -334,6 +348,7 @@ export default {
         itemcode: "",
         itemname: "",
         itemspecification: "",
+        approvestatus:""
       };
       getERPReportAction(parmas, "getbomlist").then((res) => {
         if (res.data.success) {
@@ -364,6 +379,7 @@ export default {
         itemname: "",
         itemspecification: "",
         drawingno: "",
+        approvestatus:""
       };
     },
     //关键词搜索
@@ -386,6 +402,7 @@ export default {
         itemcode: this.searchValue.itemcode.trim(),
         itemname: this.searchValue.itemname.trim(),
         drawingno: this.searchValue.drawingno.trim(),
+        approvestatus:this.searchValue.approvestatus,
         itemspecification: this.searchValue.itemspecification.trim(),
         itemcodesign: this.itemcodesign,
         itemspecificationsign: this.itemspecificationsign,

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2021-12-16 16:10:16
+ * @LastEditTime: 2021-12-17 14:45:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/StartWork.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-textarea style="width:400px" allowClear ref="orderValue" v-model="orderValue" placeholder="" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-textarea style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @pressEnter="scanCode" auto-size /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -54,8 +54,8 @@ import { setStartWorkApi, getPrintInfo } from "@/services/web.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import Print from "../components/print.vue";
 import { getTimeData } from "@/utils/util";
-import MsgList from "./components/MsgList.vue";
-import WorkTable from "./components/WorkTable.vue";
+import MsgList from "../components/MsgList.vue";
+import WorkTable from "../components/WorkTable.vue";
 export default {
   components: { Print, MsgList, WorkTable },
   mixins: [PublicVar],
@@ -141,7 +141,7 @@ export default {
         return;
       }
       let parmas = {
-        ScanCode: this.orderValue.trim(),
+        ScanCode: this.orderValue,
         ProcessCode: "ASSEMBLE_PROCESS",
         ProcessStatus: "PROCESS_START",
       };
@@ -186,7 +186,7 @@ export default {
         LineId: this.orderInfo.LineId,
         ScanCode: this.orderInfo.ScanCode,
         ScanCodeType: this.orderInfo.ScanCodeType,
-        MoCode: this.orderInfo.WorkshopId,
+        MoCode: this.orderInfo.MoCode,
         ProcessCode: "ASSEMBLE_PROCESS",
         ProcessStatus: "PROCESS_START",
         ReportQty: this.startWorkQty,

@@ -111,6 +111,7 @@ export default {
     //移除文件
     removeFile() {
       this.fileList = [];
+      this.errorList = [];
     },
     close() {
       this.$emit("closeModal");

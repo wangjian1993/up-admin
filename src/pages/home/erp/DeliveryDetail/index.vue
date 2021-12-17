@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 17:30:45
- * @LastEditTime: 2021-12-16 13:40:17
+ * @LastEditTime: 2021-12-17 14:02:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/DeliveryDetail/index.vue
@@ -88,7 +88,7 @@
         <span>
           <p>进退货别</p>
           <div style="display:flex;">
-            <a-select v-model="searchValue.poreceivetype" defaultValue="1" size="small" @change="search" placeholder="请选择需求工厂">
+            <a-select v-model="searchValue.poreceivetype" style="width:60px" defaultValue="1" size="small" @change="search" placeholder="请选择需求工厂">
               <a-select-option value="1">All</a-select-option>
               <a-select-option value="2">进货</a-select-option>
               <a-select-option value="3">退货</a-select-option>

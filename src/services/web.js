@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-12-11 10:05:18
+ * @LastEditTime: 2021-12-17 09:30:37
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -224,4 +224,11 @@ export function getStartWorkApi(params, action) {
 }
 export function setStartWorkApi(params, action) {
     return request(`${UP_WEB}/process/report/${action}`, METHOD.POST, params);
+}
+//返工
+export function getReworkApi(params, action) {
+    return request(`${UP_WEB}/process/rework/${action}`, METHOD.GET, params);
+}
+export function setReworkApi(params, action) {
+    return request(`${UP_WEB}/process/rework/${action}`, METHOD.POST, params);
 }

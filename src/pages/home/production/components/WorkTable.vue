@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:56:46
- * @LastEditTime: 2021-12-15 15:59:16
+ * @LastEditTime: 2021-12-17 09:24:22
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/production/process/components/WorkTable.vue
+ * @FilePath: /up-admin/src/pages/home/production/components/WorkTable.vue
 -->
 <template>
   <div>
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { columns } from "../data.js";
+import { columns } from "./data.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 export default {
   mixins: [PublicVar],

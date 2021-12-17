@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:48:13
- * @LastEditTime: 2021-12-15 17:49:33
+ * @LastEditTime: 2021-12-17 13:54:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/data.js
@@ -48,11 +48,11 @@ export const columns = [
         slots: { title: "ITEM_SPECIFICATION_INPUT" }
     },
     {
-        title: "状态",
         dataIndex: "ApproveStatus",
         scopedSlots: { customRender: "ApproveStatus" },
         align: "center",
-        width: 50,
+        width: 90,
+        slots: { title: "ApproveStatus_SELECT" }
     },
     {
         dataIndex: "DRAWING_NO",

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2021-12-16 16:10:07
+ * @LastEditTime: 2021-12-17 15:02:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-textarea style="width:400px" allowClear ref="orderValue" v-model="orderValue" placeholder="" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-textarea style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @pressEnter="scanCode" auto-size /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -37,9 +37,7 @@
           <a-button type="primary" icon="check-circle" @click="startWork" :disabled="!hasPerm('process_scan')">
             进站
           </a-button>
-          <a-button style="margin-left:10px" type="primary" icon="export" @click="handlePrint()">
-            打印标识卡
-          </a-button></a-descriptions-item
+         </a-descriptions-item
         >
       </a-descriptions>
     </a-card>
@@ -48,18 +46,16 @@
     </div>
     <!-- 列表 -->
     <WorkTable :orderList="orderList" />
-    <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
   </a-card>
 </template>
 <script>
 import { setStartWorkApi } from "@/services/web.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { getTimeData } from "@/utils/util";
-import MsgList from "./components/MsgList.vue";
-import WorkTable from "./components/WorkTable.vue";
-import identification from "./identification.vue";
+import MsgList from "../components/MsgList.vue";
+import WorkTable from "../components/WorkTable.vue";
 export default {
-  components: { MsgList, WorkTable, identification },
+  components: { MsgList, WorkTable },
   mixins: [PublicVar],
   data() {
     return {

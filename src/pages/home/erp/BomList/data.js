@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:51:24
- * @LastEditTime: 2021-12-15 18:06:00
+ * @LastEditTime: 2021-12-17 13:48:51
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomList/data.js
@@ -62,11 +62,11 @@ export const columns = [
         width: 80,
     },
     {
-        title: "BOM生效状态",
         dataIndex: "ApproveStatus",
         scopedSlots: { customRender: "ApproveStatus" },
         align: "center",
         width: 120,
+        slots: { title: "ApproveStatus_SELECT" }
     },
     {
         title: "工厂",

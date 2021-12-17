@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-30 14:31:04
- * @LastEditTime: 2021-11-30 16:34:52
+ * @LastEditTime: 2021-12-17 14:40:10
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/processLine/process.vue
@@ -66,7 +66,7 @@
           </a-form-model-item>
           <a-form-model-item ref="ProcessCode" has-feedback label="工序编码" prop="ProcessCode">
             <a-input
-              v-model="form.ProcessCode"
+              v-model.trim="form.ProcessCode"
               allowClear
               placeholder="请输入工序编码"
               :disabled="isEdit"
