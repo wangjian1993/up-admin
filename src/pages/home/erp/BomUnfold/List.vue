@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-14 15:27:48
+ * @LastEditTime: 2021-12-20 15:30:30
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -263,6 +263,8 @@ export default {
       this.week = "";
       this.searchForm.resetFields();
       this.getPlant();
+      this.pagination.current = 1
+       this.pagination.total = 0
     },
     //关键词搜索
     search() {
@@ -282,6 +284,9 @@ export default {
             itemcodesign: "等于",
             itemspecificationsign: "",
             itemnamesign: "",
+            drawingnosign:"",
+            drawingno:"",
+            approvestatus:""
           };
           getERPReportAction(parmas, "getbomlist").then((res) => {
             if (res.data.success) {

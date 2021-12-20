@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 17:30:45
- * @LastEditTime: 2021-12-17 14:02:47
+ * @LastEditTime: 2021-12-20 10:44:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/DeliveryDetail/index.vue
@@ -301,6 +301,7 @@ export default {
           this.docnorsign = text;
           break;
       }
+      this.pagination.current = 1;
       this.search();
     },
     //物料需求详情
@@ -328,6 +329,8 @@ export default {
     reset() {
       this.data = [];
       this.week = "";
+      this.pagination.current = 1;
+      this.pagination.total = 0;
       this.searchForm.resetFields();
       this.getPlant();
       this.itemcodesign = "";

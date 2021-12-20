@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-14 15:06:16
+ * @LastEditTime: 2021-12-20 10:43:36
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -214,6 +214,8 @@ export default {
       this.searchForm.resetFields();
       this.data = [];
       this.getPlant();
+      this.pagination.current = 1;
+      this.pagination.total = 0;
       this.searchForm.setFieldsValue({
         approvestatus: "A",
       });

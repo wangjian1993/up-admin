@@ -48,7 +48,7 @@
     </div>
     <!-- 列表 -->
     <WorkTable :orderList="orderList" />
-     <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
+    <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
   </a-card>
 </template>
 <script>
@@ -57,7 +57,7 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { getTimeData } from "@/utils/util";
 import MsgList from "../components/MsgList.vue";
 import WorkTable from "../components/WorkTable.vue";
-import identification from './identification.vue'
+import identification from "./identification.vue";
 export default {
   components: { identification, MsgList, WorkTable },
   mixins: [PublicVar],
@@ -72,7 +72,7 @@ export default {
       isPrint: false,
       IsSuccess: false,
       remark: "",
-      receiveQty:0,
+      receiveQty: 0,
       scrapQty: 0,
       orderList: [],
     };

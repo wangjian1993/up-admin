@@ -31,6 +31,13 @@ const assetsCDN = {
     '//cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js',
     '//cdn.jsdelivr.net/npm/@antv/data-set@0.11.4/build/data-set.min.js',
     '//cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js'
+    // '//cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.min.js',
+    // '//cdn.bootcdn.net/ajax/libs/vue-router/3.4.0/vue-router.min.js',
+    // '//cdn.bootcdn.net/ajax/libs/vuex/3.5.1/vuex.min.js',
+    // '//cdn.bootcdn.net/ajax/libs/axios/0.20.0/axios.min.js',
+    // '//cdn.bootcdn.net/ajax/libs/nprogress/0.2.0/nprogress.min.js',
+    // '//cdn.bootcdn.net/ajax/libs/clipboard.js/2.0.6/clipboard.min.js',
+    // '//cdn.bootcdn.net/ajax/libs/js-cookie/2.2.1/js.cookie.min.js',
   ]
 }
 

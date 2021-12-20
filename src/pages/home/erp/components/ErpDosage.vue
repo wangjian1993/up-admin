@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-12-14 15:33:50
+ * @LastEditTime: 2021-12-20 15:15:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="BOM信息" @cancel="close" width="100%" :footer="null" centered>
+    <a-drawer :visible="visible" title="BOM信息" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }"  width="100%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-descriptions :column="5" bordered size="small" :class="antDescriptionsRow">
@@ -62,7 +62,7 @@
         </div>
         <div>
           <a-card title="BOM用量信息" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName" :components="components">
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName" :components="components">
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -95,7 +95,7 @@
           </a-card>
         </div>
       </a-spin>
-    </a-modal>
+    </a-drawer>
     <model-info v-if="isModelInfo" :modelData="modelData" @closeModal="closeModal"></model-info>
     <BomUnfold v-if="isUnfold" :ModelInfo="info" @closeModal="closeModal" />
   </div>

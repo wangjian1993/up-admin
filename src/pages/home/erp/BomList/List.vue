@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-17 13:53:35
+ * @LastEditTime: 2021-12-20 15:04:54
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -159,7 +159,7 @@
                 <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
                 <a-menu slot="overlay">
                   <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemcode', item)">
-                    <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item + itemcodesign }}</a>
+                    <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item }}</a>
                   </a-menu-item>
                 </a-menu>
               </a-dropdown>
@@ -308,6 +308,7 @@ export default {
           this.drawingnosign = text;
           break;
       }
+      this.pagination.current = 1
       this.search();
     },
     //多选
@@ -368,6 +369,8 @@ export default {
       // this.getListAll();
       this.data = [];
       this.week = "";
+      this.pagination.current = 1
+       this.pagination.total = 0
       this.searchForm.resetFields();
       this.getPlant();
       this.itemcodesign = "";

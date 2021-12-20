@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-17 13:53:53
+ * @LastEditTime: 2021-12-20 10:41:37
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
@@ -265,6 +265,7 @@ export default {
           this.drawingnosign = text;
           break;    
       }
+      this.pagination.current = 1
       this.search();
     },
     //物料需求详情
@@ -316,6 +317,8 @@ export default {
     reset() {
       this.data = [];
       this.week = "";
+      this.pagination.current = 1
+       this.pagination.total = 0
       this.searchForm.resetFields();
       this.getPlant();
       this.itemcodesign = "";
@@ -341,7 +344,7 @@ export default {
       }
       this.loading = true;
       this.data = [];
-      this.pagination.total = 0;     
+      // this.pagination.total = 0;     
       console.log(this.searchValue);
       let parmas = {
         pageindex: this.pagination.current,

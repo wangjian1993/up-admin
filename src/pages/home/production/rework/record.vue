@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:51
- * @LastEditTime: 2021-12-17 16:46:03
+ * @LastEditTime: 2021-12-20 09:19:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/rework/record.vue
@@ -40,6 +40,9 @@
           <a-button type="primary" icon="check-circle" @click="startWork" :disabled="!hasPerm('save')">
             返工提交
           </a-button>
+          <a-button style="margin-left:10px" type="primary" icon="export" @click="handlePrint()">
+            打印标识卡
+          </a-button>
         </a-descriptions-item>
       </a-descriptions>
     </a-card>
@@ -48,7 +51,7 @@
     </div>
     <!-- 列表 -->
     <WorkTable :orderList="orderList" />
-    <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
+    <reworkSheet v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></reworkSheet>
   </a-card>
 </template>
 <script>
@@ -57,9 +60,9 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { getTimeData } from "@/utils/util";
 import MsgList from "../components/MsgList.vue";
 import WorkTable from "../components/WorkTable.vue";
-import identification from "../process/identification.vue";
+import reworkSheet from "./reworkSheet.vue";
 export default {
-  components: { MsgList, WorkTable, identification },
+  components: { MsgList, WorkTable, reworkSheet },
   mixins: [PublicVar],
   data() {
     return {
@@ -91,6 +94,20 @@ export default {
   methods: {
     closeListData() {
       this.listData = [];
+    },
+    //打印工单
+    handlePrint() {
+      console.log(this.orderInfo);
+      if (this.orderInfo.length == 0) {
+        let message = {
+          content: "请先输入工单号，或者扫描工单二维码",
+          time: getTimeData(),
+          IsSuccess: false,
+        };
+        this.listData.unshift(message);
+        return;
+      }
+      this.isPrint = true;
     },
     getWorkshopList() {
       getReworkApi("", "getworkshop").then((res) => {

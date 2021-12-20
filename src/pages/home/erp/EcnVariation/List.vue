@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-16 11:51:46
+ * @LastEditTime: 2021-12-20 10:44:30
  * @LastEditors: max
  * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
@@ -228,6 +228,8 @@ export default {
       this.week = "";
       this.loading = false;
       this.searchForm.resetFields();
+      this.pagination.current = 1
+      this.pagination.total = 0
       this.getPlant();
       this.searchForm.setFieldsValue({
         approvestatus: "A",

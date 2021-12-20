@@ -1,18 +1,18 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2021-12-10 15:29:19
+ * @LastEditTime: 2021-12-20 15:37:32
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
 -->
 <template>
   <div>
-    <a-modal class="bom-detail" v-model="visible" title="品号信息" @cancel="close" width="90%" :footer="null" centered>
+    <a-drawer class="bom-detail" :visible="visible" title="BOM信息" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }"  width="100%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div class="info-box">
           <div>
-            <a-descriptions :column="3" bordered size="small">
+            <a-descriptions :column="4" bordered size="small">
               <a-descriptions-item label="品号">
                 {{ info.ITEM_CODE }}
               </a-descriptions-item>
@@ -124,7 +124,7 @@
           </div>
         </div>
       </a-spin>
-    </a-modal>
+    </a-drawer>
   </div>
 </template>
 
@@ -314,12 +314,10 @@ export default {
 }
 /deep/ .ant-modal {
   height: auto;
-  min-height: 600px;
   max-height: auto;
 }
 .info-box {
   width: 100%;
-  height: 600px;
   overflow-y: auto;
 }
 </style>

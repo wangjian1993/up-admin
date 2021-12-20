@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-12-14 16:56:16
+ * @LastEditTime: 2021-12-20 15:35:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/VariationInfo.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="工程变更单" @cancel="close" width="100%" :footer="null" centered>
+    <a-drawer :visible="visible" title="BOM信息" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }"  width="100%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-descriptions :column="5" bordered size="small">
@@ -117,7 +117,7 @@
           </a-card>
         </div>
       </a-spin>
-    </a-modal>
+    </a-drawer>
   </div>
 </template>
 

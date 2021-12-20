@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-16 11:29:30
+ * @LastEditTime: 2021-12-20 14:53:32
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/List.vue
@@ -285,6 +285,7 @@ export default {
           this.lastissuedatesign = text;
           break;
       }
+      this.pagination.current = 1
       this.search();
     },
     //多选
@@ -347,6 +348,8 @@ export default {
       // this.getListAll();
       this.data = [];
       this.week = "";
+      this.pagination.current = 1
+       this.pagination.total = 0
       this.searchForm.resetFields();
       this.getPlant();
       this.itemcodesign = "";
@@ -366,36 +369,36 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           console.log(values);
-          this.loading = true;
           // console.log("Received values of form: ", values.week);
           if (values.itemcode == undefined && values.itemname == undefined && values.itemspecification == undefined) {
             this.$message.warning("请输入查询条件:品号,品名.规格");
             this.loading = false;
             return;
           }
-          if (values["originialreceiptdate"]) {
+          if (values["originialreceiptdate"] && values["originialreceiptdate"].length == 1) {
             var originialreceiptdate = values["originialreceiptdate"].format("YYYY-MM-DD");
           }
-          if (values["lastreceiptdate"]) {
+          if (values["lastreceiptdate"] && values["lastreceiptdate"].length == 1) {
             var lastreceiptdate = values["lastreceiptdate"].format("YYYY-MM-DD");
           }
-          if (values["lastissuedate"]) {
+          if (values["lastissuedate"] && values["lastissuedate"].length == 1) {
             var lastissuedate = values["lastissuedate"].format("YYYY-MM-DD");
           }
+          this.loading = true;
           this.data = [];
           this.pagination.total = 0;
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            itemcode: values.itemcode.trim(),
-            itemname: values.itemname.trim(),
-            drawingno: values.drawingno.trim(),
-            inventoryqty: values.inventoryqty.trim(),
-            originialreceiptdate: originialreceiptdate.trim(),
+            itemcode: values.itemcode|| "",
+            itemname: values.itemname|| "",
+            drawingno: values.drawingno || "",
+            inventoryqty: values.inventoryqty || "",
+            originialreceiptdate: originialreceiptdate || "", 
             lastreceiptdate: lastreceiptdate || "",
             lastissuedate: lastissuedate || "",
-            itemspecification: values.itemspecification.trim(),
+            itemspecification: values.itemspecification || "",
             itemcodesign: this.itemcodesign,
             itemspecificationsign: this.itemspecificationsign,
             itemnamesign: this.itemnamesign,
@@ -405,6 +408,7 @@ export default {
             drawingnosign: this.drawingnosign,
             inventoryqtysign: this.inventoryqtysign,
           };
+          console.log("111111",parmas)
           getERPReportAction(parmas, "getwarehousestockinfo").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
