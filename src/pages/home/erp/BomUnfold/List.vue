@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-20 15:30:30
+ * @LastEditTime: 2021-12-21 14:24:45
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -44,8 +44,8 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="false" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow" @expand="fatherExpand" :expandedRowKeys="expandedRowKeys">
-      <a-table slot="expandedRowRender" :loading="expandLoading" size="small" :rowKey="(data) => data.ITEM_ID" :columns="innerColumns" :data-source="innerData" :customRow="handleClickRow2" :pagination="false" bordered>
+    <a-table v-if="hasPerm('search')" ref="tableRef" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="false" @change="handleTableChange" :rowKey="(data) => data.BOM_ID" bordered :customRow="handleClickRow" @expand="fatherExpand" :expandedRowKeys="expandedRowKeys">
+      <a-table slot="expandedRowRender" :loading="expandLoading" size="small" :rowKey="(innerData, index) => innerData.ITEM_CODE + '_' + index" :columns="innerColumns" :data-source="innerData" :customRow="handleClickRow2" :pagination="false" bordered>
         <template slot="ITEM_PROPERTY" slot-scope="text">
           <span>{{ modelType(text) }}</span>
         </template>
@@ -115,7 +115,16 @@ export default {
       isModelInfo: false,
       modelData: [],
       itemcodesign: "",
+      ScrollPosition: 0,
     };
+  },
+  activated() {
+    this.$refs.tableRef.$el.querySelector(".ant-table-body").scrollTop = this.ScrollPosition;
+    console.log(this.$refs.tableRef);
+  },
+  beforeRouteLeave(to, from, next) {
+    this.ScrollPosition = this.$refs.tableRef.$el.querySelector(".ant-table-body").scrollTop;
+    next();
   },
   updated() {
     renderStripe();
@@ -263,17 +272,14 @@ export default {
       this.week = "";
       this.searchForm.resetFields();
       this.getPlant();
-      this.pagination.current = 1
-       this.pagination.total = 0
+      this.pagination.current = 1;
+      this.pagination.total = 0;
     },
     //关键词搜索
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          // console.log("Received values of form: ", values.week);
-          this.data = [];
-          this.pagination.total = 0;
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
@@ -284,9 +290,9 @@ export default {
             itemcodesign: "等于",
             itemspecificationsign: "",
             itemnamesign: "",
-            drawingnosign:"",
-            drawingno:"",
-            approvestatus:""
+            drawingnosign: "",
+            drawingno: "",
+            approvestatus: "",
           };
           getERPReportAction(parmas, "getbomlist").then((res) => {
             if (res.data.success) {

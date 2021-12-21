@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-20 15:04:54
+ * @LastEditTime: 2021-12-21 14:12:17
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -92,7 +92,9 @@
         :rowKey="(data) => data.BOM_ID"
         bordered
         :customRow="handleClickRow"
+        ref="tableRef"
         :rowClassName="rowClassName"
+        :scrollToFirstRowOnChange="false"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -258,6 +260,7 @@ export default {
       itemnamesign: "",
       itemspecificationsign: "",
       drawingnosign: "",
+      ScrollPosition:0,
       searchValue: {
         plantId: "",
         itemcode: "",
@@ -267,6 +270,13 @@ export default {
         approvestatus:""
       },
     };
+  },
+  activated() {
+    this.$refs.tableRef.$el.querySelector(".ant-table-body").scrollTop = this.ScrollPosition;
+  },
+  beforeRouteLeave(to, from, next) {
+    this.ScrollPosition = this.$refs.tableRef.$el.querySelector(".ant-table-body").scrollTop;
+    next();
   },
   updated() {
     renderStripe();
@@ -396,8 +406,6 @@ export default {
         return;
       }
       this.loading = true;
-      this.data = [];
-      this.pagination.total = 0;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,

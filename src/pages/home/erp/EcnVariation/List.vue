@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-20 10:44:30
+ * @LastEditTime: 2021-12-21 14:27:20
  * @LastEditors: max
  * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
@@ -48,7 +48,7 @@
                   已审核
                 </a-select-option>
               </a-select> -->
-              <a-select default-value="全部" style="width: 120px" v-decorator="['approvestatus',{initialValue:'A'}]">
+              <a-select default-value="全部" style="width: 120px" v-decorator="['approvestatus', { initialValue: 'A' }]">
                 <a-select-option value="A">
                   全部
                 </a-select-option>
@@ -86,7 +86,7 @@
         </a-row>
       </div>
     </a-form>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ECN_ID" bordered :customRow="handleClickRow" :components="components">
+    <a-table v-if="hasPerm('search')" ref="tableRef" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ECN_ID" bordered :customRow="handleClickRow" :components="components">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -152,7 +152,16 @@ export default {
       detailData: [],
       plantList: [],
       mitemcodeData: [],
+      ScrollPosition: 0,
     };
+  },
+  activated() {
+    this.$refs.tableRef.$el.querySelector(".ant-table-body").scrollTop = this.ScrollPosition;
+    console.log(this.$refs.tableRef);
+  },
+  beforeRouteLeave(to, from, next) {
+    this.ScrollPosition = this.$refs.tableRef.$el.querySelector(".ant-table-body").scrollTop;
+    next();
   },
   updated() {
     renderStripe();
@@ -228,8 +237,8 @@ export default {
       this.week = "";
       this.loading = false;
       this.searchForm.resetFields();
-      this.pagination.current = 1
-      this.pagination.total = 0
+      this.pagination.current = 1;
+      this.pagination.total = 0;
       this.getPlant();
       this.searchForm.setFieldsValue({
         approvestatus: "A",
@@ -241,9 +250,7 @@ export default {
     //关键词搜索
     search() {
       this.searchForm.validateFields((err, values) => {
-        console.log(values);
         if (!err) {
-          console.log(values.ecnchangeorder);
           if (values.ecnchangeorder !== "" && values.ecnchangeorder !== undefined) {
             if ((values.itemcodep !== undefined && values.itemcodep !== "") || (values.itemcodec !== undefined && values.itemcodec !== "")) {
               this.$message.warning("查询条件:ECN变更单号与元件品号不能同时查询");
@@ -251,8 +258,6 @@ export default {
               return;
             }
           }
-          this.loading = true;
-          this.pagination.total = 0;
           if (values["range-time-picker1"] && values["range-time-picker1"].length == 2) {
             const rangeValue1 = values["range-time-picker1"];
             var docdatestart = rangeValue1[0].format("YYYY-MM-DD");
@@ -263,6 +268,7 @@ export default {
             var approvedatestart = rangeValue2[0].format("YYYY-MM-DD");
             var approvedateend = rangeValue2[1].format("YYYY-MM-DD");
           }
+          this.loading = true;
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,

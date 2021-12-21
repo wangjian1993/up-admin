@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-20 14:53:32
+ * @LastEditTime: 2021-12-21 14:34:02
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/List.vue
@@ -154,10 +154,11 @@
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(data) => data.ITEM_ID"
+        :rowKey="(data, index) => data.ITEM_ID + '_' + index"
         bordered
         :customRow="handleClickRow"
         :rowClassName="rowClassName"
+        ref="tableRef"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -239,7 +240,15 @@ export default {
       originialreceiptdatesign: "",
       lastissuedatesign: "",
       lastreceiptdatesign: "",
+      ScrollPosition: 0,
     };
+  },
+  activated() {
+    this.$refs.tableRef.$el.querySelector(".ant-table-body").scrollTop = this.ScrollPosition;
+  },
+  beforeRouteLeave(to, from, next) {
+    this.ScrollPosition = this.$refs.tableRef.$el.querySelector(".ant-table-body").scrollTop;
+    next();
   },
   updated() {
     renderStripe();
@@ -285,7 +294,7 @@ export default {
           this.lastissuedatesign = text;
           break;
       }
-      this.pagination.current = 1
+      this.pagination.current = 1;
       this.search();
     },
     //多选
@@ -348,8 +357,8 @@ export default {
       // this.getListAll();
       this.data = [];
       this.week = "";
-      this.pagination.current = 1
-       this.pagination.total = 0
+      this.pagination.current = 1;
+      this.pagination.total = 0;
       this.searchForm.resetFields();
       this.getPlant();
       this.itemcodesign = "";
@@ -385,17 +394,15 @@ export default {
             var lastissuedate = values["lastissuedate"].format("YYYY-MM-DD");
           }
           this.loading = true;
-          this.data = [];
-          this.pagination.total = 0;
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            itemcode: values.itemcode|| "",
-            itemname: values.itemname|| "",
+            itemcode: values.itemcode || "",
+            itemname: values.itemname || "",
             drawingno: values.drawingno || "",
             inventoryqty: values.inventoryqty || "",
-            originialreceiptdate: originialreceiptdate || "", 
+            originialreceiptdate: originialreceiptdate || "",
             lastreceiptdate: lastreceiptdate || "",
             lastissuedate: lastissuedate || "",
             itemspecification: values.itemspecification || "",
@@ -408,7 +415,7 @@ export default {
             drawingnosign: this.drawingnosign,
             inventoryqtysign: this.inventoryqtysign,
           };
-          console.log("111111",parmas)
+          console.log("111111", parmas);
           getERPReportAction(parmas, "getwarehousestockinfo").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
@@ -460,8 +467,8 @@ export default {
         let excelData = [];
         let list = JSON.parse(JSON.stringify(this.data));
         this.selectedRowKeys.forEach((item) => {
-          list.find((items) => {
-            if (items.ITEM_ID == item) {
+          list.find((items, index) => {
+            if (items.ITEM_ID + "_" + index == item) {
               items.ORIGINIAL_RECEIPT_DATE = splitData(items.ORIGINIAL_RECEIPT_DATE);
               items.LAST_RECEIPT_DATE = splitData(items.LAST_RECEIPT_DATE);
               items.LAST_ISSUE_DATE = splitData(items.LAST_ISSUE_DATE);

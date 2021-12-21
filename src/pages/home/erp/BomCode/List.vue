@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-20 10:41:37
+ * @LastEditTime: 2021-12-21 14:11:41
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
@@ -76,7 +76,7 @@
         </span>
       </a-col>
     </a-row>
-    <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_BUSINESS_ID" bordered :customRow="handleClickRow" :rowClassName="rowClassName" :components="components">
+    <a-table ref="tableRef" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_BUSINESS_ID" bordered :customRow="handleClickRow" :rowClassName="rowClassName" :components="components">
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -105,7 +105,7 @@
       <template slot="CreateDate" slot-scope="text">
         <span>{{ splitData(text) }}</span>
       </template>
-       <template slot="ApproveStatus_SELECT">
+      <template slot="ApproveStatus_SELECT">
         <span>
           <p>状态</p>
           <div style="display:flex;">
@@ -150,7 +150,7 @@
           <div style="display:flex;">
             <a-input placeholder="品名" size="small" style="font-size: 10px;" allowClear v-model="searchValue.itemname" />
             <a-dropdown>
-               <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
+              <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
               <a-menu slot="overlay">
                 <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemname', item)">
                   <a href="javascript:;" :class="itemnamesign == item ? 'menuBg' : ''">{{ item }}</a>
@@ -182,7 +182,7 @@
           <div style="display:flex;">
             <a-input placeholder="图号" size="small" style="font-size: 10px;" allowClear v-model="searchValue.drawingno" />
             <a-dropdown>
-             <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
+              <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
               <a-menu slot="overlay">
                 <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('drawingno', item)">
                   <a href="javascript:;" :class="drawingnosign == item ? 'menuBg' : ''">{{ item }}</a>
@@ -193,7 +193,6 @@
         </span>
       </template>
     </a-table>
-    <a-empty v-else description="暂无权限" />
     <model-info v-if="isModelInfo" :modelData="mitemcodeData" @closeModal="closeModal"></model-info>
   </a-card>
 </template>
@@ -227,16 +226,24 @@ export default {
       itemcodesign: "",
       itemnamesign: "",
       itemspecificationsign: "",
-      drawingnosign:"",
+      drawingnosign: "",
+      ScrollPosition: 0,
       searchValue: {
         plantId: "",
         itemcode: "",
         itemname: "",
         itemspecification: "",
-        drawingno:"",
-        approvestatus:""
+        drawingno: "",
+        approvestatus: "",
       },
     };
+  },
+  activated() {
+    this.$refs.tableRef.$el.querySelector(".ant-table-body").scrollTop = this.ScrollPosition;
+  },
+  beforeRouteLeave(to, from, next) {
+    this.ScrollPosition = this.$refs.tableRef.$el.querySelector(".ant-table-body").scrollTop;
+    next();
   },
   created() {
     this.$nextTick(() => {
@@ -263,9 +270,9 @@ export default {
           break;
         case "drawingno":
           this.drawingnosign = text;
-          break;    
+          break;
       }
-      this.pagination.current = 1
+      this.pagination.current = 1;
       this.search();
     },
     //物料需求详情
@@ -317,8 +324,8 @@ export default {
     reset() {
       this.data = [];
       this.week = "";
-      this.pagination.current = 1
-       this.pagination.total = 0
+      this.pagination.current = 1;
+      this.pagination.total = 0;
       this.searchForm.resetFields();
       this.getPlant();
       this.itemcodesign = "";
@@ -328,8 +335,8 @@ export default {
         itemcode: "",
         itemname: "",
         itemspecification: "",
-        drawingno:"",
-        approvestatus:""
+        drawingno: "",
+        approvestatus: "",
       };
     },
     //关键词搜索
@@ -343,22 +350,19 @@ export default {
         return;
       }
       this.loading = true;
-      this.data = [];
-      // this.pagination.total = 0;     
-      console.log(this.searchValue);
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         plantid: this.searchValue.plantId,
         itemcode: this.searchValue.itemcode.trim(),
         itemname: this.searchValue.itemname.trim(),
-        drawingno:this.searchValue.drawingno.trim(),
-        approvestatus:this.searchValue.approvestatus,
+        drawingno: this.searchValue.drawingno.trim(),
+        approvestatus: this.searchValue.approvestatus,
         itemspecification: this.searchValue.itemspecification.trim(),
         itemcodesign: this.itemcodesign,
         itemspecificationsign: this.itemspecificationsign,
         itemnamesign: this.itemnamesign,
-        drawingnosign:this.drawingnosign
+        drawingnosign: this.drawingnosign,
       };
       getERPReportAction(parmas, "getbominfo").then((res) => {
         if (res.data.success) {

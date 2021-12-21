@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 17:30:45
- * @LastEditTime: 2021-12-20 10:44:16
+ * @LastEditTime: 2021-12-21 14:26:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/DeliveryDetail/index.vue
@@ -23,6 +23,7 @@
       </a-col>
     </a-row>
     <a-table
+      ref="tableRef"
       v-if="hasPerm('search')"
       :columns="columns"
       :data-source="data"
@@ -255,7 +256,16 @@ export default {
         docnoa: "",
         docnor: "",
       },
+      ScrollPosition: 0,
     };
+  },
+  activated() {
+    this.$refs.tableRef.$el.querySelector(".ant-table-body").scrollTop = this.ScrollPosition;
+    console.log(this.$refs.tableRef);
+  },
+  beforeRouteLeave(to, from, next) {
+    this.ScrollPosition = this.$refs.tableRef.$el.querySelector(".ant-table-body").scrollTop;
+    next();
   },
   computed: {
     hasSelected() {
@@ -364,9 +374,6 @@ export default {
         var transactiondate = this.searchValue.transactiondate.format("YYYY-MM-DD");
       }
       this.loading = true;
-      this.data = [];
-      this.pagination.total = 0;
-      console.log(this.searchValue);
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,

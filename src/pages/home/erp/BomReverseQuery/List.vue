@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-20 10:43:36
+ * @LastEditTime: 2021-12-21 10:33:21
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -224,8 +224,7 @@ export default {
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-          this.loading = true;
-          this.pagination.total = 0;
+          
           if (values["bomdate"]) {
             var bomdate = values["bomdate"].format("YYYY-MM-DD");
           }
@@ -239,6 +238,7 @@ export default {
             var lastmodifieddatestart = rangeValue2[0].format("YYYY-MM-DD");
             var lastmodifieddateend = rangeValue2[1].format("YYYY-MM-DD");
           }
+          this.loading = true;
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,

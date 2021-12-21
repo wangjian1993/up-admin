@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:53:46
- * @LastEditTime: 2021-12-14 15:25:38
+ * @LastEditTime: 2021-12-21 14:17:30
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/data.js
@@ -147,7 +147,7 @@ export const innerColumns = [
         dataIndex: "LOWLEVEL",
         scopedSlots: { customRender: "LOWLEVEL" },
         align: "left",
-        width: 50,
+        width: 80,
     },
     {
         title: "序号",
