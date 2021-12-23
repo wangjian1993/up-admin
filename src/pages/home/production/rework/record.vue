@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:51
- * @LastEditTime: 2021-12-20 09:19:04
+ * @LastEditTime: 2021-12-23 17:57:27
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/rework/record.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-textarea style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @pressEnter="scanCode" auto-size /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -34,13 +34,16 @@
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="计划生产时间">{{ orderInfo.PlanDate }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
-        <a-descriptions-item label="返工数量"><a-input-number :min="0" v-model="reworkQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="返工数量"><a-input-number :disabled="isOrderDisabled" :min="0" v-model="reworkQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item label="返工原因"><a-input v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
-          <a-button type="primary" icon="check-circle" @click="startWork" :disabled="!hasPerm('save')">
+          <a-button v-if="hasPerm('save')" type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
             返工提交
           </a-button>
-          <a-button style="margin-left:10px" type="primary" icon="export" @click="handlePrint()">
+          <a-button v-else type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
+            返工提交
+          </a-button>
+          <a-button style="margin-left:10px" type="primary" icon="export" @click="handlePrint()" :disabled="!isStart">
             打印标识卡
           </a-button>
         </a-descriptions-item>
@@ -52,6 +55,7 @@
     <!-- 列表 -->
     <WorkTable :orderList="orderList" />
     <reworkSheet v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></reworkSheet>
+    <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
   </a-card>
 </template>
 <script>
@@ -61,8 +65,9 @@ import { getTimeData } from "@/utils/util";
 import MsgList from "../components/MsgList.vue";
 import WorkTable from "../components/WorkTable.vue";
 import reworkSheet from "./reworkSheet.vue";
+import orderSelect from "./components/orderSelect.vue";
 export default {
-  components: { MsgList, WorkTable, reworkSheet },
+  components: { MsgList, WorkTable, reworkSheet, orderSelect },
   mixins: [PublicVar],
   data() {
     return {
@@ -82,6 +87,11 @@ export default {
       lineList: [],
       ReworkWorkshopId: "",
       ReworkLineId: "",
+      isOrderSelect: false,
+      orderSelectList: [],
+      isOrderDisabled: false,
+      reworkList: [],
+       isStart: false,
     };
   },
   created() {
@@ -94,6 +104,21 @@ export default {
   methods: {
     closeListData() {
       this.listData = [];
+    },
+    inputChange(e) {
+      const { value } = e.target;
+      if (!value && e.type !== "change") {
+        // do something
+        this.emptyData();
+      }
+    },
+    emptyData() {
+      this.orderInfo = [];
+      this.processData = [];
+      this.userLineData = [];
+      this.orderValue = "";
+      this.reworkQty = 0;
+      this.remark = "";
     },
     //打印工单
     handlePrint() {
@@ -140,6 +165,7 @@ export default {
     closeModal() {
       this.visible = false;
       this.isPrint = false;
+      this.isOrderSelect = false;
     },
     getWorkInfo() {
       setReworkApi("", "loaduserline").then((res) => {
@@ -148,7 +174,7 @@ export default {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
             this.processData = res.data.data.result.Process;
-            this.userLineData = res.data.data.result.UserLine;
+            this.userLineData = { ...res.data.data.result.UserLine, ...this.processData };
           }
           res.data.message.content = res.data.data.Msg;
           this.listData.unshift(res.data.message);
@@ -176,10 +202,25 @@ export default {
       setReworkApi(parmas, "scan").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
+          this.reworkQty = 0;
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
+            this.isStart =true;
             res.data.message.content = res.data.data.Msg;
-            this.orderInfo = res.data.data.result;
+            if (res.data.data.result.length == 1) {
+              this.orderInfo = res.data.data.result[0];
+              this.reworkList = res.data.data.result;
+              console.log(this.reworkList);
+              this.isOrderDisabled = false;
+            } else {
+              this.isOrderSelect = true;
+              this.isOrderDisabled = true;
+              let result = res.data.data.result;
+              result.map((item) => {
+                item.reworkQty = 0;
+              });
+              this.orderSelectList = result;
+            }
             this.listData.unshift(res.data.message);
           } else {
             res.data.message.content = res.data.data.Msg;
@@ -187,6 +228,20 @@ export default {
           }
         }
       });
+    },
+    succeedOrder(list) {
+      this.reworkList = list;
+      list.forEach((item) => {
+        let date = new Date(item.PlanDate);
+        item.date = date.getTime();
+        this.reworkQty += Number(item.reworkQty);
+      });
+      list.sort(this.orderSort);
+      this.orderInfo = list[0];
+      this.isOrderSelect = false;
+    },
+    orderSort(a, b) {
+      return a.date - b.date;
     },
     //开工
     startWork() {
@@ -226,24 +281,30 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      let parmas = {
-        ReworkWorkshopId: this.ReworkWorkshopId,
-        ReworkLineId: this.ReworkLineId,
-        ReworkQty: this.reworkQty,
-        Remarks: this.remark,
-        ScanCodeType: this.orderInfo.ScanCodeType,
-        MoCode: this.orderInfo.MoCode,
-        ScanCode: this.orderInfo.ScanCode,
-      };
+      let parmas = [];
+      this.reworkList.map((item) => {
+        parmas.push({
+          ProPlanId: item.ProPlanId,
+          ReworkWorkshopId: this.ReworkWorkshopId,
+          ReworkLineId: this.ReworkLineId,
+          ReworkQty: item.reworkQty || this.reworkQty,
+          Remarks: this.remark,
+          MoCode: item.MoCode,
+          ScanCode: item.ScanCode,
+          ScanCodeType: item.ScanCodeType,
+        });
+      });
       setReworkApi(parmas, "submit").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
-          console.log(res);
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
             res.data.message.content = res.data.data.Msg;
-            this.orderList.unshift(res.data.data.result);
+            res.data.data.result.map((item) => {
+              this.orderList.unshift(item);
+            });
             this.listData.unshift(res.data.message);
+            this.emptyData();
           } else {
             res.data.message.content = res.data.data.Msg;
             this.listData.unshift(res.data.message);

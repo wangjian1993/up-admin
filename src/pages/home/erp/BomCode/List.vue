@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-21 14:11:41
+ * @LastEditTime: 2021-12-22 10:26:41
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
@@ -146,7 +146,7 @@
       </template>
       <template slot="ITEM_NAME_INPUT">
         <span>
-          <p>品名</p>
+          <p>品名 <a-icon @click="tableSort" :type="itemNameSort == 'ascend' ? 'sort-ascending' : 'sort-descending'"></a-icon></p>
           <div style="display:flex;">
             <a-input placeholder="品名" size="small" style="font-size: 10px;" allowClear v-model="searchValue.itemname" />
             <a-dropdown>
@@ -203,10 +203,11 @@ import { splitData, modelType } from "@/utils/util.js";
 import ModelInfo from "../components/ModelInfo.vue";
 import { columns } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
+import { bomSort } from "@/mixins/bomSort.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { ModelInfo },
-  mixins: [PublicVar],
+  mixins: [PublicVar,bomSort],
   data() {
     this.components = {
       header: {
@@ -235,7 +236,7 @@ export default {
         itemspecification: "",
         drawingno: "",
         approvestatus: "",
-      },
+      }    
     };
   },
   activated() {
@@ -401,7 +402,6 @@ export default {
         this.search();
         return;
       }
-      this.getListAll();
     },
     //设置行数据背景
     rowClassName(record) {

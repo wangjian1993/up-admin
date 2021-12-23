@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-12-01 16:55:07
+ * @LastEditTime: 2021-12-23 16:31:19
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
@@ -209,7 +209,7 @@ export default {
       return myyear + "/" + mymonth + "/" + myweekday;
     },
     handleOk() {
-      if(this.isUpload){
+      if (this.isUpload) {
         return;
       }
       //提交的数据格式
@@ -234,7 +234,7 @@ export default {
         return;
       }
       let keyMap = {
-        "下单\n日期": "DateOrder",
+        下单日期: "DateOrder",
         业务单号: "WorkOrderNo",
         人均标准产能: "PerCapiteCapacity",
         品号: "MitemCode",
@@ -242,10 +242,10 @@ export default {
         工时: "WorkHour",
         序号: "序号",
         缺料状况: "MaterialShortage",
-        "计划\n数量": "PlanQty",
+        计划数量: "PlanQty",
         计划日期: "PlanDate",
-        "订单\n交期": "DateDeliveryOrder",
-        "订单\n数量": "OrderQty",
+        订单交期: "DateDeliveryOrder",
+        订单数量: "OrderQty",
         备注: "Remarks",
       };
       let data = {
@@ -266,16 +266,6 @@ export default {
         if (typeof item.PlanQty !== "number" || item.PlanQty === "") {
           this.errorList.push({
             ErrorMsg: `第${index + 1}行,"计划数量"数据(${item.PlanQty})错误,必须为数字`,
-          });
-        }
-        if (typeof item.WorkHour !== "number" || item.WorkHour === "") {
-          this.errorList.push({
-            ErrorMsg: `第${index + 1}行,"工时"数据(${item.WorkHour})错误,必须为数字`,
-          });
-        }
-        if (typeof item.PerCapiteCapacity !== "number" || item.PerCapiteCapacity === "") {
-          this.errorList.push({
-            ErrorMsg: `第${index + 1}行,"人均标准产值"数据(${item.PerCapiteCapacity})错误,必须为数字`,
           });
         }
         //数据添加
@@ -301,15 +291,15 @@ export default {
       }
     },
     submitExecl(parmas) {
-      this.isUpload =true
+      this.isUpload = true;
       dailyPlanAction(parmas, "import").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.close();
-          this.isUpload =false
+          this.isUpload = false;
         } else {
           this.errorList = res.data.data.list;
-          this.isUpload =false
+          this.isUpload = false;
           // this.$message.info(res.data.message.content);
         }
       });
@@ -325,7 +315,7 @@ export default {
       if (fileExt === "xlsx" || fileExt === "xls") {
         this.readFile(file);
         this.file = file;
-        this.isUpload =true
+        this.isUpload = true;
       } else {
         this.$Notice.warning({
           title: "文件类型错误",
@@ -347,7 +337,7 @@ export default {
         });
         this.tableData = results; //这里的tableData就是拿到的excel表格中的数据
         this.tableTitle = tableTitle;
-        this.isUpload =false
+        this.isUpload = false;
       };
     },
   },

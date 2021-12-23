@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-12-20 09:09:22
+ * @LastEditTime: 2021-12-23 15:57:28
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/rework/components/print.vue
@@ -16,7 +16,7 @@
           <div class="head-title">
             <p>返工标识卡</p>
           </div>
-          <div class="head-qr"><vue-qr text="1111" :size="300"></vue-qr></div>
+          <div class="head-qr"><vue-qr :text="item.QrCode" :size="300"></vue-qr></div>
         </div>
         <div class="info">
           <a-descriptions :column="2" bordered size="small">
@@ -33,10 +33,10 @@
               {{ item.Qty }}
             </a-descriptions-item>
             <a-descriptions-item label="品号">
-              {{ item.MitemCode }}
+              {{ item.ProCode }}
             </a-descriptions-item>
             <a-descriptions-item label="品名">
-              {{ item.MitemName }}
+              {{ item.ProName }}
             </a-descriptions-item>
             <a-descriptions-item label="返工车间">
               {{ item.WorkShopName }}
@@ -78,8 +78,15 @@ export default {
     },
     updatedStatu() {
       console.log("打印=====");
-      let parmas = [this.printData.id];
-      setPrintInfo(parmas, "update").then((res) => {
+      let parmas = [];
+      this.printData.map((item) => {
+        parmas.push({
+          Id: item.Id,
+          Remarks:item.Remarks,
+          Status: "PRINTED",
+        });
+      });
+      setPrintInfo(parmas, "reworkupdate").then((res) => {
         if (res.data.success) {
           this.$message.success("打印成功!");
         }

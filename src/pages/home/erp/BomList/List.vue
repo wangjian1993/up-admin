@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-21 14:12:17
+ * @LastEditTime: 2021-12-22 10:24:57
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -129,19 +129,19 @@
         <template slot="CreateDate" slot-scope="text">
           <span>{{ splitData(text) }}</span>
         </template>
-         <template slot="ApproveStatus_SELECT">
-        <span>
-          <p>BOM生效状态</p>
-          <div style="display:flex;">
-            <a-select v-model="searchValue.approvestatus" style="width: 80px" defaultValue="ALL" size="small" @change="search" placeholder="">
-              <a-select-option value="">All</a-select-option>
-              <a-select-option value="Y">已生效</a-select-option>
-              <a-select-option value="N">未生效</a-select-option>
-              <a-select-option value="V">失效</a-select-option>
-            </a-select>
-          </div>
-        </span>
-      </template>
+        <template slot="ApproveStatus_SELECT">
+          <span>
+            <p>BOM生效状态</p>
+            <div style="display:flex;">
+              <a-select v-model="searchValue.approvestatus" style="width: 80px" defaultValue="ALL" size="small" @change="search" placeholder="">
+                <a-select-option value="">All</a-select-option>
+                <a-select-option value="Y">已生效</a-select-option>
+                <a-select-option value="N">未生效</a-select-option>
+                <a-select-option value="V">失效</a-select-option>
+              </a-select>
+            </div>
+          </span>
+        </template>
         <template slot="PLANT_NAME_P_SELECT">
           <span>
             <p>工厂/储运</p>
@@ -170,7 +170,7 @@
         </template>
         <template slot="ITEM_NAME_INPUT">
           <span>
-            <p>品名</p>
+            <p>品名<a-icon size="18" @click="tableSort" :type="itemNameSort == 'ascend' ? 'sort-ascending' : 'sort-descending'"></a-icon></p>
             <div style="display:flex;">
               <a-input placeholder="品名" size="small" style="font-size: 10px;" allowClear v-model="searchValue.itemname" />
               <a-dropdown>
@@ -233,10 +233,11 @@ import { exportjsontoexcelMore } from "@/utils/ExportExcel";
 import Print from "../components/Print.vue";
 import { columns } from "./data";
 import { PublicVar } from "@/mixins/publicVar.js";
+import { bomSort } from "@/mixins/bomSort.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { ErpDosage, Print },
-  mixins: [PublicVar],
+  mixins: [PublicVar,bomSort],
   data() {
     this.components = {
       header: {
@@ -260,14 +261,14 @@ export default {
       itemnamesign: "",
       itemspecificationsign: "",
       drawingnosign: "",
-      ScrollPosition:0,
+      ScrollPosition: 0,
       searchValue: {
         plantId: "",
         itemcode: "",
         itemname: "",
         drawingno: "",
         itemspecification: "",
-        approvestatus:""
+        approvestatus: "",
       },
     };
   },
@@ -318,7 +319,7 @@ export default {
           this.drawingnosign = text;
           break;
       }
-      this.pagination.current = 1
+      this.pagination.current = 1;
       this.search();
     },
     //多选
@@ -359,7 +360,7 @@ export default {
         itemcode: "",
         itemname: "",
         itemspecification: "",
-        approvestatus:""
+        approvestatus: "",
       };
       getERPReportAction(parmas, "getbomlist").then((res) => {
         if (res.data.success) {
@@ -379,8 +380,8 @@ export default {
       // this.getListAll();
       this.data = [];
       this.week = "";
-      this.pagination.current = 1
-       this.pagination.total = 0
+      this.pagination.current = 1;
+      this.pagination.total = 0;
       this.searchForm.resetFields();
       this.getPlant();
       this.itemcodesign = "";
@@ -392,7 +393,7 @@ export default {
         itemname: "",
         itemspecification: "",
         drawingno: "",
-        approvestatus:""
+        approvestatus: "",
       };
     },
     //关键词搜索
@@ -413,7 +414,7 @@ export default {
         itemcode: this.searchValue.itemcode.trim(),
         itemname: this.searchValue.itemname.trim(),
         drawingno: this.searchValue.drawingno.trim(),
-        approvestatus:this.searchValue.approvestatus,
+        approvestatus: this.searchValue.approvestatus,
         itemspecification: this.searchValue.itemspecification.trim(),
         itemcodesign: this.itemcodesign,
         itemspecificationsign: this.itemspecificationsign,

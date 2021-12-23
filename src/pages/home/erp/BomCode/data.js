@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:48:13
- * @LastEditTime: 2021-12-17 13:54:17
+ * @LastEditTime: 2021-12-22 09:21:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/data.js
@@ -17,7 +17,7 @@ export const columns = [
         dataIndex: "ITEM_CODE",
         align: "left",
         width: 150,
-        slots: { title: "ITEM_CODE_INPUT" }
+        slots: { title: "ITEM_CODE_INPUT" },
     },
     {
         title: "工厂编号",
@@ -38,7 +38,7 @@ export const columns = [
         scopedSlots: { customRender: "ITEM_NAME" },
         align: "left",
         width: 150,
-        slots: { title: "ITEM_NAME_INPUT" }
+        slots: { title: "ITEM_NAME_INPUT" },
     },
     {
         dataIndex: "ITEM_SPECIFICATION",

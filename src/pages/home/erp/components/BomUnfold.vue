@@ -1,22 +1,22 @@
 <!--
  * @Author: max
  * @Date: 2021-12-02 17:34:40
- * @LastEditTime: 2021-12-08 17:26:57
+ * @LastEditTime: 2021-12-22 13:48:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/BomUnfold.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="BOM展开" @cancel="close" width="90%" :footer="null" centered>
+    <a-drawer :visible="visible" title="BOM展开" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 600, x:2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName"> </a-table>
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 600, x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName"> </a-table>
           </a-card>
         </div>
       </a-spin>
-    </a-modal>
+    </a-drawer>
     <model-info v-if="isModelInfo" :modelData="modelData" @closeModal="closeModal"></model-info>
   </div>
 </template>
@@ -132,7 +132,7 @@ const columns = [
     dataIndex: "REMARK",
     scopedSlots: { customRender: "REMARK" },
     align: "center",
-     width: 80,
+    width: 80,
   },
   {
     title: "BOM生效状态",

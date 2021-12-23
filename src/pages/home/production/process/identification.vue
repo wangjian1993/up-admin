@@ -1,18 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-12-16 13:58:52
- * @LastEditTime: 2021-12-16 15:47:57
+ * @LastEditTime: 2021-12-23 17:09:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/identification.vue
--->
-<!--
- * @Author: max
- * @Date: 2021-10-07 15:16:07
- * @LastEditTime: 2021-10-16 09:09:34
- * @LastEditors: max
- * @Description: 
- * @FilePath: /up-admin/src/pages/home/scm/quality/BatchApprove.vue
 -->
 <template>
   <div>
@@ -31,7 +23,7 @@
           {{ userLineData.UserName }}
         </a-descriptions-item>
         <a-descriptions-item label="打印时间">
-          <!-- {{ splitData(userLineData.RequirementDate) }} -->
+          {{ splitData(userLineData.DateCreated) }}
         </a-descriptions-item>
       </a-descriptions>
       <div>
@@ -118,6 +110,7 @@ const columns = [
 ];
 import { setPrintInfo } from "@/services/web.js";
 import print from "./components/print.vue";
+import { splitData } from "@/utils/util.js";
 export default {
   props: ["orderList", "userLineData"],
   components: { print },
@@ -144,8 +137,9 @@ export default {
     this.getPrintList();
   },
   methods: {
+    splitData,
     closeModal() {
-      this.isPrint = true;
+      this.isPrint = false;
     },
     close() {
       this.$emit("closeModal");
@@ -153,7 +147,7 @@ export default {
     getPrintList() {
       let parmas = [];
       this.orderList.map((item) => {
-        parmas.push(item.ReWorkId);
+        parmas.push(item.Id);
       });
       setPrintInfo(parmas, "getmitemprint").then((res) => {
         if (res.data.success) {

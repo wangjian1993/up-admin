@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2021-12-17 14:43:21
+ * @LastEditTime: 2021-12-23 17:57:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/outbound.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-textarea style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @change="inputChange" @pressEnter="scanCode" auto-size /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -28,19 +28,22 @@
         </a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
-        <a-descriptions-item label="计划生产时间">{{ orderInfo.PlanDate }}</a-descriptions-item>
+        <a-descriptions-item label="计划生产时间">{{ splitData(orderInfo.PlanDate) }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
         <a-descriptions-item label="出站数量"><a-input-number :min="0" v-model="receiveQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item label="报废数量"><a-input-number :min="0" v-model="scrapQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item label="备注"><a-input v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
-          <a-button type="primary" icon="check-circle" @click="startWork" :disabled="!hasPerm('process_scan')">
+          <a-button v-if="hasPerm('process_scan')" type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
             出站
           </a-button>
-          <a-button style="margin-left:10px" type="primary" icon="export" @click="handlePrint()">
+          <a-button v-else type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
+            出站
+          </a-button>
+          <a-button style="margin-left:10px" type="primary" icon="export" :disabled="!isStart" @click="handlePrint()">
             打印标识卡
-          </a-button></a-descriptions-item
-        >
+          </a-button>
+        </a-descriptions-item>
       </a-descriptions>
     </a-card>
     <div style="margin:10px 0">
@@ -49,6 +52,7 @@
     <!-- 列表 -->
     <WorkTable :orderList="orderList" />
     <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
+    <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
   </a-card>
 </template>
 <script>
@@ -58,8 +62,10 @@ import { getTimeData } from "@/utils/util";
 import MsgList from "../components/MsgList.vue";
 import WorkTable from "../components/WorkTable.vue";
 import identification from "./identification.vue";
+import orderSelect from "./components/orderSelect.vue";
+import { splitData } from "@/utils/util.js";
 export default {
-  components: { identification, MsgList, WorkTable },
+  components: { identification, MsgList, WorkTable, orderSelect },
   mixins: [PublicVar],
   data() {
     return {
@@ -75,6 +81,9 @@ export default {
       receiveQty: 0,
       scrapQty: 0,
       orderList: [],
+      isOrderSelect: false,
+      orderSelectList: [],
+      isStart: false,
     };
   },
   created() {
@@ -84,8 +93,25 @@ export default {
     this.$refs.orderValue.focus();
   },
   methods: {
+    splitData,
     closeListData() {
       this.listData = [];
+    },
+    inputChange(e) {
+      const { value } = e.target;
+      if (!value && e.type !== "change") {
+        // do something
+        this.emptyData();
+      }
+    },
+    emptyData() {
+      this.orderInfo = [];
+      this.processData = [];
+      this.userLineData = [];
+      this.orderValue = "";
+      this.receiveQty = 0;
+      this.scrapQty = 0;
+      this.remark = "";
     },
     //打印工单
     handlePrint() {
@@ -111,6 +137,7 @@ export default {
     closeModal() {
       this.visible = false;
       this.isPrint = false;
+      this.isOrderSelect = false;
     },
     getWorkInfo() {
       setStartWorkApi("", "loaduserline").then((res) => {
@@ -119,7 +146,7 @@ export default {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
             this.processData = res.data.data.result.Process;
-            this.userLineData = res.data.data.result.UserLine;
+            this.userLineData = { ...res.data.data.result.UserLine, ...this.processData };
           }
           res.data.message.content = res.data.data.Msg;
           this.listData.unshift(res.data.message);
@@ -149,8 +176,14 @@ export default {
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
+            this.isStart = true;
             res.data.message.content = res.data.data.Msg;
-            this.orderInfo = res.data.data.result;
+            if (res.data.data.result.length == 1) {
+              this.orderInfo = res.data.data.result[0];
+            } else {
+              this.isOrderSelect = true;
+              this.orderSelectList = res.data.data.result;
+            }
             this.listData.unshift(res.data.message);
           } else {
             res.data.message.content = res.data.data.Msg;
@@ -158,6 +191,10 @@ export default {
           }
         }
       });
+    },
+    succeedOrder(item) {
+      this.orderInfo = item;
+      this.isOrderSelect = false;
     },
     //开工
     startWork() {
@@ -180,6 +217,7 @@ export default {
         return;
       }
       let parmas = {
+        ProPlanId: this.orderInfo.ProPlanId,
         PlantId: this.orderInfo.PlantId,
         WorkshopId: this.orderInfo.WorkshopId,
         LineId: this.orderInfo.LineId,
@@ -199,6 +237,7 @@ export default {
             res.data.message.content = res.data.data.Msg;
             this.orderList.unshift(res.data.data.result);
             this.listData.unshift(res.data.message);
+            this.emptyData();
           } else {
             res.data.message.content = res.data.data.Msg;
             this.listData.unshift(res.data.message);

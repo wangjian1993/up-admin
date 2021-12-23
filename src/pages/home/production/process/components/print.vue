@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-12-16 16:21:10
+ * @LastEditTime: 2021-12-23 17:08:43
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/process/components/print.vue
@@ -16,7 +16,7 @@
           <div class="head-title">
             <p>物料标识卡</p>
           </div>
-          <div class="head-qr"><vue-qr text="1111" :size="300"></vue-qr></div>
+          <div class="head-qr"><vue-qr :text="item.QrCode" :size="300"></vue-qr></div>
         </div>
         <div class="info">
           <a-descriptions :column="2" bordered size="small">
@@ -43,6 +43,9 @@
             </a-descriptions-item>
             <a-descriptions-item label="拉">
               {{ item.LineName }}
+            </a-descriptions-item>
+             <a-descriptions-item label="备注">
+              {{ item.Remarks }}
             </a-descriptions-item>
           </a-descriptions>
         </div>
@@ -75,8 +78,15 @@ export default {
     },
     updatedStatu() {
       console.log("打印=====");
-      let parmas = [this.printData.id];
-      setPrintInfo(parmas, "update").then((res) => {
+      let parmas = [];
+      this.printData.map((item) => {
+        parmas.push({
+          Id: item.Id,
+          Remarks:item.Remarks,
+          Status: "PRINTED",
+        });
+      });
+      setPrintInfo(parmas, "mitemupdate").then((res) => {
         if (res.data.success) {
           this.$message.success("打印成功!");
         }

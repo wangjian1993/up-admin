@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 17:30:45
- * @LastEditTime: 2021-12-21 14:26:45
+ * @LastEditTime: 2021-12-22 10:29:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/DeliveryDetail/index.vue
@@ -173,7 +173,6 @@
       </template>
       <template slot="ITEM_NAME_INPUT">
         <span>
-          <p>品名</p>
           <div style="display:flex;">
             <a-input placeholder="品名" size="small" style="font-size: 10px;" allowClear v-model="searchValue.itemdescription" />
             <a-dropdown>
