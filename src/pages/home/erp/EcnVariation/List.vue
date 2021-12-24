@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-21 14:27:20
+ * @LastEditTime: 2021-12-24 15:42:48
  * @LastEditors: max
  * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
@@ -331,8 +331,8 @@ export default {
 /deep/.ant-table {
   font-size: 10px;
 }
-/deep/.ant-table-row-cell-break-word {
-  white-space: nowrap;
-  overflow: hidden;
-}
+// /deep/.ant-table-row-cell-break-word {
+//   white-space: nowrap;
+//   overflow: hidden;
+// }
 </style>

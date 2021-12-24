@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:51
- * @LastEditTime: 2021-12-23 17:57:27
+ * @LastEditTime: 2021-12-24 08:59:23
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/rework/record.vue
@@ -113,9 +113,9 @@ export default {
       }
     },
     emptyData() {
-      this.orderInfo = [];
-      this.processData = [];
-      this.userLineData = [];
+      // this.orderInfo = [];
+      // this.processData = [];
+      // this.userLineData = [];
       this.orderValue = "";
       this.reworkQty = 0;
       this.remark = "";

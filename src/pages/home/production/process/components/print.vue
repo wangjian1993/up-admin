@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-12-23 17:08:43
+ * @LastEditTime: 2021-12-24 16:12:22
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/process/components/print.vue
@@ -10,7 +10,7 @@
   <a-modal v-model="visible" title="打印生产投料单" v-if="visible" @cancel="close" :footer="null" centered width="50%">
     <a-button style="float:right" type="primary" class="no-print" @click="updatedStatu" v-print="'#printTest'">打印</a-button>
     <div id="printTest">
-      <div class="content" v-for="(item, index) in printData" :key="item.id" :style="(index + 1) % 4 == 0 ? 'page-break-after:always' : ''">
+      <div class="content" v-for="(item, index) in printData" :key="item.id" :style="(index + 1) % 3 == 0 ? 'page-break-after:always' : ''">
         <div class="content-top">
           <div class="head-img"><img src="@/assets/img/mb.png" alt="" /></div>
           <div class="head-title">

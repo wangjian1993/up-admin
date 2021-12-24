@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2021-12-23 17:53:35
+ * @LastEditTime: 2021-12-24 16:10:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
@@ -100,9 +100,9 @@ export default {
       }
     },
     emptyData() {
-      this.orderInfo = [];
-      this.processData = [];
-      this.userLineData = [];
+      // this.orderInfo = [];
+      // this.processData = [];
+      // this.userLineData = [];
       this.orderValue = "";
       this.receiveQty =0;
       this.isStart = false;
@@ -176,6 +176,7 @@ export default {
             res.data.message.content = res.data.data.Msg;
             if (res.data.data.result.length == 1) {
               this.orderInfo = res.data.data.result[0];
+              this.getHistoryList();
             } else {
               this.isOrderSelect = true;
               this.orderSelectList = res.data.data.result;
@@ -188,9 +189,31 @@ export default {
         }
       });
     },
+    getHistoryList() {
+      let parmas = {
+        ProPlanId: this.orderInfo.ProPlanId,
+        MoCode: this.orderInfo.MoCode,
+        ProcessStatus: "PROCESS_START",
+      };
+      setStartWorkApi(parmas, "gethisreports").then((res) => {
+        res.data.message.time = getTimeData();
+        if (res.data.success) {
+          res.data.message.IsSuccess = res.data.data.IsSuccess;
+          if (res.data.data.IsSuccess) {
+            res.data.message.content = res.data.data.Msg;
+            this.orderList = res.data.data.result;
+            this.listData.unshift(res.data.message);
+          } else {
+            res.data.message.content = res.data.data.Msg;
+            this.listData.unshift(res.data.message);
+          }
+        }
+      });
+    },
     succeedOrder(item) {
       this.orderInfo = item;
       this.isOrderSelect = false;
+      this.getHistoryList();
     },
     //开工
     startWork() {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-19 11:49:02
+ * @LastEditTime: 2021-12-24 15:38:33
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/erp/components/Print.vue
@@ -248,5 +248,8 @@ export default {
 }
 /deep/.ant-table-small > .ant-table-content > .ant-table-body {
   margin: 0;
+}
+/deep/.ant-table-row-cell-break-word {
+  white-space: break-word;
 }
 </style>

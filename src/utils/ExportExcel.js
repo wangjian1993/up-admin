@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2021-12-16 10:51:36
+ * @LastEditTime: 2021-12-24 14:55:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/ExportExcel.js
@@ -400,7 +400,7 @@ export function exportjsontoexcelMore({
         }
 
         for (var i in dataInfo) {
-            console.log("i===", i)
+            // console.log("i===", i)
             if (i == '!ref' || i == '!merges' || i == '!cols') {
 
             } else {

@@ -82,7 +82,7 @@
               <template slot="ITEM_TYPE" slot-scope="text">
                 <span>{{ feedSystem(text) }}</span>
               </template>
-              <template slot="APPROVEDATE_ECN" slot-scope="text" v-if="text == '1900-01-01T00:00:00'">
+              <template slot="APPROVEDATE_ECN" slot-scope="text" v-if="text !== '1900-01-01T00:00:00'">
                 <span>{{ splitData(text) }}</span>
               </template>
               <template slot="EFFECTIVE_DATE" slot-scope="text">

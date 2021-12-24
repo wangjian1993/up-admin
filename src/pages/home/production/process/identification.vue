@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-16 13:58:52
- * @LastEditTime: 2021-12-23 17:09:31
+ * @LastEditTime: 2021-12-24 10:58:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/identification.vue
@@ -105,7 +105,7 @@ const columns = [
     dataIndex: "Remarks",
     scopedSlots: { customRender: "Remarks" },
     align: "center",
-    width: "80px",
+    width: "120px",
   },
 ];
 import { setPrintInfo } from "@/services/web.js";

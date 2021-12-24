@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-02 17:34:40
- * @LastEditTime: 2021-12-22 13:48:38
+ * @LastEditTime: 2021-12-24 17:39:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/BomUnfold.vue
@@ -12,7 +12,7 @@
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 600, x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName"> </a-table>
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 600, x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list, index) => list.ITEM_CODE + '_' + index" bordered> </a-table>
           </a-card>
         </div>
       </a-spin>

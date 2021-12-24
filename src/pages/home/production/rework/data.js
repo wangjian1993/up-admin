@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2021-11-29 13:58:17
- * @LastEditTime: 2021-12-16 14:09:29
+ * @LastEditTime: 2021-12-24 09:22:57
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/production/process/data.js
+ * @FilePath: /up-admin/src/pages/home/production/rework/data.js
  */
 import { splitData } from "@/utils/util.js";
 export const columns = [
@@ -44,15 +44,15 @@ export const columns = [
     },
     {
         title: "工单号",
-        dataIndex: "WorkOrderNo",
-        scopedSlots: { customRender: "WorkOrderNo" },
+        dataIndex: "MoCode",
+        scopedSlots: { customRender: "MoCode" },
         align: "center",
         width: 80
     },
     {
         title: "业务订单号",
-        dataIndex: "WorkOrderNo1",
-        scopedSlots: { customRender: "WorkOrderNo1" },
+        dataIndex: "SalesOrderNo",
+        scopedSlots: { customRender: "SalesOrderNo" },
         align: "center",
         width: 100
     },
@@ -88,7 +88,7 @@ export const columns = [
         width: 120
     },
     {
-        title: "计划数量",
+        title: "报工数量",
         dataIndex: "PlanQty",
         scopedSlots: { customRender: "PlanQty" },
         align: "center",
@@ -96,8 +96,8 @@ export const columns = [
     },
     {
         title: "开工时间",
-        dataIndex: "PlanDate1",
-        scopedSlots: { customRender: "PlanDate1" },
+        dataIndex: "DatetimeStart",
+        scopedSlots: { customRender: "DatetimeStart" },
         align: "center",
         width: 120,
         customRender: (text) => {

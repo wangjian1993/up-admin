@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2021-11-29 13:58:17
- * @LastEditTime: 2021-12-16 14:09:29
+ * @LastEditTime: 2021-12-24 09:19:31
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/production/process/data.js
+ * @FilePath: /up-admin/src/pages/home/production/components/data.js
  */
 import { splitData } from "@/utils/util.js";
 export const columns = [
@@ -44,15 +44,15 @@ export const columns = [
     },
     {
         title: "工单号",
-        dataIndex: "WorkOrderNo",
-        scopedSlots: { customRender: "WorkOrderNo" },
+        dataIndex: "MoCode",
+        scopedSlots: { customRender: "MoCode" },
         align: "center",
-        width: 80
+        width: 120
     },
     {
         title: "业务订单号",
-        dataIndex: "WorkOrderNo1",
-        scopedSlots: { customRender: "WorkOrderNo1" },
+        dataIndex: "SalesOrderNo",
+        scopedSlots: { customRender: "SalesOrderNo" },
         align: "center",
         width: 100
     },
@@ -61,14 +61,14 @@ export const columns = [
         dataIndex: "ProCode",
         scopedSlots: { customRender: "ProCode" },
         align: "center",
-        width: 150
+        width: 120
     },
     {
         title: "品名",
         dataIndex: "ProName",
         scopedSlots: { customRender: "ProName" },
         align: "center",
-        width: 120
+        width: 250
     },
     {
         title: "计划生产日期",
@@ -81,7 +81,7 @@ export const columns = [
         }
     },
     {
-        title: "订单数量",
+        title: "报工数量",
         dataIndex: "ReportQty",
         scopedSlots: { customRender: "ReportQty" },
         align: "center",
@@ -96,13 +96,10 @@ export const columns = [
     },
     {
         title: "开工时间",
-        dataIndex: "PlanDate1",
-        scopedSlots: { customRender: "PlanDate1" },
+        dataIndex: "DatetimeStart",
+        scopedSlots: { customRender: "DatetimeStart" },
         align: "center",
-        width: 120,
-        customRender: (text) => {
-            return splitData(text);
-        }
+        width: 130,
     },
     {
         title: "填单人",
@@ -120,8 +117,8 @@ export const columns = [
     },
     {
         title: "状态",
-        dataIndex: "Status",
-        scopedSlots: { customRender: "Status" },
+        dataIndex: "ProcessStatusName",
+        scopedSlots: { customRender: "ProcessStatusName" },
         align: "center",
         width: 120
     },
