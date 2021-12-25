@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:51
- * @LastEditTime: 2021-12-24 08:59:23
+ * @LastEditTime: 2021-12-25 09:16:05
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/rework/record.vue
@@ -53,7 +53,7 @@
       <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
     </div>
     <!-- 列表 -->
-    <WorkTable :orderList="orderList" />
+    <WorkTable :orderList="orderList" :tableType="3"/>
     <reworkSheet v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></reworkSheet>
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
   </a-card>

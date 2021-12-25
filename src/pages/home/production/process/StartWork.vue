@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2021-12-24 16:10:16
+ * @LastEditTime: 2021-12-25 09:07:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/StartWork.vue
@@ -44,7 +44,7 @@
     <div style="margin:10px 0">
       <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
     </div>
-    <WorkTable :orderList="orderList" />
+    <WorkTable :orderList="orderList" :tableType="0"/>
     <!-- 列表 -->
     <print v-if="isPrint" :printData="printData" @closeModal="closeModal"></print>
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />

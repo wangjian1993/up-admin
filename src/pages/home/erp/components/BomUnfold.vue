@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-02 17:34:40
- * @LastEditTime: 2021-12-24 17:39:41
+ * @LastEditTime: 2021-12-25 11:30:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/BomUnfold.vue
@@ -12,7 +12,7 @@
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 600, x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list, index) => list.ITEM_CODE + '_' + index" bordered> </a-table>
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 600, x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list, index) => list.ITEM_CODE + '_' + index" bordered :components="components"> </a-table>
           </a-card>
         </div>
       </a-spin>
@@ -41,36 +41,36 @@ const columns = [
     title: "上阶品号",
     dataIndex: "LAST_ITEM_CODE",
     scopedSlots: { customRender: "LAST_ITEM_CODE" },
-    align: "center",
-    width: 150,
+    align: "left",
+    width: 120,
   },
   {
     title: "元件品号",
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
-    align: "center",
-    width: 150,
+    align: "left",
+    width: 120,
   },
   {
     title: "快捷码",
     dataIndex: "SHORTCUT",
     scopedSlots: { customRender: "SHORTCUT" },
-    align: "center",
-    width: 150,
+    align: "left",
+    width: 120,
   },
   {
     title: "元件品名",
     dataIndex: "ITEM_NAME",
     scopedSlots: { customRender: "ITEM_NAME" },
-    align: "center",
-    width: 200,
+    align: "left",
+    width: 150,
   },
   {
     title: "元件规格",
     dataIndex: "ITEM_SPECIFICATION",
     scopedSlots: { customRender: "ITEM_SPECIFICATION" },
-    align: "center",
-    width: 300,
+    align: "left",
+    width: 250,
   },
   {
     title: "单位",
@@ -191,10 +191,16 @@ import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
 import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
 import ModelInfo from "./ModelInfo.vue";
+import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { ModelInfo },
   props: ["ModelInfo"],
   data() {
+    this.components = {
+      header: {
+        cell: (h, props, children) => resizeableTitle(h, props, children, this.columns),
+      },
+    };
     return {
       size: "small",
       columns,

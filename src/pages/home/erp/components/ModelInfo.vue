@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2021-12-20 15:37:32
+ * @LastEditTime: 2021-12-25 17:51:59
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
@@ -319,5 +319,11 @@ export default {
 .info-box {
   width: 100%;
   overflow-y: auto;
+}
+/deep/.ant-descriptions-item-content{
+  font-size: 10px;
+}
+/deep/.ant-descriptions-item-label{
+  font-size: 10px;
 }
 </style>

@@ -96,9 +96,6 @@
 <script>
 import { getDailyPlanAction, getWorkshopList, getLineList, setDailyPlanAction, getStartWorkApi } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcelJS";
-
-import { renderStripe } from "@/utils/stripe.js";
-import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import UserList from "@/components/app-user/UserList";
 import { columns } from "./list.data";
@@ -128,13 +125,7 @@ export default {
       isEdit: false,
     };
   },
-  updated() {
-    renderStripe();
-  },
   created() {
-    this.$nextTick(() => {
-      this.scrollY = getTableScroll(70);
-    });
     this.getListAll();
     this.getPlant();
   },

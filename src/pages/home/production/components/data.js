@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-29 13:58:17
- * @LastEditTime: 2021-12-24 09:19:31
+ * @LastEditTime: 2021-12-25 09:05:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/components/data.js
@@ -81,9 +81,9 @@ export const columns = [
         }
     },
     {
-        title: "报工数量",
         dataIndex: "ReportQty",
         scopedSlots: { customRender: "ReportQty" },
+        slots: { title:"ReportQtyTitle"},
         align: "center",
         width: 120
     },
