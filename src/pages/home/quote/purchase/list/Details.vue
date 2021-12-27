@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-11-26 17:46:08
+ * @LastEditTime: 2021-12-27 10:25:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -11,7 +11,7 @@
     <a-modal v-model="visible" title="报价单详情" @cancel="close" width="90%" :footer="null" centered>
       <a-spin tip="loading..." :spinning="loading">
         <div>
-          <a-descriptions title="基本信息" :column="4" bordered>
+          <a-descriptions title="基本信息" :column="4" bordered size="small">
             <a-descriptions-item label="需求公司">
               {{ info.EnterpriseName }}
             </a-descriptions-item>
@@ -51,7 +51,7 @@
           </a-descriptions>
         </div>
         <div>
-          <a-descriptions style="padding:5px 0" :title="item.CostSort" v-for="(item, index) in ConfigList" :key="index" :column="6" bordered>
+          <a-descriptions style="padding:5px 0" :title="item.CostSort" v-for="(item, index) in ConfigList" :key="index" :column="6" bordered size="small">
             <a-descriptions-item v-for="(items, indexs) in item.list" :key="indexs + 'cost'" :label="items.CostName">
               {{ items.Amount }}
             </a-descriptions-item>

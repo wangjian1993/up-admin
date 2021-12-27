@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-12-17 09:30:37
+ * @LastEditTime: 2021-12-27 15:30:40
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -231,4 +231,11 @@ export function getReworkApi(params, action) {
 }
 export function setReworkApi(params, action) {
     return request(`${UP_WEB}/process/rework/${action}`, METHOD.POST, params);
+}
+//老化
+export function getAgeingApi(params, action) {
+    return request(`${UP_WEB}/process/ageing/${action}`, METHOD.GET, params);
+}
+export function setAgeingApi(params, action) {
+    return request(`${UP_WEB}/process/ageing/${action}`, METHOD.POST, params);
 }

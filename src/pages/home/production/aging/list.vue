@@ -1,3 +1,11 @@
+<!--
+ * @Author: max
+ * @Date: 2021-12-17 09:09:57
+ * @LastEditTime: 2021-12-27 16:21:00
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/home/production/aging/list.vue
+-->
 <template>
   <div>
     <a-spin tip="导出中..." :spinning="isExportLod">
@@ -12,40 +20,13 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['workshopid']" style="width: 200px" placeholder="请选择生产车间" @change="workshopChange">
-                  <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
-                </a-select>
+              <a-form-item label="生产日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
               </a-form-item>
             </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产产线">
-                  <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
-                <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="工单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入生产批号" v-decorator="['mocode']" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="业务单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['salesno']" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="生产日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
               </a-form-item>
             </a-col>
           </a-row>
@@ -62,7 +43,7 @@
         :columns="columns"
         :data-source="dataSource"
         size="small"
-        :scroll="{ y: scrollY, x: 2800 }"
+        :scroll="{ y: scrollY, x: 2400 }"
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
@@ -88,20 +69,17 @@
           </a-descriptions>
         </a-drawer>
       </div>
-      <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
     </a-spin>
   </div>
 </template>
 
 <script>
-import {getWorkshopList, getLineList, getStartWorkApi } from "@/services/web.js";
+import { getAgeingApi } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { splitData } from "@/utils/util.js";
-import UserList from "@/components/app-user/UserList";
 import { columns } from "./list.data";
 import { PublicVar } from "@/mixins/publicVar.js";
 export default {
-  components: { UserList },
   mixins: [PublicVar],
   data() {
     return {
@@ -117,12 +95,6 @@ export default {
       statistic: [],
       isUserList: false,
       isExportLod: false,
-      statisticType: "",
-      workshopList: [],
-      lineList: [],
-      workshopId: "",
-      editData: [],
-      isEdit: false,
     };
   },
   created() {
@@ -136,26 +108,6 @@ export default {
   },
   methods: {
     splitData,
-    //pmc选择
-    userSearch() {
-      this.isUserList = true;
-    },
-    closeEditModal() {
-      this.isEdit = false;
-    },
-    closeUserModal() {
-      this.isUserList = false;
-    },
-    okUserModal(item) {
-      this.isUserList = false;
-      this.searchForm.setFieldsValue({
-        pmc: item.Name,
-      });
-    },
-    //关闭弹出框
-    onClose() {
-      this.isDrawer = false;
-    },
     //重置搜索
     reset() {
       this.getListAll();
@@ -165,52 +117,15 @@ export default {
     plantChange(e) {
       if (e == "") return;
       this.plantId = e;
-      this.searchForm.setFieldsValue({
-        workshopid: "",
-        lineid: "",
-      });
-      this.getWorkshopList();
-    },
-    //车间选择
-    workshopChange(e) {
-      if (e == "") return;
-      this.workshopId = e;
-      this.searchForm.setFieldsValue({
-        lineid: "",
-      });
-      this.getLineList();
     },
     getPlant() {
       let parmas1 = {
         entertypecode: "PLANT",
       };
-      getStartWorkApi(parmas1, "getlistbytypecode").then((res) => {
+      getAgeingApi(parmas1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
-        }
-      });
-    },
-    //获取车间
-    getWorkshopList() {
-      let parmas = {
-        plantid: this.plantId,
-      };
-      getWorkshopList(parmas, "getlist").then((res) => {
-        if (res.data.success) {
-          this.workshopList = res.data.data;
-        }
-      });
-    },
-    //获取产线
-    getLineList() {
-      let parmas = {
-        plantid: this.plantId,
-        workshopId: this.workshopId,
-      };
-      getLineList(parmas).then((res) => {
-        if (res.data.success) {
-          this.lineList = res.data.data;
         }
       });
     },
@@ -225,7 +140,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getStartWorkApi(parmas, "getall").then((res) => {
+      getAgeingApi(parmas, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -261,15 +176,11 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            workshopid: values.workshopid,
-            lineid: values.lineid,
-            pmc: values.pmc,
-            salesno: values.salesno,
             mocode: values.mocode,
             startdate: startdate,
             enddate: enddate,
           };
-          getStartWorkApi(parmas, "getall").then((res) => {
+          getAgeingApi(parmas, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -289,7 +200,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
       };
-      getStartWorkApi(parmas, "getall").then((res) => {
+      getAgeingApi(parmas, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {
@@ -343,3 +254,4 @@ export default {
   min-height: 62vh;
 }
 </style>
+
