@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import {getWorkshopList, getLineList, getStartWorkApi } from "@/services/web.js";
+import {getWorkshopList, getLineList, getStartWorkApi,getDailyPlanAction } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { splitData } from "@/utils/util.js";
 import UserList from "@/components/app-user/UserList";
@@ -181,10 +181,10 @@ export default {
       this.getLineList();
     },
     getPlant() {
-      let parmas1 = {
+      let parmas = {
         entertypecode: "PLANT",
       };
-      getStartWorkApi(parmas1, "getlistbytypecode").then((res) => {
+      getDailyPlanAction(parmas, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:57
- * @LastEditTime: 2021-12-27 16:21:00
+ * @LastEditTime: 2021-12-28 17:13:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/aging/list.vue
@@ -56,19 +56,6 @@
           </div>
         </template>
       </a-table>
-      <!-- 查看详情 -->
-      <div>
-        <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
-          <a-descriptions title="详情" :column="1">
-            <a-descriptions-item v-for="(item, index) in filterData" :key="index" :label="item.title">{{ drawerItem[item.dataIndex] }}</a-descriptions-item>
-            <a-descriptions-item label="状态">
-              <div>
-                <a-tag :color="drawerItem.StatusName === '待审' || drawerItem.StatusName === '返工' ? 'red' : 'green'">{{ drawerItem.StatusName }}</a-tag>
-              </div>
-            </a-descriptions-item>
-          </a-descriptions>
-        </a-drawer>
-      </div>
     </a-spin>
   </div>
 </template>

@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2021-12-22 16:40:54
+ * @LastEditTime: 2021-12-28 10:19:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/components/orderSelect.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="选择生产计划单" @cancel="close" @ok="handleOk" centered width="70%">
+    <a-modal v-model="visible" title="老化出站选择" @cancel="close" @ok="handleOk" centered width="70%">
       <a-descriptions :column="6">
         <a-descriptions-item label="工单">
           {{ orderSelectList[0].MoCode }}
@@ -36,10 +36,11 @@
             :data-source="orderSelectList"
             :size="size"
             :pagination="false"
+            :rowKey="(orderSelectList) => orderSelectList.ProPlanId"
             :row-selection="{
               selectedRowKeys: selectedRowKeys,
               onChange: onSelectChange,
-              type: 'radio',
+              type:selectionType
             }"
             bordered
           >
@@ -48,8 +49,11 @@
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
               </div>
             </template>
-            <template slot="Remarks" slot-scope="text, record">
-              <a-input v-model="record.Remarks" />
+            <template slot="ReportQty" slot-scope="text, record">
+              <a-input-number :disabled="!record.isInput" :min="0" v-model="record.ReportQty" />
+            </template>
+            <template slot="ScrapedQty" slot-scope="text, record">
+              <a-input-number :disabled="!record.isInput" :min="0" v-model="record.ScrapedQty" />
             </template>
           </a-table>
         </a-card>
@@ -66,13 +70,6 @@ const columns = [
     width: 50,
   },
   {
-    title: "生产计划批号",
-    dataIndex: "BatchNo",
-    scopedSlots: { customRender: "BatchNo" },
-    align: "center",
-    width: "120px",
-  },
-  {
     title: "工单号",
     dataIndex: "MoCode",
     scopedSlots: { customRender: "MoCode" },
@@ -80,14 +77,11 @@ const columns = [
     width: 120,
   },
   {
-    title: "计划生产日期",
-    dataIndex: "PlanDate",
-    scopedSlots: { customRender: "PlanDate" },
+    title: "开始老化日期",
+    dataIndex: "DatetimeAgeingStart",
+    scopedSlots: { customRender: "DatetimeAgeingStart" },
     align: "center",
     width: 120,
-    customRender: (text) => {
-        return splitData(text);
-    }
   },
   {
     title: "品号",
@@ -97,36 +91,44 @@ const columns = [
     width: 120,
   },
   {
-    title: "计划车间",
-    dataIndex: "WorkShopName",
+    title: "品名",
+    dataIndex: "ProName",
+    scopedSlots: { customRender: "ProName" },
     align: "center",
-    width: 100,
+    width: 120,
   },
   {
-    title: "计划产线",
-    dataIndex: "LineName",
-    scopedSlots: { customRender: "LineName" },
-    align: "center",
-    width: 100,
-  },
-  {
-    title: "计划数量",
-    dataIndex: "PlanQty",
-    scopedSlots: { customRender: "PlanQty" },
+    title: "正式老化数量",
+    dataIndex: "AgeingQty",
+    scopedSlots: { customRender: "AgeingQty" },
     align: "center",
     width: "80px",
   },
   {
-    title: "状态",
-    dataIndex: "StatusName",
-    scopedSlots: { customRender: "StatusName" },
+    title: "已完成老化数量",
+    dataIndex: "AgeingedQty",
+    scopedSlots: { customRender: "AgeingedQty" },
+    align: "center",
+    width: "80px",
+  },
+  {
+    title: "老化出站数量",
+    dataIndex: "ReportQty",
+    scopedSlots: { customRender: "ReportQty" },
+    align: "center",
+    width: "80px",
+  },
+  {
+    title: "报废数量",
+    dataIndex: "ScrapedQty",
+    scopedSlots: { customRender: "ScrapedQty" },
     align: "center",
     width: "80px",
   },
 ];
 import { splitData } from "@/utils/util.js";
 export default {
-  props: ["orderSelectList", "userLineData"],
+  props: ["orderSelectList", "userLineData","selectType"],
   data() {
     return {
       data: [],
@@ -145,10 +147,18 @@ export default {
       },
       isPrint: false,
       selectedRowKeys: [],
+      selectionType:"checkbox"
     };
   },
   created() {
-    
+    this.$nextTick(() => {
+      console.log(this.selectType);
+      if(this.selectType == 'Multiple'){
+        this.selectionType = 'checkbox'
+      }else {
+        this.selectionType = 'radio'
+      }
+    })
   },
   methods: {
     splitData,
@@ -156,13 +166,32 @@ export default {
       this.isPrint = true;
     },
     onSelectChange(selectedRowKeys) {
+      console.log(selectedRowKeys);
       this.selectedRowKeys = selectedRowKeys;
+      if (selectedRowKeys.length > 0) {
+        this.orderSelectList.map((items) => {
+          items.isInput = this.setIsInput(items.ProPlanId);
+        });
+      } else {
+        this.orderSelectList.map((items) => {
+          items.isInput = false;
+        });
+      }
+    },
+    setIsInput(id) {
+      return this.selectedRowKeys.includes(id);
     },
     close() {
       this.$emit("closeModal");
     },
     handleOk() {
-      this.$emit('succeedOrder',this.orderSelectList[this.selectedRowKeys[0]])
+      let list = [];
+      this.orderSelectList.map((items) => {
+        if (this.setIsInput(items.ProPlanId)) {
+          list.push(items);
+        }
+      });
+      this.$emit("succeedOrder", list);
     },
   },
 };

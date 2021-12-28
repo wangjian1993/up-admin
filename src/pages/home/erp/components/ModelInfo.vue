@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2021-12-27 10:22:20
+ * @LastEditTime: 2021-12-28 16:25:57
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
 -->
 <template>
   <div>
-    <a-drawer class="bom-detail" :visible="visible" title="BOM信息" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }"  width="100%" :footer="null" centered :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
+    <a-drawer class="bom-detail" :visible="visible" title="BOM信息" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
       <a-spin tip="loading..." :spinning="loading">
         <div class="info-box">
           <div>
@@ -105,19 +105,22 @@
                 </a-descriptions>
               </a-tab-pane>
               <a-tab-pane key="7" tab="品号图片">
-                <div style="margin:10px 0">
-                  <a-button type="primary" icon="file-image" @click="downImg('img')">
-                    导出图片
-                  </a-button>
-                  <!-- <a-button style="margin-left:10px" type="primary" icon="file-pdf" @click="downImg('pdf')">
+                <div v-if="imgUrl != ''">
+                  <div style="margin:10px 0">
+                    <a-button type="primary" icon="file-image" @click="downImg('img')">
+                      导出图片
+                    </a-button>
+                    <!-- <a-button style="margin-left:10px" type="primary" icon="file-pdf" @click="downImg('pdf')">
                     导出PDF
                   </a-button> -->
+                  </div>
+                  <div style="width:100%">
+                    <viewer>
+                      <img style="width:100%;height:100%;" :src="imgUrl" alt="" />
+                    </viewer>
+                  </div>
                 </div>
-                <div style="width:100%">
-                  <viewer>
-                    <img style="width:100%;height:100%;" :src="imgUrl" alt="" />
-                  </viewer>
-                </div>
+                <a-empty v-else description="暂无图片" />
               </a-tab-pane>
               <a-tab-pane key="8" tab="品号附件"> </a-tab-pane>
             </a-tabs>
@@ -189,7 +192,7 @@ export default {
       production,
       plant,
       finance,
-      imgUrl: "http://192.168.1.245:8080/Upload/images/20211117/FA0D9F3E37E54191A90783470688113927.jpg",
+      imgUrl: "",
     };
   },
   created() {
@@ -206,34 +209,6 @@ export default {
         alink.href = this.imgUrl;
         alink.download = this.info.ITEM_CODE; //图片名
         alink.click();
-      }
-      if (type == "pdf") {
-        // let self = this;
-        // let img = new Image();
-        // img.setAttribute("crossOrigin", "anonymous");
-        // img.src = self.imgUrl;
-        // img.onload = function() {
-        //   var canvas = document.createElement("canvas");
-        //   console.log("canvas", canvas);
-        //   canvas.width = img.width;
-        //   canvas.height = img.height;
-        //   var context = canvas.getContext("2d");
-        //   console.log(self.imgUrl);
-        //   context.drawImage(self.imgUrl, 0, 0, img.width, img.height);
-        //   var quality = 0.8;
-        //   console.log(canvas);
-        //   //这里的dataurl就是base64类型
-        //   var dataURL = canvas.toDataURL("image/jpeg", quality); //使用toDataUrl将图片转换成jpeg的格式,不要把图片压缩成png，因为压缩成png后base64的字符串可能比不转换前的长！
-        //   console.log(dataURL);
-        //   // console.log("dataURL", dataURL);
-        //   const recordPdf = new jsPDF("", "pt", "a4");
-        //   console.log("recordPdf", recordPdf);
-        //   recordPdf.addImage(dataURL, "JPEG", 0, 0, img.width, img.height);
-        //   recordPdf.save(`"哈哈.pdf"`);
-        // const recordPdf = new jsPDF("l", "pt", "a4");
-        // recordPdf.setFontSize(40);
-        // recordPdf.addImage(pdfImg, "JPEG", 15, 40, 180, 160);
-        // recordPdf.output("datauri");
       }
     },
     close() {
@@ -320,10 +295,15 @@ export default {
   width: 100%;
   overflow-y: auto;
 }
-/deep/.ant-descriptions-item-content{
+/deep/.ant-descriptions-item-content {
   font-size: 10px;
 }
-/deep/.ant-descriptions-item-label{
+/deep/.ant-descriptions-item-label {
   font-size: 10px;
+}
+/deep/.ant-drawer-close{
+  width: 36px;
+  height:36px;
+  line-height: 36px;
 }
 </style>

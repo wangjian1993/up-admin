@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2021-12-25 09:08:11
+ * @LastEditTime: 2021-12-28 10:22:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/outbound.vue
@@ -50,9 +50,9 @@
       <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
     </div>
     <!-- 列表 -->
-    <WorkTable :orderList="orderList" :tableType="2"/>
+    <WorkTable :orderList="orderList" :tableType="2" />
     <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
-    <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
+    <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" :selectType="selectType" />
   </a-card>
 </template>
 <script>
@@ -84,6 +84,8 @@ export default {
       isOrderSelect: false,
       orderSelectList: [],
       isStart: false,
+      selectType: "",
+      multipleList: [],
     };
   },
   created() {
@@ -178,13 +180,26 @@ export default {
           if (res.data.data.IsSuccess) {
             this.isStart = true;
             res.data.message.content = res.data.data.Msg;
-            if (res.data.data.result.length == 1) {
-              this.orderInfo = res.data.data.result[0];
-              this.getHistoryList();
-            } else {
-              this.isOrderSelect = true;
-              this.orderSelectList = res.data.data.result;
-            }
+            this.selectType = res.data.data.result.selectType;
+            this.isOrderSelect = true;
+            let result = res.data.data.result.result;
+            result.map((item) => {
+              item.ReportQty = 0;
+              item.ScrapedQty = 0;
+            });
+            this.orderSelectList = result;
+            // if (res.data.data.result.selectType !== "Multiple") {
+            //   this.orderInfo = res.data.data.result.result[0];
+            //   this.getHistoryList();
+            // } else {
+            //   this.isOrderSelect = true;
+            //   let result = res.data.data.result.result;
+            //   result.map((item) => {
+            //     item.ReportQty = 0;
+            //     item.ScrapedQty = 0;
+            //   });
+            //   this.orderSelectList = result;
+            // }
             this.listData.unshift(res.data.message);
           } else {
             res.data.message.content = res.data.data.Msg;
@@ -204,9 +219,12 @@ export default {
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
-            res.data.message.content = res.data.data.Msg;
+            if (res.data.data.result.length > 0) {
+              res.data.message.content = res.data.data.Msg;
+            } else {
+              res.data.message.content = "暂无历史出站数据";
+            }
             this.orderList = res.data.data.result;
-            console.log(this.orderList)
             this.listData.unshift(res.data.message);
           } else {
             res.data.message.content = res.data.data.Msg;
@@ -215,8 +233,14 @@ export default {
         }
       });
     },
-    succeedOrder(item) {
-      this.orderInfo = item;
+    succeedOrder(list) {
+      console.log(list);
+      this.multipleList = list;
+      list.forEach((item) => {
+        this.receiveQty += item.ReportQty;
+        this.ScrapedQty += item.ScrapedQty;
+      });
+      this.orderInfo = list[0];
       this.isOrderSelect = false;
       this.getHistoryList();
     },
@@ -240,26 +264,49 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      let parmas = {
-        ProPlanId: this.orderInfo.ProPlanId,
-        PlantId: this.orderInfo.PlantId,
-        WorkshopId: this.orderInfo.WorkshopId,
-        LineId: this.orderInfo.LineId,
-        ScanCode: this.orderInfo.ScanCode,
-        ScanCodeType: this.orderInfo.ScanCodeType,
-        MoCode: this.orderInfo.MoCode,
-        ProcessStatus: "PROCESS_FINISHED",
-        ReportQty: this.receiveQty,
-        ScrapedQty: this.scrapQty,
-      };
-      setStartWorkApi(parmas, "submit").then((res) => {
+      let parmas = [];
+      let url = "";
+      if (this.selectType == "Multiple") {
+        url = "multiplesubmit";
+        this.multipleList.forEach((item) => {
+          parmas.push({
+            ProPlanId: item.ProPlanId,
+            PlantId: item.PlantId,
+            WorkshopId: item.WorkshopId,
+            LineId: item.LineId,
+            ScanCode: item.ScanCode,
+            ScanCodeType: item.ScanCodeType,
+            MoCode: item.MoCode,
+            ProcessStatus: "PROCESS_FINISHED",
+            ReportQty: item.ReportQty,
+            ScrapedQty: item.ScrapedQty,
+          });
+        });
+      } else {
+        url = "submit";
+        parmas = {
+          ProPlanId: this.orderInfo.ProPlanId,
+          PlantId: this.orderInfo.PlantId,
+          WorkshopId: this.orderInfo.WorkshopId,
+          LineId: this.orderInfo.LineId,
+          ScanCode: this.orderInfo.ScanCode,
+          ScanCodeType: this.orderInfo.ScanCodeType,
+          MoCode: this.orderInfo.MoCode,
+          ProcessStatus: "PROCESS_FINISHED",
+          ReportQty: this.receiveQty,
+          ScrapedQty: this.scrapQty,
+        };
+      }
+      setStartWorkApi(parmas, url).then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
-          console.log(res);
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
             res.data.message.content = res.data.data.Msg;
-            this.orderList.unshift(res.data.data.result);
+            let list = res.data.data.result;
+            list.map((item) => {
+              this.orderList.unshift(item);
+            });
             this.listData.unshift(res.data.message);
             this.emptyData();
           } else {
