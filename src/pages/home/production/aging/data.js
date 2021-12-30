@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-29 13:58:17
- * @LastEditTime: 2021-12-27 16:07:44
+ * @LastEditTime: 2021-12-30 14:05:30
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/aging/data.js
@@ -71,8 +71,8 @@ export const columns = [
     },
     {
         title: "老化进站数量",
-        dataIndex: "AgeingedQty",
-        scopedSlots: { customRender: "AgeingedQty" },
+        dataIndex: "ProcessStartQty",
+        scopedSlots: { customRender: "ProcessStartQty" },
         align: "center",
         width: 120
     },
@@ -92,8 +92,8 @@ export const columns = [
     },
     {
         title: "状态",
-        dataIndex: "Status",
-        scopedSlots: { customRender: "Status" },
+        dataIndex: "ProcessStatusName",
+        scopedSlots: { customRender: "ProcessStatusName" },
         align: "center",
         width: 120
     },

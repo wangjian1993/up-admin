@@ -1,14 +1,15 @@
 <!--
  * @Author: max
  * @Date: 2021-12-08 10:33:42
- * @LastEditTime: 2021-12-08 14:31:07
+ * @LastEditTime: 2021-12-30 14:40:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/index.vue
 -->
 <template>
   <!-- <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }"> -->
-    <div id="index" ref="appRef">
+  <a-drawer :title="`${titleType}看板`" placement="right" closable @close="onClose" :visible="visible" width="100%" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
+    <dv-full-screen-container style="width:100%;height:100%">
       <div class="bg">
         <dv-loading v-if="loading">Loading...</dv-loading>
         <div v-else class="host-body">
@@ -17,7 +18,7 @@
             <div class="d-flex jc-center">
               <dv-decoration-8 class="dv-dec-8" :color="['#568aea', '#000000']" />
               <div class="title">
-                <span class="title-text">包装车间作业实时看板</span>
+                <span class="title-text">{{ titleType }}车间作业实时看板</span>
                 <dv-decoration-6 class="dv-dec-6" :reverse="true" :color="['#50e3c2', '#67a1e5']" />
               </div>
               <dv-decoration-8 class="dv-dec-8" :reverse="true" :color="['#568aea', '#000000']" />
@@ -28,35 +29,34 @@
             <dv-decoration-3 style="width:250px;height:30px;" />
             <div class="d-flex aside-width">
               <div class="mr-3 react-right bg-color-blue">
-                <span class="text fw-b">民爆光电</span>
+                <span class="text fw-b" style="color:#fff">民爆光电</span>
               </div>
-              <div class="mr-4 react-right react-l-s">
+              <div class="mr-3 react-right react-l-s">
                 <span class="react-after"></span>
-                <span class="text">{{ dateYear }} {{ dateWeek }} {{ dateDay }}</span>
+                <span class="text" style="color:#fff">{{ dateYear }} {{ dateWeek }} {{ dateDay }}</span>
               </div>
             </div>
           </div>
           <div class="body-box">
-            <!-- 第三行数据 -->
             <div class="content-box">
-              <!-- 中间 -->
+              <!-- 生产进度 -->
               <div class="grid-box">
-                <center />
-                <div style="height:850px">
+                <center :TodayProqtyData="TodayProqtyData" />
+                <div style="height:750px">
                   <dv-border-box-11 title="生产进度">
-                    <centerRight1 />
+                    <centerRight1 :ScheduleData="ScheduleData" />
                   </dv-border-box-11>
                 </div>
               </div>
-              <!-- 中间 -->
+              <!-- 拉线生产中情况 -->
               <div class="grid-box grid-box-right">
-                <div style="height:500px">
+                <div style="height:420px">
                   <dv-border-box-11 title="拉线生产中情况">
-                    <bottomLeft />
+                    <bottomLeft :linePlanData="linePlanData" />
                   </dv-border-box-11>
                 </div>
                 <dv-decoration-10 style="width:100%;height:5px;" />
-                <div style="height:450px">
+                <div style="height:420px">
                   <dv-border-box-11 title="历史欠数订单">
                     <bottomRight />
                   </dv-border-box-11>
@@ -66,7 +66,8 @@
           </div>
         </div>
       </div>
-    </div>
+    </dv-full-screen-container>
+  </a-drawer>
   <!-- </a-card> -->
 </template>
 
@@ -77,6 +78,7 @@ import centerRight1 from "./centerRight1";
 import center from "./center";
 import bottomLeft from "./bottomLeft";
 import bottomRight from "./bottomRight";
+import axios from "axios";
 export default {
   mixins: [drawMixin],
   data() {
@@ -87,6 +89,14 @@ export default {
       dateYear: null,
       dateWeek: null,
       weekday: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+      visible: true,
+      titleType: "",
+      BASE_URL: "http://192.168.0.240:8081",
+      TBASE_URL: "http://192.168.1.245:6688",
+      params: [],
+      TodayProqtyData: [], //计划数量
+      ScheduleData: [], //生产进度
+      linePlanData: [], //拉线生产计划
     };
   },
   components: {
@@ -96,13 +106,56 @@ export default {
     bottomRight,
   },
   mounted() {
+    let type = this.$route.path.split("&")[1];
+    console.log(type);
+    this.titleType = type == "zz" ? "组装" : type == "lh" ? "老化" : "包装";
+    this.$store.dispatch("setDataType", type);
+    switch (type) {
+      case "zz":
+        this.params = {
+          plantcode: "01",
+          processcode: "ASSEMBLE_PROCESS",
+          workshopcode: "111",
+        };
+        break;
+      case "lh":
+        this.params = {
+          plantcode: "01",
+          processcode: "AGEING_PROCESS",
+          workshopcode: "LH01",
+        };
+        break;
+      case "bz":
+        this.params = {
+          plantcode: "01",
+          processcode: "PACKING_PROCESS",
+          workshopcode: "PACK01",
+        };
+        break;
+      default:
+        this.params = {
+          plantcode: "01",
+          processcode: "PACKING_PROCESS",
+          workshopcode: "PACK01",
+        };
+        break;
+    }
     this.timeFn();
     this.cancelLoading();
+    this.getTodayProqty();
+    this.getSchedule();
+    this.getLinePlan();
+  },
+  activated() {
+    this.visible = true;
   },
   beforeDestroy() {
     clearInterval(this.timing);
   },
   methods: {
+    onClose() {
+      this.visible = false;
+    },
     timeFn() {
       this.timing = setInterval(() => {
         this.dateDay = formatTime(new Date(), "HH: mm: ss");
@@ -115,10 +168,53 @@ export default {
         this.loading = false;
       }, 500);
     },
+    getTodayProqty() {
+      axios
+        .get(this.TBASE_URL + "/api/kanban/production/workshop/gettodayproqty", { params: this.params })
+        .then((res) => {
+          this.TodayProqtyData = res.data.data;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getSchedule() {
+      axios
+        .get(this.TBASE_URL + "/api/kanban/production/workshop/getprogress", { params: this.params })
+        .then((res) => {
+          this.ScheduleData = [...res.data.data, ...res.data.data];
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    getLinePlan() {
+      axios
+        .get(this.TBASE_URL + "/api/kanban/production/workshop/getlineprogress", { params: this.params })
+        .then((res) => {
+          this.linePlanData = [...res.data.data, ...res.data.data];
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
   },
 };
 </script>
-
+<style lang="less" scoped>
+/deep/.ant-drawer-close {
+  width: 36px;
+  height: 36px;
+  line-height: 36px;
+}
+</style>
 <style lang="less">
 @import "./style/index.less";
+.title-text {
+  color: #fff;
+}
+#dv-full-screen-container {
+  position: static;
+  width: 100%;
+}
 </style>

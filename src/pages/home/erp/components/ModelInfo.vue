@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2021-12-28 16:25:57
+ * @LastEditTime: 2021-12-29 14:45:41
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
@@ -25,14 +25,14 @@
               <a-descriptions-item label="快捷码">
                 {{ info.SHORTCUT }}
               </a-descriptions-item>
+              <a-descriptions-item label="品名" :span="2">
+                {{ info.ITEM_NAME }}
+              </a-descriptions-item>
               <a-descriptions-item label="生命周期">
                 {{ info.DESCRIPTION }}
               </a-descriptions-item>
               <a-descriptions-item label="周期种类">
                 {{ info.CYCLEL_STATUS == "1" ? "1.新建" : info.CYCLEL_STATUS == "2" ? "2.发行" : "3.终止" }}
-              </a-descriptions-item>
-              <a-descriptions-item label="品名" :span="2">
-                {{ info.ITEM_NAME }}
               </a-descriptions-item>
               <a-descriptions-item label="状态">
                 {{ info.ApproveStatus == "Y" ? "Y.已生效" : info.ApproveStatus == "N" ? "N.未生效" : "V.已失效" }}

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2021-12-25 09:08:02
+ * @LastEditTime: 2021-12-30 15:28:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
@@ -47,7 +47,7 @@
       <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
     </div>
     <!-- 列表 -->
-    <WorkTable :orderList="orderList" :tableType="1"/>
+    <WorkTable :orderList="orderList" :tableType="1" />
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
   </a-card>
 </template>
@@ -104,7 +104,7 @@ export default {
       // this.processData = [];
       // this.userLineData = [];
       this.orderValue = "";
-      this.receiveQty =0;
+      this.receiveQty = 0;
       this.isStart = false;
       this.remark = "";
     },
@@ -171,15 +171,16 @@ export default {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
+          this.emptyData();
           if (res.data.data.IsSuccess) {
             this.isStart = true;
             res.data.message.content = res.data.data.Msg;
-            if (res.data.data.result.length == 1) {
-              this.orderInfo = res.data.data.result[0];
+            if (res.data.data.result.selectType == "single") {
+              this.orderInfo = res.data.data.result.result[0];
               this.getHistoryList();
             } else {
               this.isOrderSelect = true;
-              this.orderSelectList = res.data.data.result;
+              this.orderSelectList = res.data.data.result.result;
             }
             this.listData.unshift(res.data.message);
           } else {
@@ -195,14 +196,20 @@ export default {
         MoCode: this.orderInfo.MoCode,
         ProcessStatus: "PROCESS_START",
       };
+      this.orderList = [];
       setStartWorkApi(parmas, "gethisreports").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
-            res.data.message.content = res.data.data.Msg;
-            this.orderList = res.data.data.result;
-            this.listData.unshift(res.data.message);
+            let list = res.data.data.result;
+            if (this.selectType == "single") {
+              this.orderList.unshift(list);
+            } else {
+              list.map((item) => {
+                this.orderList.unshift(item);
+              });
+            }
           } else {
             res.data.message.content = res.data.data.Msg;
             this.listData.unshift(res.data.message);
@@ -256,7 +263,6 @@ export default {
             res.data.message.content = res.data.data.Msg;
             this.orderList.unshift(res.data.data.result);
             this.listData.unshift(res.data.message);
-            this.emptyData();
           } else {
             res.data.message.content = res.data.data.Msg;
             this.listData.unshift(res.data.message);

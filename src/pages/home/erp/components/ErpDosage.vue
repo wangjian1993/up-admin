@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-12-27 10:24:17
+ * @LastEditTime: 2021-12-30 15:17:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
 -->
 <template>
   <div>
-    <a-drawer :visible="visible" title="BOM信息" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }"  width="100%" :footer="null" centered :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
+    <a-drawer :visible="visible" title="BOM信息" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-descriptions :column="5" bordered size="small" :class="antDescriptionsRow">
@@ -62,7 +62,7 @@
         </div>
         <div>
           <a-card title="BOM用量信息" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{y:600 ,x: 2000 }" :pagination="false" :customRow="handleClickRow" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName" :components="components">
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 600, x: 2000 }" :pagination="false" :customRow="handleClickRow" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName" :components="components">
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -90,6 +90,22 @@
               </template>
               <template slot="EXPRITY_DATE" slot-scope="text">
                 <span>{{ splitData(text) }}</span>
+              </template>
+              <template slot="ITEM_NAME" slot-scope="text">
+                <a-tooltip placement="topLeft" :overlayStyle="{ fontSize: '10px' }">
+                  <template slot="title">
+                    {{ text }}
+                  </template>
+                  {{ text }}
+                </a-tooltip>
+              </template>
+              <template slot="ITEM_SPECIFICATION" slot-scope="text">
+                <a-tooltip placement="topLeft" :overlayStyle="{ fontSize: '10px' }">
+                  <template slot="title">
+                    {{ text }}
+                  </template>
+                  {{ text }}
+                </a-tooltip>
               </template>
             </a-table>
           </a-card>
@@ -441,15 +457,15 @@ export default {
   white-space: nowrap;
   overflow: hidden;
 }
-/deep/.ant-descriptions-item-content{
+/deep/.ant-descriptions-item-content {
   font-size: 10px;
 }
-/deep/.ant-descriptions-item-label{
+/deep/.ant-descriptions-item-label {
   font-size: 10px;
 }
-/deep/.ant-drawer-close{
+/deep/.ant-drawer-close {
   width: 36px;
-  height:36px;
+  height: 36px;
   line-height: 36px;
 }
 </style>

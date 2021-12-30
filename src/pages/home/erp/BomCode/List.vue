@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-22 10:26:41
+ * @LastEditTime: 2021-12-30 15:17:58
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
@@ -192,6 +192,22 @@
           </div>
         </span>
       </template>
+      <template slot="ITEM_NAME" slot-scope="text">
+        <a-tooltip placement="topLeft" :overlayStyle="{ fontSize: '10px' }">
+          <template slot="title" >
+            {{ text }}
+          </template>
+          {{ text }}
+        </a-tooltip>
+      </template>
+      <template slot="ITEM_SPECIFICATION" slot-scope="text">
+        <a-tooltip placement="topLeft" :overlayStyle="{ fontSize: '10px' }">
+          <template slot="title" >
+            {{ text }}
+          </template>
+          {{ text }}
+        </a-tooltip>
+      </template>
     </a-table>
     <model-info v-if="isModelInfo" :modelData="mitemcodeData" @closeModal="closeModal"></model-info>
   </a-card>
@@ -207,7 +223,7 @@ import { bomSort } from "@/mixins/bomSort.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { ModelInfo },
-  mixins: [PublicVar,bomSort],
+  mixins: [PublicVar, bomSort],
   data() {
     this.components = {
       header: {
@@ -236,7 +252,7 @@ export default {
         itemspecification: "",
         drawingno: "",
         approvestatus: "",
-      }    
+      },
     };
   },
   activated() {
@@ -373,6 +389,10 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.isSearch = true;
+        } else {
+          this.data = [];
+          this.pagination.current = 1;
+          this.pagination.total = 0;
         }
         this.loading = false;
       });

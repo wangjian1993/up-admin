@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-21 10:33:21
+ * @LastEditTime: 2021-12-30 15:17:45
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -100,6 +100,22 @@
       </template>
       <template slot="EXPRITY_DATE" slot-scope="text">
         <span>{{ splitData(text) }}</span>
+      </template>
+      <template slot="ITEM_NAME" slot-scope="text">
+        <a-tooltip placement="topLeft">
+          <template slot="title" :overlayStyle="{ fontSize: '10px' }">
+            {{ text }}
+          </template>
+          {{ text }}
+        </a-tooltip>
+      </template>
+      <template slot="ITEM_SPECIFICATION" slot-scope="text">
+        <a-tooltip placement="topLeft" :overlayStyle="{ fontSize: '10px' }">
+          <template slot="title">
+            {{ text }}
+          </template>
+          {{ text }}
+        </a-tooltip>
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
@@ -205,6 +221,9 @@ export default {
           this.loading = false;
           this.isSearch = false;
         } else {
+          this.data = [];
+          this.pagination.current = 1;
+          this.pagination.total = 0;
           this.loading = false;
         }
       });
@@ -224,7 +243,6 @@ export default {
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
-          
           if (values["bomdate"]) {
             var bomdate = values["bomdate"].format("YYYY-MM-DD");
           }

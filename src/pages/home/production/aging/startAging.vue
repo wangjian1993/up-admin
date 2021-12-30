@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:51
- * @LastEditTime: 2021-12-27 16:03:59
+ * @LastEditTime: 2021-12-30 14:04:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/aging/startAging.vue
@@ -27,8 +27,8 @@
           {{ userLineData.UserName }}
         </a-descriptions-item>
         <a-descriptions-item label="工单">{{ orderInfo.MoCode }}</a-descriptions-item>
-        <a-descriptions-item label="老化进站数量">{{ orderInfo.AgeingQty }}</a-descriptions-item>
-        <a-descriptions-item label="未老化数量">{{ orderInfo.AgeingedQty }}</a-descriptions-item>
+        <a-descriptions-item label="老化进站数量">{{ orderInfo.ProcessStartQty }}</a-descriptions-item>
+        <a-descriptions-item label="未老化数量">{{ orderInfo.AgeingQty }}</a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名" :span="2">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="老化数量"><a-input-number :disabled="isOrderDisabled" :min="0" v-model="AgeingQty" style="width:200px"/></a-descriptions-item>
@@ -154,6 +154,11 @@ export default {
             this.isStart = true;
             res.data.message.content = res.data.data.Msg;
             this.orderInfo = res.data.data.result;
+            let list = res.data.data.ageingLog;
+            list.map((item) => {
+              this.orderList.unshift(item);
+            });
+            // this.orderList.unshift(res.data.data.result);
             this.listData.unshift(res.data.message);
           } else {
             res.data.message.content = res.data.data.Msg;

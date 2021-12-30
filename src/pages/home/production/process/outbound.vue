@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2021-12-28 10:22:35
+ * @LastEditTime: 2021-12-30 15:27:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/outbound.vue
@@ -110,6 +110,7 @@ export default {
       // this.orderInfo = [];
       // this.processData = [];
       // this.userLineData = [];
+      console.log("1111")
       this.orderValue = "";
       this.receiveQty = 0;
       this.scrapQty = 0;
@@ -177,29 +178,23 @@ export default {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
+           this.emptyData();
           if (res.data.data.IsSuccess) {
             this.isStart = true;
             res.data.message.content = res.data.data.Msg;
             this.selectType = res.data.data.result.selectType;
-            this.isOrderSelect = true;
-            let result = res.data.data.result.result;
-            result.map((item) => {
-              item.ReportQty = 0;
-              item.ScrapedQty = 0;
-            });
-            this.orderSelectList = result;
-            // if (res.data.data.result.selectType !== "Multiple") {
-            //   this.orderInfo = res.data.data.result.result[0];
-            //   this.getHistoryList();
-            // } else {
-            //   this.isOrderSelect = true;
-            //   let result = res.data.data.result.result;
-            //   result.map((item) => {
-            //     item.ReportQty = 0;
-            //     item.ScrapedQty = 0;
-            //   });
-            //   this.orderSelectList = result;
-            // }
+            if (res.data.data.result.selectType == "single") {
+              this.orderInfo = res.data.data.result.result[0];
+              this.getHistoryList();
+            } else {
+              this.isOrderSelect = true;
+              let result = res.data.data.result.result;
+              result.map((item) => {
+                item.ReportQty = 0;
+                item.ScrapedQty = 0;
+              });
+              this.orderSelectList = result;
+            }
             this.listData.unshift(res.data.message);
           } else {
             res.data.message.content = res.data.data.Msg;
@@ -214,18 +209,16 @@ export default {
         MoCode: this.orderInfo.MoCode,
         ProcessStatus: "PROCESS_FINISHED",
       };
+      this.orderList = []
       setStartWorkApi(parmas, "gethisreports").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
-            if (res.data.data.result.length > 0) {
-              res.data.message.content = res.data.data.Msg;
-            } else {
-              res.data.message.content = "暂无历史出站数据";
-            }
-            this.orderList = res.data.data.result;
-            this.listData.unshift(res.data.message);
+            let list = res.data.data.result;
+            list.map((item) => {
+              this.orderList.unshift(item);
+            });
           } else {
             res.data.message.content = res.data.data.Msg;
             this.listData.unshift(res.data.message);
@@ -304,9 +297,13 @@ export default {
           if (res.data.data.IsSuccess) {
             res.data.message.content = res.data.data.Msg;
             let list = res.data.data.result;
-            list.map((item) => {
-              this.orderList.unshift(item);
-            });
+            if (this.selectType == "single") {
+              this.orderList.unshift(list);
+            } else {
+              list.map((item) => {
+                this.orderList.unshift(item);
+              });
+            }
             this.listData.unshift(res.data.message);
             this.emptyData();
           } else {

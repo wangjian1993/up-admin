@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 17:30:45
- * @LastEditTime: 2021-12-22 10:29:56
+ * @LastEditTime: 2021-12-30 15:16:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/DeliveryDetail/index.vue
@@ -201,6 +201,22 @@
             </a-dropdown>
           </div>
         </span>
+      </template>
+      <template slot="ITEM_NAME" slot-scope="text">
+        <a-tooltip placement="topLeft" :overlayStyle="{ fontSize: '10px' }">
+          <template slot="title">
+            {{ text }}
+          </template>
+          {{ text }}
+        </a-tooltip>
+      </template>
+      <template slot="ITEM_SPECIFICATION" slot-scope="text">
+        <a-tooltip placement="topLeft" :overlayStyle="{ fontSize: '10px' }">
+          <template slot="title">
+            {{ text }}
+          </template>
+          {{ text }}
+        </a-tooltip>
       </template>
     </a-table>
     <a-empty v-else description="暂无权限" />
@@ -407,6 +423,10 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.isSearch = true;
+        } else {
+          this.data = [];
+          this.pagination.current = 1;
+          this.pagination.total = 0;
         }
         this.loading = false;
       });
@@ -513,5 +533,8 @@ export default {
 /deep/.ant-table-row-cell-break-word {
   white-space: nowrap;
   overflow: hidden;
+}
+/deep/.ant-tooltip {
+  font-size: 10px;
 }
 </style>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-21 14:34:02
+ * @LastEditTime: 2021-12-30 15:03:34
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/List.vue
@@ -193,6 +193,22 @@
         <template slot="CreateDate" slot-scope="text">
           <span>{{ splitData(text) }}</span>
         </template>
+        <template slot="ITEM_NAME" slot-scope="text">
+        <a-tooltip placement="topLeft">
+          <template slot="title" >
+            {{ text }}
+          </template>
+          {{ text }}
+        </a-tooltip>
+      </template>
+      <template slot="ITEM_SPECIFICATION" slot-scope="text">
+        <a-tooltip placement="topLeft">
+          <template slot="title" >
+            {{ text }}
+          </template>
+          {{ text }}
+        </a-tooltip>
+      </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
       <dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></dosage>
@@ -423,6 +439,10 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.isSearch = true;
+            } else {
+              this.data = [];
+              this.pagination.current = 1;
+              this.pagination.total = 0;
             }
             this.loading = false;
           });

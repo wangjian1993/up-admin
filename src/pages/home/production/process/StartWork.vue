@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2021-12-25 09:07:53
+ * @LastEditTime: 2021-12-30 13:50:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/StartWork.vue
@@ -44,7 +44,7 @@
     <div style="margin:10px 0">
       <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
     </div>
-    <WorkTable :orderList="orderList" :tableType="0"/>
+    <WorkTable :orderList="orderList" :tableType="0" />
     <!-- 列表 -->
     <print v-if="isPrint" :printData="printData" @closeModal="closeModal"></print>
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
@@ -177,12 +177,12 @@ export default {
           if (res.data.data.IsSuccess) {
             this.isStart = true;
             res.data.message.content = res.data.data.Msg;
-            if (res.data.data.result.length == 1) {
-              this.orderInfo = res.data.data.result[0];
+            if (res.data.data.result.selectType == "single") {
+              this.orderInfo = res.data.data.result.result[0];
               this.getHistoryList();
             } else {
               this.isOrderSelect = true;
-              this.orderSelectList = res.data.data.result;
+              this.orderSelectList = res.data.data.result.result;
             }
             this.listData.unshift(res.data.message);
           } else {
@@ -203,14 +203,20 @@ export default {
         MoCode: this.orderInfo.MoCode,
         ProcessStatus: "PROCESS_START",
       };
+      this.orderList = []
       setStartWorkApi(parmas, "gethisreports").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
-            res.data.message.content = res.data.data.Msg;
-            this.orderList = res.data.data.result;
-            this.listData.unshift(res.data.message);
+            let list = res.data.data.result;
+            if (this.selectType == "single") {
+              this.orderList.unshift(list);
+            } else {
+              list.map((item) => {
+                this.orderList.unshift(item);
+              });
+            }
           } else {
             res.data.message.content = res.data.data.Msg;
             this.listData.unshift(res.data.message);

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-24 15:42:48
+ * @LastEditTime: 2021-12-29 11:56:44
  * @LastEditors: max
  * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
@@ -289,6 +289,10 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.isSearch = true;
+            }else {
+              this.data = [];
+              this.pagination.current = 1;
+              this.pagination.total = 0;
             }
             this.loading = false;
           });

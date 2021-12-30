@@ -3,7 +3,7 @@
     <div class="up">
       <div class="bg-color-black item" v-for="item in titleItem" :key="item.title">
         <dv-border-box-10>
-          <p class="colorBlue" style="padding-left: 10px;padding-top:10px">{{ item.title }}</p>
+          <p class="colorBlue" style="color:#fff;padding-left: 10px;padding-top:10px">{{ item.title }}</p>
           <dv-digital-flop class="dv-dig-flop" style="height:60px;padding-left: 10px;margin-bottom: 10px;" :config="item.number" />
         </dv-border-box-10>
         <!-- <dv-decoration-4 style="width:5px;height:70px;" /> -->
@@ -16,14 +16,14 @@
 // import CenterChart from "@/components/echart/center/centerChartRate";
 
 export default {
+  props: ["TodayProqtyData"],
   data() {
     return {
       titleItem: [
         {
-          title: "今年累计任务建次数",
+          title: "今日生产量",
           number: {
-            number: [120],
-            toFixed: 1,
+            number: [0],
             textAlign: "left",
             content: "{nt}",
             style: {
@@ -32,10 +32,9 @@ export default {
           },
         },
         {
-          title: "本月累计任务次数",
+          title: "今日目标量",
           number: {
-            number: [18],
-            toFixed: 1,
+            number: [0],
             textAlign: "left",
             content: "{nt}",
             style: {
@@ -44,116 +43,29 @@ export default {
           },
         },
         {
-          title: "今日累计任务次数",
+          title: "达成率",
           number: {
-            number: [2],
-            toFixed: 1,
+            number: [0],
             textAlign: "left",
             content: "{nt}",
             style: {
               fontSize: 26,
-            },
-          },
-        },
-      ],
-      ranking: {
-        data: [
-          {
-            name: "周口",
-            value: 55,
-          },
-          {
-            name: "南阳",
-            value: 120,
-          },
-          {
-            name: "西峡",
-            value: 78,
-          },
-          {
-            name: "驻马店",
-            value: 66,
-          },
-          {
-            name: "新乡",
-            value: 80,
-          },
-          {
-            name: "新乡2",
-            value: 80,
-          },
-          {
-            name: "新乡3",
-            value: 80,
-          },
-          {
-            name: "新乡4",
-            value: 80,
-          },
-          {
-            name: "新乡5",
-            value: 80,
-          },
-          {
-            name: "新乡6",
-            value: 80,
-          },
-        ],
-        carousel: "single",
-        unit: "人",
-      },
-      water: {
-        data: [24, 45],
-        shape: "roundRect",
-        formatter: "{value}%",
-        waveNum: 3,
-      },
-      // 通过率和达标率的组件复用数据
-      rate: [
-        {
-          id: "centerRate1",
-          tips: 60,
-          colorData: {
-            textStyle: "#3fc0fb",
-            series: {
-              color: ["#00bcd44a", "transparent"],
-              dataColor: {
-                normal: "#03a9f4",
-                shadowColor: "#97e2f5",
-              },
-            },
-          },
-        },
-        {
-          id: "centerRate2",
-          tips: 40,
-          colorData: {
-            textStyle: "#67e0e3",
-            series: {
-              color: ["#faf3a378", "transparent"],
-              dataColor: {
-                normal: "#ff9800",
-                shadowColor: "#fcebad",
-              },
-            },
-          },
-        },
-        {
-          id: "centerRate3",
-          tips: 20,
-          colorData: {
-            textStyle: "#c81624",
-            series: {
-              color: ["#fa00378", "transparent"],
-              dataColor: {
-                normal: "#ff0000",
-                shadowColor: "#fcebad",
-              },
             },
           },
         },
       ],
     };
+  },
+  mounted() {
+    let type = this.$route.path.split("&");
+    this.dataType = type[1]
+    if (this.dataType == "lh") {
+      this.titleItem[1].title = "总接收量";
+      this.titleItem[2].title = "今日转移量";
+    }
+    this.titleItem[0].number.number[0] = this.TodayProqtyData.ReachProportion;
+    this.titleItem[1].number.number[0] = this.TodayProqtyData.TotalPlanQty;
+    this.titleItem[2].number.number[0] = this.TodayProqtyData.TotalFinishedQty;
   },
   components: {},
 };
@@ -189,7 +101,7 @@ export default {
     justify-content: space-between;
     .bg-color-black {
       border-radius: 5px;
-      padding:10px;
+      padding: 10px;
     }
     .ranking {
       padding: 10px;
