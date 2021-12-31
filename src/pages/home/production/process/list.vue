@@ -45,7 +45,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="生产日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
+                <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
               </a-form-item>
             </a-col>
           </a-row>
@@ -58,17 +58,7 @@
       <div class="operator">
         <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
       </div>
-      <a-table
-        :columns="columns"
-        :data-source="dataSource"
-        size="small"
-        :scroll="{ y: scrollY, x: 2800 }"
-        :loading="loading"
-        :pagination="pagination"
-        @change="handleTableChange"
-        :rowKey="(dataSource,index) => dataSource.ProcessId +'_'+index"
-        bordered
-      >
+      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.ProcessId + '_' + index" bordered>
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -94,12 +84,13 @@
 </template>
 
 <script>
-import {getWorkshopList, getLineList, getStartWorkApi,getDailyPlanAction } from "@/services/web.js";
+import { getWorkshopList, getLineList, getStartWorkApi, getDailyPlanAction } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { splitData } from "@/utils/util.js";
 import UserList from "@/components/app-user/UserList";
 import { columns } from "./list.data";
 import { PublicVar } from "@/mixins/publicVar.js";
+// import getTableScroll from "@/utils/setTableHeight";
 export default {
   components: { UserList },
   mixins: [PublicVar],
@@ -123,9 +114,13 @@ export default {
       workshopId: "",
       editData: [],
       isEdit: false,
+      scrollY: "",
     };
   },
   created() {
+    // this.$nextTick(() => {
+    //   this.scrollY = getTableScroll();
+    // });
     this.getListAll();
     this.getPlant();
   },
@@ -340,6 +335,8 @@ export default {
   color: #000;
 }
 /deep/.ant-table {
-  min-height: 62vh;
+  max-height: 61vh;
+  min-height: 61vh;
+  overflow: auto;
 }
 </style>

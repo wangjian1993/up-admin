@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2021-12-30 15:28:28
+ * @LastEditTime: 2021-12-31 15:54:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
@@ -30,7 +30,7 @@
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="计划生产时间">{{ splitData(orderInfo.PlanDate) }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
-        <a-descriptions-item label="接收数量"><a-input-number :min="0" v-model="receiveQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="接收数量"><a-input-number :min="0" v-model="receiveQty" disabled style="width:200px"/></a-descriptions-item>
         <!-- <a-descriptions-item label="报废数量"><a-input-number :min="0" v-model="scrapQty" style="width:200px"/></a-descriptions-item> -->
         <a-descriptions-item label="备注"><a-input v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
@@ -48,7 +48,7 @@
     </div>
     <!-- 列表 -->
     <WorkTable :orderList="orderList" :tableType="1" />
-    <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
+    <orderSelectPull v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" :selectType="selectType" />
   </a-card>
 </template>
 <script>
@@ -57,10 +57,10 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { getTimeData } from "@/utils/util";
 import MsgList from "../components/MsgList.vue";
 import WorkTable from "../components/WorkTable.vue";
-import orderSelect from "./components/orderSelect.vue";
+import orderSelectPull from "./components/orderSelectPull.vue";
 import { splitData } from "@/utils/util.js";
 export default {
-  components: { MsgList, WorkTable, orderSelect },
+  components: { MsgList, WorkTable, orderSelectPull },
   mixins: [PublicVar],
   data() {
     return {
@@ -171,17 +171,18 @@ export default {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
-          this.emptyData();
+          this.receiveQty = 0;
+          this.remark = "";
           if (res.data.data.IsSuccess) {
             this.isStart = true;
             res.data.message.content = res.data.data.Msg;
-            if (res.data.data.result.selectType == "single") {
-              this.orderInfo = res.data.data.result.result[0];
-              this.getHistoryList();
-            } else {
-              this.isOrderSelect = true;
-              this.orderSelectList = res.data.data.result.result;
-            }
+            this.selectType = res.data.data.result.selectType;
+            this.isOrderSelect = true;
+            let result = res.data.data.result.result;
+            result.map((item) => {
+              item.receiveQty = 0;
+            });
+            this.orderSelectList = result;
             this.listData.unshift(res.data.message);
           } else {
             res.data.message.content = res.data.data.Msg;
@@ -203,13 +204,12 @@ export default {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
             let list = res.data.data.result;
-            if (this.selectType == "single") {
-              this.orderList.unshift(list);
-            } else {
-              list.map((item) => {
-                this.orderList.unshift(item);
-              });
+            if (list.length == 0) {
+              return;
             }
+            list.map((item) => {
+              this.orderList.unshift(item);
+            });
           } else {
             res.data.message.content = res.data.data.Msg;
             this.listData.unshift(res.data.message);
@@ -217,8 +217,13 @@ export default {
         }
       });
     },
-    succeedOrder(item) {
-      this.orderInfo = item;
+    succeedOrder(list) {
+      console.log(list);
+      this.multipleList = list;
+      list.forEach((item) => {
+        this.receiveQty += item.receiveQty;
+      });
+      this.orderInfo = list[0];
       this.isOrderSelect = false;
       this.getHistoryList();
     },

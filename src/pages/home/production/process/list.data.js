@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-12-24 09:42:09
- * @LastEditTime: 2021-12-24 09:58:26
+ * @LastEditTime: 2021-12-31 10:20:44
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/list.data.js
@@ -151,8 +151,8 @@ export const columns = [
     },
     {
         title: "报工人",
-        dataIndex: "UserName",
-        scopedSlots: { customRender: "UserName" },
+        dataIndex: "UserCode",
+        scopedSlots: { customRender: "UserCode" },
         align: "center",
         width: "100px",
     },

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-08 10:33:42
- * @LastEditTime: 2021-12-30 14:40:07
+ * @LastEditTime: 2021-12-31 09:38:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/index.vue
@@ -9,7 +9,7 @@
 <template>
   <!-- <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }"> -->
   <a-drawer :title="`${titleType}看板`" placement="right" closable @close="onClose" :visible="visible" width="100%" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
-    <dv-full-screen-container style="width:100%;height:100%">
+    <dv-full-screen-container>
       <div class="bg">
         <dv-loading v-if="loading">Loading...</dv-loading>
         <div v-else class="host-body">
@@ -215,6 +215,5 @@ export default {
 }
 #dv-full-screen-container {
   position: static;
-  width: 100%;
 }
 </style>

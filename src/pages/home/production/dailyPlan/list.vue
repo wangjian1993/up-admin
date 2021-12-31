@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-11-22 10:16:07
+ * @LastEditTime: 2021-12-31 09:41:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/list.vue
@@ -70,7 +70,7 @@
           <a-row v-if="advanced">
             <a-col :md="6" :sm="24">
               <a-form-item label="生产日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
+                <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
               </a-form-item>
             </a-col>
           </a-row>

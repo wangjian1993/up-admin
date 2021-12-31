@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2021-12-30 15:27:56
+ * @LastEditTime: 2021-12-31 15:36:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/outbound.vue
@@ -50,7 +50,7 @@
       <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
     </div>
     <!-- 列表 -->
-    <WorkTable :orderList="orderList" :tableType="2" />
+    <WorkTable :orderList="orderList" :tableType="2" @listUpdate="listUpdate" />
     <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" :selectType="selectType" />
   </a-card>
@@ -110,7 +110,7 @@ export default {
       // this.orderInfo = [];
       // this.processData = [];
       // this.userLineData = [];
-      console.log("1111")
+      console.log("1111");
       this.orderValue = "";
       this.receiveQty = 0;
       this.scrapQty = 0;
@@ -178,23 +178,32 @@ export default {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
-           this.emptyData();
+          this.receiveQty = 0;
+          this.scrapQty = 0;
+          this.remark = "";
           if (res.data.data.IsSuccess) {
             this.isStart = true;
             res.data.message.content = res.data.data.Msg;
             this.selectType = res.data.data.result.selectType;
-            if (res.data.data.result.selectType == "single") {
-              this.orderInfo = res.data.data.result.result[0];
-              this.getHistoryList();
-            } else {
-              this.isOrderSelect = true;
-              let result = res.data.data.result.result;
-              result.map((item) => {
-                item.ReportQty = 0;
-                item.ScrapedQty = 0;
-              });
-              this.orderSelectList = result;
-            }
+            this.isOrderSelect = true;
+            let result = res.data.data.result.result;
+            result.map((item) => {
+              item.ReportQty = 0;
+              item.ScrapedQty = 0;
+            });
+            this.orderSelectList = result;
+            // if (res.data.data.result.selectType == "single") {
+            //   this.orderInfo = res.data.data.result.result[0];
+            //   this.getHistoryList();
+            // } else {
+            //   this.isOrderSelect = true;
+            //   let result = res.data.data.result.result;
+            //   result.map((item) => {
+            //     item.ReportQty = 0;
+            //     item.ScrapedQty = 0;
+            //   });
+            //   this.orderSelectList = result;
+            // }
             this.listData.unshift(res.data.message);
           } else {
             res.data.message.content = res.data.data.Msg;
@@ -209,7 +218,7 @@ export default {
         MoCode: this.orderInfo.MoCode,
         ProcessStatus: "PROCESS_FINISHED",
       };
-      this.orderList = []
+      this.orderList = [];
       setStartWorkApi(parmas, "gethisreports").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
@@ -231,7 +240,7 @@ export default {
       this.multipleList = list;
       list.forEach((item) => {
         this.receiveQty += item.ReportQty;
-        this.ScrapedQty += item.ScrapedQty;
+        this.scrapQty += item.ScrapedQty;
       });
       this.orderInfo = list[0];
       this.isOrderSelect = false;
@@ -297,13 +306,9 @@ export default {
           if (res.data.data.IsSuccess) {
             res.data.message.content = res.data.data.Msg;
             let list = res.data.data.result;
-            if (this.selectType == "single") {
-              this.orderList.unshift(list);
-            } else {
-              list.map((item) => {
-                this.orderList.unshift(item);
-              });
-            }
+            list.map((item) => {
+              this.orderList.unshift(item);
+            });
             this.listData.unshift(res.data.message);
             this.emptyData();
           } else {
@@ -311,6 +316,25 @@ export default {
             this.listData.unshift(res.data.message);
           }
         }
+      });
+    },
+    listUpdate(item) {
+      let parmas = {
+        Id: item.Id,
+        ReportQty: item.ReportQty,
+        ScrapedQty: item.ScrapedQty,
+        ProcessStatus: "PROCESS_FINISHED",
+      };
+      setStartWorkApi(parmas, "update").then((res) => {
+        res.data.message.time = getTimeData();
+        if (res.data.data.IsSuccess) {
+          res.data.message.content = res.data.data.Msg;
+          this.listData.unshift(res.data.message);
+        } else {
+          res.data.message.content = res.data.data.Msg;
+          this.listData.unshift(res.data.message);
+        }
+        this.getHistoryList();
       });
     },
   },

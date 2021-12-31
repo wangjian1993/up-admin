@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-12-23 16:31:19
+ * @LastEditTime: 2021-12-31 09:30:56
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
@@ -185,6 +185,9 @@ export default {
       return toTransition(list);
     },
     formatLongDate(date) {
+      let dateTime = date.setDate(date.getDate() + 1);
+      date = new Date(dateTime);
+      console.log("date-====", date);
       let myyear = date.getFullYear();
       let mymonth = date.getMonth() + 1;
       let myweekday = date.getDate();
@@ -233,21 +236,31 @@ export default {
         this.$message.warning("请先导入excel文件!");
         return;
       }
-      let keyMap = {
-        下单日期: "DateOrder",
-        业务单号: "WorkOrderNo",
-        人均标准产能: "PerCapiteCapacity",
-        品号: "MitemCode",
-        品名: "MitemName",
-        工时: "WorkHour",
-        序号: "序号",
-        缺料状况: "MaterialShortage",
-        计划数量: "PlanQty",
-        计划日期: "PlanDate",
-        订单交期: "DateDeliveryOrder",
-        订单数量: "OrderQty",
-        备注: "Remarks",
-      };
+      let arr = [];
+      let table = this.tableData;
+      for (let i = 0; i < table.length; i++) {
+        let res = table[i];
+        let obj = {};
+        this.tableTitle.forEach((item) => {
+          obj[item["key"]] = res[item["key"]] || "";
+        });
+        arr.push(obj);
+      }
+      // let keyMap = {
+      //   下单日期: "DateOrder",
+      //   业务单号: "WorkOrderNo",
+      //   人均标准产能: "PerCapiteCapacity",
+      //   品号: "MitemCode",
+      //   品名: "MitemName",
+      //   工时: "WorkHour",
+      //   序号: "序号",
+      //   缺料状况: "MaterialShortage",
+      //   计划数量: "PlanQty",
+      //   计划日期: "PlanDate",
+      //   订单交期: "DateDeliveryOrder",
+      //   订单数量: "OrderQty",
+      //   备注: "Remarks",
+      // };
       let data = {
         PlantId: this.plantId,
         WorkShopId: this.workshopId,
@@ -255,40 +268,164 @@ export default {
         PersonQty: this.people,
         PlanList: [],
       };
-      let arr = this.transitionKey(this.tableData, keyMap);
       arr.forEach((item, index) => {
-        //错误信息判断
-        if (typeof item.OrderQty !== "number" || item.OrderQty === "") {
-          this.errorList.push({
-            ErrorMsg: `第${index + 1}行,"订单数量"数据(${item.OrderQty})错误,必须为数字`,
-          });
+        let list = {};
+        for (let key in item) {
+          switch (key) {
+            case "下单日期":
+              if (typeof item[key] === "object") {
+                list.DateOrder = this.formatLongDate(item[key]);
+              }
+              //字符串格式
+              if (typeof item[key] === "string") {
+                try {
+                  //字符串转换为日期
+                  let date = new Date(item[key]);
+                  let formatDate = this.formatLongDate(date);
+                  if (formatDate !== "NaN/NaN/NaN") {
+                    list.DateOrder = formatDate;
+                  } else {
+                    this.errorList.push({
+                      ErrorMsg: `第${index + 1}行,下单日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                    });
+                  }
+                } catch (error) {
+                  this.errorList.push({
+                    ErrorMsg: `第${index + 1}行,下单日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                  });
+                }
+              }
+              break;
+            case "业务单号":
+              list.WorkOrderNo = item[key];
+              break;
+            case "人均标准产能":
+              list.PerCapiteCapacity = item[key];
+              break;
+            case "品号":
+              list.MitemCode = item[key];
+              break;
+            case "品名":
+              list.MitemName = item[key];
+              break;
+            case "工时":
+              list.WorkHour = item[key];
+              break;
+            case "缺料状况":
+              list.MaterialShortage = item[key];
+              break;
+            case "计划数量":
+              if (typeof item[key] !== "number" && item[key] !== "") {
+                this.errorList.push({
+                  ErrorMsg: `第${index + 1}行,计划数量:数据'${item[key]}'错误,必须为数字`,
+                });
+              } else {
+                list.PlanQty = Number(item[key]);
+              }
+              break;
+            case "计划日期":
+              if (typeof item[key] === "object") {
+                list.PlanDate = this.formatLongDate(item[key]);
+              }
+              //字符串格式
+              if (typeof item[key] === "string") {
+                try {
+                  //字符串转换为日期
+                  let date = new Date(item[key]);
+                  let formatDate = this.formatLongDate(date);
+                  if (formatDate !== "NaN/NaN/NaN") {
+                    list.PlanDate = formatDate;
+                  } else {
+                    this.errorList.push({
+                      ErrorMsg: `第${index + 1}行,计划日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                    });
+                  }
+                } catch (error) {
+                  this.errorList.push({
+                    ErrorMsg: `第${index + 1}行,计划日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                  });
+                }
+              }
+              break;
+            case "订单交期":
+              if (typeof item[key] === "object") {
+                list.DateDeliveryOrder = this.formatLongDate(item[key]);
+              }
+              //字符串格式
+              if (typeof item[key] === "string") {
+                try {
+                  //字符串转换为日期
+                  let date = new Date(item[key]);
+                  let formatDate = this.formatLongDate(date);
+                  if (formatDate !== "NaN/NaN/NaN") {
+                    list.DateDeliveryOrder = formatDate;
+                  } else {
+                    this.errorList.push({
+                      ErrorMsg: `第${index + 1}行,订单交期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                    });
+                  }
+                } catch (error) {
+                  this.errorList.push({
+                    ErrorMsg: `第${index + 1}行,订单交期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                  });
+                }
+              }
+              break;
+            case "订单数量":
+              if (typeof item[key] !== "number" && item[key] !== "") {
+                this.errorList.push({
+                  ErrorMsg: `第${index + 1}行,订单数量:数据'${item[key]}'错误,必须为数字`,
+                });
+              } else {
+                list.OrderQty = Number(item[key]);
+              }
+              break;
+            case "备注":
+              list.Remarks = item[key];
+              break;
+          }
         }
-        if (typeof item.PlanQty !== "number" || item.PlanQty === "") {
-          this.errorList.push({
-            ErrorMsg: `第${index + 1}行,"计划数量"数据(${item.PlanQty})错误,必须为数字`,
-          });
-        }
-        //数据添加
-        data.PlanList.push({
-          PlanDate: this.formatDate(item.PlanDate) || "",
-          WorkOrderNo: item.WorkOrderNo || "",
-          MitemCode: item.MitemCode || "",
-          MitemName: item.MitemName || "",
-          OrderQty: item.OrderQty || 0,
-          PlanQty: item.PlanQty || 0,
-          DateOrder: this.formatDate(item.DateOrder) || "",
-          DateDeliveryOrder: this.formatDate(item.DateDeliveryOrder) || "",
-          PerCapiteCapacity: item.PerCapiteCapacity || "",
-          WorkHour: item.WorkHour || "",
-          MaterialShortage: item.MaterialShortage || "",
-          Remarks: item.Remarks || "",
-        });
+        data.PlanList.push(list);
       });
       if (this.errorList.length == 0) {
         this.submitExecl(data);
       } else {
-        this.$message.error("生产日计划数据格式错误,请修改");
+        this.$message.error("物料信息格式错误,请修改");
       }
+      // arr.forEach((item, index) => {
+      //   console.log(item);
+      //   //错误信息判断
+      //   if (typeof item.OrderQty !== "number" || item.OrderQty === "") {
+      //     this.errorList.push({
+      //       ErrorMsg: `第${index + 1}行,"订单数量"数据(${item.OrderQty})错误,必须为数字`,
+      //     });
+      //   }
+      //   if (typeof item.PlanQty !== "number" || item.PlanQty === "") {
+      //     this.errorList.push({
+      //       ErrorMsg: `第${index + 1}行,"计划数量"数据(${item.PlanQty})错误,必须为数字`,
+      //     });
+      //   }
+      //   //数据添加
+      //   data.PlanList.push({
+      //     PlanDate: this.formatLongDate(item.PlanDate) || "",
+      //     WorkOrderNo: item.WorkOrderNo || "",
+      //     MitemCode: item.MitemCode || "",
+      //     MitemName: item.MitemName || "",
+      //     OrderQty: item.OrderQty || 0,
+      //     PlanQty: item.PlanQty || 0,
+      //     DateOrder: this.formatLongDate(item.DateOrder) || "",
+      //     DateDeliveryOrder: this.formatLongDate(item.DateDeliveryOrder) || "",
+      //     PerCapiteCapacity: item.PerCapiteCapacity || "",
+      //     WorkHour: item.WorkHour || "",
+      //     MaterialShortage: item.MaterialShortage || "",
+      //     Remarks: item.Remarks || "",
+      //   });
+      // });
+      // if (this.errorList.length == 0) {
+      //   this.submitExecl(data);
+      // } else {
+      //   this.$message.error("生产日计划数据格式错误,请修改");
+      // }
     },
     submitExecl(parmas) {
       this.isUpload = true;
@@ -330,13 +467,14 @@ export default {
       reader.readAsArrayBuffer(file);
       reader.onload = (e) => {
         const data = e.target.result;
-        const { header, results } = excel.read1(data, "array");
+        const { header, results } = excel.read(data, "array");
         const tableTitle = header.map((item) => {
           let key = item.replace(/[\r\n]/g, "");
           return { key: key };
         });
         this.tableData = results; //这里的tableData就是拿到的excel表格中的数据
         this.tableTitle = tableTitle;
+        console.log(this.tableData);
         this.isUpload = false;
       };
     },
