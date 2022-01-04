@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2021-12-31 15:54:31
+ * @LastEditTime: 2022-01-04 17:28:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
@@ -30,7 +30,7 @@
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="计划生产时间">{{ splitData(orderInfo.PlanDate) }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
-        <a-descriptions-item label="接收数量"><a-input-number :min="0" v-model="receiveQty" disabled style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="接收数量"><a-input-number :min="0" v-model="receiveQty" :disabled="orderInfo.IsWrite === false" style="width:200px"/></a-descriptions-item>
         <!-- <a-descriptions-item label="报废数量"><a-input-number :min="0" v-model="scrapQty" style="width:200px"/></a-descriptions-item> -->
         <a-descriptions-item label="备注"><a-input v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
@@ -107,6 +107,7 @@ export default {
       this.receiveQty = 0;
       this.isStart = false;
       this.remark = "";
+      this.orderInfo.IsWrite = true;
     },
     //打印工单
     //打印工单
@@ -177,12 +178,21 @@ export default {
             this.isStart = true;
             res.data.message.content = res.data.data.Msg;
             this.selectType = res.data.data.result.selectType;
-            this.isOrderSelect = true;
             let result = res.data.data.result.result;
-            result.map((item) => {
-              item.receiveQty = 0;
-            });
-            this.orderSelectList = result;
+            if (result.length <= 1) {
+              this.orderInfo = res.data.data.result.result[0];
+              this.getHistoryList();
+              if (this.orderInfo.IsWrite === false) {
+                this.receiveQty = this.orderInfo.ReportQty;
+              }
+            } else {
+              this.isOrderSelect = true;
+              result.map((item) => {
+                item.receiveQty = 0;
+              });
+              this.orderSelectList = result;
+            }
+
             this.listData.unshift(res.data.message);
           } else {
             res.data.message.content = res.data.data.Msg;
@@ -238,9 +248,9 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      if (!this.receiveQty) {
+      if (this.receiveQty <= 0) {
         let message = {
-          content: "请先输入进站数量",
+          content: "进站数量必须大于0",
           time: getTimeData(),
           IsSuccess: false,
         };
@@ -268,6 +278,7 @@ export default {
             res.data.message.content = res.data.data.Msg;
             this.orderList.unshift(res.data.data.result);
             this.listData.unshift(res.data.message);
+            this.emptyData();
           } else {
             res.data.message.content = res.data.data.Msg;
             this.listData.unshift(res.data.message);

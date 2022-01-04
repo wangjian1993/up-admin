@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2021-12-31 15:57:00
+ * @LastEditTime: 2022-01-04 18:14:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/components/orderSelect.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="老化出站选择" @cancel="close" @ok="handleOk" centered width="70%">
+    <a-modal v-model="visible" title="出站选择" @cancel="close" @ok="handleOk" centered width="70%">
       <a-descriptions :column="6">
         <a-descriptions-item label="工单">
           {{ orderSelectList[0].MoCode }}
@@ -50,7 +50,8 @@
               </div>
             </template>
             <template slot="ReportQty" slot-scope="text, record">
-              <a-input-number :disabled="!record.isInput" :min="0" v-model="record.ReportQty" />
+               <a-input-number v-if="!record.IsWrite" disabled :min="0" v-model="record.ReportQty" />
+              <a-input-number v-else :disabled="!record.isInput" :min="0" v-model="record.ReportQty" />
             </template>
             <template slot="ScrapedQty" slot-scope="text, record">
               <a-input-number :disabled="!record.isInput" :min="0" v-model="record.ScrapedQty" />
@@ -70,6 +71,13 @@ const columns = [
     width: 50,
   },
   {
+    title: "计划批次",
+    dataIndex: "BatchNo",
+    scopedSlots: { customRender: "BatchNo" },
+    align: "center",
+    width: 120,
+  },
+  {
     title: "工单号",
     dataIndex: "MoCode",
     scopedSlots: { customRender: "MoCode" },
@@ -77,9 +85,9 @@ const columns = [
     width: 120,
   },
   {
-    title: "开始老化日期",
-    dataIndex: "DatetimeAgeingStart",
-    scopedSlots: { customRender: "DatetimeAgeingStart" },
+    title: "开工/开始老化日期",
+    dataIndex: "DatetimeStart",
+    scopedSlots: { customRender: "DatetimeStart" },
     align: "center",
     width: 120,
   },
@@ -98,21 +106,21 @@ const columns = [
     width: 120,
   },
   {
-    title: "正式老化数量",
-    dataIndex: "AgeingQty",
-    scopedSlots: { customRender: "AgeingQty" },
+    title: "已进站/开始老化数量",
+    dataIndex: "StartedQty",
+    scopedSlots: { customRender: "StartedQty" },
     align: "center",
     width: "80px",
   },
   {
-    title: "已完成老化数量",
-    dataIndex: "AgeingedQty",
-    scopedSlots: { customRender: "AgeingedQty" },
+    title: "已出站/完成老化数量",
+    dataIndex: "FinishedQty",
+    scopedSlots: { customRender: "FinishedQty" },
     align: "center",
     width: "80px",
   },
   {
-    title: "老化出站数量",
+    title: "可出站数量",
     dataIndex: "ReportQty",
     scopedSlots: { customRender: "ReportQty" },
     align: "center",

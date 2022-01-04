@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-12-08 10:33:42
- * @LastEditTime: 2021-12-31 09:38:47
+ * @LastEditTime: 2022-01-04 09:52:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/index.vue
 -->
 <template>
   <!-- <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }"> -->
-  <a-drawer :title="`${titleType}看板`" placement="right" closable @close="onClose" :visible="visible" width="100%" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
+  <a-drawer :title="`${titleType}看板`" placement="right" closable @close="onClose" :visible="visible" width="100%" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '0px 0px' }">
     <dv-full-screen-container>
       <div class="bg">
         <dv-loading v-if="loading">Loading...</dv-loading>
@@ -84,6 +84,7 @@ export default {
   data() {
     return {
       timing: null,
+      dataTime: null,
       loading: true,
       dateDay: null,
       dateYear: null,
@@ -145,14 +146,24 @@ export default {
     this.getTodayProqty();
     this.getSchedule();
     this.getLinePlan();
+    this.loopData();
   },
   activated() {
     this.visible = true;
   },
   beforeDestroy() {
     clearInterval(this.timing);
+    clearInterval(this.dataTime);
   },
   methods: {
+    loopData() {
+      this.dataTime = setInterval(() => {
+        this.cancelLoading();
+        this.getTodayProqty();
+        this.getSchedule();
+        this.getLinePlan();
+      }, 20000);
+    },
     onClose() {
       this.visible = false;
     },
@@ -182,7 +193,7 @@ export default {
       axios
         .get(this.TBASE_URL + "/api/kanban/production/workshop/getprogress", { params: this.params })
         .then((res) => {
-          this.ScheduleData = [...res.data.data, ...res.data.data];
+          this.ScheduleData =res.data.data;
         })
         .catch((error) => {
           console.log(error);
@@ -192,7 +203,7 @@ export default {
       axios
         .get(this.TBASE_URL + "/api/kanban/production/workshop/getlineprogress", { params: this.params })
         .then((res) => {
-          this.linePlanData = [...res.data.data, ...res.data.data];
+          this.linePlanData = res.data.data;
         })
         .catch((error) => {
           console.log(error);

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2021-12-31 15:36:22
+ * @LastEditTime: 2022-01-04 18:17:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/outbound.vue
@@ -185,13 +185,18 @@ export default {
             this.isStart = true;
             res.data.message.content = res.data.data.Msg;
             this.selectType = res.data.data.result.selectType;
-            this.isOrderSelect = true;
             let result = res.data.data.result.result;
-            result.map((item) => {
-              item.ReportQty = 0;
-              item.ScrapedQty = 0;
-            });
-            this.orderSelectList = result;
+            if (result.length <= 1) {
+              this.orderInfo = res.data.data.result.result[0];
+              this.getHistoryList();
+            } else {
+              this.isOrderSelect = true;
+              result.map((item) => {
+                // item.ReportQty = 0;
+                item.ScrapedQty = 0;
+              });
+              this.orderSelectList = result;
+            }
             // if (res.data.data.result.selectType == "single") {
             //   this.orderInfo = res.data.data.result.result[0];
             //   this.getHistoryList();
@@ -268,8 +273,10 @@ export default {
       }
       let parmas = [];
       let url = "";
-      if (this.selectType == "Multiple") {
+      let resultType = "";
+      if (this.selectType == "Multiple" && this.multipleList.length >= 1) {
         url = "multiplesubmit";
+        resultType = 0;
         this.multipleList.forEach((item) => {
           parmas.push({
             ProPlanId: item.ProPlanId,
@@ -286,6 +293,7 @@ export default {
         });
       } else {
         url = "submit";
+        resultType = 1;
         parmas = {
           ProPlanId: this.orderInfo.ProPlanId,
           PlantId: this.orderInfo.PlantId,
@@ -306,9 +314,13 @@ export default {
           if (res.data.data.IsSuccess) {
             res.data.message.content = res.data.data.Msg;
             let list = res.data.data.result;
-            list.map((item) => {
-              this.orderList.unshift(item);
-            });
+            if (resultType == 0) {
+              list.map((item) => {
+                this.orderList.unshift(item);
+              });
+            }else {
+              this.orderList.unshift(list);
+            }
             this.listData.unshift(res.data.message);
             this.emptyData();
           } else {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-10 09:39:43
- * @LastEditTime: 2021-12-31 09:07:36
+ * @LastEditTime: 2022-01-04 09:37:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/bottomRight.vue
@@ -65,9 +65,13 @@ export default {
   }
 }
 ::v-deep .dv-scroll-board .rows .row-item {
-  font-size: 14px;
+  font-size: 13px;
 }
 ::v-deep .dv-scroll-board .header .header-item {
-  font-size: 16px;
+  font-size: 14px;
+  white-space: initial;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

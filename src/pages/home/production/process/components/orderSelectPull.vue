@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2021-12-31 15:56:04
+ * @LastEditTime: 2022-01-04 18:08:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/components/orderSelectPull.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="出站选择" @cancel="close" @ok="handleOk" centered width="70%">
+    <a-modal v-model="visible" title="进站选择" @cancel="close" @ok="handleOk" centered width="70%">
       <a-descriptions :column="6">
         <a-descriptions-item label="工单">
           {{ orderSelectList[0].MoCode }}
@@ -130,6 +130,13 @@ const columns = [
     title: "状态",
     dataIndex: "StatusName",
     scopedSlots: { customRender: "StatusName" },
+    align: "center",
+    width: "80px",
+  },
+   {
+    title: "已进站数量",
+    dataIndex: "StartedQty",
+    scopedSlots: { customRender: "StartedQty" },
     align: "center",
     width: "80px",
   },

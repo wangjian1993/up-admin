@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:51
- * @LastEditTime: 2021-12-25 09:16:05
+ * @LastEditTime: 2022-01-04 14:04:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/rework/record.vue
@@ -17,13 +17,13 @@
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
         </a-descriptions-item>
-        <a-descriptions-item label="生产车间">
-          <a-select style="width: 200px" v-model="ReworkWorkshopId" placeholder="请选择生产车间" @change="workshopChange">
+        <a-descriptions-item label="返工车间">
+          <a-select style="width: 200px" v-model="ReworkWorkshopId" placeholder="请选择返工车间" @change="workshopChange">
             <a-select-option v-for="item in workshopList" :key="item.WorkshopId" :value="item.WorkshopId">{{ item.WorkshopName }}</a-select-option>
           </a-select>
         </a-descriptions-item>
-        <a-descriptions-item label="生产产线">
-          <a-select style="width: 200px" v-model="ReworkLineId" placeholder="请选择生产产线">
+        <a-descriptions-item label="返工产线">
+          <a-select style="width: 200px" v-model="ReworkLineId" placeholder="请选择返工产线">
             <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
           </a-select>
         </a-descriptions-item>
