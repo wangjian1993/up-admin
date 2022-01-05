@@ -3,8 +3,8 @@
     <div class="up">
       <div class="bg-color-black item" v-for="item in titleItem" :key="item.title">
         <dv-border-box-10>
-          <p class="colorBlue" style="color:#fff;padding-left: 10px;padding-top:10px">{{ item.title + item.number.number }}</p>
-          <dv-digital-flop class="dv-dig-flop" style="height:60px;padding-left: 10px;margin-bottom: 10px;" :config="item.number" />
+          <p class="colorBlue" style="color:#fff;padding-left: 10px;font-size: 20px;margin:0">{{ item.title }}</p>
+          <dv-digital-flop class="dv-dig-flop" style="width:100%;height:70px" :config="item.number" />
         </dv-border-box-10>
         <!-- <dv-decoration-4 style="width:5px;height:70px;" /> -->
       </div>
@@ -25,11 +25,10 @@ export default {
           title: "今日生产量",
           number: {
             number: [0],
-            textAlign: "left",
+            textAlign: "center",
             content: "{nt}",
-            toFixed:2,
             style: {
-              fontSize: 26,
+              fill: "rgba(235, 15, 15)",
             },
           },
         },
@@ -37,11 +36,10 @@ export default {
           title: "今日目标量",
           number: {
             number: [0],
-            textAlign: "left",
+            textAlign: "center",
             content: "{nt}",
-            toFixed:2,
             style: {
-              fontSize: 26,
+              fill: "rgba(235, 15, 15)",
             },
           },
         },
@@ -49,27 +47,43 @@ export default {
           title: "达成率",
           number: {
             number: [0],
-            textAlign: "left",
-            content: "{nt}",
-            toFixed:2,
+            textAlign: "center",
+            content: "{nt}%",
             style: {
-              fontSize: 26,
+              fill: "rgba(235, 15, 15)",
             },
           },
         },
       ],
     };
   },
+  watch: {
+    TodayProqtyData() {
+      this.getListData();
+       console.log("2222")
+    },
+  },
   created() {
-    let type = this.$route.path.split("&");
-    this.dataType = type[1];
-    if (this.dataType == "lh") {
-      this.titleItem[1].title = "总接收量";
-      this.titleItem[2].title = "今日转移量";
-    }
-    this.titleItem[0].number.number[0] = Number(this.TodayProqtyData.ReachProportion);
-    this.titleItem[1].number.number[0] = Number(this.TodayProqtyData.TotalPlanQty);
-    this.titleItem[2].number.number[0] = Number(this.TodayProqtyData.TotalFinishedQty);
+    this.getListData();
+    console.log("11111111")
+  },
+  methods: {
+    getListData() {
+      let type = this.$route.path.split("&");
+      this.dataType = type[1];
+      if (this.dataType == "lh") {
+        this.titleItem[1].title = "总接收量";
+        this.titleItem[2].title = "今日转移量";
+      }
+      // let num = parseInt(Math.random() * (8 + 1));
+      // console.log(Number(this.TodayProqtyData.TotalFinishedQty + num));
+      this.titleItem[0].number.number[0] = Number(this.TodayProqtyData.TotalFinishedQty);
+      this.titleItem[1].number.number[0] = Number(this.TodayProqtyData.TotalPlanQty);
+      this.titleItem[2].number.number[0] = Number(this.TodayProqtyData.ReachProportion);
+      this.titleItem.map((item) => {
+        item.number = { ...item.number };
+      });
+    },
   },
   components: {},
 };

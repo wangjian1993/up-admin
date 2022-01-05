@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-12-24 15:38:33
+ * @LastEditTime: 2022-01-05 11:33:25
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/erp/components/Print.vue
@@ -144,7 +144,7 @@ export default {
       pagination: {
         current: 1,
         total: 0,
-        pageSize: 20, //每页中显示10条数据
+        pageSize: 100, //每页中显示10条数据
         showSizeChanger: true,
         showLessItems: true,
         showQuickJumper: true,

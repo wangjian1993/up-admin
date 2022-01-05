@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2021-12-20 15:35:17
+ * @LastEditTime: 2022-01-05 11:33:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/VariationInfo.vue
@@ -427,7 +427,7 @@ export default {
       pagination2: {
         current: 1,
         total: 0,
-        pageSize: 20, //每页中显示10条数据
+        pageSize: 100, //每页中显示10条数据
         showSizeChanger: true,
         showLessItems: true,
         showQuickJumper: true,

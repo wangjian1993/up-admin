@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-30 15:17:45
+ * @LastEditTime: 2022-01-05 11:41:45
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -130,11 +130,11 @@ import { splitData } from "@/utils/util.js";
 import ErpDosage from "../components/ErpDosage.vue";
 import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
 import { columns } from "./data";
-import { PublicVar } from "@/mixins/publicVar.js";
+import { PublicVarErp } from "@/mixins/publicVarErp.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { ErpDosage },
-  mixins: [PublicVar],
+  mixins: [PublicVarErp],
   data() {
     this.components = {
       header: {

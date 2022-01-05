@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-30 15:17:52
+ * @LastEditTime: 2022-01-05 11:41:36
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -252,12 +252,12 @@ import ErpDosage from "../components/ErpDosage.vue";
 import { exportjsontoexcelMore } from "@/utils/ExportExcel";
 import Print from "../components/Print.vue";
 import { columns } from "./data";
-import { PublicVar } from "@/mixins/publicVar.js";
+import { PublicVarErp } from "@/mixins/publicVarErp.js";
 import { bomSort } from "@/mixins/bomSort.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { ErpDosage, Print },
-  mixins: [PublicVar, bomSort],
+  mixins: [PublicVarErp, bomSort],
   data() {
     this.components = {
       header: {

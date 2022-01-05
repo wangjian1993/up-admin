@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-30 15:17:58
+ * @LastEditTime: 2022-01-05 11:38:12
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
@@ -218,12 +218,12 @@ import { getERPReportAction } from "@/services/erp.js";
 import { splitData, modelType } from "@/utils/util.js";
 import ModelInfo from "../components/ModelInfo.vue";
 import { columns } from "./data";
-import { PublicVar } from "@/mixins/publicVar.js";
+import { PublicVarErp } from "@/mixins/publicVarErp.js";
 import { bomSort } from "@/mixins/bomSort.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { ModelInfo },
-  mixins: [PublicVar, bomSort],
+  mixins: [PublicVarErp, bomSort],
   data() {
     this.components = {
       header: {

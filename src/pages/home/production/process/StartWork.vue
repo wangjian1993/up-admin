@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2021-12-30 13:50:48
+ * @LastEditTime: 2022-01-05 09:00:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/StartWork.vue
@@ -24,7 +24,7 @@
           {{ userLineData.LineName }}
         </a-descriptions-item>
         <a-descriptions-item label="填单人/填单时间">
-          {{ userLineData.UserName }}
+          {{ userLineData.UserName }} / {{ splitData(userLineData.DATETIME_CREATED) }}
         </a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>

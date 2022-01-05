@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 13:58:47
- * @LastEditTime: 2021-12-30 13:48:16
+ * @LastEditTime: 2022-01-05 17:52:24
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/bottomLeft.vue
@@ -36,37 +36,46 @@ export default {
     };
   },
   components: {},
+  watch: {
+    linePlanData() {
+      this.getListData();
+    },
+  },
   mounted() {
-    let type = this.$route.path.split("&");
-    this.dataType = type[1];
-    if (this.dataType === "lh") {
-      this.config.header = ["产线", "工单", "品名", "接收数量", "转移数量", "老化开始时间", "已老化小时数"];
-      this.config.columnWidth = [100, 160, 200, 100, 100, 110, 110];
-    } else {
-      this.config.header = ["产线", "工单", "品名", "计划数量", "拉上数量", "开工时间", "已上传小时数", "已入库数量"];
-      this.config.columnWidth = [90, 160, 200, 90, 100, 110, 110,100];
-    }
-    this.linePlanData.map((item) => {
-      let list = [];
-      if (this.dataType === "lh") {
-        list.push(item.LineName);
-        list.push(item.MoCode);
-        list.push(item.ProName);
-        list.push(item.PlanQty);
-        list.push(item.FinishedQty);
-        list.push(this.ageingStart(item.StartTime));
-        list.push(item.ProHours);
-        // list = [item.LineName, item.MoCode, item.ProName, item.PlanQty, `<span style="color:#32c5e9;">${item.StatusName}</span>`, "", "", item.AgeingHour, item.ReworkQty, item.FinishedQty, item.DefectiveQty, item.DefectiveProportion];
-      } else {
-        list = [item.LineName, item.MoCode, item.ProName, item.PlanQty, item.StatusName, item.StartTime, item.FinishedQty, item.FinishedTime, item.ReworkQty, item.DefectiveQty, item.ReachProportion, item.DefectiveProportion];
-      }
-      this.config.data.push(list);
-    });
+    this.getListData();
   },
   methods: {
+    getListData() {
+      console.log("更新====");
+      let type = this.$route.path.split("&");
+      this.dataType = type[1];
+      if (this.dataType === "lh") {
+        this.config.header = ["产线", "工单", "品名", "接收数量", "转移数量", "老化开始时间", "已老化小时数"];
+        this.config.columnWidth = [100, 160, 200, 100, 100, 110, 110];
+      } else {
+        this.config.header = ["产线", "工单", "品名", "计划数量", "拉上数量", "开工时间", "已生产小时数", "已入库数量"];
+        this.config.columnWidth = [90, 150, 180, 90, 100, 100, 100, 100];
+      }
+      this.linePlanData.map((item) => {
+        let list = [];
+        if (this.dataType === "lh") {
+          list.push(item.LineName);
+          list.push(item.MoCode);
+          list.push(`<p style="color:rgb(255,255,153);font-size:10px;margin:0">${item.ProName}</p>`);
+          list.push(item.PlanQty);
+          list.push(item.FinishedQty);
+          list.push(`<p style="color:rgb(0,255,255);font-size:10px;margin:0">${this.ageingStart(item.StartTime)}</p>`);
+          list.push(item.ProHours);
+        } else {
+          list = [item.LineName, item.MoCode, `<p style="color:rgb(255,255,153);font-size:10px;margin:0">${item.ProName}</p>`, item.PlanQty, item.OnlineQty, `<p style="color:rgb(0,255,255);font-size:10px;margin:0">${this.ageingStart(item.StartTime)}</p>`, item.ProHours, item.FinishedQty];
+        }
+        this.config.data.push(list);
+        this.config = { ...this.config };
+      });
+    },
     ageingStart(time) {
       if (time == null) {
-        return;
+        return "";
       }
       let str = time.split("T");
       let d = str[1].split(":");

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-30 15:03:34
+ * @LastEditTime: 2022-01-05 11:41:29
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/List.vue
@@ -223,11 +223,11 @@ import { splitData, modelType } from "@/utils/util.js";
 import Dosage from "./Dosage.vue";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { columns, columnsPrint } from "./data";
-import { PublicVar } from "@/mixins/publicVar.js";
+import { PublicVarErp } from "@/mixins/publicVarErp.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { Dosage },
-  mixins: [PublicVar],
+  mixins: [PublicVarErp],
   data() {
     this.components = {
       header: {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:56:46
- * @LastEditTime: 2021-12-31 15:30:11
+ * @LastEditTime: 2022-01-05 14:19:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/components/WorkTable.vue
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { columns, columns1 } from "./data.js";
+import { columns, columns1, columns2 } from "./data.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 export default {
   mixins: [PublicVar],
@@ -53,14 +53,16 @@ export default {
   created() {
     if (this.tableType == 2) {
       this.columnsData = columns1;
+    } else if (this.tableType == 3) {
+      this.columnsData = columns2;
     } else {
       this.columnsData = columns;
     }
   },
   methods: {
     agingSave(item) {
-      console.log("更新====")
-      this.$emit("listUpdate",item)
+      console.log("更新====");
+      this.$emit("listUpdate", item);
     },
   },
   components: {},

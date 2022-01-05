@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 17:30:45
- * @LastEditTime: 2022-01-05 11:42:12
+ * @LastEditTime: 2022-01-05 18:17:03
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/erp/DeliveryDetail/index.vue
+ * @FilePath: /up-admin/src/pages/home/erp/DeliveryDetail/index2.vue
 -->
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
@@ -228,7 +228,7 @@ import getTableScroll from "@/utils/setTableHeight";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData, modelType } from "@/utils/util.js";
 import ModelInfo from "../components/ModelInfo.vue";
-import { columns, columnsHeard } from "./data";
+import { columns, columnsHeard } from "./data2";
 import { PublicVarErp } from "@/mixins/publicVarErp.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 import { exportjsontoexcelMore } from "@/utils/ExportExcel";

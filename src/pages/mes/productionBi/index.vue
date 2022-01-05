@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-12-08 10:33:42
- * @LastEditTime: 2022-01-04 09:52:17
+ * @LastEditTime: 2022-01-05 18:10:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/index.vue
 -->
 <template>
   <!-- <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }"> -->
-  <a-drawer :title="`${titleType}看板`" placement="right" closable @close="onClose" :visible="visible" width="100%" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '0px 0px' }">
+  <a-drawer v-if="visible" :title="`${titleType}看板`" placement="right" destroyOnClose closable @close="onClose" :visible="visible" width="100%" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '0px 0px' }">
     <dv-full-screen-container>
       <div class="bg">
         <dv-loading v-if="loading">Loading...</dv-loading>
@@ -79,6 +79,7 @@ import center from "./center";
 import bottomLeft from "./bottomLeft";
 import bottomRight from "./bottomRight";
 import axios from "axios";
+var timer = 0;
 export default {
   mixins: [drawMixin],
   data() {
@@ -110,7 +111,6 @@ export default {
     let type = this.$route.path.split("&")[1];
     console.log(type);
     this.titleType = type == "zz" ? "组装" : type == "lh" ? "老化" : "包装";
-    this.$store.dispatch("setDataType", type);
     switch (type) {
       case "zz":
         this.params = {
@@ -146,26 +146,32 @@ export default {
     this.getTodayProqty();
     this.getSchedule();
     this.getLinePlan();
-    this.loopData();
   },
   activated() {
+    console.log("显示======");
     this.visible = true;
+    this.loopData();
   },
-  beforeDestroy() {
+  destroyed() {
     clearInterval(this.timing);
-    clearInterval(this.dataTime);
+    window.clearInterval(this.dataTime);
+    console.log("关闭======", this.dataTime);
+    this.dataTime = null;
+    this.timing = null;
   },
   methods: {
     loopData() {
-      this.dataTime = setInterval(() => {
-        this.cancelLoading();
+      timer = window.setInterval(() => {
         this.getTodayProqty();
         this.getSchedule();
         this.getLinePlan();
-      }, 20000);
+      }, 30000);
     },
     onClose() {
       this.visible = false;
+      window.clearInterval(timer);
+      clearInterval(this.timing);
+      console.log("关闭=====", timer);
     },
     timeFn() {
       this.timing = setInterval(() => {
@@ -193,7 +199,9 @@ export default {
       axios
         .get(this.TBASE_URL + "/api/kanban/production/workshop/getprogress", { params: this.params })
         .then((res) => {
-          this.ScheduleData =res.data.data;
+          if (res.data.data.length > 0) {
+            this.ScheduleData = res.data.data;
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -203,7 +211,9 @@ export default {
       axios
         .get(this.TBASE_URL + "/api/kanban/production/workshop/getlineprogress", { params: this.params })
         .then((res) => {
-          this.linePlanData = res.data.data;
+          if (res.data.data.length > 0) {
+            this.linePlanData = res.data.data;
+          }
         })
         .catch((error) => {
           console.log(error);

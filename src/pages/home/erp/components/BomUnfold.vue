@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-02 17:34:40
- * @LastEditTime: 2021-12-27 10:21:08
+ * @LastEditTime: 2022-01-05 11:33:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/BomUnfold.vue
@@ -209,7 +209,7 @@ export default {
       pagination: {
         current: 1,
         total: 0,
-        pageSize: 20, //每页中显示10条数据
+        pageSize: 100, //每页中显示10条数据
         showSizeChanger: true,
         showLessItems: true,
         showQuickJumper: true,

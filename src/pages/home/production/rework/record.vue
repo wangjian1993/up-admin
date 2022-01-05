@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:51
- * @LastEditTime: 2022-01-04 14:04:46
+ * @LastEditTime: 2022-01-05 09:01:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/rework/record.vue
@@ -28,7 +28,7 @@
           </a-select>
         </a-descriptions-item>
         <a-descriptions-item label="填单人/填单时间">
-          {{ userLineData.UserName }}
+          {{ userLineData.UserName }} / {{ splitData(userLineData.DATETIME_CREATED) }}
         </a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
@@ -66,6 +66,7 @@ import MsgList from "../components/MsgList.vue";
 import WorkTable from "../components/WorkTable.vue";
 import reworkSheet from "./reworkSheet.vue";
 import orderSelect from "./components/orderSelect.vue";
+import { splitData } from "@/utils/util.js";
 export default {
   components: { MsgList, WorkTable, reworkSheet, orderSelect },
   mixins: [PublicVar],
@@ -102,6 +103,7 @@ export default {
     this.$refs.orderValue.focus();
   },
   methods: {
+    splitData,
     closeListData() {
       this.listData = [];
     },

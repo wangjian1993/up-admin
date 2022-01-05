@@ -16,59 +16,105 @@ export default {
       config: {
         header: [],
         data: [],
-        rowNum: 13, //表格行数
+        rowNum: 15, //表格行数
         headerBGC: "#0f1325", //表头
         oddRowBGC: "#0f1325", //奇数行
         evenRowBGC: "#171c33", //偶数行
         index: false,
         waitTime: 2000,
-        align: ["center", "center", "center", "center", "center", "center", "center", "center","center", "center", "center", "center"],
-        columnWidth:[60,130,160]
+        align: ["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"],
+        columnWidth: [60, 130, 160],
       },
     };
   },
+  watch: {
+    ScheduleData() {
+      console.log("更新====");
+      this.getListData();
+    },
+  },
   components: {},
   mounted() {
-    let type = this.$route.path.split("&");
-    this.dataType = type[1]
-    if (this.dataType === "lh") {
-      this.config.header = ["产线", "工单", "品名", "计划数量", "批次", "老化开始日期", "老化开始时间", "已老化小时数", "返工数量", "转移数量", "不良品数量", "不良率"];
-    } else {
-      this.config.header = ["产线", "工单", "品名", "计划数量", "状态", "开工时间", "完工数量", "完工时间", "返工数量", "不良品数量", "达成率", "不良率"];
-    }
-    this.ScheduleData.map((item) => {
-      let list = [];
-      if (this.dataType === "lh") {
-        list.push(item.LineName);
-        list.push(item.MoCode);
-        list.push(item.ProName);
-        list.push(item.PlanQty);
-        if (item.StatusName == "已开工") {
-          list.push(`<p style="background:#fecb31;color:#000;font-size:14px">${item.StatusName}</p>`);
-        } else if (item.StatusName == "未开工") {
-          list.push(`<p style="background:#ff0004;color:#000;font-size:14px">${item.StatusName}</p>`);
-        } else if (item.StatusName == "部分完工") {
-          list.push(`<p style="background:#32c5e9;color:#000;font-size:14px">${item.StatusName}</p>`);
-        } else if (item.StatusName == "已完工") {
-          list.push(`<p style="background:#349969;color:#000;font-size:14px">${item.StatusName}</p>`);
-        } else {
-          list.push(item.StatusName);
-        }
-        list.push("");
-        list.push("");
-        list.push(item.AgeingHour);
-        list.push(item.ReworkQty);
-        list.push(item.FinishedQty);
-        list.push(item.DefectiveQty);
-        list.push(item.DefectiveProportion);
-        // list = [item.LineName, item.MoCode, item.ProName, item.PlanQty, `<span style="color:#32c5e9;">${item.StatusName}</span>`, "", "", item.AgeingHour, item.ReworkQty, item.FinishedQty, item.DefectiveQty, item.DefectiveProportion];
-      } else {
-        list = [item.LineName, item.MoCode, item.ProName, item.PlanQty, item.StatusName, item.StartTime, item.FinishedQty, item.FinishedTime, item.ReworkQty, item.DefectiveQty, item.ReachProportion, item.DefectiveProportion];
-      }
-      this.config.data.push(list);
-    });
+    this.getListData();
   },
-  methods: {},
+  methods: {
+    getListData() {
+      let type = this.$route.path.split("&");
+      this.dataType = type[1];
+      if (this.dataType === "lh") {
+        this.config.header = ["产线", "工单", "品名", "计划数量", "状态", "老化开始日期", "老化开始时间", "已老化小时数", "返工数量", "转移数量", "不良品数量", "不良率%"];
+      } else {
+        this.config.header = ["产线", "工单", "品名", "计划数量", "状态", "开工时间", "完工数量", "完工时间", "返工数量", "不良品数量", "达成率%", "不良率%"];
+      }
+      this.ScheduleData.map((item) => {
+        let list = [];
+        let stateStr = this.setState(item.StatusName);
+        if (this.dataType === "lh") {
+          list.push(item.LineName);
+          list.push(item.MoCode);
+          list.push(`<p style="color:rgb(255,255,153);font-size:10px;margin:0">${item.ProName}</p>`);
+          list.push(item.PlanQty);
+          list.push(stateStr);
+          list.push(`<p style="color:rgb(0,255,255);font-size:10px;margin:0">${this.ageingDate(item.StartTime)}</p>`);
+          list.push(`<p style="color:rgb(0,255,255);font-size:10px;margin:0">${this.ageingStart(item.StartTime)}</p>`);
+          list.push(item.AgeingHour);
+          list.push(item.ReworkQty);
+          list.push(item.FinishedQty);
+          list.push(`<p style="color:red;font-size:14px;margin:0">${item.DefectiveQty}</p>`);
+          list.push(`<p style="color:red;font-size:14px;margin:0">${item.DefectiveProportion}</p>`);
+        } else {
+          list = [
+            item.LineName,
+            item.MoCode,
+            `<p style="color:rgb(255,255,153);font-size:10px;margin:0">${item.ProName}</p>`,
+            item.PlanQty,
+            stateStr,
+            `<p style="color:rgb(0,255,255);font-size:10px;margin:0">${this.ageingStart(item.StartTime)}</p>`,
+            item.FinishedQty,
+            `<p style="color:rgb(0,255,255);font-size:10px;margin:0">${this.ageingStart(item.FinishedTime)}</p>`,
+            item.ReworkQty,
+            item.DefectiveQty,
+            `<p style="color:red;font-size:14px;margin:0">${item.ReachProportion}</p>`,
+            `<p style="color:red;font-size:14px;margin:0">${item.DefectiveProportion}</p>`,
+          ];
+        }
+        // console.log("生产进度更新item====", list);
+        this.config.data.push(list);
+        this.config = { ...this.config };
+      });
+    },
+    setState(state) {
+      let str = "";
+      if (state == "已开工") {
+        str = `<p style="background:#fecb31;color:#000;font-size:10px;margin:0">${state}</p>`;
+      } else if (state == "未开工") {
+        str = `<p style="background:#ff0004;color:#000;font-size:10px;margin:0">${state}</p>`;
+      } else if (state == "部分完工") {
+        str = `<p style="background:#32c5e9;color:#000;font-size:10px;margin:0">${state}</p>`;
+      } else if (state == "已完工") {
+        str = `<p style="background:#349969;color:#000;font-size:10px;margin:0">${state}</p>`;
+      } else {
+        str = state;
+      }
+      return str;
+    },
+    ageingDate(time) {
+      if (time == null) {
+        return "";
+      }
+      let str = time.split("T");
+      let d = str[0].split("-");
+      return d[0] + "/" + d[1] + "/" + d[2];
+    },
+    ageingStart(time) {
+      if (time == null) {
+        return "";
+      }
+      let str = time.split("T");
+      let d = str[1].split(":");
+      return d[0] + ":" + d[1];
+    },
+  },
 };
 </script>
 

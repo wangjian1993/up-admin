@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:48:13
- * @LastEditTime: 2022-01-05 18:15:01
+ * @LastEditTime: 2022-01-05 18:18:54
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/erp/DeliveryDetail/data.js
+ * @FilePath: /up-admin/src/pages/home/erp/DeliveryDetail/data2.js
  */
 import { splitData } from "@/utils/util.js";
 export const columns = [
@@ -111,20 +111,6 @@ export const columns = [
         width: 80,
     },
     {
-        title: "单价",
-        dataIndex: "DISCOUNTED_PRICE",
-        scopedSlots: { customRender: "DISCOUNTED_PRICE" },
-        align: "center",
-        width: 80,
-    },
-    {
-        title: "原币金额",
-        dataIndex: "AMOUNT_O",
-        scopedSlots: { customRender: "AMOUNT_O" },
-        align: "center",
-        width: 80,
-    },
-    {
         title: "交易币种",
         dataIndex: "CURRENCY_CODE",
         scopedSlots: { customRender: "CURRENCY_CODE" },
@@ -160,13 +146,6 @@ export const columns = [
         width: 80,
     },
     {
-        title: "本币金额",
-        dataIndex: "AMOUNT_L",
-        scopedSlots: { customRender: "AMOUNT_L" },
-        align: "center",
-        width: 80,
-    },
-    {
         title: "结算状态",
         dataIndex: "SETTLEMENT_CLOSE",
         scopedSlots: { customRender: "SETTLEMENT_CLOSE" },
@@ -180,34 +159,6 @@ export const columns = [
         title: "已结算数量",
         dataIndex: "SETTLEMENT_PRICE_QTY",
         scopedSlots: { customRender: "SETTLEMENT_PRICE_QTY" },
-        align: "center",
-        width: 80,
-    },
-    {
-        title: "原币未税金额",
-        dataIndex: "AMOUNT_UNINCLUDE_TAX_OC",
-        scopedSlots: { customRender: "AMOUNT_UNINCLUDE_TAX_OC" },
-        align: "center",
-        width: 80,
-    },
-    {
-        title: "原币税额",
-        dataIndex: "TAX_OC",
-        scopedSlots: { customRender: "TAX_OC" },
-        align: "center",
-        width: 80,
-    },
-    {
-        title: "本币未税金额",
-        dataIndex: "AMOUNT_UNINCLUDE_TAX_BC",
-        scopedSlots: { customRender: "AMOUNT_UNINCLUDE_TAX_BC" },
-        align: "center",
-        width: 80,
-    },
-    {
-        title: "本币税额",
-        dataIndex: "TAX_BC",
-        scopedSlots: { customRender: "TAX_BC" },
         align: "center",
         width: 80,
     },
@@ -413,8 +364,6 @@ export const columnsHeard = [
         align: "center",
         width: 80,
     },
-
-
     {
         title: "税率",
         dataIndex: "TAX_RATE",

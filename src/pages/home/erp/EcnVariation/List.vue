@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-29 11:56:44
+ * @LastEditTime: 2022-01-05 11:42:23
  * @LastEditors: max
  * @Description: bom工程变更单
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/List.vue
@@ -131,11 +131,11 @@ import { splitData } from "@/utils/util.js";
 import VariationInfo from "./VariationInfo.vue";
 import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
 import { columns } from "./data";
-import { PublicVar } from "@/mixins/publicVar.js";
+import { PublicVarErp } from "@/mixins/publicVarErp.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { VariationInfo },
-  mixins: [PublicVar],
+  mixins: [PublicVarErp],
   data() {
     this.components = {
       header: {

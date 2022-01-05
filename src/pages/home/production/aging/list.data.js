@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-12-24 09:42:09
- * @LastEditTime: 2021-12-27 16:20:22
+ * @LastEditTime: 2022-01-05 14:37:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/aging/list.data.js
@@ -12,13 +12,6 @@ export const columns = [
         scopedSlots: { customRender: "index" },
         align: "center",
         width: 50,
-    },
-    {
-        title: "物料标识卡条码",
-        dataIndex: "ScanCode",
-        scopedSlots: { customRender: "ScanCode" },
-        align: "center",
-        width: 120
     },
     {
         title: "工单",

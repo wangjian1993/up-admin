@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:51
- * @LastEditTime: 2021-12-30 14:04:37
+ * @LastEditTime: 2022-01-05 13:45:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/aging/startAging.vue
@@ -24,11 +24,11 @@
           {{ userLineData.LineName }}
         </a-descriptions-item>
         <a-descriptions-item label="填单人/填单时间">
-          {{ userLineData.UserName }}
+          {{ userLineData.UserName }} / {{ splitData(userLineData.DATETIME_CREATED) }}
         </a-descriptions-item>
         <a-descriptions-item label="工单">{{ orderInfo.MoCode }}</a-descriptions-item>
         <a-descriptions-item label="老化进站数量">{{ orderInfo.ProcessStartQty }}</a-descriptions-item>
-        <a-descriptions-item label="未老化数量">{{ orderInfo.AgeingQty }}</a-descriptions-item>
+        <a-descriptions-item label="未老化数量">{{ orderInfo.AgeingedQty }}</a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名" :span="2">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="老化数量"><a-input-number :disabled="isOrderDisabled" :min="0" v-model="AgeingQty" style="width:200px"/></a-descriptions-item>
@@ -55,6 +55,7 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { getTimeData } from "@/utils/util";
 import MsgList from "../components/MsgList.vue";
 import WorkTable from "./WorkTable.vue";
+import { splitData } from "@/utils/util.js";
 export default {
   components: { MsgList, WorkTable },
   mixins: [PublicVar],
@@ -87,6 +88,7 @@ export default {
     this.$refs.orderValue.focus();
   },
   methods: {
+    splitData,
     closeListData() {
       this.listData = [];
     },
@@ -147,6 +149,7 @@ export default {
       };
       setAgeingApi(parmas, "scan").then((res) => {
         res.data.message.time = getTimeData();
+        this.orderList = [];
         if (res.data.success) {
           this.AgeingQty = 0;
           res.data.message.IsSuccess = res.data.data.IsSuccess;

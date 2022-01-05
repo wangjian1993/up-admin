@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2021-12-21 14:24:45
+ * @LastEditTime: 2022-01-05 11:41:54
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -92,11 +92,11 @@ import { splitData, modelType } from "@/utils/util.js";
 import ErpDosage from "../components/ErpDosage.vue";
 import ModelInfo from "../components/ModelInfo.vue";
 import { columns, innerColumns } from "./data";
-import { PublicVar } from "@/mixins/publicVar.js";
+import { PublicVarErp } from "@/mixins/publicVarErp.js";
 // import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   components: { ErpDosage, ModelInfo },
-  mixins: [PublicVar],
+  mixins: [PublicVarErp],
   data() {
     return {
       data: [],
