@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-08 10:33:42
- * @LastEditTime: 2022-01-05 18:10:08
+ * @LastEditTime: 2022-01-06 17:24:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/index.vue
@@ -108,6 +108,13 @@ export default {
     bottomRight,
   },
   mounted() {
+    if (process.env.NODE_ENV == "production") {
+      //正式服
+      this.BASE_URL = window.location.host === "218.17.19.58:7003" ? "http://218.17.19.58:7004" : "http://192.168.0.240:8081";
+    } else {
+      //测试
+      this.BASE_URL = process.env.VUE_APP_API_BASE_URL;
+    }
     let type = this.$route.path.split("&")[1];
     console.log(type);
     this.titleType = type == "zz" ? "组装" : type == "lh" ? "老化" : "包装";
@@ -170,8 +177,6 @@ export default {
     onClose() {
       this.visible = false;
       window.clearInterval(timer);
-      clearInterval(this.timing);
-      console.log("关闭=====", timer);
     },
     timeFn() {
       this.timing = setInterval(() => {
@@ -187,7 +192,7 @@ export default {
     },
     getTodayProqty() {
       axios
-        .get(this.TBASE_URL + "/api/kanban/production/workshop/gettodayproqty", { params: this.params })
+        .get(this.BASE_URL + "/api/kanban/production/workshop/gettodayproqty", { params: this.params })
         .then((res) => {
           this.TodayProqtyData = res.data.data;
         })
@@ -197,7 +202,7 @@ export default {
     },
     getSchedule() {
       axios
-        .get(this.TBASE_URL + "/api/kanban/production/workshop/getprogress", { params: this.params })
+        .get(this.BASE_URL + "/api/kanban/production/workshop/getprogress", { params: this.params })
         .then((res) => {
           if (res.data.data.length > 0) {
             this.ScheduleData = res.data.data;
@@ -209,10 +214,13 @@ export default {
     },
     getLinePlan() {
       axios
-        .get(this.TBASE_URL + "/api/kanban/production/workshop/getlineprogress", { params: this.params })
+        .get(this.BASE_URL + "/api/kanban/production/workshop/getlineprogress", { params: this.params })
         .then((res) => {
           if (res.data.data.length > 0) {
             this.linePlanData = res.data.data;
+            // this.linePlanData.map((item) => {
+            //   item.MoCode = item.MoCode + new Date();
+            // });
           }
         })
         .catch((error) => {

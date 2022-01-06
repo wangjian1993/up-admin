@@ -16,12 +16,12 @@ export default {
       config: {
         header: [],
         data: [],
-        rowNum: 15, //表格行数
+        rowNum: 10, //表格行数
         headerBGC: "#0f1325", //表头
         oddRowBGC: "#0f1325", //奇数行
         evenRowBGC: "#171c33", //偶数行
         index: false,
-        waitTime: 2000,
+        waitTime: 3000,
         align: ["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"],
         columnWidth: [60, 130, 160],
       },
@@ -41,6 +41,7 @@ export default {
     getListData() {
       let type = this.$route.path.split("&");
       this.dataType = type[1];
+      this.config.data = [];
       if (this.dataType === "lh") {
         this.config.header = ["产线", "工单", "品名", "计划数量", "状态", "老化开始日期", "老化开始时间", "已老化小时数", "返工数量", "转移数量", "不良品数量", "不良率%"];
       } else {
@@ -78,10 +79,10 @@ export default {
             `<p style="color:red;font-size:14px;margin:0">${item.DefectiveProportion}</p>`,
           ];
         }
-        // console.log("生产进度更新item====", list);
+        // const { config } = this;
         this.config.data.push(list);
-        this.config = { ...this.config };
       });
+      this.config = { ...this.config };
     },
     setState(state) {
       let str = "";

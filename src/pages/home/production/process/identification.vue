@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-16 13:58:52
- * @LastEditTime: 2021-12-24 10:58:19
+ * @LastEditTime: 2022-01-06 09:59:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/identification.vue
@@ -54,8 +54,8 @@ const columns = [
   },
   {
     title: "订单号",
-    dataIndex: "MoCode",
-    scopedSlots: { customRender: "MoCode" },
+    dataIndex: "MoCode1",
+    scopedSlots: { customRender: "MoCode1" },
     align: "center",
     width: "120px",
   },
@@ -157,6 +157,9 @@ export default {
       });
     },
     handleOk() {
+      if(this.pagination.total < 1 ){
+        return
+      }
       this.isPrint = true;
     },
   },

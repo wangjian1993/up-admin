@@ -1,14 +1,16 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-12-24 16:12:22
+ * @LastEditTime: 2022-01-06 09:56:53
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/process/components/print.vue
 -->
 <template>
   <a-modal v-model="visible" title="打印生产投料单" v-if="visible" @cancel="close" :footer="null" centered width="50%">
-    <a-button style="float:right" type="primary" class="no-print" @click="updatedStatu" v-print="'#printTest'">打印</a-button>
+    <div style="display: flex;justify-content: flex-end;">
+      <a-button type="primary" class="no-print" @click="updatedStatu" v-print="'#printTest'">打印</a-button>
+    </div>
     <div id="printTest">
       <div class="content" v-for="(item, index) in printData" :key="item.id" :style="(index + 1) % 3 == 0 ? 'page-break-after:always' : ''">
         <div class="content-top">
@@ -44,7 +46,7 @@
             <a-descriptions-item label="拉">
               {{ item.LineName }}
             </a-descriptions-item>
-             <a-descriptions-item label="备注">
+            <a-descriptions-item label="备注">
               {{ item.Remarks }}
             </a-descriptions-item>
           </a-descriptions>
@@ -82,7 +84,7 @@ export default {
       this.printData.map((item) => {
         parmas.push({
           Id: item.Id,
-          Remarks:item.Remarks,
+          Remarks: item.Remarks,
           Status: "PRINTED",
         });
       });

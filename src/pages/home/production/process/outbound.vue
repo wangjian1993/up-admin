@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2022-01-05 08:58:47
+ * @LastEditTime: 2022-01-06 09:28:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/outbound.vue
@@ -272,7 +272,7 @@ export default {
       let parmas = [];
       let url = "";
       let resultType = "";
-      if (this.selectType == "Multiple" && this.multipleList.length >= 1) {
+      if (this.selectType == "Multiple" && this.multipleList.length > 1) {
         url = "multiplesubmit";
         resultType = 0;
         this.multipleList.forEach((item) => {

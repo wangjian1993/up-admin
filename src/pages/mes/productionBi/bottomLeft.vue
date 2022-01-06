@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 13:58:47
- * @LastEditTime: 2022-01-05 17:52:24
+ * @LastEditTime: 2022-01-06 17:12:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/bottomLeft.vue
@@ -30,6 +30,7 @@ export default {
         oddRowBGC: "#0f1325", //奇数行
         evenRowBGC: "#171c33", //偶数行
         index: false,
+        waitTime: 3000,
         align: ["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"],
         columnWidth: [],
       },
@@ -49,6 +50,7 @@ export default {
       console.log("更新====");
       let type = this.$route.path.split("&");
       this.dataType = type[1];
+      this.config.data = [];
       if (this.dataType === "lh") {
         this.config.header = ["产线", "工单", "品名", "接收数量", "转移数量", "老化开始时间", "已老化小时数"];
         this.config.columnWidth = [100, 160, 200, 100, 100, 110, 110];
@@ -63,15 +65,15 @@ export default {
           list.push(item.MoCode);
           list.push(`<p style="color:rgb(255,255,153);font-size:10px;margin:0">${item.ProName}</p>`);
           list.push(item.PlanQty);
-          list.push(item.FinishedQty);
+          list.push(item.OnlineQty);
           list.push(`<p style="color:rgb(0,255,255);font-size:10px;margin:0">${this.ageingStart(item.StartTime)}</p>`);
           list.push(item.ProHours);
         } else {
           list = [item.LineName, item.MoCode, `<p style="color:rgb(255,255,153);font-size:10px;margin:0">${item.ProName}</p>`, item.PlanQty, item.OnlineQty, `<p style="color:rgb(0,255,255);font-size:10px;margin:0">${this.ageingStart(item.StartTime)}</p>`, item.ProHours, item.FinishedQty];
         }
         this.config.data.push(list);
-        this.config = { ...this.config };
       });
+      this.config = { ...this.config };
     },
     ageingStart(time) {
       if (time == null) {
