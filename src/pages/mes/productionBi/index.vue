@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-08 10:33:42
- * @LastEditTime: 2022-01-06 17:24:48
+ * @LastEditTime: 2022-01-08 17:55:59
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/index.vue
@@ -206,6 +206,8 @@ export default {
         .then((res) => {
           if (res.data.data.length > 0) {
             this.ScheduleData = res.data.data;
+          } else {
+            this.linePlanData = [];
           }
         })
         .catch((error) => {
@@ -221,6 +223,8 @@ export default {
             // this.linePlanData.map((item) => {
             //   item.MoCode = item.MoCode + new Date();
             // });
+          } else {
+            this.linePlanData = [];
           }
         })
         .catch((error) => {

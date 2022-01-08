@@ -29,6 +29,7 @@ export default {
             content: "{nt}",
             style: {
               fill: "rgba(235, 15, 15)",
+              fontSize: 34,
             },
           },
         },
@@ -40,6 +41,7 @@ export default {
             content: "{nt}",
             style: {
               fill: "rgba(235, 15, 15)",
+              fontSize: 34,
             },
           },
         },
@@ -48,9 +50,10 @@ export default {
           number: {
             number: [0],
             textAlign: "center",
-            content: "{nt}%",
+            content: "{nt}",
             style: {
               fill: "rgba(235, 15, 15)",
+              fontSize: 34,
             },
           },
         },
@@ -60,12 +63,12 @@ export default {
   watch: {
     TodayProqtyData() {
       this.getListData();
-       console.log("2222")
+      console.log("2222");
     },
   },
   created() {
     this.getListData();
-    console.log("11111111")
+    console.log("11111111");
   },
   methods: {
     getListData() {
@@ -74,12 +77,19 @@ export default {
       if (this.dataType == "lh") {
         this.titleItem[1].title = "总接收量";
         this.titleItem[2].title = "今日转移量";
+        this.titleItem[2].number.content = "{nt}";
+        this.titleItem[0].number.number[0] = Number(this.TodayProqtyData.TotalStartQty);
+        this.titleItem[1].number.number[0] = Number(this.TodayProqtyData.TotalPlanQty);
+        this.titleItem[2].number.number[0] = Number(this.TodayProqtyData.TotalFinishedQty);
+      } else {
+        this.titleItem[2].number.content = "{nt}%";
+        this.titleItem[0].number.number[0] = Number(this.TodayProqtyData.TotalFinishedQty);
+        this.titleItem[1].number.number[0] = Number(this.TodayProqtyData.TotalPlanQty);
+        this.titleItem[2].number.number[0] = Number(this.TodayProqtyData.ReachProportion);
       }
       // let num = parseInt(Math.random() * (8 + 1));
       // console.log(Number(this.TodayProqtyData.TotalFinishedQty + num));
-      this.titleItem[0].number.number[0] = Number(this.TodayProqtyData.TotalFinishedQty);
-      this.titleItem[1].number.number[0] = Number(this.TodayProqtyData.TotalPlanQty);
-      this.titleItem[2].number.number[0] = Number(this.TodayProqtyData.ReachProportion);
+
       this.titleItem.map((item) => {
         item.number = { ...item.number };
       });

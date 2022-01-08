@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2022-01-05 09:00:37
+ * @LastEditTime: 2022-01-07 13:58:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @change="inputChange" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur" @pressEnter="scanCode" auto-size /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -30,9 +30,9 @@
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="计划生产时间">{{ splitData(orderInfo.PlanDate) }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
-        <a-descriptions-item label="接收数量"><a-input-number :min="0" v-model="receiveQty" :disabled="orderInfo.IsWrite === false" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="接收数量"><a-input-number @blur="setFocus" :min="0" v-model="receiveQty" :disabled="orderInfo.IsWrite === false" style="width:200px"/></a-descriptions-item>
         <!-- <a-descriptions-item label="报废数量"><a-input-number :min="0" v-model="scrapQty" style="width:200px"/></a-descriptions-item> -->
-        <a-descriptions-item label="备注"><a-input v-model="remark" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="备注"><a-input @blur="setFocus" v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button v-if="hasPerm('process_scan')" type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
             进站
@@ -91,6 +91,16 @@ export default {
     splitData,
     closeListData() {
       this.listData = [];
+    },
+    iinputBlur() {
+      setTimeout(() => {
+        this.$refs.orderValue.focus();
+      }, 10000);
+    },
+    setFocus() {
+      setTimeout(() => {
+        this.$refs.orderValue.focus();
+      }, 100);
     },
     inputChange(e) {
       const { value } = e.target;
@@ -152,6 +162,7 @@ export default {
     },
     //扫码
     scanCode(e) {
+      e.currentTarget.select();
       if (e.keyCode == 13) {
         event.preventDefault(); // 阻止浏览器默认换行操作
       }

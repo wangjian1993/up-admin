@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-01-05 09:00:43
+ * @LastEditTime: 2022-01-07 13:56:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/StartWork.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-input style="width:400px;" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @change="inputChange" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-input style="width:400px;" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur" @pressEnter="scanCode" auto-size /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -23,14 +23,12 @@
         <a-descriptions-item label="生产产线">
           {{ userLineData.LineName }}
         </a-descriptions-item>
-        <a-descriptions-item label="填单人/填单时间">
-          {{ userLineData.UserName }} / {{ splitData(userLineData.DATETIME_CREATED) }}
-        </a-descriptions-item>
+        <a-descriptions-item label="填单人/填单时间"> {{ userLineData.UserName }} / {{ splitData(userLineData.DATETIME_CREATED) }} </a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="计划生产时间">{{ splitData(orderInfo.PlanDate) }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
-        <a-descriptions-item label="开工数量"><a-input-number :min="0" v-model="startWorkQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="开工数量"><a-input-number @blur="setFocus" :min="0" v-model="startWorkQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
             开工
@@ -88,6 +86,17 @@ export default {
   },
   methods: {
     splitData,
+    inputBlur() {
+      setTimeout(() => {
+        this.$refs.orderValue.focus();
+      }, 10000);
+    },
+    setFocus() {
+      setTimeout(() => {
+        this.$refs.orderValue.focus();
+      }, 100);
+    },
+    //定时添加焦点
     closeListData() {
       this.listData = [];
     },
@@ -153,6 +162,7 @@ export default {
     },
     //扫码
     scanCode(e) {
+      e.currentTarget.select();
       if (e.keyCode == 13) {
         event.preventDefault(); // 阻止浏览器默认换行操作
       }
@@ -203,7 +213,7 @@ export default {
         MoCode: this.orderInfo.MoCode,
         ProcessStatus: "PROCESS_START",
       };
-      this.orderList = []
+      this.orderList = [];
       setStartWorkApi(parmas, "gethisreports").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {

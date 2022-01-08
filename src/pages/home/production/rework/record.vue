@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:51
- * @LastEditTime: 2022-01-05 09:01:55
+ * @LastEditTime: 2022-01-07 14:06:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/rework/record.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @pressEnter="scanCode" @blur="inputBlur" auto-size /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -27,15 +27,13 @@
             <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
           </a-select>
         </a-descriptions-item>
-        <a-descriptions-item label="填单人/填单时间">
-          {{ userLineData.UserName }} / {{ splitData(userLineData.DATETIME_CREATED) }}
-        </a-descriptions-item>
+        <a-descriptions-item label="填单人/填单时间"> {{ userLineData.UserName }} / {{ splitData(userLineData.DATETIME_CREATED) }} </a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="计划生产时间">{{ orderInfo.PlanDate }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
-        <a-descriptions-item label="返工数量"><a-input-number :disabled="isOrderDisabled" :min="0" v-model="reworkQty" style="width:200px"/></a-descriptions-item>
-        <a-descriptions-item label="返工原因"><a-input v-model="remark" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="返工数量"><a-input-number @blur="setFocus" :disabled="isOrderDisabled" :min="0" v-model="reworkQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="返工原因"><a-input @blur="setFocus" v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button v-if="hasPerm('save')" type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
             返工提交
@@ -53,7 +51,7 @@
       <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
     </div>
     <!-- 列表 -->
-    <WorkTable :orderList="orderList" :tableType="3"/>
+    <WorkTable :orderList="orderList" :tableType="3" />
     <reworkSheet v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></reworkSheet>
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
   </a-card>
@@ -92,7 +90,7 @@ export default {
       orderSelectList: [],
       isOrderDisabled: false,
       reworkList: [],
-       isStart: false,
+      isStart: false,
     };
   },
   created() {
@@ -102,8 +100,23 @@ export default {
   mounted() {
     this.$refs.orderValue.focus();
   },
+  activated() {
+    setTimeout(() => {
+      this.$refs.orderValue.focus();
+    }, 100);
+  },
   methods: {
     splitData,
+    inputBlur() {
+      setTimeout(() => {
+        this.$refs.orderValue.focus();
+      }, 10000);
+    },
+    setFocus() {
+      setTimeout(() => {
+        this.$refs.orderValue.focus();
+      }, 100);
+    },
     closeListData() {
       this.listData = [];
     },
@@ -185,6 +198,7 @@ export default {
     },
     //扫码
     scanCode(e) {
+      e.currentTarget.select();
       if (e.keyCode == 13) {
         event.preventDefault(); // 阻止浏览器默认换行操作
       }
@@ -207,7 +221,7 @@ export default {
           this.reworkQty = 0;
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
-            this.isStart =true;
+            this.isStart = true;
             res.data.message.content = res.data.data.Msg;
             if (res.data.data.result.length == 1) {
               this.orderInfo = res.data.data.result[0];

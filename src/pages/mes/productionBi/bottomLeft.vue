@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 13:58:47
- * @LastEditTime: 2022-01-06 17:12:09
+ * @LastEditTime: 2022-01-08 15:50:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/bottomLeft.vue
@@ -29,10 +29,10 @@ export default {
         headerBGC: "#0f1325", //表头
         oddRowBGC: "#0f1325", //奇数行
         evenRowBGC: "#171c33", //偶数行
-        index: false,
+        index: true,
         waitTime: 3000,
         align: ["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"],
-        columnWidth: [],
+        columnWidth: [40, 60, 120, 140],
       },
     };
   },
@@ -53,27 +53,36 @@ export default {
       this.config.data = [];
       if (this.dataType === "lh") {
         this.config.header = ["产线", "工单", "品名", "接收数量", "转移数量", "老化开始时间", "已老化小时数"];
-        this.config.columnWidth = [100, 160, 200, 100, 100, 110, 110];
+        this.config.columnWidth = [40, 100, 160, 200, 100, 100, 110, 110];
       } else {
         this.config.header = ["产线", "工单", "品名", "计划数量", "拉上数量", "开工时间", "已生产小时数", "已入库数量"];
-        this.config.columnWidth = [90, 150, 180, 90, 100, 100, 100, 100];
+        this.config.columnWidth = [40, 90, 150, 180, 90, 100, 100, 100, 100];
       }
       this.linePlanData.map((item) => {
         let list = [];
         if (this.dataType === "lh") {
           list.push(item.LineName);
           list.push(item.MoCode);
-          list.push(`<p style="color:rgb(255,255,153);font-size:10px;margin:0">${item.ProName}</p>`);
-          list.push(item.PlanQty);
-          list.push(item.OnlineQty);
-          list.push(`<p style="color:rgb(0,255,255);font-size:10px;margin:0">${this.ageingStart(item.StartTime)}</p>`);
+          list.push(`<p style="color:rgb(255,255,153);font-size:16px;margin:0">${item.ProName}</p>`);
+          list.push(item.StartQty);
+          list.push(item.FinishedQty);
+          list.push(`<p style="color:rgb(0,255,255);font-size:16px;margin:0">${this.ageingDate(item.StartTime)}</p>`);
           list.push(item.ProHours);
         } else {
-          list = [item.LineName, item.MoCode, `<p style="color:rgb(255,255,153);font-size:10px;margin:0">${item.ProName}</p>`, item.PlanQty, item.OnlineQty, `<p style="color:rgb(0,255,255);font-size:10px;margin:0">${this.ageingStart(item.StartTime)}</p>`, item.ProHours, item.FinishedQty];
+          list = [item.LineName, item.MoCode, `<p style="color:rgb(255,255,153);font-size:16px;margin:0">${item.ProName}</p>`, item.PlanQty, item.OnlineQty, `<p style="color:rgb(0,255,255);font-size:16px;margin:0">${this.ageingDate(item.StartTime)}</p>`, item.ProHours, item.FinishedQty];
         }
         this.config.data.push(list);
       });
       this.config = { ...this.config };
+    },
+    ageingDate(time) {
+      if (time == null) {
+        return "";
+      }
+      let str = time.split("T");
+      let d = str[0].split("-");
+      let t = str[1].split(":");
+      return d[1] + "/" + d[2] + " " + t[0] + ":" + t[1];
     },
     ageingStart(time) {
       if (time == null) {
@@ -107,13 +116,13 @@ export default {
     border-radius: 10px;
     overflow: hidden;
     .dv-scr-board {
-      width: 930px;
+      width: 100%;
       height: 360px;
     }
   }
 }
 ::v-deep .dv-scroll-board .rows .row-item {
-  font-size: 13px;
+  font-size: 16px;
 }
 ::v-deep .dv-scroll-board .header .header-item {
   font-size: 14px;

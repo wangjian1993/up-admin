@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:51
- * @LastEditTime: 2022-01-05 13:45:28
+ * @LastEditTime: 2022-01-07 14:05:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/aging/startAging.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="6" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @pressEnter="scanCode" @blur="inputBlur" auto-size /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -23,15 +23,13 @@
         <a-descriptions-item label="老化产线">
           {{ userLineData.LineName }}
         </a-descriptions-item>
-        <a-descriptions-item label="填单人/填单时间">
-          {{ userLineData.UserName }} / {{ splitData(userLineData.DATETIME_CREATED) }}
-        </a-descriptions-item>
+        <a-descriptions-item label="填单人/填单时间"> {{ userLineData.UserName }} / {{ splitData(userLineData.DATETIME_CREATED) }} </a-descriptions-item>
         <a-descriptions-item label="工单">{{ orderInfo.MoCode }}</a-descriptions-item>
         <a-descriptions-item label="老化进站数量">{{ orderInfo.ProcessStartQty }}</a-descriptions-item>
         <a-descriptions-item label="未老化数量">{{ orderInfo.AgeingedQty }}</a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名" :span="2">{{ orderInfo.ProName }}</a-descriptions-item>
-        <a-descriptions-item label="老化数量"><a-input-number :disabled="isOrderDisabled" :min="0" v-model="AgeingQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="老化数量"><a-input-number @blur="setFocus" :disabled="isOrderDisabled" :min="0" v-model="AgeingQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button v-if="hasPerm('start_aging')" type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
             开始老化
@@ -87,8 +85,23 @@ export default {
   mounted() {
     this.$refs.orderValue.focus();
   },
+  activated() {
+    setTimeout(() => {
+      this.$refs.orderValue.focus();
+    }, 100);
+  },
   methods: {
     splitData,
+    inputBlur() {
+      setTimeout(() => {
+        this.$refs.orderValue.focus();
+      }, 10000);
+    },
+    setFocus() {
+      setTimeout(() => {
+        this.$refs.orderValue.focus();
+      }, 100);
+    },
     closeListData() {
       this.listData = [];
     },
@@ -131,6 +144,7 @@ export default {
     },
     //扫码
     scanCode(e) {
+      e.currentTarget.select();
       if (e.keyCode == 13) {
         event.preventDefault(); // 阻止浏览器默认换行操作
       }

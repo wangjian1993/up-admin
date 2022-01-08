@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2021-12-24 14:55:29
+ * @LastEditTime: 2022-01-08 16:39:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/ExportExcel.js
@@ -93,7 +93,7 @@ export function exportjsontoexcel({
         ws = sheet_from_array_of_arrays(data);
 
     //合并单元格
-    ws['!merges'] = merges
+    ws['!merges'] = merges;
     //动态设置宽度
     if (autoWidth) {
         /*设置worksheet每列的最大宽度*/
@@ -271,6 +271,10 @@ export function exportjsontoexcelMore({
         let ws = sheet_from_array_of_arrays(data)
         //合并单元格
         ws['!merges'] = merges
+        // ws['B7'] = { t: 'n', f: "=SUM(D9:D21)" };
+        // ws['B7'] = { t: 'n', f: "SUM(D9:D21)", F: "B7:B7" };
+        // ws['A28'] = { t: 'n', f: "SUM(D9:D21)", F: "A28:A28" };
+        console.log("ws", ws);
         //动态设置宽度
         if (autoWidth) {
             /*设置worksheet每列的最大宽度*/
@@ -330,6 +334,7 @@ export function exportjsontoexcelMore({
         /* add worksheet to workbook */
         wb.SheetNames.push(Sheet);
         wb.Sheets[Sheet] = ws;
+        // wb.Sheets[Sheet]['B7'] = { t: 'n', f: 'SUM(D9:P21)' };
         let dataInfo = wb.Sheets[wb.SheetNames[index]];
 
         const borderAll = { //单元格外侧框线
