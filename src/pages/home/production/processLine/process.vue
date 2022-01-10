@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-30 14:31:04
- * @LastEditTime: 2021-12-17 14:40:10
+ * @LastEditTime: 2022-01-10 17:11:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/processLine/process.vue
@@ -126,10 +126,9 @@
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
-        <template slot="enable" slot-scope="record">
+        <template slot="EnableName" slot-scope="text">
           <div>
-            <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
-            <a-tag color="red" v-else>禁用</a-tag>
+            <a-tag :color="text == '启用' ? 'green' : 'red'" v-if="text == '启用'">{{text}}</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">

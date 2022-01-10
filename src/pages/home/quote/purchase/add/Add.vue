@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2021-11-22 10:16:14
+ * @LastEditTime: 2022-01-10 10:59:59
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -653,7 +653,7 @@ export default {
           }
           if (item.CostName == "电源插件费") {
             let str = item.Description.split("*");
-            item.Description =  `插件数量(${this.costInfo.ItemOtherInfo.DycjNum})*${str[1]} `;
+            item.Description = `插件数量(${this.costInfo.ItemOtherInfo.DycjNum})*${str[1]} `;
             let price1 = this.costInfo.ItemOtherInfo.DycjNum * str[1];
             item.Amount = parseFloat(price1.toFixed(4));
           }
@@ -891,12 +891,16 @@ export default {
       // let ConfigList = this.arrayGroup(this.costList);
       let _data = [];
       let mergeTitle = [];
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 8; i++) {
         mergeTitle.push({
           s: { r: i, c: 1 },
-          e: { r: i, c: 13 },
+          e: { r: i, c: 15 },
         });
       }
+      let formula = {
+        process: 0,
+        totalPrice: 0,
+      };
       let enterInfo = this.searchForm.getFieldsValue();
       let en = this.enterList.find((item) => item.EnterId === enterInfo.enterpriseid);
       let pl = this.plantList.find((item) => item.EnterId === enterInfo.plantid);
@@ -906,6 +910,8 @@ export default {
       _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null]);
       _data.push(["大类", info.ItemSort, null, null, null, null, null, null, null, null, null, null, null, null]);
       _data.push([" 产品规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["物料成本", this.cost.materialTotal, null, null, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["最终成本", this.cost.ultimatelyTotal, null, null, null, null, null, null, null, null, null, null, null, null]);
       let cost = [];
       ConfigList.map((item) => {
         cost = cost.concat(item.list);
@@ -914,30 +920,30 @@ export default {
         let array = [item.CostSort, item.CostName, null, item.Amount || 0, null, null, null, null, null, null, null, null, null, null];
         _data.push(array);
         mergeTitle.push({
-          s: { r: 6 + index, c: 1 },
-          e: { r: 6 + index, c: 2 },
+          s: { r: 8 + index, c: 1 },
+          e: { r: 8 + index, c: 2 },
         });
         mergeTitle.push({
-          s: { r: 6 + index, c: 3 },
-          e: { r: 6 + index, c: 13 },
+          s: { r: 8 + index, c: 3 },
+          e: { r: 8 + index, c: 15 },
         });
       });
       ConfigList.map((item, index) => {
         let l = item.list.length - 1;
         if (index == 0) {
           mergeTitle.push({
-            s: { r: 6, c: 0 },
-            e: { r: 6 + l, c: 0 },
+            s: { r: 8, c: 0 },
+            e: { r: 8 + l, c: 0 },
           });
         } else {
           mergeTitle.push({
-            s: { r: 6 + ConfigList[index - 1].list.length, c: 0 },
-            e: { r: 6 + l + ConfigList[index - 1].list.length, c: 0 },
+            s: { r: 8 + ConfigList[index - 1].list.length, c: 0 },
+            e: { r: 8 + l + ConfigList[index - 1].list.length, c: 0 },
           });
         }
+        formula.process += item.list.length;
       });
-      _data.push(["物料成本", this.cost.materialTotal, null, null, null, null, null, null, null, null, null, null, null, null]);
-      _data.push(["最终成本", this.cost.ultimatelyTotal, null, null, null, null, null, null, null, null, null, null, null, null]);
+
       mergeTitle.push({
         s: { r: 6 + cost.length, c: 1 },
         e: { r: 6 + cost.length, c: 13 },
@@ -970,6 +976,9 @@ export default {
           _data1.push(array1);
         }
       });
+      formula.totalPrice = list.length;
+      formula.process = formula.process + 8;
+      console.log("formula===", formula);
       let excelArray = [];
       let contentList = [];
       let merges2 = []; // 设置表格内容单元格合并
@@ -1018,6 +1027,7 @@ export default {
           dataList: excelArray,
           bookType: "xlsx", // 导出类型
           filename: `${info.ItemCode}_${temp}`, // 导出标题名
+          formula,
         });
         this.$message.success("导出数据成功!");
       } catch (error) {

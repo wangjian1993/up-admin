@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-30 14:42:25
- * @LastEditTime: 2021-12-01 10:01:13
+ * @LastEditTime: 2022-01-10 16:42:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/processLine/data.js
@@ -44,8 +44,8 @@ export const columns = [
     },
     {
         title: "状态",
-        dataIndex: "Enable",
-        scopedSlots: { customRender: "Enable" },
+        dataIndex: "EnableName",
+        scopedSlots: { customRender: "EnableName" },
         align: "center",
     },
     {
@@ -57,8 +57,8 @@ export const columns = [
     },
     {
         title: "创建人",
-        dataIndex: "UserCreated",
-        scopedSlots: { customRender: "UserCreated" },
+        dataIndex: "UserName",
+        scopedSlots: { customRender: "UserName" },
         align: "center",
     },
     {

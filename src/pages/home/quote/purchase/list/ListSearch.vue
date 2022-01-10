@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2021-12-10 09:48:07
+ * @LastEditTime: 2022-01-10 10:39:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -350,7 +350,7 @@ import { getDemandEnter, getCostConfig, addCost } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import ADetails from "./Details.vue";
-import { exportjsontoexcelMore } from "@/utils/ExportExcel";
+import { exportjsontoexcelMore } from "@/utils/Export2ExcelJs";
 import HistoryList from "./HistoryList";
 export default {
   components: { ADetails, HistoryList },
@@ -695,7 +695,11 @@ export default {
           let ConfigList = this.arrayGroup(res.data.data.ConfigList);
           let _data = [];
           let mergeTitle = [];
-          for (let i = 0; i < 6; i++) {
+          let formula = {
+            process: 0,
+            totalPrice: 0,
+          };
+          for (let i = 0; i < 8; i++) {
             mergeTitle.push({
               s: { r: i, c: 1 },
               e: { r: i, c: 15 },
@@ -707,6 +711,8 @@ export default {
           _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
           _data.push(["大类", info.ItemSort, null, null, null, null, null, null, null, null, null, null, null, null, null]);
           _data.push([" 产品规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["物料成本", info.MaterialCost, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["最终成本", info.FinalCost, null, null, null, null, null, null, null, null, null, null, null, null, null]);
           let cost = [];
           ConfigList.map((item) => {
             cost = cost.concat(item.list);
@@ -715,47 +721,36 @@ export default {
             let array = [item.CostSort, item.CostName, null, item.Amount, null, null, null, null, null, null, null, null, null, null, null];
             _data.push(array);
             mergeTitle.push({
-              s: { r: 6 + index, c: 1 },
-              e: { r: 6 + index, c: 2 },
+              s: { r: 8 + index, c: 1 },
+              e: { r: 8 + index, c: 2 },
             });
             mergeTitle.push({
-              s: { r: 6 + index, c: 3 },
-              e: { r: 6 + index, c: 15 },
+              s: { r: 8 + index, c: 3 },
+              e: { r: 8 + index, c: 15 },
             });
           });
           ConfigList.map((item, index) => {
             let l = item.list.length - 1;
             if (index == 0) {
               mergeTitle.push({
-                s: { r: 6, c: 0 },
-                e: { r: 6 + l, c: 0 },
+                s: { r: 8, c: 0 },
+                e: { r: 8 + l, c: 0 },
               });
             } else {
               mergeTitle.push({
-                s: { r: 6 + ConfigList[index - 1].list.length, c: 0 },
-                e: { r: 6 + l + ConfigList[index - 1].list.length, c: 0 },
+                s: { r: 8 + ConfigList[index - 1].list.length, c: 0 },
+                e: { r: 8 + l + ConfigList[index - 1].list.length, c: 0 },
               });
-              console.log({
-                s: { r: 6 + ConfigList[index - 1].list.length, c: 0 },
-                e: { r: 6 + l + ConfigList[index - 1].list.length, c: 0 },
-              });
+              //计算加工成本最后位置
             }
-          });
-          _data.push(["物料成本", info.MaterialCost, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-          _data.push(["最终成本", info.FinalCost, null, null, null, null, null, null, null, null, null, null, null, null, null]);
-          mergeTitle.push({
-            s: { r: 6 + cost.length, c: 1 },
-            e: { r: 6 + cost.length, c: 15 },
-          });
-          mergeTitle.push({
-            s: { r: 7 + cost.length, c: 1 },
-            e: { r: 7 + cost.length, c: 15 },
+            formula.process += item.list.length;
           });
           const columns = [];
           this.excelHead.map((item) => {
             columns.push(item.title);
           });
           _data.push(columns);
+          //展开数据
           let _data1 = [..._data];
           list.map((item) => {
             let array = [];
@@ -764,9 +759,10 @@ export default {
             });
             _data.push(array);
           });
+          console.log(_data);
+          //收缩数据
           let tree = this.initTree(LastCode);
           let treeData = this.calField(tree);
-          console.log(treeData);
           treeData.map((item) => {
             let array1 = [];
             if (item.LvNo == 2) {
@@ -776,6 +772,9 @@ export default {
               _data1.push(array1);
             }
           });
+          formula.totalPrice = list.length;
+          formula.process = formula.process + 8;
+          console.log("formula===", formula);
           let excelArray = [];
           let contentList = [];
           let merges2 = []; // 设置表格内容单元格合并
@@ -798,7 +797,7 @@ export default {
             { wch: 7 }, // 用量
             { wch: 6 }, // 金额
             { wch: 10 }, // 提示
-            { wch: 22 }, // 备注
+            { wch: 10 }, // 备注
           ];
           let formStyle = {};
           excelArray.push({
@@ -823,6 +822,7 @@ export default {
               dataList: excelArray,
               bookType: "xlsx", // 导出类型
               filename: `${info.ItemCode}_${temp}`, // 导出标题名
+              formula,
             });
             this.$message.success("导出数据成功!");
           } catch (error) {

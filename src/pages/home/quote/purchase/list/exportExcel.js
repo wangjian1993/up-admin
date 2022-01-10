@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2021-11-03 10:03:43
+ * @LastEditTime: 2022-01-10 13:48:44
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/exportExcel.js
@@ -93,7 +93,7 @@ export function exportjsontoexcel({
         ws = sheet_from_array_of_arrays(data);
 
     //合并单元格
-    ws['!merges'] = merges
+    ws['!merges'] = merges;
     //动态设置宽度
     if (autoWidth) {
         /*设置worksheet每列的最大宽度*/
@@ -255,7 +255,8 @@ export function exportjsontoexcelMore({
     dataList,
     filename,
     bookType = 'xlsx',
-}) {
+    formula
+}, excelStyle) {
     //判断是否有表名、没有则赋予固定表名
     filename = filename || 'excel-list'
     var wb = new Workbook()
@@ -271,6 +272,10 @@ export function exportjsontoexcelMore({
         let ws = sheet_from_array_of_arrays(data)
         //合并单元格
         ws['!merges'] = merges
+        // ws['B7'] = { t: 'n', f: "=SUM(D9:D21)" };
+        // ws['B7'] = { t: 'n', f: "SUM(D9:D21)", F: "B7:B7" };
+        // ws['A28'] = { t: 'n', f: "SUM(D9:D21)", F: "A28:A28" };
+        console.log("ws", ws);
         //动态设置宽度
         if (autoWidth) {
             /*设置worksheet每列的最大宽度*/
@@ -322,16 +327,33 @@ export function exportjsontoexcelMore({
                 }
             }
             ws['!cols'] = result;
-        }else {
+        } else {
             // console.log("不自适应",sheetCols);
             ws['!cols'] = sheetCols;
         }
 
         /* add worksheet to workbook */
         wb.SheetNames.push(Sheet);
+        console.log("Sheets", Sheet);
         wb.Sheets[Sheet] = ws;
-        let dataInfo = wb.Sheets[wb.SheetNames[index]];
+        // wb.Sheets[Sheet]['B7'] = { t: 'n', f: 'SUM(D9:P21)' };
+        //开始位置
+        let startIndex = formula.process + 2;
+        let endIndex = startIndex + formula.totalPrice;
+        if (Sheet == '展开显示') {
+            //金额计算
+            for (let index = startIndex; index <= endIndex; index++) {
+                wb.Sheets[Sheet]['L' + index] = { t: 'n', f: 'ROUND(J' + index + "*K" + index + ",4)" };
+            }
+        }
+        //物料成本
+        wb.Sheets[Sheet]['B7'] = { t: 'n', f: 'ROUND(SUM(L' + startIndex + ':L' + endIndex + '),4)' };
+        //总成本
+        wb.Sheets[Sheet]['B8'] = { t: 'n', f: 'ROUND(SUM(SUM(D9:P' + formula.process + ')+B7),4)' };
 
+        // wb.Sheets['展开显示']['B7'].s = styleS
+        // wb.Sheets['展开显示']['B8'].s = styleS
+        let dataInfo = wb.Sheets[wb.SheetNames[index]];
         const borderAll = { //单元格外侧框线
             top: {
                 style: 'thin'
@@ -374,7 +396,7 @@ export function exportjsontoexcelMore({
             "X": 23,
             "Y": 24,
             "Z": 25
-        }
+        };
         const range = dataInfo['!ref'].split(':') // 表格范围区域
         let a1 = range[0].slice(0, 1) // A
         let b1 = +range[0].slice(1) // 1
@@ -391,7 +413,7 @@ export function exportjsontoexcelMore({
                 if (!dataInfo[value + j]) {
                     dataInfo[value + j] = {
                         s: {
-                            border: borderAll,
+                            // border: borderAll,
                         }
                     }
                 }
@@ -400,16 +422,31 @@ export function exportjsontoexcelMore({
         }
 
         for (var i in dataInfo) {
+            // console.log("i===", i)
             if (i == '!ref' || i == '!merges' || i == '!cols') {
 
             } else {
-                dataInfo[i + ''].s = {
-                    border: borderAll,
-                    //居中属性
-                    alignment: {
-                        horizontal: "left",
-                        vertical: "left"
-                    },
+                if (excelStyle) {
+                    dataInfo[i + ''].s = {
+                        //居中属性
+                        ...excelStyle
+                    }
+                } else {
+                    dataInfo[i + ''].s = {
+                        //居中属性
+                        border: borderAll,
+                        //居中属性
+                        font: {
+                            name: "宋体",
+                            sz: 10
+                        },
+                        alignment: {
+                            wrapText: 1,
+                            horizontal: "left",
+                            vertical: "left",
+                            indent: 0,
+                        },
+                    }
                 }
             }
         }

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-01-08 17:57:57
+ * @LastEditTime: 2022-01-10 10:18:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -323,7 +323,7 @@ import getTableScroll from "@/utils/setTableHeight";
 import ADetails from "./Details.vue";
 // import { funtransformF } from "./excel";
 import HistoryList from "./HistoryList";
-import { exportjsontoexcelMore } from "@/utils/ExportExcel";
+import { exportjsontoexcelMore } from "@/utils/Export2ExcelJs.js";
 export default {
   components: { ADetails, HistoryList },
   props: ["categoryList"],
@@ -613,6 +613,10 @@ export default {
           let ConfigList = this.arrayGroup(res.data.data.ConfigList);
           let _data = [];
           let mergeTitle = [];
+          let formula = {
+            process: 0,
+            totalPrice: 0,
+          };
           for (let i = 0; i < 8; i++) {
             mergeTitle.push({
               s: { r: i, c: 1 },
@@ -631,7 +635,6 @@ export default {
           ConfigList.map((item) => {
             cost = cost.concat(item.list);
           });
-          // console.log("ConfigList===", ConfigList);
           cost.map((item, index) => {
             let array = [item.CostSort, item.CostName, null, item.Amount, null, null, null, null, null, null, null, null, null, null, null];
             _data.push(array);
@@ -656,11 +659,9 @@ export default {
                 s: { r: 8 + ConfigList[index - 1].list.length, c: 0 },
                 e: { r: 8 + l + ConfigList[index - 1].list.length, c: 0 },
               });
-              console.log({
-                s: { r: 8 + ConfigList[index - 1].list.length, c: 0 },
-                e: { r: 8 + l + ConfigList[index - 1].list.length, c: 0 },
-              });
+              //计算加工成本最后位置
             }
+            formula.process += item.list.length;
           });
           const columns = [];
           this.excelHead.map((item) => {
@@ -689,6 +690,9 @@ export default {
               _data1.push(array1);
             }
           });
+          formula.totalPrice = list.length;
+          formula.process = formula.process + 8;
+          console.log("formula===", formula);
           let excelArray = [];
           let contentList = [];
           let merges2 = []; // 设置表格内容单元格合并
@@ -736,6 +740,7 @@ export default {
               dataList: excelArray,
               bookType: "xlsx", // 导出类型
               filename: `${info.ItemCode}_${temp}`, // 导出标题名
+              formula
             });
             this.$message.success("导出数据成功!");
           } catch (error) {

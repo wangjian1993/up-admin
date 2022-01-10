@@ -1,135 +1,469 @@
 /*
  * @Author: max
- * @Date: 2022-01-08 16:40:52
- * @LastEditTime: 2022-01-08 16:47:29
+ * @Date: 2021-11-03 10:00:48
+ * @LastEditTime: 2022-01-10 13:51:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/Export2ExcelJs.js
  */
-require('script-loader!file-saver')
-import * as ExcelJs from 'exceljs/dist/exceljs'
+// Export2Excel.js
+/* eslint-disable */
+import 'script-loader!file-saver';
+import '../pages/home/quote/purchase/list/Blob.js'; //转二进制用  这边要写你的blob的实际地址
+import 'script-loader!xlsx/dist/xlsx.core.min';
+import XLSXS from 'xlsx-style'
 
-/**
- * 支持多sheet 导出excel
- * @param multiHeader 多行表头
- * @param headers 多sheet对应的表头
- * @param datas 数据，一个数组表示一个sheet中的数据
- * @param filename 文件名称
- * @param sheetnames sheet名称，数组格式的，数组中按次获取sheet名称
- * @param merges 合并单元格 未实现
- * @param autoWidth 自动列宽
- * @param bookType 文档类型
- */
-export function export_json_to_excel_sheet({
-    multiHeader = [],
-    headers = [],
-    datas = [],
-    filename,
-    sheetnames = [],
-    autoWidth = true,
-    bookType = 'xlsx'
-} = {}) {
-    // 创建一个工作簿
-    const workbook = new ExcelJs.Workbook()
+function datenum(v, date1904) {
+    if (date1904) v += 1462;
+    var epoch = Date.parse(v);
+    return (epoch - new Date(Date.UTC(1899, 11, 30))) / (24 * 60 * 60 * 1000);
+}
 
-    // 遍历数据
-    for (let tmp = 0; tmp <= datas.length - 1; tmp++) {
-        // 获取数据
-        const data = datas[tmp]
-        // 添加表头, 合并表头的数据
-        const header = headers[tmp]
-        data.unshift(header)
-        // 多行标头
-        for (let i = multiHeader.length - 1; i > -1; i--) {
-            data.unshift(multiHeader[i])
+function sheet_from_array_of_arrays(data, opts) {
+    var ws = {};
+    var range = {
+        s: {
+            c: 10000000,
+            r: 10000000
+        },
+        e: {
+            c: 0,
+            r: 0
         }
-        // 获取sheetname
-        var ws_name = sheetnames[tmp]
-        // add header
-        const ws1 = workbook.addWorksheet(ws_name)
-        ws1.addRows(data)
+    };
+    for (var R = 0; R != data.length; ++R) {
+        for (var C = 0; C != data[R].length; ++C) {
+            if (range.s.r > R) range.s.r = R;
+            if (range.s.c > C) range.s.c = C;
+            if (range.e.r < R) range.e.r = R;
+            if (range.e.c < C) range.e.c = C;
+            var cell = {
+                v: data[R][C]
+            };
+            if (cell.v == null) continue;
+            var cell_ref = XLSXS.utils.encode_cell({
+                c: C,
+                r: R
+            });
 
-        // 行居中
-        rowCenter(ws1, 1 + multiHeader.length, data.length)
+            if (typeof cell.v === 'number') cell.t = 'n';
+            else if (typeof cell.v === 'boolean') cell.t = 'b';
+            else if (cell.v instanceof Date) {
+                cell.t = 'n';
+                cell.z = XLSXS.SSF._table[14];
+                cell.v = datenum(cell.v);
+            } else cell.t = 's';
 
-        // 自动处理列宽
-        if (autoWidth) {
-            /* 设置worksheet每列的最大宽度*/
-            const columnWidth = data.map(row => row.map(val => {
-                /* 先判断是否为null/undefined*/
-                if (val == null) {
-                    return {
-                        'width': 10
-                    }
-                    // eslint-disable-next-line brace-style
-                }
-                /* 再判断是否为中文*/
-                else if (val.toString().charCodeAt(0) > 255) {
-                    return {
-                        'width': val.toString().length * 2
-                    }
-                } else {
-                    return {
-                        'width': val.toString().length
-                    }
-                }
-            }))
-            /* 以第一行为初始值*/
-            const result = columnWidth[0]
-            for (let i = 1; i < columnWidth.length; i++) {
-                for (let j = 0; j < columnWidth[i].length; j++) {
-                    if (result[j]['width'] < columnWidth[i][j]['width']) {
-                        result[j]['width'] = columnWidth[i][j]['width']
-                    }
-                }
-            }
-            // 设置列宽
-            colWidth(ws1, result)
+            ws[cell_ref] = cell;
         }
     }
+    if (range.s.c < 10000000) ws['!ref'] = XLSXS.utils.encode_range(range);
+    return ws;
+}
 
-    /**
-     *  设置start-end行单元格水平垂直居中/添加边框
-     * @param arg_ws workSheet 参数
-     * @param arg_start 开始行
-     * @param arg_end 结束结束行
-     */
-    function rowCenter(arg_ws, arg_start, arg_end) {
-        // eslint-disable-next-line no-undef,no-unmodified-loop-condition
-        let i = arg_start
-        for (; i <= arg_end; i++) {
-            arg_ws.findRow(i).alignment = { vertical: 'middle', horizontal: 'center' }
-            // eslint-disable-next-line no-irregular-whitespace
-            // 循环 row 中的　cell，给每个 cell添加边框
-            arg_ws.findRow(i).eachCell(function (cell) {
-                cell.border = {
-                    top: { style: 'thin' },
-                    left: { style: 'thin' },
-                    bottom: { style: 'thin' },
-                    right: { style: 'thin' }
+function Workbook() {
+    if (!(this instanceof Workbook)) return new Workbook();
+    this.SheetNames = [];
+    this.Sheets = {};
+}
+
+function s2ab(s) {
+    var buf = new ArrayBuffer(s.length);
+    var view = new Uint8Array(buf);
+    for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
+}
+
+// 导出单个表格
+export function exportjsontoexcel({
+    data, //格式后的数据
+    filename, //表名
+    merges = [], //合并单元格格式
+    autoWidth = true,
+    bookType = 'xlsx',
+    formStyle, // 样式修改
+} = {}) {
+    /* original data */
+    //判断是否有表名、没有则赋予固定表名
+    filename = filename || 'excel-list'
+
+    var ws_name = "SheetJS";
+    var wb = new Workbook(),
+        //将data转化格式 用于接下来动态宽度
+        ws = sheet_from_array_of_arrays(data);
+
+    //合并单元格
+    ws['!merges'] = merges;
+    //动态设置宽度
+    if (autoWidth) {
+        /*设置worksheet每列的最大宽度*/
+        const colWidth = data.map(row => row.map(val => {
+            /*先判断是否为null/undefined*/
+            if (val == null) {
+                return {
+                    'wch': 10
+                };
+            }
+            /*再判断是否为中文*/
+            else if (val.toString().charCodeAt(0) > 255) {
+                return {
+                    'wch': val.toString().length * 2
+                };
+            } else {
+                return {
+                    'wch': val.toString().length
+                };
+            }
+        }))
+        //判断合并单元格中是否有同行合并，有则将其长度设为0
+        if (merges.length > 0) {
+            if (!ws['!merges']) ws['!merges'] = [];
+            merges.forEach(a => {
+                let w1 = a.s.c
+                let e1 = a.s.r
+                let w2 = a.e.c
+                let e2 = a.e.r
+                if (e1 == e2) {
+                    if (+w1 > +w2) {
+                        let jh = w1
+                        w1 = w2
+                        w2 = jh
+                    }
+                    for (let i = +w1; i <= +w2; i++) {
+                        colWidth[e1][i]['wch'] = 0;
+                    }
                 }
             })
         }
+        /*以第一行为初始值 判断对应每一列的最大长度*/
+        let result = colWidth[0];
+        for (let i = 1; i < colWidth.length; i++) {
+            for (let j = 0; j < colWidth[i].length; j++) {
+                if (result[j]['wch'] < colWidth[i][j]['wch']) {
+                    result[j]['wch'] = colWidth[i][j]['wch'];
+                }
+            }
+        }
+        ws['!cols'] = result;
     }
 
-    // eslint-disable-next-line no-irregular-whitespace
-    // 设置　start-end 列的宽度
-    /**
-     * 设置行宽
-     * @param arg_ws workSheet
-     * @param arg_cols 列数组
-     */
-    function colWidth(arg_ws, arg_cols) {
-        for (const i in arg_cols) {
-            arg_ws.getColumn(parseInt(i) + 1).width = arg_cols[i].width
+    /* add worksheet to workbook */
+    wb.SheetNames.push(ws_name);
+    wb.Sheets[ws_name] = ws;
+    var dataInfo = wb.Sheets[wb.SheetNames[0]];
+
+    const borderAll = { //单元格外侧框线
+        top: {
+            style: 'thin'
+        },
+        bottom: {
+            style: 'thin'
+        },
+        left: {
+            style: 'thin'
+        },
+        right: {
+            style: 'thin'
+        }
+    };
+    //给所以单元格加上边框
+    const letter = {
+        "A": 0,
+        "B": 1,
+        "C": 2,
+        "D": 3,
+        "E": 4,
+        "F": 5,
+        "G": 6,
+        "H": 7,
+        "I": 8,
+        "J": 9,
+        "K": 10,
+        "L": 11,
+        "M": 12,
+        "N": 13,
+        "O": 14,
+        "P": 15,
+        "Q": 16,
+        "R": 17,
+        "S": 18,
+        "T": 19,
+        "U": 20,
+        "V": 21,
+        "W": 22,
+        "X": 23,
+        "Y": 24,
+        "Z": 25
+    }
+    const range = dataInfo['!ref'].split(':') // 表格范围区域
+    let a1 = range[0].slice(0, 1) // A
+    let b1 = +range[0].slice(1) // 1
+    let a2 = range[1].slice(0, 1) // 最大为Z（26） 表格的列数
+    let b2 = +range[1].slice(1) // 表格的行数
+    for (let i = letter[a1]; i <= letter[a2]; i++) {
+        for (let j = b1; j <= b2; j++) {
+            let value = ''
+            for (let key in letter) {
+                if (letter[key] == i) {
+                    value = key
+                }
+            }
+            if (!dataInfo[value + j]) {
+                dataInfo[value + j] = {
+                    s: {
+                        border: borderAll,
+                    }
+                }
+            }
+
         }
     }
 
-    // 保存设置
-    workbook.xlsx.writeBuffer().then(buffer => {
-        // eslint-disable-next-line no-undef
-        saveAs(new Blob([buffer], {
-            type: 'application/octet-stream'
-        }), `${filename}.${bookType}`)
+    for (var i in dataInfo) {
+        if (i == '!ref' || i == '!merges' || i == '!cols') {
+
+        } else {
+            dataInfo[i + ''].s = {
+                border: borderAll,
+                //居中属性left
+                alignment: {
+                    horizontal: "left",
+                    vertical: "left"
+                },
+            }
+        }
+    }
+
+    //设置主标题样式
+    for (let key in formStyle) {
+        dataInfo[key].s = formStyle[key]
+        dataInfo[key].s.border = borderAll
+    }
+
+    var wbout = XLSXS.write(wb, {
+        bookType: bookType,
+        bookSST: false,
+        type: 'binary'
+    });
+    saveAs(new Blob([s2ab(wbout)], {
+        type: "application/octet-stream"
+    }), `${filename}.${bookType}`);
+};
+
+// 导出多个表格  下方带tab切换
+export function exportjsontoexcelMore({
+    dataList,
+    filename,
+    bookType = 'xlsx',
+    formula
+}, excelStyle) {
+    //判断是否有表名、没有则赋予固定表名
+    filename = filename || 'excel-list'
+    var wb = new Workbook()
+    dataList.forEach((item, index) => {
+        let {
+            Sheet,
+            data,
+            merges,
+            autoWidth,
+            formStyle,
+            sheetCols
+        } = item
+        let ws = sheet_from_array_of_arrays(data)
+        //合并单元格
+        ws['!merges'] = merges
+        // ws['B7'] = { t: 'n', f: "=SUM(D9:D21)" };
+        // ws['B7'] = { t: 'n', f: "SUM(D9:D21)", F: "B7:B7" };
+        // ws['A28'] = { t: 'n', f: "SUM(D9:D21)", F: "A28:A28" };
+        console.log("ws", ws);
+        //动态设置宽度
+        if (autoWidth) {
+            /*设置worksheet每列的最大宽度*/
+            const colWidth = data.map(row => row.map(val => {
+                /*先判断是否为null/undefined*/
+                if (val == null) {
+                    return {
+                        'wch': 10
+                    };
+                }
+                /*再判断是否为中文*/
+                else if (val.toString().charCodeAt(0) > 255) {
+                    return {
+                        'wch': val.toString().length * 2
+                    };
+                } else {
+                    return {
+                        'wch': val.toString().length
+                    };
+                }
+            }))
+            //判断合并单元格中是否有同行合并，有则将其长度设为0
+            if (merges.length > 0) {
+                if (!ws['!merges']) ws['!merges'] = [];
+                merges.forEach(a => {
+                    let w1 = a.s.c
+                    let e1 = a.s.r
+                    let w2 = a.e.c
+                    let e2 = a.e.r
+                    if (e1 == e2) {
+                        if (+w1 > +w2) {
+                            let jh = w1
+                            w1 = w2
+                            w2 = jh
+                        }
+                        for (let i = +w1; i <= +w2; i++) {
+                            colWidth[e1][i]['wch'] = 0;
+                        }
+                    }
+                })
+            }
+            /*以第一行为初始值 判断对应每一列的最大长度*/
+            let result = colWidth[0];
+            for (let i = 1; i < colWidth.length; i++) {
+                for (let j = 0; j < colWidth[i].length; j++) {
+                    if (result[j]['wch'] < colWidth[i][j]['wch']) {
+                        result[j]['wch'] = colWidth[i][j]['wch'];
+                    }
+                }
+            }
+            ws['!cols'] = result;
+        } else {
+            // console.log("不自适应",sheetCols);
+            ws['!cols'] = sheetCols;
+        }
+
+        /* add worksheet to workbook */
+        wb.SheetNames.push(Sheet);
+        console.log("Sheets", Sheet);
+        wb.Sheets[Sheet] = ws;
+        if (formula) {
+            //开始位置
+            let startIndex = formula.process + 2;
+            let endIndex = startIndex + formula.totalPrice;
+            if (Sheet == '展开显示') {
+                //金额计算
+                for (let index = startIndex; index <= endIndex; index++) {
+                    wb.Sheets[Sheet]['M' + index] = { t: 'n', f: 'ROUND(K' + index + "*L" + index + ',4)' };
+                }
+            }
+            //物料成本
+            wb.Sheets[Sheet]['B7'] = { t: 'n', f: 'ROUND(SUM(M' + startIndex + ':M' + endIndex + '),4)' };
+            //总成本
+            wb.Sheets[Sheet]['B8'] = { t: 'n', f: 'ROUND(SUM(SUM(D9:P' + formula.process + ')+B7),4)' };
+
+        }
+        // wb.Sheets['展开显示']['B7'].s = styleS
+        // wb.Sheets['展开显示']['B8'].s = styleS
+        let dataInfo = wb.Sheets[wb.SheetNames[index]];
+        const borderAll = { //单元格外侧框线
+            top: {
+                style: 'thin'
+            },
+            bottom: {
+                style: 'thin'
+            },
+            left: {
+                style: 'thin'
+            },
+            right: {
+                style: 'thin'
+            }
+        };
+        //给所以单元格加上边框
+        const letter = {
+            "A": 0,
+            "B": 1,
+            "C": 2,
+            "D": 3,
+            "E": 4,
+            "F": 5,
+            "G": 6,
+            "H": 7,
+            "I": 8,
+            "J": 9,
+            "K": 10,
+            "L": 11,
+            "M": 12,
+            "N": 13,
+            "O": 14,
+            "P": 15,
+            "Q": 16,
+            "R": 17,
+            "S": 18,
+            "T": 19,
+            "U": 20,
+            "V": 21,
+            "W": 22,
+            "X": 23,
+            "Y": 24,
+            "Z": 25
+        };
+        const range = dataInfo['!ref'].split(':') // 表格范围区域
+        let a1 = range[0].slice(0, 1) // A
+        let b1 = +range[0].slice(1) // 1
+        let a2 = range[1].slice(0, 1) // 最大为Z（26） 表格的列数
+        let b2 = +range[1].slice(1) // 表格的行数
+        for (let i = letter[a1]; i <= letter[a2]; i++) {
+            for (let j = b1; j <= b2; j++) {
+                let value = ''
+                for (let key in letter) {
+                    if (letter[key] == i) {
+                        value = key
+                    }
+                }
+                if (!dataInfo[value + j]) {
+                    dataInfo[value + j] = {
+                        s: {
+                            // border: borderAll,
+                        }
+                    }
+                }
+
+            }
+        }
+
+        for (var i in dataInfo) {
+            // console.log("i===", i)
+            if (i == '!ref' || i == '!merges' || i == '!cols') {
+
+            } else {
+                if (excelStyle) {
+                    dataInfo[i + ''].s = {
+                        //居中属性
+                        ...excelStyle
+                    }
+                } else {
+                    dataInfo[i + ''].s = {
+                        //居中属性
+                        border: borderAll,
+                        //居中属性
+                        font: {
+                            name: "宋体",
+                            sz: 9
+                        },
+                        alignment: {
+                            wrapText: 1,
+                            horizontal: "left",
+                            vertical: "left",
+                            indent: 0,
+                        },
+                    }
+                }
+            }
+        }
+        //设置主标题样式
+        for (let key in formStyle) {
+            dataInfo[key].s = formStyle[key]
+            dataInfo[key].s.border = borderAll
+        }
     })
+
+    var wbout = XLSXS.write(wb, {
+        bookType: bookType,
+        bookSST: false,
+        type: 'binary'
+    });
+    saveAs(new Blob([s2ab(wbout)], {
+        type: "application/octet-stream"
+    }), `${filename}.${bookType}`);
 }
