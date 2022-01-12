@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-08 10:33:42
- * @LastEditTime: 2022-01-08 17:55:59
+ * @LastEditTime: 2022-01-12 16:55:15
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/index.vue
@@ -172,7 +172,7 @@ export default {
         this.getTodayProqty();
         this.getSchedule();
         this.getLinePlan();
-      }, 30000);
+      }, 120000);
     },
     onClose() {
       this.visible = false;
@@ -245,6 +245,12 @@ export default {
 @import "./style/index.less";
 .title-text {
   color: #fff;
+}
+@media screen and (max-width: 1280px) {
+  #dv-full-screen-container {
+    position: static;
+    height: 100%;
+  }
 }
 #dv-full-screen-container {
   position: static;

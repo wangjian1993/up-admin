@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:57
- * @LastEditTime: 2021-12-28 17:13:41
+ * @LastEditTime: 2022-01-12 15:10:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/aging/list.vue
@@ -21,7 +21,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="生产日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
+                <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -85,6 +85,14 @@ export default {
     };
   },
   created() {
+    this.$nextTick(() => {
+      let tHeader = document.getElementsByClassName("ant-table-thead")[1];
+      console.log(tHeader)
+      let tHeaderBottom = tHeader.getBoundingClientRect().bottom;
+      let height = `calc(100vh - ${tHeaderBottom + 70}px)`;
+      console.log("height",height)
+      this.scrollY = height
+    });
     this.getListAll();
     this.getPlant();
   },
@@ -238,7 +246,8 @@ export default {
   color: #000;
 }
 /deep/.ant-table {
-  min-height: 62vh;
+  min-height: 66vh;
+  overflow: auto;
 }
 </style>
 

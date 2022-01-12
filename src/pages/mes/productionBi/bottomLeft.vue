@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 13:58:47
- * @LastEditTime: 2022-01-08 15:50:43
+ * @LastEditTime: 2022-01-12 16:35:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/bottomLeft.vue
@@ -98,7 +98,7 @@ export default {
 
 <style lang="less" scoped>
 @box-height: 380px;
-@box-width: 930px;
+@box-width: 100%;
 #centerRight1 {
   padding: 16px;
   padding-top: 45px;
@@ -121,14 +121,28 @@ export default {
     }
   }
 }
-::v-deep .dv-scroll-board .rows .row-item {
-  font-size: 16px;
+@media (min-width: 1440px) {
+  ::v-deep .dv-scroll-board .rows .row-item {
+    font-size: 12px;
+  }
+  ::v-deep .dv-scroll-board .header .header-item {
+    font-size: 10px;
+    white-space: initial;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
-::v-deep .dv-scroll-board .header .header-item {
-  font-size: 14px;
-  white-space: initial;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media (min-width: 1920px) {
+  ::v-deep .dv-scroll-board .rows .row-item {
+    font-size: 16px;
+  }
+  ::v-deep .dv-scroll-board .header .header-item {
+    font-size: 14px;
+    white-space: initial;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 </style>

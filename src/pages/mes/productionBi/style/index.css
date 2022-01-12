@@ -1,7 +1,7 @@
 .bg {
   width: 100%;
   height: 100%;
-  /* padding: 16px 16px 0 16px; */
+  padding: 16px 16px 0 16px;
   background-image: url("../../../../assets/img/pageBg.png");
   background-size: cover;
   background-position: center center;
@@ -54,10 +54,10 @@
   text-align: center;
   transform: skewX(-45deg);
 }
-/* .host-body .react-right.react-l-s {
+.host-body .react-right.react-l-s {
   text-align: right;
-  width: 300px;
-} */
+  width: 500px;
+}
 .host-body .react-right .react-after {
   position: absolute;
   right: -25px;
@@ -81,7 +81,7 @@
   background-color: #0f1325;
 }
 .host-body .react-left.react-l-s {
-  width: 300px;
+  width: 500px;
   text-align: left;
 }
 .host-body .react-left .react-before {
@@ -97,18 +97,35 @@
   display: inline-block;
   transform: skewX(-45deg);
 }
-.host-body .body-box .content-box {
-  display: grid;
-  grid-template-columns: repeat(2, 50%);
-  grid-gap: 1rem;
+@media screen and (min-width: 1440px) {
+  .host-body .body-box .content-box {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+    grid-gap: 1rem;
+  }
+  .host-body .body-box .content-box .grid-box {
+    width: 100%;
+    height: 100%;
+  }
+  .host-body .body-box .bototm-box {
+    margin-top: 10px;
+    display: grid;
+  }
 }
-.host-body .body-box .content-box .grid-box {
-  width: 100%;
-  height: 100%;
-}
-.host-body .body-box .bototm-box {
-  margin-top: 10px;
-  display: grid;
+@media screen and (max-width: 1440px) {
+  .body-box .content-box {
+    display: grid;
+    grid-template-columns: repeat(1, 100%);
+    grid-gap: 1rem;
+  }
+  .body-box .content-box .grid-box {
+    width: 100%;
+    height: 100%;
+  }
+  .body-box .bototm-box {
+    margin-top: 10px;
+    display: grid;
+  }
 }
 .w-100 {
   width: 100%;

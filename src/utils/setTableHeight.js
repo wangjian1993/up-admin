@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-24 18:04:26
- * @LastEditTime: 2021-10-14 14:37:40
+ * @LastEditTime: 2022-01-12 15:05:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/setTableHeight.js
@@ -25,7 +25,6 @@ export default function getTableScroll(extraHeight = 70, id) {
     tHeaderBottom = tHeader.getBoundingClientRect().bottom;
     tHeaderTop = tHeader.getBoundingClientRect().top;
   }
-  console.log("extraHeight",extraHeight);
   // let height = document.body.clientHeight - tHeaderBottom - extraHeight
   let height = `calc(100vh - ${tHeaderBottom + extraHeight}px)`;
   let height1 = `calc(100vh - ${tHeaderTop + extraHeight}px)`;
@@ -34,5 +33,6 @@ export default function getTableScroll(extraHeight = 70, id) {
   const table = document.getElementsByClassName('ant-table')[0];
   table.style.minHeight = height1;
   // console.log(table);
+  console.log("height",height);
   return height;
 }

@@ -2,7 +2,7 @@
   <div id="centerRight1">
     <div class="bg-color-black">
       <div class="d-flex jc-center body-box">
-        <dv-scroll-board class="dv-scr-board" :config="config" />
+        <dv-scroll-board class="dv-scr-board" :config="config" @LoopOver="LoopOver" />
       </div>
     </div>
   </div>
@@ -38,6 +38,9 @@ export default {
     this.getListData();
   },
   methods: {
+    LoopOver() {
+      console.log("完了====");
+    },
     getListData() {
       let type = this.$route.path.split("&");
       this.dataType = type[1];
@@ -54,29 +57,29 @@ export default {
         let stateStr = this.setState(item.StatusName);
         if (this.dataType === "lh") {
           list.push(item.MoCode);
-          list.push(`<p style="color:rgb(255,255,153);font-size:16px;margin:0">${item.ProName}</p>`);
+          list.push(`<p class="fontSize16" style="color:rgb(255,255,153);margin:0">${item.ProName}</p>`);
           list.push(item.PlanQty);
           list.push(stateStr);
-          list.push(`<p style="color:rgb(0,255,255);font-size:16px;margin:0">${this.ageingDate(item.StartTime)}</p>`);
+          list.push(`<p class="fontSize16" style="color:rgb(0,255,255);margin:0">${this.ageingDate(item.StartTime)}</p>`);
           list.push(item.AgeingHour);
           list.push(item.ReworkQty);
           list.push(item.FinishedQty);
-          list.push(`<p style="color:red;font-size:18px;margin:0">${item.DefectiveQty}</p>`);
-          list.push(`<p style="color:red;font-size:18px;margin:0">${item.DefectiveProportion}</p>`);
+          list.push(`<p class="fontSize18" style="color:red;margin:0">${item.DefectiveQty}</p>`);
+          list.push(`<p class="fontSize18" style="color:red;margin:0">${item.DefectiveProportion}</p>`);
         } else {
           list = [
             item.LineName,
             item.MoCode,
-            `<p style="color:rgb(255,255,153);font-size:16px;margin:0">${item.ProName}</p>`,
+            `<p class="fontSize16" style="color:rgb(255,255,153);margin:0">${item.ProName}</p>`,
             item.PlanQty,
             stateStr,
-            `<p style="color:rgb(0,255,255);font-size:16px;margin:0">${this.ageingDate(item.StartTime)}</p>`,
+            `<p class="fontSize16" style="color:rgb(0,255,255);margin:0">${this.ageingDate(item.StartTime)}</p>`,
             item.FinishedQty,
-            `<p style="color:rgb(0,255,255);font-size:16px;margin:0">${this.ageingDate(item.FinishedTime)}</p>`,
+            `<p class="fontSize16" style="color:rgb(0,255,255);margin:0">${this.ageingDate(item.FinishedTime)}</p>`,
             item.ReworkQty,
             item.DefectiveQty,
-            `<p style="color:red;font-size:18px;margin:0">${item.ReachProportion}</p>`,
-            `<p style="color:red;font-size:18px;margin:0">${item.DefectiveProportion}</p>`,
+            `<p class="fontSize16" style="color:red;margin:0">${item.ReachProportion}</p>`,
+            `<p class="fontSize16" style="color:red;margin:0">${item.DefectiveProportion}</p>`,
           ];
         }
         // const { config } = this;
@@ -87,13 +90,13 @@ export default {
     setState(state) {
       let str = "";
       if (state == "已开工") {
-        str = `<p style="background:#fecb31;color:#000;font-size:14px;margin:0">${state}</p>`;
+        str = `<p  style="background:#fecb31;color:#000;margin:0;font-size:14px">${state}</p>`;
       } else if (state == "未开工") {
-        str = `<p style="background:#ff0004;color:#000;font-size:14px;margin:0">${state}</p>`;
+        str = `<p  style="background:#ff0004;color:#000;margin:0;font-size:14px">${state}</p>`;
       } else if (state == "部分完工") {
-        str = `<p style="background:#32c5e9;color:#000;font-size:14px;margin:0">${state}</p>`;
+        str = `<p  style="background:#32c5e9;color:#000;margin:0;font-size:14px">${state}</p>`;
       } else if (state == "已完工") {
-        str = `<p style="background:#349969;color:#000;font-size:14px;margin:0">${state}</p>`;
+        str = `<p style="background:#349969;color:#000;margin:0;font-size:14px">${state}</p>`;
       } else {
         str = state;
       }
@@ -121,8 +124,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@box-height: 680px;
-@box-width: 950px;
+@box-height: 100%;
+@box-width: 100%;
 #centerRight1 {
   padding: 16px;
   padding-top: 45px;
@@ -141,18 +144,50 @@ export default {
     overflow: hidden;
     .dv-scr-board {
       width: 100%;
-      height: 690px;
+      height: 100%;
     }
   }
 }
-::v-deep .dv-scroll-board .rows .row-item {
-  font-size: 16px;
+@media (min-width: 1440px) {
+  ::v-deep .dv-scroll-board .rows .row-item {
+    font-size: 12px;
+  }
+  .fontSize18 {
+    font-size: 14px;
+  }
+  .fontSize16 {
+    font-size: 12px;
+  }
+  .fontSize14 {
+    font-size: 10px;
+  }
+  ::v-deep .dv-scroll-board .header .header-item {
+    font-size: 10px;
+    white-space: initial;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
-::v-deep .dv-scroll-board .header .header-item {
-  font-size: 16px;
-  white-space: initial;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media (min-width: 1680px) {
+  .fontSize14 {
+    font-size: 14px;
+  }
+  ::v-deep .dv-scroll-board .rows .row-item {
+    font-size: 16px;
+  }
+  .fontSize18 {
+    font-size: 18px;
+  }
+  .fontSize16 {
+    font-size: 16px;
+  }
+  ::v-deep .dv-scroll-board .header .header-item {
+    font-size: 14px;
+    white-space: initial;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 </style>

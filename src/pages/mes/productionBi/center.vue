@@ -74,9 +74,11 @@ export default {
     getListData() {
       let type = this.$route.path.split("&");
       this.dataType = type[1];
+      // let num = parseInt(Math.random() * (8 + 1));
       if (this.dataType == "lh") {
+        this.titleItem[0].title = "今日进站量";
         this.titleItem[1].title = "总接收量";
-        this.titleItem[2].title = "今日转移量";
+        this.titleItem[2].title = "今日出站量";
         this.titleItem[2].number.content = "{nt}";
         this.titleItem[0].number.number[0] = Number(this.TodayProqtyData.TotalStartQty);
         this.titleItem[1].number.number[0] = Number(this.TodayProqtyData.TotalPlanQty);
@@ -87,12 +89,12 @@ export default {
         this.titleItem[1].number.number[0] = Number(this.TodayProqtyData.TotalPlanQty);
         this.titleItem[2].number.number[0] = Number(this.TodayProqtyData.ReachProportion);
       }
-      // let num = parseInt(Math.random() * (8 + 1));
       // console.log(Number(this.TodayProqtyData.TotalFinishedQty + num));
 
       this.titleItem.map((item) => {
         item.number = { ...item.number };
       });
+      // this.titleItem = { ...this.titleItem };
     },
   },
   components: {},

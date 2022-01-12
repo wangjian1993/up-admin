@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-12-24 09:42:09
- * @LastEditTime: 2021-12-31 10:20:44
+ * @LastEditTime: 2022-01-12 15:01:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/list.data.js
@@ -144,8 +144,8 @@ export const columns = [
     },
     {
         title: "完成时间",
-        dataIndex: "RequirementQty",
-        scopedSlots: { customRender: "RequirementQty" },
+        dataIndex: "completiontime",
+        scopedSlots: { customRender: "completiontime" },
         align: "center",
         width: "100px",
     },
@@ -158,8 +158,8 @@ export const columns = [
     },
     {
         title: "接收人",
-        dataIndex: "UserName",
-        scopedSlots: { customRender: "UserName" },
+        dataIndex: "UserName1",
+        scopedSlots: { customRender: "UserName1" },
         align: "center",
         width: "100px",
     },

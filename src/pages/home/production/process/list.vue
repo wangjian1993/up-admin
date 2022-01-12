@@ -58,26 +58,13 @@
       <div class="operator">
         <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
       </div>
-      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.ProcessId + '_' + index" bordered>
+      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.ProcessId + '_' + index" bordered>
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
       </a-table>
-      <!-- 查看详情 -->
-      <div>
-        <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
-          <a-descriptions title="详情" :column="1">
-            <a-descriptions-item v-for="(item, index) in filterData" :key="index" :label="item.title">{{ drawerItem[item.dataIndex] }}</a-descriptions-item>
-            <a-descriptions-item label="状态">
-              <div>
-                <a-tag :color="drawerItem.StatusName === '待审' || drawerItem.StatusName === '返工' ? 'red' : 'green'">{{ drawerItem.StatusName }}</a-tag>
-              </div>
-            </a-descriptions-item>
-          </a-descriptions>
-        </a-drawer>
-      </div>
       <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
     </a-spin>
   </div>
@@ -90,7 +77,6 @@ import { splitData } from "@/utils/util.js";
 import UserList from "@/components/app-user/UserList";
 import { columns } from "./list.data";
 import { PublicVar } from "@/mixins/publicVar.js";
-// import getTableScroll from "@/utils/setTableHeight";
 export default {
   components: { UserList },
   mixins: [PublicVar],
@@ -118,9 +104,14 @@ export default {
     };
   },
   created() {
-    // this.$nextTick(() => {
-    //   this.scrollY = getTableScroll();
-    // });
+    this.$nextTick(() => {
+      let tHeader = document.getElementsByClassName("ant-table-thead")[1];
+      console.log(tHeader)
+      let tHeaderBottom = tHeader.getBoundingClientRect().bottom;
+      let height = `calc(100vh - ${tHeaderBottom + 70}px)`;
+      console.log("height",height)
+      this.scrollY = height
+    });
     this.getListAll();
     this.getPlant();
   },
@@ -322,21 +313,21 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-statistic {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-/deep/.ant-statistic-title {
-  margin-bottom: 0;
-  font-size: 18px;
-  // font-weight: 700;
-  color: #000;
-}
+// /deep/.ant-statistic {
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   cursor: pointer;
+// }
+// /deep/.ant-statistic-title {
+//   margin-bottom: 0;
+//   font-size: 18px;
+//   // font-weight: 700;
+//   color: #000;
+// }
 /deep/.ant-table {
-  max-height: 61vh;
-  min-height: 61vh;
+  min-height: 62vh;
+  max-height: 62vh;
   overflow: auto;
 }
 </style>
