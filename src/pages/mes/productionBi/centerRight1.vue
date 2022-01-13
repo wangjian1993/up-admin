@@ -21,8 +21,9 @@ export default {
         oddRowBGC: "#0f1325", //奇数行
         evenRowBGC: "#171c33", //偶数行
         index: true,
-        waitTime: 3000,
-        align: ["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"],
+        waitTime: 2000,
+        indexHeader: "序号",
+        align: ["center", "center", "center", "center", "left", "center", "center", "center", "center", "center", "center", "center", "center"],
         columnWidth: [],
       },
     };
@@ -46,39 +47,35 @@ export default {
       this.dataType = type[1];
       this.config.data = [];
       if (this.dataType === "lh") {
-        this.config.header = ["工单", "品名", "计划数量", "状态", "老化时间", "已老化小时数", "返工数量", "转移数量", "不良品数量", "不良率%"];
-        this.config.columnWidth = [60, 140, 180, 70, 70, 70, 70, 70, 70, 70, 80, 80];
+        this.config.header = ["工单", "品名", "完工/计划数量", "老化时间", "已老化小时数", "返工/不良数量", "不良率%"];
+        this.config.columnWidth = [50, 100, 140, 180, 120, 110, 80];
       } else {
-        this.config.header = ["产线", "工单", "品名", "计划数量", "状态", "开工时间", "完工数量", "完工时间", "返工数量", "不良数量", "达成率%", "不良率%"];
-        this.config.columnWidth = [50, 60, 120, 140, 60, 70, 70, 70, 70, 70, 60, 70, 60];
+        this.config.header = ["产线", "工单", "品名", "完工/计划数量", "返工/不良数量", "开工时间", "完工时间", "不良率%"];
+        this.config.columnWidth = [50, 100, 140, 180, 120, 110, 80, 80];
       }
       this.ScheduleData.map((item) => {
         let list = [];
-        let stateStr = this.setState(item.StatusName);
+        let stateStr = this.setState(item.StatusName, item.MoCode);
+        let PlanQty_FinishedQty = this.progress(item);
         if (this.dataType === "lh") {
           list.push(item.MoCode);
           list.push(`<p class="fontSize16" style="color:rgb(255,255,153);margin:0">${item.ProName}</p>`);
-          list.push(item.PlanQty);
+          list.push(PlanQty_FinishedQty);
           list.push(stateStr);
           list.push(`<p class="fontSize16" style="color:rgb(0,255,255);margin:0">${this.ageingDate(item.StartTime)}</p>`);
           list.push(item.AgeingHour);
           list.push(item.ReworkQty);
-          list.push(item.FinishedQty);
           list.push(`<p class="fontSize18" style="color:red;margin:0">${item.DefectiveQty}</p>`);
           list.push(`<p class="fontSize18" style="color:red;margin:0">${item.DefectiveProportion}</p>`);
         } else {
           list = [
             item.LineName,
-            item.MoCode,
-            `<p class="fontSize16" style="color:rgb(255,255,153);margin:0">${item.ProName}</p>`,
-            item.PlanQty,
             stateStr,
+            `<p class="fontSize16" style="color:rgb(255,255,153);margin:0">${item.ProName}</p>`,
+            PlanQty_FinishedQty,
+            item.ReworkQty + "/" + item.DefectiveQty,
             `<p class="fontSize16" style="color:rgb(0,255,255);margin:0">${this.ageingDate(item.StartTime)}</p>`,
-            item.FinishedQty,
             `<p class="fontSize16" style="color:rgb(0,255,255);margin:0">${this.ageingDate(item.FinishedTime)}</p>`,
-            item.ReworkQty,
-            item.DefectiveQty,
-            `<p class="fontSize16" style="color:red;margin:0">${item.ReachProportion}</p>`,
             `<p class="fontSize16" style="color:red;margin:0">${item.DefectiveProportion}</p>`,
           ];
         }
@@ -87,16 +84,37 @@ export default {
       });
       this.config = { ...this.config };
     },
-    setState(state) {
+    progress(item) {
+      // let num = this.getPercent(item.FinishedQty,item.PlanQty);
+      let num = parseInt(item.ReachProportion);
+      console.log(num);
+      // let num = item.ReachProportion.split(".");
+      let percent = num >= 100 ? 100 : num;
+      return `<div><p style="width:${percent}%;background:#349969;margin:0;display:flex;">${item.FinishedQty + "/" + item.PlanQty}</p><p style="color:red;font-size:16px;margin:0;text-align:center;padding-top:5px">${num}%</p></div>`;
+    },
+    /**
+     * 求百分比
+     * @param  num 当前数
+     * @param  total 总数
+     */
+    getPercent(num, total) {
+      num = parseFloat(num);
+      total = parseFloat(total);
+      if (isNaN(num) || isNaN(total)) {
+        return "-";
+      }
+      return total <= 0 ? "0%" : Math.round((num / total) * 10000) / 100.0 + "%";
+    },
+    setState(state, text) {
       let str = "";
       if (state == "已开工") {
-        str = `<p  style="background:#fecb31;color:#000;margin:0;font-size:14px">${state}</p>`;
+        str = `<p style="background:#fecb31;color:#000;font-size:14px;margin:0">${text}</p>`;
       } else if (state == "未开工") {
-        str = `<p  style="background:#ff0004;color:#000;margin:0;font-size:14px">${state}</p>`;
+        str = `<p style="color:#fff;font-size:14px;margin:0">${text}</p>`;
       } else if (state == "部分完工") {
-        str = `<p  style="background:#32c5e9;color:#000;margin:0;font-size:14px">${state}</p>`;
+        str = `<p style="background:#32c5e9;color:#000;font-size:14px;margin:0">${text}</p>`;
       } else if (state == "已完工") {
-        str = `<p style="background:#349969;color:#000;margin:0;font-size:14px">${state}</p>`;
+        str = `<p style="background:#349969;color:#000;font-size:14px;margin:0">${text}</p>`;
       } else {
         str = state;
       }
@@ -129,17 +147,17 @@ export default {
 #centerRight1 {
   padding: 16px;
   padding-top: 45px;
-  height: @box-height;
+  height: 100%;
   width: @box-width;
   border-radius: 5px;
   .bg-color-black {
-    height: @box-height - 30px;
     border-radius: 10px;
   }
   .text {
     color: #c3cbde;
   }
   .body-box {
+    height: 100%;
     border-radius: 10px;
     overflow: hidden;
     .dv-scr-board {

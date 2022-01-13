@@ -129,13 +129,42 @@
     }
   }
 
-  @media screen and (min-width: 1440px) {
+  @media screen and (min-width: 1366px) {
+    .body-box {
+      width: 100%;
+      height: calc(100% - 100px);
+
+      //下方区域的布局
+      .content-box {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        height: 100%;
+
+        .grid-box {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          width: 50%;
+        }
+
+        // 底部数据
+        .bototm-box {
+          margin-top: 10px;
+          display: grid;
+          // grid-template-columns: repeat(2, 50%);
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: 1366px) {
     .body-box {
 
       //下方区域的布局
       .content-box {
         display: grid;
-        grid-template-columns: repeat(2, 50%);
+        grid-template-columns: repeat(1, 100%);
         grid-gap: 1rem;
 
         .grid-box {
@@ -153,27 +182,12 @@
     }
   }
 }
-@media screen and (max-width: 1440px) {
-  .body-box {
 
-    //下方区域的布局
-    .content-box {
-      display: grid;
-      grid-template-columns: repeat(1, 100%);
-      grid-gap: 1rem;
-      .grid-box {
-        width: 100%;
-        height: 100%;
-      }
-    }
-
-    // 底部数据
-    .bototm-box {
-      margin-top: 10px;
-      display: grid;
-      // grid-template-columns: repeat(2, 50%);
-    }
-  }
+.grid-box-right,
+.grid-box-left {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh -100px);
 }
 
 // #index {

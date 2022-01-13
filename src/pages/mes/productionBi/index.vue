@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-08 10:33:42
- * @LastEditTime: 2022-01-12 16:55:15
+ * @LastEditTime: 2022-01-13 18:21:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/index.vue
@@ -13,7 +13,7 @@
       <div class="bg">
         <dv-loading v-if="loading">Loading...</dv-loading>
         <div v-else class="host-body">
-          <div class="d-flex jc-center">
+          <div class="d-flex jc-center" style="height:50px">
             <dv-decoration-10 class="dv-dec-10" />
             <div class="d-flex jc-center">
               <dv-decoration-8 class="dv-dec-8" :color="['#568aea', '#000000']" />
@@ -25,13 +25,13 @@
             </div>
             <dv-decoration-10 class="dv-dec-10-s" />
           </div>
-          <div class="px-2 d-flex jc-between">
+          <div class="px-2 d-flex jc-between" style="height:50px">
             <dv-decoration-3 style="width:250px;height:30px;" />
             <div class="d-flex aside-width">
               <div class="mr-3 react-right bg-color-blue">
                 <span class="text fw-b" style="color:#fff">民爆光电</span>
               </div>
-              <div class="mr-3 react-right react-l-s">
+              <div class="mr-4 react-right react-l-s">
                 <span class="react-after"></span>
                 <span class="text" style="color:#fff">{{ dateYear }} {{ dateWeek }} {{ dateDay }}</span>
               </div>
@@ -41,22 +41,23 @@
             <div class="content-box">
               <!-- 生产进度 -->
               <div class="grid-box">
-                <center :TodayProqtyData="TodayProqtyData" />
-                <div style="height:750px">
+                <center style="height:13%;width:100%" :TodayProqtyData="TodayProqtyData" />
+                <div style="height:87%;width:100%">
                   <dv-border-box-11 title="生产进度">
-                    <centerRight1 :ScheduleData="ScheduleData" />
+                    111
+                    <!-- <centerRight1 :ScheduleData="ScheduleData" /> -->
                   </dv-border-box-11>
                 </div>
               </div>
               <!-- 拉线生产中情况 -->
               <div class="grid-box grid-box-right">
-                <div style="height:420px">
+                <div style="height:calc((100vh - 150px) / 2);overflow: hidden;">
                   <dv-border-box-11 title="拉线生产中情况">
                     <bottomLeft :linePlanData="linePlanData" />
                   </dv-border-box-11>
                 </div>
                 <dv-decoration-10 style="width:100%;height:5px;" />
-                <div style="height:420px">
+                <div style="height:calc((100vh - 100px) / 2);overflow: hidden;">
                   <dv-border-box-11 title="历史欠数订单">
                     <bottomRight />
                   </dv-border-box-11>
@@ -74,7 +75,7 @@
 <script>
 import drawMixin from "./utils/drawMixin";
 import { formatTime } from "./utils/index.js";
-import centerRight1 from "./centerRight1";
+// import centerRight1 from "./centerRight1";
 import center from "./center";
 import bottomLeft from "./bottomLeft";
 import bottomRight from "./bottomRight";
@@ -102,7 +103,7 @@ export default {
     };
   },
   components: {
-    centerRight1,
+    // centerRight1,
     center,
     bottomLeft,
     bottomRight,
@@ -110,7 +111,7 @@ export default {
   mounted() {
     if (process.env.NODE_ENV == "production") {
       //正式服
-      this.BASE_URL = window.location.host === "218.17.19.58:7003" ? "http://218.17.19.58:7004" : "http://192.168.0.240:8081";
+      this.BASE_URL = window.location.host === "218.17.19.58:7003" ? "http://218.17.19.58:7004" : window.location.host === "192.168.0.240:8080" ? "http://192.168.0.240:8081" : "http://192.168.1.245:6688";
     } else {
       //测试
       this.BASE_URL = process.env.VUE_APP_API_BASE_URL;
@@ -205,7 +206,7 @@ export default {
         .get(this.BASE_URL + "/api/kanban/production/workshop/getprogress", { params: this.params })
         .then((res) => {
           if (res.data.data.length > 0) {
-            this.ScheduleData = res.data.data;
+            this.ScheduleData = [...res.data.data, ...res.data.data, ...res.data.data, ...res.data.data];
           } else {
             this.linePlanData = [];
           }

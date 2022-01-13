@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2021-12-31 09:30:56
+ * @LastEditTime: 2022-01-13 16:04:22
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
@@ -37,7 +37,7 @@
                 </a-col>
                 <a-col :md="8" :sm="24">
                   <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
-                    <a-input-number placeholder="请输入人数" :min="0" allowClear style="width: 200px" v-model="people" />
+                    <a-input-number placeholder="请输入计划生产人数" :min="0" allowClear style="width: 200px" v-model="people" />
                   </a-form-item>
                 </a-col>
                 <a-col :md="8" :sm="24">
