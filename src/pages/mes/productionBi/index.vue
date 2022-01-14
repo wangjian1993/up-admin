@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-08 10:33:42
- * @LastEditTime: 2022-01-13 18:21:29
+ * @LastEditTime: 2022-01-14 10:35:21
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/index.vue
@@ -41,16 +41,15 @@
             <div class="content-box">
               <!-- 生产进度 -->
               <div class="grid-box">
-                <center style="height:13%;width:100%" :TodayProqtyData="TodayProqtyData" />
-                <div style="height:87%;width:100%">
+                <div style="height:100px;"><center :TodayProqtyData="TodayProqtyData" /></div>
+                <div style="height:calc(100vh - 220px);">
                   <dv-border-box-11 title="生产进度">
-                    111
-                    <!-- <centerRight1 :ScheduleData="ScheduleData" /> -->
+                    <centerRight1 :ScheduleData="ScheduleData" />
                   </dv-border-box-11>
                 </div>
               </div>
               <!-- 拉线生产中情况 -->
-              <div class="grid-box grid-box-right">
+              <div class="grid-box">
                 <div style="height:calc((100vh - 150px) / 2);overflow: hidden;">
                   <dv-border-box-11 title="拉线生产中情况">
                     <bottomLeft :linePlanData="linePlanData" />
@@ -75,7 +74,7 @@
 <script>
 import drawMixin from "./utils/drawMixin";
 import { formatTime } from "./utils/index.js";
-// import centerRight1 from "./centerRight1";
+import centerRight1 from "./centerRight1";
 import center from "./center";
 import bottomLeft from "./bottomLeft";
 import bottomRight from "./bottomRight";
@@ -103,7 +102,7 @@ export default {
     };
   },
   components: {
-    // centerRight1,
+    centerRight1,
     center,
     bottomLeft,
     bottomRight,
@@ -116,39 +115,48 @@ export default {
       //测试
       this.BASE_URL = process.env.VUE_APP_API_BASE_URL;
     }
-    let type = this.$route.path.split("&")[1];
+    let paramsArray = this.$route.path.split("&");
+    let type = this.paramsSplit(paramsArray[1]);
+    let plantcode = this.paramsSplit(paramsArray[2]);
+    let processcode = this.paramsSplit(paramsArray[3]);
+    let workshopcode = this.paramsSplit(paramsArray[4]);
     console.log(type);
+    this.params = {
+      plantcode: plantcode,
+      processcode: processcode,
+      workshopcode: workshopcode,
+    };
     this.titleType = type == "zz" ? "组装" : type == "lh" ? "老化" : "包装";
-    switch (type) {
-      case "zz":
-        this.params = {
-          plantcode: "01",
-          processcode: "ASSEMBLE_PROCESS",
-          workshopcode: "111",
-        };
-        break;
-      case "lh":
-        this.params = {
-          plantcode: "01",
-          processcode: "AGEING_PROCESS",
-          workshopcode: "LH01",
-        };
-        break;
-      case "bz":
-        this.params = {
-          plantcode: "01",
-          processcode: "PACKING_PROCESS",
-          workshopcode: "PACK01",
-        };
-        break;
-      default:
-        this.params = {
-          plantcode: "01",
-          processcode: "PACKING_PROCESS",
-          workshopcode: "PACK01",
-        };
-        break;
-    }
+    // switch (type) {
+    //   case "zz":
+    //     this.params = {
+    //       plantcode: plantcode,
+    //       processcode: processcode,
+    //       workshopcode:workshopcode,
+    //     };
+    //     break;
+    //   case "lh":
+    //     this.params = {
+    //       plantcode: "01",
+    //       processcode: "AGEING_PROCESS",
+    //       workshopcode: "LH01",
+    //     };
+    //     break;
+    //   case "bz":
+    //     this.params = {
+    //       plantcode: "01",
+    //       processcode: "PACKING_PROCESS",
+    //       workshopcode: "PACK01",
+    //     };
+    //     break;
+    //   default:
+    //     this.params = {
+    //       plantcode: "01",
+    //       processcode: "PACKING_PROCESS",
+    //       workshopcode: "PACK01",
+    //     };
+    //     break;
+    // }
     this.timeFn();
     this.cancelLoading();
     this.getTodayProqty();
@@ -168,6 +176,10 @@ export default {
     this.timing = null;
   },
   methods: {
+    paramsSplit(str) {
+      let s = str.split("=");
+      return s[1];
+    },
     loopData() {
       timer = window.setInterval(() => {
         this.getTodayProqty();
@@ -195,7 +207,9 @@ export default {
       axios
         .get(this.BASE_URL + "/api/kanban/production/workshop/gettodayproqty", { params: this.params })
         .then((res) => {
-          this.TodayProqtyData = res.data.data;
+          if (res.data.success) {
+            this.TodayProqtyData = res.data.data;
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -206,7 +220,7 @@ export default {
         .get(this.BASE_URL + "/api/kanban/production/workshop/getprogress", { params: this.params })
         .then((res) => {
           if (res.data.data.length > 0) {
-            this.ScheduleData = [...res.data.data, ...res.data.data, ...res.data.data, ...res.data.data];
+            this.ScheduleData = res.data.data;
           } else {
             this.linePlanData = [];
           }

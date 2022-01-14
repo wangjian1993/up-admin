@@ -1,18 +1,18 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-01-06 09:56:53
+ * @LastEditTime: 2022-01-14 16:23:10
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/process/components/print.vue
 -->
 <template>
-  <a-modal v-model="visible" title="打印生产投料单" v-if="visible" @cancel="close" :footer="null" centered width="50%">
+  <a-modal v-model="visible" title="打印标识卡" v-if="visible" @cancel="close" :footer="null" centered width="50%">
     <div style="display: flex;justify-content: flex-end;">
       <a-button type="primary" class="no-print" @click="updatedStatu" v-print="'#printTest'">打印</a-button>
     </div>
     <div id="printTest">
-      <div class="content" v-for="(item, index) in printData" :key="item.id" :style="(index + 1) % 3 == 0 ? 'page-break-after:always' : ''">
+      <div class="content" v-for="item in printData" :key="item.id" style="page-break-after:always">
         <div class="content-top">
           <div class="head-img"><img src="@/assets/img/mb.png" alt="" /></div>
           <div class="head-title">
@@ -21,7 +21,7 @@
           <div class="head-qr"><vue-qr :text="item.QrCode" :size="300"></vue-qr></div>
         </div>
         <div class="info">
-          <a-descriptions :column="2" bordered size="small">
+          <a-descriptions :column="1" bordered size="small">
             <a-descriptions-item label="订单">
               {{ item.MoCode }}
             </a-descriptions-item>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 13:58:47
- * @LastEditTime: 2022-01-13 17:38:02
+ * @LastEditTime: 2022-01-14 08:48:21
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/bottomLeft.vue
@@ -140,7 +140,7 @@ export default {
     overflow: hidden;
     .dv-scr-board {
       width: 100%;
-      height: 360px;
+      // height: 360px;
     }
   }
 }

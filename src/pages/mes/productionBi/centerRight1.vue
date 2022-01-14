@@ -16,7 +16,7 @@ export default {
       config: {
         header: [],
         data: [],
-        rowNum: 7, //表格行数
+        rowNum: 8, //表格行数
         headerBGC: "#0f1325", //表头
         oddRowBGC: "#0f1325", //奇数行
         evenRowBGC: "#171c33", //偶数行
@@ -79,8 +79,9 @@ export default {
             `<p class="fontSize16" style="color:red;margin:0">${item.DefectiveProportion}</p>`,
           ];
         }
-        // const { config } = this;
         this.config.data.push(list);
+        this.config.rowNum = 8; //表格行数
+        this.config.waitTime = 2000;
       });
       this.config = { ...this.config };
     },
@@ -150,7 +151,9 @@ export default {
   height: 100%;
   width: @box-width;
   border-radius: 5px;
+  overflow: hidden;
   .bg-color-black {
+    height: 100%;
     border-radius: 10px;
   }
   .text {
@@ -162,7 +165,6 @@ export default {
     overflow: hidden;
     .dv-scr-board {
       width: 100%;
-      height: 100%;
     }
   }
 }

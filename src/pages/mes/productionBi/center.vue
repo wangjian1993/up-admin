@@ -80,14 +80,14 @@ export default {
         this.titleItem[1].title = "总接收量";
         this.titleItem[2].title = "今日出站量";
         this.titleItem[2].number.content = "{nt}";
-        this.titleItem[0].number.number[0] = Number(this.TodayProqtyData.TotalStartQty);
-        this.titleItem[1].number.number[0] = Number(this.TodayProqtyData.TotalPlanQty);
-        this.titleItem[2].number.number[0] = Number(this.TodayProqtyData.TotalFinishedQty);
+        this.titleItem[0].number.number[0] = Number(this.TodayProqtyData.TotalStartQty) || 0;
+        this.titleItem[1].number.number[0] = Number(this.TodayProqtyData.TotalPlanQty) || 0;
+        this.titleItem[2].number.number[0] = Number(this.TodayProqtyData.TotalFinishedQty) || 0;
       } else {
         this.titleItem[2].number.content = "{nt}%";
-        this.titleItem[0].number.number[0] = Number(this.TodayProqtyData.TotalFinishedQty);
-        this.titleItem[1].number.number[0] = Number(this.TodayProqtyData.TotalPlanQty);
-        this.titleItem[2].number.number[0] = Number(this.TodayProqtyData.ReachProportion);
+        this.titleItem[0].number.number[0] = Number(this.TodayProqtyData.TotalFinishedQty) || 0;
+        this.titleItem[1].number.number[0] = Number(this.TodayProqtyData.TotalPlanQty) || 0;
+        this.titleItem[2].number.number[0] = Number(this.TodayProqtyData.ReachProportion) || 0;
       }
       // console.log(Number(this.TodayProqtyData.TotalFinishedQty + num));
 

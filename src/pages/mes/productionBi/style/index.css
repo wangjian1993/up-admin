@@ -106,12 +106,11 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    height: 100%;
   }
   .host-body .body-box .content-box .grid-box {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: calc(100% - 100px);
     width: 50%;
   }
   .host-body .body-box .content-box .bototm-box {
