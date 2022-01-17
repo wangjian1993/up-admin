@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-12-31 09:41:39
+ * @LastEditTime: 2022-01-17 11:27:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/list.vue
@@ -116,7 +116,7 @@
         </template>
         <template slot="StatusName" slot-scope="text">
           <div>
-            <a-tag :color="text === '待审' || text === '返工' ? 'red' : 'green'">{{ text }}</a-tag>
+            <a-tag :color="text === '待审' || text === '返工' || text === '未开工' ? 'red' : 'green'">{{ text }}</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">

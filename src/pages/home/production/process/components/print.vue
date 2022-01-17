@@ -1,18 +1,18 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-01-14 16:23:10
+ * @LastEditTime: 2022-01-17 16:47:36
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/process/components/print.vue
 -->
 <template>
-  <a-modal v-model="visible" title="打印标识卡" v-if="visible" @cancel="close" :footer="null" centered width="50%">
+  <a-modal v-model="visible" title="打印标识卡" v-if="visible" @cancel="close" :footer="null" centered width="70%">
     <div style="display: flex;justify-content: flex-end;">
       <a-button type="primary" class="no-print" @click="updatedStatu" v-print="'#printTest'">打印</a-button>
     </div>
     <div id="printTest">
-      <div class="content" v-for="item in printData" :key="item.id" style="page-break-after:always">
+      <div class="content always" v-for="item in printData" :key="item.id">
         <div class="content-top">
           <div class="head-img"><img src="@/assets/img/mb.png" alt="" /></div>
           <div class="head-title">
@@ -21,15 +21,18 @@
           <div class="head-qr"><vue-qr :text="item.QrCode" :size="300"></vue-qr></div>
         </div>
         <div class="info">
-          <a-descriptions :column="1" bordered size="small">
+          <a-descriptions :column="2" bordered size="small">
             <a-descriptions-item label="订单">
-              {{ item.MoCode }}
+              {{ item.BusinessOrderNo }}
             </a-descriptions-item>
             <a-descriptions-item label="工单号">
               {{ item.MoCode }}
             </a-descriptions-item>
-            <a-descriptions-item label="日期/时间">
+            <a-descriptions-item label="日期">
               {{ item.DateTime }}
+            </a-descriptions-item>
+            <a-descriptions-item label="工单数量">
+              {{ item.MoQty }}
             </a-descriptions-item>
             <a-descriptions-item label="数量">
               {{ item.Qty }}
@@ -37,16 +40,34 @@
             <a-descriptions-item label="品号">
               {{ item.MitemCode }}
             </a-descriptions-item>
-            <a-descriptions-item label="品名">
-              {{ item.MitemName }}
+            <a-descriptions-item label="色温">
+              1000k
             </a-descriptions-item>
             <a-descriptions-item label="生产车间">
               {{ item.WorkShopName }}
             </a-descriptions-item>
-            <a-descriptions-item label="拉">
+            <a-descriptions-item label="拉" :span="2">
               {{ item.LineName }}
             </a-descriptions-item>
-            <a-descriptions-item label="备注">
+            <a-descriptions-item label="品名" :span="2">
+              {{ item.MitemName }}
+            </a-descriptions-item>
+            <a-descriptions-item label="状态" :span="2">
+              <a-checkbox>
+                良品
+              </a-checkbox>
+              <a-checkbox>
+                不良品
+              </a-checkbox>
+              <a-checkbox>
+                待处理
+              </a-checkbox>
+              <a-checkbox> 成品 </a-checkbox
+              ><a-checkbox>
+                半成品
+              </a-checkbox>
+            </a-descriptions-item>
+            <a-descriptions-item label="备注" :span="2">
               {{ item.Remarks }}
             </a-descriptions-item>
           </a-descriptions>
@@ -79,7 +100,6 @@ export default {
       this.data = [];
     },
     updatedStatu() {
-      console.log("打印=====");
       let parmas = [];
       this.printData.map((item) => {
         parmas.push({
@@ -103,9 +123,21 @@ export default {
   margin-bottom: 5px;
 }
 .content {
-  margin: 8px auto;
-  border: 1px #000 solid;
+  width: 1086px;
+  height: 756px;
+  margin: 0px auto;
+  overflow: hidden;
+  max-height: 756px;
+  padding: 0;
+  word-break: break-all;
 }
+.always {
+  page-break-after: always;
+}
+.always:last-child {
+  page-break-after: auto;
+}
+
 .head-img {
   text-align: center;
   width: 200px;
@@ -132,7 +164,7 @@ export default {
   p {
     padding: 0;
     margin: 0;
-    font-size: 18px;
+    font-size: 30px;
     color: #000;
     font-weight: 700;
   }
@@ -147,13 +179,20 @@ export default {
   padding-bottom: 2px;
 }
 /deep/.ant-descriptions-item-label {
-  font-size: 10px;
+  font-size: 26px;
+  width:14%;
 }
 /deep/.ant-descriptions-item-content {
-  font-size: 10px;
+  font-size: 26px;
+}
+/deep/.ant-checkbox-wrapper {
+  font-size: 26px;
+}
+/deep/.ant-checkbox {
+  font-size: 26px;
 }
 /deep/.ant-table-small {
-  border: 1px #000 solid;
+  border: 2px #000 solid;
   // border-top: none;
   // border-bottom: none;
 }
@@ -168,20 +207,36 @@ export default {
   margin: 0;
 }
 /deep/.ant-table-column-title {
-  font-size: 10px;
+  font-size: 20px;
 }
-/deep/.ant-table-thead > tr > th {
-  border-bottom: 1px #000 solid;
-}
-/deep/.ant-table-bordered .ant-table-thead > tr > th,
-.ant-table-bordered .ant-table-tbody > tr > td {
-  border-right: 1px #000 solid;
-}
-/deep/.ant-table-tbody > tr > td {
-  border-bottom: 1px #000 solid;
-}
+// /deep/.ant-table-thead > tr > th {
+//   border-bottom: 1px #000 solid;
+// }
+// /deep/.ant-table-bordered .ant-table-thead > tr > th,
+// .ant-table-bordered .ant-table-tbody > tr > td {
+//   border-right: 1px #000 solid;
+// }
+// /deep/.ant-table-tbody > tr > td {
+//   border-bottom: 1px #000 solid;
+// }
 /deep/.ant-table-small > .ant-table-content > .ant-table-body {
   margin: 0;
+}
+/deep/.ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-label,
+.ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-content {
+  padding: 15px 10px;
+}
+/deep/.ant-descriptions-bordered .ant-descriptions-item-label{
+  border-right:1px solid #b4b3b3;
+}
+/deep/.ant-descriptions-bordered .ant-descriptions-item-content{
+   border-right:1px solid #b4b3b3;
+}
+/deep/.ant-descriptions-bordered .ant-descriptions-row{
+  border-bottom: 1px solid #b4b3b3;
+}
+/deep/.ant-descriptions-bordered .ant-descriptions-view{
+  border: 1px solid #b4b3b3;
 }
 .print-footer,
 .content-top {

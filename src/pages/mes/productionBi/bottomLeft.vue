@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 13:58:47
- * @LastEditTime: 2022-01-14 08:48:21
+ * @LastEditTime: 2022-01-17 11:04:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/bottomLeft.vue
@@ -47,10 +47,16 @@ export default {
     this.getListData();
   },
   methods: {
+    paramsSplit(str) {
+      let s = str.split("=");
+      return s[1];
+    },
     getListData() {
       console.log("更新====");
-      let type = this.$route.path.split("&");
-      this.dataType = type[1];
+      let paramsArray = this.$route.path.split("&");
+      let type = this.paramsSplit(paramsArray[1]);
+      console.log(type)
+      this.dataType = type;
       this.config.data = [];
       if (this.dataType === "lh") {
         this.config.header = ["产线", "工单", "品名", "接收数量", "转移数量", "老化开始时间", "已老化小时数"];

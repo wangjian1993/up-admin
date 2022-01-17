@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-16 13:58:52
- * @LastEditTime: 2022-01-06 09:59:00
+ * @LastEditTime: 2022-01-17 16:46:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/identification.vue
@@ -28,7 +28,17 @@
       </a-descriptions>
       <div>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-          <a-table :columns="columns" :data-source="data" :size="size" :pagination="false" bordered>
+          <a-table
+            :columns="columns"
+            :data-source="data"
+            :size="size"
+            :pagination="false"
+            :row-selection="{
+              selectedRowKeys: selectedRowKeys,
+              onChange: onSelectChange,
+            }"
+            bordered
+          >
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -41,7 +51,7 @@
         </a-card>
       </div>
     </a-modal>
-    <print v-if="isPrint" :printData="data" @closeModal="closeModal"/>
+    <print v-if="isPrint" :printData="printData" @closeModal="closeModal" />
   </div>
 </template>
 <script>
@@ -54,8 +64,8 @@ const columns = [
   },
   {
     title: "订单号",
-    dataIndex: "MoCode1",
-    scopedSlots: { customRender: "MoCode1" },
+    dataIndex: "BusinessOrderNo",
+    scopedSlots: { customRender: "BusinessOrderNo" },
     align: "center",
     width: "120px",
   },
@@ -65,6 +75,13 @@ const columns = [
     scopedSlots: { customRender: "MoCode" },
     align: "center",
     width: 120,
+  },
+  {
+    title: "工单数量",
+    dataIndex: "MoQty",
+    scopedSlots: { customRender: "MoQty" },
+    align: "center",
+    width: 80,
   },
   {
     title: "时间",
@@ -131,6 +148,8 @@ export default {
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       isPrint: false,
+      selectedRowKeys: [],
+      printData: [],
     };
   },
   created() {
@@ -143,6 +162,9 @@ export default {
     },
     close() {
       this.$emit("closeModal");
+    },
+    onSelectChange(selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys;
     },
     getPrintList() {
       let parmas = [];
@@ -157,9 +179,13 @@ export default {
       });
     },
     handleOk() {
-      if(this.pagination.total < 1 ){
-        return
+      this.printData = [];
+      if (this.selectedRowKeys.length == 0) {
+        return;
       }
+      this.selectedRowKeys.map((item) => {
+        this.printData.push(this.data[item]);
+      });
       this.isPrint = true;
     },
   },

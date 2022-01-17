@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-16 13:53:22
+ * @LastEditTime: 2022-01-17 14:05:43
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/leadIn.vue
@@ -469,7 +469,7 @@ export default {
     },
     downloadExcel() {
       // window.location.open = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
-      window.open("./Upload/excel/20211008/生产日计划导入模板.xlsx", '_blank');
+      window.open("./Upload/excel/20211008/生产日计划导入模板V2.xlsx", '_blank');
       // let a = document.createElement("a");
       // a.href = "./Upload/excel/20211008/物料需求计划导入模板.xlsx";
       // a.click();

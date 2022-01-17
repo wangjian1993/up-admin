@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-20 09:03:36
- * @LastEditTime: 2021-12-23 15:59:24
+ * @LastEditTime: 2022-01-17 10:10:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/rework/reworkSheet.vue
@@ -28,7 +28,17 @@
       </a-descriptions>
       <div>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-          <a-table :columns="columns" :data-source="data" :size="size" :pagination="false" bordered>
+          <a-table
+            :columns="columns"
+            :data-source="data"
+            :size="size"
+            :pagination="false"
+            bordered
+            :row-selection="{
+              selectedRowKeys: selectedRowKeys,
+              onChange: onSelectChange,
+            }"
+          >
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -41,7 +51,7 @@
         </a-card>
       </div>
     </a-modal>
-    <print v-if="isPrint" :printData="data" @closeModal="closeModal"/>
+    <print v-if="isPrint" :printData="printData" @closeModal="closeModal" />
   </div>
 </template>
 <script>
@@ -137,6 +147,8 @@ export default {
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       isPrint: false,
+      selectedRowKeys: [],
+      printData:[]
     };
   },
   created() {
@@ -148,6 +160,9 @@ export default {
     },
     close() {
       this.$emit("closeModal");
+    },
+    onSelectChange(selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys;
     },
     getPrintList() {
       let parmas = [];
@@ -162,6 +177,13 @@ export default {
       });
     },
     handleOk() {
+      this.printData =[]
+      if (this.pagination.total < 1) {
+        return;
+      }
+      this.selectedRowKeys.map((item) => {
+        this.printData.push(this.data[item]);
+      })
       this.isPrint = true;
     },
   },

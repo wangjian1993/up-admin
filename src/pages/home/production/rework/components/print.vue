@@ -1,16 +1,16 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-12-23 15:57:28
+ * @LastEditTime: 2022-01-17 10:09:04
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/rework/components/print.vue
 -->
 <template>
-  <a-modal v-model="visible" title="打印生产投料单" v-if="visible" @cancel="close" :footer="null" centered width="50%">
+  <a-modal v-model="visible" title="打印返工单" v-if="visible" @cancel="close" :footer="null" centered width="70%">
     <a-button style="float:right" type="primary" class="no-print" @click="updatedStatu" v-print="'#printTest'">打印</a-button>
     <div id="printTest">
-      <div class="content" v-for="(item, index) in printData" :key="item.id" :style="(index + 1) % 3 == 0 ? 'page-break-after:always' : ''">
+      <div class="content always" v-for="item in printData" :key="item.id">
         <div class="content-top">
           <div class="head-img"><img src="@/assets/img/mb.png" alt="" /></div>
           <div class="head-title">
@@ -101,8 +101,19 @@ export default {
   margin-bottom: 5px;
 }
 .content {
-  margin: 8px auto;
-  border: 1px #000 solid;
+  width: 1086px;
+  height: 756px;
+  margin: 8;
+  overflow: hidden;
+  max-height: 756px;
+  padding: 0;
+  word-break: break-all;
+}
+.always {
+  page-break-after: always;
+}
+.always:last-child {
+  page-break-after: auto;
 }
 .head-img {
   text-align: center;
@@ -127,10 +138,11 @@ export default {
 }
 .head-title {
   text-align: center;
+  font-size: 30px;
   p {
     padding: 0;
     margin: 0;
-    font-size: 18px;
+    font-size: 30px;
     color: #000;
     font-weight: 700;
   }
@@ -145,13 +157,19 @@ export default {
   padding-bottom: 2px;
 }
 /deep/.ant-descriptions-item-label {
-  font-size: 10px;
+  font-size: 26px;
 }
 /deep/.ant-descriptions-item-content {
-  font-size: 10px;
+  font-size: 26px;
+}
+/deep/.ant-checkbox-wrapper {
+  font-size: 26px;
+}
+/deep/.ant-checkbox {
+  font-size: 26px;
 }
 /deep/.ant-table-small {
-  border: 1px #000 solid;
+  border: 2px #000 solid;
   // border-top: none;
   // border-bottom: none;
 }
@@ -180,6 +198,10 @@ export default {
 }
 /deep/.ant-table-small > .ant-table-content > .ant-table-body {
   margin: 0;
+}
+/deep/.ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-label,
+.ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-content {
+  padding: 20px 10px;
 }
 .print-footer,
 .content-top {

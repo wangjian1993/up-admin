@@ -23,7 +23,7 @@ export default {
         index: true,
         waitTime: 2000,
         indexHeader: "序号",
-        align: ["center", "center", "center", "center", "left", "center", "center", "center", "center", "center", "center", "center", "center"],
+        align: [],
         columnWidth: [],
       },
     };
@@ -42,30 +42,36 @@ export default {
     LoopOver() {
       console.log("完了====");
     },
+    paramsSplit(str) {
+      let s = str.split("=");
+      return s[1];
+    },
     getListData() {
-      let type = this.$route.path.split("&");
-      this.dataType = type[1];
+      let paramsArray = this.$route.path.split("&");
+      console.log(paramsArray);
+      let type = this.paramsSplit(paramsArray[1]);
+      this.dataType = type;
       this.config.data = [];
       if (this.dataType === "lh") {
         this.config.header = ["工单", "品名", "完工/计划数量", "老化时间", "已老化小时数", "返工/不良数量", "不良率%"];
-        this.config.columnWidth = [50, 100, 140, 180, 120, 110, 80];
+        this.config.columnWidth = [50, 110, 180, 120, 120, 110, 80];
+        this.config.align = ["center", "center", "center", "left", "center", "center", "center", "center", "center", "center", "center", "center"];
       } else {
         this.config.header = ["产线", "工单", "品名", "完工/计划数量", "返工/不良数量", "开工时间", "完工时间", "不良率%"];
         this.config.columnWidth = [50, 100, 140, 180, 120, 110, 80, 80];
+        this.config.align = ["center", "center", "center", "center", "left", "center", "center", "center", "center", "center", "center", "center", "center"];
       }
       this.ScheduleData.map((item) => {
         let list = [];
         let stateStr = this.setState(item.StatusName, item.MoCode);
         let PlanQty_FinishedQty = this.progress(item);
         if (this.dataType === "lh") {
-          list.push(item.MoCode);
+          list.push(stateStr);
           list.push(`<p class="fontSize16" style="color:rgb(255,255,153);margin:0">${item.ProName}</p>`);
           list.push(PlanQty_FinishedQty);
-          list.push(stateStr);
           list.push(`<p class="fontSize16" style="color:rgb(0,255,255);margin:0">${this.ageingDate(item.StartTime)}</p>`);
           list.push(item.AgeingHour);
-          list.push(item.ReworkQty);
-          list.push(`<p class="fontSize18" style="color:red;margin:0">${item.DefectiveQty}</p>`);
+          list.push(item.ReworkQty + "/" + item.DefectiveQty);
           list.push(`<p class="fontSize18" style="color:red;margin:0">${item.DefectiveProportion}</p>`);
         } else {
           list = [

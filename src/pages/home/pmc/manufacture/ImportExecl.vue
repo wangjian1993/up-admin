@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2022-01-13 16:04:22
+ * @LastEditTime: 2022-01-17 14:17:38
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
@@ -14,7 +14,7 @@
           <a-form layout="horizontal">
             <div>
               <a-row>
-                <a-col :md="8" :sm="24">
+                <!-- <a-col :md="8" :sm="24">
                   <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
                     <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
                       <a-select-option v-for="item in plantArray" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
@@ -39,7 +39,7 @@
                   <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
                     <a-input-number placeholder="请输入计划生产人数" :min="0" allowClear style="width: 200px" v-model="people" />
                   </a-form-item>
-                </a-col>
+                </a-col> -->
                 <a-col :md="8" :sm="24">
                   <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
                     <div style="display:flex;">
@@ -216,22 +216,22 @@ export default {
         return;
       }
       //提交的数据格式
-      if (this.plantId == "") {
-        this.$message.warning("请先选择生产工厂!");
-        return;
-      }
-      if (this.workshopId == "") {
-        this.$message.warning("请先选择生产车间!");
-        return;
-      }
-      if (this.lineId == "") {
-        this.$message.warning("请先选择生成产线!");
-        return;
-      }
-      if (this.people == "") {
-        this.$message.warning("请输入人数!");
-        return;
-      }
+      // if (this.plantId == "") {
+      //   this.$message.warning("请先选择生产工厂!");
+      //   return;
+      // }
+      // if (this.workshopId == "") {
+      //   this.$message.warning("请先选择生产车间!");
+      //   return;
+      // }
+      // if (this.lineId == "") {
+      //   this.$message.warning("请先选择生成产线!");
+      //   return;
+      // }
+      // if (this.people == "") {
+      //   this.$message.warning("请输入人数!");
+      //   return;
+      // }
       if (this.tableData.length === 0) {
         this.$message.warning("请先导入excel文件!");
         return;
@@ -246,61 +246,13 @@ export default {
         });
         arr.push(obj);
       }
-      // let keyMap = {
-      //   下单日期: "DateOrder",
-      //   业务单号: "WorkOrderNo",
-      //   人均标准产能: "PerCapiteCapacity",
-      //   品号: "MitemCode",
-      //   品名: "MitemName",
-      //   工时: "WorkHour",
-      //   序号: "序号",
-      //   缺料状况: "MaterialShortage",
-      //   计划数量: "PlanQty",
-      //   计划日期: "PlanDate",
-      //   订单交期: "DateDeliveryOrder",
-      //   订单数量: "OrderQty",
-      //   备注: "Remarks",
-      // };
-      let data = {
-        PlantId: this.plantId,
-        WorkShopId: this.workshopId,
-        LineId: this.lineId,
-        PersonQty: this.people,
-        PlanList: [],
-      };
+      let data = [];
       arr.forEach((item, index) => {
         let list = {};
         for (let key in item) {
           switch (key) {
-            case "下单日期":
-              if (typeof item[key] === "object") {
-                list.DateOrder = this.formatLongDate(item[key]);
-              }
-              //字符串格式
-              if (typeof item[key] === "string") {
-                try {
-                  //字符串转换为日期
-                  let date = new Date(item[key]);
-                  let formatDate = this.formatLongDate(date);
-                  if (formatDate !== "NaN/NaN/NaN") {
-                    list.DateOrder = formatDate;
-                  } else {
-                    this.errorList.push({
-                      ErrorMsg: `第${index + 1}行,下单日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
-                    });
-                  }
-                } catch (error) {
-                  this.errorList.push({
-                    ErrorMsg: `第${index + 1}行,下单日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
-                  });
-                }
-              }
-              break;
-            case "业务单号":
+            case "工单单号":
               list.WorkOrderNo = item[key];
-              break;
-            case "人均标准产能":
-              list.PerCapiteCapacity = item[key];
               break;
             case "品号":
               list.MitemCode = item[key];
@@ -308,11 +260,14 @@ export default {
             case "品名":
               list.MitemName = item[key];
               break;
-            case "工时":
-              list.WorkHour = item[key];
-              break;
-            case "缺料状况":
-              list.MaterialShortage = item[key];
+            case "工单数量":
+              if (typeof item[key] !== "number" && item[key] !== "") {
+                this.errorList.push({
+                  ErrorMsg: `第${index + 1}行,计划数量:数据'${item[key]}'错误,必须为数字`,
+                });
+              } else {
+                list.OrderQty = Number(item[key]);
+              }
               break;
             case "计划数量":
               if (typeof item[key] !== "number" && item[key] !== "") {
@@ -323,7 +278,7 @@ export default {
                 list.PlanQty = Number(item[key]);
               }
               break;
-            case "计划日期":
+            case "计划生产日期":
               if (typeof item[key] === "object") {
                 list.PlanDate = this.formatLongDate(item[key]);
               }
@@ -347,45 +302,21 @@ export default {
                 }
               }
               break;
-            case "订单交期":
-              if (typeof item[key] === "object") {
-                list.DateDeliveryOrder = this.formatLongDate(item[key]);
-              }
-              //字符串格式
-              if (typeof item[key] === "string") {
-                try {
-                  //字符串转换为日期
-                  let date = new Date(item[key]);
-                  let formatDate = this.formatLongDate(date);
-                  if (formatDate !== "NaN/NaN/NaN") {
-                    list.DateDeliveryOrder = formatDate;
-                  } else {
-                    this.errorList.push({
-                      ErrorMsg: `第${index + 1}行,订单交期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
-                    });
-                  }
-                } catch (error) {
-                  this.errorList.push({
-                    ErrorMsg: `第${index + 1}行,订单交期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
-                  });
-                }
-              }
-              break;
-            case "订单数量":
-              if (typeof item[key] !== "number" && item[key] !== "") {
-                this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,订单数量:数据'${item[key]}'错误,必须为数字`,
-                });
-              } else {
-                list.OrderQty = Number(item[key]);
-              }
-              break;
             case "备注":
               list.Remarks = item[key];
               break;
+            case "工厂":
+              list.PlantName = item[key];
+              break;
+            case "产线":
+              list.LineName = item[key];
+              break;
+            case "计划生产人数":
+              list.PersonQty = item[key];
+              break;
           }
         }
-        data.PlanList.push(list);
+        data.push(list);
       });
       if (this.errorList.length == 0) {
         this.submitExecl(data);
@@ -429,15 +360,15 @@ export default {
     },
     submitExecl(parmas) {
       this.isUpload = true;
-      dailyPlanAction(parmas, "import").then((res) => {
+      dailyPlanAction(parmas, "importv2").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.close();
           this.isUpload = false;
         } else {
-          this.errorList = res.data.data.list;
           this.isUpload = false;
           // this.$message.info(res.data.message.content);
+          this.errorList = res.data.data.list;
         }
       });
     },

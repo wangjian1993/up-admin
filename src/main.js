@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-12-14 15:21:10
+ * @LastEditTime: 2022-01-17 11:47:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/main.js
@@ -37,8 +37,8 @@ const router = initRouter(store.state.setting.asyncRoutes);
 const i18n = initI18n('CN', 'US')
 import { hasBtnPermission } from './utils/permissions';
 //将DOM转为PDF
-import htmlToPdf from './utils/htmlToPdf';
-Vue.use(htmlToPdf);
+// import htmlToPdf from './utils/htmlToPdf';
+// Vue.use(htmlToPdf);
 Vue.prototype.hasPerm = hasBtnPermission;
 Vue.use(Antd);
 Vue.config.productionTip = false;

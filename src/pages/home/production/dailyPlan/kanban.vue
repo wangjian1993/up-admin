@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-12-11 16:23:11
+ * @LastEditTime: 2022-01-17 11:24:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/kanban.vue
@@ -95,7 +95,7 @@
         </template>
         <template slot="StatusName" slot-scope="text">
           <div>
-            <a-tag :color="text === '待审' || text === '返工' ? 'red' : 'green'">{{ text }}</a-tag>
+            <a-tag :color="text === '待审' || text === '返工' || text === '未开工' ? 'red' : 'green'">{{ text }}</a-tag>
           </div>
         </template>
         <template slot="material" slot-scope="text, record">

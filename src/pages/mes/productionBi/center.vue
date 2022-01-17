@@ -71,9 +71,14 @@ export default {
     console.log("11111111");
   },
   methods: {
+    paramsSplit(str) {
+      let s = str.split("=");
+      return s[1];
+    },
     getListData() {
-      let type = this.$route.path.split("&");
-      this.dataType = type[1];
+      let paramsArray = this.$route.path.split("&");
+      let type = this.paramsSplit(paramsArray[1]);
+      this.dataType = type;
       // let num = parseInt(Math.random() * (8 + 1));
       if (this.dataType == "lh") {
         this.titleItem[0].title = "今日进站量";
