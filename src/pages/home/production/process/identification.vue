@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-16 13:58:52
- * @LastEditTime: 2022-01-17 16:46:13
+ * @LastEditTime: 2022-01-18 17:56:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/identification.vue
@@ -186,6 +186,49 @@ export default {
       this.selectedRowKeys.map((item) => {
         this.printData.push(this.data[item]);
       });
+      // this.printData.push({
+      //   BatchNo: null,
+      //   DateCreated: "2022-01-18T17:36:47.48",
+      //   FinishedQty: null,
+      //   HisScrapedQty: null,
+      //   Id: "A4CD988A49EA4183A9E22DE6722369BB",
+      //   InnerOrderNo: null,
+      //   IsMitemIdentity: false,
+      //   IsWrite: null,
+      //   LineId: "5D135D85016942618B25F0FF5B7C12E0",
+      //   LineName: "老化车间02线",
+      //   MoCode: "WK-1911050064",
+      //   MoQty: null,
+      //   PerQty: null,
+      //   PlanDate: "2022-01-06T00:00:00",
+      //   PlanQty: 2000,
+      //   PlantId: "EDC8B0D024BE4209BFB0BDB2BB0BCBEB",
+      //   PlantName: "深圳民爆",
+      //   PlantType: null,
+      //   MitemName:"",
+      //   ProCode: "3-03202-30300001",
+      //   ProName: "UP-FDB30370-01 AL08-30W调光 TUV认证 SAA152451 SAA160864 for AL25",
+      //   ProPlanId: "8CDD0749BBBB4A7C98D7DFBA40386A0E",
+      //   ProcessCode: "AGEING_PROCESS",
+      //   ProcessId: "71CA6E7BDD4849D5AAC05C91A05E3541",
+      //   ProcessName: "老化工序",
+      //   ProcessStatus: "PROCESS_FINISHED",
+      //   ProcessStatusName: "老化工序工序出站",
+      //   ProcessStep: null,
+      //   Remarks: null,
+      //   ReportQty: 4,
+      //   SalesOrderNo: null,
+      //   ScanCode: "WK-1911050064",
+      //   ScanCodeType: null,
+      //   ScrapedQty: 0,
+      //   StartedQty: null,
+      //   Status: null,
+      //   StatusName: null,
+      //   UserCode: "UP-10163",
+      //   UserName: "曾辉",
+      //   WorkshopId: "BADD9225C22342C4988B5CB1B40A9935",
+      //   WorkshopName: "老化车间01",
+      // });
       this.isPrint = true;
     },
   },

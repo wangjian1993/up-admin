@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-01-17 16:47:36
+ * @LastEditTime: 2022-01-18 17:54:19
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/process/components/print.vue
@@ -18,7 +18,7 @@
           <div class="head-title">
             <p>物料标识卡</p>
           </div>
-          <div class="head-qr"><vue-qr :text="item.QrCode" :size="300"></vue-qr></div>
+          <div class="head-qr"><vue-qr :text="item.Id" :size="300"></vue-qr></div>
         </div>
         <div class="info">
           <a-descriptions :column="2" bordered size="small">
@@ -41,7 +41,6 @@
               {{ item.MitemCode }}
             </a-descriptions-item>
             <a-descriptions-item label="色温">
-              1000k
             </a-descriptions-item>
             <a-descriptions-item label="生产车间">
               {{ item.WorkShopName }}
@@ -49,7 +48,10 @@
             <a-descriptions-item label="拉" :span="2">
               {{ item.LineName }}
             </a-descriptions-item>
-            <a-descriptions-item label="品名" :span="2">
+            <a-descriptions-item :span="2">
+              <template v-slot:label>
+                <span style="display: inline-block;height:100px;line-height: 100px;max-height: 100px;margin:0">品名</span>
+              </template>
               {{ item.MitemName }}
             </a-descriptions-item>
             <a-descriptions-item label="状态" :span="2">
@@ -153,7 +155,7 @@ export default {
   width: 100px;
   height: 100px;
   margin: 0 auto;
-  margin-top: 5px;
+  margin-top: 15px;
   img {
     width: 100%;
     height: 100%;

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-01-07 13:56:57
+ * @LastEditTime: 2022-01-18 13:36:15
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/StartWork.vue
@@ -29,6 +29,7 @@
         <a-descriptions-item label="计划生产时间">{{ splitData(orderInfo.PlanDate) }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
         <a-descriptions-item label="开工数量"><a-input-number @blur="setFocus" :min="0" v-model="startWorkQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="生产人数"><a-input-number @blur="setFocus" :min="0" v-model="peopleQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
             开工
@@ -76,6 +77,7 @@ export default {
       isOrderSelect: false,
       orderSelectList: [],
       isStart: false,
+      peopleQty: 0,
     };
   },
   created() {
@@ -113,6 +115,7 @@ export default {
       // this.userLineData = [];
       this.orderValue = "";
       this.startWorkQty = 0;
+      this.peopleQty = 0;
     },
     closeModal() {
       this.isPrint = false;
@@ -266,6 +269,7 @@ export default {
         ProcessStatus: "PROCESS_START",
         ReportQty: this.startWorkQty,
         ScrapedQty: 0,
+        PerQty: this.peopleQty,
       };
       setStartWorkApi(parmas, "submit").then((res) => {
         res.data.message.time = getTimeData();

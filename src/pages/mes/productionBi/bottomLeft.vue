@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 13:58:47
- * @LastEditTime: 2022-01-17 11:04:45
+ * @LastEditTime: 2022-01-18 08:55:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/bottomLeft.vue
@@ -32,7 +32,7 @@ export default {
         index: true,
         waitTime: 3000,
         indexHeader: "序号",
-        align: ["center", "center", "center", "center", "left", "center", "center", "center", "center", "center", "center", "center"],
+        align: [],
         columnWidth: [],
       },
     };
@@ -59,17 +59,18 @@ export default {
       this.dataType = type;
       this.config.data = [];
       if (this.dataType === "lh") {
-        this.config.header = ["产线", "工单", "品名", "接收数量", "转移数量", "老化开始时间", "已老化小时数"];
-        this.config.columnWidth = [40, 100, 160, 200, 100, 100, 110, 110];
+        this.config.header = ["工单", "品名", "接收数量", "转移数量", "老化开始时间", "已老化小时数"];
+        this.config.columnWidth = [100, 160, 200, 100, 100, 110];
+        this.config.align= ["center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center", "center"];
       } else {
         this.config.header = ["产线", "工单", "品名", "计划/入库数量", "拉上数量", "开工时间", "已生产小时数"];
         this.config.columnWidth = [50, 100, 150, 200, 120, 100, 100];
+        this.config.align= ["center", "center", "center", "center", "left", "center", "center", "center", "center", "center", "center", "center"];
       }
       this.linePlanData.map((item) => {
         let list = [];
         let progress = this.progress(item);
         if (this.dataType === "lh") {
-          list.push(item.LineName);
           list.push(item.MoCode);
           list.push(`<p style="color:rgb(255,255,153);font-size:16px;margin:0">${item.ProName}</p>`);
           list.push(item.StartQty);

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-01-17 10:09:04
+ * @LastEditTime: 2022-01-18 09:12:00
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/rework/components/print.vue
@@ -26,7 +26,7 @@
             <a-descriptions-item label="工单号">
               {{ item.MoCode }}
             </a-descriptions-item>
-            <a-descriptions-item label="日期/时间">
+            <a-descriptions-item label="日期">
               {{ item.DateTime }}
             </a-descriptions-item>
             <a-descriptions-item label="返工数量">
@@ -82,7 +82,7 @@ export default {
       this.printData.map((item) => {
         parmas.push({
           Id: item.Id,
-          Remarks:item.Remarks,
+          Remarks: item.Remarks,
           Status: "PRINTED",
         });
       });
@@ -103,7 +103,7 @@ export default {
 .content {
   width: 1086px;
   height: 756px;
-  margin: 8;
+  margin:0 auto;
   overflow: hidden;
   max-height: 756px;
   padding: 0;
@@ -158,6 +158,7 @@ export default {
 }
 /deep/.ant-descriptions-item-label {
   font-size: 26px;
+  width: 14%;
 }
 /deep/.ant-descriptions-item-content {
   font-size: 26px;
@@ -195,6 +196,22 @@ export default {
 }
 /deep/.ant-table-tbody > tr > td {
   border-bottom: 1px #000 solid;
+}
+/deep/.ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-label,
+.ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-content {
+  padding: 15px 10px;
+}
+/deep/.ant-descriptions-bordered .ant-descriptions-item-label {
+  border-right: 1px solid #b4b3b3;
+}
+/deep/.ant-descriptions-bordered .ant-descriptions-item-content {
+  border-right: 1px solid #b4b3b3;
+}
+/deep/.ant-descriptions-bordered .ant-descriptions-row {
+  border-bottom: 1px solid #b4b3b3;
+}
+/deep/.ant-descriptions-bordered .ant-descriptions-view {
+  border: 1px solid #b4b3b3;
 }
 /deep/.ant-table-small > .ant-table-content > .ant-table-body {
   margin: 0;

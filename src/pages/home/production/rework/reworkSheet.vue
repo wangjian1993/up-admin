@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-20 09:03:36
- * @LastEditTime: 2022-01-17 10:10:39
+ * @LastEditTime: 2022-01-18 09:13:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/rework/reworkSheet.vue
@@ -178,7 +178,7 @@ export default {
     },
     handleOk() {
       this.printData =[]
-      if (this.pagination.total < 1) {
+      if (this.selectedRowKeys.length == 0) {
         return;
       }
       this.selectedRowKeys.map((item) => {

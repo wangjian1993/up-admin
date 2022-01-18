@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2022-01-17 14:17:38
+ * @LastEditTime: 2022-01-18 17:26:38
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
@@ -292,12 +292,60 @@ export default {
                     list.PlanDate = formatDate;
                   } else {
                     this.errorList.push({
-                      ErrorMsg: `第${index + 1}行,计划日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                      ErrorMsg: `第${index + 1}行,计划生产日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
                     });
                   }
                 } catch (error) {
                   this.errorList.push({
-                    ErrorMsg: `第${index + 1}行,计划日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                    ErrorMsg: `第${index + 1}行,计划生产日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                  });
+                }
+              }
+              break;
+            case "下单日期":
+              if (typeof item[key] === "object") {
+                list.DateDeliveryOrder = this.formatLongDate(item[key]);
+              }
+              //字符串格式
+              if (typeof item[key] === "string") {
+                try {
+                  //字符串转换为日期
+                  let date = new Date(item[key]);
+                  let formatDate = this.formatLongDate(date);
+                  if (formatDate !== "NaN/NaN/NaN") {
+                    list.DateDeliveryOrder = formatDate;
+                  } else {
+                    this.errorList.push({
+                      ErrorMsg: `第${index + 1}行,下单日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                    });
+                  }
+                } catch (error) {
+                  this.errorList.push({
+                    ErrorMsg: `第${index + 1}行,下单日期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                  });
+                }
+              }
+              break;
+            case "订单交期":
+              if (typeof item[key] === "object") {
+                list.DateOrder = this.formatLongDate(item[key]);
+              }
+              //字符串格式
+              if (typeof item[key] === "string") {
+                try {
+                  //字符串转换为日期
+                  let date = new Date(item[key]);
+                  let formatDate = this.formatLongDate(date);
+                  if (formatDate !== "NaN/NaN/NaN") {
+                    list.DateOrder = formatDate;
+                  } else {
+                    this.errorList.push({
+                      ErrorMsg: `第${index + 1}行,订单交期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
+                    });
+                  }
+                } catch (error) {
+                  this.errorList.push({
+                    ErrorMsg: `第${index + 1}行,订单交期:数据'${item[key]}'错误,日期格式为:2008-08-08`,
                   });
                 }
               }
