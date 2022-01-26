@@ -11,7 +11,7 @@
                 </a-select>
               </a-form-item>
             </a-col>
-            <a-col :md="6" :sm="24">
+            <!-- <a-col :md="6" :sm="24">
               <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['workshopid']" style="width: 200px" placeholder="请选择生产车间" @change="workshopChange">
                   <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
@@ -24,15 +24,15 @@
                   <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
                 </a-select>
               </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
+            </a-col> -->
+            <!-- <a-col :md="6" :sm="24">
               <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
                 <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
               </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row>
+            </a-col> -->
+          <!-- </a-row>
+          <a-row> -->
             <a-col :md="6" :sm="24">
               <a-form-item label="工单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入生产批号" v-decorator="['mocode']" />
@@ -43,11 +43,11 @@
                 <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['salesno']" />
               </a-form-item>
             </a-col>
-            <a-col :md="6" :sm="24">
+            <!-- <a-col :md="6" :sm="24">
               <a-form-item label="生产日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
               </a-form-item>
-            </a-col>
+            </a-col> -->
           </a-row>
         </div>
         <span style="float: right; margin-top: 3px;">
@@ -238,24 +238,19 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
-            const rangeValue = values["range-time-picker"];
-            var startdate = rangeValue[0].format("YYYY-MM-DD");
-            var enddate = rangeValue[1].format("YYYY-MM-DD");
-          }
+          // if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
+          //   const rangeValue = values["range-time-picker"];
+          //   var startdate = rangeValue[0].format("YYYY-MM-DD");
+          //   var enddate = rangeValue[1].format("YYYY-MM-DD");
+          // }
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            workshopid: values.workshopid,
-            lineid: values.lineid,
-            pmc: values.pmc,
             salesno: values.salesno,
             mocode: values.mocode,
-            startdate: startdate,
-            enddate: enddate,
           };
-          getStartWorkApi(parmas, "getall").then((res) => {
+          getStartWorkApi(parmas, "v2/getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

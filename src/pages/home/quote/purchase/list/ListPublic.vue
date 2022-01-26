@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-01-10 10:18:36
+ * @LastEditTime: 2022-01-26 09:43:15
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -74,31 +74,27 @@
               </a-form-item>
             </a-col>
           </a-row>
-          <a-row>
-            <a-col :md="24" :sm="24">
-              <span style="float: right; margin-top: 3px;">
-                <a-button type="primary" :disabled="!hasPerm('search_public')" @click="search">查询</a-button>
-                <a-button style="margin-left: 8px" :disabled="!hasPerm('search_public')" @click="reset">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? "收起" : "展开" }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
-                </a>
-              </span>
-            </a-col>
-          </a-row>
         </div>
+        <span style="float: right; margin-top: 3px;">
+          <a-button type="primary" :disabled="!hasPerm('search_public')" @click="search">查询</a-button>
+          <a-button style="margin-left: 8px" :disabled="!hasPerm('search_public')" @click="reset">重置</a-button>
+          <a @click="toggleAdvanced" style="margin-left: 8px">
+            {{ advanced ? "收起" : "展开" }}
+            <a-icon :type="advanced ? 'up' : 'down'" />
+          </a>
+        </span>
       </a-form>
     </div>
     <div>
-      <!-- <a-space class="operator">
-        <a-button icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="checkAll" style="margin-left: 8px">审批</a-button>
-        <a-button icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+      <a-space class="operator">
+        <a-button icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="checkAll" style="margin-left: 8px">导出</a-button>
+        <!-- <a-button icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button> -->
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
             {{ `共选中 ${selectedRowKeys.length} 条` }}
           </template>
         </span>
-      </a-space> -->
+      </a-space>
       <a-table
         :columns="columns"
         :data-source="dataSource"
@@ -111,7 +107,6 @@
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
-          getCheckboxProps: getCheckboxProps,
         }"
         bordered
       >
@@ -600,6 +595,180 @@ export default {
         children: this.initTree(item.ChildCode),
       }));
     },
+    async formattingExcel(excelData) {
+      return new Promise((resolve) => {
+        let excelArray = [];
+        let formula = {};
+        excelData.forEach((item) => {
+          console.log(item);
+          let list = item.ItemInfo.ItemChildList;
+          this.exportData = list;
+          let info = item.ItemInfo;
+          let ConfigList = this.arrayGroup(item.ConfigList);
+          let _data = [];
+          let mergeTitle = [];
+          formula = {
+            process: 0,
+            totalPrice: 0,
+          };
+          for (let i = 0; i < 8; i++) {
+            mergeTitle.push({
+              s: { r: i, c: 1 },
+              e: { r: i, c: 15 },
+            });
+          }
+          _data.push(["需求公司", info.EnterpriseName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["需求工厂", info.PlantName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["品号", info.ItemCode, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["大类", info.ItemSort, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push([" 产品规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["物料成本", info.MaterialCost, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          _data.push(["最终成本", info.FinalCost, null, null, null, null, null, null, null, null, null, null, null, null, null]);
+          let cost = [];
+          ConfigList.map((item) => {
+            cost = cost.concat(item.list);
+          });
+          cost.map((item, index) => {
+            let array = [item.CostSort, item.CostName, null, item.Amount, null, null, null, null, null, null, null, null, null, null, null];
+            _data.push(array);
+            mergeTitle.push({
+              s: { r: 8 + index, c: 1 },
+              e: { r: 8 + index, c: 2 },
+            });
+            mergeTitle.push({
+              s: { r: 8 + index, c: 3 },
+              e: { r: 8 + index, c: 15 },
+            });
+          });
+          ConfigList.map((item, index) => {
+            let l = item.list.length - 1;
+            if (index == 0) {
+              mergeTitle.push({
+                s: { r: 8, c: 0 },
+                e: { r: 8 + l, c: 0 },
+              });
+            } else {
+              mergeTitle.push({
+                s: { r: 8 + ConfigList[index - 1].list.length, c: 0 },
+                e: { r: 8 + l + ConfigList[index - 1].list.length, c: 0 },
+              });
+              //计算加工成本最后位置
+            }
+            formula.process += item.list.length;
+          });
+          const columns = [];
+          this.excelHead.map((item) => {
+            columns.push(item.title);
+          });
+          _data.push(columns);
+          //展开数据
+          let _data1 = [..._data];
+          list.map((item) => {
+            let array = [];
+            this.excelHead.map((items) => {
+              array.push(item[items.dataIndex]);
+            });
+            _data.push(array);
+          });
+          console.log(_data);
+          //收缩数据
+          let tree = this.initTree(item.ItemInfo.ItemCode);
+          let treeData = this.calField(tree);
+          treeData.map((item) => {
+            let array1 = [];
+            if (item.LvNo == 2) {
+              this.excelHead.map((items) => {
+                array1.push(item[items.dataIndex]);
+              });
+              _data1.push(array1);
+            }
+          });
+          formula.totalPrice = list.length;
+          formula.process = formula.process + 8;
+          let contentList = [];
+          let merges2 = []; // 设置表格内容单元格合并
+          let aoa = [..._data, ...contentList]; // 导出的数据
+          let merges = [...mergeTitle, ...merges2]; // 合并单元格
+          // 样式修改
+          const sheetCols = [
+            { wch: 10 }, // 序号
+            { wch: 5 }, // 阶次
+            { wch: 8 }, // 类型
+            { wch: 10 }, // 上阶BOM号
+            { wch: 10 }, // 品号
+            { wch: 18 }, // 料名
+            { wch: 20 }, //  产品规格
+            { wch: 6 }, // 单位
+            { wch: 8 }, // 价格来源
+            { wch: 7 }, // E10单价
+            { wch: 7 }, // 单价
+            { wch: 7 }, // 用量
+            { wch: 6 }, // 金额
+            { wch: 10 }, // 提示
+            { wch: 10 }, // 备注
+          ];
+          let formStyle = {};
+          excelArray.push({
+            Sheet: info.ItemCode, // 下方tab切换名称
+            data: aoa, // 表格数据
+            merges, //  合并单元格
+            autoWidth: false, // 自适应宽度
+            formStyle: formStyle, // 特殊行或列样式
+            sheetCols,
+          });
+        });
+        resolve({ excelArray, formula });
+      });
+    },
+    getExcelData(id) {
+      return new Promise((resolve) => {
+        let parmas = {
+          Id: id,
+        };
+        getCostConfig(parmas, "getquotedetail").then((res) => {
+          resolve(res.data.data);
+        });
+      });
+    },
+    async waitData(code) {
+      let n = await this.getExcelData(code);
+      return n;
+    },
+    //导出数据
+    async checkAll() {
+      let arr = [];
+      this.dataSource.map((item) => {
+        if (this.selectedRowKeys.includes(item.Id)) {
+          arr.push(this.waitData(item.Id));
+        }
+      });
+      Promise.all(arr)
+        .then((res) => {
+          this.formattingExcel(res).then((r) => {
+            console.log(r);
+            try {
+              var timestamp = Date.parse(new Date());
+              exportjsontoexcelMore({
+                dataList: r.excelArray,
+                bookType: "xlsx", // 导出类型
+                filename: `BOM清单_${timestamp}`, // 导出标题名
+                formula: r.formula,
+              });
+              this.$message.success("导出数据成功!");
+              this.selectedRowKeys = [];
+            } catch (error) {
+              console.log(error);
+              this.$message.error("导出数据失败");
+            }
+            this.isExportLod = false;
+          });
+        })
+        .catch((err) => {
+          //  loading.close();
+          console.log("error", err);
+        });
+    },
     //导出数据
     handleExcel(id, LastCode) {
       let parmas = {
@@ -740,7 +909,7 @@ export default {
               dataList: excelArray,
               bookType: "xlsx", // 导出类型
               filename: `${info.ItemCode}_${temp}`, // 导出标题名
-              formula
+              formula,
             });
             this.$message.success("导出数据成功!");
           } catch (error) {
