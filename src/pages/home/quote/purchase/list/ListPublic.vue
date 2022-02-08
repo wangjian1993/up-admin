@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-01-26 09:43:15
+ * @LastEditTime: 2022-02-07 10:06:15
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -87,7 +87,7 @@
     </div>
     <div>
       <a-space class="operator">
-        <a-button icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="checkAll" style="margin-left: 8px">导出</a-button>
+        <!-- <a-button icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="checkAll" style="margin-left: 8px">导出</a-button> -->
         <!-- <a-button icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button> -->
         <span style="margin-left: 8px">
           <template v-if="hasSelected">

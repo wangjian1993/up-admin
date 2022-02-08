@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-12-27 10:25:29
+ * @LastEditTime: 2022-02-07 09:57:30
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/Details.vue
@@ -66,13 +66,18 @@
             </a-form>
             <a-tabs default-active-key="1" @change="callback">
               <a-tab-pane key="1" tab="展开显示">
-                <a-table :columns="columns" :data-source="searchList" :size="size" :scroll="{ y: 600 }" :pagination="pagination" :rowKey="(list) => list.IndexNo + 'tab1'" bordered>
+                <a-table :columns="columns" :data-source="searchList" :size="size" :scroll="{ y: 600 }" :pagination="pagination" :rowKey="(searchList) => searchList.CodeId" bordered>
                   <div slot="e10" slot-scope="text, record">
                     <p>{{ record.PriceErpSource == "" ? text : text + `(${record.PriceErpSource})` }}</p>
                   </div>
+                  <template slot="Index" slot-scope="text, record, index">
+                    <div>
+                      <span>{{index + 1 }}</span>
+                    </div>
+                  </template>
                   <div slot="Amount2" slot-scope="text, record">
                     <p>{{ text }}</p>
-                    <a style="margin-right: 8px" @click="historyAmount(record,1)">
+                    <a style="margin-right: 8px" @click="historyAmount(record, 1)">
                       <a-icon type="history" />
                       历史价格
                     </a>
@@ -86,7 +91,7 @@
                   </div>
                   <div slot="Amount2" slot-scope="text, record">
                     <p>{{ text }}</p>
-                    <a style="margin-right: 8px" @click="historyAmount(record,2)">
+                    <a style="margin-right: 8px" @click="historyAmount(record, 2)">
                       <a-icon type="history" />
                       历史价格
                     </a>
@@ -96,7 +101,7 @@
             </a-tabs>
           </a-card>
         </div>
-        <HistoryAmount v-if="isHistoryAmount" :historyAmountData="historyAmountData" :info="info" @closeModal="closeModal" :amounType="amounType"/>
+        <HistoryAmount v-if="isHistoryAmount" :historyAmountData="historyAmountData" :info="info" @closeModal="closeModal" :amounType="amounType" />
       </a-spin>
     </a-modal>
   </div>
@@ -118,7 +123,8 @@ const columns = [
   },
   {
     title: "序号",
-    dataIndex: "IndexNo",
+    dataIndex: "Index",
+    scopedSlots: { customRender: "Index" },
     align: "center",
     width: "4%",
   },
@@ -219,17 +225,17 @@ export default {
       keyword: "",
       isHistoryAmount: false,
       historyAmountData: [],
-      amounType:""
+      amounType: "",
     };
   },
   created() {
     this.getList();
   },
   methods: {
-    historyAmount(item,type) {
+    historyAmount(item, type) {
       this.isHistoryAmount = true;
       this.historyAmountData = item;
-      this.amounType =type
+      this.amounType = type;
     },
     close() {
       this.$emit("closeModal");
@@ -268,6 +274,9 @@ export default {
       getCostConfig(parmas, "getquotedetail").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.ItemInfo.ItemChildList;
+          this.list.forEach((item,index) => {
+            item.CodeId = item.ChildCode + "_" + item.LastCode + "_" + index;
+          });
           this.searchList = this.list;
           this.info = res.data.data.ItemInfo;
           this.ConfigList = this.arrayGroup(res.data.data.ConfigList);

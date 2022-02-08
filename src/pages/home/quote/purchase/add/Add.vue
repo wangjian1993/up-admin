@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2022-01-10 10:59:59
+ * @LastEditTime: 2022-02-07 09:58:02
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -492,8 +492,8 @@ export default {
       getCostConfig(parmas, "getbomdetail2").then((res) => {
         if (res.data.success) {
           this.tableData = res.data.data.ItemInfo.ItemChildList;
-          this.tableData.forEach((item) => {
-            item.CodeId = item.ChildCode + "_" + item.LastCode + "_" + item.IndexNo;
+          this.tableData.forEach((item,index) => {
+            item.CodeId = item.ChildCode + "_" + item.LastCode + "_" + index;
           });
           this.searchList = this.tableData;
           this.costInfo = res.data.data.ItemInfo;
