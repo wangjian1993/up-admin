@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-31 09:36:32
- * @LastEditTime: 2021-12-10 09:42:16
+ * @LastEditTime: 2022-02-08 15:07:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/TotalPlan.vue
@@ -29,10 +29,10 @@
 </template>
 <script>
 import DetailMerge from "./DetailMerge.vue";
-import Action from "./Action.vue";
-import Detail from "./Detail.vue";
-import Total from "./Total.vue";
-import Reply from "./Reply.vue";
+import Action from "./action.vue";
+import Detail from "./detail.vue";
+import Total from "./total.vue";
+import Reply from "./reply.vue";
 import { getMitemrequirement } from "@/services/web.js";
 import { getParamData } from "@/services/admin.js";
 export default {

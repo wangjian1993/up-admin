@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-02-07 10:06:15
+ * @LastEditTime: 2022-02-08 17:11:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -78,6 +78,7 @@
         <span style="float: right; margin-top: 3px;">
           <a-button type="primary" :disabled="!hasPerm('search_public')" @click="search">查询</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('search_public')" @click="reset">重置</a-button>
+          <a-button style="margin-left: 8px" @click="batchSearch">批量查询</a-button>
           <a @click="toggleAdvanced" style="margin-left: 8px">
             {{ advanced ? "收起" : "展开" }}
             <a-icon :type="advanced ? 'up' : 'down'" />
@@ -143,6 +144,7 @@
     <a-details v-if="isDetails" :detailsId="detailsId" @closeModal="closeModal"></a-details>
     <!-- 历史版本 -->
     <history-list v-if="isHistory" :historyData="historyData" @closeModal="closeHistory" @details="details" @handleExcel="handleExcel" :historyType="historyType"></history-list>
+    <batch-bom v-if="isBatchBom"></batch-bom>
   </div>
 </template>
 
@@ -316,11 +318,11 @@ import { getDemandEnter, getCostConfig, addCost } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import ADetails from "./Details.vue";
-// import { funtransformF } from "./excel";
+import BatchBom from "./BatchBom.vue";
 import HistoryList from "./HistoryList";
 import { exportjsontoexcelMore } from "@/utils/Export2ExcelJs.js";
 export default {
-  components: { ADetails, HistoryList },
+  components: { ADetails, HistoryList, BatchBom },
   props: ["categoryList"],
   data() {
     return {
@@ -356,6 +358,7 @@ export default {
       historyType: "",
       isSearch: false,
       exportData: [],
+      isBatchBom: false,
     };
   },
   updated() {
@@ -391,6 +394,10 @@ export default {
     history(item) {
       this.isHistory = true;
       this.historyData = item;
+    },
+    //批量查询
+    batchSearch() {
+      this.isBatchBom = true;
     },
     //获取需求公司
     getDemandEnter() {
