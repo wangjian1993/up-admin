@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-10 09:51:42
+ * @LastEditTime: 2022-02-10 17:33:32
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/shipment/up/infoPersonal/index.vue
+ * @FilePath: /up-admin/src/pages/home/shipment/agc/infoPersonal/index.vue
 -->
 <template>
   <div>
@@ -14,56 +14,18 @@
           <div :class="advanced ? null : 'fold'">
             <a-row>
               <a-col :md="6" :sm="24">
-                <a-form-item label="业务订单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" allowClear placeholder="请输入业务订单号" v-decorator="['pinumber']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="客户代码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" allowClear placeholder="请输入客户代码" v-decorator="['customercode']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="订单状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['statusshipment']" placeholder="请选择订单状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">已出货</a-select-option>
-                    <a-select-option value="0">未出货</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="处理状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['statushandle']" placeholder="请选择订单状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">已处理</a-select-option>
-                    <a-select-option value="0">未处理</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-            </a-row>
-            <a-row v-if="advanced">
-              <a-col :md="6" :sm="24">
-                <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['plantname']" style="width: 200px" placeholder="请选择生产工厂">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option v-for="item in plantList" :key="item.PlantName" :value="item.PlantName">{{ item.PlantName }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
                 <a-form-item label="申请时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-range-picker style="width: 300px" v-decorator="['range-time-picker1']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="验货时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="退货时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-range-picker style="width: 300px" v-decorator="['range-time-picker3']" />
+                <a-form-item label="审核状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['statuscheck']" placeholder="请选择订单状态" style="width: 200px">
+                    <a-select-option value="">全部</a-select-option>
+                    <a-select-option value="1">已审核</a-select-option>
+                    <a-select-option value="2">未审核</a-select-option>
+                    <a-select-option value="3">不需要审核</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -71,10 +33,6 @@
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-            <a @click="toggleAdvanced" style="margin-left: 8px">
-              {{ advanced ? "收起" : "展开" }}
-              <a-icon :type="advanced ? 'up' : 'down'" />
-            </a>
           </span>
         </a-form>
         <div class="operator">
@@ -92,7 +50,7 @@
           :columns="columns"
           :data-source="dataSource"
           size="small"
-          :scroll="{ y: scrollY }"
+          :scroll="{ y: scrollY, x: 2400 }"
           :loading="loading"
           :pagination="pagination"
           @change="handleTableChange"
@@ -104,31 +62,30 @@
             getCheckboxProps: getCheckboxProps,
           }"
         >
-          <a-table slot="expandedRowRender" slot-scope="text" :columns="innerColumns" :data-source="text.group" :rowKey="(innerColumns, index) => innerColumns.Id + '_' + index" :pagination="false"></a-table>
           <template slot="index" slot-scope="text, record, index">
             <div>
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="StatusHandle" slot-scope="text">
+          <template slot="statuscheck" slot-scope="text">
             <div>
-              <a-tag :color="text === '0' ? 'red' : 'green'">{{ text === "0" ? "未处理" : "已处理" }}</a-tag>
+              <a-tag :color="text !== '1' ? 'red' : 'green'">{{ text === "2" ? "未处理" : text === "1" ? "已处理" : "不需要处理" }}</a-tag>
             </div>
           </template>
-          <template slot="StatusShipment" slot-scope="text">
+          <template slot="IsShipment" slot-scope="text">
             <div>
-              <a-tag :color="text === '0' ? 'red' : 'green'">{{ text === "0" ? "未出货" : "已出货" }}</a-tag>
+              <a-tag :color="text === 'N' ? 'red' : 'green'">{{ text === "N" ? "未出货" : "已出货" }}</a-tag>
             </div>
           </template>
           <template slot="action" slot-scope="text, record">
             <div>
-              <a-popconfirm title="确定删除?" @confirm="() => onDelete(record, 'Radio')" v-if="record.StatusHandle == 0 || record.StatusShipment == 0">
+              <a-popconfirm title="确定删除?" @confirm="() => onDelete(record, 'Radio')" v-if="record.statuscheck != 1 || record.IsShipment == 'N'">
                 <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                   <a-icon type="delete" />
                   删除
                 </a>
               </a-popconfirm>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')"  v-if="record.StatusHandle == 0 || record.StatusShipment == 0">
+              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')" v-if="record.statuscheck != 1 || record.IsShipment == 'N'">
                 <a-icon type="edit" />
                 编辑
               </a>
@@ -150,21 +107,21 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: 100,
+    width: 50,
   },
   {
     title: "业务订单号",
     dataIndex: "PiNumber",
     scopedSlots: { customRender: "PiNumber" },
     align: "center",
-    width: 150,
+    width: 180,
   },
   {
     title: "客户代码",
     dataIndex: "CustomerCode",
     scopedSlots: { customRender: "CustomerCode" },
     align: "center",
-    width: 100,
+    width: 80,
   },
   {
     title: "出货国家",
@@ -174,46 +131,95 @@ const columns = [
     width: 80,
   },
   {
-    title: "出货方式",
-    dataIndex: "ShipmentWay",
-    scopedSlots: { customRender: "ShipmentWay" },
+    title: "出货数量",
+    dataIndex: "Quantity",
+    scopedSlots: { customRender: "Quantity" },
     align: "center",
     width: 80,
   },
   {
-    title: "是否验货",
-    dataIndex: "IsExamine",
-    scopedSlots: { customRender: "IsExamine" },
+    title: "货代",
+    dataIndex: "ShipmentAgency",
+    scopedSlots: { customRender: "ShipmentAgency" },
     align: "center",
     width: 80,
   },
   {
-    title: "约定验货时间",
-    dataIndex: "GoodsExamineTime",
-    scopedSlots: { customRender: "GoodsExamineTime" },
+    title: "渠道",
+    dataIndex: "Channel",
+    scopedSlots: { customRender: "Channel" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "条款",
+    dataIndex: "Clause",
+    scopedSlots: { customRender: "Clause" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "币种",
+    dataIndex: "Currency",
+    scopedSlots: { customRender: "Currency" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "出货金额",
+    dataIndex: "ShipmentAmount",
+    scopedSlots: { customRender: "ShipmentAmount" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "是否报关",
+    dataIndex: "IsApplyCustoms",
+    scopedSlots: { customRender: "IsApplyCustoms" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "不报关原因",
+    dataIndex: "NotApplyReason",
+    scopedSlots: { customRender: "NotApplyReason" },
     align: "center",
     width: 120,
   },
   {
-    title: " 约定提货时间",
+    title: "具体原因",
+    dataIndex: "DetailReason",
+    scopedSlots: { customRender: "DetailReason" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "申报品牌",
+    dataIndex: "DeclaredBrand",
+    scopedSlots: { customRender: "DeclaredBrand" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "货好时间",
+    dataIndex: "GoodsFinishTime",
+    scopedSlots: { customRender: "GoodsFinishTime" },
+    align: "center",
+    width: 120,
+  },
+  {
+    title: " 预计提货时间",
     dataIndex: "GoodsPickTime",
     scopedSlots: { customRender: "GoodsPickTime" },
     align: "center",
     width: 120,
   },
   {
-    title: "申请时间",
+    title: "添加时间",
     dataIndex: "DatetimeCreated",
     scopedSlots: { customRender: "DatetimeCreated" },
     align: "center",
-    width: 120,
-  },
-  {
-    title: "生产工厂",
-    dataIndex: "PlantName",
-    scopedSlots: { customRender: "PlantName" },
-    align: "center",
-    width: "100px",
+    width: 130,
   },
   {
     title: "备注",
@@ -231,71 +237,37 @@ const columns = [
   },
   {
     title: "出货状态",
-    dataIndex: "StatusShipment",
-    scopedSlots: { customRender: "StatusShipment" },
+    dataIndex: "statuscheck",
+    scopedSlots: { customRender: "statuscheck" },
     align: "center",
+    fixed: "right",
     width: 80,
   },
   {
-    title: "处理状态",
-    dataIndex: "StatusHandle",
-    scopedSlots: { customRender: "StatusHandle" },
+    title: "审核状态",
+    dataIndex: "IsShipment",
+    scopedSlots: { customRender: "IsShipment" },
     align: "center",
+    fixed: "right",
     width: 80,
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
     align: "center",
+    fixed: "right",
     width: 120,
-  },
-];
-const innerColumns = [
-  {
-    title: "品号",
-    dataIndex: "ItemCode",
-    scopedSlots: { customRender: "ItemCode" },
-    align: "left",
-    width: 200,
-  },
-  {
-    title: "品名",
-    dataIndex: "ItemName",
-    scopedSlots: { customRender: "ItemName" },
-    align: "left",
-    width: 350,
-  },
-  {
-    title: "规格",
-    dataIndex: "ItemSpecification",
-    scopedSlots: { customRender: "ItemSpecification" },
-    align: "left",
-  },
-  {
-    title: "订单数量",
-    dataIndex: "ShipmentQtyOrder",
-    scopedSlots: { customRender: "ShipmentQtyOrder" },
-    align: "center",
-    width: 150,
-  },
-  {
-    title: "本次出货数量",
-    dataIndex: "ShipmentQtyNow",
-    scopedSlots: { customRender: "ShipmentQtyNow" },
-    align: "center",
-    width: 150,
   },
 ];
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
-import { getPlantList, getOrderList, deleteOrder } from "@/services/shipment.js";
+import { getOrderInfoAgc, deleteOrderAgc } from "@/services/shipment.js";
 import { splitData } from "@/utils/util.js";
 export default {
   components: { InfoEdit },
   data() {
     return {
       scrollY: "",
-      innerColumns,
       loading: false,
       advanced: true,
       columns,
@@ -332,20 +304,10 @@ export default {
   computed: {
     hasSelected() {
       return this.selectedRowKeys.length > 0;
-    }
+    },
   },
   methods: {
     splitData,
-    getPlantList() {
-      let parmas = {
-        entertypecode: "PLANT",
-      };
-      getPlantList(parmas).then((res) => {
-        if (res.data.success) {
-          this.plantList = res.data.data;
-        }
-      });
-    },
     //关闭弹出框
     closeModal() {
       this.isEdit = false;
@@ -365,22 +327,13 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        rolesign: "PERSONAL",
-        pinumber: "",
-        customercode: "",
-        statusshipment: "",
-        statushandle: "",
-        plantname: "",
         createdatestart: "",
         createdateend: "",
-        goodsexaminetimestart: "",
-        goodsexaminetimeend: "",
-        goodspicktimestart: "",
-        goodspicktimeend: "",
+        statuscheck: "",
       };
-      getOrderList(parmas).then((res) => {
+      getOrderInfoAgc(parmas,'getplantpersonal').then((res) => {
         if (res.data.success) {
-          this.dataSource = this.handlerDatas(res.data.data.list);
+          this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -463,9 +416,9 @@ export default {
             goodspicktimestart: goodspicktimestart || "",
             goodspicktimeend: goodspicktimeend || "",
           };
-          getOrderList(parmas).then((res) => {
+          getOrderInfoAgc(parmas,'getplantpersonal').then((res) => {
             if (res.data.success) {
-              this.dataSource = this.handlerDatas(res.data.data.list);
+              this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
@@ -479,13 +432,13 @@ export default {
     },
     onDelete(item, type) {
       let parmas = {
-        Ids: [],
+        PlantList: [],
       };
       if (type == "Radio") {
-        parmas.Ids.push({
+        parmas.PlantList.push({
           Id: item.Id,
         });
-        deleteOrder(parmas).then((res) => {
+        deleteOrderAgc(parmas).then((res) => {
           if (res.data.success) {
             this.$message.success("删除成功!");
             this.getListAll();
@@ -499,12 +452,12 @@ export default {
             self.dataSource.map((item, index) => {
               let id = item.Id + "_" + index;
               if (self.selectedRowKeys.includes(id)) {
-                parmas.Ids.push({
+                parmas.PlantList.push({
                   Id: item.Id,
                 });
               }
             });
-            deleteOrder(parmas).then((res) => {
+            deleteOrderAgc(parmas).then((res) => {
               if (res.data.success) {
                 self.$message.success("删除成功!");
                 self.getListAll();
@@ -517,7 +470,7 @@ export default {
     },
     getCheckboxProps: (record) => ({
       props: {
-        disabled: record.StatusHandle !== "0" || record.StatusShipment !== "0", // Column configuration not to be checked
+        disabled: record.IsShipment === "Y" || record.StatusCheck === "1", // Column configuration not to be checked
       },
     }),
     exportExcel() {

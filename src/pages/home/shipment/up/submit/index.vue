@@ -212,6 +212,7 @@ export default {
     //重置搜索
     reset() {
       this.searchForm.resetFields();
+      this.selectedRowKeys = []
       this.data = [];
       this.orderInfo = [];
       this.saveParmas = {
