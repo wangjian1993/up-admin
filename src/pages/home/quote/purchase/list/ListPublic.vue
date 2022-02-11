@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-02-08 17:11:02
+ * @LastEditTime: 2022-02-11 15:43:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -78,7 +78,7 @@
         <span style="float: right; margin-top: 3px;">
           <a-button type="primary" :disabled="!hasPerm('search_public')" @click="search">查询</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('search_public')" @click="reset">重置</a-button>
-          <a-button style="margin-left: 8px" @click="batchSearch">批量查询</a-button>
+          <!-- <a-button style="margin-left: 8px" @click="batchSearch">批量查询</a-button> -->
           <a @click="toggleAdvanced" style="margin-left: 8px">
             {{ advanced ? "收起" : "展开" }}
             <a-icon :type="advanced ? 'up' : 'down'" />

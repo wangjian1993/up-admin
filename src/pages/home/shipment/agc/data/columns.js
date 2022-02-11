@@ -1,0 +1,165 @@
+/*
+ * @Author: max
+ * @Date: 2022-02-11 14:02:47
+ * @LastEditTime: 2022-02-11 14:10:32
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/home/shipment/agc/data/columns.js
+ */
+export const columns = [
+    {
+        title: "序号",
+        scopedSlots: { customRender: "index" },
+        align: "center",
+        width: 50,
+    },
+    {
+        title: "业务订单号",
+        dataIndex: "PiNumber",
+        scopedSlots: { customRender: "PiNumber" },
+        align: "center",
+        width: 180,
+    },
+    {
+        title: "客户代码",
+        dataIndex: "CustomerCode",
+        scopedSlots: { customRender: "CustomerCode" },
+        align: "center",
+        width: 80,
+    },
+    {
+        title: "出货国家",
+        dataIndex: "ToCountry",
+        scopedSlots: { customRender: "ToCountry" },
+        align: "center",
+        width: 80,
+    },
+    {
+        title: "出货数量",
+        dataIndex: "Quantity",
+        scopedSlots: { customRender: "Quantity" },
+        align: "center",
+        width: 80,
+    },
+    {
+        title: "货代",
+        dataIndex: "ShipmentAgency",
+        scopedSlots: { customRender: "ShipmentAgency" },
+        align: "center",
+        width: 80,
+    },
+    {
+        title: "渠道",
+        dataIndex: "Channel",
+        scopedSlots: { customRender: "Channel" },
+        align: "center",
+        width: 80,
+    },
+    {
+        title: "条款",
+        dataIndex: "Clause",
+        scopedSlots: { customRender: "Clause" },
+        align: "center",
+        width: 80,
+    },
+    {
+        title: "币种",
+        dataIndex: "Currency",
+        scopedSlots: { customRender: "Currency" },
+        align: "center",
+        width: 80,
+    },
+    {
+        title: "出货金额",
+        dataIndex: "ShipmentAmount",
+        scopedSlots: { customRender: "ShipmentAmount" },
+        align: "center",
+        width: 80,
+    },
+    {
+        title: "是否报关",
+        dataIndex: "IsApplyCustoms",
+        scopedSlots: { customRender: "IsApplyCustoms" },
+        align: "center",
+        width: 80,
+    },
+    {
+        title: "不报关原因",
+        dataIndex: "NotApplyReason",
+        scopedSlots: { customRender: "NotApplyReason" },
+        align: "center",
+        width: 120,
+    },
+    {
+        title: "具体原因",
+        dataIndex: "DetailReason",
+        scopedSlots: { customRender: "DetailReason" },
+        align: "center",
+        width: 80,
+    },
+    {
+        title: "申报品牌",
+        dataIndex: "DeclaredBrand",
+        scopedSlots: { customRender: "DeclaredBrand" },
+        align: "center",
+        width: 80,
+    },
+    {
+        title: "货好时间",
+        dataIndex: "GoodsFinishTime",
+        scopedSlots: { customRender: "GoodsFinishTime" },
+        align: "center",
+        width: 120,
+    },
+    {
+        title: " 预计提货时间",
+        dataIndex: "GoodsPickTime",
+        scopedSlots: { customRender: "GoodsPickTime" },
+        align: "center",
+        width: 120,
+    },
+    {
+        title: "添加时间",
+        dataIndex: "DatetimeCreated",
+        scopedSlots: { customRender: "DatetimeCreated" },
+        align: "center",
+        width: 130,
+    },
+    {
+        title: "备注",
+        dataIndex: "Remark",
+        scopedSlots: { customRender: "Remark" },
+        align: "center",
+        width: 120,
+    },
+    {
+        title: "业务员",
+        dataIndex: "DisplayName",
+        scopedSlots: { customRender: "DisplayName" },
+        align: "center",
+        width: "100px",
+    },
+    {
+        title: "审核状态",
+        dataIndex: "StatusCheck",
+        scopedSlots: { customRender: "StatusCheck" },
+        align: "center",
+        fixed: "right",
+        width: 90,
+    },
+    {
+        title: "出货状态",
+        dataIndex: "IsShipment",
+        scopedSlots: { customRender: "IsShipment" },
+        align: "center",
+        fixed: "right",
+        width: 80,
+    },
+    {
+        title: "操作",
+        scopedSlots: { customRender: "action" },
+        align: "center",
+        fixed: "right",
+        width: 120,
+    },
+];

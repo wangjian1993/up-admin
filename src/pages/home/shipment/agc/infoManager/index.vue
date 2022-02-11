@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-10 17:34:56
+ * @LastEditTime: 2022-02-11 14:11:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/agc/infoManager/index.vue
@@ -36,8 +36,7 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button v-if="hasPerm('export')" icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="exportExcel" style="margin-left: 8px">导出</a-button>
-          <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">导出</a-button>
+          <a-button icon="delete" type="primary" :loading="loading" @click="exportExcel('', 'all')" style="margin-left: 8px">导出</a-button>
           <a-button v-if="hasPerm('approve')" icon="edit" type="primary" :disabled="!hasSelected" :loading="loading" @click="onDelete()" style="margin-left: 8px">审核</a-button>
           <a-button v-else icon="edit" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">审核</a-button>
           <span style="margin-left: 8px">
@@ -67,9 +66,9 @@
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="statuscheck" slot-scope="text">
+          <template slot="StatusCheck" slot-scope="text">
             <div>
-              <a-tag :color="text !== '1' ? 'red' : 'green'">{{ text === "2" ? "未处理" : text === "1" ? "已处理" : "不需要处理" }}</a-tag>
+              <a-tag :color="text !== '1' ? 'red' : 'green'">{{ text == "2" ? "未处理" : text == "1" ? "已处理" : "不需要处理" }}</a-tag>
             </div>
           </template>
           <template slot="IsShipment" slot-scope="text">
@@ -85,6 +84,10 @@
                   审核
                 </a>
               </a-popconfirm>
+              <a style="margin-right: 8px" @click="exportExcel(record)" :disabled="!hasPerm('export')">
+                <a-icon type="export" />
+                导出
+              </a>
             </div>
           </template>
         </a-table>
@@ -94,170 +97,14 @@
 </template>
 
 <script>
-import { getSupplierAction } from "@/services/web.js";
-import ExportExcel from "@/utils/ExportExcelJS";
-const columns = [
-  {
-    title: "序号",
-    scopedSlots: { customRender: "index" },
-    align: "center",
-    width: 50,
-  },
-  {
-    title: "业务订单号",
-    dataIndex: "PiNumber",
-    scopedSlots: { customRender: "PiNumber" },
-    align: "center",
-    width: 180,
-  },
-  {
-    title: "客户代码",
-    dataIndex: "CustomerCode",
-    scopedSlots: { customRender: "CustomerCode" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "出货国家",
-    dataIndex: "ToCountry",
-    scopedSlots: { customRender: "ToCountry" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "出货数量",
-    dataIndex: "Quantity",
-    scopedSlots: { customRender: "Quantity" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "货代",
-    dataIndex: "ShipmentAgency",
-    scopedSlots: { customRender: "ShipmentAgency" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "渠道",
-    dataIndex: "Channel",
-    scopedSlots: { customRender: "Channel" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "条款",
-    dataIndex: "Clause",
-    scopedSlots: { customRender: "Clause" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "币种",
-    dataIndex: "Currency",
-    scopedSlots: { customRender: "Currency" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "出货金额",
-    dataIndex: "ShipmentAmount",
-    scopedSlots: { customRender: "ShipmentAmount" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "是否报关",
-    dataIndex: "IsApplyCustoms",
-    scopedSlots: { customRender: "IsApplyCustoms" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "不报关原因",
-    dataIndex: "NotApplyReason",
-    scopedSlots: { customRender: "NotApplyReason" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "具体原因",
-    dataIndex: "DetailReason",
-    scopedSlots: { customRender: "DetailReason" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "申报品牌",
-    dataIndex: "DeclaredBrand",
-    scopedSlots: { customRender: "DeclaredBrand" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "货好时间",
-    dataIndex: "GoodsFinishTime",
-    scopedSlots: { customRender: "GoodsFinishTime" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: " 预计提货时间",
-    dataIndex: "GoodsPickTime",
-    scopedSlots: { customRender: "GoodsPickTime" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "添加时间",
-    dataIndex: "DatetimeCreated",
-    scopedSlots: { customRender: "DatetimeCreated" },
-    align: "center",
-    width: 130,
-  },
-  {
-    title: "备注",
-    dataIndex: "Remark",
-    scopedSlots: { customRender: "Remark" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "业务员",
-    dataIndex: "DisplayName",
-    scopedSlots: { customRender: "DisplayName" },
-    align: "center",
-    width: "100px",
-  },
-  {
-    title: "审核状态",
-    dataIndex: "statuscheck",
-    scopedSlots: { customRender: "statuscheck" },
-    align: "center",
-    fixed: "right",
-    width: 90,
-  },
-  {
-    title: "出货状态",
-    dataIndex: "IsShipment",
-    scopedSlots: { customRender: "IsShipment" },
-    align: "center",
-    fixed: "right",
-    width: 80,
-  },
-  {
-    title: "操作",
-    scopedSlots: { customRender: "action" },
-    align: "center",
-    fixed: "right",
-    width: 90,
-  },
-];
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { getOrderInfoAgc, confirmDisposeAgc } from "@/services/shipment.js";
 import { splitData } from "@/utils/util.js";
+import { ShipmentExport } from "@/mixins/shipmentUp";
+import { columns } from "../data/columns";
 export default {
+  mixins: [ShipmentExport],
   data() {
     return {
       scrollY: "",
@@ -449,93 +296,6 @@ export default {
         disabled: record.StatusCheck == "1", // Column configuration not to be checked
       },
     }),
-    exportExcel() {
-      this.isExportLod = true;
-      let values = this.searchForm.getFieldsValue();
-      let parmas = {
-        pageindex: this.pagination.current,
-        pagesize: this.pagination.total,
-        plantid: values.plantid,
-        batchid: values.batchid,
-        week: this.week || "",
-        pmc: values.pmc,
-        status: values.status,
-        mitemcode: values.mitemcode,
-        mitemname: values.mitemname,
-        fastcondition: this.statisticType,
-      };
-      getSupplierAction(parmas, "reply/getall").then((res) => {
-        if (res.data.success) {
-          let list = res.data.data.list;
-          list.forEach((item) => {
-            if (item.PurchaseOrderMatchList !== null && item.PurchaseOrderMatchList.length > 0) {
-              let PurchaseUserName = [];
-              let SupplierName = [];
-              let PurchaseOrderNo = [];
-              let LineItem = [];
-              let TransitQty = [];
-              let SupplierReplyDate = [];
-              let SupplierReplyQty = [];
-              let PurchaseReplyResult = [];
-              let MatchedQty = [];
-              let SalesNos = [];
-              item.PurchaseOrderMatchList.map((items) => {
-                PurchaseUserName.push(items.PurchaseUserName);
-                SupplierName.push(items.SupplierName);
-                PurchaseOrderNo.push(items.PurchaseOrderNo);
-                LineItem.push(items.LineItem);
-                TransitQty.push(items.TransitQty);
-                SupplierReplyDate.push(items.SupplierReplyDate);
-                SupplierReplyQty.push(items.SupplierReplyQty);
-                PurchaseReplyResult.push(items.PurchaseReplyResult);
-                MatchedQty.push(items.RequirementQty);
-                SalesNos.push(items.SalesNos);
-              });
-              item.PurchaseUserName = PurchaseUserName;
-              item.SupplierName = SupplierName;
-              item.PurchaseOrderNo = PurchaseOrderNo;
-              item.LineItem = LineItem;
-              item.TransitQty = TransitQty;
-              item.SupplierReplyDate = SupplierReplyDate;
-              item.SupplierReplyQty = SupplierReplyQty;
-              item.PurchaseReplyResult = PurchaseReplyResult;
-              item.MatchedQty = MatchedQty;
-              item.SalesNos = SalesNos;
-            }
-            item.Status = item.StatusName;
-            item.MatchStatus = item.MatchStatusName;
-            item.RequirementDate = splitData(item.RequirementDate);
-          });
-          const dataSource = list.map((item) => {
-            Object.keys(item).forEach((key) => {
-              // 后端传null node写入会有问题
-              if (item[key] === null) {
-                item[key] = "";
-              }
-              if (Array.isArray(item[key])) {
-                item[key] = item[key].join(",");
-              }
-            });
-            return item;
-          });
-          const header = [];
-          this.columns.map((item) => {
-            if (item.dataIndex) {
-              header.push({ key: item.dataIndex, title: item.title });
-            }
-          });
-          var timestamp = Date.parse(new Date());
-          try {
-            ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
-            this.$message.success("导出数据成功!");
-          } catch (error) {
-            // console.log(error);
-            this.$message.error("导出数据失败");
-          }
-          this.isExportLod = false;
-        }
-      });
-    },
   },
 };
 </script>

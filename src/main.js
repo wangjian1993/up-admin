@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2022-01-17 11:47:58
+ * @LastEditTime: 2022-02-11 13:43:27
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/main.js

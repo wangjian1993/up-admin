@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-02-09 08:56:25
- * @LastEditTime: 2022-02-10 17:34:43
+ * @LastEditTime: 2022-02-11 14:18:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/shipment.js
@@ -67,6 +67,11 @@ export function setShipmentAgc(params) {
 
 export function getOrderInfoAgc(params,action) {
     return request(`${UP_CMS}/shipmentplantagc/${action}`, METHOD.GET, params);
+}
+
+//编辑
+export function editOrderAgc(params) {
+    return request(`${UP_CMS}/shipmentplantagc/addoreditplant`, METHOD.POST, params);
 }
 
 export function deleteOrderAgc(params) {
