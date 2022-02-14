@@ -52,7 +52,7 @@ function parseRoutes(routesConfig, routerMap) {
 			let cp = item.component;
 			//过滤掉按钮类型
 			if (item.component) {
-				if (cp.indexOf("button") != -1) return;
+				if (cp.indexOf("button") != -1 || cp.indexOf("module") != -1) return;
 			}
 			if (item.component == 'BlankView' || item.component == "") {
 				//空白页

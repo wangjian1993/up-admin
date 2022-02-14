@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-02-11 15:43:20
+ * @LastEditTime: 2022-02-14 10:19:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -88,7 +88,7 @@
     </div>
     <div>
       <a-space class="operator">
-        <!-- <a-button icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="checkAll" style="margin-left: 8px">导出</a-button> -->
+        <a-button icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="checkAll" style="margin-left: 8px">导出</a-button>
         <!-- <a-button icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button> -->
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
@@ -520,6 +520,7 @@ export default {
     },
     //分页按钮
     handleTableChange(pagination) {
+      this.selectedRowKeys = [];
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
       if (this.isSearch) {

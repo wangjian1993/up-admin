@@ -42,7 +42,7 @@
               </a-col>
               <a-col :span="12">
                 <a-form-model-item ref="AppTypeId" has-feedback label="应用类型" prop="AppTypeId">
-                  <a-select v-model="form.AppTypeId" placeholder="请选择用户类型">
+                  <a-select v-model="form.AppTypeId" placeholder="请选择用户类型" @change="appTypeChange">
                     <a-select-option v-for="item in appTypeList" :key="item.AppTypeId" :value="item.AppTypeId">{{ item.AppTypeName }}</a-select-option>
                   </a-select>
                 </a-form-model-item>
@@ -85,7 +85,7 @@
             </a-row>
           </a-form-model>
         </a-tab-pane>
-        <a-tab-pane key="2" tab="应用首页">
+        <a-tab-pane key="2" tab="应用首页" v-if="!isMobile">
           <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-row>
               <a-col :span="24">
@@ -118,7 +118,7 @@
                 </a-form-model-item>
               </a-col>
               <a-col :span="24">
-                <a-form-model-item ref="MouduleUrl" label="组件路径"  prop="MouduleUrl">
+                <a-form-model-item ref="MouduleUrl" label="组件路径" prop="MouduleUrl">
                   <a-input v-model="form.MouduleUrl" placeholder="组件路径" />
                 </a-form-model-item>
               </a-col>
@@ -199,20 +199,20 @@ export default {
             trigger: "blur",
           },
         ],
-        MouduleUrl:[
-           {
+        MouduleUrl: [
+          {
             required: true,
             message: "请输入访问路径",
             trigger: "blur",
           },
         ],
-        AppLogo:[
-           {
+        AppLogo: [
+          {
             required: true,
             message: "请选择应用图标",
             trigger: "blur",
           },
-        ]
+        ],
       },
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -226,6 +226,7 @@ export default {
       layoutList: [],
       configTypeList: [],
       linkTypeList: [],
+      isMobile: false,
     };
   },
   created() {
@@ -273,6 +274,20 @@ export default {
     iconClick(item) {
       this.form.AppLogo = item;
       this.isIcon = false;
+    },
+    //应用类型
+    appTypeChange(e) {
+      this.appTypeList.map((item) => {
+        if (item.AppTypeId == e) {
+          if (item.AppTypeCode == "MOBILE") {
+            this.isMobile = true;
+            this.LayoutTypeCode = "Mobile"
+          } else {
+            this.isMobile = false;
+            this.LayoutTypeCode = "BlankView"
+          }
+        }
+      });
     },
     defaultForm() {
       this.form = {
@@ -348,6 +363,9 @@ export default {
       getAppTypeList(parmas).then((res) => {
         if (res.data.success) {
           this.appTypeList = res.data.data.list;
+          if (this.appTypeList[0].AppTypeCode == "MOBILE") {
+            this.isMobile = true;
+          }
         }
       });
     },
@@ -402,9 +420,9 @@ export default {
               }
             });
           } else {
-            if(this.form.MouduleUrl == ''){
+            if (this.form.MouduleUrl == "" && !this.isMobile) {
               this.$message.warning("请填写页面路径!");
-              return 
+              return;
             }
             appInfoAction(this.form, "add").then((res) => {
               if (res.data.success) {

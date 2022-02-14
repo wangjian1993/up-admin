@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-11 14:12:17
+ * @LastEditTime: 2022-02-14 09:21:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/agc/infoShipping/index.vue
@@ -100,9 +100,10 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { getOrderInfoAgc, confirmShipmentAgc } from "@/services/shipment.js";
 import { splitData } from "@/utils/util.js";
-import { exportExcel } from "../excel/exportExcel.js";
 import { columns } from "../data/columns";
+import { ShipmentExport } from "@/mixins/shipmentUp";
 export default {
+  mixins: [ShipmentExport],
   data() {
     return {
       scrollY: "",
@@ -293,27 +294,6 @@ export default {
         disabled: record.IsShipment === "Y", // Column configuration not to be checked
       },
     }),
-    exportExcel(record, type) {
-      let parmas = [];
-      let id = "";
-      if (type != "all") {
-        parmas.push(record);
-        id = record.PiNumber;
-      } else {
-        if(this.dataSource.length == 0 ){
-          return;
-        }
-        parmas = this.dataSource;
-        id = this.dataSource[0].PiNumber;
-      }
-      exportExcel(parmas, this.columns, id)
-        .then(() => {
-          this.$message.success("导出成功!");
-        })
-        .catch(() => {
-          this.$message.error("导出错误!");
-        });
-    },
   },
 };
 </script>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2022-02-11 15:42:12
+ * @LastEditTime: 2022-02-14 15:42:53
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -197,7 +197,8 @@
           }"
         >
           <div slot="Price" slot-scope="text, record, index">
-            <a-input-number :disabled="record.Property !== '采购件' || record.Property !== '内部采购件' || record.Property !== '委外加工件'" :id="record.key" v-model="record.Price" :min="0" @change="priceNumber(record, index)" />
+            <a-input-number :disabled="record.Property !== '采购件' && record.Property !== '内部采购件' && record.Property !== '委外加工件'" :id="record.key" v-model="record.Price" :min="0" @change="priceNumber(record, index)" />
+            <!-- <a-input-number :disabled="record.Property === '自制件' || record.Property === '虚设件'" :id="record.key" v-model="record.Price" :min="0" @change="priceNumber(record, index)" /> -->
           </div>
           <div slot="Property" slot-scope="text">
             <p v-if="text != '委外加工费'">{{ text }}</p>
