@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-01-05 11:33:33
+ * @LastEditTime: 2022-02-19 14:38:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
@@ -10,7 +10,10 @@
   <div>
     <a-drawer :visible="visible" title="BOM信息" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
       <a-spin tip="loading..." :spinning="loading">
-        <div>
+        <div class="clone-btn" v-if="isCloneBtn" @click="close">
+          <img src="@/assets/img/guanbi.png" alt="" />
+        </div>
+        <div ref="backTop">
           <a-descriptions :column="5" bordered size="small" :class="antDescriptionsRow">
             <a-descriptions-item label="主件品号">
               {{ info.ITEM_CODE }}
@@ -331,6 +334,7 @@ export default {
       modelData: [],
       antDescriptionsRow: "",
       isUnfold: false,
+      isCloneBtn: false,
     };
   },
   created() {
@@ -338,11 +342,28 @@ export default {
     //设置详情字体颜色
     this.info.ApproveStatus == "N" ? (this.antDescriptionsRow = "rowColor1") : this.info.ApproveStatus == "V" ? (this.antDescriptionsRow = "rowColor2") : "";
   },
+  mounted() {
+    window.addEventListener("scroll", this.handleScroll, true);
+  },
+  // 组件销毁前
+  beforeDestroy() {
+    window.removeEventListener("scroll", this.handleScroll,true);
+  },
   methods: {
     splitData,
     modelType,
     feedSystem,
     stateType,
+    handleScroll() {
+      // 页面滑动的距离
+      let scrollTop = this.$refs.backTop.getBoundingClientRect().top;
+      // 当页面滑动的距离大于300px时元素显示，否则不显示
+      if (scrollTop < 100) {
+        this.isCloneBtn = true;
+      } else {
+        this.isCloneBtn = false;
+      }
+    },
     close() {
       this.$emit("closeModal");
     },
@@ -467,5 +488,23 @@ export default {
   width: 36px;
   height: 36px;
   line-height: 36px;
+}
+.clone-btn {
+  position: absolute;
+  top:18%;
+  right: 0px;
+  background: #f2f2f2;
+  width: 40px;
+  height: 30px;
+  border-radius: 10px 0px 0px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer;
+  img {
+    width: 26px;
+    height: 26px;
+  }
 }
 </style>

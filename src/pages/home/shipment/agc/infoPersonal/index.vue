@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-11 14:11:08
+ * @LastEditTime: 2022-02-19 11:18:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/agc/infoPersonal/index.vue
@@ -106,7 +106,7 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { getOrderInfoAgc, deleteOrderAgc } from "@/services/shipment.js";
 import { splitData } from "@/utils/util.js";
-import { ShipmentExport } from "@/mixins/shipmentUp";
+import { ShipmentExport } from "@/mixins/shipmentAgc";
 import { columns } from "../data/columns";
 export default {
   components: { InfoEdit },

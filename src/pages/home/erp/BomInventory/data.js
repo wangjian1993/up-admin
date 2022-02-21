@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:49:42
- * @LastEditTime: 2021-12-14 15:19:50
+ * @LastEditTime: 2022-02-15 09:12:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/data.js
@@ -40,7 +40,8 @@ export const columns = [
         dataIndex: "INVENTORY_QTY",
         scopedSlots: { customRender: "INVENTORY_QTY" },
         align: "center",
-        width: 80,
+        width: 100,
+        sorter: (a, b) => a.INVENTORY_QTY - b.INVENTORY_QTY,
     },
     {
         title: "工厂编号",

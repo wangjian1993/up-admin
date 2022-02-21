@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-14 09:21:06
+ * @LastEditTime: 2022-02-19 11:19:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/agc/infoShipping/index.vue
@@ -101,7 +101,7 @@ import getTableScroll from "@/utils/setTableHeight";
 import { getOrderInfoAgc, confirmShipmentAgc } from "@/services/shipment.js";
 import { splitData } from "@/utils/util.js";
 import { columns } from "../data/columns";
-import { ShipmentExport } from "@/mixins/shipmentUp";
+import { ShipmentExport } from "@/mixins/shipmentAgc";
 export default {
   mixins: [ShipmentExport],
   data() {

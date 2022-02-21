@@ -1,45 +1,36 @@
 let path = require('path')
 const webpack = require('webpack')
 const ThemeColorReplacer = require('webpack-theme-color-replacer')
-const {getThemeColors, modifyVars} = require('./src/utils/themeUtil')
-const {resolveCss} = require('./src/utils/theme-color-replacer-extend')
+const { getThemeColors, modifyVars } = require('./src/utils/themeUtil')
+const { resolveCss } = require('./src/utils/theme-color-replacer-extend')
 const CompressionWebpackPlugin = require('compression-webpack-plugin')
 
 const productionGzipExtensions = ['js', 'css']
 const isProd = process.env.NODE_ENV === 'production'
-// vue.config.js
-const assetsCDN = {
-  // webpack build externals
-  externals: {
-    vue: 'Vue',
-    'vue-router': 'VueRouter',
-    vuex: 'Vuex',
-    axios: 'axios',
-    nprogress: 'NProgress',
-    clipboard: 'ClipboardJS',
-    '@antv/data-set': 'DataSet',
-    'js-cookie': 'Cookies'
-  },
-  css: [
-  ],
-  js: [
-    '//cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js',
-    '//cdn.jsdelivr.net/npm/vue-router@3.3.4/dist/vue-router.min.js',
-    '//cdn.jsdelivr.net/npm/vuex@3.4.0/dist/vuex.min.js',
-    '//cdn.jsdelivr.net/npm/axios@0.19.2/dist/axios.min.js',
-    '//cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js',
-    '//cdn.jsdelivr.net/npm/clipboard@2.0.6/dist/clipboard.min.js',
-    '//cdn.jsdelivr.net/npm/@antv/data-set@0.11.4/build/data-set.min.js',
-    '//cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js'
-    // '//cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.min.js',
-    // '//cdn.bootcdn.net/ajax/libs/vue-router/3.4.0/vue-router.min.js',
-    // '//cdn.bootcdn.net/ajax/libs/vuex/3.5.1/vuex.min.js',
-    // '//cdn.bootcdn.net/ajax/libs/axios/0.20.0/axios.min.js',
-    // '//cdn.bootcdn.net/ajax/libs/nprogress/0.2.0/nprogress.min.js',
-    // '//cdn.bootcdn.net/ajax/libs/clipboard.js/2.0.6/clipboard.min.js',
-    // '//cdn.bootcdn.net/ajax/libs/js-cookie/2.2.1/js.cookie.min.js',
-  ]
-}
+// const assetsCDN = {
+//   // webpack build externals
+//   externals: {
+//     vue: 'Vue',
+//     'vue-router': 'VueRouter',
+//     vuex: 'Vuex',
+//     axios: 'axios',
+//   },
+//   css: [
+//   ],
+//   js: [
+//     '//cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js',
+//     '//cdn.jsdelivr.net/npm/vue-router@3.5.1/dist/vue-router.min.js',
+//     '//cdn.jsdelivr.net/npm/vuex@3.1.1/dist/vuex.min.js',
+//     '//cdn.jsdelivr.net/npm/axios@0.21.1/dist/axios.min.js'
+//     // '//cdn.bootcdn.net/ajax/libs/vue/2.6.12/vue.min.js',
+//     // '//cdn.bootcdn.net/ajax/libs/vue-router/3.4.0/vue-router.min.js',
+//     // '//cdn.bootcdn.net/ajax/libs/vuex/3.5.1/vuex.min.js',
+//     // '//cdn.bootcdn.net/ajax/libs/axios/0.20.0/axios.min.js',
+//     // '//cdn.bootcdn.net/ajax/libs/nprogress/0.2.0/nprogress.min.js',
+//     // '//cdn.bootcdn.net/ajax/libs/clipboard.js/2.0.6/clipboard.min.js',
+//     // '//cdn.bootcdn.net/ajax/libs/js-cookie/2.2.1/js.cookie.min.js',
+//   ]
+// }
 
 module.exports = {
   // devServer: {
@@ -87,28 +78,25 @@ module.exports = {
       }))
     }
     // if prod, add externals
-    if (isProd) {
-      config.externals = assetsCDN.externals
-    }
+    // externals: isProd ? assetsCDN.externals : {}
   },
-
   chainWebpack: config => {
     // 生产环境下关闭css压缩的 colormin 项，因为此项优化与主题色替换功能冲突
     if (isProd) {
       config.plugin('optimize-css')
         .tap(args => {
-            args[0].cssnanoOptions.preset[1].colormin = false
+          args[0].cssnanoOptions.preset[1].colormin = false
           return args
         })
     }
     // 生产环境下使用CDN
-    if (isProd) {
-      config.plugin('html')
-        .tap(args => {
-          args[0].cdn = assetsCDN
-        return args
-      })
-    }
+    // if (isProd) {
+    //   config.plugin('html')
+    //     .tap(args => {
+    //       args[0].cdn = assetsCDN
+    //     return args
+    //   })
+    // }
   },
 
   css: {

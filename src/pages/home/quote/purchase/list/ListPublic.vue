@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-02-14 10:19:48
+ * @LastEditTime: 2022-02-19 17:02:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -88,7 +88,10 @@
     </div>
     <div>
       <a-space class="operator">
-        <a-button icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="checkAll" style="margin-left: 8px">导出</a-button>
+        <a-button v-if="hasPerm('details_export')" icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="checkAll" style="margin-left: 8px">明细导出</a-button>
+        <a-button v-else icon="export" type="primary" disabled :loading="loading" @click="checkAll" style="margin-left: 8px">明细导出</a-button>
+        <a-button v-if="hasPerm('list_export')" icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="listExport" style="margin-left: 8px">列表导出</a-button>
+        <a-button v-else icon="export" type="primary" disabled :loading="loading" @click="listExport" style="margin-left: 8px">列表导出</a-button>
         <!-- <a-button icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button> -->
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
@@ -128,11 +131,11 @@
               <a-icon type="profile" />
               详情
             </a>
-            <a style="margin-right: 8px" @click="handleExcel(record.Id, record.ItemCode)">
+            <a style="margin-right: 8px" :disabled="!hasPerm('export')" @click="handleExcel(record.Id, record.ItemCode)">
               <a-icon type="export" />
               导出
             </a>
-            <a style="margin-right: 8px" @click="history(record)">
+            <a style="margin-right: 8px" :disabled="!hasPerm('history')" @click="history(record)">
               <a-icon type="history" />
               历史版本
             </a>
@@ -321,6 +324,8 @@ import ADetails from "./Details.vue";
 import BatchBom from "./BatchBom.vue";
 import HistoryList from "./HistoryList";
 import { exportjsontoexcelMore } from "@/utils/Export2ExcelJs.js";
+import ExportExcel from "@/utils/ExportExcelJS";
+import { splitData } from "@/utils/util.js";
 export default {
   components: { ADetails, HistoryList, BatchBom },
   props: ["categoryList"],
@@ -692,8 +697,9 @@ export default {
               _data1.push(array1);
             }
           });
-          formula.totalPrice = list.length;
+          formula.totalPrice = 500;
           formula.process = formula.process + 8;
+          console.log("位置=======",formula)
           let contentList = [];
           let merges2 = []; // 设置表格内容单元格合并
           let aoa = [..._data, ...contentList]; // 导出的数据
@@ -776,6 +782,44 @@ export default {
           //  loading.close();
           console.log("error", err);
         });
+    },
+    listExport() {
+      let list = [];
+      this.dataSource.map((item) => {
+        if (this.selectedRowKeys.includes(item.Id)) {
+          list.push(item);
+        }
+      });
+      const dataSource = list.map((item) => {
+        Object.keys(item).forEach((key) => {
+          // 后端传null node写入会有问题
+          if (item[key] === null) {
+            item[key] = "";
+          }
+          if (Array.isArray(item[key])) {
+            item[key] = item[key].join(",");
+          }
+          if(key === 'DatetimeCreated'){
+            item[key] =  splitData(item[key])
+          }
+        });
+        return item;
+      });
+      const header = [];
+      this.columns.map((item) => {
+        if (item.dataIndex) {
+          header.push({ key: item.dataIndex, title: item.title });
+        }
+      });
+      var timestamp = Date.parse(new Date());
+      try {
+        ExportExcel(header, dataSource, `报价列表_${timestamp}.xlsx`);
+        this.$message.success("导出数据成功!");
+        this.selectedRowKeys = []
+      } catch (error) {
+        // console.log(error);
+        this.$message.error("导出数据失败");
+      }
     },
     //导出数据
     handleExcel(id, LastCode) {
