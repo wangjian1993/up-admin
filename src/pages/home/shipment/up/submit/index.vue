@@ -244,8 +244,8 @@ export default {
               this.data.map((item) => {
                 item.ShippingQty = item.BUSINESS_QTY;
               });
-              this.loading = false;
             }
+            this.loading = false;
           });
           // do something
         }
