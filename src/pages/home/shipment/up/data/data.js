@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-02-21 14:01:19
- * @LastEditTime: 2022-02-21 14:01:21
+ * @LastEditTime: 2022-02-24 13:58:30
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/up/data/data.js

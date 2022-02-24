@@ -54,7 +54,7 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="退货时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-form-item label="提货时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-range-picker style="width: 300px" v-decorator="['range-time-picker3']" />
                 </a-form-item>
               </a-col>
@@ -70,7 +70,8 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button :disabled="!hasPerm('export')" icon="export" type="primary" :loading="loading" @click="excelFn('', 'allPublic')" style="margin-left: 8px">导出</a-button>
+          <a-button v-if="hasPerm('export')" :disabled="selectedRowKeys.length == 0" icon="export" type="primary" :loading="loading" @click="excelFn('', 'allPublic')" style="margin-left: 8px">导出</a-button>
+           <a-button v-else disabled icon="export" type="primary" :loading="loading" @click="excelFn('', 'allPublic')" style="margin-left: 8px">导出</a-button>
         </div>
         <a-table
           :columns="columns"
@@ -103,6 +104,11 @@
               <a-tag :color="text === '0' ? 'red' : 'green'">{{ text === "0" ? "未出货" : "已出货" }}</a-tag>
             </div>
           </template>
+           <template slot="IsExamine" slot-scope="text">
+            <div>
+              <a-tag :color="text === '0' ? 'red' : 'green'">{{ text === "0" ? "否" : "是" }}</a-tag>
+            </div>
+          </template>
           <template slot="action" slot-scope="text, record">
             <div>
               <a style="margin-right: 8px" @click="excelFn(record)" :disabled="!hasPerm('export')">
@@ -123,7 +129,7 @@ import getTableScroll from "@/utils/setTableHeight";
 import { getPlantList, getOrderList } from "@/services/shipment.js";
 import { splitData } from "@/utils/util.js";
 import { ShipmentExport } from "@/mixins/shipmentUp";
-import {innerColumns ,columns} from "../data/data.js"
+import { innerColumns, columns } from "../data/data.js";
 export default {
   mixins: [ShipmentExport],
   data() {
@@ -168,6 +174,9 @@ export default {
       return this.selectedRowKeys.length > 0;
     },
   },
+  activated(){
+    this.getListAll();
+  },
   methods: {
     splitData,
     getPlantList() {
@@ -194,7 +203,7 @@ export default {
       this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
-        pagesize:10000,
+        pagesize: 10000,
         rolesign: "COMMON",
         pinumber: "",
         customercode: "",
@@ -220,23 +229,6 @@ export default {
           this.loading = false;
         }
       });
-    },
-    //分组
-    handlerDatas(arr) {
-      let obj = {};
-      arr.forEach((item) => {
-        let { Id } = item;
-        if (!obj[Id]) {
-          obj[Id] = {
-            ...item,
-            group: [],
-          };
-        }
-        obj[Id].group.push(item);
-      });
-      let data = Object.values(obj); // 最终输出
-      console.log(data);
-      return data;
     },
     //编辑
     edit(record) {

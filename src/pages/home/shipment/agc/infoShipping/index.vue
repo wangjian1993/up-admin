@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-19 11:19:04
+ * @LastEditTime: 2022-02-24 14:03:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/agc/infoShipping/index.vue
@@ -143,6 +143,9 @@ export default {
     hasSelected() {
       return this.selectedRowKeys.length > 0;
     },
+  },
+  activated(){
+    this.getListAll();
   },
   methods: {
     splitData,

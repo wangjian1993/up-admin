@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2021-11-16 13:50:59
+ * @LastEditTime: 2022-02-24 16:43:37
  * @LastEditors: max
  * @Description: API日志
  * @FilePath: /up-admin/src/pages/admin/log/apiLog.vue
@@ -45,7 +45,7 @@
     </div>
     <!-- 列表 -->
     <div class="tab">
-      <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY }" :loading="loading" :pagination="pagination" @change="handleTableChange" bordered>
+      <a-table v-if="hasPerm('search')" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 2200 }" :loading="loading" :pagination="pagination" @change="handleTableChange" bordered>
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -105,104 +105,106 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: "3%",
+    width: 80,
   },
   {
     title: "创建时间",
     dataIndex: "DateTimeCreated",
     scopedSlots: { customRender: "DateTimeCreated" },
     align: "center",
-    width: "13%",
-    ellipsis: true,
+    width: 150,
   },
   {
     title: "操作用户",
     dataIndex: "UserLoginId",
     scopedSlots: { customRender: "UserLoginId" },
     align: "center",
-    width: "8%",
-    ellipsis: true,
+    width: 80,
   },
   {
     title: "客户端IP",
     dataIndex: "InComimgIp",
     scopedSlots: { customRender: "InComimgIp" },
     align: "center",
-    width: "8%",
-    ellipsis: true,
+    width: 100,
   },
   {
     title: "端口号",
     dataIndex: "InComingPort",
     scopedSlots: { customRender: "InComingPort" },
     align: "center",
-    width: "4%",
+    width: 80,
   },
   {
     title: "服务器IP",
     dataIndex: "ServerIp",
     scopedSlots: { customRender: "ServerIp" },
     align: "center",
-    width: "8%",
-    ellipsis: true,
+    width: 120,
   },
   {
     title: "端口号",
     dataIndex: "ServerPort",
     scopedSlots: { customRender: "ServerPort" },
     align: "center",
-    width: "4%",
+    width: 80,
   },
   {
     title: "耗时(毫秒)",
     dataIndex: "ElapseTime",
     scopedSlots: { customRender: "ElapseTime" },
     align: "center",
-    width: "4%",
+    width: 100,
   },
   {
     title: "访问方式",
     dataIndex: "AccessMothod",
     scopedSlots: { customRender: "AccessMothod" },
     align: "center",
-    width: "5%",
+    width: 80,
+  },
+  {
+    title: "状态码",
+    dataIndex: "StatusCode",
+    scopedSlots: { customRender: "StatusCode" },
+    align: "center",
+    width: 60,
   },
   {
     title: "API地址",
     dataIndex: "APIUrl",
     scopedSlots: { customRender: "APIUrl" },
     align: "center",
-    width: "10%",
-    ellipsis: true,
+    width: 200,
   },
   {
     title: "执行方式",
     dataIndex: "InvokeMothod",
     scopedSlots: { customRender: "InvokeMothod" },
     align: "center",
-    width: "10%",
-    ellipsis: true,
+    width: 200,
   },
   {
     title: "执行编码",
     dataIndex: "TracePath",
     scopedSlots: { customRender: "TracePath" },
     align: "center",
-    width: "10%",
-    ellipsis: true,
+    width: 100,
   },
   {
     title: "API返回结果",
     dataIndex: "ReturnResult",
     scopedSlots: { customRender: "ReturnResult" },
     align: "center",
-    width: "5%",
-    ellipsis: true,
+    width: 120,
+    fixed: "right",
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
     align: "center",
+    fixed: "right",
+    width: 130,
   },
 ];
 import { getLogAction } from "@/services/admin.js";
@@ -229,16 +231,16 @@ export default {
       pagination: {
         current: 1,
         total: 0,
-        pageSize: 20, //每页中显示10条数据
+        pageSize: 100, //每页中显示10条数据
         showSizeChanger: true,
         showLessItems: true,
         showQuickJumper: true,
-        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
+        pageSizeOptions: ["50", "100", "150", "200"], //每页中显示的数据
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       searchForm: this.$form.createForm(this),
       scrollY: "",
-      isSearch:false,
+      isSearch: false,
     };
   },
   updated() {
@@ -276,7 +278,7 @@ export default {
     reset() {
       this.data = [];
       this.pagination.total = 0;
-      this.pagination.current =1
+      this.pagination.current = 1;
       this.getLogList();
       this.searchForm.resetFields();
     },
@@ -328,7 +330,7 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.loading = false;
-              this.isSearch =true
+              this.isSearch = true;
             }
           });
         }
@@ -347,7 +349,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-          this.isSearch =false
+          this.isSearch = false;
         } else {
           this.loading = false;
         }
@@ -363,7 +365,7 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if( this.isSearch){
+      if (this.isSearch) {
         this.search();
         return;
       }

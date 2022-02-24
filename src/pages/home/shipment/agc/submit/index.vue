@@ -5,7 +5,7 @@
         <a-button type="primary" @click="save">提交</a-button>
         <a-button style="margin-left: 8px" @click="reset">重置</a-button>
       </div>
-      <a-table :columns="columns" :data-source="data" size="small" :loading="loading" :pagination="false" :rowKey="(data, index) => data.ITEM_CODE" bordered>
+      <a-table :columns="columns" :data-source="data" size="small" :scroll="{ x: 1500 }" :loading="loading" :pagination="false" :rowKey="(data, index) => data.ITEM_CODE" bordered>
         <template slot="PiNumber" slot-scope="text, record">
           <a-input size="small" v-model="record.PiNumber" placeholder="订单号" />
         </template>
@@ -16,7 +16,7 @@
           <a-input size="small" v-model="record.ToCountry" placeholder="出货国家" />
         </template>
         <template slot="Quantity" slot-scope="text, record">
-          <a-input-number size="small" v-model="record.Quantity" :min="0" />
+          <a-input size="small" v-model="record.Quantity"/>
         </template>
         <template slot="ShipmentAgency" slot-scope="text, record">
           <a-input size="small" v-model="record.ShipmentAgency" placeholder="货代" />
@@ -47,10 +47,10 @@
         </template>
         <template slot="IsApplyCustoms" slot-scope="text, record">
           <a-select style="width: 80px" placeholder="选择是否报关" size="small" v-model="record.IsApplyCustoms">
-            <a-select-option value="1">
+            <a-select-option value="报关">
               报关
             </a-select-option>
-            <a-select-option value="0">
+            <a-select-option value="不报关">
               不报关
             </a-select-option>
           </a-select>
@@ -110,96 +110,112 @@ const columns = [
     dataIndex: "PiNumber",
     scopedSlots: { customRender: "PiNumber" },
     align: "center",
+    width: 120,
   },
   {
     title: "客户代码",
     dataIndex: "CustomerCode",
     scopedSlots: { customRender: "CustomerCode" },
     align: "center",
+    width: 120,
   },
   {
     title: "出货国家",
     dataIndex: "ToCountry",
     scopedSlots: { customRender: "ToCountry" },
     align: "center",
+    width: 100,
   },
   {
     title: "出货数量",
     dataIndex: "Quantity",
     scopedSlots: { customRender: "Quantity" },
     align: "center",
+    width: 100,
   },
   {
     title: "货代",
     dataIndex: "ShipmentAgency",
     scopedSlots: { customRender: "ShipmentAgency" },
     align: "center",
+    width: 100,
   },
   {
     title: "渠道",
     dataIndex: "Channel",
     scopedSlots: { customRender: "Channel" },
     align: "center",
+    width: 100,
   },
   {
     title: "条款",
     dataIndex: "Clause",
     scopedSlots: { customRender: "Clause" },
     align: "center",
+     width: 120,
   },
   {
     title: "币种",
     dataIndex: "Currency",
     scopedSlots: { customRender: "Currency" },
     align: "center",
+    width: 120,
   },
   {
     title: "出货金额",
     dataIndex: "ShipmentAmount",
     scopedSlots: { customRender: "ShipmentAmount" },
     align: "center",
+    width: 120,
   },
   {
     title: "是否报关",
     dataIndex: "IsApplyCustoms",
     scopedSlots: { customRender: "IsApplyCustoms" },
     align: "center",
+    width: 120,
   },
   {
     title: "不报关理由",
     dataIndex: "NotApplyReason",
     scopedSlots: { customRender: "NotApplyReason" },
     align: "center",
+    width: 120,
   },
   {
     title: "具体原因",
     dataIndex: "DetailReason",
     scopedSlots: { customRender: "DetailReason" },
     align: "center",
+    width: 120,
   },
   {
     title: "申报品牌",
     dataIndex: "DeclaredBrand",
     scopedSlots: { customRender: "DeclaredBrand" },
     align: "center",
+    width: 120,
   },
   {
     title: "货好时间",
     dataIndex: "GoodsFinishTime",
     scopedSlots: { customRender: "GoodsFinishTime" },
     align: "center",
+    width: 140,
   },
   {
     title: "预计提货时间",
     dataIndex: "GoodsPickTime",
     scopedSlots: { customRender: "GoodsPickTime" },
     align: "center",
+    width: 140,
   },
   {
     title: "备注",
     dataIndex: "Remark",
     scopedSlots: { customRender: "Remark" },
     align: "center",
+     width: 100,
   },
 ];
 import { renderStripe } from "@/utils/stripe.js";
@@ -263,10 +279,10 @@ export default {
   methods: {
     moment,
     disabledDate(current) {
-      return current && current < moment().endOf('day');
+      return current && current < moment().endOf("day");
     },
     disabledDate1(current) {
-      return current && current < moment().endOf('day');
+      return current && current < moment().endOf("day");
     },
     handleChange(value, key, column) {
       const newData = [...this.data];

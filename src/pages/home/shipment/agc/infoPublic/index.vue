@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-19 11:18:56
+ * @LastEditTime: 2022-02-24 14:03:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/agc/infoPublic/index.vue
@@ -128,6 +128,9 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
+    this.getListAll();
+  },
+  activated(){
     this.getListAll();
   },
   computed: {

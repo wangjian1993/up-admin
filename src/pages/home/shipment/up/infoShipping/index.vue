@@ -54,7 +54,7 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="退货时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-form-item label="提货时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-range-picker style="width: 300px" v-decorator="['range-time-picker3']" />
                 </a-form-item>
               </a-col>
@@ -92,7 +92,7 @@
           :row-selection="{
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
-             getCheckboxProps: getCheckboxProps,
+            getCheckboxProps: getCheckboxProps,
           }"
         >
           <a-table slot="expandedRowRender" slot-scope="text" :columns="innerColumns" :data-source="text.group" :rowKey="(innerColumns, index) => innerColumns.Id + '_' + index" :pagination="false"></a-table>
@@ -111,6 +111,11 @@
               <a-tag :color="text === '0' ? 'red' : 'green'">{{ text === "0" ? "未出货" : "已出货" }}</a-tag>
             </div>
           </template>
+          <template slot="IsExamine" slot-scope="text">
+            <div>
+              <a-tag :color="text === '0' ? 'red' : 'green'">{{ text === "0" ? "否" : "是" }}</a-tag>
+            </div>
+          </template>
           <template slot="action" slot-scope="text, record">
             <div>
               <a-popconfirm title="确定出货?" @confirm="() => onDelete(record, 'Radio')" v-if="record.StatusShipment == 0">
@@ -119,7 +124,7 @@
                   确认出货
                 </a>
               </a-popconfirm>
-               <a style="margin-right: 8px" @click="excelFn(record)" :disabled="!hasPerm('export')">
+              <a style="margin-right: 8px" @click="excelFn(record)" :disabled="!hasPerm('export')">
                 <a-icon type="export" />
                 导出
               </a>
@@ -137,9 +142,9 @@ import getTableScroll from "@/utils/setTableHeight";
 import { getPlantList, getOrderList, confirmShipment } from "@/services/shipment.js";
 import { splitData } from "@/utils/util.js";
 import { ShipmentExport } from "@/mixins/shipmentUp";
-import {innerColumns ,columns} from "../data/data.js"
+import { innerColumns, columns } from "../data/data.js";
 export default {
-   mixins: [ShipmentExport],
+  mixins: [ShipmentExport],
   data() {
     return {
       scrollY: "",
@@ -180,7 +185,10 @@ export default {
   computed: {
     hasSelected() {
       return this.selectedRowKeys.length > 0;
-    }
+    },
+  },
+  activated(){
+    this.getListAll();
   },
   methods: {
     splitData,
@@ -234,23 +242,6 @@ export default {
           this.loading = false;
         }
       });
-    },
-    //分组
-    handlerDatas(arr) {
-      let obj = {};
-      arr.forEach((item) => {
-        let { Id } = item;
-        if (!obj[Id]) {
-          obj[Id] = {
-            ...item,
-            group: [],
-          };
-        }
-        obj[Id].group.push(item);
-      });
-      let data = Object.values(obj); // 最终输出
-      console.log(data);
-      return data;
     },
     //编辑
     edit(record) {
@@ -323,7 +314,7 @@ export default {
     },
     getCheckboxProps: (record) => ({
       props: {
-        disabled:record.StatusShipment !== "0", // Column configuration not to be checked
+        disabled: record.StatusShipment !== "0", // Column configuration not to be checked
       },
     }),
     onDelete(item, type) {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-02-09 17:33:25
- * @LastEditTime: 2022-02-10 08:53:39
+ * @LastEditTime: 2022-02-24 10:23:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/up/infoPersonal/infoEdit.vue
@@ -76,11 +76,12 @@
           :row-selection="{
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
+            getCheckboxProps: getCheckboxProps,
           }"
           bordered
         >
           <template slot="ShipmentQtyNow" slot-scope="text, record">
-            <a-input-number :min="0" :max="numberQty(record.ShipmentQtyOrder)" :value="text" @change="(e) => handleChange(e, record.ItemCode, 'ShipmentQtyNow')" />
+            <a-input-number :min="0" :value="text" @change="(e) => handleChange(e, record.ItemCode, 'ShipmentQtyNow')" />
           </template>
         </a-table>
       </a-card>
@@ -194,6 +195,12 @@ export default {
     disabledDate1(current) {
       return current < moment().add(10, "days");
     },
+    //禁用多选
+    getCheckboxProps: () => ({
+      props: {
+        disabled:true, // Column configuration not
+      },
+    }),
     handleChange(value, key, column) {
       const newData = [...this.data];
       const target = newData.filter((item) => key === item.ItemCode)[0];
@@ -315,7 +322,7 @@ export default {
       this.data.map((item) => {
         if (this.selectedRowKeys.includes(item.ItemCode)) {
           this.saveParmas.PlantChild.push({
-            Id: item.Id,
+            Id: item.Cid,
             ShipmentQtyNow: item.ShipmentQtyNow,
           });
         }

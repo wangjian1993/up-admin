@@ -75,7 +75,7 @@
         bordered
       >
         <template slot="ShippingQty" slot-scope="text, record">
-          <a-input-number :min="0" :max="record.BUSINESS_QTY" :value="text" @change="(e) => handleChange(e, record.ITEM_CODE, 'ShippingQty')" />
+          <a-input-number :min="0" :value="text" @change="(e) => handleChange(e, record.ITEM_CODE, 'ShippingQty')" />
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />

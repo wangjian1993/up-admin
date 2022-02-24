@@ -54,7 +54,7 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="退货时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-form-item label="提货时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-range-picker style="width: 300px" v-decorator="['range-time-picker3']" />
                 </a-form-item>
               </a-col>
@@ -109,6 +109,11 @@
           <template slot="StatusShipment" slot-scope="text">
             <div>
               <a-tag :color="text === '0' ? 'red' : 'green'">{{ text === "0" ? "未出货" : "已出货" }}</a-tag>
+            </div>
+          </template>
+           <template slot="IsExamine" slot-scope="text">
+            <div>
+              <a-tag :color="text === '0' ? 'red' : 'green'">{{ text === "0" ? "否" : "是" }}</a-tag>
             </div>
           </template>
           <template slot="action" slot-scope="text, record">
@@ -181,6 +186,9 @@ export default {
     hasSelected() {
       return this.selectedRowKeys.length > 0;
     },
+  },
+  activated(){
+    this.getListAll();
   },
   methods: {
     splitData,

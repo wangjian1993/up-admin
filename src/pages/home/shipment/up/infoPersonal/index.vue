@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-21 14:02:44
+ * @LastEditTime: 2022-02-24 13:59:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/up/infoPersonal/index.vue
@@ -62,7 +62,7 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="退货时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-form-item label="提货时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-range-picker style="width: 300px" v-decorator="['range-time-picker3']" />
                 </a-form-item>
               </a-col>
@@ -119,15 +119,20 @@
               <a-tag :color="text === '0' ? 'red' : 'green'">{{ text === "0" ? "未出货" : "已出货" }}</a-tag>
             </div>
           </template>
+          <template slot="IsExamine" slot-scope="text">
+            <div>
+              <a-tag :color="text === '0' ? 'red' : 'green'">{{ text === "0" ? "否" : "是" }}</a-tag>
+            </div>
+          </template>
           <template slot="action" slot-scope="text, record">
             <div>
-              <a-popconfirm title="确定删除?" @confirm="() => onDelete(record, 'Radio')" v-if="record.StatusHandle == 0 || record.StatusShipment == 0">
+              <a-popconfirm title="确定删除?" @confirm="() => onDelete(record, 'Radio')" v-if="record.StatusHandle == 0 && record.StatusShipment == 0 && comparedate(record.DatetimeCreated)">
                 <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                   <a-icon type="delete" />
                   删除
                 </a>
               </a-popconfirm>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')" v-if="record.StatusHandle == 0 || record.StatusShipment == 0">
+              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')" v-if="record.StatusHandle == 0 && record.StatusShipment == 0 && comparedate(record.DatetimeCreated)">
                 <a-icon type="edit" />
                 编辑
               </a>
@@ -154,7 +159,8 @@ import getTableScroll from "@/utils/setTableHeight";
 import { getPlantList, getOrderList, deleteOrder } from "@/services/shipment.js";
 import { splitData } from "@/utils/util.js";
 import { ShipmentExport } from "@/mixins/shipmentUp";
-import {innerColumns ,columns} from "../data/data.js"
+import { innerColumns, columns } from "../data/data.js";
+import moment from "moment";
 export default {
   components: { InfoEdit },
   mixins: [ShipmentExport],
@@ -200,6 +206,9 @@ export default {
       return this.selectedRowKeys.length > 0;
     },
   },
+  activated(){
+    this.getListAll();
+  },
   methods: {
     splitData,
     getPlantList() {
@@ -211,6 +220,20 @@ export default {
           this.plantList = res.data.data;
         }
       });
+    },
+    //比较两个日期的大小
+    comparedate(date) {
+      let date2  =moment().format("YYYY-MM-DD");
+      let date1 = date.split("T");
+      let oDate1 = new Date(date1[0]); //申请时间
+      let oDate2 = new Date(date2);  //今天时间
+      console.log(oDate1.getTime())
+      console.log(oDate2.getTime())
+     if (oDate1.getTime() == oDate2.getTime()) {
+        return true;
+      } else {
+        return false;
+      }
     },
     //关闭弹出框
     closeModal() {
@@ -256,23 +279,6 @@ export default {
           this.loading = false;
         }
       });
-    },
-    //分组
-    handlerDatas(arr) {
-      let obj = {};
-      arr.forEach((item) => {
-        let { Id } = item;
-        if (!obj[Id]) {
-          obj[Id] = {
-            ...item,
-            group: [],
-          };
-        }
-        obj[Id].group.push(item);
-      });
-      let data = Object.values(obj); // 最终输出
-      console.log(data);
-      return data;
     },
     //编辑
     edit(record) {
@@ -386,7 +392,6 @@ export default {
         disabled: record.StatusHandle !== "0" || record.StatusShipment !== "0", // Column configuration not to be checked
       },
     }),
-    
   },
 };
 </script>

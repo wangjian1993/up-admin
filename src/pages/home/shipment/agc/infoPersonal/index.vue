@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-19 11:18:50
+ * @LastEditTime: 2022-02-24 14:03:59
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/agc/infoPersonal/index.vue
@@ -77,13 +77,13 @@
           </template>
           <template slot="action" slot-scope="text, record">
             <div>
-              <a-popconfirm title="确定删除?" @confirm="() => onDelete(record, 'Radio')" v-if="record.statuscheck != 1 || record.IsShipment == 'N'">
+              <a-popconfirm title="确定删除?" @confirm="() => onDelete(record, 'Radio')" v-if="record.statuscheck != 1 && record.IsShipment == 'N'">
                 <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                   <a-icon type="delete" />
                   删除
                 </a>
               </a-popconfirm>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')" v-if="record.statuscheck != 1 || record.IsShipment == 'N'">
+              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')" v-if="record.statuscheck != 1 && record.IsShipment == 'N'">
                 <a-icon type="edit" />
                 编辑
               </a>
@@ -139,6 +139,9 @@ export default {
   },
   updated() {
     renderStripe();
+  },
+  activated(){
+    this.getListAll();
   },
   created() {
     this.$nextTick(() => {

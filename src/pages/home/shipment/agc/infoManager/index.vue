@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-19 11:18:45
+ * @LastEditTime: 2022-02-24 14:04:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/agc/infoManager/index.vue
@@ -28,6 +28,14 @@
                   </a-select>
                 </a-form-item>
               </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="组员" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['groupmemberuserid']" style="width: 200px" placeholder="请选择组员">
+                    <a-select-option value="">全部</a-select-option>
+                    <a-select-option v-for="item in crewList" :key="item.EnterpriseId" :value="item.EnterpriseId">{{ item.UserId + " " + item.DisplayName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
@@ -38,7 +46,7 @@
         <div class="operator">
           <a-button icon="delete" type="primary" :loading="loading" @click="exportExcel('', 'all')" style="margin-left: 8px">导出</a-button>
           <a-button v-if="hasPerm('approve')" icon="edit" type="primary" :disabled="!hasSelected" :loading="loading" @click="onDelete()" style="margin-left: 8px">审核</a-button>
-          <a-button v-else icon="edit" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">审核</a-button>
+          <a-button v-else icon="edit" type="primary" disabled :loading="loading" style="margin-left: 8px">审核</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -129,17 +137,21 @@ export default {
       plantList: [],
       isEdit: false,
       editData: [],
+      crewList: [],
     };
   },
   updated() {
     renderStripe();
   },
+  activated(){
+    this.getListAll();
+  },
   created() {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    this.getPlantList();
     this.getListAll();
+    this.getCrewList();
   },
   computed: {
     hasSelected() {
@@ -160,6 +172,13 @@ export default {
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
+    },
+    getCrewList() {
+      getOrderInfoAgc("", "getgroupmember").then((res) => {
+        if (res.data.success) {
+          this.crewList = res.data.data.list;
+        }
+      });
     },
     //获取列表
     getListAll() {
