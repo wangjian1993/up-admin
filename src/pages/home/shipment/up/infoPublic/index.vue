@@ -79,7 +79,7 @@
           size="small"
           :scroll="{ y: scrollY }"
           :loading="loading"
-          :pagination="false"
+          :pagination="pagination"
           @change="handleTableChange"
           :rowKey="(dataSource, index) => dataSource.Id + '_' + index"
           bordered

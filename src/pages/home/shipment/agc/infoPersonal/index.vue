@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-24 14:03:59
+ * @LastEditTime: 2022-02-25 10:30:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/agc/infoPersonal/index.vue
@@ -36,7 +36,7 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button icon="delete" type="primary" :loading="loading" @click="exportExcel('', 'all')" style="margin-left: 8px">导出</a-button>
+          <a-button icon="export" :disabled="!hasPerm('export')" type="primary" :loading="loading" @click="exportExcel('', 'all')" style="margin-left: 8px">导出</a-button>
           <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="onDelete()" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <span style="margin-left: 8px">
@@ -58,6 +58,7 @@
           :row-selection="{
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
+            getCheckboxProps:getCheckboxProps
           }"
         >
           <template slot="index" slot-scope="text, record, index">
@@ -206,7 +207,7 @@ export default {
         obj[Id].group.push(item);
       });
       let data = Object.values(obj); // 最终输出
-      console.log(data);
+      // console.log(data);
       return data;
     },
     //编辑
@@ -218,7 +219,7 @@ export default {
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      console.log(this.isSearch);
+      // console.log(this.isSearch);
       if (this.isSearch == 2) {
         this.search();
         return;

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-24 14:03:50
+ * @LastEditTime: 2022-02-25 10:18:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/agc/infoPublic/index.vue
@@ -36,7 +36,8 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button icon="delete" type="primary" :loading="loading" @click="exportExcel('', 'all')" style="margin-left: 8px">导出</a-button>
+          <a-button v-if="hasPerm('export')" :disabled="selectedRowKeys.length == 0" icon="export" type="primary" :loading="loading" @click="exportExcel('', 'all')" style="margin-left: 8px">导出</a-button>
+          <a-button v-else icon="delete" disabled="" type="primary" :loading="loading" style="margin-left: 8px">导出</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -130,7 +131,7 @@ export default {
     });
     this.getListAll();
   },
-  activated(){
+  activated() {
     this.getListAll();
   },
   computed: {

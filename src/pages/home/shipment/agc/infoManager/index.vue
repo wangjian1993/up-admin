@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-24 14:04:07
+ * @LastEditTime: 2022-02-25 10:51:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/agc/infoManager/index.vue
@@ -32,7 +32,7 @@
                 <a-form-item label="组员" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['groupmemberuserid']" style="width: 200px" placeholder="请选择组员">
                     <a-select-option value="">全部</a-select-option>
-                    <a-select-option v-for="item in crewList" :key="item.EnterpriseId" :value="item.EnterpriseId">{{ item.UserId + " " + item.DisplayName }}</a-select-option>
+                    <a-select-option v-for="item in crewList" :key="item.UserId" :value="item.UserId">{{ item.UserId + " " + item.DisplayName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>

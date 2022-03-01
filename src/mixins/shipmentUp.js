@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-02-11 13:53:25
- * @LastEditTime: 2022-02-24 13:40:55
+ * @LastEditTime: 2022-02-25 10:33:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/mixins/shipmentUp.js
@@ -93,6 +93,9 @@ export const ShipmentExport = {
             list.map((listItme) => {
                 listItme.group.map((item) => {
                     let array = [];
+                    item.StatusHandle = item.StatusHandle == 0 ? '未处理' : '已处理';
+                    item.StatusShipment = item.StatusShipment == 0 ? '未出货' : '已出货';
+                    console.log(item);
                     headArray.map((items) => {
                         if (items.dataIndex) {
                             array.push(item[items.dataIndex] || "");
@@ -108,7 +111,6 @@ export const ShipmentExport = {
                 }
                 startR += listItme.group.length;
                 endR += listItme.group.length
-
             });
             const sheetCols = [
                 { wch: 10 }, // 序号

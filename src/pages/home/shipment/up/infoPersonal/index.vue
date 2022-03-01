@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-02-24 13:59:01
+ * @LastEditTime: 2022-02-25 10:31:24
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/shipment/up/infoPersonal/index.vue
@@ -93,7 +93,7 @@
           size="small"
           :scroll="{ y: scrollY }"
           :loading="loading"
-          :pagination="false"
+          :pagination="pagination"
           @change="handleTableChange"
           :rowKey="(dataSource, index) => dataSource.Id + '_' + index"
           bordered
@@ -227,8 +227,8 @@ export default {
       let date1 = date.split("T");
       let oDate1 = new Date(date1[0]); //申请时间
       let oDate2 = new Date(date2);  //今天时间
-      console.log(oDate1.getTime())
-      console.log(oDate2.getTime())
+      // console.log(oDate1.getTime())
+      // console.log(oDate2.getTime())
      if (oDate1.getTime() == oDate2.getTime()) {
         return true;
       } else {

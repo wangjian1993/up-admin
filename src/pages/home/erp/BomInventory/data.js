@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:49:42
- * @LastEditTime: 2022-02-15 09:12:32
+ * @LastEditTime: 2022-02-28 15:41:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/data.js
@@ -180,6 +180,7 @@ export const columns = [
         dataIndex: "DRAWING_NO",
         scopedSlots: { customRender: "DRAWING_NO" },
         align: "center",
+        width: 150,
     },
     {
         title: "快捷码",

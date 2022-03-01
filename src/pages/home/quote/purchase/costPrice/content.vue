@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-02-23 14:54:15
- * @LastEditTime: 2022-02-23 15:00:19
+ * @LastEditTime: 2022-03-01 10:29:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/costPrice/content.vue
@@ -16,6 +16,8 @@
           <span>
             <a-button :disabled="!hasPerm('search')" type="primary" @click="search" icon="search">查询</a-button>
             <a-button :disabled="!hasPerm('search')" style="margin-left: 10px" icon="reload" @click="reset">重置</a-button>
+            <a-button v-if="hasPerm('export')" :disabled="!isSearch" type="primary" style="margin-left: 10px" icon="export" @click="handleExcel">导出</a-button>
+            <a-button v-else disabled type="primary" style="margin-left: 10px" icon="export" @click="handleExcel">导出</a-button>
           </span>
         </div>
         <div :class="advanced ? 'search' : null">
@@ -63,6 +65,26 @@
                       ]"
                     >
                       <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :lg="8" :md="12" :sm="24" v-if="pageType == 1">
+                  <a-form-item label="查询类型" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
+                    <a-select
+                      default-value="ALL"
+                      v-decorator="[
+                        'querytype',
+                        {
+                          rules: [{ required: true, message: '请选择查询类型' }],
+                        },
+                      ]"
+                    >
+                      <a-select-option value="ALL">
+                        全部展阶
+                      </a-select-option>
+                      <a-select-option value="TAIL">
+                        仅显示尾阶(原外挂系统取数逻辑)
+                      </a-select-option>
                     </a-select>
                   </a-form-item>
                 </a-col>
@@ -117,6 +139,7 @@
 </template>
 <script>
 import { getDemandEnter, getCostConfig } from "@/services/web.js";
+import { exportjsontoexcelMore } from "@/utils/ExportExcel";
 export default {
   props: ["pageType"],
   data() {
@@ -269,6 +292,7 @@ export default {
             querysign: this.pageType == 1 ? "ALL" : "SFG",
             itemcode: values.itemcode,
             plantid: values.plantid,
+            querytype: this.pageType == 1 ? values.querytype : "",
           };
           getCostConfig(parmas, "getbommaterialprice").then((res) => {
             if (res.data.success) {
@@ -303,6 +327,87 @@ export default {
         });
       } catch (error) {
         this.searchList = this.tableData;
+      }
+    },
+    handleExcel() {
+      if (this.tableData.length == 0) {
+        this.$message.warning("请先查询bom信息!");
+        return;
+      }
+      let list = this.tableData;
+      this.exportData = list;
+      let info = this.costInfo;
+      let _data = [];
+      let mergeTitle = [];
+      for (let i = 0; i < 5; i++) {
+        mergeTitle.push({
+          s: { r: i, c: 1 },
+          e: { r: i, c: 12 },
+        });
+      }
+      let enterInfo = this.searchForm.getFieldsValue();
+      let pl = this.plantList.find((item) => item.EnterId === enterInfo.plantid);
+      _data.push(["需求工厂", pl.EnterName || 0, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["品号", info.ItemCode, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["品名", info.ItemName, null, null, null, null, null, null, null, null, null, null]);
+      _data.push([" 产品规格", info.ItemSpecification, null, null, null, null, null, null, null, null, null, null]);
+      _data.push(["最终成本", info.MaterialCost, null, null, null, null, null, null, null, null, null, null]);
+      const columns = [];
+      this.columns.map((item) => {
+        columns.push(item.title);
+      });
+      _data.push(columns);
+      list.map((item) => {
+        let array = [];
+        this.columns.map((items) => {
+          array.push(item[items.dataIndex]);
+        });
+        _data.push(array);
+      });
+      let excelArray = [];
+      let contentList = [];
+      let merges2 = []; // 设置表格内容单元格合并
+      let aoa = [..._data, ...contentList]; // 导出的数据
+      let merges = [...mergeTitle, ...merges2]; // 合并单元格
+      // 样式修改
+      const sheetCols = [
+        { wch: 8 }, // 序号
+        { wch: 5 }, // 阶次
+        { wch: 8 }, // 类型
+        { wch: 10 }, // 上阶BOM号
+        { wch: 10 }, // 品号
+        { wch: 18 }, // 料名
+        { wch: 20 }, //  产品规格
+        { wch: 6 }, // 单位
+        { wch: 8 }, // 价格来源
+        { wch: 7 }, // E10单价
+        { wch: 7 }, // 单价
+        { wch: 7 }, // 用量
+        { wch: 6 }, // 金额
+        { wch: 10 }, // 提示
+        { wch: 10 }, // 备注
+      ];
+      let formStyle = {};
+      excelArray.push({
+        Sheet: `${info.ItemCode}`, // 下方tab切换名称
+        data: aoa, // 表格数据
+        merges, //  合并单元格
+        autoWidth: false, // 自适应宽度
+        formStyle: formStyle, // 特殊行或列样式
+        sheetCols,
+      });
+      try {
+        console.log(excelArray);
+        // var temp = info.ItemName.replace(/['//<>%;.)(&+]/g, " ").replace(/(^\s)|(\s$)/g, "");
+        exportjsontoexcelMore({
+          dataList: excelArray,
+          bookType: "xlsx", // 导出类型
+          filename: `${info.ItemCode}`, // 导出标题名
+        });
+        this.$message.success("导出数据成功!");
+      } catch (error) {
+        console.log(error);
+        this.$message.error("导出数据失败");
       }
     },
   },

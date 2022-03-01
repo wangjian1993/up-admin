@@ -85,7 +85,7 @@
           size="small"
           :scroll="{ y: scrollY }"
           :loading="loading"
-          :pagination="false"
+          :pagination="pagination"
           @change="handleTableChange"
           :rowKey="(dataSource, index) => dataSource.Id + '_' + index"
           bordered
@@ -243,23 +243,7 @@ export default {
         }
       });
     },
-    //分组
-    handlerDatas(arr) {
-      let obj = {};
-      arr.forEach((item) => {
-        let { Id } = item;
-        if (!obj[Id]) {
-          obj[Id] = {
-            ...item,
-            group: [],
-          };
-        }
-        obj[Id].group.push(item);
-      });
-      let data = Object.values(obj); // 最终输出
-      console.log(data);
-      return data;
-    },
+    
     //编辑
     edit(record) {
       this.isEdit = true;
