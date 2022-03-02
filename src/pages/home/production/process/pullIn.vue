@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2022-01-07 13:58:09
+ * @LastEditTime: 2022-03-02 15:04:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
@@ -76,7 +76,7 @@ export default {
       receiveQty: 0,
       scrapQty: 0,
       orderList: [],
-      isOrderSelect: false,
+      isOrderSelect: true,
       orderSelectList: [],
       isStart: false,
     };

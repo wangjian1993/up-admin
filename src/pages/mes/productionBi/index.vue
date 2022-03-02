@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-10 09:39:43
- * @LastEditTime: 2022-02-28 16:45:22
+ * @LastEditTime: 2022-03-02 09:44:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/index.vue
@@ -25,12 +25,12 @@ export default {
     console.log(paramsArray);
     if (process.env.NODE_ENV == "production") {
       //正式服
-      this.BASE_URL_MOCK = window.location.host
+      this.BASE_URL_MOCK = "http://" + window.location.host;
     } else {
       //测试
       this.BASE_URL_MOCK = "http://192.168.1.245:8080";
     }
-    this.datavUrl =this.BASE_URL_MOCK + `/datav/#/?${paramsArray[1]}&${paramsArray[2]}&${paramsArray[3]}&${paramsArray[4]}&${paramsArray[5]}`;
+    this.datavUrl = this.BASE_URL_MOCK + `/datav/#/?${paramsArray[1]}&${paramsArray[2]}&${paramsArray[3]}&${paramsArray[4]}&${paramsArray[5]}`;
     console.log(this.datavUrl);
   },
   components: {},

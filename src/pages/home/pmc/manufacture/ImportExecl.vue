@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2022-01-18 17:26:38
+ * @LastEditTime: 2022-03-02 09:34:14
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
@@ -187,7 +187,6 @@ export default {
     formatLongDate(date) {
       let dateTime = date.setDate(date.getDate() + 1);
       date = new Date(dateTime);
-      console.log("date-====", date);
       let myyear = date.getFullYear();
       let mymonth = date.getMonth() + 1;
       let myweekday = date.getDate();

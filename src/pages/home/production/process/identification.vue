@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-12-16 13:58:52
- * @LastEditTime: 2022-01-18 17:56:50
+ * @LastEditTime: 2022-03-02 15:06:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/identification.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="打印标识卡" @cancel="close" okText="确认打印" @ok="handleOk" centered width="70%">
+    <a-modal v-model="visible" title="打印标识卡" @cancel="close" :ok-button-props="{ props: { disabled: selectedRowKeys.length == 0 } }" okText="确认打印" @ok="handleOk" centered width="70%">
       <a-descriptions :column="5">
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -181,6 +181,7 @@ export default {
     handleOk() {
       this.printData = [];
       if (this.selectedRowKeys.length == 0) {
+        this.$message.warning("请先勾选要打印的工单!");
         return;
       }
       this.selectedRowKeys.map((item) => {
