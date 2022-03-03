@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2022-02-09 08:57:38
+ * @LastEditTime: 2022-03-03 08:57:24
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/api.js
@@ -36,5 +36,6 @@ module.exports = {
   UP_WEB: `${BASE_URL_MOCK}/api/feb`,
   UP_USER: `${BASE_URL_MOCK}/api/auth`,
   UP_ERP: `${BASE_URL_MOCK}/api/erpreport`,
-  UP_CMS: `${BASE_URL_MOCK}/api/cms`
+  UP_CMS: `${BASE_URL_MOCK}/api/cms`,
+  UP_WMS: `${BASE_URL_MOCK}/api/wms`
 }

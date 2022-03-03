@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-01-18 17:54:19
+ * @LastEditTime: 2022-03-03 11:49:17
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/process/components/print.vue
@@ -18,7 +18,7 @@
           <div class="head-title">
             <p>物料标识卡</p>
           </div>
-          <div class="head-qr"><vue-qr :text="item.Id" :size="300"></vue-qr></div>
+          <div class="head-qr"><vue-qr :text="item.QrCode" :size="400"></vue-qr></div>
         </div>
         <div class="info">
           <a-descriptions :column="2" bordered size="small">
@@ -40,8 +40,7 @@
             <a-descriptions-item label="品号">
               {{ item.MitemCode }}
             </a-descriptions-item>
-            <a-descriptions-item label="色温">
-            </a-descriptions-item>
+            <a-descriptions-item label="色温"> </a-descriptions-item>
             <a-descriptions-item label="生产车间">
               {{ item.WorkShopName }}
             </a-descriptions-item>
@@ -50,7 +49,7 @@
             </a-descriptions-item>
             <a-descriptions-item :span="2">
               <template v-slot:label>
-                <span style="display: inline-block;height:100px;line-height: 100px;max-height: 100px;margin:0">品名</span>
+                <span style="display: inline-block;height:80px;line-height: 80px;max-height: 80px;margin:0">品名</span>
               </template>
               {{ item.MitemName }}
             </a-descriptions-item>
@@ -152,8 +151,8 @@ export default {
 }
 .head-qr {
   text-align: center;
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   margin: 0 auto;
   margin-top: 15px;
   img {
@@ -182,7 +181,7 @@ export default {
 }
 /deep/.ant-descriptions-item-label {
   font-size: 26px;
-  width:14%;
+  width: 14%;
 }
 /deep/.ant-descriptions-item-content {
   font-size: 26px;
@@ -228,18 +227,26 @@ export default {
 .ant-descriptions-bordered.ant-descriptions-small .ant-descriptions-item-content {
   padding: 15px 10px;
 }
-/deep/.ant-descriptions-bordered .ant-descriptions-item-label{
-  border-right:1px solid #b4b3b3;
+/deep/.ant-descriptions-bordered .ant-descriptions-item-label {
+  border-right: 1px solid #b4b3b3;
 }
-/deep/.ant-descriptions-bordered .ant-descriptions-item-content{
-   border-right:1px solid #b4b3b3;
+/deep/.ant-descriptions-bordered .ant-descriptions-item-content {
+  border-right: 1px solid #b4b3b3;
 }
-/deep/.ant-descriptions-bordered .ant-descriptions-row{
+/deep/.ant-descriptions-bordered .ant-descriptions-row {
   border-bottom: 1px solid #b4b3b3;
 }
-/deep/.ant-descriptions-bordered .ant-descriptions-view{
-  border: 1px solid #b4b3b3;
+/deep/.ant-descriptions-bordered .ant-descriptions-view {
+  border: 1px solid #333;
 }
+/deep/.ant-checkbox-inner {
+  width:25px;
+  height:25px;
+  border: 2px solid #000;
+}
+// /deep/.ant-checkbox-input {
+//   border: 1px solid #000;
+// }
 .print-footer,
 .content-top {
   display: flex;

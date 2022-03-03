@@ -250,7 +250,7 @@ export default {
             salesno: values.salesno,
             mocode: values.mocode,
           };
-          getStartWorkApi(parmas, "v2/getall").then((res) => {
+          getStartWorkApi(parmas, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-28 10:54:51
- * @LastEditTime: 2021-09-29 10:53:49
+ * @LastEditTime: 2022-03-03 11:10:40
  * @LastEditors: max
  * @Description: 添加用户form
  * @FilePath: /up-admin/src/pages/admin/user/components/add-user.vue
@@ -205,9 +205,11 @@ export default {
     this.getOrganizationList();
     console.log(this.modalType);
     if (this.modalType == "edit") {
+      console.log(this.editItem)
       this.form = this.editItem;
       this.imageUrl ="./"+ this.editItem.PhotoUrl;
-      this.roleList = this.editItem.UserInRoleList;
+      this.roleList = this.editItem.UserInRoleList[0];
+      console.log("this.roleList===",this.editItem)
     }
   },
   methods: {
@@ -307,7 +309,7 @@ export default {
       getUserRoles().then((res) => {
         if (res.data.success) {
           this.rolesList = res.data.data.list;
-          this.roleList = this.rolesList[0];
+          // this.roleList = this.rolesList[0];
           this.rolesDefault = this.rolesList[0].RoleId;
         }
       });
@@ -329,7 +331,7 @@ export default {
       });
     },
     rolesChange(e) {
-      console.log(e.target.value);
+      console.log("设置角色权限===",e.target.value);
       this.rolesList.filter((item) => {
         if (item.RoleId == e.target.value) {
           this.roleList = item;
@@ -344,7 +346,7 @@ export default {
       console.log("保存=====");
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          console.log("111");
+          console.log("111",this.roleList);
           if (this.modalType == "edit") {
             let role = [
               {
@@ -376,6 +378,7 @@ export default {
               console.log(e);
             }
             console.log("组织信息", org);
+             console.log("权限角色", role);
             this.form.UserInOrgList = org;
             this.form.UserInRoleList = role;
             this.form.EnterId = this.enterValue[0];

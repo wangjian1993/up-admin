@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:51
- * @LastEditTime: 2022-01-07 14:05:22
+ * @LastEditTime: 2022-03-03 13:41:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/aging/startAging.vue
@@ -23,7 +23,7 @@
         <a-descriptions-item label="老化产线">
           {{ userLineData.LineName }}
         </a-descriptions-item>
-        <a-descriptions-item label="填单人/填单时间"> {{ userLineData.UserName }} / {{ splitData(userLineData.DATETIME_CREATED) }} </a-descriptions-item>
+        <a-descriptions-item label="填单人/填单时间"> {{ userLineData.UserName }} / {{ splitData(userLineData.NowDate) }} </a-descriptions-item>
         <a-descriptions-item label="工单">{{ orderInfo.MoCode }}</a-descriptions-item>
         <a-descriptions-item label="老化进站数量">{{ orderInfo.ProcessStartQty }}</a-descriptions-item>
         <a-descriptions-item label="未老化数量">{{ orderInfo.AgeingedQty }}</a-descriptions-item>
