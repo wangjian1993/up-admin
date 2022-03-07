@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-01-17 11:24:36
+ * @LastEditTime: 2022-03-07 10:18:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/kanban.vue
@@ -70,7 +70,7 @@
           <a-row v-if="advanced">
             <a-col :md="6" :sm="24">
               <a-form-item label="生产日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
+                <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
               </a-form-item>
             </a-col>
           </a-row>

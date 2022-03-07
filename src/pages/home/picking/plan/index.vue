@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2022-03-03 09:55:03
+ * @LastEditTime: 2022-03-07 10:09:24
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/picking/plan/index.vue
@@ -15,7 +15,7 @@
             <a-col :md="6" :sm="24">
               <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['plantname', { rules: [{ required: true, message: '请选择生产工厂' }] }]" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
-                  <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterName">{{ item.EnterName }}</a-select-option>
+                  <a-select-option v-for="item in plantList" :key="item.EnterName" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -190,6 +190,7 @@ export default {
       searchForm: this.$form.createForm(this),
       workshopList: [],
       planDate: "",
+      plantList: [],
     };
   },
   updated() {
@@ -349,11 +350,16 @@ export default {
           this.loading = true;
           console.log("Received values of form: ", values);
           this.pagination.total = 0;
-
+          let plantname = "";
+          this.plantList.map((item) => {
+            if (item.EnterId == values.plantname) {
+              plantname = item.EnterName;
+            }
+          });
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            plantname: values.plantname,
+            plantname: plantname,
             workcentername: values.workcentername,
           };
           getPlanList(parmas, "getall").then((res) => {
@@ -373,6 +379,7 @@ export default {
         }
       });
     },
+    //发布
     allSave() {
       if (this.planDate == "") {
         this.$message.warning("请选择计划日期");
@@ -398,17 +405,17 @@ export default {
           });
         }
       });
-      parmas.push({})
+      parmas.push({});
       setPlan(parmas).then((res) => {
         if (res.data.success) {
           this.$message.success("发布成功");
-          this.planDate =0 ;
-          this.selectedRowKeys=[];
+          this.planDate = 0;
+          this.selectedRowKeys = [];
           this.getListAll();
         }
       });
     },
-    //分压
+    //分页
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
