@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-03-03 13:36:07
+ * @LastEditTime: 2022-03-10 14:37:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/StartWork.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-input style="width:400px;" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-input style="width:400px;" allowClear ref="orderValue1" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur()" @pressEnter="scanCode" auto-size /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -28,8 +28,8 @@
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="计划生产时间">{{ splitData(orderInfo.PlanDate) }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
-        <a-descriptions-item label="开工数量"><a-input-number @blur="setFocus" :min="0" v-model="startWorkQty" style="width:200px"/></a-descriptions-item>
-        <a-descriptions-item label="生产人数"><a-input-number @blur="setFocus" :min="0" v-model="peopleQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="开工数量"><a-input-number @blur="setFocus()" :min="0" v-model="startWorkQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="生产人数"><a-input-number @blur="setFocus()" :min="0" v-model="peopleQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
             开工
@@ -78,25 +78,31 @@ export default {
       orderSelectList: [],
       isStart: false,
       peopleQty: 0,
+      isFocus: false,
     };
   },
   created() {
+    console.log("请求===============");
     this.getWorkInfo();
   },
   mounted() {
-    this.$refs.orderValue.focus();
+    this.$refs.orderValue1.focus();
   },
   methods: {
     splitData,
     inputBlur() {
-      setTimeout(() => {
-        this.$refs.orderValue.focus();
-      }, 10000);
+      if (!this.isFocus) {
+        setTimeout(() => {
+          this.$refs.orderValue1.focus();
+        }, 10000);
+      }
     },
     setFocus() {
-      setTimeout(() => {
-        this.$refs.orderValue.focus();
-      }, 100);
+      if (!this.isFocus) {
+        setTimeout(() => {
+          this.$refs.orderValue1.focus();
+        }, 100);
+      }
     },
     //定时添加焦点
     closeListData() {
@@ -157,6 +163,9 @@ export default {
           if (res.data.data.IsSuccess) {
             this.processData = res.data.data.result.Process;
             this.userLineData = { ...res.data.data.result.UserLine, ...this.processData };
+            this.isFocus = true;
+          } else {
+            this.isFocus = false;
           }
           res.data.message.content = res.data.data.Msg;
           this.listData.unshift(res.data.message);

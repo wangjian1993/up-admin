@@ -91,6 +91,8 @@ export default {
     },
   },
   created() {
+    console.log("页面缓存multiPage======",this.multiPage)
+     console.log("页面缓存cachePage======",this.cachePage)
     this.loadCacheConfig(this.$router?.options?.routes);
     this.loadCachedTabs();
     const route = this.$route;
@@ -150,6 +152,7 @@ export default {
   },
   methods: {
     changePage(key) {
+      console.log("key-====",key);
       this.activePage = key;
       this.$router.push(key);
     },

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-16 11:00:40
- * @LastEditTime: 2022-02-23 10:33:25
+ * @LastEditTime: 2022-03-10 17:43:50
  * @LastEditors: max
  * @Description: 品号信息
  * @FilePath: /up-admin/src/pages/home/erp/components/ModelInfo.vue
@@ -220,6 +220,8 @@ export default {
       };
       getERPReportAction(parmas, "getitemimage").then((res) => {
         if (res.data.success) {
+          console.log(res.data.data.ContentBase64);
+          // this.imgUrl = "data:image/jpg;base64," + res.data.data.ContentBase64 || res.data.data.imgUrl;
           this.imgUrl = res.data.data.ImgUrl;
         }
       });
@@ -301,9 +303,9 @@ export default {
 /deep/.ant-descriptions-item-label {
   font-size: 10px;
 }
-/deep/.ant-drawer-close{
+/deep/.ant-drawer-close {
   width: 36px;
-  height:36px;
+  height: 36px;
   line-height: 36px;
 }
 </style>

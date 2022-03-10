@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2022-03-03 13:36:17
+ * @LastEditTime: 2022-03-10 14:02:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue2" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur" @pressEnter="scanCode" auto-size /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -23,16 +23,14 @@
         <a-descriptions-item label="生产产线">
           {{ userLineData.LineName }}
         </a-descriptions-item>
-        <a-descriptions-item label="填单人/填单时间">
-          {{ userLineData.UserName }} / {{ splitData(userLineData.NowDate) }}
-        </a-descriptions-item>
+        <a-descriptions-item label="填单人/填单时间"> {{ userLineData.UserName }} / {{ splitData(userLineData.NowDate) }} </a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="计划生产时间">{{ splitData(orderInfo.PlanDate) }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
         <a-descriptions-item label="接收数量"><a-input-number @blur="setFocus" :min="0" v-model="receiveQty" :disabled="orderInfo.IsWrite === false" style="width:200px"/></a-descriptions-item>
         <!-- <a-descriptions-item label="报废数量"><a-input-number :min="0" v-model="scrapQty" style="width:200px"/></a-descriptions-item> -->
-        <a-descriptions-item label="备注"><a-input @blur="setFocus" v-model="remark" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item :span="2" label="备注"><a-input @blur="setFocus" v-model="remark" style="width:500px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button v-if="hasPerm('process_scan')" type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
             进站
@@ -79,28 +77,34 @@ export default {
       isOrderSelect: false,
       orderSelectList: [],
       isStart: false,
+      isFocus: false,
     };
   },
   created() {
     this.getWorkInfo();
   },
   mounted() {
-    this.$refs.orderValue.focus();
+    this.$refs.orderValue2.focus();
   },
   methods: {
     splitData,
     closeListData() {
       this.listData = [];
     },
-    iinputBlur() {
-      setTimeout(() => {
-        this.$refs.orderValue.focus();
-      }, 10000);
+    inputBlur() {      
+      if (!this.isFocus) {
+        setTimeout(() => {
+          this.$refs.orderValue2.focus();
+        }, 10000);
+      }
     },
     setFocus() {
-      setTimeout(() => {
-        this.$refs.orderValue.focus();
-      }, 100);
+      if (!this.isFocus) {
+        setTimeout(() => {
+          console.log("111111====", this.$refs.orderValue2);
+          this.$refs.orderValue2.focus();
+        }, 100);
+      }
     },
     inputChange(e) {
       const { value } = e.target;
@@ -154,6 +158,9 @@ export default {
           if (res.data.data.IsSuccess) {
             this.processData = res.data.data.result.Process;
             this.userLineData = { ...res.data.data.result.UserLine, ...this.processData };
+            this.isFocus = true;
+          } else {
+            this.isFocus = false;
           }
           res.data.message.content = res.data.data.Msg;
           this.listData.unshift(res.data.message);

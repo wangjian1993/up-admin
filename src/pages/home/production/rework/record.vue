@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:51
- * @LastEditTime: 2022-03-03 13:36:49
+ * @LastEditTime: 2022-03-10 13:54:52
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/rework/record.vue
@@ -91,6 +91,7 @@ export default {
       isOrderDisabled: false,
       reworkList: [],
       isStart: false,
+      isFocus: false,
     };
   },
   created() {
@@ -108,14 +109,18 @@ export default {
   methods: {
     splitData,
     inputBlur() {
-      setTimeout(() => {
-        this.$refs.orderValue.focus();
-      }, 10000);
+      if (!this.isFocus) {
+        setTimeout(() => {
+          this.$refs.orderValue.focus();
+        }, 10000);
+      }
     },
     setFocus() {
-      setTimeout(() => {
-        this.$refs.orderValue.focus();
-      }, 100);
+      if (!this.isFocus) {
+        setTimeout(() => {
+          this.$refs.orderValue.focus();
+        }, 100);
+      }
     },
     closeListData() {
       this.listData = [];
@@ -190,6 +195,9 @@ export default {
           if (res.data.data.IsSuccess) {
             this.processData = res.data.data.result.Process;
             this.userLineData = { ...res.data.data.result.UserLine, ...this.processData };
+            this.isFocus = true;
+          } else {
+            this.isFocus = false;
           }
           res.data.message.content = res.data.data.Msg;
           this.listData.unshift(res.data.message);

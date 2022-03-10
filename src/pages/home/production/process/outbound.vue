@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2022-03-03 13:36:39
+ * @LastEditTime: 2022-03-10 14:01:59
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/outbound.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue3" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur" @pressEnter="scanCode" auto-size /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -84,25 +84,30 @@ export default {
       isStart: false,
       selectType: "",
       multipleList: [],
+      isFocus: false,
     };
   },
   created() {
     this.getWorkInfo();
   },
   mounted() {
-    this.$refs.orderValue.focus();
+    this.$refs.orderValue3.focus();
   },
   methods: {
     splitData,
     inputBlur() {
-      setTimeout(() => {
-        this.$refs.orderValue.focus();
-      }, 10000);
+      if (!this.isFocus) {
+        setTimeout(() => {
+          this.$refs.orderValue3.focus();
+        }, 10000);
+      }
     },
     setFocus() {
-      setTimeout(() => {
-        this.$refs.orderValue.focus();
-      }, 200);
+      if (!this.isFocus) {
+        setTimeout(() => {
+          this.$refs.orderValue3.focus();
+        }, 100);
+      }
     },
     closeListData() {
       this.listData = [];
@@ -158,6 +163,9 @@ export default {
           if (res.data.data.IsSuccess) {
             this.processData = res.data.data.result.Process;
             this.userLineData = { ...res.data.data.result.UserLine, ...this.processData };
+            this.isFocus = true;
+          } else {
+            this.isFocus = false;
           }
           res.data.message.content = res.data.data.Msg;
           this.listData.unshift(res.data.message);
