@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-12-24 09:42:09
- * @LastEditTime: 2022-01-05 14:37:12
+ * @LastEditTime: 2022-03-09 15:00:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/aging/list.data.js
@@ -57,8 +57,8 @@ export const columns = [
     },
     {
         title: "接收数量",
-        dataIndex: "AgeingedQty",
-        scopedSlots: { customRender: "AgeingedQty" },
+        dataIndex: "ProcessStartOty",
+        scopedSlots: { customRender: "ProcessStartOty" },
         align: "center",
         width: 120
     },

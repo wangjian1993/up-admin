@@ -31,7 +31,7 @@
                 <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
               </a-form-item>
             </a-col> -->
-          <!-- </a-row>
+            <!-- </a-row>
           <a-row> -->
             <a-col :md="6" :sm="24">
               <a-form-item label="工单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
@@ -105,13 +105,16 @@ export default {
   },
   created() {
     this.$nextTick(() => {
+      console.log("啊哈哈哈哈====", document.getElementsByClassName("ant-table-thead"));
       let tHeader = document.getElementsByClassName("ant-table-thead")[1];
-      console.log(tHeader)
       let tHeaderBottom = tHeader.getBoundingClientRect().bottom;
       let height = `calc(100vh - ${tHeaderBottom + 70}px)`;
-      console.log("height",height)
-      this.scrollY = height
+      console.log("height", height);
+      this.scrollY = height;
     });
+    // this.$nextTick(() => {
+    //   this.scrollY = getTableScroll(70);
+    // });
     this.getListAll();
     this.getPlant();
   },
@@ -206,12 +209,18 @@ export default {
     },
     //获取列表
     getListAll() {
+      // let data = require("./data.json");
+      // console.log(data);
+      // this.dataSource = data.data.list;
+      // const pagination = { ...this.pagination };
+      // pagination.total = data.data.recordsTotal;
+      // this.pagination = pagination;
       this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getStartWorkApi(parmas, "getall").then((res) => {
+      getStartWorkApi(parmas, "v2/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -250,7 +259,7 @@ export default {
             salesno: values.salesno,
             mocode: values.mocode,
           };
-          getStartWorkApi(parmas, "getall").then((res) => {
+          getStartWorkApi(parmas, "v2/getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -321,8 +330,6 @@ export default {
 //   color: #000;
 // }
 /deep/.ant-table {
-  min-height: 62vh;
-  max-height: 62vh;
-  overflow: auto;
+  min-height: 52vh;
 }
 </style>

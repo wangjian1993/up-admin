@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-02-19 14:38:37
+ * @LastEditTime: 2022-03-08 16:48:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
@@ -65,7 +65,7 @@
         </div>
         <div>
           <a-card title="BOM用量信息" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: 700, x: 2000 }" :pagination="false" :customRow="handleClickRow" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName" :components="components">
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ x: 2000 }" :pagination="false" :customRow="handleClickRow" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName" :components="components">
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -490,8 +490,8 @@ export default {
   line-height: 36px;
 }
 .clone-btn {
-  position: absolute;
-  top:18%;
+  position: fixed;
+  top:30%;
   right: 0px;
   background: #f2f2f2;
   width: 40px;

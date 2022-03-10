@@ -140,10 +140,15 @@ export default {
       const loginRes = res.data;
       if (loginRes.success) {
         const { userName, userModules, PhotoUrl } = loginRes.data;
-        console.log("userModules----", userModules);
         this.setUser(userName);
         this.setUserHead("./" + PhotoUrl);
         // this.setMenu(userModules);
+        console.log("userModules====", userModules);
+        userModules.map((item,index) => {
+          if (item.name == "WMS") {
+            userModules.splice(index,1)
+          }
+        });
         localStorage.setItem("menu", JSON.stringify(userModules));
         var inFifteenMinutes = new Date(new Date().getTime() + 4 * 60 * 60 * 1000);
         setAuthorization({ token: res.headers.token, expireAt: inFifteenMinutes });
@@ -178,7 +183,7 @@ export default {
         console.log(root);
         loadRoutes(root);
         // this.$router.push("dashboard");
-        this.$router.push('dashboard').catch(err => (console.log(err)))
+        this.$router.push("dashboard").catch((err) => console.log(err));
       }
     },
     cheackAccount() {

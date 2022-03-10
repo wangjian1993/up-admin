@@ -1,25 +1,17 @@
 /*
  * @Author: max
  * @Date: 2021-12-24 09:42:09
- * @LastEditTime: 2022-01-12 15:01:49
+ * @LastEditTime: 2022-03-09 16:06:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/list.data.js
  */
-import { splitData } from "@/utils/util.js";
 export const columns = [
     {
         title: "序号",
         scopedSlots: { customRender: "index" },
         align: "center",
         width:50,
-    },
-    {
-        title: "计划批号",
-        dataIndex: "BatchNo",
-        scopedSlots: { customRender: "BatchNo" },
-        align: "center",
-        width:120,
     },
     {
         title: "生产工厂",
@@ -29,35 +21,39 @@ export const columns = [
         width:100,
     },
     {
-        title: "PMC",
-        dataIndex: "UserName",
-        scopedSlots: { customRender: "UserName" },
+        title: "当前生产车间",
+        dataIndex: "CurWorkshopName",
+        scopedSlots: { customRender: "CurWorkshopName" },
         align: "center",
         width:100,
     },
     {
-        title: "计划生产日期",
-        dataIndex: "PlanDate",
-        scopedSlots: { customRender: "PlanDate" },
+        title: "当前生产产线",
+        dataIndex: "CurLineName",
+        scopedSlots: { customRender: "CurLineName" },
         align: "center",
-        width: 120,
-        customRender: (text) => {
-            return splitData(text);
-        }
+        width:100,
     },
     {
-        title: "工单号",
+        title: "生产工单号",
         dataIndex: "MoCode",
         scopedSlots: { customRender: "MoCode" },
         align: "center",
-        width: 120,
+        width:100,
     },
     {
-        title: "业务订单号",
-        dataIndex: "SalesOrderNo",
-        scopedSlots: { customRender: "SalesOrderNo" },
+        title: "生产订单号",
+        dataIndex: "OrderNo",
+        scopedSlots: { customRender: "OrderNo" },
         align: "center",
-        width:120,
+        width:100,
+    },
+    {
+        title: "工单数量",
+        dataIndex: "MoQty",
+        scopedSlots: { customRender: "MoQty" },
+        align: "center",
+        width: 120,
     },
     {
         title: "品号",
@@ -74,59 +70,31 @@ export const columns = [
         width:220,
     },
     {
-        title: " 订单交期",
-        dataIndex: "Spec",
+        title: " 上道工序车间",
+        dataIndex: "PreProcWorkshopName",
         align: "center",
         width:120,
     },
     {
-        title: "下单日期",
-        dataIndex: "DateCreated",
-        scopedSlots: { customRender: "DateCreated" },
+        title: "待接收数量",
+        dataIndex: "NoStartQty",
+        scopedSlots: { customRender: "NoStartQty" },
         align: "center",
         width:130,
     },
     {
-        title: "订单数量",
-        dataIndex: "MoQty",
-        scopedSlots: { customRender: "MoQty" },
+        title: "已接收数量",
+        dataIndex: "StartedQty",
+        scopedSlots: { customRender: "StartedQty" },
         align: "center",
         width: 80,
     },
     {
-        title: "计划数量",
-        dataIndex: "PlanQty",
-        scopedSlots: { customRender: "PlanQty" },
+        title: "已生产数量",
+        dataIndex: "FinishedQty",
+        scopedSlots: { customRender: "FinishedQty" },
         align: "center",
-        width: "100px",
-    },
-    {
-        title: "生产车间",
-        dataIndex: "WorkshopName",
-        scopedSlots: { customRender: "WorkshopName" },
-        align: "center",
-        width: "100px",
-    },
-    {
-        title: "生产产线",
-        dataIndex: "LineName",
-        scopedSlots: { customRender: "LineName" },
-        align: "center",
-        width: "100px",
-    },
-    {
-        title: "接收数量",
-        dataIndex: "ReportQty",
-        scopedSlots: { customRender: "ReportQty" },
-        align: "center",
-        width: "100px",
-    },
-    {
-        title: "生产数量",
-        dataIndex: "RequirementQty",
-        scopedSlots: { customRender: "RequirementQty" },
-        align: "center",
-        width: "100px",
+        width: 80,
     },
     {
         title: "报废数量",
@@ -136,30 +104,37 @@ export const columns = [
         width: "100px",
     },
     {
-        title: "开始时间",
-        dataIndex: "DatetimeStart",
-        scopedSlots: { customRender: "DatetimeStart" },
+        title: "返工数量",
+        dataIndex: "ReworkQty",
+        scopedSlots: { customRender: "ReworkQty" },
         align: "center",
         width: "100px",
     },
     {
-        title: "完成时间",
-        dataIndex: "completiontime",
-        scopedSlots: { customRender: "completiontime" },
+        title: "生产开始时间",
+        dataIndex: "StartDate",
+        scopedSlots: { customRender: "StartDate" },
         align: "center",
         width: "100px",
     },
     {
-        title: "报工人",
-        dataIndex: "UserCode",
-        scopedSlots: { customRender: "UserCode" },
+        title: "生产完成时间",
+        dataIndex: "FinishedDate",
+        scopedSlots: { customRender: "FinishedDate" },
         align: "center",
         width: "100px",
     },
     {
         title: "接收人",
-        dataIndex: "UserName1",
-        scopedSlots: { customRender: "UserName1" },
+        dataIndex: "StartUserName",
+        scopedSlots: { customRender: "StartUserName" },
+        align: "center",
+        width: "100px",
+    },
+    {
+        title: "报工人",
+        dataIndex: "FinishedUserName",
+        scopedSlots: { customRender: "FinishedUserName" },
         align: "center",
         width: "100px",
     },
