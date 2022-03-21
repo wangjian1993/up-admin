@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2022-01-04 18:14:45
+ * @LastEditTime: 2022-03-21 17:01:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/components/orderSelect.vue
@@ -127,7 +127,7 @@ const columns = [
     width: "80px",
   },
   {
-    title: "报废数量",
+    title: "不良数量",
     dataIndex: "ScrapedQty",
     scopedSlots: { customRender: "ScrapedQty" },
     align: "center",

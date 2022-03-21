@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2022-03-10 14:01:59
+ * @LastEditTime: 2022-03-21 16:44:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/outbound.vue
@@ -29,7 +29,7 @@
         <a-descriptions-item label="计划生产时间">{{ splitData(orderInfo.PlanDate) }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
         <a-descriptions-item label="出站数量"><a-input-number @blur="setFocus" :min="0" v-model="receiveQty" style="width:200px"/></a-descriptions-item>
-        <a-descriptions-item label="报废数量"><a-input-number @blur="setFocus" :min="0" v-model="scrapQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="不良数量"><a-input-number @blur="setFocus" :min="0" v-model="scrapQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item label="备注"><a-input @blur="setFocus" v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button v-if="hasPerm('process_scan')" type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">

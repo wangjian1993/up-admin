@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-29 13:58:17
- * @LastEditTime: 2022-01-05 14:19:41
+ * @LastEditTime: 2022-03-21 17:02:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/components/data.js
@@ -204,7 +204,7 @@ export const columns1 = [
         width: 120
     },
     {
-        title: "报废数量",
+        title: "不良数量",
         dataIndex: "ScrapedQty",
         scopedSlots: { customRender: "ScrapedQty" },
         align: "center",
@@ -334,7 +334,7 @@ export const columns2 = [
         width: 120
     },
     {
-        title: "报废数量",
+        title: "不良数量",
         dataIndex: "ScrapedQty",
         scopedSlots: { customRender: "ScrapedQty" },
         align: "center",

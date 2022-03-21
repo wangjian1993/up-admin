@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-07 15:16:07
- * @LastEditTime: 2021-10-16 09:09:34
+ * @LastEditTime: 2022-03-21 17:02:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/quality/BatchApprove.vue
@@ -106,7 +106,7 @@ const columns = [
     width: "80px",
   },
   {
-    title: "报废数量",
+    title: "不良数量",
     dataIndex: "ScrapQty",
     scopedSlots: { customRender: "ScrapQty" },
     align: "center",

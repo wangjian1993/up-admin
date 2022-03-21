@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2022-03-10 14:02:17
+ * @LastEditTime: 2022-03-21 15:50:21
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
@@ -29,7 +29,7 @@
         <a-descriptions-item label="计划生产时间">{{ splitData(orderInfo.PlanDate) }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
         <a-descriptions-item label="接收数量"><a-input-number @blur="setFocus" :min="0" v-model="receiveQty" :disabled="orderInfo.IsWrite === false" style="width:200px"/></a-descriptions-item>
-        <!-- <a-descriptions-item label="报废数量"><a-input-number :min="0" v-model="scrapQty" style="width:200px"/></a-descriptions-item> -->
+       <a-descriptions-item label="生产人数"><a-input-number @blur="setFocus()" :min="0" v-model="peopleQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item :span="2" label="备注"><a-input @blur="setFocus" v-model="remark" style="width:500px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button v-if="hasPerm('process_scan')" type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
@@ -78,6 +78,7 @@ export default {
       orderSelectList: [],
       isStart: false,
       isFocus: false,
+      peopleQty:0
     };
   },
   created() {
@@ -121,6 +122,7 @@ export default {
       this.receiveQty = 0;
       this.isStart = false;
       this.remark = "";
+       this.peopleQty = 0;
       this.orderInfo.IsWrite = true;
     },
     //打印工单
@@ -286,6 +288,7 @@ export default {
         ProcessStatus: "PROCESS_START",
         ReportQty: this.receiveQty,
         ScrapedQty: 0,
+        PerQty: this.peopleQty,
       };
       setStartWorkApi(parmas, "submit").then((res) => {
         res.data.message.time = getTimeData();

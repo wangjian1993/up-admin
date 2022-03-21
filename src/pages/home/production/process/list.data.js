@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-12-24 09:42:09
- * @LastEditTime: 2022-03-09 16:06:18
+ * @LastEditTime: 2022-03-21 17:02:27
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/list.data.js
@@ -97,7 +97,7 @@ export const columns = [
         width: 80,
     },
     {
-        title: "报废数量",
+        title: "不良数量",
         dataIndex: "ScrapedQty",
         scopedSlots: { customRender: "ScrapedQty" },
         align: "center",
