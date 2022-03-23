@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2022-03-10 14:36:41
+ * @LastEditTime: 2022-03-22 09:58:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/index.vue
@@ -23,7 +23,7 @@
     <StartWork v-show="tabKey == 1" ref="tab1" />
     <pullIn v-show="tabKey == 2" ref="tab2" />
     <outbound v-show="tabKey == 3" ref="tab3" />
-    <list v-show="tabKey == 4" />
+    <list v-if="tabKey == 4" ref="tab4" />
     <!-- <div class="tab-box">
       <div @click="tabClick(1)">tab1</div>
       <div @click="tabClick(2)">tab2</div>
@@ -55,13 +55,14 @@ export default {
     },
     callback(key) {
       this.tabKey = key;
-      console.log(" this.tabKey---", this.tabKey);
       if (key == 1) {
         this.$refs.tab1.setFocus();
       } else if (key == 2) {
         this.$refs.tab2.setFocus();
-      } else {
+      } else if (key == 3) {
         this.$refs.tab3.setFocus();
+      } else if (key == 4) {
+        // this.$refs.tab4.setTableHeigh();
       }
     },
   },

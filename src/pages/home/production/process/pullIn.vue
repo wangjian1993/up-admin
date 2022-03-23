@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2022-03-21 15:50:21
+ * @LastEditTime: 2022-03-22 14:31:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
@@ -29,8 +29,9 @@
         <a-descriptions-item label="计划生产时间">{{ splitData(orderInfo.PlanDate) }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
         <a-descriptions-item label="接收数量"><a-input-number @blur="setFocus" :min="0" v-model="receiveQty" :disabled="orderInfo.IsWrite === false" style="width:200px"/></a-descriptions-item>
-       <a-descriptions-item label="生产人数"><a-input-number @blur="setFocus()" :min="0" v-model="peopleQty" style="width:200px"/></a-descriptions-item>
-        <a-descriptions-item :span="2" label="备注"><a-input @blur="setFocus" v-model="remark" style="width:500px"/></a-descriptions-item>
+        <a-descriptions-item label="生产人数"><a-input-number @blur="setFocus()" :min="0" v-model="peopleQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="色温"><a-input @blur="setFocus()" v-model="ColorTemperature" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item  label="备注"><a-input @blur="setFocus" v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button v-if="hasPerm('process_scan')" type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
             进站
@@ -78,7 +79,8 @@ export default {
       orderSelectList: [],
       isStart: false,
       isFocus: false,
-      peopleQty:0
+      peopleQty: 0,
+      ColorTemperature: "",
     };
   },
   created() {
@@ -92,7 +94,7 @@ export default {
     closeListData() {
       this.listData = [];
     },
-    inputBlur() {      
+    inputBlur() {
       if (!this.isFocus) {
         setTimeout(() => {
           this.$refs.orderValue2.focus();
@@ -122,7 +124,8 @@ export default {
       this.receiveQty = 0;
       this.isStart = false;
       this.remark = "";
-       this.peopleQty = 0;
+      this.peopleQty = 0;
+      this.ColorTemperature = "";
       this.orderInfo.IsWrite = true;
     },
     //打印工单
@@ -289,6 +292,7 @@ export default {
         ReportQty: this.receiveQty,
         ScrapedQty: 0,
         PerQty: this.peopleQty,
+        ColorTemperature:this.ColorTemperature
       };
       setStartWorkApi(parmas, "submit").then((res) => {
         res.data.message.time = getTimeData();

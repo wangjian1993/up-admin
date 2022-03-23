@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-03-10 14:37:34
+ * @LastEditTime: 2022-03-22 14:31:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/StartWork.vue
@@ -30,6 +30,7 @@
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
         <a-descriptions-item label="开工数量"><a-input-number @blur="setFocus()" :min="0" v-model="startWorkQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item label="生产人数"><a-input-number @blur="setFocus()" :min="0" v-model="peopleQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="色温"><a-input @blur="setFocus()" v-model="ColorTemperature" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
             开工
@@ -79,6 +80,7 @@ export default {
       isStart: false,
       peopleQty: 0,
       isFocus: false,
+      ColorTemperature: "",
     };
   },
   created() {
@@ -122,6 +124,7 @@ export default {
       this.orderValue = "";
       this.startWorkQty = 0;
       this.peopleQty = 0;
+      this.ColorTemperature = "";
     },
     closeModal() {
       this.isPrint = false;
@@ -279,6 +282,7 @@ export default {
         ReportQty: this.startWorkQty,
         ScrapedQty: 0,
         PerQty: this.peopleQty,
+        ColorTemperature: this.ColorTemperature,
       };
       setStartWorkApi(parmas, "submit").then((res) => {
         res.data.message.time = getTimeData();

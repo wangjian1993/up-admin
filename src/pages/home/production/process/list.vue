@@ -105,18 +105,16 @@ export default {
   },
   created() {
     this.$nextTick(() => {
+      console.log("啊哈哈哈哈====", document.getElementsByClassName("ant-table-thead"));
       let tHeader = document.getElementsByClassName("ant-table-thead")[4];
-      console.log("啊哈哈哈哈====",tHeader);
+      console.log("啊哈哈哈哈====", tHeader.getBoundingClientRect());
       let tHeaderBottom = tHeader.getBoundingClientRect().bottom;
-      console.log("tHeaderBottom---",tHeaderBottom)
+      console.log("tHeaderBottom---", tHeaderBottom);
       let height = `calc(100vh - ${tHeaderBottom + 70}px)`;
       // let table = document.getElementsByClassName('ant-table')[5];
       // table.style.minHeight = height;
       this.scrollY = height;
     });
-    // this.$nextTick(() => {
-    //   this.scrollY = getTableScroll(70);
-    // });
     this.getListAll();
     this.getPlant();
   },
@@ -125,9 +123,21 @@ export default {
       return this.selectedRowKeys.length > 0;
     },
   },
+  mounted() {},
   methods: {
     splitData,
     //pmc选择
+    setTableHeigh() {
+      console.log("啊哈哈哈哈====", document.getElementsByClassName("ant-table-thead"));
+      let tHeader = document.getElementsByClassName("ant-table-thead")[4];
+      console.log("啊哈哈哈哈====", tHeader.getBoundingClientRect());
+      let tHeaderBottom = tHeader.getBoundingClientRect().bottom;
+      console.log("tHeaderBottom---", tHeaderBottom);
+      let height = `calc(100vh - ${tHeaderBottom + 70}px)`;
+      // let table = document.getElementsByClassName('ant-table')[5];
+      // table.style.minHeight = height;
+      this.scrollY = height;
+    },
     userSearch() {
       this.isUserList = true;
     },
@@ -211,29 +221,29 @@ export default {
     },
     //获取列表
     getListAll() {
-      let data = require("./data.json");
-      console.log(data);
-      this.dataSource = data.data.list;
-      const pagination = { ...this.pagination };
-      pagination.total = data.data.recordsTotal;
-      this.pagination = pagination;
-      // this.loading = true;
-      // let parmas = {
-      //   pageindex: this.pagination.current,
-      //   pagesize: this.pagination.pageSize,
-      // };
-      // getStartWorkApi(parmas, "v2/getall").then((res) => {
-      //   if (res.data.success) {
-      //     this.dataSource = res.data.data.list;
-      //     const pagination = { ...this.pagination };
-      //     pagination.total = res.data.data.recordsTotal;
-      //     this.pagination = pagination;
-      //     this.loading = false;
-      //     this.isSearch = 0;
-      //   } else {
-      //     this.loading = false;
-      //   }
-      // });
+      // let data = require("./data.json");
+      // console.log(data);
+      // this.dataSource = data.data.list;
+      // const pagination = { ...this.pagination };
+      // pagination.total = data.data.recordsTotal;
+      // this.pagination = pagination;
+      this.loading = true;
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.pageSize,
+      };
+      getStartWorkApi(parmas, "v2/getall").then((res) => {
+        if (res.data.success) {
+          this.dataSource = res.data.data.list;
+          const pagination = { ...this.pagination };
+          pagination.total = res.data.data.recordsTotal;
+          this.pagination = pagination;
+          this.loading = false;
+          this.isSearch = 0;
+        } else {
+          this.loading = false;
+        }
+      });
     },
     //分页
     handleTableChange(pagination) {
@@ -332,6 +342,6 @@ export default {
 //   color: #000;
 // }
 /deep/.ant-table {
-  min-height: 52vh;
+  min-height: 65vh;
 }
 </style>
