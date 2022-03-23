@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2021-12-06 16:38:24
+ * @LastEditTime: 2022-03-23 16:12:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/scm/supplierReply/Exception.vue
@@ -365,6 +365,16 @@ const columns = [
     scopedSlots: { customRender: "SalesNos" },
     align: "center",
     width: "120px",
+  },
+  {
+    title: "是否急料",
+    dataIndex: "IsUrgent",
+    scopedSlots: { customRender: "IsUrgent" },
+    align: "center",
+    width: "5%",
+    customRender: (text) => {
+      return text == 'N'?'否':'是';
+    }
   },
   {
     title: "计划状态",

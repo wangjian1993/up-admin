@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-11-16 13:53:30
+ * @LastEditTime: 2022-03-23 15:02:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
@@ -194,6 +194,16 @@ const columns = [
     scopedSlots: { customRender: "Qty" },
     align: "center",
     width: "5%",
+  },
+  {
+    title: "是否急料",
+    dataIndex: "IsUrgent",
+    scopedSlots: { customRender: "IsUrgent" },
+    align: "center",
+    width: "5%",
+    customRender: (text) => {
+      return text == 'N'?'否':'是';
+    }
   },
   {
     title: "计划状态",

@@ -144,7 +144,7 @@ export default {
         this.setUserHead("./" + PhotoUrl);
         // this.setMenu(userModules);
         console.log("userModules====", userModules);
-        userModules.map((item,index) => {
+        userModules.forEach((item,index) => {
           if (item.name == "WMS") {
             userModules.splice(index,1)
           }

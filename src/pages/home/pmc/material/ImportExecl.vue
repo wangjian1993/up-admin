@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2021-12-02 16:01:19
+ * @LastEditTime: 2022-03-23 15:01:26
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
@@ -194,6 +194,9 @@ export default {
             case "材料规格":
               list.MitemSpec = item[key];
               break;
+            case "是否急料":
+              list.IsUrgent = item[key];
+              break;  
             case "交货数量":
               if (typeof item[key] !== "number" && item[key] !== "") {
                 this.errorList.push({

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-11-24 18:31:08
+ * @LastEditTime: 2022-03-23 10:10:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/leadIn.vue
@@ -183,6 +183,13 @@ const columns = [
     scopedSlots: { customRender: "SalesScheduleQty" },
     align: "center",
     width: 150,
+  },
+  {
+    title: "处理耗时(分钟)",
+    dataIndex: "TimeConsume",
+    scopedSlots: { customRender: "TimeConsume" },
+    align: "center",
+    width: 100,
   },
   {
     title: "计划状态",

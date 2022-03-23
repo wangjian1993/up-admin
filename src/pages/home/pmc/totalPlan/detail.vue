@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-16 13:53:59
+ * @LastEditTime: 2022-03-23 15:39:23
  * @LastEditors: max
  * @Description: 物料需求总计划明细
- * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Detail.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/detail.vue
 -->
 
 <template>
@@ -187,6 +187,16 @@ const columns = [
     scopedSlots: { customRender: "Qty" },
     align: "center",
     width: "5%",
+  },
+  {
+    title: "是否急料",
+    dataIndex: "IsUrgent",
+    scopedSlots: { customRender: "IsUrgent" },
+    align: "center",
+    width: "5%",
+    customRender: (text) => {
+      return text == 'N'?'否':'是';
+    }
   },
   {
     title: "计划状态",

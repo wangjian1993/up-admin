@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-01-05 11:33:25
+ * @LastEditTime: 2022-03-23 15:57:49
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/erp/components/Print.vue
@@ -24,7 +24,7 @@
             >
           </a-row>
           <div class="info">
-            <a-descriptions columns="3">
+            <a-descriptions :column="4">
               <a-descriptions-item label="主件品号">
                 {{ item.ITEM_CODE }}
               </a-descriptions-item>
@@ -34,16 +34,17 @@
               <a-descriptions-item label="品号类型">
                 {{ modelType(item.ITEM_PROPERTY) }}
               </a-descriptions-item>
-              <a-descriptions-item label="主件品名">
+              <a-descriptions-item label="修改日期">
+                {{ splitData(item.LastModifiedDate) }}
+              </a-descriptions-item>
+              <a-descriptions-item label="主件品名" :span="3">
                 {{ item.ITEM_NAME }}
               </a-descriptions-item>
-              <a-descriptions-item label="快捷码">
+              <a-descriptions-item label="快捷码" :span="1">
                 {{ item.SHORTCUT }}
               </a-descriptions-item>
-              <a-descriptions-item label="修改日期">
-                {{ item.LastModifiedDate }}
-              </a-descriptions-item>
-              <a-descriptions-item label="主件规格" :span="3">
+              
+              <a-descriptions-item label="主件规格" :span="4">
                 {{ item.ITEM_SPECIFICATION }}
               </a-descriptions-item>
             </a-descriptions>
@@ -66,14 +67,14 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: 50,
+    width: 45,
   },
   {
     title: "元件品号",
     dataIndex: "ITEM_CODE",
     scopedSlots: { customRender: "ITEM_CODE" },
     align: "center",
-    width: 100,
+    width: 90,
   },
   {
     title: "品名",
@@ -87,7 +88,7 @@ const columns = [
     dataIndex: "ITEM_SPECIFICATION",
     scopedSlots: { customRender: "ITEM_SPECIFICATION" },
     align: "center",
-    width: 200,
+    width: 250,
   },
   {
     title: "单位",
@@ -122,7 +123,7 @@ const columns = [
     dataIndex: "DRAWING_NO",
     scopedSlots: { customRender: "DRAWING_NO" },
     align: "center",
-    width: 100,
+    width: 80,
   },
 
   {
@@ -207,7 +208,7 @@ export default {
   margin: 0 auto;
   border: 1px #000 solid;
   border-bottom: none;
-  padding: 5px 10px;
+  padding: 5px 2px;
 }
 /deep/.ant-descriptions-item {
   padding-bottom: 2px;
@@ -229,6 +230,9 @@ export default {
 /deep/.ant-table-bordered .ant-table-tbody > tr > td {
   border-right: 1px #000 solid;
   font-size: 10px;
+}
+/deep/.ant-table-small > .ant-table-content > .ant-table-body > table > .ant-table-tbody > tr > td {
+  padding: 0;
 }
 /deep/.ant-table-body {
   margin: 0;
