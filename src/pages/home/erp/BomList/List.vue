@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-01-05 11:41:36
+ * @LastEditTime: 2022-03-25 11:24:24
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -69,6 +69,7 @@
         <div class="operator">
           <!-- <a-button icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
         <a-button icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button> -->
+          <a-button v-if="hasPerm('bulk_export')" icon="import" type="primary" :loading="loading" style="margin-left: 8px" @click="bulkImport">批量查询导出</a-button>
           <a-button v-if="hasPerm('print')" icon="printer" type="primary" :disabled="!hasSelected" :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
           <a-button v-else icon="printer" type="primary" disabled :loading="loading" style="margin-left: 8px" @click="printClick">打印</a-button>
           <a-button v-if="hasPerm('export')" icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
@@ -100,6 +101,9 @@
             :row-selection="{
               selectedRowKeys: selectedRowKeys,
               onChange: onSelectChange,
+              onSelect: onSelect,
+              columnTitle: '#',
+              hideDefaultSelections: true,
             }"
             :components="components"
           >
@@ -240,6 +244,7 @@
         <erp-dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></erp-dosage>
       </a-card>
       <print v-if="isPrint" :printList="printList" @closeModal="closeModal"></print>
+      <ImportExecl v-if="isBulkImport" :plantList="plantList" @closeModal="closeModal"/>
     </a-spin>
   </div>
 </template>
@@ -255,8 +260,9 @@ import { columns } from "./data";
 import { PublicVarErp } from "@/mixins/publicVarErp.js";
 import { bomSort } from "@/mixins/bomSort.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
+import ImportExecl from "./ImportExecl.vue";
 export default {
-  components: { ErpDosage, Print },
+  components: { ErpDosage, Print, ImportExecl },
   mixins: [PublicVarErp, bomSort],
   data() {
     this.components = {
@@ -295,6 +301,8 @@ export default {
       },
       treeList: [],
       parseList: [],
+      printArray: [],
+      isBulkImport: false,
     };
   },
   activated() {
@@ -321,6 +329,10 @@ export default {
   methods: {
     splitData,
     modelType,
+    //批量导入
+    bulkImport() {
+      this.isBulkImport = true;
+    },
     printClick() {
       this.getExcelPrintData().then((res) => {
         setTimeout(() => {
@@ -350,10 +362,34 @@ export default {
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
+      // this.data.map((item) => {
+      //   if (this.selectedRowKeys.includes(item.BOM_ID)) {
+      //     this.printArray.push(item);
+      //   }
+      // });
+    },
+    onSelectInvert(selectedRows) {
+      console.log("selectedRows===", selectedRows);
+    },
+    onSelect(record, selected) {
+      console.log("record===", record);
+      console.log("selected===", selected);
+      if (selected) {
+        this.printArray.push(record);
+      } else {
+        //取消勾选时
+        console.log("取消");
+        this.printArray.forEach((item, index) => {
+          if (item.BOM_ID == record.BOM_ID) {
+            this.printArray.splice(index, 1);
+          }
+        });
+      }
     },
     closeModal() {
       this.isDosage = false;
       this.isPrint = false;
+      this.isBulkImport =false
     },
     //物料需求详情
     detail(item) {
@@ -404,6 +440,7 @@ export default {
     reset() {
       // this.getListAll();
       this.data = [];
+      this.printArray = [];
       this.week = "";
       this.pagination.current = 1;
       this.pagination.total = 0;
@@ -431,6 +468,7 @@ export default {
         this.$message.warning("请输入查询条件:品号,品名.规格");
         return;
       }
+      // this.selectedRowKeys = [];
       this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
@@ -495,21 +533,28 @@ export default {
       return new Promise((resolve) => {
         //   /* 你的逻辑代码 */
         let excelData = [];
-        this.selectedRowKeys.forEach((item) => {
-          this.data.find((items) => {
-            if (items.BOM_ID == item) {
-              let parmas = {
-                pageindex: 1,
-                pagesize: 500,
-                bomid: item,
-              };
-              getERPReportAction(parmas, "getbomusinginfo").then((res) => {
-                let children = res.data.data.list;
-                items.childrenArray = children;
-                excelData.push(items);
-                resolve(excelData);
-              });
-            }
+        console.log("selectedRowKeys===", this.selectedRowKeys);
+        this.printArray.forEach((item) => {
+          let parmas = {
+            plantid: this.searchValue.plantId,
+            itemcode: item.ITEM_CODE,
+          };
+          getERPReportAction(parmas, "getbomchildlevel").then((res) => {
+            // let children = res.data.data.list;
+            this.excelList = res.data.data.list;
+            let treeList = this.initTree(item.ITEM_CODE);
+            this.treeArray = [];
+            let parseList = this.steamrollArray(treeList);
+            item.childrenArray = parseList;
+            excelData.push(item);
+            resolve(excelData);
+            // this.excelList = res.data.data.list;
+            // let treeList = this.initTree(item.ITEM_CODE);
+            // this.treeArray = [];
+            // let parseList = this.steamrollArray(treeList);
+            // console.log("parseList====", parseList);
+            // console.log("excelData====", excelData);
+            // resolve(parseList);
           });
         });
       });
@@ -525,10 +570,8 @@ export default {
         getERPReportAction(parmas, "getbomchildlevel").then((res) => {
           this.excelList = res.data.data.list;
           let treeList = this.initTree(itemcode);
-          console.log("treeList===", treeList);
           this.treeArray = [];
           let parseList = this.steamrollArray(treeList);
-          console.log("parseList===", parseList);
           resolve(parseList);
         });
         //   /* 你的逻辑代码 */
@@ -566,13 +609,13 @@ export default {
         ...item,
         // 当前存在id（id与parent_id应该是必须有的）调用initTree() 查找所有parent_id为本id的数据
         // childs字段写入
-        children: this.initTree(item.ITEM_CODE),
+        childrens: this.initTree(item.ITEM_CODE),
       }));
     },
     steamrollArray(arr) {
       arr.forEach((el) => {
         this.treeArray.push(el);
-        el.children && el.children.length > 0 ? this.steamrollArray(el.children) : ""; // 子级递归
+        el.childrens && el.childrens.length > 0 ? this.steamrollArray(el.childrens) : ""; // 子级递归
       });
       return this.treeArray;
     },
@@ -650,14 +693,13 @@ export default {
       this.isExportLod = true;
       let arr = [];
       let promiseList = [];
-      this.data.map((item) => {
-        if (this.selectedRowKeys.includes(item.BOM_ID)) {
-          this.treeArray = [];
-          this.excelList = [];
-          promiseList.push(item);
-          arr.push(this.waitData(item.ITEM_CODE));
-          console.log("arr===", arr);
-        }
+      console.log("selectedRowKeys===", this.selectedRowKeys);
+      this.printArray.map((item) => {
+        this.treeArray = [];
+        this.excelList = [];
+        promiseList.push(item);
+        arr.push(this.waitData(item.ITEM_CODE));
+        console.log("arr===", arr);
       });
       Promise.all(arr)
         .then((res) => {

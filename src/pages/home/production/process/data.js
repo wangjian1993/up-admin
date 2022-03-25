@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-29 13:58:17
- * @LastEditTime: 2021-12-16 14:09:29
+ * @LastEditTime: 2022-03-25 17:31:59
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/data.js
@@ -15,9 +15,9 @@ export const columns = [
         width: 50,
     },
     {
-        title: "生产日计划批号",
-        dataIndex: "BatchNo",
-        scopedSlots: { customRender: "BatchNo" },
+        title: "扫描条码",
+        dataIndex: "ScanCode",
+        scopedSlots: { customRender: "ScanCode" },
         align: "center",
         width: 120
     },

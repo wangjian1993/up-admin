@@ -1,24 +1,24 @@
 <!--
  * @Author: max
- * @Date: 2022-03-23 17:24:10
- * @LastEditTime: 2022-03-24 08:57:06
+ * @Date: 2022-03-25 17:12:43
+ * @LastEditTime: 2022-03-25 17:45:43
  * @LastEditors: max
- * @Description: 我要出货
- * @FilePath: /up-admin/src/pages/home/shipment/shipment.vue
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/hp/commissions/discount/index.vue
 -->
 <template>
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <a-tabs type="card" @change="callback">
-      <a-tab-pane key="1" tab="UP" v-if="hasPerm('tab_up')"><UpSubmit/></a-tab-pane>
-      <a-tab-pane key="2" tab="AGC" v-if="hasPerm('tab_agc')"><AgcSubmit/></a-tab-pane>
+      <a-tab-pane key="1" tab="个人" v-if="hasPerm('tab_user')"></a-tab-pane>
+      <a-tab-pane key="2" tab="财务" v-if="hasPerm('tab_finance')"></a-tab-pane>
     </a-tabs>
+    <discount/>
   </a-card>
 </template>
 <script>
-import UpSubmit from "./up/submit";
-import AgcSubmit from "./agc/submit";
+import discount from "./discount.vue";
 export default {
-  components: { UpSubmit, AgcSubmit },
+  components: { discount },
   data() {
     return {
       advanced: true,

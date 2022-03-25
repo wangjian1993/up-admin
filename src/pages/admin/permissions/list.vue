@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2021-09-27 18:12:30
+ * @LastEditTime: 2022-03-24 16:23:24
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -33,6 +33,7 @@
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-row>
             <a-col :xs="12" :sm="12"><span class="card-title">用户类型:</span></a-col>
+            <!-- <a-col :xs="12" :sm="8"><span class="card-title">用户类型:</span></a-col> -->
             <a-col :xs="12" :sm="12">
               <a-select v-model="defaultUserTypeId" style="width: 120px" @change="userTypeSelect" :disabled="isNotEnter">
                 <a-select-option :value="item.UserTypeId" v-for="(item, index) in userTypeData" :key="index">{{ item.UserTypeName }}</a-select-option>

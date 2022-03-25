@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-03-23 15:57:49
+ * @LastEditTime: 2022-03-24 17:57:08
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/erp/components/Print.vue
 -->
 <template>
   <a-modal class="bom-detail" v-model="visible" title="打印预览" @cancel="close" width="60%" :footer="null" centered>
-    <a-button type="primary" class="no-print" v-print="'#printTest'">打印</a-button>
+    <a-button type="primary" class="no-print" v-print="print">打印</a-button>
     <div id="printTest">
       <div v-for="item in printList" :key="item.BOM_ID" style="page-break-after:always">
         <div class="content">
@@ -43,16 +43,16 @@
               <a-descriptions-item label="快捷码" :span="1">
                 {{ item.SHORTCUT }}
               </a-descriptions-item>
-              
+
               <a-descriptions-item label="主件规格" :span="4">
                 {{ item.ITEM_SPECIFICATION }}
               </a-descriptions-item>
             </a-descriptions>
           </div>
           <a-table :columns="columns" :data-source="item.childrenArray" size="small" :pagination="false" :rowKey="(data) => data.BOM_D_ID" bordered style="page-break-after:always">
-            <template slot="index" slot-scope="text, record, index">
+            <template slot="index" slot-scope="text, record">
               <div>
-                <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+                <span style="font-weight:600">{{ setLevel(record.LOWLEVEL) }}</span>
               </div>
             </template>
           </a-table>
@@ -64,7 +64,7 @@
 <script>
 const columns = [
   {
-    title: "序号",
+    title: "阶级",
     scopedSlots: { customRender: "index" },
     align: "center",
     width: 45,
@@ -152,10 +152,22 @@ export default {
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
+      printHeadText: "主件品号:",
+      print: {
+        id: "printTest",
+        popTitle: this.printList[0].ITEM_CODE,
+        ectraHead: this.printList[0].ITEM_CODE,
+        previewTitle: this.printList[0].ITEM_CODE, // 打印预览的标题（开启预览模式后出现）,
+      },
     };
   },
   created() {
-    console.log(this.printList);
+    // this.$nextTick(() => {
+    //   this.print.popTitle = "主件品号:" + this.printList[0].ITEM_CODE;
+    //   this.print.ectraHead = "主件品号:" + this.printList[0].ITEM_CODE;
+    //   this.print.previewTitle = "主件品号:" + this.printList[0].ITEM_CODE;
+    //   console.log(this.print);
+    // });
     // this.data = this.printList.children;
   },
   methods: {
@@ -163,6 +175,13 @@ export default {
     modelType,
     close() {
       this.$emit("closeModal");
+    },
+    setLevel(l) {
+      var str = "";
+      for (let i = 1; i <= l; i++) {
+        str += ".";
+      }
+      return str + l;
     },
   },
 };
