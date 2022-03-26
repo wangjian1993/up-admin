@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-03-26 11:07:49
+ * @LastEditTime: 2022-03-26 12:39:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/VariationInfo.vue

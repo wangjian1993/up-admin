@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-25 17:45:07
- * @LastEditTime: 2022-03-26 11:26:43
+ * @LastEditTime: 2022-03-26 16:07:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/discount/discount.vue
@@ -22,9 +22,9 @@
                 <a-input style="width: 200px" allowClear placeholder="请输入合同号" v-decorator="['crtno']" />
               </a-form-item>
             </a-col>
-            <a-col :md="6" :sm="24">
+            <a-col :md="6" :sm="24" v-if="rolesign == 'ADMIN'">
               <a-form-item label="录入时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
+                <a-range-picker style="width: 300px" :default-value="dateFormat" v-decorator="['range-time-picker']" />
               </a-form-item>
             </a-col>
           </a-row>
@@ -36,8 +36,7 @@
       </a-form>
       <div class="operator">
         <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
-        <!-- <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-        <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button> -->
+        <a-button v-if="rolesign == 'ADMIN'" style="margin-left:10px" :disabled="!hasPerm('import')" type="primary" @click="importExcel" icon="import">导入</a-button>
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
             {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -48,7 +47,7 @@
         :columns="columns"
         :data-source="dataSource"
         size="small"
-        :scroll="{ y: scrollY}"
+        :scroll="{ y: scrollY }"
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
@@ -64,25 +63,16 @@
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
-        <template slot="action" slot-scope="text, record">
+        <template slot="action" slot-scope="text, record" v-if="rolesign == 'ADMIN'">
           <div>
-            <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
-              <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
-                <a-icon type="delete" />
-                删除
-              </a>
-            </a-popconfirm>
             <a style="margin-right: 8px" :disabled="!hasPerm('edit')" @click="edit(record)">
               <a-icon type="edit" />
               编辑
             </a>
-            <a style="margin-right: 8px" @click="details(record)">
-              <a-icon type="profile" />
-              详情
-            </a>
           </div>
         </template>
       </a-table>
+      <ImportExcel v-if="isImportExcel" />
     </a-spin>
   </div>
 </template>
@@ -91,28 +81,43 @@
 import { getDiscountList } from "@/services/hp.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { renderStripe } from "@/utils/stripe.js";
-// import getTableScroll from "@/utils/setTableHeight";
+import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
-import { columns } from "./list.data";
 import { PublicVar } from "@/mixins/publicVar.js";
+import moment from "moment";
+import ImportExcel from "../components/ImportExcel.vue";
 export default {
+  props: ["rolesign", "columns"],
   mixins: [PublicVar],
+  components: { ImportExcel },
   data() {
     return {
       advanced: true,
-      columns,
       dataSource: [],
       isDrawer: false,
       isExportLod: false,
       editData: [],
       isEdit: false,
+      dateFormat: [],
+      isImportExcel: false,
     };
   },
   updated() {
     renderStripe();
   },
   created() {
-    // this.getListAll();
+    this.$nextTick(() => {
+      this.scrollY = getTableScroll(70);
+    });
+    console.log("rolesign", this.rolesign);
+    if (this.rolesign == "ADMIN") {
+      let day1 = moment().format("YYYY-MM-DD");
+      let day2 = moment()
+        .subtract(1, "years")
+        .format("YYYY-MM-DD"); // 1年前
+      this.dateFormat = [day2, day1];
+      this.getListAll();
+    }
   },
   computed: {
     hasSelected() {
@@ -128,36 +133,29 @@ export default {
   },
   methods: {
     splitData,
+    moment,
     //pmc选择
-    userSearch() {
-      this.isUserList = true;
+    importExcel() {
+      this.isImportExcel = true;
     },
     closeEditModal() {
       this.isEdit = false;
-    },
-    closeUserModal() {
-      this.isUserList = false;
-    },
-    okUserModal(item) {
-      this.isUserList = false;
-      this.searchForm.setFieldsValue({
-        pmc: item.Name,
-      });
     },
     //关闭弹出框
     onClose() {
       this.isDrawer = false;
     },
-    //查看详情
-    details(item) {
-      this.isDrawer = true;
-      this.drawerItem = item;
-    },
     //重置搜索
     reset() {
-      this.getListAll();
-      this.week = "";
-      this.isSearch = 0;
+      if (this.rolesign == "ADMIN") {
+        let day1 = moment().format("YYYY-MM-DD");
+        let day2 = moment()
+          .subtract(1, "years")
+          .format("YYYY-MM-DD"); // 1年前
+        this.dateFormat = [day2, day1];
+        this.getListAll();
+      }
+      this.dataSource = [];
       this.searchForm.resetFields();
     },
     //编辑
@@ -175,6 +173,11 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        rolesign: this.rolesign,
+        mono: "",
+        crtno: "",
+        importdatestart: this.dateFormat[0],
+        importdateend: this.dateFormat[1],
       };
       getDiscountList(parmas).then((res) => {
         if (res.data.success) {
@@ -206,28 +209,27 @@ export default {
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          console.log(values);
+          if (!values.mono || !values.crtno) {
+            return this.$message.warning("请输入订单号或合同号!");
+          }
           this.loading = true;
-          console.log("Received values of form: ", values);
           if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
             const rangeValue = values["range-time-picker"];
-            var begindate = rangeValue[0].format("YYYY-MM-DD");
-            var enddate = rangeValue[1].format("YYYY-MM-DD");
+            var importdatestart = rangeValue[0].format("YYYY-MM-DD");
+            var importdateend = rangeValue[1].format("YYYY-MM-DD");
           }
+          console.log("Received values of form: ", values);
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            plantid: values.plantid,
-            workshopid: values.workshopid,
-            lineid: values.lineid,
-            status: values.status,
-            pmc: values.pmc,
-            batchno: values.batchno,
-            mitemcode: values.mitemcode,
-            mitemname: values.mitemname,
-            begindate: begindate,
-            enddate: enddate,
+            rolesign: this.rolesign,
+            mono: values.mono,
+            crtno: values.crtno,
+            importdatestart: importdatestart,
+            importdateend: importdateend,
           };
-          getDiscountList(parmas, "getall").then((res) => {
+          getDiscountList(parmas).then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

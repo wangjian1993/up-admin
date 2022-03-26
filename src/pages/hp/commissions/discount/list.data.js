@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 09:09:28
- * @LastEditTime: 2022-03-26 11:24:56
+ * @LastEditTime: 2022-03-26 13:37:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/discount/list.data.js
@@ -15,26 +15,26 @@ export const columns = [
     },
     {
       title: "订单号",
-      dataIndex: "BatchNo",
-      scopedSlots: { customRender: "BatchNo" },
+      dataIndex: "MoNo",
+      scopedSlots: { customRender: "MoNo" },
       align: "center",
     },
     {
       title: "合同号",
-      dataIndex: "PlantName",
-      scopedSlots: { customRender: "PlantName" },
+      dataIndex: "CrtNo",
+      scopedSlots: { customRender: "CrtNo" },
       align: "center",
     },
     {
       title: "折扣率",
-      dataIndex: "WorkShopName",
-      scopedSlots: { customRender: "WorkShopName" },
+      dataIndex: "ZkRate",
+      scopedSlots: { customRender: "ZkRate" },
       align: "center",
     },
     {
       title: "更新时间",
-      dataIndex: "LineName",
-      scopedSlots: { customRender: "LineName" },
+      dataIndex: "DatetimeModified",
+      scopedSlots: { customRender: "DatetimeModified" },
       align: "center",
     },
     {

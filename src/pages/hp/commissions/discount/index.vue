@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-25 17:12:43
- * @LastEditTime: 2022-03-25 17:45:43
+ * @LastEditTime: 2022-03-26 16:00:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/discount/index.vue
@@ -12,21 +12,43 @@
       <a-tab-pane key="1" tab="个人" v-if="hasPerm('tab_user')"></a-tab-pane>
       <a-tab-pane key="2" tab="财务" v-if="hasPerm('tab_finance')"></a-tab-pane>
     </a-tabs>
-    <discount/>
+    <discount :rolesign="rolesign" :columns="columns" ref="discountBox"/>
   </a-card>
 </template>
 <script>
 import discount from "./discount.vue";
+import { columns } from "./list.data";
 export default {
   components: { discount },
   data() {
     return {
       advanced: true,
+      rolesign: "",
+      columns,
+      columnsBack: columns,
     };
+  },
+  created() {
+    this.rolesign = this.hasPerm("tab_user") ? "PERSONAL" : "ADMIN";
+  },
+  mounted() {
+    // 此处根据权限来删减表头
+    if (this.hasPerm("tab_user")) {
+      this.columns = this.columns.filter((item) => item.title !== "操作"); // 控制客户经理列是否展示
+    } else {
+      this.columns = this.columnsBack;
+    }
+    console.log("this.columns", this.columns);
   },
   methods: {
     callback(key) {
-      console.log(key);
+      this.rolesign = key == 1 ? "PERSONAL" : "ADMIN";
+      if (key == 1) {
+        this.columns = this.columns.filter((item) => item.title !== "操作"); // 控制客户经理列是否展示
+      } else {
+        this.columns = this.columnsBack;
+      }
+      this.$refs.discountBox.reset();
     },
   },
 };
