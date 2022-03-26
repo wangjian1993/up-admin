@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-03-25 11:24:24
+ * @LastEditTime: 2022-03-26 10:59:12
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -238,13 +238,29 @@
                 {{ text }}
               </a-tooltip>
             </template>
+            <template slot="SHORTCUT_INPUT">
+              <span>
+                <p>快捷码</p>
+                <div style="display:flex;">
+                  <a-input placeholder="快捷码" size="small" style="font-size: 10px;" allowClear v-model="searchValue.shortcut" />
+                  <a-dropdown>
+                    <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
+                    <a-menu slot="overlay">
+                      <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('shortcut', item)">
+                        <a href="javascript:;" :class="shortcutsign == item ? 'menuBg' : ''">{{ item }}</a>
+                      </a-menu-item>
+                    </a-menu>
+                  </a-dropdown>
+                </div>
+              </span>
+            </template>
           </a-table>
           <a-empty v-else description="暂无权限" />
         </div>
         <erp-dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></erp-dosage>
       </a-card>
       <print v-if="isPrint" :printList="printList" @closeModal="closeModal"></print>
-      <ImportExecl v-if="isBulkImport" :plantList="plantList" @closeModal="closeModal"/>
+      <ImportExecl v-if="isBulkImport" :plantList="plantList" @closeModal="closeModal" />
     </a-spin>
   </div>
 </template>
@@ -288,6 +304,7 @@ export default {
       itemnamesign: "",
       itemspecificationsign: "",
       drawingnosign: "",
+      shortcutsign: "",
       ScrollPosition: 0,
       excelList: [],
       treeArray: [],
@@ -298,6 +315,7 @@ export default {
         drawingno: "",
         itemspecification: "",
         approvestatus: "",
+        shortcut: "",
       },
       treeList: [],
       parseList: [],
@@ -355,6 +373,9 @@ export default {
         case "drawingno":
           this.drawingnosign = text;
           break;
+        case "shortcut":
+          this.shortcutsign = text;
+          break;  
       }
       this.pagination.current = 1;
       this.search();
@@ -389,7 +410,7 @@ export default {
     closeModal() {
       this.isDosage = false;
       this.isPrint = false;
-      this.isBulkImport =false
+      this.isBulkImport = false;
     },
     //物料需求详情
     detail(item) {
@@ -422,6 +443,7 @@ export default {
         itemname: "",
         itemspecification: "",
         approvestatus: "",
+        
       };
       getERPReportAction(parmas, "getbomlist").then((res) => {
         if (res.data.success) {
@@ -449,6 +471,7 @@ export default {
       this.itemcodesign = "";
       this.itemnamesign = "";
       this.itemspecificationsign = "";
+      this.shortcutsign =''
       this.searchValue = {
         plantId: "",
         itemcode: "",
@@ -456,6 +479,7 @@ export default {
         itemspecification: "",
         drawingno: "",
         approvestatus: "",
+        shortcut:""
       };
     },
     //关键词搜索
@@ -477,12 +501,14 @@ export default {
         itemcode: this.searchValue.itemcode.trim(),
         itemname: this.searchValue.itemname.trim(),
         drawingno: this.searchValue.drawingno.trim(),
+        shortcut: this.searchValue.shortcut.trim(),
         approvestatus: this.searchValue.approvestatus,
         itemspecification: this.searchValue.itemspecification.trim(),
         itemcodesign: this.itemcodesign,
         itemspecificationsign: this.itemspecificationsign,
         itemnamesign: this.itemnamesign,
         drawingnosign: this.drawingnosign,
+        shortcutsign: this.shortcutsign,
       };
       getERPReportAction(parmas, "getbomlist").then((res) => {
         if (res.data.success) {

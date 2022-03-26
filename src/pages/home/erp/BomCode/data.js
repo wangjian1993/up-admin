@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:48:13
- * @LastEditTime: 2021-12-22 09:21:34
+ * @LastEditTime: 2022-03-26 10:54:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/data.js
@@ -58,8 +58,15 @@ export const columns = [
         dataIndex: "DRAWING_NO",
         scopedSlots: { customRender: "DRAWING_NO" },
         align: "left",
-        width: 150,
+        width: 100,
         slots: { title: "DRAWING_NO_INPUT" }
+    },
+    {
+        dataIndex: "SHORTCUT",
+        scopedSlots: { customRender: "SHORTCUT" },
+        align: "left",
+        width: 100,
+        slots: { title: "SHORTCUT_INPUT" }
     },
     {
         title: "库存单位",
@@ -192,13 +199,6 @@ export const columns = [
         title: "生产部门名称",
         dataIndex: "ADMIN_UNIT_NAME",
         scopedSlots: { customRender: "ADMIN_UNIT_NAME" },
-        align: "center",
-        width: 60,
-    },
-    {
-        title: "快捷码",
-        dataIndex: "SHORTCUT",
-        scopedSlots: { customRender: "SHORTCUT" },
         align: "center",
         width: 60,
     },

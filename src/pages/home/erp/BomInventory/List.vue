@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-01-05 11:41:29
+ * @LastEditTime: 2022-03-26 11:12:12
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/List.vue
@@ -80,6 +80,19 @@
                   <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
                   <a-menu slot="overlay">
                     <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('drawingno', item)">
+                      <a href="javascript:;" :class="drawingnosign == item ? 'menuBg' : ''">{{ item }}</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="快捷码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input placeholder="请输入快捷码" allowClear style="width: 200px" v-decorator="['shortcut']" />
+                <a-dropdown>
+                  <a-button style="margin-left:5px" shape="circle" icon="filter" size="small" @click="(e) => e.preventDefault()" />
+                  <a-menu slot="overlay">
+                    <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('shortcut', item)">
                       <a href="javascript:;" :class="drawingnosign == item ? 'menuBg' : ''">{{ item }}</a>
                     </a-menu-item>
                   </a-menu>
@@ -256,6 +269,7 @@ export default {
       originialreceiptdatesign: "",
       lastissuedatesign: "",
       lastreceiptdatesign: "",
+      shortcutsign:"",
       ScrollPosition: 0,
     };
   },
@@ -309,6 +323,9 @@ export default {
         case "lastissuedate":
           this.lastissuedatesign = text;
           break;
+        case "shortcut":
+          this.shortcutsign = text;
+          break;  
       }
       this.pagination.current = 1;
       this.search();
@@ -385,6 +402,7 @@ export default {
       this.lastreceiptdatesign = "";
       this.drawingnosign = "";
       this.inventoryqtysign = "";
+      this.shortcutsign =''
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
@@ -421,6 +439,7 @@ export default {
             originialreceiptdate: originialreceiptdate || "",
             lastreceiptdate: lastreceiptdate || "",
             lastissuedate: lastissuedate || "",
+            shortcut:values.shortcut || "",
             itemspecification: values.itemspecification || "",
             itemcodesign: this.itemcodesign,
             itemspecificationsign: this.itemspecificationsign,
@@ -430,6 +449,7 @@ export default {
             lastreceiptdatesign: this.lastreceiptdatesign,
             drawingnosign: this.drawingnosign,
             inventoryqtysign: this.inventoryqtysign,
+             shortcutsign: this.shortcutsign,
           };
           console.log("111111", parmas);
           getERPReportAction(parmas, "getwarehousestockinfo").then((res) => {

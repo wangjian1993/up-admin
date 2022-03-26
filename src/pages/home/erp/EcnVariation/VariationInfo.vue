@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-01-05 11:33:14
+ * @LastEditTime: 2022-03-26 11:07:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/EcnVariation/VariationInfo.vue
@@ -557,13 +557,6 @@ export default {
 }
 /deep/.ant-card-head {
   padding: 0;
-}
-/deep/div {
-  -moz-user-select: none; /*火狐*/
-  -webkit-user-select: none; /*webkit浏览器*/
-  -ms-user-select: none; /*IE10*/
-  -khtml-user-select: none; /*早期浏览器*/
-  user-select: none;
 }
 /deep/.ant-modal {
   height: 100%;

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:51:24
- * @LastEditTime: 2021-12-17 13:48:51
+ * @LastEditTime: 2022-03-26 10:57:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomList/data.js
@@ -46,6 +46,13 @@ export const columns = [
         align: "left",
         width: 120,
         slots: { title: "DRAWING_NO_INPUT" }
+    },
+    {
+        dataIndex: "SHORTCUT",
+        scopedSlots: { customRender: "SHORTCUT" },
+        align: "left",
+        width: 100,
+        slots: { title: "SHORTCUT_INPUT" }
     },
     {
         title: "单位",
@@ -144,13 +151,6 @@ export const columns = [
         scopedSlots: { customRender: "REMARK" },
         align: "center",
         width: 40,
-    },
-    {
-        title: "快捷码",
-        dataIndex: "SHORTCUT",
-        scopedSlots: { customRender: "SHORTCUT" },
-        align: "center",
-        width: 60,
     },
     {
         title: "操作",

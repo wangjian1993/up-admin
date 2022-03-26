@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-01-05 11:38:12
+ * @LastEditTime: 2022-03-26 10:55:50
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
@@ -194,7 +194,7 @@
       </template>
       <template slot="ITEM_NAME" slot-scope="text">
         <a-tooltip placement="topLeft" :overlayStyle="{ fontSize: '10px' }">
-          <template slot="title" >
+          <template slot="title">
             {{ text }}
           </template>
           {{ text }}
@@ -202,11 +202,27 @@
       </template>
       <template slot="ITEM_SPECIFICATION" slot-scope="text">
         <a-tooltip placement="topLeft" :overlayStyle="{ fontSize: '10px' }">
-          <template slot="title" >
+          <template slot="title">
             {{ text }}
           </template>
           {{ text }}
         </a-tooltip>
+      </template>
+      <template slot="SHORTCUT_INPUT">
+        <span>
+          <p>快捷码</p>
+          <div style="display:flex;">
+            <a-input placeholder="快捷码" size="small" style="font-size: 10px;" allowClear v-model="searchValue.shortcut" />
+            <a-dropdown>
+              <a-button shape="circle" icon="unordered-list" size="small" @dblclick="(e) => e.preventDefault()" />
+              <a-menu slot="overlay">
+                <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('shortcut', item)">
+                  <a href="javascript:;" :class="shortcutsign == item ? 'menuBg' : ''">{{ item }}</a>
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
+          </div>
+        </span>
       </template>
     </a-table>
     <model-info v-if="isModelInfo" :modelData="mitemcodeData" @closeModal="closeModal"></model-info>
@@ -244,6 +260,7 @@ export default {
       itemnamesign: "",
       itemspecificationsign: "",
       drawingnosign: "",
+      shortcutsign: "",
       ScrollPosition: 0,
       searchValue: {
         plantId: "",
@@ -252,6 +269,7 @@ export default {
         itemspecification: "",
         drawingno: "",
         approvestatus: "",
+        shortcut: "",
       },
     };
   },
@@ -287,6 +305,9 @@ export default {
           break;
         case "drawingno":
           this.drawingnosign = text;
+          break;
+        case "shortcut":
+          this.shortcutsign = text;
           break;
       }
       this.pagination.current = 1;
@@ -348,12 +369,14 @@ export default {
       this.itemcodesign = "";
       this.itemnamesign = "";
       this.itemspecificationsign = "";
+      this.shortcutsign =''
       this.searchValue = {
         itemcode: "",
         itemname: "",
         itemspecification: "",
         drawingno: "",
         approvestatus: "",
+        shortcut:""
       };
     },
     //关键词搜索
@@ -374,12 +397,14 @@ export default {
         itemcode: this.searchValue.itemcode.trim(),
         itemname: this.searchValue.itemname.trim(),
         drawingno: this.searchValue.drawingno.trim(),
+        shortcut: this.searchValue.shortcut.trim(),
         approvestatus: this.searchValue.approvestatus,
         itemspecification: this.searchValue.itemspecification.trim(),
         itemcodesign: this.itemcodesign,
         itemspecificationsign: this.itemspecificationsign,
         itemnamesign: this.itemnamesign,
         drawingnosign: this.drawingnosign,
+        shortcutsign: this.shortcutsign,
       };
       getERPReportAction(parmas, "getbominfo").then((res) => {
         if (res.data.success) {
