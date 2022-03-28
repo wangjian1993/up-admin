@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2022-03-25 17:45:07
- * @LastEditTime: 2022-03-28 15:20:03
+ * @Date: 2022-03-28 14:04:18
+ * @LastEditTime: 2022-03-28 18:02:21
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/hp/commissions/discount/discount.vue
+ * @FilePath: /up-admin/src/pages/hp/commissions/monthlyTask/monthlyTask.vue
 -->
 <template>
   <div>
@@ -59,13 +59,13 @@
         </template>
       </a-table>
       <ImportExcel v-if="isImportExcel" />
+      <editForm v-if="editForm" :editType="editType" :editFormData="editFormData" @success="editSuccess" @close="editClose" />
     </a-spin>
-    <editForm v-if="editForm" :editType="editType" :editFormData="editFormData" @success="editSuccess" @close="editClose" />
   </div>
 </template>
 
 <script>
-import { getDiscountList } from "@/services/hp.js";
+import { getMonthlyTaskList } from "@/services/hp.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
@@ -90,7 +90,7 @@ export default {
       isImportExcel: false,
       editForm: false,
       editFormData: [],
-      editType:'discount'
+      editType:'intermediary'
     };
   },
   updated() {
@@ -107,7 +107,7 @@ export default {
       if (this.rolesign == "ADMIN") {
         let day1 = moment().format("YYYY-MM-DD");
         let day2 = moment()
-          .subtract(1, "years")
+          .subtract(2, "years")
           .format("YYYY-MM-DD"); // 1年前
         this.dateFormat = [day2, day1];
         this.getListAll();
@@ -165,12 +165,13 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         rolesign: this.rolesign,
-        mono: "",
-        crtno: "",
-        importdatestart: this.dateFormat[0],
-        importdateend: this.dateFormat[1],
+        theyear: "",
+        themonth: "",
+        employeecode:"",
+        importdatestart: "",
+        importdateend: "",
       };
-      getDiscountList(parmas).then((res) => {
+      getMonthlyTaskList(parmas).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -193,13 +194,14 @@ export default {
       }
       this.getListAll();
     },
+    //收起展开
+    toggleAdvanced() {
+      this.advanced = !this.advanced;
+    },
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           console.log(values);
-          if (!values.mono && !values.crtno) {
-            return this.$message.warning("请输入订单号或合同号!");
-          }
           this.loading = true;
           if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
             const rangeValue = values["range-time-picker"];
@@ -211,12 +213,13 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             rolesign: this.rolesign,
-            mono: values.mono || "",
-            crtno: values.crtno || "",
+            theyear: values.theyear || "",
+            themonth: values.themonth || "",
+            employeecode:values.employeecode || "",
             importdatestart: importdatestart || "",
             importdateend: importdateend || "",
           };
-          getDiscountList(parmas).then((res) => {
+          getMonthlyTaskList(parmas).then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -247,7 +250,7 @@ export default {
         importdatestart: importdatestart || "",
         importdateend: importdateend || "",
       };
-      getDiscountList(parmas).then((res) => {
+      getMonthlyTaskList(parmas).then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

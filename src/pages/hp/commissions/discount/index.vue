@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-25 17:12:43
- * @LastEditTime: 2022-03-26 16:00:06
+ * @LastEditTime: 2022-03-28 13:47:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/discount/index.vue
@@ -12,7 +12,7 @@
       <a-tab-pane key="1" tab="个人" v-if="hasPerm('tab_user')"></a-tab-pane>
       <a-tab-pane key="2" tab="财务" v-if="hasPerm('tab_finance')"></a-tab-pane>
     </a-tabs>
-    <discount :rolesign="rolesign" :columns="columns" ref="discountBox"/>
+    <discount :rolesign="rolesign" :columns="columns" ref="discountBox" />
   </a-card>
 </template>
 <script>
@@ -47,6 +47,8 @@ export default {
         this.columns = this.columns.filter((item) => item.title !== "操作"); // 控制客户经理列是否展示
       } else {
         this.columns = this.columnsBack;
+        console.log("thsi.rolesign----", this.rolesign);
+        this.$refs.discountBox.getAdminList();
       }
       this.$refs.discountBox.reset();
     },

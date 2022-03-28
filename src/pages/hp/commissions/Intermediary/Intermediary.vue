@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2022-03-25 17:45:07
- * @LastEditTime: 2022-03-28 15:20:03
+ * @Date: 2022-03-28 14:04:18
+ * @LastEditTime: 2022-03-28 15:19:41
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/hp/commissions/discount/discount.vue
+ * @FilePath: /up-admin/src/pages/hp/commissions/Intermediary/Intermediary.vue
 -->
 <template>
   <div>
@@ -59,13 +59,13 @@
         </template>
       </a-table>
       <ImportExcel v-if="isImportExcel" />
+      <editForm v-if="editForm" :editType="editType" :editFormData="editFormData" @success="editSuccess" @close="editClose" />
     </a-spin>
-    <editForm v-if="editForm" :editType="editType" :editFormData="editFormData" @success="editSuccess" @close="editClose" />
   </div>
 </template>
 
 <script>
-import { getDiscountList } from "@/services/hp.js";
+import { getIntermediaryList } from "@/services/hp.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
@@ -90,7 +90,7 @@ export default {
       isImportExcel: false,
       editForm: false,
       editFormData: [],
-      editType:'discount'
+      editType:'intermediary'
     };
   },
   updated() {
@@ -170,7 +170,7 @@ export default {
         importdatestart: this.dateFormat[0],
         importdateend: this.dateFormat[1],
       };
-      getDiscountList(parmas).then((res) => {
+      getIntermediaryList(parmas).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -192,6 +192,10 @@ export default {
         return;
       }
       this.getListAll();
+    },
+    //收起展开
+    toggleAdvanced() {
+      this.advanced = !this.advanced;
     },
     search() {
       this.searchForm.validateFields((err, values) => {
@@ -216,7 +220,7 @@ export default {
             importdatestart: importdatestart || "",
             importdateend: importdateend || "",
           };
-          getDiscountList(parmas).then((res) => {
+          getIntermediaryList(parmas).then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -247,7 +251,7 @@ export default {
         importdatestart: importdatestart || "",
         importdateend: importdateend || "",
       };
-      getDiscountList(parmas).then((res) => {
+      getIntermediaryList(parmas).then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

@@ -1,0 +1,446 @@
+<template>
+  <div>
+    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+      <a-form layout="horizontal" :form="searchForm">
+        <div>
+          <a-row>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                  <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['workshop']" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
+                  <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['line']" style="width: 200px" placeholder="请选择生产产线">
+                  <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="设备编号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入设备编号" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+              </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="设备名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入设备名称" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="请输入ip" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入ip" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="连接转态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入ip" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="是否启用" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入ip" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </div>
+        <span style="float: right; margin-top: 3px;">
+          <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
+          <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
+        </span>
+      </a-form>
+      <div class="operator">
+        <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" @click="add" style="margin-left: 8px">添加</a-button>
+        <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+        <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+        <span style="margin-left: 8px">
+          <template v-if="hasSelected">
+            {{ `共选中 ${selectedRowKeys.length} 条` }}
+          </template>
+        </span>
+      </div>
+      <a-table
+        v-if="hasPerm('search')"
+        :columns="columns"
+        :data-source="data"
+        size="small"
+        :scroll="{ y: scrollY }"
+        :loading="loading"
+        :pagination="pagination"
+        @change="handleTableChange"
+        :rowKey="(data) => data.Id"
+        :row-selection="{
+          selectedRowKeys: selectedRowKeys,
+          onChange: onSelectChange,
+        }"
+        bordered
+      >
+        <template slot="index" slot-scope="text, record, index">
+          <div>
+            <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+          </div>
+        </template>
+        <template slot="Status" slot-scope="text">
+          <div>
+            <a-tag color="green" v-if="text == 'APPROVED'">已审批</a-tag>
+            <a-tag color="red" v-else>未审批</a-tag>
+          </div>
+        </template>
+        <template slot="action" slot-scope="text, record">
+          <div>
+            <a-popconfirm title="确定删除?" @confirm="() => actionBnt(record, 'masterplan/delete')">
+              <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+                <a-icon type="delete" />
+                删除
+              </a>
+            </a-popconfirm>
+            <a style="margin-right: 8px" @click="detail(record)">
+              <a-icon type="profile" />
+              查看明细
+            </a>
+          </div>
+        </template>
+      </a-table>
+      <a-empty v-else description="暂无权限" />
+      <Form v-if="isForm" @close="close" @success="success" />
+    </a-card>
+  </div>
+</template>
+
+<script>
+const columns = [
+  {
+    title: "序号",
+    scopedSlots: { customRender: "index" },
+    align: "center",
+    width: "5%",
+  },
+  {
+    title: "设备编号",
+    dataIndex: "EquipmentCode",
+    scopedSlots: { customRender: "EquipmentCode" },
+    align: "center",
+  },
+  {
+    title: "设备名称",
+    dataIndex: "EquipmentName",
+    scopedSlots: { customRender: "EquipmentName" },
+    align: "center",
+  },
+  {
+    title: "生产工厂",
+    dataIndex: "PlantName",
+    scopedSlots: { customRender: "PlantName" },
+    align: "center",
+  },
+  {
+    title: "工作中心",
+    dataIndex: "WorkCenterName",
+    scopedSlots: { customRender: "WorkCenterName" },
+    align: "center",
+    width: "5%",
+  },
+  {
+    title: "产线",
+    dataIndex: "LineName",
+    scopedSlots: { customRender: "LineName" },
+    align: "center",
+  },
+  {
+    title: "是否启用",
+    dataIndex: "Enable",
+    scopedSlots: { customRender: "Enable" },
+    align: "center",
+  },
+  {
+    title: "IP地址",
+    dataIndex: "IPAddress",
+    scopedSlots: { customRender: "IPAddress" },
+    align: "center",
+  },
+  {
+    title: "连接状态",
+    dataIndex: "Status",
+    scopedSlots: { customRender: "Status" },
+    align: "center",
+  },
+  {
+    title: "创建人",
+    dataIndex: "Creater",
+    scopedSlots: { customRender: "Creater" },
+    align: "center",
+  },
+  {
+    title: "创建时间",
+    dataIndex: "CreateTime",
+    scopedSlots: { customRender: "CreateTime" },
+    align: "center",
+  },
+  {
+    title: "操作",
+    scopedSlots: { customRender: "action" },
+    align: "center",
+  },
+];
+import { getProductionPersonnel, getWorkshopList, getLineList } from "@/services/web.js";
+import getTableScroll from "@/utils/setTableHeight";
+import { renderStripe } from "@/utils/stripe.js";
+import { getSopDevice, setSopDevice } from "@/services/esop.js";
+import Form from "./form.vue";
+export default {
+  components: { Form },
+  data() {
+    return {
+      data: [],
+      columns,
+      loading: true,
+      pagination: {
+        current: 1,
+        total: 0,
+        pageSize: 20, //每页中显示10条数据
+        showSizeChanger: true,
+        showLessItems: true,
+        showQuickJumper: true,
+        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
+        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
+      },
+      selectedRows: [],
+      isExecl: false,
+      selectedRowKeys: [],
+      scrollY: "",
+      searchForm: this.$form.createForm(this),
+      week: "",
+      isSearch: false,
+      isUserList: false,
+      plantid: "", //工厂
+      plantList: [],
+      workshopList: [],
+      workshopId: "", //车间
+      lineList: [],
+      isForm: false, //添加编辑
+    };
+  },
+  updated() {
+    renderStripe();
+  },
+  computed: {
+    hasSelected() {
+      return this.selectedRowKeys.length > 0;
+    },
+  },
+  created() {
+    this.$nextTick(() => {
+      this.scrollY = getTableScroll();
+    });
+    this.getListAll();
+    this.getEnterList();
+  },
+  methods: {
+    //工厂选择
+    plantChange(e) {
+      this.plantid = e;
+      this.getWorkshopList();
+      this.searchForm.setFieldsValue({
+        workshop: "",
+        line: "",
+      });
+    },
+    //车间选择
+    workShopChange(e) {
+      this.workshopId = e;
+      this.getLineList();
+      this.searchForm.setFieldsValue({
+        line: "",
+      });
+    },
+    //获取生产工厂
+    getEnterList() {
+      let parmas = {
+        entertypecode: "PLANT",
+      };
+      getProductionPersonnel(parmas, "getlistbytypecode").then((res) => {
+        if (res.data.success) {
+          this.plantList = res.data.data;
+        }
+      });
+    },
+    getWorkshopList() {
+      let parmas = {
+        plantid: this.plantid,
+      };
+      getWorkshopList(parmas, "getlist").then((res) => {
+        if (res.data.success) {
+          this.workshopList = res.data.data;
+        }
+      });
+    },
+    getLineList() {
+      let parmas = {
+        plantid: this.plantid,
+        workshopid: this.workshopId,
+      };
+      getLineList(parmas, "getlist").then((res) => {
+        if (res.data.success) {
+          this.lineList = res.data.data;
+        }
+      });
+    },
+    //获取列表数据
+    getListAll() {
+      this.loading = true;
+      let parmas = {
+        where: {
+          pageindex: this.pagination.current,
+          pagesize: this.pagination.pageSize,
+        },
+      };
+      getSopDevice(parmas, "get").then((res) => {
+        if (res.data.success) {
+          this.data = res.data.data.list;
+          const pagination = { ...this.pagination };
+          pagination.total = res.data.data.recordsTotal;
+          this.pagination = pagination;
+          this.loading = false;
+          this.isSearch = false;
+        } else {
+          this.loading = false;
+        }
+      });
+    },
+    //多选
+    onSelectChange(selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys;
+    },
+    //重置搜索
+    reset() {
+      this.getListAll();
+      this.week = "";
+      this.searchForm.resetFields();
+    },
+    //关键词搜索
+    search() {
+      this.searchForm.validateFields((err, values) => {
+        if (!err) {
+          this.loading = true;
+          console.log("Received values of form: ", values);
+          this.data = [];
+          this.pagination.total = 0;
+          if (this.week != "") {
+            var w = this.week;
+          }
+          let parmas = {
+            pageindex: this.pagination.current,
+            pagesize: this.pagination.pageSize,
+            plantid: values.plantid,
+            week: w,
+            pmc: values.pmc,
+          };
+          getSopDevice(parmas, "get").then((res) => {
+            if (res.data.success) {
+              this.data = res.data.data.list;
+              const pagination = { ...this.pagination };
+              pagination.total = res.data.data.recordsTotal;
+              this.pagination = pagination;
+              this.loading = false;
+              this.isSearch = true;
+            }
+          });
+          // do something
+        }
+      });
+    },
+    //添加
+    add() {
+      this.isForm = true;
+    },
+    close() {
+      this.isForm = false;
+    },
+    success() {
+      this.isForm = false;
+      this.getListAll();
+    },
+    //多选删除
+    allDel() {
+      let self = this;
+      self.$confirm({
+        title: "确定要删除选中内容",
+        onOk() {
+          setSopDevice(self.selectedRowKeys, "masterplan/delete").then((res) => {
+            if (res.data.success) {
+              self.selectedRowKeys = [];
+              self.$message.success("删除成功!");
+              self.getListAll();
+            }
+          });
+        },
+        onCancel() {},
+      });
+    },
+    //多选审批
+    allCheck() {
+      let self = this;
+      self.$confirm({
+        title: "确定要生成选中内容",
+        onOk() {
+          setSopDevice(self.selectedRowKeys, "masterplan/generate").then((res) => {
+            if (res.data.success) {
+              self.selectedRowKeys = [];
+              self.$message.success("生成成功!");
+              self.getListAll();
+            }
+          });
+        },
+        onCancel() {},
+      });
+    },
+    //单个删除
+    actionBnt(item, type) {
+      let parmas = [];
+      parmas.push(item.Id);
+      setSopDevice(parmas, type).then((res) => {
+        if (res.data.success) {
+          if (type == "approved") {
+            this.$message.success("审批成功!");
+          } else {
+            this.$message.success("删除成功!");
+          }
+          this.getListAll();
+        }
+      });
+    },
+    //分压
+    handleTableChange(pagination) {
+      this.pagination.current = pagination.current;
+      this.pagination.pageSize = pagination.pageSize;
+      if (this.isSearch) {
+        this.search();
+        return;
+      }
+      this.getListAll();
+    },
+  },
+};
+</script>
+
+<style scoped lang="less">
+/deep/.ant-table {
+  min-height: 67vh;
+}
+/deep/.ant-table-body {
+  min-height: 0vh;
+}
+.ant-form-item {
+  margin-bottom: 5px;
+}
+</style>
