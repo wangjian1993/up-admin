@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2022-03-29 14:42:16
+ * @LastEditTime: 2022-03-29 14:41:19
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/hp/commissions/discount/ImportExcel.vue
+ * @FilePath: /up-admin/src/pages/hp/commissions/finishing/ImportExcel.vue
 -->
 <template>
   <div>
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { importDiscountList } from "@/services/hp.js";
+import { importFinishingList } from "@/services/hp.js";
 import excel from "@/utils/xlsxTool.js";
 const columns = [
   {
@@ -62,18 +62,33 @@ const columns = [
     width: "10%",
   },
   {
-    title: "订单号",
-    dataIndex: "MoNo",
+    title: "业务员",
+    dataIndex: "EmployeeName",
+    scopedSlots: { customRender: "EmployeeName" },
     align: "center",
   },
   {
-    title: "合同号",
-    dataIndex: "CrtNo",
+    title: "工号",
+    dataIndex: "EmployeeCode",
+    scopedSlots: { customRender: "EmployeeCode" },
     align: "center",
   },
   {
-    title: "折扣率",
-    dataIndex: "ZkRate",
+    title: "完成率起始",
+    dataIndex: "RateStart",
+    scopedSlots: { customRender: "RateStart" },
+    align: "center",
+  },
+  {
+    title: "完成率至",
+    dataIndex: "RateEnd",
+    scopedSlots: { customRender: "RateEnd" },
+    align: "center",
+  },
+  {
+    title: "月度完成率",
+    dataIndex: "TaskTcRate",
+    scopedSlots: { customRender: "TaskTcRate" },
     align: "center",
   },
 ];
@@ -115,6 +130,7 @@ export default {
       this.fileList = [];
       this.isShowTable = false;
       this.errorList = [];
+      this.tableData = [];
     },
     close() {
       this.$emit("closeModal");
@@ -137,19 +153,31 @@ export default {
         return;
       }
       let parmas = {
-        ZkRate: [],
+        Rate: [],
       };
       //拼接后台数据
       this.tableData.forEach((item, index) => {
-        if (item.ZkRate > 1) {
+        if (item.RateStart > 1) {
           this.errorList.push({
-            ErrorMsg: `第${index + 1}行,折扣率:数据'${item.ZkRate}'错误,必须在0-1范围内`,
+            ErrorMsg: `第${index + 1}行,完成率起始:数据'${item.RateStart}'错误,必须在0-1范围内`,
           });
         }
-        parmas.ZkRate.push({
-          MoNo: item.MoNo,
-          CrtNo: item.CrtNo,
-          ZkRate: item.ZkRate,
+        if (item.RateEnd > 1) {
+          this.errorList.push({
+            ErrorMsg: `第${index + 1}行,完成率至:数据'${item.RateEnd}'错误,必须在0-1范围内`,
+          });
+        }
+        if (item.TaskTcRate > 1) {
+          this.errorList.push({
+            ErrorMsg: `第${index + 1}行,月度任务提成率:数据'${item.TaskTcRate}'错误,必须在0-1范围内`,
+          });
+        }
+        parmas.Rate.push({
+          RateStart:Number(item.RateStart),
+          RateEnd:Number(item.RateEnd),
+          TaskTcRate:Number(item.TaskTcRate),
+          EmployeeName: item.EmployeeName,
+          EmployeeCode: item.EmployeeCode,
         });
       });
       if (this.errorList.length == 0) {
@@ -162,8 +190,8 @@ export default {
     //提交
     submitExecl(parmas) {
       this.isUpload = true;
-      importDiscountList(parmas).then((res) => {
-        if (res.data.ErrorNum == 0) {
+      importFinishingList(parmas).then((res) => {
+        if (res.data.data.AddNum > 0) {
           this.$message.success("导入成功!");
           this.close();
         } else {
@@ -205,14 +233,43 @@ export default {
         this.tableTitle = tableTitle;
         results.forEach((item) => {
           this.tableData.push({
-            MoNo: item["订单号"],
-            CrtNo: item["合同号"],
-            ZkRate: item["折扣率"],
+            EmployeeName: item["业务员"],
+            EmployeeCode: item["工号"],
+            RateStart: item["完成率起始"],
+            RateEnd: item["完成率至"],
+            TaskTcRate: item["月度任务提成率"],
           });
         });
         console.log(this.tableData);
         this.isUpload = false;
       };
+    },
+    formatLongDate(date) {
+      console.log(date);
+      let dateTime = date.setDate(date.getDate() + 1);
+      date = new Date(dateTime);
+      let myyear = date.getFullYear();
+      let mymonth = date.getMonth() + 1;
+      let myweekday = date.getDate();
+      let myHour = date.getHours();
+      let myMin = date.getMinutes();
+      let mySec = date.getSeconds();
+      if (mymonth < 10) {
+        mymonth = "0" + mymonth;
+      }
+      if (myweekday < 10) {
+        myweekday = "0" + myweekday;
+      }
+      if (myHour < 10) {
+        myHour = "0" + myHour;
+      }
+      if (myMin < 10) {
+        myMin = "0" + myMin;
+      }
+      if (mySec < 10) {
+        mySec = "0" + mySec;
+      }
+      return myyear + "/" + mymonth + "/" + myweekday;
     },
   },
   components: {},

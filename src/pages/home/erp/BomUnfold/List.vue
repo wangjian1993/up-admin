@@ -23,11 +23,11 @@
               <a-input placeholder="主件品号" allowClear style="width: 200px" v-decorator="['itemcode', { rules: [{ required: true, message: '请输入主键品号' }] }]" />
             </a-form-item>
           </a-col>
-           <a-col :md="6" :sm="24">
+           <!-- <a-col :md="6" :sm="24">
             <a-form-item label="快捷码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="快捷码" allowClear style="width: 200px" v-decorator="['shortcut']" />
             </a-form-item>
-          </a-col>
+          </a-col> -->
           <!-- <a-col :md="6" :sm="24">
             <a-form-item label="主件品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="请输入主键品名" allowClear style="width: 200px" v-decorator="['itemname']" />
@@ -292,7 +292,7 @@ export default {
             itemcode: values.itemcode,
             itemname: values.itemname || "",
             itemspecification: values.itemspecification || "",
-            shortcut: values.shortcut || "",
+            shortcut: "",
             itemcodesign: "等于",
             itemspecificationsign: "",
             itemnamesign: "",

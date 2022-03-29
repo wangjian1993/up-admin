@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2022-03-25 17:45:07
- * @LastEditTime: 2022-03-29 14:39:03
+ * @Date: 2022-03-29 17:42:46
+ * @LastEditTime: 2022-03-29 17:59:44
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/hp/commissions/discount/discount.vue
+ * @FilePath: /up-admin/src/pages/hp/commissions/order/order.vue
 -->
 <template>
   <div>
@@ -12,6 +12,14 @@
       <a-form layout="horizontal" :form="searchForm">
         <div :class="advanced ? null : 'fold'">
           <a-row>
+            <a-col :md="6" :sm="24" v-if="rolesign == 'ADMIN'">
+              <a-form-item label="业务员" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select style="width:200px" v-decorator="['employeecode']">
+                  <a-select-option key="" value="">全部</a-select-option>
+                  <a-select-option v-for="(item, index) in salesmanList" :key="index" :value="item.UserId">{{ item.DisplayName + " " + item.UserId }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="订单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入订单号" v-decorator="['mono']" />
@@ -20,6 +28,11 @@
             <a-col :md="6" :sm="24">
               <a-form-item label="合同号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入合同号" v-decorator="['crtno']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="客户代码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入合同号" v-decorator="['customercode']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24" v-if="rolesign == 'ADMIN'">
@@ -36,12 +49,6 @@
       </a-form>
       <div class="operator">
         <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
-        <a-button v-if="rolesign == 'ADMIN'" style="margin-left:10px" :disabled="!hasPerm('import')" type="primary" @click="importExcel" icon="import">导入</a-button>
-        <span style="margin-left: 8px">
-          <template v-if="hasSelected">
-            {{ `共选中 ${selectedRowKeys.length} 条` }}
-          </template>
-        </span>
       </div>
       <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
         <template slot="index" slot-scope="text, record, index">
@@ -53,31 +60,29 @@
           <div>
             <a style="margin-right: 8px" :disabled="!hasPerm('edit')" @click="edit(record)">
               <a-icon type="edit" />
-              编辑
+              编辑折扣率
             </a>
           </div>
         </template>
       </a-table>
-      <ImportExcel v-if="isImportExcel" @closeModal="editClose"/>
     </a-spin>
     <editForm v-if="editForm" :editType="editType" :editFormData="editFormData" @success="editSuccess" @close="editClose" />
   </div>
 </template>
 
 <script>
-import { getDiscountList } from "@/services/hp.js";
+import { getOrderList, getSalesmanList } from "@/services/hp.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import moment from "moment";
-import ImportExcel from "./ImportExcel.vue";
 import editForm from "../components/editForm.vue";
 export default {
   props: ["rolesign", "columns"],
   mixins: [PublicVar],
-  components: { ImportExcel, editForm },
+  components: { editForm },
   data() {
     return {
       advanced: true,
@@ -90,7 +95,8 @@ export default {
       isImportExcel: false,
       editForm: false,
       editFormData: [],
-      editType:'discount'
+      editType: "discount",
+      salesmanList: [],
     };
   },
   updated() {
@@ -100,6 +106,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
     });
+    this.getSalesmanList();
   },
   watch: {
     rolesign(res) {
@@ -134,6 +141,13 @@ export default {
     splitData,
     moment,
     getAdminList() {},
+    getSalesmanList() {
+      getSalesmanList().then((res) => {
+        if (res.data.success) {
+          this.salesmanList = res.data.data;
+        }
+      });
+    },
     importExcel() {
       this.isImportExcel = true;
     },
@@ -157,7 +171,7 @@ export default {
     },
     editClose() {
       this.editForm = false;
-      this.isImportExcel =false
+      this.isImportExcel = false;
     },
     //获取列表
     getListAll() {
@@ -168,10 +182,12 @@ export default {
         rolesign: this.rolesign,
         mono: "",
         crtno: "",
+        customercode: "",
+        employeecode: "",
         importdatestart: this.dateFormat[0],
         importdateend: this.dateFormat[1],
       };
-      getDiscountList(parmas).then((res) => {
+      getOrderList(parmas).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -214,10 +230,12 @@ export default {
             rolesign: this.rolesign,
             mono: values.mono || "",
             crtno: values.crtno || "",
+            ustomercode: values.ustomercode || "",
+            employeecode: values.employeecode || "",
             importdatestart: importdatestart || "",
             importdateend: importdateend || "",
           };
-          getDiscountList(parmas).then((res) => {
+          getOrderList(parmas).then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -248,7 +266,7 @@ export default {
         importdatestart: importdatestart || "",
         importdateend: importdateend || "",
       };
-      getDiscountList(parmas).then((res) => {
+      getOrderList(parmas).then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

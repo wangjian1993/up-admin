@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2022-03-28 17:54:33
+ * @LastEditTime: 2022-03-29 14:42:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/monthlyTask/ImportExcel.vue
@@ -167,7 +167,7 @@ export default {
             ErrorMsg: `第${index + 1}行,年份:数据'${item.TheYear}'错误,必须在大于2020年`,
           });
         }
-        console.log(typeof item.TheYear)
+        console.log(typeof item.TheYear);
         parmas.Task.push({
           EmployeeName: item.EmployeeName,
           EmployeeCode: item.EmployeeCode,
@@ -190,12 +190,11 @@ export default {
         if (res.data.AddNum > 0) {
           this.$message.success("导入成功!");
           this.close();
-          this.isUpload = false;
         } else {
           // this.$message.info(res.data.message.content);
           this.errorList = res.data.data.ErrorList;
-          this.isUpload = false;
         }
+        this.isUpload = false;
       });
     },
     //导入execl

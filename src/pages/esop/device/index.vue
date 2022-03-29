@@ -13,43 +13,51 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['workshop']" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
+                <a-select v-decorator="['workcenterid']" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
                   <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['line']" style="width: 200px" placeholder="请选择生产产线">
+                <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产产线">
                   <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="设备编号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入设备编号" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+                <a-input style="width: 200px" allowClear placeholder="请输入设备编号" v-decorator="['equipmentcode']" />
               </a-form-item>
             </a-col>
           </a-row>
           <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="设备名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入设备名称" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+                <a-input style="width: 200px" allowClear placeholder="请输入设备名称" v-decorator="['equipmentname']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="请输入ip" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入ip" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+              <a-form-item label="ip地址" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入ip" v-decorator="['ipaddress']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="连接转态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入ip" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+              <a-form-item label="连接状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['status']" style="width: 200px">
+                  <a-select-option value="">全部</a-select-option>
+                  <a-select-option value="treu">已连接</a-select-option>
+                  <a-select-option value="false">未连接</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="是否启用" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入ip" v-decorator="['batchno', { rules: [{ required: true, message: '请输入计划批号' }] }]" />
+                <a-select v-decorator="['enable']" style="width: 200px">
+                  <a-select-option value="">全部</a-select-option>
+                  <a-select-option value="treu">启用</a-select-option>
+                  <a-select-option value="false">禁用</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </a-row>
@@ -78,7 +86,7 @@
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(data) => data.Id"
+        :rowKey="(data) => data.EquipmentId"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -90,20 +98,30 @@
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
+        <template slot="Enable" slot-scope="text">
+          <div>
+            <a-tag color="green" v-if="text">启用</a-tag>
+            <a-tag color="red" v-else>禁用</a-tag>
+          </div>
+        </template>
         <template slot="Status" slot-scope="text">
           <div>
-            <a-tag color="green" v-if="text == 'APPROVED'">已审批</a-tag>
-            <a-tag color="red" v-else>未审批</a-tag>
+            <a-tag color="green" v-if="text">已连接</a-tag>
+            <a-tag color="red" v-else>未连接</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">
           <div>
-            <a-popconfirm title="确定删除?" @confirm="() => actionBnt(record, 'masterplan/delete')">
+            <a-popconfirm title="确定删除?" @confirm="() => useDelete(record)">
               <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                 <a-icon type="delete" />
                 删除
               </a>
             </a-popconfirm>
+            <a style="margin-right: 8px" :disabled="!hasPerm('edit')" @click="useEdit(record)">
+              <a-icon type="edit" />
+              编辑
+            </a>
             <a style="margin-right: 8px" @click="detail(record)">
               <a-icon type="profile" />
               查看明细
@@ -112,7 +130,14 @@
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
-      <Form v-if="isForm" @close="close" @success="success" />
+      <Form v-if="isForm" :editData="editData" :isEdit="isEdit" @close="close" @success="success" />
+      <div>
+        <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
+          <a-descriptions title="详情" :column="1">
+            <a-descriptions-item v-for="(item, index) in filterData" :key="index" :label="item.title">{{ drawerItem[item.dataIndex] }}</a-descriptions-item>
+          </a-descriptions>
+        </a-drawer>
+      </div>
     </a-card>
   </div>
 </template>
@@ -175,6 +200,12 @@ const columns = [
     align: "center",
   },
   {
+    title: "排序",
+    dataIndex: "Sort",
+    scopedSlots: { customRender: "Sort" },
+    align: "center",
+  },
+  {
     title: "创建人",
     dataIndex: "Creater",
     scopedSlots: { customRender: "Creater" },
@@ -203,6 +234,7 @@ export default {
     return {
       data: [],
       columns,
+      isDrawer: false,
       loading: true,
       pagination: {
         current: 1,
@@ -228,6 +260,7 @@ export default {
       workshopId: "", //车间
       lineList: [],
       isForm: false, //添加编辑
+      drawerItem: [],
     };
   },
   updated() {
@@ -236,6 +269,13 @@ export default {
   computed: {
     hasSelected() {
       return this.selectedRowKeys.length > 0;
+    },
+    filterData() {
+      return this.columns.filter((obj) => {
+        if (obj.dataIndex !== "Status") {
+          return obj.dataIndex;
+        }
+      });
     },
   },
   created() {
@@ -246,6 +286,13 @@ export default {
     this.getEnterList();
   },
   methods: {
+    onClose() {
+      this.isDrawer = false;
+    },
+    detail(item) {
+      this.isDrawer = true;
+      this.drawerItem = item;
+    },
     //工厂选择
     plantChange(e) {
       this.plantid = e;
@@ -332,18 +379,19 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          console.log("Received values of form: ", values);
-          this.data = [];
-          this.pagination.total = 0;
-          if (this.week != "") {
-            var w = this.week;
-          }
           let parmas = {
-            pageindex: this.pagination.current,
-            pagesize: this.pagination.pageSize,
-            plantid: values.plantid,
-            week: w,
-            pmc: values.pmc,
+            where: {
+              pageindex: this.pagination.current,
+              pagesize: this.pagination.pageSize,
+              equipmentcode: values.equipmentcode,
+              equipmentname:values.equipmentname,
+              plantid: values.plantid,
+              workcenterid: values.workcenterid,
+              lineid: values.lineid,
+              ipaddress: values.ipaddress,
+              enable:  values.enable,
+              status:  values.status,
+            },
           };
           getSopDevice(parmas, "get").then((res) => {
             if (res.data.success) {
@@ -363,6 +411,11 @@ export default {
     add() {
       this.isForm = true;
     },
+    useEdit(item) {
+      this.isForm = true;
+      this.editData = item;
+      this.isEdit = true;
+    },
     close() {
       this.isForm = false;
     },
@@ -373,10 +426,11 @@ export default {
     //多选删除
     allDel() {
       let self = this;
+      self.selectedRowKeys.push(null);
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          setSopDevice(self.selectedRowKeys, "masterplan/delete").then((res) => {
+          setSopDevice(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -387,34 +441,12 @@ export default {
         onCancel() {},
       });
     },
-    //多选审批
-    allCheck() {
-      let self = this;
-      self.$confirm({
-        title: "确定要生成选中内容",
-        onOk() {
-          setSopDevice(self.selectedRowKeys, "masterplan/generate").then((res) => {
-            if (res.data.success) {
-              self.selectedRowKeys = [];
-              self.$message.success("生成成功!");
-              self.getListAll();
-            }
-          });
-        },
-        onCancel() {},
-      });
-    },
     //单个删除
-    actionBnt(item, type) {
-      let parmas = [];
-      parmas.push(item.Id);
-      setSopDevice(parmas, type).then((res) => {
+    useDelete(item) {
+      let parmas = [item.EquipmentId, null];
+      setSopDevice(parmas, "delete").then((res) => {
         if (res.data.success) {
-          if (type == "approved") {
-            this.$message.success("审批成功!");
-          } else {
-            this.$message.success("删除成功!");
-          }
+          this.$message.success("删除成功!");
           this.getListAll();
         }
       });

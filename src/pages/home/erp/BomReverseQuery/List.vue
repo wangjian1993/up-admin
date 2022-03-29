@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-03-26 11:50:49
+ * @LastEditTime: 2022-03-29 16:11:22
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -48,6 +48,11 @@
           </a-col>
         </a-row>
         <a-row>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="快捷码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input placeholder="快捷码" allowClear style="width: 200px" v-decorator="['shortcut']" />
+            </a-form-item>
+          </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="录入日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-range-picker style="width: 300px" v-decorator="['range-time-picker1']" />
@@ -206,6 +211,7 @@ export default {
         plantid: this.plantId,
         itemcode: "",
         bomdate: "",
+        shortcut:"",
         approvestatus: "",
         createdatestart: "",
         createdateend: "",
@@ -263,6 +269,7 @@ export default {
             plantid: values.plantid || "",
             itemcode: values.itemcode || "",
             bomdate: bomdate || "",
+            shortcut: values.shortcut || "",
             approvestatus: values.approvestatus,
             createdatestart: createdatestart || "",
             createdateend: createdateend || "",

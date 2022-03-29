@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-03-28 11:04:11
- * @LastEditTime: 2022-03-28 11:56:24
+ * @LastEditTime: 2022-03-29 09:45:44
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/esop.js
@@ -14,9 +14,21 @@ import {
     METHOD
 } from '@/utils/request';
 
-
 /**
- * @description: 折扣率
+ * @description: 文档管理
+ * @param {*} params
+ * @param {*} action
+ * @return {*}
+ */
+ export function getSopDocument(params,action) {
+    return request(`${UP_ESOP}/doc/${action}`, METHOD.GET, params);
+}
+
+export function setSopDocumnet(params,action) {
+    return request(`${UP_ESOP}/doc/${action}`, METHOD.POST, params);
+}
+/**
+ * @description: 设备管理
  * @param {*} params
  * @param {*} action
  * @return {*}
@@ -28,3 +40,4 @@ export function getSopDevice(params,action) {
 export function setSopDevice(params,action) {
     return request(`${UP_ESOP}/equipment/${action}`, METHOD.POST, params);
 }
+

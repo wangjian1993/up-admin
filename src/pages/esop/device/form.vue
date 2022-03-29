@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-03-28 18:05:46
+ * @LastEditTime: 2022-03-29 08:51:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/device/form.vue
@@ -13,7 +13,7 @@
         <a-row>
           <a-col :span="12">
             <a-form-model-item label="设备编码" prop="equipmentcode" :labelCol="{ span: 6 }">
-              <a-input v-model="form.equipmentcode" allowClear placeholder="请输入设备编码" />
+              <a-input :disabled="isEdit" v-model="form.equipmentcode" allowClear placeholder="请输入设备编码" />
             </a-form-model-item>
           </a-col>
           <a-col :span="12">
@@ -78,9 +78,9 @@
 import { getProductionPersonnel, getWorkshopList, getLineList } from "@/services/web.js";
 import { setSopDevice } from "@/services/esop.js";
 export default {
+  props: ["editData", "isEdit"],
   data() {
     return {
-      isEdit: false,
       visible: true,
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
@@ -142,6 +142,24 @@ export default {
   },
   created() {
     this.getEnterList();
+    if (this.editData) {
+      this.form = {
+        equipmentcode: this.editData.EquipmentCode,
+        equipmentname: this.editData.EquipmentName,
+        plantid: this.editData.PlantId,
+        workcenterid: this.editData.WorkCenterId,
+        lineid: this.editData.LineId,
+        ipaddress: this.editData.IPAddress,
+        macaddress: this.editData.MACAddress,
+        description: this.editData.Description,
+        enable: this.editData.Enable.toString(),
+        sort: this.editData.Sort,
+      };
+      this.plantid = this.editData.PlantId;
+      this.getWorkshopList();
+      this.workshopId = this.editData.WorkCenterId;
+      this.getLineList();
+    }
   },
   methods: {
     enableChange(value) {
@@ -151,13 +169,8 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           if (this.isEdit) {
-            let editForm = {
-              ParamGroupId: this.form.ParamGroupId,
-              ParamGroupName: this.form.ParamGroupName,
-              ParamGroupDesc: this.form.ParamGroupDesc,
-              Enable: this.form.Enable,
-            };
-            setSopDevice(editForm, "update").then((res) => {
+            this.form.equipmentid  = this.editData.EquipmentId
+            setSopDevice(this.form, "update").then((res) => {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
                 this.$emit("success");

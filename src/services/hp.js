@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-03-26 10:33:17
- * @LastEditTime: 2022-03-28 15:42:54
+ * @LastEditTime: 2022-03-29 17:47:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/hp.js
@@ -59,10 +59,40 @@ export function editIntermediary(params) {
  export function getMonthlyTaskList(params) {
     return request(`${UP_HP}/getyjmonthtasklist`, METHOD.GET, params);
 }
-
 export function importMonthlyTaskList(params) {
     return request(`${UP_HP}/importyjmonthtask`, METHOD.POST, params);
 }
 export function editMonthlyTask(params) {
     return request(`${UP_HP}/edityjmonthtasksingle`, METHOD.POST, params);
+}
+export function getSalesmanList(params) {
+    return request(`${UP_HP}/getsalesmanlist`, METHOD.GET, params);
+}
+export function deleteItem(params) {
+    return request(`${UP_HP}/deleteyjmonthtasksalesman`, METHOD.POST, params);
+}
+
+
+/**
+ * @description: 完成率
+ * @param {*} params
+ * @param {*} action
+ * @return {*}
+ */
+export function getFinishingList(params) {
+    return request(`${UP_HP}/getmonthcomratelist`, METHOD.GET, params);
+}
+export function importFinishingList(params) {
+    return request(`${UP_HP}/importmonthcomrate`, METHOD.POST, params);
+}
+export function editFinishing(params) {
+    return request(`${UP_HP}/editmonthcomratesingle`, METHOD.POST, params);
+}
+export function deleteFinishing(params) {
+    return request(`${UP_HP}/deletemonthcomratesalesman`, METHOD.POST, params);
+}
+
+
+export function getOrderList(params) {
+    return request(`${UP_HP}/getsalesorderlist`, METHOD.GET, params);
 }

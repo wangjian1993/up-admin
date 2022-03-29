@@ -1,7 +1,15 @@
 <!--
  * @Author: max
+ * @Date: 2022-03-29 14:17:58
+ * @LastEditTime: 2022-03-29 15:00:22
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/hp/commissions/finishing/finishing.vue
+-->
+<!--
+ * @Author: max
  * @Date: 2022-03-25 17:45:07
- * @LastEditTime: 2022-03-29 14:39:03
+ * @LastEditTime: 2022-03-28 15:20:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/discount/discount.vue
@@ -12,17 +20,15 @@
       <a-form layout="horizontal" :form="searchForm">
         <div :class="advanced ? null : 'fold'">
           <a-row>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="订单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入订单号" v-decorator="['mono']" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="合同号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入合同号" v-decorator="['crtno']" />
-              </a-form-item>
-            </a-col>
             <a-col :md="6" :sm="24" v-if="rolesign == 'ADMIN'">
+              <a-form-item label="业务员" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select style="width:200px" v-decorator="['employeecode']">
+                  <a-select-option key="" value="">全部</a-select-option>
+                  <a-select-option v-for="(item, index) in salesmanList" :key="index" :value="item.UserId">{{ item.DisplayName + " " + item.UserId }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
               <a-form-item label="录入时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-range-picker style="width: 300px" :default-value="dateFormat" v-decorator="['range-time-picker']" />
               </a-form-item>
@@ -51,6 +57,12 @@
         </template>
         <template slot="action" slot-scope="text, record" v-if="rolesign == 'ADMIN'">
           <div>
+            <a-popconfirm title="确定删除?" @confirm="() => useDelete(record)">
+              <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+                <a-icon type="delete" />
+                删除
+              </a>
+            </a-popconfirm>
             <a style="margin-right: 8px" :disabled="!hasPerm('edit')" @click="edit(record)">
               <a-icon type="edit" />
               编辑
@@ -58,14 +70,14 @@
           </div>
         </template>
       </a-table>
-      <ImportExcel v-if="isImportExcel" @closeModal="editClose"/>
+      <ImportExcel v-if="isImportExcel" @closeModal="editClose" />
     </a-spin>
     <editForm v-if="editForm" :editType="editType" :editFormData="editFormData" @success="editSuccess" @close="editClose" />
   </div>
 </template>
 
 <script>
-import { getDiscountList } from "@/services/hp.js";
+import { getFinishingList,deleteFinishing,getSalesmanList} from "@/services/hp.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
@@ -90,7 +102,8 @@ export default {
       isImportExcel: false,
       editForm: false,
       editFormData: [],
-      editType:'discount'
+      editType: "finishing",
+      salesmanList:[]
     };
   },
   updated() {
@@ -100,6 +113,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
     });
+    this.getSalesmanList();
   },
   watch: {
     rolesign(res) {
@@ -157,7 +171,14 @@ export default {
     },
     editClose() {
       this.editForm = false;
-      this.isImportExcel =false
+      this.isImportExcel = false;
+    },
+    getSalesmanList() {
+      getSalesmanList().then((res) => {
+        if (res.data.success) {
+          this.salesmanList = res.data.data;
+        }
+      });
     },
     //获取列表
     getListAll() {
@@ -166,12 +187,11 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         rolesign: this.rolesign,
-        mono: "",
-        crtno: "",
+        remployeecode:"",
         importdatestart: this.dateFormat[0],
         importdateend: this.dateFormat[1],
       };
-      getDiscountList(parmas).then((res) => {
+      getFinishingList(parmas).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -181,6 +201,17 @@ export default {
           this.isSearch = 0;
         } else {
           this.loading = false;
+        }
+      });
+    },
+    useDelete(item) {
+      let parmas = {
+        EmployeeCode: item.EmployeeCode,
+      };
+      deleteFinishing(parmas).then((res) => {
+        if (res.data.success) {
+          this.$message.success("删除成功!");
+          this.getListAll();
         }
       });
     },
@@ -198,9 +229,6 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           console.log(values);
-          if (!values.mono && !values.crtno) {
-            return this.$message.warning("请输入订单号或合同号!");
-          }
           this.loading = true;
           if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
             const rangeValue = values["range-time-picker"];
@@ -212,12 +240,11 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             rolesign: this.rolesign,
-            mono: values.mono || "",
-            crtno: values.crtno || "",
+            employeecode: values.employeecode || "",
             importdatestart: importdatestart || "",
             importdateend: importdateend || "",
           };
-          getDiscountList(parmas).then((res) => {
+          getFinishingList(parmas).then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -248,7 +275,7 @@ export default {
         importdatestart: importdatestart || "",
         importdateend: importdateend || "",
       };
-      getDiscountList(parmas).then((res) => {
+      getFinishingList(parmas).then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

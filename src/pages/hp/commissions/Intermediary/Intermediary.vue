@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 14:04:18
- * @LastEditTime: 2022-03-28 15:19:41
+ * @LastEditTime: 2022-03-29 14:39:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/Intermediary/Intermediary.vue
@@ -58,7 +58,7 @@
           </div>
         </template>
       </a-table>
-      <ImportExcel v-if="isImportExcel" />
+      <ImportExcel v-if="isImportExcel" @closeModal="editClose"/>
       <editForm v-if="editForm" :editType="editType" :editFormData="editFormData" @success="editSuccess" @close="editClose" />
     </a-spin>
   </div>
@@ -157,6 +157,7 @@ export default {
     },
     editClose() {
       this.editForm = false;
+      this.isImportExcel = false
     },
     //获取列表
     getListAll() {

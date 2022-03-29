@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2022-03-28 14:23:00
+ * @LastEditTime: 2022-03-29 14:42:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/Intermediary/ImportExcel.vue
@@ -172,12 +172,11 @@ export default {
         if (res.data.AddNum == 0) {
           this.$message.success("导入成功!");
           this.close();
-          this.isUpload = false;
         } else {
           // this.$message.info(res.data.message.content);
           this.errorList = res.data.data.ErrorList;
-          this.isUpload = false;
         }
+        this.isUpload = false;
       });
     },
     //导入execl
@@ -224,7 +223,7 @@ export default {
       };
     },
     formatLongDate(date) {
-      console.log(date)
+      console.log(date);
       let dateTime = date.setDate(date.getDate() + 1);
       date = new Date(dateTime);
       let myyear = date.getFullYear();
