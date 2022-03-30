@@ -5,12 +5,12 @@
     </drawer>
     <side-menu :class="[fixedSideBar ? 'fixed-side' : '']" :theme="theme.mode" v-else-if="layout === 'side' || layout === 'mix'" :menuData="sideMenuData" :collapsed="collapsed" :collapsible="true" />
     <div v-if="fixedSideBar && !isMobile" :style="`width: ${sideMenuWidth}; min-width: ${sideMenuWidth};`" class="virtual-side"></div>
-    <drawer v-if="!hideSetting" v-model="showSetting" placement="right">
-      <div class="setting" slot="handler">
+    <!-- <drawer v-if="!hideSetting" v-model="showSetting" placement="right"> -->
+      <!-- <div class="setting" slot="handler">
         <a-icon :type="showSetting ? 'close' : 'setting'" />
-      </div>
-      <setting />
-    </drawer>
+      </div> -->
+      <!-- <setting /> -->
+    <!-- </drawer> -->
     <a-layout class="admin-layout-main beauty-scroll">
       <admin-header
         :class="[
@@ -52,16 +52,16 @@
 <script>
 import AdminHeader from "./header/AdminHeader";
 // import PageFooter from "./footer/PageFooter";
-import Drawer from "../components/tool/Drawer";
+// import Drawer from "../components/tool/Drawer";
 import SideMenu from "../components/menu/SideMenu";
-import Setting from "../components/setting/Setting";
+// import Setting from "../components/setting/Setting";
 import { mapState, mapMutations, mapGetters } from "vuex";
 import { getI18nKey } from "@/utils/routerUtil";
 // const minHeight = window.innerHeight - 64 - 122
 
 export default {
   name: "AdminLayout",
-  components: { Setting, SideMenu, Drawer, AdminHeader },
+  components: {SideMenu, AdminHeader },
   data() {
     return {
       minHeight: window.innerHeight - 48,

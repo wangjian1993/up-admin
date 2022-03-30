@@ -271,7 +271,7 @@ export default {
         pagesize: 10000,
         rolesign: this.rolesign,
         mono: values.mono || "",
-        crtno: values.crtno || "",
+        ctrno: values.ctrno || "",
         importdatestart: importdatestart || "",
         importdateend: importdateend || "",
       };

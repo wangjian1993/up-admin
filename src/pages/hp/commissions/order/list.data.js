@@ -21,8 +21,8 @@ export const columns = [
     },
     {
       title: "合同号",
-      dataIndex: "CrtNo",
-      scopedSlots: { customRender: "CrtNo" },
+      dataIndex: "ctrno",
+      scopedSlots: { customRender: "ctrno" },
       align: "center",
     },
     {

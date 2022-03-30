@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-03-29 17:42:46
- * @LastEditTime: 2022-03-29 17:59:44
+ * @LastEditTime: 2022-03-30 11:43:05
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/hp/commissions/order/order.vue
+ * @FilePath: /up-admin/src/pages/hp/commissions/collection/collection.vue
 -->
 <template>
   <div>
@@ -21,8 +21,8 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="订单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入订单号" v-decorator="['mono']" />
+              <a-form-item label="收款单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入收款单号" v-decorator="['mono']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -36,7 +36,7 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24" v-if="rolesign == 'ADMIN'">
-              <a-form-item label="录入时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-form-item label="收款时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-range-picker style="width: 300px" :default-value="dateFormat" v-decorator="['range-time-picker']" />
               </a-form-item>
             </a-col>
@@ -56,14 +56,14 @@
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
-        <template slot="action" slot-scope="text, record" v-if="rolesign == 'ADMIN'">
+        <!-- <template slot="action" slot-scope="text, record" v-if="rolesign == 'ADMIN'">
           <div>
             <a style="margin-right: 8px" :disabled="!hasPerm('edit')" @click="edit(record)">
               <a-icon type="edit" />
               编辑折扣率
             </a>
           </div>
-        </template>
+        </template> -->
       </a-table>
     </a-spin>
     <editForm v-if="editForm" :editType="editType" :editFormData="editFormData" @success="editSuccess" @close="editClose" />
@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { getOrderList, getSalesmanList } from "@/services/hp.js";
+import { getCollectionList, getSalesmanList } from "@/services/hp.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
@@ -111,18 +111,6 @@ export default {
   watch: {
     rolesign(res) {
       this.rolesign = res;
-      if (this.rolesign == "ADMIN") {
-        let day1 = moment().format("YYYY-MM-DD");
-        let day2 = moment()
-          .subtract(1, "years")
-          .format("YYYY-MM-DD"); // 1年前
-        this.dateFormat = [day2, day1];
-        this.getListAll();
-      } else {
-        // this.reset();
-        this.dataSource = [];
-        console.log("====dataSource", this.dataSource);
-      }
     },
   },
   computed: {
@@ -187,7 +175,7 @@ export default {
         importdatestart: this.dateFormat[0],
         importdateend: this.dateFormat[1],
       };
-      getOrderList(parmas).then((res) => {
+      getCollectionList(parmas).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -235,7 +223,7 @@ export default {
             importdatestart: importdatestart || "",
             importdateend: importdateend || "",
           };
-          getOrderList(parmas).then((res) => {
+          getCollectionList(parmas).then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -266,7 +254,7 @@ export default {
         importdatestart: importdatestart || "",
         importdateend: importdateend || "",
       };
-      getOrderList(parmas).then((res) => {
+      getCollectionList(parmas).then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

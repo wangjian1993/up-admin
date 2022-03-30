@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-03-26 10:33:17
- * @LastEditTime: 2022-03-29 17:47:38
+ * @LastEditTime: 2022-03-30 11:51:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/hp.js
@@ -95,4 +95,16 @@ export function deleteFinishing(params) {
 
 export function getOrderList(params) {
     return request(`${UP_HP}/getsalesorderlist`, METHOD.GET, params);
+}
+export function getCollectionList(params) {
+    return request(`${UP_HP}/getcollectionlist`, METHOD.GET, params);
+}
+export function getPerformanceList(params) {
+    return request(`${UP_HP}/getyjlist`, METHOD.GET, params);
+}
+export function getCommissionList(params) {
+    return request(`${UP_HP}/gettclist`, METHOD.GET, params);
+}
+export function getDiscountRateList(params) {
+    return request(`${UP_HP}/getzkjctcrate`, METHOD.GET, params);
 }

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-03-29 17:26:26
+ * @LastEditTime: 2022-03-30 15:11:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
@@ -24,7 +24,7 @@
           <a-col :span="12">
             <a-form-model-item ref="plantid" has-feedback label="生产工厂" prop="plantid" :labelCol="{ span: 6 }">
               <a-select v-model="form.plantid" placeholder="请选择生产工厂">
-                <a-select-option v-for="(item, index) in plantList" :key="index" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+               <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
               </a-select>
             </a-form-model-item>
           </a-col>
@@ -67,7 +67,6 @@
 </template>
 
 <script>
-import { getProductionPersonnel } from "@/services/web.js";
 import { setSopDocumnet, getSopDocument } from "@/services/esop.js";
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -262,7 +261,7 @@ export default {
       let parmas = {
         entertypecode: "PLANT",
       };
-      getProductionPersonnel(parmas, "getlistbytypecode").then((res) => {
+      getSopDocument(parmas, "getSopDocument").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }

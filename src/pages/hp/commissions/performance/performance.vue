@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-03-29 17:42:46
- * @LastEditTime: 2022-03-29 17:59:44
+ * @LastEditTime: 2022-03-30 11:27:46
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/hp/commissions/order/order.vue
+ * @FilePath: /up-admin/src/pages/hp/commissions/performance/performance.vue
 -->
 <template>
   <div>
@@ -21,23 +21,17 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="订单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入订单号" v-decorator="['mono']" />
+              <a-form-item label="年度" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select style="width:200px" v-decorator="['theyear']">
+                  <a-select-option key="" value="2020">2020</a-select-option>
+                  <a-select-option key="" value="2021">2021</a-select-option>
+                  <a-select-option key="" value="2022">2022</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="合同号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入合同号" v-decorator="['ctrno']" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="客户代码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入合同号" v-decorator="['customercode']" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24" v-if="rolesign == 'ADMIN'">
-              <a-form-item label="录入时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-range-picker style="width: 300px" :default-value="dateFormat" v-decorator="['range-time-picker']" />
+              <a-form-item label="月份" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-month-picker placeholder="选择月份"  v-decorator="['themonth']"/>
               </a-form-item>
             </a-col>
           </a-row>
@@ -56,14 +50,14 @@
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
-        <template slot="action" slot-scope="text, record" v-if="rolesign == 'ADMIN'">
+        <!-- <template slot="action" slot-scope="text, record" v-if="rolesign == 'ADMIN'">
           <div>
             <a style="margin-right: 8px" :disabled="!hasPerm('edit')" @click="edit(record)">
               <a-icon type="edit" />
               编辑折扣率
             </a>
           </div>
-        </template>
+        </template> -->
       </a-table>
     </a-spin>
     <editForm v-if="editForm" :editType="editType" :editFormData="editFormData" @success="editSuccess" @close="editClose" />
@@ -71,7 +65,7 @@
 </template>
 
 <script>
-import { getOrderList, getSalesmanList } from "@/services/hp.js";
+import { getPerformanceList, getSalesmanList } from "@/services/hp.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
@@ -111,18 +105,6 @@ export default {
   watch: {
     rolesign(res) {
       this.rolesign = res;
-      if (this.rolesign == "ADMIN") {
-        let day1 = moment().format("YYYY-MM-DD");
-        let day2 = moment()
-          .subtract(1, "years")
-          .format("YYYY-MM-DD"); // 1年前
-        this.dateFormat = [day2, day1];
-        this.getListAll();
-      } else {
-        // this.reset();
-        this.dataSource = [];
-        console.log("====dataSource", this.dataSource);
-      }
     },
   },
   computed: {
@@ -180,14 +162,11 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         rolesign: this.rolesign,
-        mono: "",
-        ctrno: "",
-        customercode: "",
+        theyear: "",
+        themonth: "",
         employeecode: "",
-        importdatestart: this.dateFormat[0],
-        importdateend: this.dateFormat[1],
       };
-      getOrderList(parmas).then((res) => {
+      getPerformanceList(parmas).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -214,28 +193,17 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           console.log(values);
-          if (!values.mono && !values.ctrno) {
-            return this.$message.warning("请输入订单号或合同号!");
-          }
           this.loading = true;
-          if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
-            const rangeValue = values["range-time-picker"];
-            var importdatestart = rangeValue[0].format("YYYY-MM-DD");
-            var importdateend = rangeValue[1].format("YYYY-MM-DD");
-          }
           console.log("Received values of form: ", values);
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             rolesign: this.rolesign,
-            mono: values.mono || "",
-            ctrno: values.ctrno || "",
-            ustomercode: values.ustomercode || "",
+            theyear: values.theyear || "",
+            themonth: values.themonth || "",
             employeecode: values.employeecode || "",
-            importdatestart: importdatestart || "",
-            importdateend: importdateend || "",
           };
-          getOrderList(parmas).then((res) => {
+          getPerformanceList(parmas).then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -266,7 +234,7 @@ export default {
         importdatestart: importdatestart || "",
         importdateend: importdateend || "",
       };
-      getOrderList(parmas).then((res) => {
+      getPerformanceList(parmas).then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {
