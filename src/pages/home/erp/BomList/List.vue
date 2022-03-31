@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-03-26 10:59:12
+ * @LastEditTime: 2022-03-31 11:26:00
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -744,6 +744,7 @@ export default {
               });
               this.$message.success("导出数据成功!");
               this.selectedRowKeys = [];
+              this.printArray =[];
             } catch (error) {
               console.log(error);
               this.$message.error("导出数据失败");
