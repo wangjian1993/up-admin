@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2022-03-31 11:18:45
+ * @LastEditTime: 2022-03-31 11:38:36
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -777,31 +777,22 @@ export default {
           console.log("信息-----", item);
           cost = cost.concat(item.list);
         });
-        // for (let item of cost) {
-        //   if (item.CostName == "加工费" && item.Amount <= 0) {
-        //     this.$message.warning("请先填写报价单'加工费'!");
-        //     break;
-        //   }
-        //   if (item.CostName == "灯珠贴片费" && item.Amount <= 0) {
-        //     this.$message.warning("请先填写报价单'灯珠贴片费'!");
-        //     break;
-        //   }
-        // }
-        // const costFlag = cost.every((item) => {
-        //   if (item.CostName == "加工费" && item.Amount <= 0) {
-        //     this.$message.warning("请先填写报价单'加工费'!");
-        //     return false;
-        //   }
-        //   if (item.CostName == "灯珠贴片费" && item.Amount <= 0) {
-        //     this.$message.warning("请先填写报价单'灯珠贴片费'!");
-        //     return false;
-        //   }
-        //   return;
-        // });
-        // if (!costFlag) {
-        //   this.costLoading = false;
-        //   return false;
-        // }
+        let flag = cost.some((item) => {
+          if (item.CostName == "加工费" && item.Amount <= 0) {
+            this.$message.warning("请先填写报价单'加工费'!");
+            return true;
+          }
+          if (item.CostName == "灯珠贴片费" && item.Amount <= 0) {
+            this.$message.warning("请先填写报价单'灯珠贴片费'!");
+            return true;
+          }
+        });
+        console.log("flag===",flag)
+        if (flag) {
+          this.costLoading = false;
+          return;
+        }
+        console.log("执行了后面");
         let parmas = {
           CostBaseList: cost,
           ItemChildList: this.tableData,

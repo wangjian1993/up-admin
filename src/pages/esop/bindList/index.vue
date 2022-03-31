@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-03-31 15:18:13
+ * @Date: 2022-03-31 13:32:48
+ * @LastEditTime: 2022-03-31 13:40:31
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/esop/document/index.vue
+ * @FilePath: /up-admin/src/pages/esop/bindList/index.vue
 -->
 <template>
   <div>
@@ -15,7 +15,7 @@
             <a-col :md="6" :sm="24">
               <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
-                 <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
+                  <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -71,24 +71,19 @@
           </a-row>
         </div>
         <span style="float: right; margin-top: 3px;">
-          <a style="margin-right: 8px" @click="helpClick('http://192.168.1.245:8080/docs/#/esop/docs')"><a-icon type="question-circle" /> 帮助</a>
           <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
         </span>
       </a-form>
       <div class="operator">
-        <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" @click="add" style="margin-left: 8px">上传</a-button>
-        <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">审核</a-button>
-        <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">审核</a-button>
-        <a-button v-if="hasPerm('retract')" icon="redo" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">撤回</a-button>
-        <a-button v-else icon="redo" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">撤回</a-button>
+        <!-- <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" @click="add" style="margin-left: 8px">添加</a-button>
         <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
             {{ `共选中 ${selectedRowKeys.length} 条` }}
           </template>
-        </span>
+        </span> -->
       </div>
       <a-table
         v-if="hasPerm('search')"
@@ -113,50 +108,20 @@
         </template>
         <template slot="Status" slot-scope="text">
           <div>
-            <a-tag color="green" v-if="text != '待审核'">{{ text }}</a-tag>
+            <a-tag color="green" v-if="text == '已审核'">已审核</a-tag>
             <a-tag color="red" v-else>{{ text }}</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">
           <div>
-            <a-popconfirm title="确定删除?" v-if="record.Status == '待审核'" @confirm="() => useDelete(record, 'delete')">
-              <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
-                <a-icon type="delete" />
-                删除
-              </a>
-            </a-popconfirm>
-            <a-popconfirm title="确定审核?" v-if="record.Status == '待审核'" @confirm="() => useDelete(record, 'audit')">
-              <a style="margin-right: 8px" :disabled="!hasPerm('approve')">
-                <a-icon type="check-circle" />
-                审核
-              </a>
-            </a-popconfirm>
-            <a-popconfirm title="确定撤回?" v-if="record.Status != '待审核'" @confirm="() => useDelete(record, 'retract')">
-              <a style="margin-right: 8px" :disabled="!hasPerm('retract')">
-                <a-icon type="redo" />
-                撤回
-              </a>
-            </a-popconfirm>
-            <a style="margin-right: 8px" v-if="record.Status == '待审核'" :disabled="!hasPerm('edit')" @click="useEdit(record)">
-              <a-icon type="edit" />
-              编辑
-            </a>
-            <a style="margin-right: 8px" @click="detail(record)">
+            <a style="margin-right: 8px" @click="bind(record)">
               <a-icon type="profile" />
-              查看明细 
+              选择设备
             </a>
           </div>
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
-      <Form v-if="isForm" :editData="editData" :isEdit="isEdit" @close="close" @success="success" />
-      <div>
-        <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
-          <a-descriptions title="详情" :column="1">
-            <a-descriptions-item v-for="(item, index) in filterData" :key="index" :label="item.title">{{ drawerItem[item.dataIndex] }}</a-descriptions-item>
-          </a-descriptions>
-        </a-drawer>
-      </div>
     </a-card>
   </div>
 </template>
@@ -170,15 +135,52 @@ const columns = [
     width: "5%",
   },
   {
-    title: "文件编号",
+    title: "设备编码",
+    dataIndex: "EquipmentCode",
+    scopedSlots: { customRender: "EquipmentCode" },
+    align: "center",
+  },
+  {
+    title: "设备名称",
+    dataIndex: "EquipmentName",
+    scopedSlots: { customRender: "EquipmentName" },
+    align: "center",
+  },
+  {
+    title: "工位",
     dataIndex: "DocumentCode",
     scopedSlots: { customRender: "DocumentCode" },
     align: "center",
   },
   {
-    title: "文件名称",
+    title: "工序",
     dataIndex: "DocumentName",
     scopedSlots: { customRender: "DocumentName" },
+    align: "center",
+    width: "5%",
+  },
+  {
+    title: "品号",
+    dataIndex: "PlantName",
+    scopedSlots: { customRender: "PlantName" },
+    align: "center",
+  },
+  {
+    title: "品名",
+    dataIndex: "PlantName",
+    scopedSlots: { customRender: "PlantName" },
+    align: "center",
+  },
+  {
+    title: "文档编码",
+    dataIndex: "PlantName",
+    scopedSlots: { customRender: "PlantName" },
+    align: "center",
+  },
+  {
+    title: "文档名称",
+    dataIndex: "PlantName",
+    scopedSlots: { customRender: "PlantName" },
     align: "center",
   },
   {
@@ -200,45 +202,21 @@ const columns = [
     align: "center",
   },
   {
-    title: "附近数量",
-    dataIndex: "FileCount",
-    scopedSlots: { customRender: "FileCount" },
-    align: "center",
-  },
-  {
-    title: "版本号",
-    dataIndex: "Version",
-    scopedSlots: { customRender: "Version" },
-    align: "center",
-  },
-  {
-    title: "上传人",
-    dataIndex: "Uploader",
-    scopedSlots: { customRender: "Uploader" },
-    align: "center",
-  },
-  {
-    title: "上传时间",
-    dataIndex: "UploadTime",
-    scopedSlots: { customRender: "UploadTime" },
-    align: "center",
-  },
-  {
-    title: "审核人员",
-    dataIndex: "Aduiter",
-    scopedSlots: { customRender: "Aduiter" },
-    align: "center",
-  },
-  {
-    title: "审核时间",
-    dataIndex: "AduitTime",
-    scopedSlots: { customRender: "AduitTime" },
-    align: "center",
-  },
-  {
     title: "状态",
     dataIndex: "Status",
     scopedSlots: { customRender: "Status" },
+    align: "center",
+  },
+  {
+    title: "创建人",
+    dataIndex: "Creater",
+    scopedSlots: { customRender: "Creater" },
+    align: "center",
+  },
+  {
+    title: "创建时间",
+    dataIndex: "CreateTime",
+    scopedSlots: { customRender: "CreateTime" },
     align: "center",
   },
   {
@@ -249,10 +227,8 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getSopDocument, setSopDocumnet } from "@/services/esop.js";
-import Form from "./form.vue";
+import { setSopDevice, getSopDocument ,getDeviceList} from "@/services/esop.js";
 export default {
-  components: { Form },
   data() {
     return {
       data: [],
@@ -284,8 +260,8 @@ export default {
       lineList: [],
       isForm: false, //添加编辑
       drawerItem: [],
-      editData: [],
-      isEdit: false,
+      isAddDevice:false,
+      documentItem:[]
     };
   },
   updated() {
@@ -311,15 +287,9 @@ export default {
     this.getEnterList();
   },
   methods: {
-    helpClick(url){
-      window.open(url,'_blank')
-    },
-    onClose() {
-      this.isDrawer = false;
-    },
-    detail(item) {
-      this.isDrawer = true;
-      this.drawerItem = item;
+    bind(item){
+        this.isAddDevice = true;
+        this.documentItem = item
     },
     //工厂选择
     plantChange(e) {
@@ -364,7 +334,7 @@ export default {
         plantid: this.plantid,
         workshopid: this.workshopId,
       };
-      getSopDocument(parmas, "getlist").then((res) => {
+      getSopDocument(parmas, "getline").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
@@ -379,7 +349,7 @@ export default {
           pagesize: this.pagination.pageSize,
         },
       };
-      getSopDocument(parmas, "get").then((res) => {
+      getDeviceList(parmas, "getinequipment").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -421,7 +391,7 @@ export default {
               status: values.status,
             },
           };
-          getSopDocument(parmas, "get").then((res) => {
+          getDeviceList(parmas, "getinequipment").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -435,21 +405,8 @@ export default {
         }
       });
     },
-    //添加
-    add() {
-      this.isForm = true;
-    },
-    useEdit(item) {
-      this.isForm = true;
-      this.editData = item;
-      this.isEdit = true;
-    },
     close() {
-      this.isForm = false;
-    },
-    success() {
-      this.isForm = false;
-      this.getListAll();
+      this.isAddDevice = false;
     },
     //多选删除
     allDel() {
@@ -458,7 +415,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          setSopDocumnet(self.selectedRowKeys, "delete").then((res) => {
+          setSopDevice(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -470,19 +427,11 @@ export default {
       });
     },
     //单个删除
-    useDelete(item, action) {
-      let parmas = [item.DocumentId, null];
-      setSopDocumnet(parmas, action).then((res) => {
+    useDelete(item) {
+      let parmas = [item.EquipmentId, null];
+      setSopDevice(parmas, "delete").then((res) => {
         if (res.data.success) {
-          if (action == "delete") {
-            this.$message.success("删除成功!");
-          }
-          if (action == "audit") {
-            this.$message.success("审核成功!");
-          }
-          if (action == "retract") {
-            this.$message.success("撤回成功!");
-          }
+          this.$message.success("删除成功!");
           this.getListAll();
         }
       });

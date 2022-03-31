@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 17:30:45
- * @LastEditTime: 2022-03-23 17:22:48
+ * @LastEditTime: 2022-03-31 11:52:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/DeliveryDetail/index2.vue
@@ -71,7 +71,7 @@
       </template>
       <template slot="TRANSACTION_DATE_FILTERS">
         <span>
-          <p>交货日期</p>
+         <p>交货日期<a-icon size="18" @click="tableDataSort" :type="itemNameSort == 'ascend' ? 'sort-ascending' : 'sort-descending'"></a-icon></p>
           <div style="display:flex;">
             <a-date-picker size="small" v-model="searchValue.transactiondate" />
             <a-dropdown>
@@ -233,9 +233,10 @@ import { columns, columnsHeard } from "./data2";
 import { PublicVarErp } from "@/mixins/publicVarErp.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 import { exportjsontoexcelMore } from "@/utils/ExportExcel";
+import { bomSort } from "@/mixins/bomSort.js";
 export default {
   components: { ModelInfo },
-  mixins: [PublicVarErp],
+  mixins: [PublicVarErp,bomSort],
   data() {
     this.components = {
       header: {

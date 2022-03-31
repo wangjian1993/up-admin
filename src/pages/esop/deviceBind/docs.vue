@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-31 09:19:37
- * @LastEditTime: 2022-03-31 10:40:55
+ * @LastEditTime: 2022-03-31 14:01:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/docs.vue
@@ -31,10 +31,19 @@
             <template slot="FileSize" slot-scope="text">
               <p>{{ getFileSize(text) }}</p>
             </template>
+            <template slot="action" slot-scope="text, record">
+              <div>
+                <a style="margin-right: 8px" @click="preview(record)">
+                  <a-icon type="profile" />
+                  预览
+                </a>
+              </div>
+            </template>
           </a-table>
         </a-card>
       </div>
     </a-modal>
+    <preview v-if="isPreview" :previewRecord="previewRecord" @close="closeModal"/>
   </div>
 </template>
 <script>
@@ -50,33 +59,36 @@ const columns = [
     dataIndex: "FileName",
     scopedSlots: { customRender: "FileName" },
     align: "center",
-    width: "130px",
   },
   {
     title: "附件大小",
     dataIndex: "FileSize",
     scopedSlots: { customRender: "FileSize" },
     align: "center",
-    width: 120,
   },
   {
     title: "附件类型",
     dataIndex: "FileType",
     scopedSlots: { customRender: "FileType" },
     align: "center",
-    width: 120,
   },
   {
     title: "附件时长",
     dataIndex: "FileLength",
     scopedSlots: { customRender: "FileLength" },
     align: "center",
-    width: 120,
+  },
+  {
+    title: "操作",
+    scopedSlots: { customRender: "action" },
+    align: "center",
   },
 ];
 import { getDeviceList, deviceSopBind } from "@/services/esop.js";
+import preview from "./preview.vue";
 export default {
   props: ["documentItem", "deviceItem", "plantId"],
+  components: { preview },
   data() {
     return {
       data: [],
@@ -95,6 +107,8 @@ export default {
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       docsFile: [],
+      isPreview:false,
+      previewRecord:[]
     };
   },
   created() {
@@ -102,8 +116,19 @@ export default {
     this.getDocsFile();
   },
   methods: {
+    preview(record) {
+      switch (record.FileType) {
+        case "image":
+          console.log(record);
+          break;
+        default:
+          break;
+      }
+      this.previewRecord = record
+      this.isPreview =true;
+    },
     closeModal() {
-      this.isPrint = true;
+      this.isPreview = false;
     },
     getDocsFile() {
       let parmas = {
