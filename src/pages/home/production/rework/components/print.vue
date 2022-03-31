@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-01-18 09:12:00
+ * @LastEditTime: 2022-03-31 09:53:20
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/rework/components/print.vue
@@ -21,7 +21,7 @@
         <div class="info">
           <a-descriptions :column="2" bordered size="small">
             <a-descriptions-item label="订单号">
-              {{ item.MoCode }}
+              {{ item.BusinessOrderNo}}
             </a-descriptions-item>
             <a-descriptions-item label="工单号">
               {{ item.MoCode }}

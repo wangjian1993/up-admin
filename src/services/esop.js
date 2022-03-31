@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-03-28 11:04:11
- * @LastEditTime: 2022-03-30 14:56:06
+ * @LastEditTime: 2022-03-31 10:17:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/esop.js
@@ -42,4 +42,8 @@ export function setSopDevice(params,action) {
 }
 export function getDeviceList(params,action) {
     return request(`${UP_ESOP}/doc/equipment/${action}`, METHOD.GET, params);
+}
+
+export function deviceSopBind(params,action) {
+    return request(`${UP_ESOP}/doc/equipment/${action}`, METHOD.POST, params);
 }

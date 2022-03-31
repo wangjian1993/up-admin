@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 13:41:09
- * @LastEditTime: 2022-03-30 17:48:31
+ * @LastEditTime: 2022-03-31 10:22:44
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/index.vue
@@ -76,14 +76,14 @@
         </span>
       </a-form>
       <div class="operator">
-        <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" @click="add" style="margin-left: 8px">添加</a-button>
+        <!-- <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" @click="add" style="margin-left: 8px">添加</a-button>
         <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
             {{ `共选中 ${selectedRowKeys.length} 条` }}
           </template>
-        </span>
+        </span> -->
       </div>
       <a-table
         v-if="hasPerm('search')"
@@ -94,7 +94,7 @@
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(data) => data.EquipmentId"
+        :rowKey="(data) => data.DocumentId"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -122,7 +122,7 @@
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
-      <device v-if="isAddDevice"/>
+      <device v-if="isAddDevice" :documentItem="documentItem" @close="close"/>
     </a-card>
   </div>
 </template>
@@ -233,7 +233,8 @@ export default {
       lineList: [],
       isForm: false, //添加编辑
       drawerItem: [],
-      isAddDevice:false
+      isAddDevice:false,
+      documentItem:[]
     };
   },
   updated() {
@@ -259,8 +260,9 @@ export default {
     this.getEnterList();
   },
   methods: {
-    bind(){
+    bind(item){
         this.isAddDevice = true;
+        this.documentItem = item
     },
     //工厂选择
     plantChange(e) {
@@ -324,7 +326,7 @@ export default {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
-          pagination.total = res.data.data.recordsTotal;
+          pagination.total = res.data.data.totalCount;
           this.pagination = pagination;
           this.loading = false;
           this.isSearch = false;
@@ -366,7 +368,7 @@ export default {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
-              pagination.total = res.data.data.recordsTotal;
+              pagination.total = res.data.data.totalCount;
               this.pagination = pagination;
               this.loading = false;
               this.isSearch = true;

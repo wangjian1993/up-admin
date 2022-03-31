@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 14:01:21
- * @LastEditTime: 2022-03-30 15:10:13
+ * @LastEditTime: 2022-03-31 10:34:51
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/device.vue
@@ -13,21 +13,21 @@
         <a-row>
           <a-col :md="6" :sm="24">
             <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
-               <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
+              <a-select v-model="plantId" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['workcenterid']" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
+              <a-select v-model="workshopId" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
                 <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产产线" @change="lineChange">
+              <a-select v-model="lineId" style="width: 200px" placeholder="请选择生产产线" @change="lineChange">
                 <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
               </a-select>
             </a-form-item>
@@ -42,11 +42,14 @@
             <span>右侧</span>
           </div>
           <div>
-            <!-- <div class="device-list-content">
-              <p class="process">工序1</p>
-              <p class="device">设备</p>
-              <p class="process">工序1</p>
-            </div> -->
+            <div class="device-list-content" v-for="(item, index) in deviceList" :key="item.EquipmentId">
+              <p class="process" @click="selectDocs(item, 1)">{{ index + 1 }}</p>
+              <div class="device">
+                <p>{{ item.EquipmentName }}</p>
+                <p :class="item.Status ? 'span-t' : 'span-f'"></p>
+              </div>
+              <p class="process" @click="selectDocs(item, 2)">{{ index + 1 }}</p>
+            </div>
           </div>
           <div class="device-list-footer">
             <span></span>
@@ -56,28 +59,45 @@
         </div>
       </div>
     </a-modal>
+    <docs v-if="isDocsList" :deviceItem="deviceItem" :plantId="plantId" :documentItem="documentItem" @closeModal="closeModal" @success="success" />
   </div>
 </template>
 
 <script>
-import { setSopDevice, getDeviceList ,getSopDocument} from "@/services/esop.js";
+import { setSopDevice, getDeviceList, getSopDocument } from "@/services/esop.js";
+import docs from "./docs.vue";
 export default {
+  props: ["documentItem"],
+  components: { docs },
   data() {
     return {
       visible: true,
       labelCol: { span: 6 },
       wrapperCol: { span: 14 },
-      plantid: "", //工厂
+      plantId: "", //工厂
       plantList: [],
       workshopList: [],
       workshopId: "", //车间
+      lineId: "",
       lineList: [],
+      deviceList: [],
+      isDocsList: false,
+      deviceItem: [],
     };
   },
   created() {
     this.getEnterList();
+    console.log(this.documentItem);
   },
   methods: {
+    selectDocs(record, direction) {
+      this.isDocsList = true;
+      record.direction = direction;
+      this.deviceItem = record;
+    },
+    closeModal() {
+      this.isDocsList = false;
+    },
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
@@ -103,39 +123,45 @@ export default {
     handleCancel() {
       this.$emit("close");
     },
+    success() {
+      this.isDocsList = false;
+      this.getDeviceList();
+    },
     //工厂选择
     plantChange(e) {
-      this.plantid = e;
+      this.plantId = e;
       this.getWorkshopList();
-      this.form.workcenterid = "";
-      this.form.lineid = "";
+      this.workshopId = "";
+      this.lineId = "";
     },
     //车间选择
     workShopChange(e) {
       this.workshopId = e;
       this.getLineList();
-      this.form.lineid = "";
+      this.lineId = "";
     },
     //获取设备
     lineChange(e) {
       console.log(e);
+      this.lineId = e;
+      this.getDeviceList();
+    },
+    getDeviceList() {
       let parmas = {
-        plantid: this.plantid,
+        plantid: this.plantId,
         workcenterid: this.workshopId,
-        lineid: e,
+        lineid: this.lineId,
       };
       getDeviceList(parmas, "getequipment").then((res) => {
         if (res.data.success) {
           console.log(res);
+          this.deviceList = res.data.data.list;
         }
       });
     },
     //获取生产工厂
     getEnterList() {
-      let parmas = {
-        entertypecode: "PLANT",
-      };
-      getSopDocument(parmas, "getplant").then((res) => {
+      getSopDocument("", "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -143,7 +169,7 @@ export default {
     },
     getWorkshopList() {
       let parmas = {
-        plantid: this.plantid,
+        plantid: this.plantId,
       };
       getSopDocument(parmas, "getworkcenter").then((res) => {
         if (res.data.success) {
@@ -153,7 +179,7 @@ export default {
     },
     getLineList() {
       let parmas = {
-        plantid: this.plantid,
+        plantid: this.plantId,
         workshopid: this.workshopId,
       };
       getSopDocument(parmas, "getline").then((res) => {
@@ -163,7 +189,6 @@ export default {
       });
     },
   },
-  components: {},
 };
 </script>
 
@@ -201,6 +226,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 5px 0;
     .process {
       width: 150px;
       height: 30px;
@@ -208,13 +234,34 @@ export default {
       text-align: center;
       line-height: 30px;
       cursor: pointer;
+      &:hover {
+        background: rgb(150, 227, 158);
+      }
     }
     .device {
       width: 80px;
       height: 50px;
       border: 1px #000 solid;
       text-align: center;
-      line-height: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      p {
+        margin: 0;
+      }
+      .span-f {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgb(240, 6, 6);
+      }
+      .span-t {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #06f035;
+      }
     }
   }
 }

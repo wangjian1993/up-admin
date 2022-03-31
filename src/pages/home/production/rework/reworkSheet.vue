@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-20 09:03:36
- * @LastEditTime: 2022-01-18 09:13:13
+ * @LastEditTime: 2022-03-31 10:01:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/rework/reworkSheet.vue
@@ -23,7 +23,7 @@
           {{ userLineData.UserName }}
         </a-descriptions-item>
         <a-descriptions-item label="打印时间">
-          <!-- {{ splitData(userLineData.RequirementDate) }} -->
+          {{ moment().format('YYYY-MM-DD HH:mm:ss') }}
         </a-descriptions-item>
       </a-descriptions>
       <div>
@@ -64,8 +64,8 @@ const columns = [
   },
   {
     title: "订单号",
-    dataIndex: "BatchNo",
-    scopedSlots: { customRender: "BatchNo" },
+    dataIndex: "BusinessOrderNo",
+    scopedSlots: { customRender: "BusinessOrderNo" },
     align: "center",
     width: "120px",
   },
@@ -85,15 +85,15 @@ const columns = [
   },
   {
     title: "品号",
-    dataIndex: "MitemCode",
-    scopedSlots: { customRender: "MitemCode" },
+    dataIndex: "ProCode",
+    scopedSlots: { customRender: "ProCode" },
     align: "center",
     width: 120,
   },
   {
     title: "品名",
-    dataIndex: "MitemName",
-    scopedSlots: { customRender: "MitemName" },
+    dataIndex: "ProName",
+    scopedSlots: { customRender: "ProName" },
     align: "center",
     width: 120,
   },
@@ -127,6 +127,7 @@ const columns = [
 ];
 import { setPrintInfo } from "@/services/web.js";
 import print from "./components/print.vue";
+import moment from "moment";
 export default {
   props: ["orderList", "userLineData"],
   components: { print },
@@ -148,13 +149,14 @@ export default {
       },
       isPrint: false,
       selectedRowKeys: [],
-      printData:[]
+      printData: [],
     };
   },
   created() {
     this.getPrintList();
   },
   methods: {
+    moment,
     closeModal() {
       this.isPrint = true;
     },
@@ -177,13 +179,13 @@ export default {
       });
     },
     handleOk() {
-      this.printData =[]
+      this.printData = [];
       if (this.selectedRowKeys.length == 0) {
         return;
       }
       this.selectedRowKeys.map((item) => {
         this.printData.push(this.data[item]);
-      })
+      });
       this.isPrint = true;
     },
   },
