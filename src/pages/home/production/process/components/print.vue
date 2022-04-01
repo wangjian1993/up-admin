@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-03-03 11:49:17
+ * @LastEditTime: 2022-03-31 09:43:26
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/process/components/print.vue
@@ -40,7 +40,7 @@
             <a-descriptions-item label="品号">
               {{ item.MitemCode }}
             </a-descriptions-item>
-            <a-descriptions-item label="色温"> </a-descriptions-item>
+            <a-descriptions-item label="色温">{{ item.ColorTemperature }}</a-descriptions-item>
             <a-descriptions-item label="生产车间">
               {{ item.WorkShopName }}
             </a-descriptions-item>
@@ -240,8 +240,8 @@ export default {
   border: 1px solid #333;
 }
 /deep/.ant-checkbox-inner {
-  width:25px;
-  height:25px;
+  width: 25px;
+  height: 25px;
   border: 2px solid #000;
 }
 // /deep/.ant-checkbox-input {

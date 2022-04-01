@@ -68,7 +68,7 @@ const columns = [
   },
   {
     title: "合同号",
-    dataIndex: "CrtNo",
+    dataIndex: "ctrno",
     align: "center",
   },
   {
@@ -148,7 +148,7 @@ export default {
         }
         parmas.ZkRate.push({
           MoNo: item.MoNo,
-          CrtNo: item.CrtNo,
+          ctrno: item.ctrno,
           ZkRate: item.ZkRate,
         });
       });
@@ -207,7 +207,7 @@ export default {
         results.forEach((item) => {
           this.tableData.push({
             MoNo: item["订单号"],
-            CrtNo: item["合同号"],
+            ctrno: item["合同号"],
             ZkRate: item["折扣率"],
           });
         });

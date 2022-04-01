@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2022-02-14 15:42:53
+ * @LastEditTime: 2022-03-31 11:38:36
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -493,7 +493,7 @@ export default {
       getCostConfig(parmas, "getbomdetail2").then((res) => {
         if (res.data.success) {
           this.tableData = res.data.data.ItemInfo.ItemChildList;
-          this.tableData.forEach((item,index) => {
+          this.tableData.forEach((item, index) => {
             item.CodeId = item.ChildCode + "_" + item.LastCode + "_" + index;
           });
           this.searchList = this.tableData;
@@ -774,8 +774,25 @@ export default {
         // var obj = Object.assign(this.tableData, this.searchList);
         let cost = [];
         this.costList.map((item) => {
+          console.log("信息-----", item);
           cost = cost.concat(item.list);
         });
+        let flag = cost.some((item) => {
+          if (item.CostName == "加工费" && item.Amount <= 0) {
+            this.$message.warning("请先填写报价单'加工费'!");
+            return true;
+          }
+          if (item.CostName == "灯珠贴片费" && item.Amount <= 0) {
+            this.$message.warning("请先填写报价单'灯珠贴片费'!");
+            return true;
+          }
+        });
+        console.log("flag===",flag)
+        if (flag) {
+          this.costLoading = false;
+          return;
+        }
+        console.log("执行了后面");
         let parmas = {
           CostBaseList: cost,
           ItemChildList: this.tableData,

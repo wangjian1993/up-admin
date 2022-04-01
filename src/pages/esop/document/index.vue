@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-03-29 16:07:45
+ * @LastEditTime: 2022-03-31 15:18:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/index.vue
@@ -15,7 +15,7 @@
             <a-col :md="6" :sm="24">
               <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
-                  <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                 <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -71,6 +71,7 @@
           </a-row>
         </div>
         <span style="float: right; margin-top: 3px;">
+          <a style="margin-right: 8px" @click="helpClick('http://192.168.1.245:8080/docs/#/esop/docs')"><a-icon type="question-circle" /> 帮助</a>
           <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
         </span>
@@ -140,10 +141,10 @@
               <a-icon type="edit" />
               编辑
             </a>
-            <!-- <a style="margin-right: 8px" @click="detail(record)">
+            <a style="margin-right: 8px" @click="detail(record)">
               <a-icon type="profile" />
-              查看明细 -->
-            <!-- </a> -->
+              查看明细 
+            </a>
           </div>
         </template>
       </a-table>
@@ -246,7 +247,6 @@ const columns = [
     align: "center",
   },
 ];
-import { getProductionPersonnel, getWorkshopList, getLineList } from "@/services/web.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getSopDocument, setSopDocumnet } from "@/services/esop.js";
@@ -311,6 +311,9 @@ export default {
     this.getEnterList();
   },
   methods: {
+    helpClick(url){
+      window.open(url,'_blank')
+    },
     onClose() {
       this.isDrawer = false;
     },
@@ -340,7 +343,7 @@ export default {
       let parmas = {
         entertypecode: "PLANT",
       };
-      getProductionPersonnel(parmas, "getlistbytypecode").then((res) => {
+      getSopDocument(parmas, "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -350,7 +353,7 @@ export default {
       let parmas = {
         plantid: this.plantid,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getSopDocument(parmas, "getworkcenter").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
@@ -361,7 +364,7 @@ export default {
         plantid: this.plantid,
         workshopid: this.workshopId,
       };
-      getLineList(parmas, "getlist").then((res) => {
+      getSopDocument(parmas, "getlist").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }

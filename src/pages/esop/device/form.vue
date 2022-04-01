@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-03-29 08:51:40
+ * @LastEditTime: 2022-03-30 15:10:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/device/form.vue
@@ -24,7 +24,7 @@
           <a-col :span="12">
             <a-form-model-item ref="plantid" has-feedback label="生产工厂" prop="plantid" :labelCol="{ span: 6 }">
               <a-select v-model="form.plantid" placeholder="请选择生产工厂" @change="plantChange">
-                <a-select-option v-for="(item, index) in plantList" :key="index" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
               </a-select>
             </a-form-model-item>
           </a-col>
@@ -75,8 +75,7 @@
 </template>
 
 <script>
-import { getProductionPersonnel, getWorkshopList, getLineList } from "@/services/web.js";
-import { setSopDevice } from "@/services/esop.js";
+import { setSopDevice ,getSopDocument} from "@/services/esop.js";
 export default {
   props: ["editData", "isEdit"],
   data() {
@@ -208,7 +207,7 @@ export default {
       let parmas = {
         entertypecode: "PLANT",
       };
-      getProductionPersonnel(parmas, "getlistbytypecode").then((res) => {
+      getSopDocument(parmas, "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -218,7 +217,7 @@ export default {
       let parmas = {
         plantid: this.plantid,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getSopDocument(parmas, "getworkcenter").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
@@ -229,7 +228,7 @@ export default {
         plantid: this.plantid,
         workshopid: this.workshopId,
       };
-      getLineList(parmas, "getlist").then((res) => {
+      getSopDocument(parmas, "getline").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }

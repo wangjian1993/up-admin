@@ -27,7 +27,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="合同号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入合同号" v-decorator="['crtno']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入合同号" v-decorator="['ctrno']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -181,7 +181,7 @@ export default {
         pagesize: this.pagination.pageSize,
         rolesign: this.rolesign,
         mono: "",
-        crtno: "",
+        ctrno: "",
         customercode: "",
         employeecode: "",
         importdatestart: this.dateFormat[0],
@@ -214,7 +214,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           console.log(values);
-          if (!values.mono && !values.crtno) {
+          if (!values.mono && !values.ctrno) {
             return this.$message.warning("请输入订单号或合同号!");
           }
           this.loading = true;
@@ -229,7 +229,7 @@ export default {
             pagesize: this.pagination.pageSize,
             rolesign: this.rolesign,
             mono: values.mono || "",
-            crtno: values.crtno || "",
+            ctrno: values.ctrno || "",
             ustomercode: values.ustomercode || "",
             employeecode: values.employeecode || "",
             importdatestart: importdatestart || "",
@@ -262,7 +262,7 @@ export default {
         pagesize: 10000,
         rolesign: this.rolesign,
         mono: values.mono || "",
-        crtno: values.crtno || "",
+        ctrno: values.ctrno || "",
         importdatestart: importdatestart || "",
         importdateend: importdateend || "",
       };

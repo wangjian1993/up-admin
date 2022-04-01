@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 14:04:18
- * @LastEditTime: 2022-03-29 14:40:06
+ * @LastEditTime: 2022-03-30 11:24:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/monthlyTask/monthlyTask.vue
@@ -23,7 +23,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="月份" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-month-picker placeholder="选择月份" />
+                <a-month-picker placeholder="选择月份"  v-decorator="['themonth']"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24" v-if="rolesign == 'ADMIN'">
@@ -124,18 +124,6 @@ export default {
   watch: {
     rolesign(res) {
       this.rolesign = res;
-      if (this.rolesign == "ADMIN") {
-        let day1 = moment().format("YYYY-MM-DD");
-        let day2 = moment()
-          .subtract(2, "years")
-          .format("YYYY-MM-DD"); // 1年前
-        this.dateFormat = [day2, day1];
-        this.getListAll();
-      } else {
-        // this.reset();
-        this.dataSource = [];
-        console.log("====dataSource", this.dataSource);
-      }
     },
   },
   computed: {
@@ -285,7 +273,7 @@ export default {
         pagesize: 10000,
         rolesign: this.rolesign,
         mono: values.mono || "",
-        crtno: values.crtno || "",
+        ctrno: values.ctrno || "",
         importdatestart: importdatestart || "",
         importdateend: importdateend || "",
       };

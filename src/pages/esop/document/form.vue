@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-03-29 17:26:26
+ * @LastEditTime: 2022-03-31 16:09:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
@@ -24,7 +24,7 @@
           <a-col :span="12">
             <a-form-model-item ref="plantid" has-feedback label="生产工厂" prop="plantid" :labelCol="{ span: 6 }">
               <a-select v-model="form.plantid" placeholder="请选择生产工厂">
-                <a-select-option v-for="(item, index) in plantList" :key="index" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
               </a-select>
             </a-form-model-item>
           </a-col>
@@ -55,7 +55,7 @@
           </a-col>
           <a-col :span="12">
             <a-form-model-item label="上传附件" :labelCol="{ span: 6 }">
-              <a-upload :beforeUpload="beforeUpload" :custom-request="uploadFile" list-type="picture" :default-file-list="fileList" :remove="removeFile">
+              <a-upload :beforeUpload="beforeUpload" :custom-request="uploadFile" list-type="picture" :default-file-list="defFileList" :fileList="fileList" :remove="removeFile">
                 <a-button> <a-icon type="upload" /> 选择附件 </a-button>
               </a-upload></a-form-model-item
             >
@@ -67,7 +67,6 @@
 </template>
 
 <script>
-import { getProductionPersonnel } from "@/services/web.js";
 import { setSopDocumnet, getSopDocument } from "@/services/esop.js";
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -87,6 +86,7 @@ export default {
       workshopId: "", //车间
       lineList: [],
       fileList: [],
+      defFileList: [],
       fileData: [],
       FilePrefix: "",
       form: {
@@ -138,11 +138,15 @@ export default {
   },
   methods: {
     removeFile(record) {
-      let parmas = {
-        resourceid: record.ResourceId,
-        filepath: record.FilePath,
+      console.log(record);
+      console.log(this.fileData);
+      let paramsData = this.fileData.find((item) => item.uid == record.uid);
+      console.log("paramsData",paramsData);
+      let params = {
+        resourceid: paramsData.ResourceId,
+        filepath: paramsData.FilePath,
       };
-      setSopDocumnet(parmas, "deletefile").then((res) => {
+      setSopDocumnet(params, "deletefile").then((res) => {
         if (res.data.success) {
           this.$message.success("移除成功!");
           this.fileData.map((item, index) => {
@@ -163,7 +167,7 @@ export default {
           let doc = res.data.data.doc;
           let files = res.data.data.files;
           files.forEach((item) => {
-            this.fileList.push({
+            this.defFileList.push({
               ...item,
               name: item.FileName,
               status: "done",
@@ -177,7 +181,6 @@ export default {
               ResourceId: item.ResourceId,
             });
           });
-          console.log(this.fileList);
           this.form = {
             documentcode: doc.DocumentCode,
             documentname: doc.DocumentName,
@@ -190,15 +193,15 @@ export default {
         }
       });
     },
-    beforeUpload(file) {
+    beforeUpload() {
       // const fileExt = file.name
       //   .split(".")
       //   .pop()
       //   .toLocaleLowerCase();
-      let fileList = [...this.fileList, file];
-      this.fileList = fileList.slice(-1);
-      this.isUpload = true;
-      this.file = file;
+      // let fileList = [...this.fileList, file];
+      // this.fileList = fileList.slice(-1);
+      // this.isUpload = true;
+      // this.file = file;
     },
     uploadFile(info) {
       getBase64(info.file, (imageUrl) => {
@@ -217,14 +220,19 @@ export default {
           parmas.FilePrefix = this.FilePrefix;
         }
         setSopDocumnet(parmas, "upload").then((res) => {
+          console.log("fileList===", this.fileList);
           if (res.data.success) {
+            this.fileList.push(info.file);
             this.$message.success("上传成功!");
             if (this.fileData.length == 0) {
               this.FilePrefix = res.data.data.FilePrefix;
             }
-            this.fileData.push(res.data.data);
-          } else {
-            this.$message.error(`上传失败`);
+            let fileInfo = {
+              ...res.data.data,
+              ...info.file,
+            };
+            console.log("fileInfo", fileInfo);
+            this.fileData.push(fileInfo);
           }
         });
         this.loading = false;
@@ -262,7 +270,7 @@ export default {
       let parmas = {
         entertypecode: "PLANT",
       };
-      getProductionPersonnel(parmas, "getlistbytypecode").then((res) => {
+      getSopDocument(parmas, "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
