@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-03-31 15:18:13
+ * @LastEditTime: 2022-04-01 14:14:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/index.vue
@@ -15,7 +15,7 @@
             <a-col :md="6" :sm="24">
               <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
-                 <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
+                  <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -143,20 +143,14 @@
             </a>
             <a style="margin-right: 8px" @click="detail(record)">
               <a-icon type="profile" />
-              查看明细 
+              查看明细
             </a>
           </div>
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
       <Form v-if="isForm" :editData="editData" :isEdit="isEdit" @close="close" @success="success" />
-      <div>
-        <a-drawer width="400" placement="right" :closable="true" :visible="isDrawer" @close="onClose">
-          <a-descriptions title="详情" :column="1">
-            <a-descriptions-item v-for="(item, index) in filterData" :key="index" :label="item.title">{{ drawerItem[item.dataIndex] }}</a-descriptions-item>
-          </a-descriptions>
-        </a-drawer>
-      </div>
+      <useDetails v-if="isDrawer" :drawerItem="drawerItem" @closeModal="close"/>
     </a-card>
   </div>
 </template>
@@ -251,8 +245,9 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getSopDocument, setSopDocumnet } from "@/services/esop.js";
 import Form from "./form.vue";
+import useDetails from './details.vue'
 export default {
-  components: { Form },
+  components: { Form ,useDetails },
   data() {
     return {
       data: [],
@@ -311,8 +306,8 @@ export default {
     this.getEnterList();
   },
   methods: {
-    helpClick(url){
-      window.open(url,'_blank')
+    helpClick(url) {
+      window.open(url, "_blank");
     },
     onClose() {
       this.isDrawer = false;
@@ -374,10 +369,8 @@ export default {
     getListAll() {
       this.loading = true;
       let parmas = {
-        where: {
-          pageindex: this.pagination.current,
-          pagesize: this.pagination.pageSize,
-        },
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.pageSize,
       };
       getSopDocument(parmas, "get").then((res) => {
         if (res.data.success) {
@@ -408,18 +401,16 @@ export default {
         if (!err) {
           this.loading = true;
           let parmas = {
-            where: {
-              pageindex: this.pagination.current,
-              pagesize: this.pagination.pageSize,
-              equipmentcode: values.equipmentcode,
-              equipmentname: values.equipmentname,
-              plantid: values.plantid,
-              workcenterid: values.workcenterid,
-              lineid: values.lineid,
-              ipaddress: values.ipaddress,
-              enable: values.enable,
-              status: values.status,
-            },
+            pageindex: this.pagination.current,
+            pagesize: this.pagination.pageSize,
+            equipmentcode: values.equipmentcode,
+            equipmentname: values.equipmentname,
+            plantid: values.plantid,
+            workcenterid: values.workcenterid,
+            lineid: values.lineid,
+            ipaddress: values.ipaddress,
+            enable: values.enable,
+            status: values.status,
           };
           getSopDocument(parmas, "get").then((res) => {
             if (res.data.success) {
@@ -446,6 +437,7 @@ export default {
     },
     close() {
       this.isForm = false;
+      this.isDrawer =false
     },
     success() {
       this.isForm = false;

@@ -1,31 +1,34 @@
 <!--
  * @Author: max
- * @Date: 2022-03-31 09:19:37
- * @LastEditTime: 2022-04-01 14:43:29
+ * @Date: 2022-04-01 14:02:21
+ * @LastEditTime: 2022-04-01 14:42:14
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/esop/deviceBind/docs.vue
+ * @FilePath: /up-admin/src/pages/esop/document/details.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="选择sop文档" @cancel="close" @ok="handleOk" centered width="70%">
+    <a-modal v-model="visible" title="sop文档详情" @cancel="close" :footer="null" centered width="70%">
       <div>
+        <a-descriptions :column="4" size="small">
+          <a-descriptions-item label="文件名称">
+            {{ docsInfo.DocumentName }}
+          </a-descriptions-item>
+          <a-descriptions-item label="生产工厂">
+            {{ docsInfo.PlantName }}
+          </a-descriptions-item>
+          <a-descriptions-item label="产品大类">
+            {{ docsInfo.ProType }}
+          </a-descriptions-item>
+          <a-descriptions-item label="产品系列">
+            {{ docsInfo.ProTypeDetail }}
+          </a-descriptions-item>
+        </a-descriptions>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-          <a-table
-            :columns="columns"
-            :data-source="docsFile"
-            :size="size"
-            :pagination="false"
-            :rowKey="(docsFile) => docsFile.FileCode"
-            :row-selection="{
-              selectedRowKeys: selectedRowKeys,
-              onChange: onSelectChange,
-            }"
-            bordered
-          >
+          <a-table :columns="columns" :data-source="docsFile" :size="size" :pagination="false" :rowKey="(docsFile) => docsFile.FileCode" bordered>
             <template slot="index" slot-scope="text, record, index">
               <div>
-                <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+                <span>{{ index + 1 }}</span>
               </div>
             </template>
             <template slot="FileSize" slot-scope="text">
@@ -42,8 +45,8 @@
           </a-table>
         </a-card>
       </div>
+      <preview v-if="isPreview" :previewRecord="previewRecord" @close="closeModal" />
     </a-modal>
-    <preview v-if="isPreview" :previewRecord="previewRecord" @close="closeModal" />
   </div>
 </template>
 <script>
@@ -84,38 +87,30 @@ const columns = [
     align: "center",
   },
 ];
-import { getDeviceList, deviceSopBind } from "@/services/esop.js";
+import { getSopDocument } from "@/services/esop.js";
 import preview from "../components/preview.vue";
 export default {
-  props: ["documentItem", "deviceItem", "plantId"],
   components: { preview },
+  props: ["drawerItem"],
   data() {
     return {
       data: [],
       columns,
       size: "small",
       visible: true,
-      selectedRowKeys: [],
-      pagination: {
-        current: 1,
-        total: 0,
-        pageSize: 20, //每页中显示10条数据
-        showSizeChanger: true,
-        showLessItems: true,
-        showQuickJumper: true,
-        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
-      },
       docsFile: [],
+      docsInfo: [],
       isPreview: false,
       previewRecord: [],
     };
   },
   created() {
-    console.log(this.documentItem);
     this.getDocsFile();
   },
   methods: {
+    closeModal() {
+      this.isPreview = false;
+    },
     preview(record) {
       this.previewRecord = record;
       if (record.FileType == "image" || record.FileType == "video") {
@@ -124,16 +119,14 @@ export default {
         window.open("http://192.168.1.245:8080" + record.FilePath, "_blank");
       }
     },
-    closeModal() {
-      this.isPreview = false;
-    },
     getDocsFile() {
       let parmas = {
-        documentid: this.documentItem.DocumentId,
+        id: this.drawerItem.DocumentId,
       };
-      getDeviceList(parmas, "getfile").then((res) => {
+      getSopDocument(parmas, "single").then((res) => {
         if (res.data.success) {
-          this.docsFile = res.data.data.list;
+          this.docsFile = res.data.data.files;
+          this.docsInfo = res.data.data.doc;
         }
       });
     },
@@ -142,33 +135,6 @@ export default {
     },
     close() {
       this.$emit("closeModal");
-    },
-    handleOk() {
-      let params = {
-        documentid: this.documentItem.DocumentId,
-        documentcode: this.documentItem.DocumentCode,
-        equipmentlist: [
-          {
-            id: this.deviceItem.Id,
-            equipmentid: this.deviceItem.EquipmentId,
-            equipmentcode: this.deviceItem.EquipmentCode,
-            equipmentname: this.deviceItem.EquipmentName,
-            plantid: this.deviceItem.PlantId,
-            workcenterid: this.deviceItem.WorkCenterId,
-            lineid: this.deviceItem.LineId,
-            station: this.deviceItem.Station,
-            stationlocation: this.deviceItem.direction == 1 ? "左" : "右",
-            filecode: this.selectedRowKeys,
-          },
-        ],
-      };
-      deviceSopBind(params, "bind").then((res) => {
-        if (res.data.success) {
-          // this.docsFile = res.data.data.list;
-          this.$message.success("绑定成功!");
-          this.$emit("success");
-        }
-      });
     },
     getFileSize(size) {
       if (!size) return 0;

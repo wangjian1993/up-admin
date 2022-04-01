@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 13:41:09
- * @LastEditTime: 2022-03-31 10:22:44
+ * @LastEditTime: 2022-04-01 13:55:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/index.vue
@@ -122,7 +122,7 @@
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
-      <device v-if="isAddDevice" :documentItem="documentItem" @close="close"/>
+      <device v-if="isAddDevice" :documentItem="documentItem" @close="close" />
     </a-card>
   </div>
 </template>
@@ -233,8 +233,8 @@ export default {
       lineList: [],
       isForm: false, //添加编辑
       drawerItem: [],
-      isAddDevice:false,
-      documentItem:[]
+      isAddDevice: false,
+      documentItem: [],
     };
   },
   updated() {
@@ -260,9 +260,9 @@ export default {
     this.getEnterList();
   },
   methods: {
-    bind(item){
-        this.isAddDevice = true;
-        this.documentItem = item
+    bind(item) {
+      this.isAddDevice = true;
+      this.documentItem = item;
     },
     //工厂选择
     plantChange(e) {
@@ -317,10 +317,8 @@ export default {
     getListAll() {
       this.loading = true;
       let parmas = {
-        where: {
-          pageindex: this.pagination.current,
-          pagesize: this.pagination.pageSize,
-        },
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.pageSize,
       };
       getSopDocument(parmas, "get").then((res) => {
         if (res.data.success) {
@@ -351,18 +349,16 @@ export default {
         if (!err) {
           this.loading = true;
           let parmas = {
-            where: {
-              pageindex: this.pagination.current,
-              pagesize: this.pagination.pageSize,
-              equipmentcode: values.equipmentcode,
-              equipmentname: values.equipmentname,
-              plantid: values.plantid,
-              workcenterid: values.workcenterid,
-              lineid: values.lineid,
-              ipaddress: values.ipaddress,
-              enable: values.enable,
-              status: values.status,
-            },
+            pageindex: this.pagination.current,
+            pagesize: this.pagination.pageSize,
+            equipmentcode: values.equipmentcode,
+            equipmentname: values.equipmentname,
+            plantid: values.plantid,
+            workcenterid: values.workcenterid,
+            lineid: values.lineid,
+            ipaddress: values.ipaddress,
+            enable: values.enable,
+            status: values.status,
           };
           getSopDevice(parmas, "get").then((res) => {
             if (res.data.success) {

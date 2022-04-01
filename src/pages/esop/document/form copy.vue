@@ -1,7 +1,15 @@
 <!--
  * @Author: max
+ * @Date: 2022-04-01 14:51:08
+ * @LastEditTime: 2022-04-01 14:51:08
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/esop/document/form copy.vue
+-->
+<!--
+ * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-04-01 18:17:59
+ * @LastEditTime: 2022-04-01 10:32:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
@@ -29,10 +37,24 @@
             </a-form-model-item>
           </a-col>
           <!-- <a-col :span="12">
+            <a-form-model-item ref="workcenterid" has-feedback label="生产产线" prop="workcenterid" :labelCol="{ span: 6 }">
+              <a-select v-model="form.workcenterid" placeholder="请选择生产产线" @change="workShopChange">
+                <a-select-option v-for="(item, index) in workshopList" :key="index" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col>
+          <a-col :span="12">
+            <a-form-model-item ref="lineid" has-feedback label="生产车间" prop="lineid" :labelCol="{ span: 6 }">
+              <a-select v-model="form.lineid" placeholder="请选择生产车间">
+                <a-select-option v-for="(item, index) in lineList" :key="index" :value="item.LineId">{{ item.LineName }}</a-select-option>
+              </a-select>
+            </a-form-model-item>
+          </a-col> -->
+          <a-col :span="12">
             <a-form-model-item label="版本号" prop="version" :labelCol="{ span: 6 }">
               <a-input v-model="form.version" allowClear placeholder="请输入版本号" />
             </a-form-model-item>
-          </a-col> -->
+          </a-col>
           <a-col :span="12">
             <a-form-model-item label="产品大类" :labelCol="{ span: 6 }"><a-input v-model="form.protype" placeholder="请输入产品大类"/></a-form-model-item>
           </a-col>
@@ -40,14 +62,11 @@
             <a-form-model-item label="产品系列" :labelCol="{ span: 6 }"><a-input v-model="form.protypedetail" placeholder="请输入产品系列"/></a-form-model-item>
           </a-col>
           <a-col :span="12">
-            <a-form-model-item label="工序数量" :labelCol="{ span: 6 }"><a-input-number :min="1" v-model="processValue" placeholder="请输入工序" @change="processChange"/></a-form-model-item>
-          </a-col>
-          <a-col :span="12">
-            <div v-for="(item, index) in processValue" :key="index">
-              <a-form-model-item :label="'工序' + (index + 1)" :labelCol="{ span: 6 }">
-                <a-upload ref="uploadRef" :data="{ sort: index }" :custom-request="uploadFile" list-type="picture-card" :default-file-list="defFileList" :fileList="processList['sort' + index]" :remove="removeFile"> <a-icon type="plus" /> </a-upload
-              ></a-form-model-item>
-            </div>
+            <a-form-model-item label="上传附件" :labelCol="{ span: 6 }">
+              <a-upload :beforeUpload="beforeUpload" :custom-request="uploadFile" list-type="picture" :default-file-list="defFileList" :fileList="fileList" :remove="removeFile">
+                <a-button> <a-icon type="upload" /> 选择附件 </a-button>
+              </a-upload></a-form-model-item
+            >
           </a-col>
         </a-row>
       </a-form-model>
@@ -78,10 +97,6 @@ export default {
       defFileList: [],
       fileData: [],
       FilePrefix: "",
-      processValue: 1,
-      processList: {
-        sort0: [],
-      },
       form: {
         documentcode: "",
         documentname: "",
@@ -121,7 +136,6 @@ export default {
           },
         ],
       },
-      sortValue: 0,
     };
   },
   created() {
@@ -151,18 +165,6 @@ export default {
           });
         }
       });
-    },
-    processChange(e) {
-      if (e > this.sortValue) {
-        this.processList["sort" + this.editData] = [];
-      } else {
-         this.processList.pop()
-      }
-      this.sortValue = e;
-      // for (let index = 0; index < e; index++) {
-      //   this.processList["sort" + index] = [];
-      // }
-      // console.log(this.processList);
     },
     getListAll() {
       let parmas = {
@@ -211,7 +213,6 @@ export default {
       // this.file = file;
     },
     uploadFile(info) {
-      console.log("info", info);
       getBase64(info.file, (imageUrl) => {
         this.imageUrl = imageUrl;
         console.log(info.file);
@@ -237,6 +238,17 @@ export default {
           fileType = defaType[0];
           fileSuffix = defaType[1];
         }
+        // let fileType = info.file.type.split("/");
+        // console.log("this.fileData", info.file);
+        // switch (fileType[1]) {
+        //   case ".vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+        //     break;
+
+        //   default:
+        //     break;
+        // }
+        // filesuffix: ".vnd.openxmlformats-officedocument.wordprocessingml.document";
+        // filesuffix: ".vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         let parmas = {
           filename: info.file.name,
           filecontent: imageUrl,
@@ -251,10 +263,7 @@ export default {
         setSopDocumnet(parmas, "upload").then((res) => {
           console.log("fileList===", this.fileList);
           if (res.data.success) {
-            console.log("info.data.sort", info.data.sort);
-            console.log("this.processList", this.processList);
-            this.processList["sort" + info.data.sort].push(info.file);
-            console.log("this.processList", this.processList);
+            this.fileList.push(info.file);
             this.$message.success("上传成功!");
             if (this.fileData.length == 0) {
               this.FilePrefix = res.data.data.FilePrefix;
@@ -262,11 +271,9 @@ export default {
             let fileInfo = {
               ...res.data.data,
               ...info.file,
-              sort: info.data.sort + 1,
             };
-
+            console.log("fileInfo", fileInfo);
             this.fileData.push(fileInfo);
-            console.log(" this.fileData", this.fileData);
           }
         });
         this.loading = false;

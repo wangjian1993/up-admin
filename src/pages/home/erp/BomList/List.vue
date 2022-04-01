@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-03-31 11:20:10
+ * @LastEditTime: 2022-04-01 16:05:53
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -321,6 +321,7 @@ export default {
       parseList: [],
       printArray: [],
       isBulkImport: false,
+      scrollY:""
     };
   },
   activated() {

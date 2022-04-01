@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-03-31 09:43:26
+ * @LastEditTime: 2022-04-01 13:49:54
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/production/process/components/print.vue
@@ -17,6 +17,7 @@
           <div class="head-img"><img src="@/assets/img/mb.png" alt="" /></div>
           <div class="head-title">
             <p>物料标识卡</p>
+             <vue-barcode v-if="item.MitemCode" v-bind:value="item.MitemCode" :width="1" :height="50" :options="barcodeOptions" />
           </div>
           <div class="head-qr"><vue-qr :text="item.QrCode" :size="400"></vue-qr></div>
         </div>
@@ -81,15 +82,21 @@
 <script>
 import { setPrintInfo } from "@/services/web.js";
 import vueQr from "vue-qr";
+import VueBarcode from "vue-barcode";
 export default {
   props: ["printData"],
-  components: { vueQr },
+  components: { vueQr, VueBarcode },
   data() {
     return {
       data: [],
       isSearch: false,
       isUserList: false,
       visible: true,
+      barcodeValue: "",
+      barcodeOptions: {
+        width: 50,
+        height: 50,
+      },
     };
   },
   created() {

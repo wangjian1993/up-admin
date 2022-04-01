@@ -1,13 +1,14 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2021-12-27 15:30:40
+ * @LastEditTime: 2022-04-01 17:49:29
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
  */
 import {
-    UP_WEB
+    UP_WEB,
+    UP_REPORT
 } from '@/services/api'
 import {
     request,
@@ -238,4 +239,8 @@ export function getAgeingApi(params, action) {
 }
 export function setAgeingApi(params, action) {
     return request(`${UP_WEB}/process/ageing/${action}`, METHOD.POST, params);
+}
+
+export function getDailyReport(params, action) {
+    return request(`${UP_REPORT}/production/${action}`, METHOD.GET, params);
 }

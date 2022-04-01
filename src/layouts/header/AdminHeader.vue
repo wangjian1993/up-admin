@@ -18,7 +18,7 @@
       </div>
       <div :class="['admin-header-right', headerTheme]">
         <div class="header-item" @click="clickFullscreen"><a-icon :type="fullScreenIcon" /></div>
-        <!-- <header-help class="header-item" /> -->
+        <header-help class="header-item" />
         <header-avatar class="header-item" />
         <!-- <a-dropdown class="lang header-item">
           <div><a-icon type="global" /> {{ langAlias }}</div>
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-// import HeaderHelp from './HeaderHelp.vue';
+import HeaderHelp from './HeaderHelp.vue';
 import HeaderAvatar from "./HeaderAvatar";
 import IMenu from "@/components/menu/menu";
 import screenfull from "screenfull";
@@ -46,7 +46,7 @@ import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "AdminHeader",
-  components: { IMenu, HeaderAvatar},
+  components: { IMenu, HeaderAvatar ,HeaderHelp},
   props: ["collapsed", "menuData", "breadcrumb"],
   data() {
     return {

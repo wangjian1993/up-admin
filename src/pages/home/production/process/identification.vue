@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-16 13:58:52
- * @LastEditTime: 2022-03-03 11:49:51
+ * @LastEditTime: 2022-04-01 13:51:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/identification.vue
@@ -210,6 +210,7 @@ export default {
       //   ProCode: "3-03202-30300001",
       //   ProName: "UP-FDB30370-01 AL08-30W调光 TUV认证 SAA152451 SAA160864 for AL25",
       //   ProPlanId: "8CDD0749BBBB4A7C98D7DFBA40386A0E",
+      //   QrCode: "8CDD0749BBBB4A7C98D7DFBA40386A0E",
       //   ProcessCode: "AGEING_PROCESS",
       //   ProcessId: "71CA6E7BDD4849D5AAC05C91A05E3541",
       //   ProcessName: "老化工序",

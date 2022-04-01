@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-03-08 16:48:13
+ * @LastEditTime: 2022-04-01 17:18:27
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
@@ -64,8 +64,8 @@
           </a-descriptions>
         </div>
         <div>
-          <a-card title="BOM用量信息" class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ x: 2000 }" :pagination="false" :customRow="handleClickRow" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName" :components="components">
+          <a-card title="BOM用量信息" class="card" :bordered="false" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px' }">
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: scrollY, x: 2000 }" :pagination="false" :customRow="handleClickRow" :rowKey="(list) => list.BOM_D_ID" bordered :rowClassName="rowClassName" :components="components">
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -289,13 +289,6 @@ const columns = [
     align: "center",
     width: 80,
   },
-  {
-    title: "操作",
-    scopedSlots: { customRender: "action" },
-    align: "center",
-    fixed: "right",
-    width: 100,
-  },
 ];
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
@@ -335,19 +328,22 @@ export default {
       antDescriptionsRow: "",
       isUnfold: false,
       isCloneBtn: false,
+      scrollY: "",
     };
   },
   created() {
+    this.$nextTick(() => {
+      console.log("啊哈哈哈哈====", document.getElementsByClassName("ant-table-thead"));
+      let tHeader = document.getElementsByClassName("ant-table-thead")[2];
+      console.log("啊哈哈哈哈====", tHeader.getBoundingClientRect());
+      let tHeaderBottom = tHeader.getBoundingClientRect().bottom;
+      console.log("tHeaderBottom---", tHeaderBottom);
+      let height = `calc(100vh - 400px)`;
+      this.scrollY = height;
+    });
     this.getList();
     //设置详情字体颜色
     this.info.ApproveStatus == "N" ? (this.antDescriptionsRow = "rowColor1") : this.info.ApproveStatus == "V" ? (this.antDescriptionsRow = "rowColor2") : "";
-  },
-  mounted() {
-    window.addEventListener("scroll", this.handleScroll, true);
-  },
-  // 组件销毁前
-  beforeDestroy() {
-    window.removeEventListener("scroll", this.handleScroll,true);
   },
   methods: {
     splitData,
@@ -491,7 +487,7 @@ export default {
 }
 .clone-btn {
   position: fixed;
-  top:30%;
+  top: 30%;
   right: 0px;
   background: #f2f2f2;
   width: 40px;

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-03-26 10:55:50
+ * @LastEditTime: 2022-04-01 10:38:27
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
@@ -73,6 +73,7 @@
         <span>
           <!-- <a-button type="primary" @click="search">查询</a-button> -->
           <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+          <a style="margin-left: 8px" @click="helpClick('http://192.168.1.245:8080/docs/#/erp/info')"><a-icon type="question-circle" /> 帮助</a>
         </span>
       </a-col>
     </a-row>
@@ -289,6 +290,9 @@ export default {
   methods: {
     splitData,
     modelType,
+    helpClick(url){
+      window.open(url,'_blank')
+    },
     closeModal() {
       this.isModelInfo = false;
     },

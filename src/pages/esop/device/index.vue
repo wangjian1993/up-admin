@@ -349,10 +349,8 @@ export default {
     getListAll() {
       this.loading = true;
       let parmas = {
-        where: {
-          pageindex: this.pagination.current,
+         pageindex: this.pagination.current,
           pagesize: this.pagination.pageSize,
-        },
       };
       getSopDevice(parmas, "get").then((res) => {
         if (res.data.success) {
@@ -383,8 +381,7 @@ export default {
         if (!err) {
           this.loading = true;
           let parmas = {
-            where: {
-              pageindex: this.pagination.current,
+             pageindex: this.pagination.current,
               pagesize: this.pagination.pageSize,
               equipmentcode: values.equipmentcode,
               equipmentname: values.equipmentname,
@@ -394,7 +391,6 @@ export default {
               ipaddress: values.ipaddress,
               enable: values.enable,
               status: values.status,
-            },
           };
           getSopDevice(parmas, "get").then((res) => {
             if (res.data.success) {
