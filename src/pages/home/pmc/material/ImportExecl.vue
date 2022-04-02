@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:33:37
- * @LastEditTime: 2022-03-23 15:01:26
+ * @LastEditTime: 2022-04-02 14:10:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/ImportExecl.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="导入物料需求计划" @cancel="close" @ok="handleOk" centered :width="800">
+    <a-modal v-model="visible" title="导入物料需求计划" @cancel="close" :maskClosable="false" @ok="handleOk" centered :width="800">
       <a-spin tip="导入中..." :spinning="isUpload">
         <div>
           <a-form layout="horizontal">
@@ -92,9 +92,12 @@ export default {
     //移除文件
     removeFile() {
       this.fileList = [];
+      this.errorList = [];
     },
     close() {
       this.$emit("closeModal");
+      this.fileList = [];
+      this.errorList = [];
     },
     //查看详情
     onClose() {
@@ -105,7 +108,8 @@ export default {
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");
-      this.week = str[1].replace("周", "");
+      console.log(str);
+      this.week = str[1].replace("th", "");
     },
     //时间格式化
     formatDate(numb, format = "-") {
@@ -150,7 +154,11 @@ export default {
       if (this.isUpload) {
         return;
       }
-      this.errorList = [];
+      if (this.errorList.length > 0) {
+        this.$message.warning("请先检查上传的excel是否正确!");
+        return;
+      }
+      // this.errorList = [];
       //提交的数据格式
       if (this.plantId == "") {
         this.$message.warning("请先选择生产工厂!");
@@ -196,7 +204,7 @@ export default {
               break;
             case "是否急料":
               list.IsUrgent = item[key];
-              break;  
+              break;
             case "交货数量":
               if (typeof item[key] !== "number" && item[key] !== "") {
                 this.errorList.push({
@@ -240,6 +248,7 @@ export default {
         }
         parmas.RequirementList.push(list);
       });
+      console.log(this.errorList);
       if (this.errorList.length == 0) {
         this.submitExecl(parmas);
       } else {
@@ -291,17 +300,34 @@ export default {
     },
     // 读取文件
     readFile(file) {
+      let tableHead = ["材料品号", "材料品名", "材料规格", "交货数量", "交货日期", "是否急料"];
+      let tableHead2 = [];
       const reader = new FileReader();
       reader.readAsArrayBuffer(file);
       reader.onload = (e) => {
         const data = e.target.result;
         const { header, results } = excel.read(data, "array");
         const tableTitle = header.map((item) => {
+          tableHead2.push(item);
           return { title: item, key: item };
         });
         this.tableData = results; //这里的tableData就是拿到的excel表格中的数据
         this.tableTitle = tableTitle;
-        console.log("上传====222", this.tableData);
+        console.log(this.tableData);
+        this.tableTitle.find((item) => {
+          if (tableHead.includes(item.title)) {
+            console.log(item.title);
+          }
+        });
+        let missing = tableHead.filter(((i) => (a) => a !== tableHead2[i] || !++i)(0));
+        if (missing.length > 0) {
+          missing.forEach((item) => {
+            this.errorList.push({
+              ErrorMsg: `导入的excel缺少"${item}"字段,请重新上传`,
+            });
+            return;
+          });
+        }
         this.isUpload = false;
       };
     },

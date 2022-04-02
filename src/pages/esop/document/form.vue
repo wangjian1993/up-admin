@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-04-01 18:17:59
+ * @LastEditTime: 2022-04-02 11:29:24
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
@@ -42,12 +42,15 @@
           <a-col :span="12">
             <a-form-model-item label="工序数量" :labelCol="{ span: 6 }"><a-input-number :min="1" v-model="processValue" placeholder="请输入工序" @change="processChange"/></a-form-model-item>
           </a-col>
-          <a-col :span="12">
+          <a-col :span="24">
             <div v-for="(item, index) in processValue" :key="index">
-              <a-form-model-item :label="'工序' + (index + 1)" :labelCol="{ span: 6 }">
-                <a-upload ref="uploadRef" :data="{ sort: index }" :custom-request="uploadFile" list-type="picture-card" :default-file-list="defFileList" :fileList="processList['sort' + index]" :remove="removeFile"> <a-icon type="plus" /> </a-upload
+              <a-form-model-item :label="'工序' + (index + 1)" :labelCol="{ span: 3 }">
+                <a-upload :data="{ sort: index + 1 }" :custom-request="uploadFile" list-type="picture-card" :default-file-list="defFileList['sort' + (index + 1)]" :fileList="processList['sort' + (index + 1)]" :remove="removeFile"> <a-icon type="plus" /> </a-upload
               ></a-form-model-item>
             </div>
+            <!-- <a-upload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :default-file-list="defFileList.sort1">
+              <a-button> <a-icon type="upload" /> Upload </a-button>
+            </a-upload> -->
           </a-col>
         </a-row>
       </a-form-model>
@@ -75,12 +78,12 @@ export default {
       workshopId: "", //车间
       lineList: [],
       fileList: [],
-      defFileList: [],
+      defFileList: {},
       fileData: [],
       FilePrefix: "",
       processValue: 1,
       processList: {
-        sort0: [],
+        sort1: [],
       },
       form: {
         documentcode: "",
@@ -88,7 +91,7 @@ export default {
         plantid: "",
         protype: "",
         protypedetail: "",
-        version: "",
+        version: 1,
         filecount: "",
       },
       rules: {
@@ -121,14 +124,16 @@ export default {
           },
         ],
       },
-      sortValue: 0,
+      sortValue: 1,
     };
   },
-  created() {
-    this.getEnterList();
+  mounted() {
     if (this.isEdit) {
       this.getListAll();
     }
+  },
+  created() {
+    this.getEnterList();
   },
   methods: {
     removeFile(record) {
@@ -146,23 +151,26 @@ export default {
           this.fileData.map((item, index) => {
             if (item.uid == record.uid) {
               this.fileData.splice(index, 1);
-              this.fileList.splice(index, 1);
             }
           });
+          for (const p in this.processList["sort" + paramsData.sort]) {
+            console.log(this.processList["sort" + paramsData.sort]);
+            if (this.processList["sort" + paramsData.sort].uid == record.uid) {
+              this.processList["sort" + paramsData.sort].splice(1, p);
+            }
+          }
         }
       });
     },
     processChange(e) {
       if (e > this.sortValue) {
-        this.processList["sort" + this.editData] = [];
+        this.sortValue = e;
+        this.processList["sort" + this.sortValue] = [];
       } else {
-         this.processList.pop()
+        console.log(typeof this.processList);
+        delete this.processList["sort" + this.sortValue];
       }
       this.sortValue = e;
-      // for (let index = 0; index < e; index++) {
-      //   this.processList["sort" + index] = [];
-      // }
-      // console.log(this.processList);
     },
     getListAll() {
       let parmas = {
@@ -170,11 +178,14 @@ export default {
       };
       getSopDocument(parmas, "single").then((res) => {
         if (res.data.success) {
-          console.log(res.data.data);
           let doc = res.data.data.doc;
           let files = res.data.data.files;
+          for (let index = 1; index <= doc.ProcessCount; index++) {
+            this.defFileList["sort" + index] = [];
+            this.processList["sort" + index] = [];
+          }
           files.forEach((item) => {
-            this.defFileList.push({
+            this.processList["sort" + item.Sort].push({
               ...item,
               name: item.FileName,
               status: "done",
@@ -186,8 +197,11 @@ export default {
               FilePath: item.FilePath,
               FilePrefix: item.FilePrefix,
               ResourceId: item.ResourceId,
+              sort: item.Sort,
+              uid: item.ID,
             });
           });
+          this.processValue = doc.ProcessCount;
           this.form = {
             documentcode: doc.DocumentCode,
             documentname: doc.DocumentName,
@@ -249,12 +263,8 @@ export default {
           parmas.FilePrefix = this.FilePrefix;
         }
         setSopDocumnet(parmas, "upload").then((res) => {
-          console.log("fileList===", this.fileList);
           if (res.data.success) {
-            console.log("info.data.sort", info.data.sort);
-            console.log("this.processList", this.processList);
             this.processList["sort" + info.data.sort].push(info.file);
-            console.log("this.processList", this.processList);
             this.$message.success("上传成功!");
             if (this.fileData.length == 0) {
               this.FilePrefix = res.data.data.FilePrefix;
@@ -262,9 +272,8 @@ export default {
             let fileInfo = {
               ...res.data.data,
               ...info.file,
-              sort: info.data.sort + 1,
+              sort: info.data.sort,
             };
-
             this.fileData.push(fileInfo);
             console.log(" this.fileData", this.fileData);
           }
@@ -277,6 +286,7 @@ export default {
         if (valid) {
           this.form.filecount = this.fileData.length;
           this.form.files = this.fileData;
+          this.form.processcount = this.processValue;
           if (this.isEdit) {
             this.form.documentid = this.editData.DocumentId;
             setSopDocumnet(this.form, "update").then((res) => {
@@ -293,10 +303,20 @@ export default {
               }
             });
           }
+          this.form = [];
+          this.processcount = 1;
+          this.defFileList = {};
+          this.processList = {};
+          this.isEdit = false;
         }
       });
     },
     handleCancel() {
+      this.form = [];
+      this.processcount = 1;
+      this.defFileList = {};
+      this.processList = {};
+      this.isEdit = false;
       this.$emit("close");
     },
     //获取生产工厂
