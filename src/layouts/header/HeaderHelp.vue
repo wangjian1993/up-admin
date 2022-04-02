@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 16:51:17
- * @LastEditTime: 2022-03-30 16:53:29
+ * @LastEditTime: 2022-04-02 14:25:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/layouts/header/HeaderHelp.vue
@@ -22,7 +22,7 @@ export default {
   },
   methods: {
     helpClick(){
-        window.open('/docs/')
+        window.open('http://192.168.1.245:8080/docs/')
     }
   }
 }

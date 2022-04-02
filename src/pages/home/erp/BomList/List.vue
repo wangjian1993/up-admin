@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-04-01 16:05:53
+ * @LastEditTime: 2022-04-02 14:26:23
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -75,6 +75,7 @@
           <a-button v-if="hasPerm('export')" icon="export" type="primary" :disabled="!hasSelected" :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
           <a-button v-else icon="export" type="primary" disabled :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
           <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+           <a style="margin-left: 8px" @click="helpClick('http://192.168.1.245:8080/docs/#/erp/list')"><a-icon type="question-circle" /> 帮助</a>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -349,6 +350,9 @@ export default {
     splitData,
     modelType,
     //批量导入
+    helpClick(url){
+      window.open(url,'_blank')
+    },
     bulkImport() {
       this.isBulkImport = true;
     },

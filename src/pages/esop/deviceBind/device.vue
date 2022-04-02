@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 14:01:21
- * @LastEditTime: 2022-03-31 15:18:54
+ * @LastEditTime: 2022-04-02 16:54:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/device.vue
@@ -42,13 +42,19 @@
             <span>右侧</span>
           </div>
           <div>
-            <div class="device-list-content" v-for="(item, index) in deviceList" :key="item.EquipmentId">
-              <p class="process" @click="selectDocs(item, 1)">{{ index + 1 }}</p>
-              <div class="device">
-                <p>{{ item.EquipmentName }}</p>
-                <p :class="item.Status ? 'span-t' : 'span-f'"></p>
+            <div class="device-list-content" v-for="(item, index) in deviceList" :key="index">
+              <div class="device" v-for="(items, indexs) in item" :key="items.EquipmentId">
+                <div v-if="indexs == 0" class="process" @click="selectDocs(items, 1)">
+                  <p v-for="fileItem in items.Detail" :key="fileItem.Id">{{ fileItem.FileName }}</p>
+                </div>
+                <div class="device-content">
+                  <p>{{ items.EquipmentName }}</p>
+                  <p :class="items.Status ? 'span-t' : 'span-f'"></p>
+                </div>
+                <div v-if="indexs == 1" class="process" @click="selectDocs(items, 2)">
+                   <p v-for="fileItem in items.Detail" :key="fileItem.Id">{{ fileItem.FileName }}</p>
+                </div>
               </div>
-              <p class="process" @click="selectDocs(item, 2)">{{ index + 1 }}</p>
             </div>
           </div>
           <div class="device-list-footer">
@@ -124,6 +130,7 @@ export default {
       this.$emit("close");
     },
     success() {
+      this.deviceList =[]
       this.isDocsList = false;
       this.getDeviceList();
     },
@@ -154,8 +161,10 @@ export default {
       };
       getDeviceList(parmas, "getequipment").then((res) => {
         if (res.data.success) {
-          console.log(res);
-          this.deviceList = res.data.data.list;
+          let list = res.data.data.list;
+          for (var i = 0; i < list.length; i += 2) {
+            this.deviceList.push(list.slice(i, i + 2));
+          }
         }
       });
     },
@@ -197,7 +206,7 @@ export default {
   margin-bottom: 5px;
 }
 .device-lsit {
-  width: 500px;
+  width: 550px;
   margin: 0 auto;
   text-align: center;
   border: 1px #000 solid;
@@ -228,7 +237,7 @@ export default {
     align-items: center;
     padding: 5px 0;
     .process {
-      width: 150px;
+      width: 130px;
       height: 30px;
       border: 1px #000 solid;
       text-align: center;
@@ -239,16 +248,22 @@ export default {
       }
     }
     .device {
-      width: 80px;
-      height: 50px;
-      border: 1px #000 solid;
       text-align: center;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       p {
         margin: 0;
+      }
+      .device-content {
+        width: 100px;
+        height: 50px;
+        border: 1px #000 solid;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0 10px;
       }
       .span-f {
         width: 10px;

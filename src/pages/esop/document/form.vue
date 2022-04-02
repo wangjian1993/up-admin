@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-04-02 11:29:24
+ * @LastEditTime: 2022-04-02 14:56:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
@@ -153,12 +153,19 @@ export default {
               this.fileData.splice(index, 1);
             }
           });
-          for (const p in this.processList["sort" + paramsData.sort]) {
-            console.log(this.processList["sort" + paramsData.sort]);
-            if (this.processList["sort" + paramsData.sort].uid == record.uid) {
-              this.processList["sort" + paramsData.sort].splice(1, p);
+          this.processList["sort" + paramsData.sort].forEach((item, index) => {
+            if (item.uid == record.uid) {
+              this.processList["sort" + paramsData.sort].splice(index, 1);
             }
-          }
+          });
+          // for (const p in this.processList["sort" + paramsData.sort]) {
+          //   console.log("111", this.processList["sort" + paramsData.sort][p].uid);
+          //   console.log("222", record.uid);
+          //   if (this.processList["sort" + paramsData.sort].uid == record.uid) {
+          //     console.log("333", this.processList["sort" + paramsData.sort]);
+          //     this.processList["sort" + paramsData.sort].splice(1, p);
+          //   }
+          // }
         }
       });
     },
@@ -264,7 +271,11 @@ export default {
         }
         setSopDocumnet(parmas, "upload").then((res) => {
           if (res.data.success) {
-            this.processList["sort" + info.data.sort].push(info.file);
+            this.processList["sort" + info.data.sort].push({
+              name: info.file.name,
+              status: "done",
+              uid: info.file.uid,
+            });
             this.$message.success("上传成功!");
             if (this.fileData.length == 0) {
               this.FilePrefix = res.data.data.FilePrefix;

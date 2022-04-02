@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 13:41:09
- * @LastEditTime: 2022-04-01 13:55:45
+ * @LastEditTime: 2022-04-02 17:26:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/index.vue
@@ -76,14 +76,13 @@
         </span>
       </a-form>
       <div class="operator">
-        <!-- <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" @click="add" style="margin-left: 8px">添加</a-button>
-        <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-        <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+        <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="useAllApprove" style="margin-left: 8px">发布</a-button>
+        <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="useAllApprove" style="margin-left: 8px">发布</a-button>
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
             {{ `共选中 ${selectedRowKeys.length} 条` }}
           </template>
-        </span> -->
+        </span>
       </div>
       <a-table
         v-if="hasPerm('search')"
@@ -108,7 +107,7 @@
         </template>
         <template slot="Status" slot-scope="text">
           <div>
-            <a-tag color="green" v-if="text == '已审核'">已审核</a-tag>
+            <a-tag color="green" v-if="text != '待审核'">{{text}}</a-tag>
             <a-tag color="red" v-else>{{ text }}</a-tag>
           </div>
         </template>
@@ -118,6 +117,12 @@
               <a-icon type="profile" />
               选择设备
             </a>
+            <a-popconfirm title="确定发布?" @confirm="() => useApprove(record, 'delete')">
+              <a style="margin-right: 8px" :disabled="!hasPerm('approve')">
+                <a-icon type="delete" />
+                发布
+              </a>
+            </a-popconfirm>
           </div>
         </template>
       </a-table>
@@ -198,7 +203,7 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getSopDevice, setSopDevice, getSopDocument } from "@/services/esop.js";
+import { getSopDevice, getSopDocument ,deviceSopBind } from "@/services/esop.js";
 import device from "./device.vue";
 export default {
   components: { device },
@@ -378,16 +383,16 @@ export default {
       this.isAddDevice = false;
     },
     //多选删除
-    allDel() {
+    useAllApprove() {
       let self = this;
       self.selectedRowKeys.push(null);
       self.$confirm({
-        title: "确定要删除选中内容",
+        title: "确定要发布选中内容",
         onOk() {
-          setSopDevice(self.selectedRowKeys, "delete").then((res) => {
+          deviceSopBind(self.selectedRowKeys, "publish").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
-              self.$message.success("删除成功!");
+              self.$message.success("发布成功!");
               self.getListAll();
             }
           });
@@ -396,11 +401,11 @@ export default {
       });
     },
     //单个删除
-    useDelete(item) {
-      let parmas = [item.EquipmentId, null];
-      setSopDevice(parmas, "delete").then((res) => {
+    useApprove(item) {
+      let parmas = [item.DocumentId, null];
+      deviceSopBind(parmas, "publish").then((res) => {
         if (res.data.success) {
-          this.$message.success("删除成功!");
+          this.$message.success("发布成功!");
           this.getListAll();
         }
       });
