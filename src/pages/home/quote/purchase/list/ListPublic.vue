@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-02-19 17:02:45
+ * @LastEditTime: 2022-04-04 17:52:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -768,6 +768,7 @@ export default {
                 bookType: "xlsx", // 导出类型
                 filename: `BOM清单_${timestamp}`, // 导出标题名
                 formula: r.formula,
+                multi:true
               });
               this.$message.success("导出数据成功!");
               this.selectedRowKeys = [];

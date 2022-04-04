@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2022-03-30 14:01:21
- * @LastEditTime: 2022-04-04 16:23:49
+ * @Date: 2022-04-04 17:03:33
+ * @LastEditTime: 2022-04-04 17:09:34
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/esop/deviceBind/device.vue
+ * @FilePath: /up-admin/src/pages/esop/record/device.vue
 -->
 <template>
   <div>
@@ -82,18 +82,12 @@
         </div>
       </div>
     </a-modal>
-    <docs v-if="isDocsList" :deviceItem="deviceItem" :plantId="plantId" :documentItem="documentRecord" @closeModal="closeModal" @success="success" />
-    <docsList v-if="isDocs" @success="successDocs" />
   </div>
 </template>
-
 <script>
-import { getDeviceList, getSopDocument } from "@/services/esop.js";
-import docs from "./docs.vue";
-import docsList from "./docsList.vue";
+import { getSopDocument } from "@/services/esop.js";
 export default {
-  props: ["editData", "isEdit"],
-  components: { docs, docsList },
+  props: ["documentItem"],
   data() {
     return {
       visible: true,
@@ -115,15 +109,15 @@ export default {
   },
   created() {
     this.getEnterList();
-    if (this.isEdit) {
-      this.plantId = this.editData.PlantId;
-      this.workshopId = this.editData.WorkCenterId;
-      this.lineId = this.editData.LineId;
-      this.selectDocsList = this.editData;
-      this.getWorkshopList();
-      this.getLineList();
+    // if (this.isEdit) {
+    //   this.plantId = this.editData.PlantId;
+    //   this.workshopId = this.editData.WorkCenterId;
+    //   this.lineId = this.editData.LineId;
+    //   this.selectDocsList = this.editData;
+    //   this.getWorkshopList();
+    //   this.getLineList();
       this.getDeviceList();
-    }
+    // }
   },
   methods: {
     docsList() {
@@ -179,12 +173,11 @@ export default {
     },
     getDeviceList() {
       let parmas = {
-        plantid: this.plantId,
-        workcenterid: this.workshopId,
-        lineid: this.lineId,
-        documentid: this.selectDocsList.DocumentId,
+        recordid: this.documentItem.RecordId,
+        lineid: this.documentItem.LineId,
+        documentid: this.documentItem.DocumentId,
       };
-      getDeviceList(parmas, "getequipment").then((res) => {
+      getSopDocument(parmas, "record/getequipment").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           for (var i = 0; i < list.length; i += 2) {

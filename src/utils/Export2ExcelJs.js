@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2022-01-10 13:51:55
+ * @LastEditTime: 2022-04-04 17:53:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/Export2ExcelJs.js
@@ -255,8 +255,10 @@ export function exportjsontoexcelMore({
     dataList,
     filename,
     bookType = 'xlsx',
-    formula
+    formula,
+    multi
 }, excelStyle) {
+    console.log("formula===",formula)
     //判断是否有表名、没有则赋予固定表名
     filename = filename || 'excel-list'
     var wb = new Workbook()
@@ -275,7 +277,7 @@ export function exportjsontoexcelMore({
         // ws['B7'] = { t: 'n', f: "=SUM(D9:D21)" };
         // ws['B7'] = { t: 'n', f: "SUM(D9:D21)", F: "B7:B7" };
         // ws['A28'] = { t: 'n', f: "SUM(D9:D21)", F: "A28:A28" };
-        console.log("ws", ws);
+        // console.log("ws", ws);
         //动态设置宽度
         if (autoWidth) {
             /*设置worksheet每列的最大宽度*/
@@ -340,7 +342,7 @@ export function exportjsontoexcelMore({
             //开始位置
             let startIndex = formula.process + 2;
             let endIndex = startIndex + formula.totalPrice;
-            if (Sheet == '展开显示') {
+            if (Sheet == '展开显示' || multi) {
                 //金额计算
                 for (let index = startIndex; index <= endIndex; index++) {
                     wb.Sheets[Sheet]['M' + index] = { t: 'n', f: 'ROUND(K' + index + "*L" + index + ',4)' };
@@ -428,6 +430,7 @@ export function exportjsontoexcelMore({
 
             } else {
                 if (excelStyle) {
+                    // console.log("自定义样式")
                     dataInfo[i + ''].s = {
                         //居中属性
                         ...excelStyle
@@ -435,7 +438,13 @@ export function exportjsontoexcelMore({
                 } else {
                     dataInfo[i + ''].s = {
                         //居中属性
-                        border: borderAll,
+                        border: {
+                            color: { auto: 1 },
+                            top: { style: 'thin' },
+                            bottom: { style: 'thin' },
+                            left: { style: 'thin' },
+                            right: { style: 'thin' }
+                        },
                         //居中属性
                         font: {
                             name: "宋体",
@@ -448,6 +457,7 @@ export function exportjsontoexcelMore({
                             indent: 0,
                         },
                     }
+                    // console.log("默认样式", dataInfo)
                 }
             }
         }

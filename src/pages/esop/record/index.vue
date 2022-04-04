@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2022-03-30 13:41:09
- * @LastEditTime: 2022-04-04 16:58:42
+ * @Date: 2022-04-04 16:01:38
+ * @LastEditTime: 2022-04-04 17:07:39
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/esop/deviceBind/index.vue
+ * @FilePath: /up-admin/src/pages/esop/record/index.vue
 -->
 <template>
   <div>
@@ -76,14 +76,14 @@
         </span>
       </a-form>
       <div class="operator">
-        <a-button icon="plus" type="primary" :loading="loading" @click="bind()" style="margin-left: 8px">新增</a-button>
-        <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="useAllApprove" style="margin-left: 8px">发布</a-button>
-        <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="useAllApprove" style="margin-left: 8px">发布</a-button>
+        <!-- <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" @click="add" style="margin-left: 8px">添加</a-button>
+        <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+        <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
             {{ `共选中 ${selectedRowKeys.length} 条` }}
           </template>
-        </span>
+        </span> -->
       </div>
       <a-table
         v-if="hasPerm('search')"
@@ -94,7 +94,7 @@
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(data) => data.DocumentId"
+        :rowKey="(data) => data.RecordId"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -108,22 +108,12 @@
         </template>
         <template slot="Status" slot-scope="text">
           <div>
-            <a-tag color="green" v-if="text != '待审核'">{{ text }}</a-tag>
+            <a-tag color="green" v-if="text == '已审核'">已审核</a-tag>
             <a-tag color="red" v-else>{{ text }}</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">
           <div>
-            <a style="margin-right: 8px" v-if="record.Status != '已发布'" @click="edit(record)">
-              <a-icon type="edit" />
-              修改
-            </a>
-            <a-popconfirm title="确定发布?" v-if="record.Status != '已发布'" @confirm="() => useApprove(record, 'delete')">
-              <a style="margin-right: 8px" :disabled="!hasPerm('approve')">
-                <a-icon type="delete" />
-                发布
-              </a>
-            </a-popconfirm>
             <a style="margin-right: 8px" @click="detail(record)">
               <a-icon type="profile" />
               查看
@@ -132,7 +122,7 @@
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
-      <device v-if="isAddDevice" :editData="editData" :isEdit="isEdit" @close="close" />
+       <device v-if="isDevice" :documentItem="documentItem"  @close="close" />
     </a-card>
   </div>
 </template>
@@ -146,29 +136,29 @@ const columns = [
     width: "5%",
   },
   {
-    title: "品名",
-    dataIndex: "",
-    scopedSlots: { customRender: "EquipentCode" },
+    title: "品号",
+    dataIndex: "EquipmentCode",
+    scopedSlots: { customRender: "EquipmentCode" },
     align: "center",
   },
   {
-    title: "品号",
-    dataIndex: "",
+    title: "品名",
+    dataIndex: "EquipmentName",
     scopedSlots: { customRender: "EquipmentName" },
     align: "center",
   },
   {
     title: "文件编号",
-    dataIndex: "DocumentCode",
-    scopedSlots: { customRender: "DocumentCode" },
-    align: "center",
-  },
-  {
-    title: "文件名称",
     dataIndex: "DocumentName",
     scopedSlots: { customRender: "DocumentName" },
     align: "center",
     width: "5%",
+  },
+  {
+    title: "文件名称",
+    dataIndex: "PlantName",
+    scopedSlots: { customRender: "PlantName" },
+    align: "center",
   },
   {
     title: "生产工厂",
@@ -177,7 +167,13 @@ const columns = [
     align: "center",
   },
   {
-    title: "生产产线",
+    title: "工作中心",
+    dataIndex: "WorkCenterName",
+    scopedSlots: { customRender: "WorkCenterName" },
+    align: "center",
+  },
+  {
+    title: "产线",
     dataIndex: "LineName",
     scopedSlots: { customRender: "LineName" },
     align: "center",
@@ -195,15 +191,15 @@ const columns = [
     align: "center",
   },
   {
-    title: "状态",
-    dataIndex: "Status",
-    scopedSlots: { customRender: "Status" },
+    title: "发布日期",
+    dataIndex: "UploadTime",
+    scopedSlots: { customRender: "UploadTime" },
     align: "center",
   },
   {
-    title: "关联设备",
-    dataIndex: "CreateTime",
-    scopedSlots: { customRender: "CreateTime" },
+    title: "发布人",
+    dataIndex: "Uploader",
+    scopedSlots: { customRender: "Uploader" },
     align: "center",
   },
   {
@@ -214,7 +210,7 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getSopDevice, getSopDocument, deviceSopBind } from "@/services/esop.js";
+import { getSopDocument, getDeviceList } from "@/services/esop.js";
 import device from "./device.vue";
 export default {
   components: { device },
@@ -251,8 +247,7 @@ export default {
       drawerItem: [],
       isAddDevice: false,
       documentItem: [],
-      editData: [],
-      isEdit: false,
+      isDevice:false
     };
   },
   updated() {
@@ -278,17 +273,9 @@ export default {
     this.getEnterList();
   },
   methods: {
-    bind() {
-      this.isAddDevice = true;
-    },
-    edit(record) {
-      this.isAddDevice = true;
-      this.editData = record;
-      this.isEdit = true;
-    },
-    detail(record) {
-      this.isAddDevice = true;
-      this.editData = record;
+    detail(item) {
+      this.isDevice = true;
+      this.documentItem = item;
     },
     //工厂选择
     plantChange(e) {
@@ -346,7 +333,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getSopDocument(parmas, "equipment/get").then((res) => {
+      getSopDocument(parmas, "record/get").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -375,18 +362,20 @@ export default {
         if (!err) {
           this.loading = true;
           let parmas = {
-            pageindex: this.pagination.current,
-            pagesize: this.pagination.pageSize,
-            equipmentcode: values.equipmentcode,
-            equipmentname: values.equipmentname,
-            plantid: values.plantid,
-            workcenterid: values.workcenterid,
-            lineid: values.lineid,
-            ipaddress: values.ipaddress,
-            enable: values.enable,
-            status: values.status,
+            where: {
+              pageindex: this.pagination.current,
+              pagesize: this.pagination.pageSize,
+              equipmentcode: values.equipmentcode,
+              equipmentname: values.equipmentname,
+              plantid: values.plantid,
+              workcenterid: values.workcenterid,
+              lineid: values.lineid,
+              ipaddress: values.ipaddress,
+              enable: values.enable,
+              status: values.status,
+            },
           };
-          getSopDevice(parmas, "equipment/get").then((res) => {
+          getDeviceList(parmas, "getinequipment").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -397,53 +386,6 @@ export default {
             }
           });
           // do something
-        }
-      });
-    },
-    close() {
-      this.isAddDevice = false;
-    },
-    //多选删除
-    useAllApprove() {
-      let self = this;
-      self.selectedRowKeys.push(null);
-      let parmas = [];
-      this.data.forEach((item) => {
-        if (self.selectedRowKeys.includes(item.DocumentId)) {
-          parmas.push({
-            documentid: item.DocumentId,
-            lineid: item.LineId,
-          });
-        }
-      });
-      parmas.push({})
-      self.$confirm({
-        title: "确定要发布选中内容",
-        onOk() {
-          deviceSopBind(parmas, "publish").then((res) => {
-            if (res.data.success) {
-              self.selectedRowKeys = [];
-              self.$message.success("发布成功!");
-              self.getListAll();
-            }
-          });
-        },
-        onCancel() {},
-      });
-    },
-    //单个删除
-    useApprove(item) {
-      let parmas = [
-        {
-          documentid: item.DocumentId,
-          lineid: item.LineId,
-        },
-        {},
-      ];
-      deviceSopBind(parmas, "publish").then((res) => {
-        if (res.data.success) {
-          this.$message.success("发布成功!");
-          this.getListAll();
         }
       });
     },
