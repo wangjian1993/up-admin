@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-29 17:42:46
- * @LastEditTime: 2022-03-30 11:41:28
+ * @LastEditTime: 2022-04-06 14:56:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/commission/commission.vue
@@ -35,7 +35,7 @@
                 <a-input style="width: 200px" allowClear placeholder="请输入合同号" v-decorator="['customercode']" />
               </a-form-item>
             </a-col>
-            <a-col :md="6" :sm="24" v-if="rolesign == 'ADMIN'">
+            <a-col :md="6" :sm="24">
               <a-form-item label="收款时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-range-picker style="width: 300px" :default-value="dateFormat" v-decorator="['range-time-picker']" />
               </a-form-item>
@@ -104,7 +104,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(70);
+      this.scrollY = getTableScroll(120);
     });
     this.getSalesmanList();
   },
@@ -212,6 +212,7 @@ export default {
             var importdateend = rangeValue[1].format("YYYY-MM-DD");
           }
           console.log("Received values of form: ", values);
+          let jobNumber = this.rolesign == 'ADMIN' ? values.employeecode:localStorage.getItem('userName')
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
@@ -219,7 +220,7 @@ export default {
             mono: values.mono || "",
             ctrno: values.ctrno || "",
             customercode:values.customercode || "",
-            employeecode: values.employeecode || "",
+            employeecode: jobNumber,
             bkdatestart: importdatestart || "",
             bkdateend: importdateend || "",
           };
@@ -229,9 +230,9 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.loading = false;
               this.isSearch = 2;
             }
+             this.loading = false;
           });
           // do something
         }

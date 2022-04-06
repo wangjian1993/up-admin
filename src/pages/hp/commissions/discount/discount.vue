@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-25 17:45:07
- * @LastEditTime: 2022-03-29 14:39:03
+ * @LastEditTime: 2022-04-06 14:48:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/discount/discount.vue
@@ -58,7 +58,7 @@
           </div>
         </template>
       </a-table>
-      <ImportExcel v-if="isImportExcel" @closeModal="editClose"/>
+      <ImportExcel v-if="isImportExcel" @closeModal="editClose" />
     </a-spin>
     <editForm v-if="editForm" :editType="editType" :editFormData="editFormData" @success="editSuccess" @close="editClose" />
   </div>
@@ -90,7 +90,7 @@ export default {
       isImportExcel: false,
       editForm: false,
       editFormData: [],
-      editType:'discount'
+      editType: "discount",
     };
   },
   updated() {
@@ -157,7 +157,7 @@ export default {
     },
     editClose() {
       this.editForm = false;
-      this.isImportExcel =false
+      this.isImportExcel = false;
     },
     //获取列表
     getListAll() {
@@ -223,9 +223,9 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.loading = false;
               this.isSearch = 2;
             }
+            this.loading = false;
           });
           // do something
         }

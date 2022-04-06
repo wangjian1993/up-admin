@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-29 17:42:46
- * @LastEditTime: 2022-03-30 11:27:46
+ * @LastEditTime: 2022-04-06 15:00:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/performance/performance.vue
@@ -22,7 +22,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="年度" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select style="width:200px" v-decorator="['theyear']">
+                <a-select style="width:200px" v-decorator="['theyear', { rules: [{ required: true, message: '请选择年度' }] }]">
                   <a-select-option key="" value="2020">2020</a-select-option>
                   <a-select-option key="" value="2021">2021</a-select-option>
                   <a-select-option key="" value="2022">2022</a-select-option>
@@ -31,7 +31,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="月份" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-month-picker placeholder="选择月份"  v-decorator="['themonth']"/>
+                <a-month-picker placeholder="选择月份" v-decorator="['themonth', { rules: [{ required: true, message: '请选择月份' }] }]" />
               </a-form-item>
             </a-col>
           </a-row>
@@ -195,13 +195,14 @@ export default {
           console.log(values);
           this.loading = true;
           console.log("Received values of form: ", values);
+          let jobNumber = this.rolesign == "ADMIN" ? values.employeecode : localStorage.getItem("userName");
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             rolesign: this.rolesign,
             theyear: values.theyear || "",
             themonth: values.themonth || "",
-            employeecode: values.employeecode || "",
+            employeecode: jobNumber,
           };
           getPerformanceList(parmas).then((res) => {
             if (res.data.success) {
@@ -209,9 +210,9 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.loading = false;
               this.isSearch = 2;
             }
+            this.loading = false;
           });
           // do something
         }

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-29 17:42:46
- * @LastEditTime: 2022-03-29 17:59:44
+ * @LastEditTime: 2022-04-06 14:54:27
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/order/order.vue
@@ -104,7 +104,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(70);
+      this.scrollY = getTableScroll(120);
     });
     this.getSalesmanList();
   },

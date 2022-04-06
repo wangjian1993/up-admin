@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 14:04:18
- * @LastEditTime: 2022-03-30 11:24:41
+ * @LastEditTime: 2022-04-06 15:04:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/monthlyTask/monthlyTask.vue
@@ -14,7 +14,7 @@
           <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="年度" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select style="width:200px" v-decorator="['theyear']">
+                <a-select style="width:200px" v-decorator="['theyear', { rules: [{ required: true, message: '请选择年度' }] }]">
                   <a-select-option key="" value="2020">2020</a-select-option>
                   <a-select-option key="" value="2021">2021</a-select-option>
                   <a-select-option key="" value="2022">2022</a-select-option>
@@ -36,7 +36,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="录入时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-range-picker style="width: 300px" :default-value="dateFormat" v-decorator="['range-time-picker']" />
+                <a-range-picker style="width: 300px" :default-value="dateFormat" v-decorator="['range-time-picker', { rules: [{ required: true, message: '请选择录入时间' }] }]" />
               </a-form-item>
             </a-col>
           </a-row>
@@ -225,13 +225,14 @@ export default {
             var importdateend = rangeValue[1].format("YYYY-MM-DD");
           }
           console.log("Received values of form: ", values);
+          let jobNumber = this.rolesign == "ADMIN" ? values.employeecode : localStorage.getItem("userName");
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             rolesign: this.rolesign,
             theyear: values.theyear || "",
             themonth: values.themonth || "",
-            employeecode: values.employeecode || "",
+            employeecode: jobNumber,
             importdatestart: importdatestart || "",
             importdateend: importdateend || "",
           };
@@ -243,6 +244,8 @@ export default {
               this.pagination = pagination;
               this.loading = false;
               this.isSearch = 2;
+            }else {
+               this.loading = false;
             }
           });
           // do something

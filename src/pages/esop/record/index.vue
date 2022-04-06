@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 16:01:38
- * @LastEditTime: 2022-04-04 17:07:39
+ * @LastEditTime: 2022-04-06 16:09:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/index.vue
@@ -13,6 +13,38 @@
         <div>
           <a-row>
             <a-col :md="6" :sm="24">
+              <a-form-item label="设备编号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入设备编号" v-decorator="['equipmentcode']" />
+              </a-form-item>
+            </a-col>
+             <a-col :md="6" :sm="24">
+              <a-form-item label="设备名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入设备名称" v-decorator="['equipumentname']" />
+              </a-form-item>
+            </a-col>
+             <a-col :md="6" :sm="24">
+              <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['procode']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['proname']" />
+              </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row>
+             <a-col :md="6" :sm="24">
+              <a-form-item label="文件编号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入文件编号" v-decorator="['documentcode']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="文件名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入文件名称" v-decorator="['documentname']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
               <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
                   <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
@@ -20,52 +52,13 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['workcenterid']" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
-                  <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
-                </a-select>
+              <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请选择产品大类" v-decorator="['protype']" />
               </a-form-item>
             </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产产线">
-                  <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="设备编号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入设备编号" v-decorator="['equipmentcode']" />
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="设备名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入设备名称" v-decorator="['equipmentname']" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="ip地址" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入ip" v-decorator="['ipaddress']" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="连接状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['status']" style="width: 200px">
-                  <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="treu">已连接</a-select-option>
-                  <a-select-option value="false">未连接</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="是否启用" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['enable']" style="width: 200px">
-                  <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="treu">启用</a-select-option>
-                  <a-select-option value="false">禁用</a-select-option>
-                </a-select>
+             <a-col :md="6" :sm="24">
+              <a-form-item label="产品系列" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['protypedetail']" />
               </a-form-item>
             </a-col>
           </a-row>
@@ -122,7 +115,7 @@
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
-       <device v-if="isDevice" :documentItem="documentItem"  @close="close" />
+      <device v-if="isDevice" :documentItem="documentItem" @close="close" />
     </a-card>
   </div>
 </template>
@@ -149,15 +142,15 @@ const columns = [
   },
   {
     title: "文件编号",
-    dataIndex: "DocumentName",
-    scopedSlots: { customRender: "DocumentName" },
+    dataIndex: "DocumentCode",
+    scopedSlots: { customRender: "DocumentCode" },
     align: "center",
     width: "5%",
   },
   {
     title: "文件名称",
-    dataIndex: "PlantName",
-    scopedSlots: { customRender: "PlantName" },
+    dataIndex: "DocumentName",
+    scopedSlots: { customRender: "DocumentName" },
     align: "center",
   },
   {
@@ -247,7 +240,7 @@ export default {
       drawerItem: [],
       isAddDevice: false,
       documentItem: [],
-      isDevice:false
+      isDevice: false,
     };
   },
   updated() {
@@ -276,6 +269,9 @@ export default {
     detail(item) {
       this.isDevice = true;
       this.documentItem = item;
+    },
+    close() {
+      this.isDevice = false;
     },
     //工厂选择
     plantChange(e) {
@@ -362,8 +358,7 @@ export default {
         if (!err) {
           this.loading = true;
           let parmas = {
-            where: {
-              pageindex: this.pagination.current,
+             pageindex: this.pagination.current,
               pagesize: this.pagination.pageSize,
               equipmentcode: values.equipmentcode,
               equipmentname: values.equipmentname,
@@ -373,7 +368,6 @@ export default {
               ipaddress: values.ipaddress,
               enable: values.enable,
               status: values.status,
-            },
           };
           getDeviceList(parmas, "getinequipment").then((res) => {
             if (res.data.success) {

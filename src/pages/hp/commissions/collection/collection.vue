@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-29 17:42:46
- * @LastEditTime: 2022-03-30 11:43:05
+ * @LastEditTime: 2022-04-06 14:56:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/collection/collection.vue
@@ -104,7 +104,7 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(70);
+      this.scrollY = getTableScroll(120);
     });
     this.getSalesmanList();
   },
@@ -229,9 +229,9 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.loading = false;
               this.isSearch = 2;
             }
+            this.loading = false;
           });
           // do something
         }

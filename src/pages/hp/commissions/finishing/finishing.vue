@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-29 14:17:58
- * @LastEditTime: 2022-03-29 15:00:22
+ * @LastEditTime: 2022-04-06 15:06:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/finishing/finishing.vue
@@ -236,11 +236,12 @@ export default {
             var importdateend = rangeValue[1].format("YYYY-MM-DD");
           }
           console.log("Received values of form: ", values);
+          let jobNumber = this.rolesign == "ADMIN" ? values.employeecode : localStorage.getItem("userName");
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             rolesign: this.rolesign,
-            employeecode: values.employeecode || "",
+            employeecode: jobNumber,
             importdatestart: importdatestart || "",
             importdateend: importdateend || "",
           };
@@ -252,6 +253,8 @@ export default {
               this.pagination = pagination;
               this.loading = false;
               this.isSearch = 2;
+            }else {
+               this.loading = false;
             }
           });
           // do something

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 13:41:09
- * @LastEditTime: 2022-04-04 16:58:42
+ * @LastEditTime: 2022-04-06 09:19:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/index.vue
@@ -46,25 +46,31 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="ip地址" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入ip" v-decorator="['ipaddress']" />
+              <a-form-item label="文档编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入文档编码" v-decorator="['documentcode']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="连接状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-form-item label="文档名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入文档名称" v-decorator="['documentname']" />
+              </a-form-item>
+            </a-col>
+             <a-col :md="6" :sm="24">
+              <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['procode']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['proname']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['status']" style="width: 200px">
                   <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="treu">已连接</a-select-option>
-                  <a-select-option value="false">未连接</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="是否启用" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['enable']" style="width: 200px">
-                  <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="treu">启用</a-select-option>
-                  <a-select-option value="false">禁用</a-select-option>
+                  <a-select-option value="treu">已发布</a-select-option>
+                  <a-select-option value="false">未发布</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
@@ -381,9 +387,10 @@ export default {
             equipmentname: values.equipmentname,
             plantid: values.plantid,
             workcenterid: values.workcenterid,
-            lineid: values.lineid,
-            ipaddress: values.ipaddress,
-            enable: values.enable,
+            proname: values.proname,
+            procode: values.procode,
+            documentcode: values.documentcode,
+            documentname: values.documentname,
             status: values.status,
           };
           getSopDevice(parmas, "equipment/get").then((res) => {

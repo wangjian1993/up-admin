@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2022-03-31 13:32:48
- * @LastEditTime: 2022-04-06 09:14:29
+ * @Date: 2022-04-06 15:38:52
+ * @LastEditTime: 2022-04-06 17:14:43
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/esop/bindList/index.vue
+ * @FilePath: /up-admin/src/pages/esop/product/query/index.vue
 -->
 <template>
   <div>
@@ -13,60 +13,35 @@
         <div>
           <a-row>
             <a-col :md="6" :sm="24">
+              <a-form-item label="文件编号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入文件编号" v-decorator="['documentcode']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="文件名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入文件名称" v-decorator="['documentname']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
               <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                <a-select v-decorator="['plantid', { rules: [{ required: true, message: '请选择生产工厂' }] }]" style="width: 200px" placeholder="请选择生产工厂">
                   <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['workcenterid']" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
-                  <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
-                </a-select>
+              <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请选择产品大类" v-decorator="['protype']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产产线">
-                  <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="设备编号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入设备编号" v-decorator="['equipmentcode']" />
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="设备名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入设备名称" v-decorator="['equipmentname']" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="文档编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入文档编码" v-decorator="['documentcode']" />
-              </a-form-item>
-            </a-col>
-             <a-col :md="6" :sm="24">
-              <a-form-item label="文档名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入文档名称" v-decorator="['documentname']" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['status']" style="width: 200px">
-                  <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="treu">已发布</a-select-option>
-                  <a-select-option value="false">未发布</a-select-option>
-                </a-select>
+              <a-form-item label="产品系列" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['protypedetail']" />
               </a-form-item>
             </a-col>
           </a-row>
         </div>
-        <span style="float: right; margin-top: 3px;">
+        <span style="display:flex;justify-content: flex-end">
           <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
         </span>
@@ -90,7 +65,7 @@
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(data) => data.DocumentId"
+        :rowKey="(data) => data.RecordId"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -104,21 +79,21 @@
         </template>
         <template slot="Status" slot-scope="text">
           <div>
-            <a-tag color="green" v-if="text">已发布</a-tag>
-            <a-tag color="red" v-else>未发布</a-tag>
+            <a-tag color="green" v-if="text == '已审核'">已审核</a-tag>
+            <a-tag color="red" v-else>{{ text }}</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">
           <div>
-            <a style="margin-right: 8px" @click="checkFile(record)">
+            <a style="margin-right: 8px" @click="edit(record)">
               <a-icon type="profile" />
-              查看
+              修改
             </a>
           </div>
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
-       <docs v-if="isDocs"  :deviceItem="deviceItem" @close="close" />
+      <edit v-if="isEditForm" :editData="editData" @close="close" @success="search" :plantId="plantId" />
     </a-card>
   </div>
 </template>
@@ -130,18 +105,6 @@ const columns = [
     scopedSlots: { customRender: "index" },
     align: "center",
     width: "5%",
-  },
-  {
-    title: "设备编码",
-    dataIndex: "EquipmentCode",
-    scopedSlots: { customRender: "EquipmentCode" },
-    align: "center",
-  },
-  {
-    title: "设备名称",
-    dataIndex: "EquipmentName",
-    scopedSlots: { customRender: "EquipmentName" },
-    align: "center",
   },
   {
     title: "品号",
@@ -156,51 +119,28 @@ const columns = [
     align: "center",
   },
   {
-    title: "文档编码",
+    title: "文件编号",
     dataIndex: "DocumentCode",
     scopedSlots: { customRender: "DocumentCode" },
     align: "center",
+    width: "5%",
   },
   {
-    title: "文档名称",
+    title: "文件名称",
     dataIndex: "DocumentName",
     scopedSlots: { customRender: "DocumentName" },
     align: "center",
   },
   {
-    title: "生产工厂",
-    dataIndex: "PlantName",
-    scopedSlots: { customRender: "PlantName" },
-    align: "center",
-  },
-  {
     title: "产品大类",
-    dataIndex: "ProType",
-    scopedSlots: { customRender: "ProType" },
+    dataIndex: "ProTypeCode",
+    scopedSlots: { customRender: "ProTypeCode" },
     align: "center",
   },
   {
     title: "产品系列",
-    dataIndex: "ProTypeDetail",
-    scopedSlots: { customRender: "ProTypeDetail" },
-    align: "center",
-  },
-  {
-    title: "状态",
-    dataIndex: "Status",
-    scopedSlots: { customRender: "Status" },
-    align: "center",
-  },
-  {
-    title: "创建人",
-    dataIndex: "Creater",
-    scopedSlots: { customRender: "Creater" },
-    align: "center",
-  },
-  {
-    title: "创建时间",
-    dataIndex: "CreateTime",
-    scopedSlots: { customRender: "CreateTime" },
+    dataIndex: "ProTypeDCode",
+    scopedSlots: { customRender: "ProTypeDCode" },
     align: "center",
   },
   {
@@ -211,16 +151,16 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getSopDocument, getDeviceList } from "@/services/esop.js";
-import docs from "./docs.vue";
+import { getSopDocument, getProduct } from "@/services/esop.js";
+import edit from "./edit.vue";
 export default {
-  components: { docs },
+  components: { edit },
   data() {
     return {
       data: [],
       columns,
       isDrawer: false,
-      loading: true,
+      loading: false,
       pagination: {
         current: 1,
         total: 0,
@@ -236,20 +176,11 @@ export default {
       selectedRowKeys: [],
       scrollY: "",
       searchForm: this.$form.createForm(this),
-      week: "",
       isSearch: false,
-      isUserList: false,
-      plantid: "", //工厂
+      plantId: "", //工厂
       plantList: [],
-      workshopList: [],
-      workshopId: "", //车间
-      lineList: [],
-      isForm: false, //添加编辑
-      drawerItem: [],
-      isAddDevice: false,
-      documentItem: [],
-      isDocs: false,
-      deviceItem:[]
+      editData: [],
+      isEditForm: false,
     };
   },
   updated() {
@@ -259,37 +190,23 @@ export default {
     hasSelected() {
       return this.selectedRowKeys.length > 0;
     },
-    filterData() {
-      return this.columns.filter((obj) => {
-        if (obj.dataIndex !== "Status") {
-          return obj.dataIndex;
-        }
-      });
-    },
   },
   created() {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    this.getListAll();
     this.getEnterList();
   },
   methods: {
-    checkFile(item) {
-      this.isDocs = true;
-      this.deviceItem = item;
+    edit(item) {
+      this.isEditForm = true;
+      this.editData = item;
+      let values = this.searchForm.getFieldsValue()
+      console.log("values",values)
+      this.plantId = values.plantid
     },
     close() {
-      this.isDocs = false;
-    },
-    //工厂选择
-    plantChange(e) {
-      this.plantid = e;
-      this.getWorkshopList();
-      this.searchForm.setFieldsValue({
-        workshop: "",
-        line: "",
-      });
+      this.isEditForm = false;
     },
     //车间选择
     workShopChange(e) {
@@ -307,27 +224,8 @@ export default {
       getSopDocument(parmas, "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
-        }
-      });
-    },
-    getWorkshopList() {
-      let parmas = {
-        plantid: this.plantid,
-      };
-      getSopDocument(parmas, "getworkcenter").then((res) => {
-        if (res.data.success) {
-          this.workshopList = res.data.data;
-        }
-      });
-    },
-    getLineList() {
-      let parmas = {
-        plantid: this.plantid,
-        workshopid: this.workshopId,
-      };
-      getSopDocument(parmas, "getline").then((res) => {
-        if (res.data.success) {
-          this.lineList = res.data.data;
+          // this.plantid = this.plantList[0].PlantId;
+          // this.getListAll();
         }
       });
     },
@@ -337,12 +235,17 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        plantid: this.plantid,
+        documentcode: "",
+        documentname: "",
+        protypecode: "",
+        protypedcode: "",
       };
-      getDeviceList(parmas, "getinequipment").then((res) => {
+      getProduct(parmas, "getproductlist").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
-          pagination.total = res.data.data.totalCount;
+          pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
           this.isSearch = false;
@@ -369,24 +272,21 @@ export default {
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            equipmentcode: values.equipmentcode,
-            equipmentname: values.equipmentname,
             plantid: values.plantid,
-            workcenterid: values.workcenterid,
-            lineid: values.lineid,
-            documentcode: values.documentcode,
-            documentname: values.documentname,
-            status: values.status,
+            documentcode: values.documentcode || "",
+            documentname: values.documentname || "",
+            protypecode: values.protypecode || "",
+            protypedcode: values.protypedcode || "",
           };
-          getDeviceList(parmas, "getinequipment").then((res) => {
+          getProduct(parmas, "getproductlist").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
-              pagination.total = res.data.data.totalCount;
+              pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.loading = false;
               this.isSearch = true;
             }
+            this.loading = false;
           });
           // do something
         }

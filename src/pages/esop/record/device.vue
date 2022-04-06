@@ -1,54 +1,23 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 17:03:33
- * @LastEditTime: 2022-04-04 17:09:34
+ * @LastEditTime: 2022-04-06 08:53:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/device.vue
 -->
 <template>
   <div>
-    <a-modal title="选择设备" :visible="visible" v-if="visible" destoryOnClose :ok-button-props="{ props: { disabled: deviceList.length == 0 } }" @ok="handleOk" @cancel="handleCancel" width="60%">
-      <div>
-        <a-row>
-          <a-col :md="6" :sm="24">
-            <a-button type="primary" @click="docsList">选择SOP文档</a-button>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-model="plantId" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
-                <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-model="workshopId" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
-                <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-model="lineId" style="width: 200px" placeholder="请选择生产产线" @change="lineChange">
-                <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </div>
-      <a-descriptions v-if="selectDocsList.length != 0" :column="4" size="small">
+    <a-modal title="设备信息" :visible="visible" v-if="visible" destoryOnClose :footer="null" @cancel="handleCancel" width="60%">
+      <a-descriptions v-if="documentItem.length != 0" :column="4" size="small">
         <a-descriptions-item label="文件名称">
-          {{ selectDocsList.DocumentName }}
+          {{ documentItem.DocumentName }}
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
-          {{ selectDocsList.PlantName }}
+          {{ documentItem.PlantName }}
         </a-descriptions-item>
-        <a-descriptions-item label="产品大类">
-          {{ selectDocsList.ProType }}
-        </a-descriptions-item>
-        <a-descriptions-item label="产品系列">
-          {{ selectDocsList.ProTypeDetail }}
+        <a-descriptions-item label="生产产线">
+          {{ documentItem.LineName }}
         </a-descriptions-item>
       </a-descriptions>
       <div>
@@ -61,14 +30,14 @@
           <div>
             <div class="device-list-content" v-for="(item, index) in deviceList" :key="index">
               <div class="device" v-for="(items, indexs) in item" :key="items.EquipmentId">
-                <div v-if="indexs == 0" class="process" @click="selectDocs(items, 1)">
+                <div v-if="indexs == 0" class="process" @click="checkDocs(items)">
                   <p v-for="fileItem in items.Detail" :key="fileItem.Id">{{ fileItem.FileName }}</p>
                 </div>
                 <div class="device-content">
                   <p>{{ items.EquipmentName }}</p>
                   <p :class="items.Status ? 'span-t' : 'span-f'"></p>
                 </div>
-                <div v-if="indexs == 1" class="process" @click="selectDocs(items, 2)">
+                <div v-if="indexs == 1" class="process" @click="checkDocs(items)">
                   <p v-for="fileItem in items.Detail" :key="fileItem.Id">{{ fileItem.FileName }}</p>
                 </div>
               </div>
@@ -81,24 +50,19 @@
           </div>
         </div>
       </div>
+      <docs v-if="isDocs" :documentItem="documentItem" :deviceItem="deviceItem" @close="close" />
     </a-modal>
   </div>
 </template>
 <script>
 import { getSopDocument } from "@/services/esop.js";
+import docs from "./docs.vue";
 export default {
   props: ["documentItem"],
+  components: { docs },
   data() {
     return {
       visible: true,
-      labelCol: { span: 6 },
-      wrapperCol: { span: 14 },
-      plantId: "", //工厂
-      plantList: [],
-      workshopList: [],
-      workshopId: "", //车间
-      lineId: "",
-      lineList: [],
       deviceList: [],
       isDocsList: false,
       deviceItem: [],
@@ -108,68 +72,18 @@ export default {
     };
   },
   created() {
-    this.getEnterList();
-    // if (this.isEdit) {
-    //   this.plantId = this.editData.PlantId;
-    //   this.workshopId = this.editData.WorkCenterId;
-    //   this.lineId = this.editData.LineId;
-    //   this.selectDocsList = this.editData;
-    //   this.getWorkshopList();
-    //   this.getLineList();
-      this.getDeviceList();
-    // }
+    this.getDeviceList();
   },
   methods: {
-    docsList() {
-      this.isDocs = true;
-    },
-    selectDocs(record, direction) {
-      this.isDocsList = true;
-      record.direction = direction;
-      this.documentRecord = this.selectDocsList;
-      this.deviceItem = record;
-    },
-    successDocs(record) {
-      this.selectDocsList = record;
-      this.isDocs = false;
-      this.deviceList = [];
-      this.plantId = "";
-      this.workshopId = "";
-      this.lineId = "";
-    },
-    closeModal() {
-      this.isDocsList = false;
-      this.isDocs = false;
-    },
-    handleOk() {
-      this.$emit("close");
-    },
     handleCancel() {
       this.$emit("close");
     },
-    success() {
-      this.deviceList = [];
-      this.isDocsList = false;
-      this.getDeviceList();
+    close(){
+      this.isDocs = false;
     },
-    //工厂选择
-    plantChange(e) {
-      this.plantId = e;
-      this.getWorkshopList();
-      this.workshopId = "";
-      this.lineId = "";
-    },
-    //车间选择
-    workShopChange(e) {
-      this.workshopId = e;
-      this.getLineList();
-      this.lineId = "";
-    },
-    //获取设备
-    lineChange(e) {
-      console.log(e);
-      this.lineId = e;
-      this.getDeviceList();
+    checkDocs(item) {
+      this.isDocs = true;
+      this.deviceItem =item
     },
     getDeviceList() {
       let parmas = {
@@ -183,35 +97,6 @@ export default {
           for (var i = 0; i < list.length; i += 2) {
             this.deviceList.push(list.slice(i, i + 2));
           }
-        }
-      });
-    },
-    //获取生产工厂
-    getEnterList() {
-      getSopDocument("", "getplant").then((res) => {
-        if (res.data.success) {
-          this.plantList = res.data.data;
-        }
-      });
-    },
-    getWorkshopList() {
-      let parmas = {
-        plantid: this.plantId,
-      };
-      getSopDocument(parmas, "getworkcenter").then((res) => {
-        if (res.data.success) {
-          this.workshopList = res.data.data;
-        }
-      });
-    },
-    getLineList() {
-      let parmas = {
-        plantid: this.plantId,
-        workshopid: this.workshopId,
-      };
-      getSopDocument(parmas, "getline").then((res) => {
-        if (res.data.success) {
-          this.lineList = res.data.data;
         }
       });
     },

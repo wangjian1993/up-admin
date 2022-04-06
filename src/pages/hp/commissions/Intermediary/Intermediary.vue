@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 14:04:18
- * @LastEditTime: 2022-03-29 14:39:25
+ * @LastEditTime: 2022-04-06 14:49:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/hp/commissions/Intermediary/Intermediary.vue
@@ -229,6 +229,8 @@ export default {
               this.pagination = pagination;
               this.loading = false;
               this.isSearch = 2;
+            }else {
+               this.loading = false;
             }
           });
           // do something
