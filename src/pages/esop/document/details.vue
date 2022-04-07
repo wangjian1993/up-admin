@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 14:02:21
- * @LastEditTime: 2022-04-01 14:42:14
+ * @LastEditTime: 2022-04-07 11:51:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/details.vue
@@ -39,6 +39,10 @@
                 <a style="margin-right: 8px" @click="preview(record)">
                   <a-icon type="profile" />
                   预览
+                </a>
+                <a style="margin-right: 8px" v-if="record.FileType == 'xlsx' || record.FileType == 'word'" @click="download(record)">
+                  <a-icon type="download" />
+                  下载
                 </a>
               </div>
             </template>
@@ -118,6 +122,9 @@ export default {
       } else {
         window.open("http://192.168.1.245:8080" + record.FilePath, "_blank");
       }
+    },
+    download(record) {
+      window.open("http://192.168.1.245:8080" + record.FilePath, "_blank");
     },
     getDocsFile() {
       let parmas = {

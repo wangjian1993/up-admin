@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-02 17:34:40
- * @LastEditTime: 2022-03-23 11:15:51
+ * @LastEditTime: 2022-04-07 09:56:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/BomUnfold.vue
@@ -12,7 +12,7 @@
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list, index) => list.ITEM_CODE + '_' + index" bordered :components="components"> </a-table>
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: scrollY, x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list, index) => list.ITEM_CODE + '_' + index" bordered :components="components" :rowClassName="rowClassName"> </a-table>
           </a-card>
         </div>
       </a-spin>
@@ -222,10 +222,21 @@ export default {
       isModelInfo: false,
       modelData: [],
       antDescriptionsRow: "",
+      scrollY: 0,
+      selectIndex: "",
     };
   },
   created() {
     this.getList();
+    this.$nextTick(() => {
+      console.log("啊哈哈哈哈====", document.getElementsByClassName("ant-table-thead"));
+      let tHeader = document.getElementsByClassName("ant-table-thead")[2];
+      console.log("啊哈哈哈哈====", tHeader.getBoundingClientRect());
+      let tHeaderBottom = tHeader.getBoundingClientRect().bottom;
+      console.log("tHeaderBottom---", tHeaderBottom);
+      // let height = `calc(100vh - 0px)`;
+      this.scrollY = `calc(100vh - 200px)`;
+    });
   },
   methods: {
     splitData,
@@ -297,13 +308,22 @@ export default {
       this.pagination.pageSize = pagination.pageSize;
       this.getList();
     },
-    handleClickRow(record) {
+    //点击当前行后进行判断返回class
+    rowClassName(record, index) {
+      console.log("index3====", index, record.ITEM_CODE + "_" + index === this.selectIndex ? "Rowactive" : "");
+      // console.log(" this.selectIndex ==" + index == this.selectIndex ? "Rowactive" : "");
+      return record.ITEM_CODE + "_" + index === this.selectIndex ? "Rowactive" : "";
+    },
+    handleClickRow(record, index) {
       return {
         style: {
           // 行背景色
           cursor: "pointer",
         },
         on: {
+          click: () => {
+            this.selectIndex = record.ITEM_CODE + "_" + index;
+          },
           dblclick: () => {
             this.isModelInfo = true;
             this.modelData = record;
@@ -321,9 +341,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.rowActive {
-  background: #000;
-}
+// .rowActive {
+//   background: #000;
+// }
 .form-box {
   display: flex;
   justify-content: flex-start;
@@ -358,5 +378,9 @@ export default {
   th {
     color: red;
   }
+}
+/deep/.Rowactive > td {
+  background-color: #13c2c2 !important;
+  color:#ffffff !important;
 }
 </style>

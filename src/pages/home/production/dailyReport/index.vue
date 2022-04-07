@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2022-04-01 17:52:21
+ * @LastEditTime: 2022-04-07 16:08:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/index.vue
@@ -43,40 +43,22 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
-                  <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
+                <a-form-item label="订单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入订单号" v-decorator="['orderno']" />
                 </a-form-item>
               </a-col>
             </a-row>
             <a-row>
               <a-col :md="6" :sm="24">
-                <a-form-item label="生产批号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" allowClear placeholder="请输入生产批号" v-decorator="['batchno']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['mitemname']" />
+                <a-form-item label="工单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入工单号" v-decorator="['mocode']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['mitemcode']" />
+                  <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['procode']" />
                 </a-form-item>
               </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['status']" placeholder="请选择计划状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option :value="item.ParamCode" v-for="(item, index) in stateList" :key="index">
-                      {{ item.ParamName }}
-                    </a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-            </a-row>
-            <a-row v-if="advanced">
               <a-col :md="6" :sm="24">
                 <a-form-item label="生产日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
@@ -87,10 +69,6 @@
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-            <a @click="toggleAdvanced" style="margin-left: 8px">
-              {{ advanced ? "收起" : "展开" }}
-              <a-icon :type="advanced ? 'up' : 'down'" />
-            </a>
           </span>
         </a-form>
         <div class="operator">
@@ -101,35 +79,6 @@
           <template slot="index" slot-scope="text, record, index">
             <div>
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-            </div>
-          </template>
-          <template slot="StatusName" slot-scope="text">
-            <div>
-              <a-tag :color="text === '待审' || text === '返工' || text === '未开工' ? 'red' : 'green'">{{ text }}</a-tag>
-            </div>
-          </template>
-          <template slot="material" slot-scope="text, record">
-            <a style="margin-right: 8px" @click="details(record)">
-              <a-icon type="profile" />
-              查看物料
-            </a>
-          </template>
-          <template slot="production_remarks" slot-scope="text, record">
-            <a style="margin-right: 8px" @click="remarks(record)">
-              <a-icon type="profile" />
-              填写生产备注
-            </a>
-          </template>
-          <template slot="action" slot-scope="text, record">
-            <div>
-              <a style="margin-right: 8px" :disabled="!hasPerm('print')" @click="handlePrint(record)">
-                <a-icon type="printer" />
-                打印工单
-              </a>
-              <a style="margin-right: 8px" @click="details(record)">
-                <a-icon type="profile" />
-                开工
-              </a>
             </div>
           </template>
         </a-table>
@@ -179,25 +128,9 @@ export default {
   created() {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
-      this.searchForm.setFieldsValue({
-        batchid: this.batchid,
-      });
     });
     this.getListAll();
     this.getPlant();
-    this.getParamData();
-  },
-  computed: {
-    hasSelected() {
-      return this.selectedRowKeys.length > 0;
-    },
-    filterData() {
-      return this.columns.filter((obj) => {
-        if (obj.dataIndex !== "StatusName" && obj.dataIndex !== "MatchStatusName") {
-          return obj.dataIndex;
-        }
-      });
-    },
   },
   methods: {
     splitData,
@@ -257,8 +190,7 @@ export default {
     //获取产线
     getLineList() {
       let parmas = {
-        plantid: this.plantId,
-        workshopId: this.workshopId,
+        workshop: this.workshopId,
       };
       getDailyReport(parmas, "getlinelist").then((res) => {
         if (res.data.success) {
@@ -325,14 +257,12 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            workshopid: values.workshopid,
-            lineid: values.lineid,
-            status: values.status,
-            pmc: values.pmc,
-            batchno: values.batchno,
-            mitemcode: values.mitemcode,
-            mitemname: values.mitemname,
-            begindate: begindate,
+            workshop: values.workshopid,
+            line: values.lineid,
+            orderno: values.orderno,
+            mocode: values.mocode,
+            procode: values.procode,
+            stratdate: begindate,
             enddate: enddate,
           };
           getDailyReport(parmas, "daily/getall").then((res) => {
@@ -341,9 +271,9 @@ export default {
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.loading = false;
               this.isSearch = 2;
             }
+            this.loading = false;
           });
           // do something
         }
@@ -356,42 +286,22 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
       };
-      getDailyReport(parmas, "requirement/detail/getall").then((res) => {
+      getDailyReport(parmas, "daily/getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
-          list.forEach((item) => {
-            if (item.PurchaseOrderMatchList !== null && item.PurchaseOrderMatchList.length > 0) {
-              let PurchaseUserName = [];
-              let SupplierName = [];
-              let PurchaseOrderNo = [];
-              let LineItem = [];
-              let TransitQty = [];
-              let MatchedQty = [];
-              item.PurchaseOrderMatchList.map((items) => {
-                PurchaseUserName.push(items.PurchaseUserName);
-                SupplierName.push(items.SupplierName);
-                PurchaseOrderNo.push(items.PurchaseOrderNo);
-                LineItem.push(items.LineItem);
-                TransitQty.push(items.TransitQty);
-                MatchedQty.push(items.RequirementQty);
-              });
-              item.PurchaseUserName = PurchaseUserName;
-              item.SupplierName = SupplierName;
-              item.PurchaseOrderNo = PurchaseOrderNo;
-              item.LineItem = LineItem;
-              item.TransitQty = TransitQty;
-              item.MatchedQty = MatchedQty;
-            }
-            item.RequirementDate = splitData(item.RequirementDate);
-          });
           const dataSource = list.map((item) => {
             Object.keys(item).forEach((key) => {
+              console.log(key)
               // 后端传null node写入会有问题
               if (item[key] === null) {
                 item[key] = "";
               }
               if (Array.isArray(item[key])) {
                 item[key] = item[key].join(",");
+              }
+              if(key == 'ProDate'){
+                console.log("1111")
+                item[key] = splitData(item[key])
               }
             });
             return item;
@@ -404,7 +314,7 @@ export default {
           });
           var timestamp = Date.parse(new Date());
           try {
-            ExportExcel(header, dataSource, `物料需求明细_${timestamp}.xlsx`);
+            ExportExcel(header, dataSource, `生产日报表_${timestamp}.xlsx`);
             this.$message.success("导出数据成功!");
           } catch (error) {
             // console.log(error);

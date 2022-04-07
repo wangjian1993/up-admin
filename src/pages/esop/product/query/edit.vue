@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-06 16:12:29
- * @LastEditTime: 2022-04-06 17:46:03
+ * @LastEditTime: 2022-04-07 11:17:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/product/query/edit.vue
@@ -12,36 +12,36 @@
       <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-row>
           <a-col :span="24">
-            <a-form-model-item label="产品大类" prop="ProType" :labelCol="{ span: 6 }">
-              <a-select v-model="form.ProType" mode="tags" style="width: 100%" placeholder="选择物料大类" :token-separators="[',']">
-                <a-select-option v-for="(item, index) in ProType" :key="index">
+            <a-form-model-item label="产品大类" :labelCol="{ span: 6 }">
+              <a-select v-model="form.ProType" mode="tags" style="width: 100%" placeholder="选择物料大类" :token-separators="[',']" @deselect="delProType" @select="addProType">
+                <a-select-option v-for="(item, index) in form.ProType" :key="index">
                   {{ item }}
                 </a-select-option>
               </a-select>
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
-            <a-form-model-item label="产品系列" prop="ProTypeDetail" :labelCol="{ span: 6 }">
-              <a-select v-model="form.ProTypeDetail" mode="tags" style="width: 100%" placeholder="选择物料大类" :token-separators="[',']">
-                <a-select-option v-for="(item, index) in ProTypeDetail" :key="index">
+            <a-form-model-item label="产品系列" :labelCol="{ span: 6 }">
+              <a-select v-model="form.ProTypeDetail" mode="tags" style="width: 100%" placeholder="选择物料大类" :token-separators="[',']" @deselect="delProTypeDetail" @select="addProTypeDetail">
+                <a-select-option v-for="(item, index) in form.ProTypeDetail" :key="index">
                   {{ item }}
                 </a-select-option>
               </a-select>
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
-            <a-form-model-item label="品名" prop="ProName" :labelCol="{ span: 6 }">
-              <a-select v-model="form.ProName" mode="tags" style="width: 100%" placeholder="选择物料大类" :token-separators="[',']">
-                <a-select-option v-for="(item, index) in ProName" :key="index">
+            <a-form-model-item label="品名" :labelCol="{ span: 6 }">
+              <a-select v-model="form.ProName" mode="tags" style="width: 100%" placeholder="选择物料大类" :token-separators="[',']" @deselect="delProName" @select="addProName">
+                <a-select-option v-for="(item, index) in form.ProName" :key="index">
                   {{ item }}
                 </a-select-option>
               </a-select>
             </a-form-model-item>
           </a-col>
           <a-col :span="24">
-            <a-form-model-item label="品号" prop="ProCode" :labelCol="{ span: 6 }">
-              <a-select v-model="form.ProCode" mode="tags" style="width: 100%" placeholder="选择物料大类" :token-separators="[',']">
-                <a-select-option v-for="(item, index) in ProCode" :key="index">
+            <a-form-model-item label="品号" :labelCol="{ span: 6 }">
+              <a-select v-model="form.ProCode" mode="tags" style="width: 100%" placeholder="选择物料大类" :token-separators="[',']" @deselect="delProCode" @select="addProCode">
+                <a-select-option v-for="(item, index) in form.ProCode" :key="index">
                   {{ item }}
                 </a-select-option>
               </a-select>
@@ -99,26 +99,118 @@ export default {
         ],
       },
       sortValue: 1,
+      ProTypeDCodeList: [],
+      ProCodeList: [],
+      ProTypeCodeList: [],
+      ProNameList: [],
     };
   },
   created() {
     this.getList();
-    // this.form.ProTypeDetail = this.editData.ProTypeDCode.split(",");
-    // this.form.ProType = this.editData.ProTypeCode.split(",");
-    // this.form.ProCode = this.editData.ProCode.split(",");
-    // this.form.ProName = this.editData.ProName.split(",");
   },
   methods: {
+    //大类
+    delProType(value) {
+      console.log(this.ProTypeCodeList);
+      this.ProTypeCodeList.forEach((item, index) => {
+        if (value == item.Value) {
+          if (item.Id != "") {
+            item.IsDel = "Y";
+          } else {
+            this.ProTypeCodeList.splice(index, 1);
+          }
+        }
+      });
+    },
+    addProType(value) {
+      console.log("111删除");
+      this.ProTypeCodeList.push({
+        Id: "",
+        Value: value,
+        IsDel: "",
+      });
+    },
+    //系列
+    delProTypeDetail(value) {
+      this.ProTypeDCodeList.map((item, index) => {
+        if (value == item.Value) {
+          if (item.Id != "") {
+            item.IsDel = "Y";
+          } else {
+            this.ProTypeDCodeList.splice(index, 1);
+          }
+        }
+      });
+    },
+    addProTypeDetail(value) {
+      this.ProTypeDCodeList.push({
+        Id: "",
+        Value: value,
+        IsDel: "",
+      });
+    },
+    //品名
+    delProName(value) {
+      this.ProNameList.map((item, index) => {
+        if (value == item.Value) {
+          if (item.Id != "") {
+            item.IsDel = "Y";
+          } else {
+            this.ProNameList.splice(index, 1);
+          }
+        }
+      });
+    },
+    addProName(value) {
+      this.ProNameList.push({
+        Id: "",
+        Value: value,
+        IsDel: "",
+      });
+    },
+    //品号
+    delProCode(value) {
+      this.ProCodeList.map((item, index) => {
+        if (value == item.Value) {
+          if (item.Id != "") {
+            item.IsDel = "Y";
+          } else {
+            this.ProCodeList.splice(index, 1);
+          }
+        }
+      });
+    },
+    addProCode(value) {
+      this.ProCodeList.push({
+        Id: "",
+        Value: value,
+        IsDel: "",
+      });
+    },
     getList() {
       let params = {
         documentid: this.editData.Id, //文件ID
       };
       getProduct(params, "getproductdetail").then((res) => {
         if (res.data.success) {
-            console.log("res===",res)
-          // this.$message.success("添加成功!");
-          // this.$emit("success");
-          // this.$emit("close");
+          let list = res.data.data;
+          this.ProTypeDCodeList = list.ProTypeDCodeList;
+          this.ProCodeList = list.ProCodeList;
+          this.ProTypeCodeList = list.ProTypeCodeList;
+          this.ProNameList = list.ProNameList;
+          this.ProTypeDCodeList.forEach((item) => {
+            this.form.ProTypeDetail.push(item.Value);
+          });
+          this.ProTypeCodeList.forEach((item) => {
+            this.form.ProType.push(item.Value);
+          });
+          this.ProCodeList.forEach((item) => {
+            this.form.ProCode.push(item.Value);
+          });
+          this.ProNameList.forEach((item) => {
+            this.form.ProName.push(item.Value);
+          });
+          // console.log(this.form);
         }
       });
     },
@@ -128,39 +220,12 @@ export default {
           let params = {
             PlantId: this.plantId, //工厂ID
             DocumentId: this.editData.Id, //文件ID
-            ProTypeCodeList: [],
-            ProTypeDCodeList: [],
-            ProCodeList: [],
-            ProNameList: [],
+            ProTypeCodeList: this.ProTypeCodeList,
+            ProTypeDCodeList: this.ProTypeDCodeList,
+            ProCodeList: this.ProCodeList,
+            ProNameList: this.ProNameList,
           };
-          this.form.ProTypeDetail.forEach((item) => {
-            params.ProTypeDCodeList.push({
-              Id: "", //默认""
-              Value: item, //大类名称
-              IsDel: "", //默认""
-            });
-          });
-          this.form.ProType.forEach((item) => {
-            params.ProTypeCodeList.push({
-              Id: "", //默认""
-              Value: item, //大类名称
-              IsDel: "", //默认""
-            });
-          });
-          this.form.ProCode.forEach((item) => {
-            params.ProCodeList.push({
-              Id: "", //默认""
-              Value: item, //大类名称
-              IsDel: "", //默认""
-            });
-          });
-          this.form.ProName.forEach((item) => {
-            params.ProNameList.push({
-              Id: "", //默认""
-              Value: item, //大类名称
-              IsDel: "", //默认""
-            });
-          });
+          console.log("params===", params);
           setProduct(params, "addorupdate").then((res) => {
             if (res.data.success) {
               this.$message.success("添加成功!");
