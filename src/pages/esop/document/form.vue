@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-04-02 14:56:35
+ * @LastEditTime: 2022-04-12 10:04:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
@@ -139,7 +139,7 @@ export default {
     removeFile(record) {
       console.log(record);
       console.log(this.fileData);
-      let paramsData = this.fileData.find((item) => item.uid == record.uid);
+      let paramsData = this.fileData.find((item) => item.id == record.uid);
       console.log("paramsData", paramsData);
       let params = {
         resourceid: paramsData.ResourceId,
@@ -149,7 +149,7 @@ export default {
         if (res.data.success) {
           this.$message.success("移除成功!");
           this.fileData.map((item, index) => {
-            if (item.uid == record.uid) {
+            if (item.id == record.uid) {
               this.fileData.splice(index, 1);
             }
           });
@@ -199,16 +199,24 @@ export default {
               url: item.FilePath,
               uid: item.ID,
             });
+            this.defFileList["sort" + item.Sort].push({
+              ...item,
+              name: item.FileName,
+              status: "done",
+              url: item.FilePath,
+              uid: item.ID,
+            });
             this.fileData.push({
               FileName: item.FileName,
               FilePath: item.FilePath,
               FilePrefix: item.FilePrefix,
               ResourceId: item.ResourceId,
               sort: item.Sort,
-              uid: item.ID,
+              id: item.ID,
             });
           });
           this.processValue = doc.ProcessCount;
+          console.log(this.defFileList);
           this.form = {
             documentcode: doc.DocumentCode,
             documentname: doc.DocumentName,
@@ -318,7 +326,7 @@ export default {
           this.processcount = 1;
           this.defFileList = {};
           this.processList = {};
-          this.isEdit = false;
+          this.fileData = [];
         }
       });
     },
@@ -327,7 +335,7 @@ export default {
       this.processcount = 1;
       this.defFileList = {};
       this.processList = {};
-      this.isEdit = false;
+      this.fileData = [];
       this.$emit("close");
     },
     //获取生产工厂

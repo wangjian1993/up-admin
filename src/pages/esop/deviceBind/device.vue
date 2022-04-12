@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 14:01:21
- * @LastEditTime: 2022-04-04 16:23:49
+ * @LastEditTime: 2022-04-12 13:55:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/device.vue
@@ -11,26 +11,26 @@
     <a-modal title="选择设备" :visible="visible" v-if="visible" destoryOnClose :ok-button-props="{ props: { disabled: deviceList.length == 0 } }" @ok="handleOk" @cancel="handleCancel" width="60%">
       <div>
         <a-row>
-          <a-col :md="6" :sm="24">
+          <a-col :md="6" :sm="24" v-if="!isDetail">
             <a-button type="primary" @click="docsList">选择SOP文档</a-button>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-model="plantId" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+              <a-select :disabled="isDetail" v-model="plantId" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
                 <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-model="workshopId" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
+              <a-select :disabled="isDetail" v-model="workshopId" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
                 <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select v-model="lineId" style="width: 200px" placeholder="请选择生产产线" @change="lineChange">
+              <a-select :disabled="isDetail" v-model="lineId" style="width: 200px" placeholder="请选择生产产线" @change="lineChange">
                 <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
               </a-select>
             </a-form-item>
@@ -92,7 +92,7 @@ import { getDeviceList, getSopDocument } from "@/services/esop.js";
 import docs from "./docs.vue";
 import docsList from "./docsList.vue";
 export default {
-  props: ["editData", "isEdit"],
+  props: ["editData", "isEdit", "isDetail"],
   components: { docs, docsList },
   data() {
     return {
@@ -124,12 +124,24 @@ export default {
       this.getLineList();
       this.getDeviceList();
     }
+    if (this.isDetail) {
+      this.plantId = this.editData.PlantId;
+      this.workshopId = this.editData.WorkCenterId;
+      this.lineId = this.editData.LineId;
+      this.selectDocsList = this.editData;
+      this.getWorkshopList();
+      this.getLineList();
+      this.getDeviceList();
+    }
   },
   methods: {
     docsList() {
       this.isDocs = true;
     },
     selectDocs(record, direction) {
+      if (this.isDetail) {
+        return;
+      }
       this.isDocsList = true;
       record.direction = direction;
       this.documentRecord = this.selectDocsList;
@@ -268,6 +280,11 @@ export default {
       text-align: center;
       line-height: 30px;
       cursor: pointer;
+      p {
+        overflow: hidden;
+        text-overflow: ellipsis; //文本溢出显示省略号
+        white-space: nowrap; //文本不会换行
+      }
       &:hover {
         background: rgb(150, 227, 158);
       }

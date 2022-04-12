@@ -1,18 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2022-04-07 16:08:32
+ * @LastEditTime: 2022-04-08 08:56:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/index.vue
--->
-<!--
- * @Author: max
- * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-03-07 10:18:42
- * @LastEditors: max
- * @Description: 
- * @FilePath: /up-admin/src/pages/home/production/dailyPlan/kanban.vue
 -->
 <template>
   <div>

@@ -138,7 +138,7 @@
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
-      <device v-if="isAddDevice" :editData="editData" :isEdit="isEdit" @close="close" />
+      <device v-if="isAddDevice" :editData="editData" :isDetail="isDetail" :isEdit="isEdit" @close="close" />
     </a-card>
   </div>
 </template>
@@ -259,6 +259,7 @@ export default {
       documentItem: [],
       editData: [],
       isEdit: false,
+      isDetail:false
     };
   },
   updated() {
@@ -295,6 +296,7 @@ export default {
     detail(record) {
       this.isAddDevice = true;
       this.editData = record;
+      this.isDetail =true;
     },
     //工厂选择
     plantChange(e) {

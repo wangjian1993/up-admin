@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2022-02-23 16:23:46
+ * @LastEditTime: 2022-04-08 10:52:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/App.vue
@@ -17,15 +17,19 @@ import { enquireScreen } from "./utils/util";
 import { mapState, mapMutations } from "vuex";
 import themeUtil from "@/utils/themeUtil";
 import { getI18nKey } from "@/utils/routerUtil";
-
+import zhCN from "ant-design-vue/es/locale/zh_CN";
+import moment from "moment";
+import "moment/locale/zh-cn";
+moment.locale("zh-cn");
 export default {
   name: "App",
   data() {
     return {
-      locale: {},
+      locale: zhCN,
     };
   },
   created() {
+    console.log("locale===",this.locale)
     this.setHtmlTitle();
     this.setLanguage(this.lang);
     enquireScreen((isMobile) => this.setDevice(isMobile));

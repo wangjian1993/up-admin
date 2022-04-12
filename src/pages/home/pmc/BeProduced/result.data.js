@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-25 11:48:45
- * @LastEditTime: 2021-11-25 11:58:29
+ * @LastEditTime: 2022-04-08 15:20:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/result.data.js
@@ -108,6 +108,13 @@ export const columns = [
       title: "采购在途数量",
       dataIndex: "TransitQty",
       scopedSlots: { customRender: "TransitQty" },
+      align: "center",
+      width: 100,
+    },
+    {
+      title: "到货未入数",
+      dataIndex: "QtyNoIn",
+      scopedSlots: { customRender: "QtyNoIn" },
       align: "center",
       width: 100,
     },

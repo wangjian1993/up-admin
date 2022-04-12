@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 17:03:33
- * @LastEditTime: 2022-04-06 08:53:32
+ * @LastEditTime: 2022-04-12 13:43:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/device.vue
@@ -73,17 +73,18 @@ export default {
   },
   created() {
     this.getDeviceList();
+    console.log("documentItem---",this.documentItem)
   },
   methods: {
     handleCancel() {
       this.$emit("close");
     },
-    close(){
+    close() {
       this.isDocs = false;
     },
     checkDocs(item) {
       this.isDocs = true;
-      this.deviceItem =item
+      this.deviceItem = item;
     },
     getDeviceList() {
       let parmas = {
@@ -146,6 +147,11 @@ export default {
       text-align: center;
       line-height: 30px;
       cursor: pointer;
+      p {
+        overflow: hidden;
+        text-overflow: ellipsis; //文本溢出显示省略号
+        white-space: nowrap; //文本不会换行
+      }
       &:hover {
         background: rgb(150, 227, 158);
       }

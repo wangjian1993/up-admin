@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-03-30 15:10:06
+ * @LastEditTime: 2022-04-11 16:33:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/device/form.vue
@@ -44,15 +44,15 @@
           </a-col>
           <a-col :span="12">
             <a-form-model-item label="ip地址" :labelCol="{ span: 6 }">
-              <a-input v-model="form.ipaddress" allowClear placeholder="请输入机构简称(中文)" />
+              <a-input v-model="form.ipaddress" allowClear placeholder="请输入ip地址" />
             </a-form-model-item>
           </a-col>
           <a-col :span="12">
-            <a-form-model-item label="mac地址" :labelCol="{ span: 6 }"><a-input v-model="form.macaddress" placeholder="请输入机构英文名"/></a-form-model-item>
+            <a-form-model-item label="mac地址" :labelCol="{ span: 6 }"><a-input v-model="form.macaddress" placeholder="请输入mac地址"/></a-form-model-item>
           </a-col>
           <a-col :span="12">
             <a-form-model-item label="序号" :labelCol="{ span: 6 }">
-              <a-input v-model="form.sort" allowClear placeholder="请输入机构简称(英文)" />
+              <a-input v-model="form.sort" allowClear placeholder="请输入序号" />
             </a-form-model-item>
           </a-col>
           <a-col :span="12">
@@ -65,7 +65,7 @@
           </a-col>
           <a-col :span="12">
             <a-form-model-item label="设备描述" :labelCol="{ span: 6 }">
-              <a-textarea v-model="form.description" placeholder="请输入机构描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
+              <a-textarea v-model="form.description" placeholder="请输入设备描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
             </a-form-model-item>
           </a-col>
         </a-row>

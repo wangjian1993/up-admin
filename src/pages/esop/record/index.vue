@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 16:01:38
- * @LastEditTime: 2022-04-06 16:09:08
+ * @LastEditTime: 2022-04-12 13:44:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/index.vue
@@ -269,6 +269,7 @@ export default {
     detail(item) {
       this.isDevice = true;
       this.documentItem = item;
+      console.log(this.documentItem)
     },
     close() {
       this.isDevice = false;

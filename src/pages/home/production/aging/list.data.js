@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-12-24 09:42:09
- * @LastEditTime: 2022-03-09 15:00:46
+ * @LastEditTime: 2022-04-12 16:00:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/aging/list.data.js
@@ -57,8 +57,8 @@ export const columns = [
     },
     {
         title: "接收数量",
-        dataIndex: "ProcessStartOty",
-        scopedSlots: { customRender: "ProcessStartOty" },
+        dataIndex: "ProcessStartQty",
+        scopedSlots: { customRender: "ProcessStartQty" },
         align: "center",
         width: 120
     },
@@ -99,8 +99,8 @@ export const columns = [
     },
     {
         title: "状态",
-        dataIndex: "Status",
-        scopedSlots: { customRender: "Status" },
+        dataIndex: "ProcessStatusName",
+        scopedSlots: { customRender: "ProcessStatusName" },
         align: "center",
         width: 120
     },

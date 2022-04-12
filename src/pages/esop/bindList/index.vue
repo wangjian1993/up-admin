@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-31 13:32:48
- * @LastEditTime: 2022-04-06 09:14:29
+ * @LastEditTime: 2022-04-12 13:35:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/bindList/index.vue
@@ -59,8 +59,8 @@
               <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['status']" style="width: 200px">
                   <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="treu">已发布</a-select-option>
-                  <a-select-option value="false">未发布</a-select-option>
+                  <a-select-option value="treu">已连接</a-select-option>
+                  <a-select-option value="false">未连接</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
