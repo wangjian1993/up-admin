@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 13:41:09
- * @LastEditTime: 2022-04-06 09:19:22
+ * @LastEditTime: 2022-04-15 10:37:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/index.vue
@@ -100,7 +100,7 @@
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
-        :rowKey="(data) => data.DocumentId"
+        :rowKey="(data) => data.ID"
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
@@ -418,7 +418,8 @@ export default {
       self.selectedRowKeys.push(null);
       let parmas = [];
       this.data.forEach((item) => {
-        if (self.selectedRowKeys.includes(item.DocumentId)) {
+        console.log("self.selectedRowKeys---",self.selectedRowKeys)
+        if (self.selectedRowKeys.includes(item.ID)) {
           parmas.push({
             documentid: item.DocumentId,
             lineid: item.LineId,

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 14:02:21
- * @LastEditTime: 2022-04-07 11:51:20
+ * @LastEditTime: 2022-04-15 09:20:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/details.vue
@@ -29,6 +29,11 @@
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ index + 1 }}</span>
+              </div>
+            </template>
+            <template slot="Sort" slot-scope="text">
+              <div>
+                <span>工序{{ text }}</span>
               </div>
             </template>
             <template slot="FileSize" slot-scope="text">
@@ -60,6 +65,12 @@ const columns = [
     scopedSlots: { customRender: "index" },
     align: "center",
     width: 50,
+  },
+  {
+    title: "工序",
+    dataIndex: "Sort",
+    scopedSlots: { customRender: "Sort" },
+    align: "center",
   },
   {
     title: "附件名称",

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-04-12 13:34:05
+ * @LastEditTime: 2022-04-15 10:32:24
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/index.vue
@@ -14,12 +14,12 @@
           <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
                   <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
-            <a-col :md="6" :sm="24">
+            <!-- <a-col :md="6" :sm="24">
               <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['workcenterid']" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
                   <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
@@ -32,14 +32,12 @@
                   <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
                 </a-select>
               </a-form-item>
-            </a-col>
+            </a-col> -->
             <a-col :md="6" :sm="24">
               <a-form-item label="文档编号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入设备编号" v-decorator="['documentcode']" />
               </a-form-item>
             </a-col>
-          </a-row>
-          <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="文档名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入设备名称" v-decorator="['documentname']" />
@@ -50,6 +48,8 @@
                 <a-input style="width: 200px" allowClear placeholder="请输入产品大类" v-decorator="['documentname']" />
               </a-form-item>
             </a-col>
+          </a-row>
+          <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="产品系列" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['documentname']" />
@@ -361,7 +361,7 @@ export default {
         plantid: this.plantid,
         workshopid: this.workshopId,
       };
-      getSopDocument(parmas, "getlist").then((res) => {
+      getSopDocument(parmas, "getline").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
@@ -413,7 +413,6 @@ export default {
             equipmentcode: values.equipmentcode,
             equipmentname: values.equipmentname,
             plantid: values.plantid,
-            workcenterid: values.workcenterid,
             documentname: values.documentname,
             documentcode: values.documentcode,
             status: values.status,

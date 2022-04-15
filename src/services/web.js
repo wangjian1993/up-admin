@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2022-04-08 09:04:01
+ * @LastEditTime: 2022-04-15 16:53:33
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -247,4 +247,8 @@ export function getDailyReport(params, action) {
 
 export function getWorkOrderList(params) {
     return request(`${UP_WEB}/momanagement/getmodata`, METHOD.GET, params);
+}
+
+export function getMaterialsPrice(params) {
+    return request(`${UP_WEB}/itemsupplierprice/bindfun`, METHOD.POST, params);
 }

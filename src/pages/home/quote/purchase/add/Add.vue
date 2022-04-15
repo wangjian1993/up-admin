@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2022-03-31 11:38:36
+ * @LastEditTime: 2022-04-15 14:21:26
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -77,7 +77,7 @@
               <a-row>
                 <a-col :lg="8" :md="12" :sm="24">
                   <a-form-item label="品名" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
-                    <a-input :disabled="isSearch" v-model="costInfo.ItemName" />
+                    <a-textarea :disabled="isSearch" v-model="costInfo.ItemName"  :rows="3"/>
                   </a-form-item>
                 </a-col>
                 <a-col :lg="8" :md="12" :sm="24">

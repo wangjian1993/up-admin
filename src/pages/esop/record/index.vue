@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 16:01:38
- * @LastEditTime: 2022-04-12 13:44:43
+ * @LastEditTime: 2022-04-15 10:16:30
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/index.vue
@@ -99,10 +99,10 @@
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
-        <template slot="Status" slot-scope="text">
+        <template slot="Enable" slot-scope="text">
           <div>
-            <a-tag color="green" v-if="text == '已审核'">已审核</a-tag>
-            <a-tag color="red" v-else>{{ text }}</a-tag>
+            <a-tag color="green" v-if="text == 'Y'">启用</a-tag>
+            <a-tag color="red" v-else>禁用</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">
@@ -187,6 +187,18 @@ const columns = [
     title: "发布日期",
     dataIndex: "UploadTime",
     scopedSlots: { customRender: "UploadTime" },
+    align: "center",
+  },
+  {
+    title: "版本号",
+    dataIndex: "Version",
+    scopedSlots: { customRender: "Version" },
+    align: "center",
+  },
+  {
+    title: "是否启用",
+    dataIndex: "Enable",
+    scopedSlots: { customRender: "Enable" },
     align: "center",
   },
   {

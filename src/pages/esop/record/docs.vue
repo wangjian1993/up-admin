@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-06 08:45:19
- * @LastEditTime: 2022-04-07 11:53:01
+ * @LastEditTime: 2022-04-15 09:22:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/docs.vue
@@ -37,7 +37,7 @@
                   <a-icon type="profile" />
                   预览
                 </a>
-                 <a style="margin-right: 8px" v-if="record.FileType == 'xlsx' || record.FileType == 'word'" @click="download(record)">
+                <a style="margin-right: 8px" v-if="record.FileType == 'xlsx' || record.FileType == 'word'" @click="download(record)">
                   <a-icon type="download" />
                   下载
                 </a>
@@ -57,6 +57,12 @@ const columns = [
     scopedSlots: { customRender: "index" },
     align: "center",
     width: 50,
+  },
+  {
+    title: "工序",
+    dataIndex: "Sort",
+    scopedSlots: { customRender: "Sort" },
+    align: "center",
   },
   {
     title: "附件名称",
@@ -88,7 +94,7 @@ const columns = [
     align: "center",
   },
 ];
-import {getSopDocument } from "@/services/esop.js";
+import { getSopDocument } from "@/services/esop.js";
 import preview from "../components/preview.vue";
 export default {
   props: ["documentItem", "deviceItem"],
@@ -116,7 +122,7 @@ export default {
     };
   },
   created() {
-    console.log(this.deviceItem)
+    console.log(this.deviceItem);
     this.getDocsFile();
   },
   methods: {
@@ -131,7 +137,7 @@ export default {
     download(record) {
       window.open("http://192.168.1.245:8080" + record.FilePath, "_blank");
     },
-    close(){
+    close() {
       this.$emit("close");
     },
     closeModal() {
@@ -139,8 +145,8 @@ export default {
     },
     getDocsFile() {
       let parmas = {
-        recordid: this.documentItem.DocumentId,
-        equipmentid: this.deviceItem.EquipmentId
+        recordid: this.documentItem.RecordId,
+        equipmentid: this.deviceItem.EquipmentId,
       };
       getSopDocument(parmas, "record/getfile").then((res) => {
         if (res.data.success) {

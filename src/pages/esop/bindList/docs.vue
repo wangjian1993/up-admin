@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-06 09:07:48
- * @LastEditTime: 2022-04-07 11:52:43
+ * @LastEditTime: 2022-04-15 09:21:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/bindList/docs.vue
@@ -65,6 +65,12 @@ const columns = [
     scopedSlots: { customRender: "index" },
     align: "center",
     width: 50,
+  },
+   {
+    title: "工序",
+    dataIndex: "Sort",
+    scopedSlots: { customRender: "Sort" },
+    align: "center",
   },
   {
     title: "附件名称",

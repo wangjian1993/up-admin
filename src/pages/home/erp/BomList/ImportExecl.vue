@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2022-03-25 13:39:02
+ * @LastEditTime: 2022-04-13 10:31:44
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/erp/BomList/ImportExecl.vue
@@ -151,6 +151,33 @@ export default {
         this.isUpload = false;
       };
     },
+    getBomInfo(bom) {
+      return new Promise((resolve) => {
+        let parmas = {
+          pageindex: 1,
+          pagesize: 1,
+          plantid: this.plantId,
+          itemcode: bom,
+          itemname: "",
+          drawingno: "",
+          shortcut: "",
+          approvestatus: "",
+          itemspecification: "",
+          itemcodesign: "包含(A,B,C)",
+          itemspecificationsign: "",
+          itemnamesign: "",
+          drawingnosign: "",
+          shortcutsign: "",
+        };
+        getERPReportAction(parmas, "getbominfo").then((res) => {
+          if (res.data.success) {
+            let list = res.data.data.list[0];
+            console.log(list);
+            resolve(list);
+          }
+        });
+      });
+    },
     async handleExcel() {
       if (this.plantId == "") {
         return this.$message.warning("请选择生产工厂");
@@ -161,17 +188,21 @@ export default {
       this.excelArray.forEach((item) => {
         this.treeArray = [];
         this.excelList = [];
-        promiseList.push(item);
         arr.push(this.waitData(item.bom));
+        this.getBomInfo(item.bom).then((res) => {
+          promiseList.push(res);
+        })
         console.log("arr===", arr);
+        // console.log("promiseList===", promiseList);
       });
       Promise.all(arr)
         .then((res) => {
           // let list = res.flat();
-          console.log(res);
           res.forEach((items, index) => {
+            console.log("====", items);
             promiseList[index].childrenArray = items;
           });
+          console.log("promiseList---", promiseList);
           this.formattingExcel(promiseList).then((r) => {
             try {
               var timestamp = Date.parse(new Date());
@@ -196,6 +227,7 @@ export default {
     },
     async formattingExcel(excelData) {
       return new Promise((resolve) => {
+        console.log("excelData", excelData);
         let excelArray = [];
         let formStyle = {};
         const sheetCols = [
@@ -211,18 +243,18 @@ export default {
           { wch: 8 }, // E10单价
         ];
         excelData.forEach((item) => {
+          console.log("item===", item);
           let _data = [];
           let mergeTitle = []; //合并单元格
-          for (let i = 0; i < 1; i++) {
+          for (let i = 0; i < 3; i++) {
             mergeTitle.push({
               s: { r: i, c: 0 },
               e: { r: i, c: 8 },
             });
           }
-          console.log("item====", item);
-          _data.push([`产品代码:  ${item.bom}`, null, null, null, null, null, null, null, null]);
-          // _data.push([`产品名称: `, null, null, null, null, null, null, null, null]);
-          // _data.push([`产品规格:  `, null, null, null, null, null, null, null, null]);
+          _data.push([`产品代码:  ${item.ITEM_CODE}`, null, null, null, null, null, null, null, null]);
+          _data.push([`产品名称:  ${item.ITEM_NAME}`, null, null, null, null, null, null, null, null]);
+          _data.push([`产品规格:   ${item.ITEM_SPECIFICATION}`, null, null, null, null, null, null, null, null]);
           _data.push(["阶层", "元件品号", "元件品名", "元件规格", "元件图号", "单位", "组成用量", "底数", "插件位置"]);
           item.childrenArray.map((items) => {
             let array = [];
@@ -248,7 +280,7 @@ export default {
           let merges2 = [];
           let merges = [...mergeTitle, ...merges2]; // 合并单元格
           excelArray.push({
-            Sheet: item.bom, // 下方tab切换名称
+            Sheet: item.ITEM_CODE, // 下方tab切换名称
             data: _data, // 表格数据
             merges, //  合并单元格
             autoWidth: false, // 自适应宽度
@@ -264,7 +296,13 @@ export default {
       let n = await this.getExcelData(code);
       return n;
     },
+    async waitInfo(code) {
+      let n = await this.getBomInfo(code);
+      console.log("n====", n);
+      return n;
+    },
     initTree(parent_id) {
+      console.log("parent_id--",parent_id)
       // jsonArray 变量数据
       // 第一次以后：根据id去查询parent_id相同的（相同为子数据）
       // 第一次：查找所有parent_id为-1的数据组成第一级
@@ -288,40 +326,19 @@ export default {
       return new Promise((resolve) => {
         this.treeArray = [];
         this.excelList = [];
-        let parmas = {
+        let params = {
           plantid: this.plantId,
           itemcode: itemcode,
         };
-        getERPReportAction(parmas, "getbomchildlevel").then((res) => {
+        getERPReportAction(params, "getbomchildlevel").then((res) => {
           this.excelList = res.data.data.list;
           let treeList = this.initTree(itemcode);
+          console.log("treeList---", treeList);
           this.treeArray = [];
           let parseList = this.steamrollArray(treeList);
+          console.log("parseList---", parseList);
           resolve(parseList);
         });
-        //   /* 你的逻辑代码 */
-        // let excelData = [];
-        // this.selectedRowKeys.forEach((item) => {
-        //   this.data.find((items) => {
-        //     if (items.BOM_ID == item) {
-        //       this.treeArray = [];
-        //       this.excelList = [];
-        //       let parmas = {
-        //         plantid: this.searchValue.plantId,
-        //         itemcode: items.ITEM_CODE,
-        //       };
-        //       getERPReportAction(parmas, "getbomchildlevel").then((res) => {
-        //         // let children = res.data.data.list;
-        //         this.excelList = res.data.data.list;
-        //         this.excelList = this.initTree(items.ITEM_CODE);
-        //         let list = this.steamrollArray(this.excelList);
-        //         items.childrenArray = list;
-        //         excelData.push(items);
-        //         resolve(excelData);
-        //       });
-        //     }
-        //   });
-        // });
       });
     },
   },
