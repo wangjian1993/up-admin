@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-04-12 10:04:00
+ * @LastEditTime: 2022-04-19 14:09:30
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
@@ -43,6 +43,9 @@
             <a-form-model-item label="工序数量" :labelCol="{ span: 6 }"><a-input-number :min="1" v-model="processValue" placeholder="请输入工序" @change="processChange"/></a-form-model-item>
           </a-col>
           <a-col :span="24">
+            <a-form-model-item label="SOP文档" :labelCol="{ span: 3 }">
+              <a-upload :custom-request="uploadFile1" :before-upload="beforeUpload" list-type="picture-card" :default-file-list="defFileList1" :fileList="processList1" :remove="removeFile1"> <a-icon type="plus" /> </a-upload
+            ></a-form-model-item>
             <div v-for="(item, index) in processValue" :key="index">
               <a-form-model-item :label="'工序' + (index + 1)" :labelCol="{ span: 3 }">
                 <a-upload :data="{ sort: index + 1 }" :custom-request="uploadFile" list-type="picture-card" :default-file-list="defFileList['sort' + (index + 1)]" :fileList="processList['sort' + (index + 1)]" :remove="removeFile"> <a-icon type="plus" /> </a-upload
@@ -80,8 +83,9 @@ export default {
       fileList: [],
       defFileList: {},
       fileData: [],
+      fileData1: [],
       FilePrefix: "",
-      processValue: 1,
+      processValue: 0,
       processList: {
         sort1: [],
       },
@@ -125,6 +129,8 @@ export default {
         ],
       },
       sortValue: 1,
+      processList1: [],
+      defFileList1: [],
     };
   },
   mounted() {
@@ -136,11 +142,20 @@ export default {
     this.getEnterList();
   },
   methods: {
+    removeFile1() {
+      let params = {
+        resourceid: this.fileData1[0].ResourceId,
+        filepath: this.fileData1[0].FilePath,
+      };
+      setSopDocumnet(params, "deletefile").then((res) => {
+        if (res.data.success) {
+          this.$message.success("移除成功!");
+          this.fileData1 = [];
+        }
+      });
+    },
     removeFile(record) {
-      console.log(record);
-      console.log(this.fileData);
       let paramsData = this.fileData.find((item) => item.id == record.uid);
-      console.log("paramsData", paramsData);
       let params = {
         resourceid: paramsData.ResourceId,
         filepath: paramsData.FilePath,
@@ -158,14 +173,6 @@ export default {
               this.processList["sort" + paramsData.sort].splice(index, 1);
             }
           });
-          // for (const p in this.processList["sort" + paramsData.sort]) {
-          //   console.log("111", this.processList["sort" + paramsData.sort][p].uid);
-          //   console.log("222", record.uid);
-          //   if (this.processList["sort" + paramsData.sort].uid == record.uid) {
-          //     console.log("333", this.processList["sort" + paramsData.sort]);
-          //     this.processList["sort" + paramsData.sort].splice(1, p);
-          //   }
-          // }
         }
       });
     },
@@ -229,15 +236,70 @@ export default {
         }
       });
     },
-    beforeUpload() {
-      // const fileExt = file.name
-      //   .split(".")
-      //   .pop()
-      //   .toLocaleLowerCase();
-      // let fileList = [...this.fileList, file];
-      // this.fileList = fileList.slice(-1);
-      // this.isUpload = true;
-      // this.file = file;
+    beforeUpload(file) {
+      let fileList = [...this.defFileList1, file];
+      this.defFileList1 = fileList.slice(-1);
+    },
+    //总sop 文档上传
+    uploadFile1(info) {
+      getBase64(info.file, (imageUrl) => {
+        this.imageUrl = imageUrl;
+        console.log(info.file);
+        let fileType = "";
+        let fileSuffix = "";
+        if (info.file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+          fileType = "xlsx";
+          fileSuffix = "xlsx";
+        } else if (info.file.type == "application/msexcel") {
+          fileType = "xls";
+          fileSuffix = "xls";
+        } else if (info.file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+          fileType = "docx";
+          fileSuffix = "docx";
+        } else if (info.file.type == "application/msword") {
+          fileType = "doc";
+          fileSuffix = "doc";
+        } else if (info.file.type == "application/pdf") {
+          fileType = "pdf";
+          fileSuffix = "pdf";
+        } else {
+          let defaType = info.file.type.split("/");
+          fileType = defaType[0];
+          fileSuffix = defaType[1];
+        }
+        let parmas = {
+          filename: info.file.name,
+          filecontent: imageUrl,
+          filetype: fileType,
+          filesize: info.file.size,
+          filesuffix: "." + fileSuffix,
+          filelength: 0,
+        };
+        if (this.fileData1.length > 0) {
+          parmas.FilePrefix = this.FilePrefix;
+        }
+        setSopDocumnet(parmas, "upload").then((res) => {
+          if (res.data.success) {
+            this.processList1.push({
+              name: info.file.name,
+              status: "done",
+              uid: info.file.uid,
+            });
+            this.$message.success("上传成功!");
+            if (this.fileData1.length == 0) {
+              this.FilePrefix = res.data.data.FilePrefix;
+            }
+            let fileInfo = {
+              ...res.data.data,
+              ...info.file,
+              sort:0,
+            };
+            this.fileData1.push(fileInfo);
+            console.log(" this.fileData", this.fileData1);
+          }
+        });
+        this.loading = false;
+      });
     },
     uploadFile(info) {
       console.log("info", info);
@@ -303,8 +365,9 @@ export default {
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          this.form.filecount = this.fileData.length;
+          this.form.filecount = this.fileData.length + 1;
           this.form.files = this.fileData;
+          this.form.files.unshift(this.fileData1[0])
           this.form.processcount = this.processValue;
           if (this.isEdit) {
             this.form.documentid = this.editData.DocumentId;

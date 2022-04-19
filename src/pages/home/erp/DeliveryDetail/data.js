@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:48:13
- * @LastEditTime: 2022-01-05 18:15:01
+ * @LastEditTime: 2022-04-19 11:37:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/DeliveryDetail/data.js
@@ -13,20 +13,6 @@ export const columns = [
         scopedSlots: { customRender: "index" },
         align: "center",
         width: 50,
-    },
-    {
-        title: "供应商编号",
-        dataIndex: "SUPPLIER_CODE",
-        scopedSlots: { customRender: "SUPPLIER_CODE" },
-        align: "left",
-        width: 80,
-    },
-    {
-        dataIndex: "SUPPLIER_NAME",
-        scopedSlots: { customRender: "SUPPLIER_NAME" },
-        align: "left",
-        width: 140,
-        slots: { title: "SUPPLIER_NAME_INPUT" }
     },
     {
         dataIndex: "TRANSACTION_DATE",

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-14 11:28:34
- * @LastEditTime: 2022-04-15 11:29:09
+ * @LastEditTime: 2022-04-18 17:58:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/materialsPrice/index.vue
@@ -107,7 +107,7 @@
             <a-button v-if="hasPerm('update')" icon="reload" type="primary" :disabled="dataSource.length == 0" @click="update" style="margin-left: 8px">确认更新</a-button>
           </span>
         </a-form>
-        <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.ItemCode + '_' + index" bordered>
+        <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :rowClassName="rowClassName" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.ItemCode + '_' + index" bordered>
           <template slot="index" slot-scope="text, record, index">
             <div>
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -131,13 +131,13 @@
           </template>
           <template slot="Price" slot-scope="text, record">
             <div>
-              <p>{{ record.Price}}</p>
-              <p v-if="record.PriceAfter != ''">{{ record.PriceAfter}}(修改后)</p>
+              <p>{{ record.Price }}</p>
+              <p v-if="record.PriceAfter != ''">{{ record.PriceAfter }}(修改后)</p>
             </div>
           </template>
           <template slot="PriceD" slot-scope="text, record">
             <div>
-              <p>{{ record.PriceD}}</p>
+              <p>{{ record.PriceD }}</p>
               <p v-if="record.PriceDAfter != ''">{{ record.PriceDAfter }}(修改后)</p>
             </div>
           </template>
@@ -235,6 +235,7 @@ export default {
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.totalCount;
           this.pagination = pagination;
+          this.$message.success("更新成功!");
         }
         this.loading = false;
       });
@@ -271,6 +272,9 @@ export default {
         }
       });
     },
+    rowClassName(record) {
+      return record.ApproveStatus != "可以更新" ? "Rowactive" : "";
+    },
   },
 };
 </script>
@@ -281,5 +285,9 @@ export default {
 }
 .ant-form-item {
   margin-bottom: 5px;
+}
+/deep/.Rowactive > td {
+  background-color: #ed0e0e !important;
+  color:#fff !important;
 }
 </style>

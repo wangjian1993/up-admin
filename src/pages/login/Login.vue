@@ -142,14 +142,6 @@ export default {
         const { userName, userModules, PhotoUrl } = loginRes.data;
         this.setUser(userName);
         this.setUserHead("./" + PhotoUrl);
-        // this.setMenu(userModules);
-        console.log("userModules====", userModules);
-        userModules.forEach((item,index) => {
-          if (item.name == "WMS") {
-            userModules.splice(index,1)
-          }
-        });
-        localStorage.setItem("menu", JSON.stringify(userModules));
         var inFifteenMinutes = new Date(new Date().getTime() + 4 * 60 * 60 * 1000);
         setAuthorization({ token: res.headers.token, expireAt: inFifteenMinutes });
         this.$message.success(this.timeFix().CN + "，欢迎回来!", 3);
@@ -165,22 +157,23 @@ export default {
           router: "dashboard", //匹配 router.map.js 中注册名 registerName = dashboard 的路由
           children: ["workplace"], //dashboard 路由的子路由配置，依次匹配 registerName 为 workplace 和 analysis 的路由
         };
-        // let cost = {
-        //   router :"quote", //匹配 router.map.js 中注册名 registerName = quote 的路由
-        //   children: ["copy",'anew']
-        // }
         let personal = { router: "personal", children: ["user"] };
+        let newRoutesConfig = [];
         routesConfig.push(workplace);
-        // routesConfig.push(cost);
         routesConfig.push(personal);
-        // }
+        routesConfig.forEach((item) => {
+          if (item.path != "") {
+            newRoutesConfig.push(item);
+          }
+        });
+        localStorage.setItem("menu", JSON.stringify(newRoutesConfig));
         let root = [
           {
             router: "root", //匹配 router.map.js 中注册名 registerName = root 的路由
-            children: routesConfig,
+            children: newRoutesConfig,
           },
         ];
-        console.log(root);
+        console.log("root====", root);
         loadRoutes(root);
         // this.$router.push("dashboard");
         this.$router.push("dashboard").catch((err) => console.log(err));
