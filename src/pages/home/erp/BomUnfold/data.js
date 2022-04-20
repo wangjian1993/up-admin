@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:53:46
- * @LastEditTime: 2021-12-21 14:17:30
+ * @LastEditTime: 2022-04-20 17:28:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/data.js
@@ -185,6 +185,13 @@ export const innerColumns = [
         width: 200,
     },
     {
+        title: "图号",
+        dataIndex: "DRAWING_NO",
+        scopedSlots: { customRender: "DRAWING_NO" },
+        align: "center",
+        width: 80,
+    },
+    {
         title: "单位",
         dataIndex: "UNIT_NAME",
         scopedSlots: { customRender: "UNIT_NAME" },
@@ -255,13 +262,6 @@ export const innerColumns = [
         customRender: (text) => {
             return text == "Y" ? "已生效" : text == "N" ? "未生效" : "失效";
         },
-    },
-    {
-        title: "图号",
-        dataIndex: "DRAWING_NO",
-        scopedSlots: { customRender: "DRAWING_NO" },
-        align: "center",
-        width: 80,
     },
     {
         title: "品号类型",

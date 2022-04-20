@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2022-04-13 10:31:44
+ * @LastEditTime: 2022-04-20 17:25:02
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/home/erp/BomList/ImportExecl.vue
@@ -172,7 +172,6 @@ export default {
         getERPReportAction(parmas, "getbominfo").then((res) => {
           if (res.data.success) {
             let list = res.data.data.list[0];
-            console.log(list);
             resolve(list);
           }
         });
@@ -185,24 +184,32 @@ export default {
       this.isUpload = true;
       let arr = [];
       let promiseList = [];
+      let sortArray = []
       this.excelArray.forEach((item) => {
         this.treeArray = [];
         this.excelList = [];
         arr.push(this.waitData(item.bom));
+        sortArray.push(item.bom)
         this.getBomInfo(item.bom).then((res) => {
           promiseList.push(res);
-        })
-        console.log("arr===", arr);
-        // console.log("promiseList===", promiseList);
+        });
+        // console.log("arr===", arr);
       });
+      //跳转数据顺序
       Promise.all(arr)
         .then((res) => {
           // let list = res.flat();
+          console.log("promiseList1", promiseList);
+          console.log("sortArray",sortArray);
+          promiseList.sort((a, b) => {
+            return sortArray.indexOf(a.ITEM_CODE) - sortArray.indexOf(b.ITEM_CODE);
+          });
+          console.log("promiseList2", promiseList);
           res.forEach((items, index) => {
-            console.log("====", items);
+            // console.log("====", items);
             promiseList[index].childrenArray = items;
           });
-          console.log("promiseList---", promiseList);
+          // console.log("promiseList---", promiseList);
           this.formattingExcel(promiseList).then((r) => {
             try {
               var timestamp = Date.parse(new Date());
@@ -302,7 +309,7 @@ export default {
       return n;
     },
     initTree(parent_id) {
-      console.log("parent_id--",parent_id)
+      // console.log("parent_id--",parent_id)
       // jsonArray 变量数据
       // 第一次以后：根据id去查询parent_id相同的（相同为子数据）
       // 第一次：查找所有parent_id为-1的数据组成第一级
@@ -333,10 +340,10 @@ export default {
         getERPReportAction(params, "getbomchildlevel").then((res) => {
           this.excelList = res.data.data.list;
           let treeList = this.initTree(itemcode);
-          console.log("treeList---", treeList);
+          // console.log("treeList---", treeList);
           this.treeArray = [];
           let parseList = this.steamrollArray(treeList);
-          console.log("parseList---", parseList);
+          // console.log("parseList---", parseList);
           resolve(parseList);
         });
       });
