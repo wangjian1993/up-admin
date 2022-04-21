@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-02 17:34:40
- * @LastEditTime: 2022-04-07 09:56:50
+ * @LastEditTime: 2022-04-21 15:52:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/BomUnfold.vue
@@ -12,7 +12,24 @@
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: scrollY, x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list, index) => list.ITEM_CODE + '_' + index" bordered :components="components" :rowClassName="rowClassName"> </a-table>
+            <a-table :columns="columns" :data-source="list" :size="size" :scroll="{ y: scrollY, x: 2000 }" :pagination="false" :customRow="handleClickRow" @change="handleTableChange" :rowKey="(list, index) => list.ITEM_CODE + '_' + index" bordered :components="components" :rowClassName="rowClassName">
+              <template slot="ITEM_NAME" slot-scope="text">
+                <a-tooltip placement="topLeft" :overlayStyle="{ fontSize: '10px' }">
+                  <template slot="title">
+                    {{ text }}
+                  </template>
+                  {{ text }}
+                </a-tooltip>
+              </template>
+              <template slot="ITEM_SPECIFICATION" slot-scope="text">
+                <a-tooltip placement="topLeft" :overlayStyle="{ fontSize: '10px' }">
+                  <template slot="title">
+                    {{ text }}
+                  </template>
+                  {{ text }}
+                </a-tooltip>
+              </template>
+            </a-table>
           </a-card>
         </div>
       </a-spin>
@@ -381,6 +398,6 @@ export default {
 }
 /deep/.Rowactive > td {
   background-color: #13c2c2 !important;
-  color:#ffffff !important;
+  color: #ffffff !important;
 }
 </style>
