@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-14 08:51:07
- * @LastEditTime: 2021-11-15 16:06:15
+ * @LastEditTime: 2022-04-22 10:20:05
  * @LastEditors: max
  * @Description: 后台接口
  * @FilePath: /up-admin/src/services/admin.js
@@ -191,6 +191,9 @@ export async function getAppMdules(params) {
  */
 export async function setPermission(params, action) {
 	return request(`${UP_ADMIN}/permission/${action}`, METHOD.POST, params);
+}
+export async function getUserPermission(params, action) {
+	return request(`${UP_ADMIN}/user/permission/${action}`, METHOD.GET, params);
 }
 /**
  * @description:权限-查询应用菜单树形信息API

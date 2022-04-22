@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-03-26 11:56:59
+ * @LastEditTime: 2022-04-22 10:06:06
  * @LastEditors: max
  * @Description: BOM多级展开
  * @FilePath: /up-admin/src/pages/home/erp/BomUnfold/List.vue
@@ -23,7 +23,7 @@
               <a-input placeholder="主件品号" allowClear style="width: 200px" v-decorator="['itemcode', { rules: [{ required: true, message: '请输入主键品号' }] }]" />
             </a-form-item>
           </a-col>
-           <!-- <a-col :md="6" :sm="24">
+          <!-- <a-col :md="6" :sm="24">
             <a-form-item label="快捷码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-input placeholder="快捷码" allowClear style="width: 200px" v-decorator="['shortcut']" />
             </a-form-item>
@@ -299,7 +299,7 @@ export default {
             drawingnosign: "",
             drawingno: "",
             approvestatus: "",
-            shortcutsign:""
+            shortcutsign: "",
           };
           getERPReportAction(parmas, "getbomlist").then((res) => {
             if (res.data.success) {
@@ -308,8 +308,8 @@ export default {
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.isSearch = true;
-            }else {
-               this.data =[]
+            } else {
+              this.data = [];
             }
             this.loading = false;
           });
