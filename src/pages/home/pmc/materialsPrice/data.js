@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-14 11:32:32
- * @LastEditTime: 2022-04-14 14:01:04
+ * @LastEditTime: 2022-04-26 17:44:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/materialsPrice/data.js
@@ -13,18 +13,6 @@ export const columns = [
       scopedSlots: { customRender: "index" },
       align: "center",
       width:50,
-    },
-    {
-      title: "状态",
-      dataIndex: "ApproveStatus",
-      scopedSlots: { customRender: "ApproveStatus" },
-      align: "center",
-    },
-    {
-      title: "供应商编号",
-      dataIndex: "SupplierCode",
-      scopedSlots: { customRender: "SupplierCode" },
-      align: "center",
     },
     {
       title: "供应商名称",
@@ -49,18 +37,7 @@ export const columns = [
       dataIndex: "ItemSpecification",
       scopedSlots: { customRender: "ItemSpecification" },
       align: "center",
-      width: "300px",
-    },
-    {
-      title: "生效日期",
-      scopedSlots: { customRender: "EffectiveDate" },
-      align: "center",
-    },
-    {
-      title: "失效日期",
-      dataIndex: "IneffectiveDate",
-      scopedSlots: { customRender: "IneffectiveDate" },
-      align: "center",
+      width: 280,
     },
     {
       title: "采购单价",
@@ -93,8 +70,19 @@ export const columns = [
       align: "center",
     },
     {
-      title: "单身采购单价",
+      title: "大批量单价",
       scopedSlots: { customRender: "PriceD" },
+      align: "center",
+    },
+    {
+      title: "生效日期",
+      scopedSlots: { customRender: "EffectiveDate" },
+      align: "center",
+    },
+    {
+      title: "失效日期",
+      dataIndex: "IneffectiveDate",
+      scopedSlots: { customRender: "IneffectiveDate" },
       align: "center",
     },
     {
@@ -102,6 +90,18 @@ export const columns = [
       dataIndex: "Description",
       scopedSlots: { customRender: "Description" },
       align: "center",
-      width:500
+      width: 280,
+    },
+    {
+      title: "状态",
+      dataIndex: "ApproveStatus",
+      scopedSlots: { customRender: "ApproveStatus" },
+      align: "center",
+    },
+    {
+      title: "供应商编号",
+      dataIndex: "SupplierCode",
+      scopedSlots: { customRender: "SupplierCode" },
+      align: "center",
     },
   ];
