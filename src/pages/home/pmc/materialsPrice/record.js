@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-27 09:50:33
- * @LastEditTime: 2022-04-27 11:05:16
+ * @LastEditTime: 2022-04-30 16:07:26
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/materialsPrice/record.js
@@ -41,13 +41,13 @@ export const columns = [
       align: "center",
     },
     {
-      title: "基准价格(大于)",
+      title: "基准价格(小于)",
       dataIndex: "JzPrice1",
       scopedSlots: { customRender: "JzPrice1" },
       align: "center",
     },
     {
-      title: "基准价格(小于)",
+      title: "基准价格(大于)",
       dataIndex: "JzPrice2",
       scopedSlots: { customRender: "JzPrice2" },
       align: "center",

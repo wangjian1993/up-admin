@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-27 08:47:14
- * @LastEditTime: 2022-04-27 17:45:41
+ * @LastEditTime: 2022-04-30 16:03:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/materialsPrice/record.vue
@@ -40,13 +40,13 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="基准价格(大于)" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input-number :min="0" style="width: 200px" allowClear placeholder="请输入基准价格1" v-decorator="['jzprice1']" />
+              <a-form-item label="基准价格(小于)" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input-number :min="0" style="width: 200px" allowClear placeholder="请输入基准价格(小于)" v-decorator="['jzprice1']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="基准价格(小于)" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input-number :min="0" style="width: 200px" allowClear placeholder="请输入基准价格2" v-decorator="['jzprice2']" />
+              <a-form-item label="基准价格(大于)" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input-number :min="0" style="width: 200px" allowClear placeholder="请输入基准价格(大于)" v-decorator="['jzprice2']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -303,7 +303,7 @@ export default {
           let list = res.data.data.Details;
           let record = res.data.data.Record[0];
           _data.push(["流水编号:", record.SerialNumber, "供应商编号:", record.SupplierCode, "供应商编号:", record.SupplierName, "面积:", record.Square, "", "", "", "", "", "", ""]);
-          _data.push(["0-面积:", record.Square, "基准价格(大于):", record.JzPrice1, "基准价格(小于):", record.JzPrice2, "品号:", record.ItemCode, "", "", "", "", "", "", ""]);
+          _data.push(["0-面积:", record.Square, "基准价格(小于):", record.JzPrice1, "基准价格(小于):", record.JzPrice2, "品号:", record.ItemCode, "", "", "", "", "", "", ""]);
           _data.push(["铜厚:", record.ThStr, "	耐压:", record.NyStr, "板厚:", record.BhStr, "生产工艺:", record.ScgyStr, "", "", "", "", "", "", ""]);
           _data.push(["提交人:", record.UserCreated, "提交时间:", record.DatetimeCreated, "审核人:", record.UserApprove || "", "审核时间:", record.DatetimeApprove || "", "", "", "", "", "", "", ""]);
           const hear = ["供应商名称", "品号", "品名", "规格", "采购单价", "含税", "分量计价", "开始数量", "结束数量", "大批量单价", "生效日期", "失效日期", "描述", "状态", "供应商编号"];

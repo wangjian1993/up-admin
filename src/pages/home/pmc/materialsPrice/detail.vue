@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-27 11:29:03
- * @LastEditTime: 2022-04-27 17:42:03
+ * @LastEditTime: 2022-04-30 16:02:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/materialsPrice/detail.vue
@@ -25,10 +25,10 @@
         <a-descriptions-item label="0-面积">
           {{ detailData.Square }}
         </a-descriptions-item>
-        <a-descriptions-item label="基准价格(大于)">
+        <a-descriptions-item label="基准价格(小于)">
           {{ detailData.JzPrice1 }}
         </a-descriptions-item>
-        <a-descriptions-item label="基准价格(小于)">
+        <a-descriptions-item label="基准价格(大于)">
           {{ detailData.JzPrice2 }}
         </a-descriptions-item>
         <a-descriptions-item label="品号">

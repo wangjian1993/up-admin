@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2022-04-01 17:49:16
+ * @LastEditTime: 2022-04-29 17:38:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/api.js
@@ -20,7 +20,7 @@ var BASE_URL_MOCK;
 console.log(window.location);
 if (process.env.NODE_ENV == 'production') {
   //正式服
-  BASE_URL_MOCK = window.location.host === '218.17.19.58:7003' ? 'http://218.17.19.58:7004' : 'http://192.168.0.240:8081';
+  BASE_URL_MOCK = window.location.host === '113.106.78.83:7003' ? 'http://113.106.78.83:7004' : 'http://192.168.0.240:8081';
 } else {
   //测试
   BASE_URL_MOCK = process.env.VUE_APP_API_BASE_URL;
@@ -40,5 +40,6 @@ module.exports = {
   UP_WMS: `${BASE_URL_MOCK}/api/wms`,
   UP_HP: `${BASE_URL_MOCK}/api/feb/hptc`,
   UP_ESOP: `${BASE_URL_MOCK}/api/esop`,
-  UP_REPORT: `${BASE_URL_MOCK}/api/report`
+  UP_REPORT: `${BASE_URL_MOCK}/api/report`,
+  UP_EAP: `${BASE_URL_MOCK}/api/eap`
 }

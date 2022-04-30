@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-27 08:46:44
- * @LastEditTime: 2022-04-27 10:00:02
+ * @LastEditTime: 2022-04-30 15:59:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/materialsPrice/list.vue
@@ -41,32 +41,32 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="基准价格(大于)" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-form-item label="基准价格(小于)" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-input-number
                     :min="0"
                     style="width: 200px"
                     allowClear
-                    placeholder="请输入基准价格1"
+                    placeholder="请输入基准价格(小于)"
                     v-decorator="[
                       'jzprice1',
                       {
-                        rules: [{ required: true, message: '请输入基准价格1!' }],
+                        rules: [{ required: true, message: '请输入基准价格(小于)' }],
                       },
                     ]"
                   />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="基准价格(小于)" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-form-item label="基准价格(大于)" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-input-number
                     :min="0"
                     style="width: 200px"
                     allowClear
-                    placeholder="请输入基准价格2"
+                    placeholder="请输入基准价格(大于)"
                     v-decorator="[
                       'jzprice2',
                       {
-                        rules: [{ required: true, message: '请输入基准价格2!' }],
+                        rules: [{ required: true, message: '请输入基准价格(大于)!' }],
                       },
                     ]"
                   />
