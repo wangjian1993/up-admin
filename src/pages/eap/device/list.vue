@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2022-04-29 17:25:28
- * @LastEditTime: 2022-05-05 15:23:27
+ * @Date: 2022-05-05 11:01:59
+ * @LastEditTime: 2022-05-05 15:06:50
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/eap/plantInfo/line.vue
+ * @FilePath: /up-admin/src/pages/eap/device/list.vue
 -->
 <template>
   <div>
@@ -14,22 +14,36 @@
           <div :class="advanced ? null : 'fold'">
             <a-row>
               <a-col :md="6" :sm="24">
-                <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
-                    <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                <a-form-item label="设备类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['typeid']" style="width: 200px" placeholder="请选择设备类型">
+                    <a-select-option v-for="item in deviceTypeList" :key="item.ID" :value="item.ID">{{ item.EQUIPMENT_TYPE_NAME }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['workshopid']" style="width: 200px" placeholder="请选择生产车间">
-                    <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
+                <a-form-item label="设备品牌" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['brand']" style="width: 200px" placeholder="请选择设备品牌">
+                    <a-select-option v-for="item in deviceBrand" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="产线名称/编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入产线名称/编码" v-decorator="['line']" />
+                <a-form-item label="设备名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入设备名称" v-decorator="['equimentname']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="设备编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入设备编码" v-decorator="['equimentcode']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="设备状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['status']" placeholder="请选择订单状态" style="width: 200px">
+                    <a-select-option value="">全部</a-select-option>
+                    <a-select-option value="1">启用</a-select-option>
+                    <a-select-option value="0">禁用</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -40,8 +54,10 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button type="primary" :disabled="!hasPerm('add')" @click="add" icon="plus">新增</a-button>
-          <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
+          <a-button type="primary" @click="add" icon="plus">新增</a-button>
+          <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
+          <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="importExcel" icon="import">导入</a-button>
+          <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="downExcel" icon="import">导入模板下载</a-button>
           <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <span style="margin-left: 8px">
@@ -62,7 +78,7 @@
             onChange: onSelectChange,
           }"
           @change="handleTableChange"
-          :rowKey="(dataSource) => dataSource.LineId"
+          :rowKey="(dataSource) => dataSource.EquimentId"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -92,36 +108,42 @@
           </template>
         </a-table>
       </a-card>
-      <lineForm v-if="isForm" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="getListAll" />
+      <listForm v-if="isForm" :isEdit="isEdit" :editData="editData" :deviceBrand="deviceBrand" :deviceTypeList="deviceTypeList" @closeModal="closeModal" @success="getListAll" />
+     <ImportExcel v-if="isImport" @closeModal="closeModal" @success="getListAll"/>
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getLineAction, getPlantList, setLineAction,getWorkshopAction } from "@/services/eap.js";
+import { getDeviceAction, getDeviceTypeAction, setDeviceAction } from "@/services/eap.js";
+import { getParamData } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data/LINE";
-import lineForm from "./components/lineForm.vue";
+import { columns } from "./data/list";
+import listForm from "./components/listForm.vue";
+import ExportExcel from "@/utils/ExportExcelJS";
+import ImportExcel from "./components/ImportExcel.vue";
 export default {
   mixins: [PublicVar],
-  components: { lineForm },
+  components: { listForm,ImportExcel },
   data() {
     return {
       scrollY: "",
       advanced: true,
       columns,
       dataSource: [],
-      plantList: [],
+      deviceTypeList: [],
       isSearch: 0,
       isExportLod: false,
       editData: [],
       isEdit: false,
       isForm: false,
       selectedRowKeys: [],
-      workshopList:[]
+      workshopList: [],
+      deviceBrand: [],
+      isImport:false
     };
   },
   updated() {
@@ -132,7 +154,8 @@ export default {
       this.scrollY = getTableScroll(70);
     });
     this.getListAll();
-    this.getPlant();
+    this.getDeviceType();
+    this.getParamData();
   },
   methods: {
     splitData,
@@ -145,6 +168,10 @@ export default {
     add() {
       this.isForm = true;
     },
+    //导入
+    importExcel(){
+      this.isImport =true
+    },
     edit(record) {
       this.isForm = true;
       this.isEdit = true;
@@ -152,24 +179,22 @@ export default {
     },
     closeModal() {
       this.isForm = false;
+      this.isImport =false
     },
-    getPlant() {
-      let parmas = {
-        entertypecode: "PLANT",
-      };
-      getPlantList(parmas, "getlistbytypecode").then((res) => {
+    getDeviceType() {
+      getDeviceTypeAction("", "getlist").then((res) => {
         if (res.data.success) {
-          this.plantList = res.data.data;
+          this.deviceTypeList = res.data.data;
         }
       });
     },
-    plantChange(e) {
+    getParamData() {
       let parmas = {
-        plantid: e,
+        groupcode: "EAP_EQUIMENT_BRAND",
       };
-      getWorkshopAction(parmas, "getlist").then((res) => {
+      getParamData(parmas).then((res) => {
         if (res.data.success) {
-          this.workshopList = res.data.data;
+          this.deviceBrand = res.data.data;
         }
       });
     },
@@ -184,7 +209,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getLineAction(parmas, "getall").then((res) => {
+      getDeviceAction(parmas, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -214,11 +239,13 @@ export default {
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            plantid: values.plantid,
-            workshopid: values.workshopid,
-            line: values.line,
+            typeid: values.typeid,
+            brand: values.brand,
+            status: values.status,
+            equimentcode: values.equimentcode,
+            equimentname: values.equimentname,
           };
-          getLineAction(parmas, "getall").then((res) => {
+          getDeviceAction(parmas, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -238,7 +265,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          setLineAction(self.selectedRowKeys, "delete").then((res) => {
+          setDeviceAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -252,15 +279,62 @@ export default {
     //单个删除
     onDelete(item) {
       let parmas = [];
-      parmas.push(item.LineId);
-      setLineAction(parmas, "delete").then((res) => {
+      parmas.push(item.EquimentId);
+      setDeviceAction(parmas, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
         }
       });
     },
-    exportExcel() {},
+    downExcel(){
+
+    },
+    exportExcel() {
+      this.isExportLod = true;
+      let values = this.searchForm.getFieldsValue();
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.total,
+        typeid: values.typeid,
+        brand: values.brand,
+        status: values.status,
+        equimentcode: values.equimentcode,
+        equimentname: values.equimentname,
+      };
+      getDeviceAction(parmas,"getall").then((res) => {
+        if (res.data.success) {
+          let list = res.data.data.list;
+          const dataSource = list.map((item) => {
+            Object.keys(item).forEach((key) => {
+              // 后端传null node写入会有问题
+              if (item[key] === null) {
+                item[key] = "";
+              }
+              if (Array.isArray(item[key])) {
+                item[key] = item[key].join(",");
+              }
+            });
+            return item;
+          });
+          const header = [];
+          columns.map((item) => {
+            if (item.dataIndex) {
+              header.push({ key: item.dataIndex, title: item.title });
+            }
+          });
+          var timestamp = Date.parse(new Date());
+          try {
+            ExportExcel(header, dataSource, `设备列表_${timestamp}.xlsx`);
+            this.$message.success("导出数据成功!");
+          } catch (error) {
+            // console.log(error);
+            this.$message.error("导出数据失败");
+          }
+          this.isExportLod = false;
+        }
+      });
+    },
   },
 };
 </script>

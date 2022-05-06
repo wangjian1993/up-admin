@@ -1,19 +1,4 @@
-<!--
- * @Author: max
- * @Date: 2022-04-30 13:51:38
- * @LastEditTime: 2022-04-30 14:15:37
- * @LastEditors: max
- * @Description: 
- * @FilePath: /up-admin/src/pages/eap/plantInfo/components/lineForm.vue
--->
-<!--
- * @Author: max
- * @Date: 2022-04-30 09:08:43
- * @LastEditTime: 2022-04-30 10:08:45
- * @LastEditors: max
- * @Description: 
- * @FilePath: /up-admin/src/pages/eap/plantInfo/components/workshopForm.vue
--->
+
 <template>
   <div>
     <a-modal :title="isEdit ? '编辑产线配置' : '添加产线配置'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">

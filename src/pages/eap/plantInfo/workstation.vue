@@ -39,9 +39,10 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button type="primary" @click="add" icon="plus">新增</a-button>
-          <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
-          <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+          <a-button type="primary" @click="add" icon="plus" :disabled="!hasPerm('add')">新增</a-button>
+          <a-button type="primary" style="margin-left: 8px" :disabled="!hasPerm('bind')" @click="bind" icon="deployment-unit">绑定设备</a-button>
+          <a-button :disabled="!hasPerm('export')" style="margin-left: 8px" type="primary" @click="exportExcel" icon="export">导出</a-button>
+          <a-button  v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
@@ -92,21 +93,23 @@
         </a-table>
       </a-card>
       <workstationForm v-if="isForm" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="getListAll" />
+      <deviceBind v-if="isBind"/>
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getWorkstationAction, getPlantList, setWorkstationAction,getWorkshopAction } from "@/services/eap.js";
+import { getWorkstationAction, getPlantList, setWorkstationAction, getWorkshopAction } from "@/services/eap.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { columns } from "./data/workstation";
 import workstationForm from "./components/workstationForm.vue";
+import deviceBind from './components/deviceBind.vue'
 export default {
   mixins: [PublicVar],
-  components: { workstationForm },
+  components: { workstationForm,deviceBind },
   data() {
     return {
       scrollY: "",
@@ -120,9 +123,10 @@ export default {
       isEdit: false,
       isForm: false,
       selectedRowKeys: [],
-      workshopList:[],
-      plantId:'',
-      LineList:[]
+      workshopList: [],
+      plantId: "",
+      LineList: [],
+      isBind:false
     };
   },
   updated() {
@@ -145,6 +149,9 @@ export default {
     },
     add() {
       this.isForm = true;
+    },
+    bind(){
+      this.isBind =true
     },
     edit(record) {
       this.isForm = true;
@@ -177,8 +184,8 @@ export default {
     },
     workshopChange(e) {
       let parmas = {
-        plantid:this.plantId,
-        workshopid:e
+        plantid: this.plantId,
+        workshopid: e,
       };
       getPlantList(parmas, "getlist").then((res) => {
         if (res.data.success) {
@@ -279,7 +286,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table {
+.ant-table {
   min-height: 62vh;
 }
 .ant-form-item {

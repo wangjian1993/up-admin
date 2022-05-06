@@ -1,18 +1,10 @@
 /*
  * @Author: max
  * @Date: 2022-04-27 09:50:33
- * @LastEditTime: 2022-04-30 16:07:26
+ * @LastEditTime: 2022-05-03 10:29:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/materialsPrice/record.js
- */
-/*
- * @Author: max
- * @Date: 2022-04-14 11:32:32
- * @LastEditTime: 2022-04-26 17:44:36
- * @LastEditors: max
- * @Description: 
- * @FilePath: /up-admin/src/pages/home/pmc/materialsPrice/data.js
  */
 // import { splitData } from "@/utils/util.js";
 export const columns = [
