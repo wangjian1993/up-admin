@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 15:19:26
- * @LastEditTime: 2022-05-05 17:17:39
+ * @LastEditTime: 2022-05-06 18:05:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/plantInfo/components/deviceBind.vue

@@ -1,3 +1,11 @@
+<!--
+ * @Author: max
+ * @Date: 2022-04-29 09:07:46
+ * @LastEditTime: 2022-05-06 16:20:47
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/eap/mqtt/gateway/service.vue
+-->
 <template>
   <div>
     <a-spin tip="导出中..." :spinning="isExportLod">
@@ -27,8 +35,18 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="产线名称/编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入产线名称/编码" v-decorator="['workstation']" />
+                <a-form-item label="服务器ip" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入服务器ip" v-decorator="['ip']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="服务编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入MQTT服务编码" v-decorator="['servercode']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="服务名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入MQTT服务名称" v-decorator="['servername']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -40,8 +58,9 @@
         </a-form>
         <div class="operator">
           <a-button type="primary" @click="add" icon="plus" :disabled="!hasPerm('add')">新增</a-button>
-          <a-button type="primary" style="margin-left: 8px" :disabled="!hasPerm('bind')" @click="bind" icon="deployment-unit">绑定设备</a-button>
           <a-button :disabled="!hasPerm('export')" style="margin-left: 8px" type="primary" @click="exportExcel" icon="export">导出</a-button>
+          <a-button v-if="hasPerm('switch')" icon="play-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">启动服务</a-button>
+          <a-button v-else icon="play-circle" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">启动服务</a-button>
           <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <span style="margin-left: 8px">
@@ -62,7 +81,7 @@
             onChange: onSelectChange,
           }"
           @change="handleTableChange"
-          :rowKey="(dataSource) => dataSource.WorkStationId"
+          :rowKey="(dataSource) => dataSource.Id"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -70,10 +89,10 @@
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="Enable" slot-scope="record">
+          <template slot="State" slot-scope="text">
             <div>
-              <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
-              <a-tag color="red" v-else>禁用</a-tag>
+              <a-tag color="green" v-if="text == '已启动'">{{ text }}</a-tag>
+              <a-tag color="red" v-else>{{ text }}</a-tag>
             </div>
           </template>
           <template slot="action" slot-scope="text, record">
@@ -88,29 +107,31 @@
                 <a-icon type="edit" />
                 编辑
               </a>
+              <a style="margin-right: 8px" @click="switchBtn(record)" :disabled="!hasPerm('switch')">
+                <a-icon :type="record.State == '未启动' ? 'pause-circle' : 'play-circle'" />
+                {{ record.State == "未启动" ? "启动" : "关闭" }}
+              </a>
             </div>
           </template>
         </a-table>
       </a-card>
-      <workstationForm v-if="isForm" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="getListAll" />
-      <deviceBind v-if="isBind" @closeModal="closeModal" />
+      <serviceForm v-if="isForm" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="getListAll" />
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getWorkstationAction, getPlantList, setWorkstationAction, getWorkshopAction } from "@/services/eap.js";
+import { getMqttServiceAction, getPlantList, setMqttServiceAction, getWorkshopAction } from "@/services/eap.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data/workstation";
-import workstationForm from "./components/workstationForm.vue";
-import deviceBind from "./components/deviceBind.vue";
+import { columns } from "./data/service";
+import serviceForm from "./components/serviceForm.vue";
 import ExportExcel from "@/utils/ExportExcelJS";
 export default {
   mixins: [PublicVar],
-  components: { workstationForm, deviceBind },
+  components: { serviceForm },
   data() {
     return {
       scrollY: "",
@@ -163,6 +184,8 @@ export default {
       console.log("关闭窗口");
       this.isBind = false;
       this.isForm = false;
+      this.isEdit = false;
+      this.editData = [];
     },
     getPlant() {
       let parmas = {
@@ -207,11 +230,11 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getWorkstationAction(parmas, "getall").then((res) => {
+      getMqttServiceAction(parmas, "get").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
-          pagination.total = res.data.data.recordsTotal;
+          pagination.total = res.data.data.totalCount;
           this.pagination = pagination;
           this.loading = false;
           this.isSearch = 0;
@@ -240,12 +263,15 @@ export default {
             plantid: values.plantid,
             workshopid: values.workshopid,
             line: values.line,
+            ip: values.ip,
+            servercode: values.servercode,
+            servername: values.servername,
           };
-          getWorkstationAction(parmas, "getall").then((res) => {
+          getMqttServiceAction(parmas, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
-              pagination.total = res.data.data.recordsTotal;
+              pagination.total = res.data.data.totalCount;
               this.pagination = pagination;
               this.isSearch = 2;
             }
@@ -261,7 +287,8 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          setWorkstationAction(self.selectedRowKeys, "delete").then((res) => {
+          self.selectedRowKeys.push(null);
+          setMqttServiceAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -275,10 +302,39 @@ export default {
     //单个删除
     onDelete(item) {
       let parmas = [];
-      parmas.push(item.WorkStationId);
-      setWorkstationAction(parmas, "delete").then((res) => {
+      parmas.push(item.Id, null);
+      setMqttServiceAction(parmas, "start").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
+          this.getListAll();
+        }
+      });
+    },
+    switchBtn(record) {
+      let parmas = [];
+      let urlType = "";
+      if (record.State == "未启动") {
+        urlType = "start";
+        parmas.push({
+          path: record.Path,
+          processname: record.ServerName,
+          httpport: record.ServerType == "HTTP" ? record.ServerPort : "",
+          tcpport: record.ServerType == "TCP" ? record.ServerPort : "",
+          wsport: record.ServerType == "WS" ? record.ServerPort : 0,
+        },{});
+      } else {
+        urlType = "stop";
+        parmas.push({
+          processname: record.ServerName,
+        },{});
+      }
+      setMqttServiceAction(parmas, urlType).then((res) => {
+        if (res.data.success) {
+          if (urlType == "start") {
+            this.$message.success("启动成功!");
+          } else {
+            this.$message.success("关闭成功!");
+          }
           this.getListAll();
         }
       });
@@ -293,7 +349,7 @@ export default {
         workshopid: values.workshopid,
         line: values.line,
       };
-      getWorkstationAction(parmas, "getall").then((res) => {
+      getMqttServiceAction(parmas, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

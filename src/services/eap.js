@@ -1,13 +1,14 @@
 /*
  * @Author: max
  * @Date: 2022-04-29 17:37:25
- * @LastEditTime: 2022-05-05 13:39:37
+ * @LastEditTime: 2022-05-06 15:05:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/eap.js
  */
 import {
-    UP_EAP
+    UP_EAP,
+    UP_MQTT
 } from '@/services/api'
 import {
     request,
@@ -55,4 +56,16 @@ export function getDeviceAction(params, action) {
 }
 export function setDeviceAction(params, action) {
     return request(`${UP_EAP}/equiment/${action}`, METHOD.POST, params);
+}
+export function getMqttServiceAction(params, action) {
+    return request(`${UP_MQTT}/server/${action}`, METHOD.GET, params);
+}
+export function setMqttServiceAction(params, action) {
+    return request(`${UP_MQTT}/server/${action}`, METHOD.POST, params);
+}
+export function getMqttClientAction(params, action) {
+    return request(`${UP_MQTT}/client/${action}`, METHOD.GET, params);
+}
+export function setMqttClientAction(params, action) {
+    return request(`${UP_MQTT}/client/${action}`, METHOD.POST, params);
 }

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:59:02
- * @LastEditTime: 2022-05-05 14:13:31
+ * @LastEditTime: 2022-05-06 08:46:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/List.vue
@@ -14,7 +14,7 @@
         <a-tab-pane key="2" tab="列表查询(采购端)" v-if="hasPerm('search_purchase')"></a-tab-pane>
       </a-tabs>
       <list-public v-show="activeKey == 1 && hasPerm('search_public')" :categoryList="categoryList"></list-public>
-      <list-search v-show="activeKey == 2 && hasPerm('search_purchase')" :categoryList="categoryList"></list-search>
+      <list-search ref="listSearch" v-show="activeKey == 2 && hasPerm('search_purchase')" :categoryList="categoryList"></list-search>
     </a-card>
   </div>
 </template>
@@ -34,7 +34,9 @@ export default {
   created() {
     this.getCategory();
     if (this.$route.query.type == 2 && this.hasPerm("search_purchase")) {
+      console.log("跳转====")
       this.activeKey = "2";
+      this.$refs.listSearch.getCostList();
     }
   },
   methods: {
