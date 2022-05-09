@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2022-05-06 13:38:39
+ * @LastEditTime: 2022-05-09 10:39:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/api.js
@@ -17,7 +17,6 @@
 //   BASE_URL_MOCK = 'http://192.168.1.245:6688'
 // }
 var BASE_URL_MOCK;
-console.log(window.location);
 if (process.env.NODE_ENV == 'production') {
   //正式服
   BASE_URL_MOCK = window.location.host === '113.106.78.83:7003' ? 'http://113.106.78.83:7004' : 'http://192.168.0.240:8081';

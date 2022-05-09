@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 15:19:26
- * @LastEditTime: 2022-05-06 18:05:31
+ * @LastEditTime: 2022-05-09 15:21:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/plantInfo/components/deviceBind.vue
@@ -45,8 +45,8 @@
               </template>
               <template slot="action" slot-scope="text, record">
                 <div>
-                  <a style="margin-right: 8px" @click="getDeviceList(record)">
-                    删除
+                  <a style="margin-right: 8px" @click="unbind(record)">
+                    解绑
                   </a>
                 </div>
               </template>
@@ -54,7 +54,7 @@
           </a-card>
         </a-col>
       </a-row>
-      <deviceList v-if="isDeviceList" :deviceInfo="deviceInfo" />
+      <deviceList v-if="isDeviceList" :deviceInfo="deviceInfo" @closeModal="closeModal" @success="success" />
     </a-drawer>
   </div>
 </template>
@@ -108,14 +108,14 @@ const columns1 = [
   },
   {
     title: "设备编码",
-    dataIndex: "EquimentCode",
-    scopedSlots: { customRender: "EquimentCode" },
+    dataIndex: "EquipmentCode",
+    scopedSlots: { customRender: "EquipmentCode" },
     align: "center",
   },
   {
     title: "设备名称",
-    dataIndex: "EquimentName",
-    scopedSlots: { customRender: "EquimentName" },
+    dataIndex: "EquipmentName",
+    scopedSlots: { customRender: "EquipmentName" },
     align: "center",
   },
   {
@@ -157,6 +157,12 @@ export default {
     close() {
       this.$emit("closeModal");
     },
+    closeModal() {
+      this.isDeviceList = false;
+    },
+    success(){
+       this.getDeviceList(this.deviceInfo);
+    },
     getListAll() {
       this.loading = true;
       let parmas = {
@@ -188,6 +194,22 @@ export default {
     //添加设备
     addDevice() {
       this.isDeviceList = true;
+    },
+    unbind(record) {
+      let params = {
+        WorkStationId: this.deviceInfo.WorkStationId,
+        EquipmentList: [
+          {
+            EquipmentId: record.EquipmentId,
+          },
+        ],
+      };
+      setWorkstationAction(params, "unbind").then((res) => {
+        if (res.data.success) {
+          this.getDeviceList(this.deviceInfo);
+          this.$message.success("解绑成功");
+        }
+      });
     },
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {

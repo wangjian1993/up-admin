@@ -20,46 +20,39 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="设备名称/编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入设备名称" v-decorator="['equiment']" />
+                <a-form-item label="设备名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入设备名称" v-decorator="['equimentname']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <span>
-                  <a-button type="primary" @click="search">查询</a-button>
-                  <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-                </span>
+                <a-form-item label="设备编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入设备编码" v-decorator="['equimentcode']" />
+                </a-form-item>
               </a-col>
             </a-row>
+            <span style="display: flex;justify-content: flex-end">
+              <a-button type="primary" @click="search">查询</a-button>
+              <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+            </span>
           </div>
         </a-form>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-table
             :columns="columns"
-            :data-source="deviceList"
+            :data-source="dataSource"
             :size="size"
             :pagination="pagination"
-            :rowKey="(deviceList) => deviceList.EquimentId"
+            :rowKey="(dataSource) => dataSource.EquimentId"
             :row-selection="{
               selectedRowKeys: selectedRowKeys,
               onChange: onSelectChange,
+              type: 'radio',
             }"
             bordered
           >
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-              </div>
-            </template>
-            <template slot="FileSize" slot-scope="text">
-              <p>{{ getFileSize(text) }}</p>
-            </template>
-            <template slot="action" slot-scope="text, record">
-              <div>
-                <a style="margin-right: 8px" @click="preview(record)">
-                  <a-icon type="profile" />
-                  预览
-                </a>
               </div>
             </template>
           </a-table>
@@ -101,13 +94,13 @@ const columns = [
     align: "center",
   },
 ];
-import { getWorkstationAction, getDeviceTypeAction,setWorkstationAction } from "@/services/eap.js";
+import { getDeviceAction, getDeviceTypeAction } from "@/services/eap.js";
 import { getParamData } from "@/services/admin.js";
 export default {
   props: ["deviceInfo"],
   data() {
     return {
-      data: [],
+      dataSource: [],
       columns,
       size: "small",
       visible: true,
@@ -122,7 +115,7 @@ export default {
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
-      deviceList: [],
+      docsList: [],
       isPreview: false,
       deviceBrand: [],
       searchForm: this.$form.createForm(this),
@@ -155,18 +148,15 @@ export default {
         }
       });
     },
-    //http://192.168.1.245:6688/api/eap/workstation/getequiment?pageindex=1&pagesize=10
-    //http://192.168.1.245:6688/api/eap/workstation/getequiment?pageindex=1&pagesize=10
-    //http://192.168.1.245:6688/api/eap/workstation/getequiment?pageindex=1&pagesize=10
     getListAll() {
       this.loading = true;
       let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getWorkstationAction(params, "getequiment").then((res) => {
+      getDeviceAction(params, "getall").then((res) => {
         if (res.data.success) {
-          this.deviceList = res.data.data.list;
+          this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -184,22 +174,8 @@ export default {
       this.$emit("closeModal");
     },
     handleOk() {
-      let params = {
-        WorkStationId: this.deviceInfo.WorkStationId,
-        EquipmentList: [],
-      };
-      this.selectedRowKeys.forEach((item)=>{
-        params.EquipmentList.push({
-          EquipmentId:item
-        })
-      })
-      setWorkstationAction(params, "bind").then((res) => {
-        if (res.data.success) {
-          this.$message.success("绑定成功");
-          this.$emit("closeModal");
-          this.$emit("success");
-        }
-      });
+      let result = this.dataSource.find((item) => item.EquimentId == this.selectedRowKeys[0]);
+      this.$emit("selectDevice", result);
     },
     reset() {
       this.getDocsList();
@@ -214,11 +190,12 @@ export default {
             pagesize: this.pagination.pageSize,
             typeid: values.typeid,
             brand: values.brand,
-            equiment: values.equiment,
+            equimentname: values.equimentname,
+            equimentcode: values.equimentcode,
           };
-          getWorkstationAction(parmas, "getequiment").then((res) => {
+          getDeviceAction(parmas, "getall").then((res) => {
             if (res.data.success) {
-              this.deviceList = res.data.data.list;
+              this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.totalCount;
               this.pagination = pagination;

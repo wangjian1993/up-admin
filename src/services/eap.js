@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-29 17:37:25
- * @LastEditTime: 2022-05-06 15:05:58
+ * @LastEditTime: 2022-05-09 13:39:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/eap.js
@@ -68,4 +68,10 @@ export function getMqttClientAction(params, action) {
 }
 export function setMqttClientAction(params, action) {
     return request(`${UP_MQTT}/client/${action}`, METHOD.POST, params);
+}
+export function getPlcAction(params, action) {
+    return request(`${UP_EAP}/plc/${action}`, METHOD.GET, params);
+}
+export function setPlcAction(params, action) {
+    return request(`${UP_EAP}/plc/${action}`, METHOD.POST, params);
 }

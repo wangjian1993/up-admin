@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 14:45:16
- * @LastEditTime: 2022-05-09 15:14:22
+ * @LastEditTime: 2022-05-09 15:13:47
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/eap/device/components/ImportExcel.vue
+ * @FilePath: /up-admin/src/pages/eap/device/components/ImportPlcExcel.vue
 -->
 <!--
  * @Author: max
@@ -16,7 +16,7 @@
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="导入设备列表" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="800">
+    <a-modal v-model="visible" title="导入PLC列表" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="800">
       <a-spin tip="导入中..." :spinning="isUpload">
         <div>
           <a-form layout="horizontal">
@@ -78,7 +78,7 @@
 
 <script>
 import excel from "@/utils/xlsxTool.js";
-import { setDeviceAction } from "@/services/eap.js";
+import { setPlcAction } from "@/services/eap.js";
 const columns = [
   {
     title: "序号",
@@ -174,15 +174,6 @@ export default {
         let list = {};
         for (let key in item) {
           switch (key) {
-            case "设备名称":
-              if (item[key] == "") {
-                this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,设备名称不能为空'`,
-                });
-              } else {
-                list.EquimentName = item[key];
-              }
-              break;
             case "设备编码":
               if (item[key] == "") {
                 this.errorList.push({
@@ -192,23 +183,71 @@ export default {
                 list.EquimentCode = item[key];
               }
               break;
-            case "设备品牌":
+            case "PLC名称":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,设备品牌不能为空'`,
+                  ErrorMsg: `第${index + 1}行,PLC名称不能为空'`,
                 });
               } else {
-                list.Brand = item[key];
+                list.PlcName = item[key];
               }
               break;
-            case "设备类型":
+            case "PLC编码":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,设备类型不能为空'`,
+                  ErrorMsg: `第${index + 1}行,PLC名称不能为空'`,
                 });
               } else {
-                list.EquimentTypeCode = item[key];
+                list.PlcCode = item[key];
               }
+              break;
+            case "PLC品牌":
+              if (item[key] == "") {
+                this.errorList.push({
+                  ErrorMsg: `第${index + 1}行,PLC品牌不能为空'`,
+                });
+              } else {
+                list.PlcBrand = item[key];
+              }
+              break;
+            case "PLC类型":
+              if (item[key] == "") {
+                this.errorList.push({
+                  ErrorMsg: `第${index + 1}行,PLC类型不能为空'`,
+                });
+              } else {
+                list.PlcTypeCode = item[key];
+              }
+              break;
+            case "IP地址":
+              if (item[key] == "") {
+                this.errorList.push({
+                  ErrorMsg: `第${index + 1}行,IP地址不能为空'`,
+                });
+              } else {
+                list.PlcIp = item[key];
+              }
+              break;
+            case "端口号":
+              if (item[key] == "") {
+                this.errorList.push({
+                  ErrorMsg: `第${index + 1}行,端口号不能为空'`,
+                });
+              } else {
+                list.PlcPort = item[key];
+              }
+              break;
+            case "MAC地址":
+              if (item[key] == "") {
+                this.errorList.push({
+                  ErrorMsg: `第${index + 1}行,MAC地址不能为空'`,
+                });
+              } else {
+                list.PlcMac = item[key];
+              }
+              break;
+            case "PLC描述":
+              list.PlcDesc = item[key];
               break;
           }
         }
@@ -217,16 +256,16 @@ export default {
       if (this.errorList.length == 0) {
         this.submitExecl(data);
       } else {
-        this.$message.error("设备信息格式错误,请修改");
+        this.$message.error("PLC信息格式错误,请修改");
       }
     },
     submitExecl(parmas) {
       this.isUpload = true;
-      setDeviceAction(parmas, "import").then((res) => {
+      setPlcAction(parmas, "import").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
-          this.$emit("closeModal");
-          this.$emit("success");
+          this.$emit('closeModal');
+          this.$emit('success')
           this.isUpload = false;
         } else {
           this.isUpload = false;
@@ -257,7 +296,7 @@ export default {
     },
     // 读取文件
     readFile(file) {
-      let tableHead = ["设备名称", "设备编码", "设备类型", "设备品牌"];
+      let tableHead = ["设备编码", "PLC名称", "PLC编码", "PLC类型", "PLC品牌", "PLC描述", "IP地址", "端口号", "MAC地址"];
       let tableHead2 = [];
       const reader = new FileReader();
       reader.readAsArrayBuffer(file);

@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2022-04-29 09:07:46
- * @LastEditTime: 2022-05-09 15:38:38
+ * @Date: 2022-05-05 11:01:59
+ * @LastEditTime: 2022-05-09 15:05:34
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/eap/mqtt/gateway/service.vue
+ * @FilePath: /up-admin/src/pages/eap/device/plc.vue
 -->
 <template>
   <div>
@@ -14,41 +14,38 @@
           <div :class="advanced ? null : 'fold'">
             <a-row>
               <a-col :md="6" :sm="24">
-                <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
-                    <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                <a-form-item label="PLC类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['typeid']" style="width: 200px" placeholder="请选择PLC类型">
+                    <a-select-option v-for="item in plcTypeList" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['workshopid']" style="width: 200px" placeholder="请选择生产车间" @change="workshopChange">
-                    <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
+                <a-form-item label="PLC品牌" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['brand']" style="width: 200px" placeholder="请选择PLC品牌">
+                    <a-select-option v-for="item in plcBrand" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产车间">
-                    <a-select-option v-for="item in LineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
+                <a-form-item label="PLC名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入PLC名称" v-decorator="['plcname']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="PLC编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入PLC编码" v-decorator="['plccode']" />
+                </a-form-item>
+              </a-col>
+              <!-- <a-col :md="6" :sm="24">
+                <a-form-item label="PLC状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['status']" placeholder="请选择订单状态" style="width: 200px">
+                    <a-select-option value="">全部</a-select-option>
+                    <a-select-option value="1">启用</a-select-option>
+                    <a-select-option value="0">禁用</a-select-option>
                   </a-select>
                 </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="服务器ip" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入服务器ip" v-decorator="['ip']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="服务编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入MQTT服务编码" v-decorator="['servercode']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="服务名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入MQTT服务名称" v-decorator="['servername']" />
-                </a-form-item>
-              </a-col>
+              </a-col> -->
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
@@ -57,10 +54,10 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button type="primary" @click="add" icon="plus" :disabled="!hasPerm('add')">新增</a-button>
-          <a-button :disabled="!hasPerm('export')" style="margin-left: 8px" type="primary" @click="exportExcel" icon="export">导出</a-button>
-          <a-button v-if="hasPerm('switch')" icon="play-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="startService" style="margin-left: 8px">启动服务</a-button>
-          <a-button v-else icon="play-circle" type="primary" disabled :loading="loading" style="margin-left: 8px">启动服务</a-button>
+          <a-button type="primary" @click="add" icon="plus">新增</a-button>
+          <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
+          <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="importExcel" icon="import">导入</a-button>
+          <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="downExcel" icon="import">导入模板下载</a-button>
           <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <span style="margin-left: 8px">
@@ -79,10 +76,9 @@
           :row-selection="{
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
-            getCheckboxProps: getCheckboxProps,
           }"
           @change="handleTableChange"
-          :rowKey="(dataSource) => dataSource.Id"
+          :rowKey="(dataSource) => dataSource.PlcId"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -90,10 +86,10 @@
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="State" slot-scope="text">
+          <template slot="Status" slot-scope="record">
             <div>
-              <a-tag color="green" v-if="text == '已启动'">{{ text }}</a-tag>
-              <a-tag color="red" v-else>{{ text }}</a-tag>
+              <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
+              <a-tag color="red" v-else>禁用</a-tag>
             </div>
           </template>
           <template slot="action" slot-scope="text, record">
@@ -108,38 +104,37 @@
                 <a-icon type="edit" />
                 编辑
               </a>
-              <a style="margin-right: 8px" @click="switchBtn(record)" :disabled="!hasPerm('switch')">
-                <a-icon :type="record.State == '未启动' ? 'pause-circle' : 'play-circle'" />
-                {{ record.State == "未启动" ? "启动" : "关闭" }}
-              </a>
             </div>
           </template>
         </a-table>
       </a-card>
-      <serviceForm v-if="isForm" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="getListAll" />
+      <plcForm v-if="isForm" :isEdit="isEdit" :editData="editData" :plcBrand="plcBrand" :plcTypeList="plcTypeList" @closeModal="closeModal" @success="getListAll" />
+      <ImportPlcExcel v-if="isImport" @closeModal="closeModal" @success="getListAll" />
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getMqttServiceAction, getPlantList, setMqttServiceAction, getWorkshopAction } from "@/services/eap.js";
+import { getPlcAction, setPlcAction } from "@/services/eap.js";
+import { getParamData } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data/service";
-import serviceForm from "./components/serviceForm.vue";
+import { columns } from "./data/plc";
+import plcForm from "./components/plcForm.vue";
 import ExportExcel from "@/utils/ExportExcelJS";
+import ImportPlcExcel from "./components/ImportPlcExcel.vue";
 export default {
   mixins: [PublicVar],
-  components: { serviceForm },
+  components: { plcForm, ImportPlcExcel },
   data() {
     return {
       scrollY: "",
       advanced: true,
       columns,
       dataSource: [],
-      plantList: [],
+      plcTypeList: [],
       isSearch: 0,
       isExportLod: false,
       editData: [],
@@ -147,9 +142,8 @@ export default {
       isForm: false,
       selectedRowKeys: [],
       workshopList: [],
-      plantId: "",
-      LineList: [],
-      isBind: false,
+      plcBrand: [],
+      isImport: false,
     };
   },
   updated() {
@@ -160,7 +154,8 @@ export default {
       this.scrollY = getTableScroll(70);
     });
     this.getListAll();
-    this.getPlant();
+    this.getDeviceType();
+    this.getParamData();
   },
   methods: {
     splitData,
@@ -173,8 +168,9 @@ export default {
     add() {
       this.isForm = true;
     },
-    bind() {
-      this.isBind = true;
+    //导入
+    importExcel() {
+      this.isImport = true;
     },
     edit(record) {
       this.isForm = true;
@@ -182,41 +178,26 @@ export default {
       this.editData = record;
     },
     closeModal() {
-      console.log("关闭窗口");
-      this.isBind = false;
       this.isForm = false;
-      this.isEdit = false;
-      this.editData = [];
+      this.isImport = false;
     },
-    getPlant() {
+    getDeviceType() {
       let parmas = {
-        entertypecode: "PLANT",
+        groupcode: "PLC_TYPE",
       };
-      getPlantList(parmas, "getlistbytypecode").then((res) => {
+      getParamData(parmas).then((res) => {
         if (res.data.success) {
-          this.plantList = res.data.data;
+          this.plcTypeList = res.data.data;
         }
       });
     },
-    plantChange(e) {
-      this.plantId = e;
+    getParamData() {
       let parmas = {
-        plantid: e,
+        groupcode: "EAP_PLAC_BRAND",
       };
-      getWorkshopAction(parmas, "getlist").then((res) => {
+      getParamData(parmas).then((res) => {
         if (res.data.success) {
-          this.workshopList = res.data.data;
-        }
-      });
-    },
-    workshopChange(e) {
-      let parmas = {
-        plantid: this.plantId,
-        workshopid: e,
-      };
-      getPlantList(parmas, "getlist").then((res) => {
-        if (res.data.success) {
-          this.LineList = res.data.data;
+          this.plcBrand = res.data.data;
         }
       });
     },
@@ -231,11 +212,11 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getMqttServiceAction(parmas, "get").then((res) => {
+      getPlcAction(parmas, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
-          pagination.total = res.data.data.totalCount;
+          pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
           this.isSearch = 0;
@@ -254,11 +235,6 @@ export default {
       }
       this.getListAll();
     },
-    getCheckboxProps: (record) => ({
-      props: {
-        disabled: record.State == "已启动",
-      },
-    }),
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
@@ -266,18 +242,17 @@ export default {
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            plantid: values.plantid,
-            workshopid: values.workshopid,
-            line: values.line,
-            ip: values.ip,
-            servercode: values.servercode,
-            servername: values.servername,
+            typeid: values.typeid,
+            brand: values.brand,
+            status: values.status,
+            plccode: values.plccode,
+            plcname: values.plcname,
           };
-          getMqttServiceAction(parmas, "get").then((res) => {
+          getPlcAction(parmas, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
-              pagination.total = res.data.data.totalCount;
+              pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.isSearch = 2;
             }
@@ -293,8 +268,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          self.selectedRowKeys.push(null);
-          setMqttServiceAction(self.selectedRowKeys, "delete").then((res) => {
+          setPlcAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -308,77 +282,28 @@ export default {
     //单个删除
     onDelete(item) {
       let parmas = [];
-      parmas.push(item.Id, null);
-      setMqttServiceAction(parmas, "start").then((res) => {
+      parmas.push(item.PlcId);
+      setPlcAction(parmas, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
         }
       });
     },
-    startService() {
-      let parmas = [];
-      this.dataSource.forEach((item) => {
-        if (this.selectedRowKeys.includes(item.Id)) {
-          parmas.push({
-            processname: item.ServerName,
-          });
-        }
-      });
-      parmas.push({})
-      setMqttServiceAction(parmas, "start").then((res) => {
-        if (res.data.success) {
-          this.$message.success("启动成功!");
-          this.getListAll();
-        }
-      });
-    },
-    switchBtn(record) {
-      let parmas = [];
-      let urlType = "";
-      if (record.State == "未启动") {
-        urlType = "start";
-        parmas.push(
-          {
-            path: record.Path,
-            processname: record.ServerName,
-            httpport: record.ServerType == "HTTP" ? record.ServerPort : 0,
-            tcpport: record.ServerType == "TCP" ? record.ServerPort : 0,
-            wsport: record.ServerType == "WS" ? record.ServerPort : 0,
-          },
-          {}
-        );
-      } else {
-        urlType = "stop";
-        parmas.push(
-          {
-            processname: record.ServerName,
-          },
-          {}
-        );
-      }
-      setMqttServiceAction(parmas, urlType).then((res) => {
-        if (res.data.success) {
-          if (urlType == "start") {
-            this.$message.success("启动成功!");
-          } else {
-            this.$message.success("关闭成功!");
-          }
-          this.getListAll();
-        }
-      });
-    },
+    downExcel() {},
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
-        plantid: values.plantid,
-        workshopid: values.workshopid,
-        line: values.line,
+        typeid: values.typeid,
+        brand: values.brand,
+        status: values.status,
+        plccode: values.plccode,
+        plcname: values.plcname,
       };
-      getMqttServiceAction(parmas, "getall").then((res) => {
+      getPlcAction(parmas, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {
@@ -401,7 +326,7 @@ export default {
           });
           var timestamp = Date.parse(new Date());
           try {
-            ExportExcel(header, dataSource, `工站列表_${timestamp}.xlsx`);
+            ExportExcel(header, dataSource, `PLC列表_${timestamp}.xlsx`);
             this.$message.success("导出数据成功!");
           } catch (error) {
             // console.log(error);
@@ -416,7 +341,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-.ant-table {
+/deep/.ant-table {
   min-height: 62vh;
 }
 .ant-form-item {
