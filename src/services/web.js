@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2022-04-27 09:04:36
+ * @LastEditTime: 2022-05-11 15:06:34
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -251,4 +251,16 @@ export function getWorkOrderList(params) {
 
 export function getMaterialsPrice(params,action) {
     return request(`${UP_WEB}/itemsupplierprice/${action}`, METHOD.POST, params);
+}
+
+//物料签样管理
+export function getDepartmentApi(params, action) {
+    return request(`${UP_WEB}/materialsample/${action}`, METHOD.GET, params);
+}
+export function setDepartmentApi(params, action) {
+    return request(`${UP_WEB}/materialsample/${action}`, METHOD.POST, params);
+}
+
+export function getMaterialSampleApi(params, action) {
+    return request(`${UP_WEB}/materialsample/${action}`, METHOD.GET, params);
 }

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-11-16 13:55:09
+ * @LastEditTime: 2022-05-10 10:12:35
  * @LastEditors: max
  * @Description: 权限
  * @FilePath: /up-admin/src/pages/home/quote/config/authority/Authority.vue
@@ -107,8 +107,8 @@
           <a-form-model-item ref="" label="操作权限">
             <a-checkbox-group v-model="actionValue" :options="actionList" :default-value="actionValue" @change="actionChange" />
           </a-form-model-item>
-          <a-form-model-item ref="" label="品号筛选">
-            <a-select v-model="form.ProNameScreens" mode="tags" style="width: 100%" placeholder="输入物品号筛选" :token-separators="[',']"> </a-select>
+          <a-form-model-item ref="" label="品名筛选">
+            <a-select v-model="form.ProNameScreens" mode="tags" style="width: 100%" placeholder="输入品名筛选" :token-separators="[',']"> </a-select>
           </a-form-model-item>
           <a-form-model-item ref="" label="规格筛选">
             <a-select v-model="form.SpecNameScreens" mode="tags" style="width: 100%" placeholder="输入规格筛选" :token-separators="[',']"> </a-select>
