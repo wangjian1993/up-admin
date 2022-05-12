@@ -286,8 +286,8 @@ export default {
     this.getEnterList();
   },
   methods: {
-    helpClick(url){
-      window.open(url,'_blank')
+    helpClick(url) {
+      window.open(url, "_blank");
     },
     onClose() {
       this.isDrawer = false;
@@ -349,14 +349,14 @@ export default {
     getListAll() {
       this.loading = true;
       let parmas = {
-         pageindex: this.pagination.current,
-          pagesize: this.pagination.pageSize,
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.pageSize,
       };
       getSopDevice(parmas, "get").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
-          pagination.total = res.data.data.recordsTotal;
+          pagination.total = res.data.data.totalCount;
           this.pagination = pagination;
           this.loading = false;
           this.isSearch = false;
@@ -381,22 +381,22 @@ export default {
         if (!err) {
           this.loading = true;
           let parmas = {
-             pageindex: this.pagination.current,
-              pagesize: this.pagination.pageSize,
-              equipmentcode: values.equipmentcode,
-              equipmentname: values.equipmentname,
-              plantid: values.plantid,
-              workcenterid: values.workcenterid,
-              lineid: values.lineid,
-              ipaddress: values.ipaddress,
-              enable: values.enable,
-              status: values.status,
+            pageindex: this.pagination.current,
+            pagesize: this.pagination.pageSize,
+            equipmentcode: values.equipmentcode,
+            equipmentname: values.equipmentname,
+            plantid: values.plantid,
+            workcenterid: values.workcenterid,
+            lineid: values.lineid,
+            ipaddress: values.ipaddress,
+            enable: values.enable,
+            status: values.status,
           };
           getSopDevice(parmas, "get").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
-              pagination.total = res.data.data.recordsTotal;
+              pagination.total = res.data.data.totalCount;
               this.pagination = pagination;
               this.loading = false;
               this.isSearch = true;
@@ -409,6 +409,8 @@ export default {
     //添加
     add() {
       this.isForm = true;
+      this.isEdit = false;
+      this.editData = [];
     },
     useEdit(item) {
       this.isForm = true;

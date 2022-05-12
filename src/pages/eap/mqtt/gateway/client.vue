@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 09:08:06
- * @LastEditTime: 2022-05-06 15:40:01
+ * @LastEditTime: 2022-05-12 14:10:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/mqtt/gateway/client.vue
@@ -68,8 +68,8 @@
         <div class="operator">
           <a-button type="primary" @click="add" icon="plus" :disabled="!hasPerm('add')">新增</a-button>
           <a-button :disabled="!hasPerm('export')" style="margin-left: 8px" type="primary" @click="exportExcel" icon="export">导出</a-button>
-          <a-button v-if="hasPerm('switch')" icon="play-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">启动客服端</a-button>
-          <a-button v-else icon="play-circle" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">启动客服端</a-button>
+          <a-button v-if="hasPerm('switch')" icon="play-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="startClient" style="margin-left: 8px">启动客户端</a-button>
+          <a-button v-else icon="play-circle" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">启动客户端</a-button>
           <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <span style="margin-left: 8px">
@@ -124,7 +124,7 @@
           </template>
         </a-table>
       </a-card>
-      <clientForm v-if="isForm" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="getListAll" :deviceList="deviceList" :serviceList="serviceList"/>
+      <clientForm v-if="isForm" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="getListAll" :deviceList="deviceList" :serviceList="serviceList" />
     </a-spin>
   </div>
 </template>
@@ -206,6 +206,8 @@ export default {
     },
     add() {
       this.isForm = true;
+      this.isEdit = false;
+      this.editData = [];
     },
     bind() {
       this.isBind = true;
@@ -300,8 +302,8 @@ export default {
             line: values.line,
             serverid: values.serverid,
             equipmentid: values.equipmentid,
-            clientcode:values.clientcode,
-            clientname:values.clientname,
+            clientcode: values.clientcode,
+            clientname: values.clientname,
           };
           getMqttClientAction(parmas, "get").then((res) => {
             if (res.data.success) {
@@ -346,16 +348,60 @@ export default {
         }
       });
     },
+    startClient() {
+      let parmas = [];
+      this.dataSource.forEach((item) => {
+        if (this.selectedRowKeys.includes(item.Id)) {
+          parmas.push({
+            url: item.Path,
+            httpmethod: "Post",
+            clientid: item.ClientCode,
+            serverip: item.ServerIP,
+            serverport: item.ServerPort,
+          });
+        }
+      });
+      parmas.push({});
+      setMqttClientAction(parmas, "start").then((res) => {
+        if (res.data.success) {
+          this.$message.success("启动成功!");
+          this.getListAll();
+        }
+      });
+    },
     switchBtn(record) {
       let parmas = [];
+      let urlType = "";
       if (record.State == "未启动") {
-        parmas.push();
+        urlType = "start";
+        parmas.push(
+          {
+            url: record.Path,
+            httpmethod: "Post",
+            clientid: record.ClientCode,
+            serverip: record.ServerIP,
+            serverport: record.ServerPort,
+          },
+          {}
+        );
       } else {
-        parmas.push();
+        urlType = "stop";
+        parmas.push(
+          {
+            url: record.Path,
+            httpmethod: "Post",
+            clientid: record.ClientCode,
+          },
+          {}
+        );
       }
-      setMqttClientAction(parmas, "delete").then((res) => {
+      setMqttClientAction(parmas, urlType).then((res) => {
         if (res.data.success) {
-          this.$message.success("删除成功!");
+          if (urlType == "start") {
+            this.$message.success("启动成功!");
+          } else {
+            this.$message.success("关闭成功!");
+          }
           this.getListAll();
         }
       });

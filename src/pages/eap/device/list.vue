@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-05 15:06:50
+ * @LastEditTime: 2022-05-12 14:11:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/list.vue
@@ -166,6 +166,8 @@ export default {
       this.getListAll();
     },
     add() {
+      this.isEdit = false;
+      this.editData = [];
       this.isForm = true;
     },
     //导入

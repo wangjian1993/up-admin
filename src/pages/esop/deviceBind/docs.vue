@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-31 09:19:37
- * @LastEditTime: 2022-04-15 09:21:47
+ * @LastEditTime: 2022-05-12 17:20:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/docs.vue
@@ -170,7 +170,7 @@ export default {
             workcenterid: this.deviceItem.WorkCenterId,
             lineid: this.deviceItem.LineId,
             station: this.deviceItem.Station,
-            stationlocation: this.deviceItem.direction == 1 ? "左" : "右",
+            stationlocation: this.deviceItem.direction == 0 ? "左" : "右",
             filecode: this.selectedRowKeys,
           },
         ],

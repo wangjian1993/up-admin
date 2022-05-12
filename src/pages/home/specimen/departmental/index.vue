@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-05-11 15:19:28
+ * @LastEditTime: 2022-05-12 15:55:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/departmental/index.vue
@@ -148,6 +148,8 @@ export default {
     },
     add() {
       this.isForm = true;
+      this.isEdit = false;
+      this.editData = [];
     },
     //导入
     importExcel() {
@@ -170,6 +172,9 @@ export default {
         if (res.data.success) {
           this.enterList = res.data.data;
           this.enterId = this.enterList[0].EnterId;
+           this.searchForm.setFieldsValue({
+            enterpriseid: this.enterId
+          })
           this.getListAll();
         }
       });

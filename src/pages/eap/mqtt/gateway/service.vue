@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 09:07:46
- * @LastEditTime: 2022-05-09 15:38:38
+ * @LastEditTime: 2022-05-12 14:10:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/mqtt/gateway/service.vue
@@ -172,6 +172,8 @@ export default {
     },
     add() {
       this.isForm = true;
+      this.isEdit = false;
+      this.editData = [];
     },
     bind() {
       this.isBind = true;
@@ -321,11 +323,15 @@ export default {
       this.dataSource.forEach((item) => {
         if (this.selectedRowKeys.includes(item.Id)) {
           parmas.push({
+            path: item.Path,
             processname: item.ServerName,
+            httpport: item.ServerType == "HTTP" ? item.ServerPort : 0,
+            tcpport: item.ServerType == "TCP" ? item.ServerPort : 0,
+            wsport: item.ServerType == "WS" ? item.ServerPort : 0,
           });
         }
       });
-      parmas.push({})
+      parmas.push({});
       setMqttServiceAction(parmas, "start").then((res) => {
         if (res.data.success) {
           this.$message.success("启动成功!");

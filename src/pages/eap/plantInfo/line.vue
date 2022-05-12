@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 17:25:28
- * @LastEditTime: 2022-05-05 15:23:27
+ * @LastEditTime: 2022-05-12 14:10:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/plantInfo/line.vue
@@ -144,6 +144,8 @@ export default {
     },
     add() {
       this.isForm = true;
+      this.isEdit = false;
+      this.editData = [];
     },
     edit(record) {
       this.isForm = true;

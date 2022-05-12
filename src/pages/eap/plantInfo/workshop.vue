@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 17:25:15
- * @LastEditTime: 2022-04-30 14:31:23
+ * @LastEditTime: 2022-05-12 14:09:59
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/plantInfo/workshop.vue
@@ -15,13 +15,7 @@
             <a-row>
               <a-col :md="8" :sm="24">
                 <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select
-                    v-decorator="[
-                      'plantid'
-                    ]"
-                    style="width: 200px"
-                    placeholder="请选择生产工厂"
-                  >
+                  <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
                     <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                   </a-select>
                 </a-form-item>
@@ -103,7 +97,7 @@ import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { columns } from "./data/workshop";
-import workshopForm from "./components/workstationForm.vue";
+import workshopForm from "./components/workshopForm.vue";
 export default {
   mixins: [PublicVar],
   components: { workshopForm },
@@ -142,6 +136,8 @@ export default {
     },
     add() {
       this.isForm = true;
+      this.isEdit = false;
+      this.editData = [];
     },
     edit(record) {
       this.isForm = true;
@@ -209,7 +205,7 @@ export default {
             plantid: values.plantid,
             workshop: values.workshop,
           };
-          getWorkshopAction(parmas,'getall').then((res) => {
+          getWorkshopAction(parmas, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

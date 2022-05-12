@@ -150,6 +150,8 @@ export default {
     },
     add() {
       this.isForm = true;
+      this.isEdit = false;
+      this.editData = [];
     },
     bind() {
       this.isBind = true;

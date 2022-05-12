@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-11 10:12:51
+ * @LastEditTime: 2022-05-12 14:11:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/plcParams.vue
@@ -181,6 +181,8 @@ export default {
     },
     add() {
       this.isForm = true;
+      this.isEdit = false;
+      this.editData = [];
     },
     //导入
     importExcel() {

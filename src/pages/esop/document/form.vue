@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-04-19 14:09:30
+ * @LastEditTime: 2022-05-12 13:53:52
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
 -->
 <template>
   <div>
-    <a-modal :title="isEdit ? '编辑文档' : '添加文档'" :visible="visible" v-if="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel" :width="840">
+    <a-modal v-if="visible" :title="isEdit ? '编辑文档' : '添加文档'" :visible="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel" :width="840">
       <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-row>
           <a-col :span="12">
@@ -194,36 +194,55 @@ export default {
         if (res.data.success) {
           let doc = res.data.data.doc;
           let files = res.data.data.files;
-          for (let index = 1; index <= doc.ProcessCount; index++) {
-            this.defFileList["sort" + index] = [];
-            this.processList["sort" + index] = [];
+          if (doc.ProcessCount > 0) {
+            for (let index = 1; index <= doc.ProcessCount; index++) {
+              this.defFileList["sort" + index] = [];
+              this.processList["sort" + index] = [];
+            }
           }
           files.forEach((item) => {
-            this.processList["sort" + item.Sort].push({
-              ...item,
-              name: item.FileName,
-              status: "done",
-              url: item.FilePath,
-              uid: item.ID,
-            });
-            this.defFileList["sort" + item.Sort].push({
-              ...item,
-              name: item.FileName,
-              status: "done",
-              url: item.FilePath,
-              uid: item.ID,
-            });
-            this.fileData.push({
-              FileName: item.FileName,
-              FilePath: item.FilePath,
-              FilePrefix: item.FilePrefix,
-              ResourceId: item.ResourceId,
-              sort: item.Sort,
-              id: item.ID,
-            });
+            if (item.Sort == 0) {
+              this.processList1.push({
+                ...item,
+                name: item.FileName,
+                status: "done",
+                url: item.FilePath,
+                uid: item.ID,
+              });
+              this.defFileList1.push({
+                ...item,
+                name: item.FileName,
+                status: "done",
+                url: item.FilePath,
+                uid: item.ID,
+              });
+            } else {
+              this.processList["sort" + item.Sort].push({
+                ...item,
+                name: item.FileName,
+                status: "done",
+                url: item.FilePath,
+                uid: item.ID,
+              });
+              this.defFileList["sort" + item.Sort].push({
+                ...item,
+                name: item.FileName,
+                status: "done",
+                url: item.FilePath,
+                uid: item.ID,
+              });
+              this.fileData.push({
+                FileName: item.FileName,
+                FilePath: item.FilePath,
+                FilePrefix: item.FilePrefix,
+                ResourceId: item.ResourceId,
+                sort: item.Sort,
+                id: item.ID,
+              });
+            }
           });
           this.processValue = doc.ProcessCount;
-          console.log(this.defFileList);
+          console.log(doc);
           this.form = {
             documentcode: doc.DocumentCode,
             documentname: doc.DocumentName,
@@ -233,6 +252,7 @@ export default {
             version: doc.Version,
             filecount: doc.FileCount,
           };
+          console.log(this.defFileList);
         }
       });
     },
@@ -292,7 +312,7 @@ export default {
             let fileInfo = {
               ...res.data.data,
               ...info.file,
-              sort:0,
+              sort: 0,
             };
             this.fileData1.push(fileInfo);
             console.log(" this.fileData", this.fileData1);
@@ -367,7 +387,7 @@ export default {
         if (valid) {
           this.form.filecount = this.fileData.length + 1;
           this.form.files = this.fileData;
-          this.form.files.unshift(this.fileData1[0])
+          this.form.files.unshift(this.fileData1[0]);
           this.form.processcount = this.processValue;
           if (this.isEdit) {
             this.form.documentid = this.editData.DocumentId;

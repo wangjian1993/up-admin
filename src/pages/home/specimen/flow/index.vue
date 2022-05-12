@@ -1,10 +1,10 @@
 <!--
  * @Author: max
- * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-12 14:11:33
+ * @Date: 2022-05-11 11:40:06
+ * @LastEditTime: 2022-05-12 15:55:10
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/eap/device/plc.vue
+ * @FilePath: /up-admin/src/pages/home/specimen/flow/index.vue
 -->
 <template>
   <div>
@@ -14,31 +14,14 @@
           <div :class="advanced ? null : 'fold'">
             <a-row>
               <a-col :md="6" :sm="24">
-                <a-form-item label="PLC类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['typeid']" style="width: 200px" placeholder="请选择PLC类型">
-                    <a-select-option v-for="item in plcTypeList" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                <a-form-item label="公司名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['enterpriseid']" placeholder="请选择公司名称">
+                    <a-select-option v-for="item in enterList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                   </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="PLC品牌" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['brand']" style="width: 200px" placeholder="请选择PLC品牌">
-                    <a-select-option v-for="item in plcBrand" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="PLC名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入PLC名称" v-decorator="['plcname']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="PLC编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入PLC编码" v-decorator="['plccode']" />
                 </a-form-item>
               </a-col>
               <!-- <a-col :md="6" :sm="24">
-                <a-form-item label="PLC状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-form-item label="设备状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['status']" placeholder="请选择订单状态" style="width: 200px">
                     <a-select-option value="">全部</a-select-option>
                     <a-select-option value="1">启用</a-select-option>
@@ -55,9 +38,6 @@
         </a-form>
         <div class="operator">
           <a-button type="primary" @click="add" icon="plus">新增</a-button>
-          <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
-          <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="importExcel" icon="import">导入</a-button>
-          <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="downExcel" icon="import">导入模板下载</a-button>
           <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <span style="margin-left: 8px">
@@ -77,16 +57,31 @@
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
+          @expand="fatherExpand"
           @change="handleTableChange"
-          :rowKey="(dataSource) => dataSource.PlcId"
+          :rowKey="(dataSource) => dataSource.FlowId"
           bordered
         >
+          <a-table slot="expandedRowRender" size="small" :columns="innerColumns" :data-source="innerData" :pagination="false">
+            <template slot="index" slot-scope="text, record, index">
+              <div>
+                <span>{{index + 1}}</span>
+              </div>
+            </template>
+            <template slot="ReceiverList" slot-scope="record">
+              <div>
+                <a-tag v-for="item in record" :key="item.ReceiverId">
+                  {{ item.ReceiverName }}
+                </a-tag>
+              </div>
+            </template>
+          </a-table>
           <template slot="index" slot-scope="text, record, index">
             <div>
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="Status" slot-scope="record">
+          <template slot="Enable" slot-scope="record">
             <div>
               <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
               <a-tag color="red" v-else>禁用</a-tag>
@@ -108,42 +103,41 @@
           </template>
         </a-table>
       </a-card>
-      <plcForm v-if="isForm" :isEdit="isEdit" :editData="editData" :plcBrand="plcBrand" :plcTypeList="plcTypeList" @closeModal="closeModal" @success="getListAll" />
-      <ImportPlcExcel v-if="isImport" @closeModal="closeModal" @success="getListAll" />
+      <useForm v-if="isForm" :isEdit="isEdit" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="getListAll" />
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getPlcAction, setPlcAction } from "@/services/eap.js";
-import { getParamData } from "@/services/admin.js";
+import { getDepartmentApi, setDepartmentApi, getMaterialSampleApi } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
-import getTableScroll from "@/utils/setTableHeight";
+// import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data/plc";
-import plcForm from "./components/plcForm.vue";
-import ExportExcel from "@/utils/ExportExcelJS";
-import ImportPlcExcel from "./components/ImportPlcExcel.vue";
+import { columns, innerColumns } from "./data";
+import useForm from "./form.vue";
 export default {
   mixins: [PublicVar],
-  components: { plcForm, ImportPlcExcel },
+  components: { useForm },
   data() {
     return {
       scrollY: "",
       advanced: true,
       columns,
+      innerColumns,
       dataSource: [],
-      plcTypeList: [],
+      deviceTypeList: [],
       isSearch: 0,
       isExportLod: false,
       editData: [],
       isEdit: false,
       isForm: false,
       selectedRowKeys: [],
-      workshopList: [],
-      plcBrand: [],
-      isImport: false,
+      enterList: [],
+      enterId: "",
+      innerData: [],
+      expandedRowKeys: [],
+      defaultExpandedRowKeys: [],
     };
   },
   updated() {
@@ -151,14 +145,42 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(70);
+      this.scrollY = this.getTableScroll(70);
     });
-    this.getListAll();
-    this.getDeviceType();
-    this.getParamData();
+    this.getEnterList();
   },
   methods: {
     splitData,
+    getTableScroll(extraHeight = 70, id) {
+      if (typeof extraHeight == "undefined") {
+        //  默认底部分页64 + 边距10
+        extraHeight = 70;
+      }
+      let tHeader = null;
+      if (id) {
+        tHeader = document.getElementById(id) ? document.getElementById(id).getElementsByClassName("ant-table-thead")[0] : null;
+      } else {
+        tHeader = document.getElementsByClassName("ant-table-thead")[0];
+      }
+      //表格内容距离顶部的距离
+      // console.log("tHeader", tHeader);
+      let tHeaderBottom = 0;
+      let tHeaderTop = 0;
+      if (tHeader) {
+        tHeaderBottom = tHeader.getBoundingClientRect().bottom;
+        tHeaderTop = tHeader.getBoundingClientRect().top;
+      }
+      // let height = document.body.clientHeight - tHeaderBottom - extraHeight
+      let height = `calc(100vh - ${tHeaderBottom + extraHeight}px)`;
+      let height1 = `calc(100vh - ${tHeaderTop + extraHeight}px)`;
+      // document.getElementsByClassName("ant-table")[0].style.maxHeight = `calc(100vh - ${tHeaderBottom}px)`;
+      // document.getElementsByClassName("ant-table")[0].style.mixHeight = `calc(100vh - ${tHeaderBottom}px)`;
+      const table = document.getElementsByClassName("ant-table")[0];
+      table.style.minHeight = height1;
+      // console.log(table);
+      console.log("height", height);
+      return height;
+    },
     //重置搜索
     reset() {
       this.isSearch = 0;
@@ -166,13 +188,15 @@ export default {
       this.getListAll();
     },
     add() {
+      this.isForm = true;
       this.isEdit = false;
       this.editData = [];
-      this.isForm = true;
     },
-    //导入
-    importExcel() {
-      this.isImport = true;
+    fatherExpand(expanded, record) {
+      this.innerData = [];
+      if (expanded) {
+        this.innerData = record.PointList;
+      }
     },
     edit(record) {
       this.isForm = true;
@@ -183,23 +207,18 @@ export default {
       this.isForm = false;
       this.isImport = false;
     },
-    getDeviceType() {
-      let parmas = {
-        groupcode: "PLC_TYPE",
+    getEnterList() {
+      let params = {
+        entertypecode: "COMPANY",
       };
-      getParamData(parmas).then((res) => {
+      getMaterialSampleApi(params, "getenterlist").then((res) => {
         if (res.data.success) {
-          this.plcTypeList = res.data.data;
-        }
-      });
-    },
-    getParamData() {
-      let parmas = {
-        groupcode: "EAP_PLAC_BRAND",
-      };
-      getParamData(parmas).then((res) => {
-        if (res.data.success) {
-          this.plcBrand = res.data.data;
+          this.enterList = res.data.data;
+          this.enterId = this.enterList[0].EnterId;
+          this.searchForm.setFieldsValue({
+            enterpriseid: this.enterId
+          })
+          this.getListAll();
         }
       });
     },
@@ -213,8 +232,9 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
+        enterpriseid: this.enterId,
       };
-      getPlcAction(parmas, "getall").then((res) => {
+      getDepartmentApi(parmas, "getflowlist").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -244,13 +264,9 @@ export default {
           let parmas = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            typeid: values.typeid,
-            brand: values.brand,
-            status: values.status,
-            plccode: values.plccode,
-            plcname: values.plcname,
+            enterpriseid: values.enterpriseid,
           };
-          getPlcAction(parmas, "getall").then((res) => {
+          getDepartmentApi(parmas, "getflowlist").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -270,7 +286,15 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          setPlcAction(self.selectedRowKeys, "delete").then((res) => {
+          let params = {
+            FlowList: [],
+          };
+          self.selectedRowKeys.forEach((item) => {
+            params.FlowList.push({
+              FlowId: item,
+            });
+          });
+          setDepartmentApi(params, "deleteflow").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -283,58 +307,17 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.PlcId);
-      setPlcAction(parmas, "delete").then((res) => {
+      let parmas = {
+        FlowList: [
+          {
+            FlowId: item.FlowId, //部门ID
+          },
+        ],
+      };
+      setDepartmentApi(parmas, "deleteflow").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
-        }
-      });
-    },
-    downExcel() {},
-    exportExcel() {
-      this.isExportLod = true;
-      let values = this.searchForm.getFieldsValue();
-      let parmas = {
-        pageindex: this.pagination.current,
-        pagesize: this.pagination.total,
-        typeid: values.typeid,
-        brand: values.brand,
-        status: values.status,
-        plccode: values.plccode,
-        plcname: values.plcname,
-      };
-      getPlcAction(parmas, "getall").then((res) => {
-        if (res.data.success) {
-          let list = res.data.data.list;
-          const dataSource = list.map((item) => {
-            Object.keys(item).forEach((key) => {
-              // 后端传null node写入会有问题
-              if (item[key] === null) {
-                item[key] = "";
-              }
-              if (Array.isArray(item[key])) {
-                item[key] = item[key].join(",");
-              }
-            });
-            return item;
-          });
-          const header = [];
-          columns.map((item) => {
-            if (item.dataIndex) {
-              header.push({ key: item.dataIndex, title: item.title });
-            }
-          });
-          var timestamp = Date.parse(new Date());
-          try {
-            ExportExcel(header, dataSource, `PLC列表_${timestamp}.xlsx`);
-            this.$message.success("导出数据成功!");
-          } catch (error) {
-            // console.log(error);
-            this.$message.error("导出数据失败");
-          }
-          this.isExportLod = false;
         }
       });
     },
@@ -343,7 +326,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table {
+/deep/.ant-table:nth-of-type(0) {
   min-height: 62vh;
 }
 .ant-form-item {

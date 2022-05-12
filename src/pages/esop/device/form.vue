@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-04-11 16:33:43
+ * @LastEditTime: 2022-05-12 13:55:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/device/form.vue
 -->
 <template>
   <div>
-    <a-modal :title="isEdit ? '编辑设备' : '添加设备'" :visible="visible" v-if="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel" :width="840">
+    <a-modal v-if="visible" :title="isEdit ? '编辑设备' : '添加设备'" :visible="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel" :width="840">
       <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-row>
           <a-col :span="12">
@@ -29,15 +29,15 @@
             </a-form-model-item>
           </a-col>
           <a-col :span="12">
-            <a-form-model-item ref="workcenterid" has-feedback label="生产产线" prop="workcenterid" :labelCol="{ span: 6 }">
-              <a-select v-model="form.workcenterid" placeholder="请选择生产产线" @change="workShopChange">
+            <a-form-model-item ref="workcenterid" has-feedback label="生产车间" prop="workcenterid" :labelCol="{ span: 6 }">
+              <a-select v-model="form.workcenterid" placeholder="请选择生产车间" @change="workShopChange">
                 <a-select-option v-for="(item, index) in workshopList" :key="index" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
               </a-select>
             </a-form-model-item>
           </a-col>
           <a-col :span="12">
-            <a-form-model-item ref="lineid" has-feedback label="生产车间" prop="lineid" :labelCol="{ span: 6 }">
-              <a-select v-model="form.lineid" placeholder="请选择生产车间">
+            <a-form-model-item ref="lineid" has-feedback label="生产产线" prop="lineid" :labelCol="{ span: 6 }">
+              <a-select v-model="form.lineid" placeholder="请选择生产产线">
                 <a-select-option v-for="(item, index) in lineList" :key="index" :value="item.LineId">{{ item.LineName }}</a-select-option>
               </a-select>
             </a-form-model-item>
@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { setSopDevice ,getSopDocument} from "@/services/esop.js";
+import { setSopDevice, getSopDocument } from "@/services/esop.js";
 export default {
   props: ["editData", "isEdit"],
   data() {
@@ -168,7 +168,7 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           if (this.isEdit) {
-            this.form.equipmentid  = this.editData.EquipmentId
+            this.form.equipmentid = this.editData.EquipmentId;
             setSopDevice(this.form, "update").then((res) => {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
@@ -188,6 +188,7 @@ export default {
     },
     handleCancel() {
       this.$emit("close");
+      this.visible = false
     },
     //工厂选择
     plantChange(e) {

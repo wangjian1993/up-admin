@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 13:41:09
- * @LastEditTime: 2022-04-15 10:37:09
+ * @LastEditTime: 2022-05-12 17:17:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/index.vue
@@ -286,7 +286,10 @@ export default {
   },
   methods: {
     bind() {
+      this.editData = [] ;
+      this.isEdit = false;
       this.isAddDevice = true;
+      this.isDetail = false
     },
     edit(record) {
       this.isAddDevice = true;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal :title="isEdit ? '编辑产线配置' : '添加产线配置'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+    <a-modal :title="isEdit ? '编辑产线配置' : '添加产线配置'" v-if="visible" :visible="visible" @ok="handleOk" @cancel="handleCancel">
       <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-form-model-item ref="PlantId" has-feedback label="生产工厂" prop="PlantId">
           <a-select v-model="form.PlantId" :disabled="isEdit" placeholder="请选择生产工厂">
@@ -74,11 +74,7 @@ export default {
   created() {
     this.getPlant();
     if (this.isEdit) {
-      this.form.PlantId = this.editData.PlantId;
-      this.form.WorkShopCode = this.editData.WorkShopCode;
-      this.form.WorkShopName = this.editData.WorkShopName;
-      this.form.WorkShopDesc = this.editData.WorkShopDesc;
-      this.form.Enable = this.editData.Enable;
+      this.form = this.editData;
     }
   },
   methods: {

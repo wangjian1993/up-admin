@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:45
- * @LastEditTime: 2022-05-05 11:27:25
+ * @LastEditTime: 2022-05-12 14:11:05
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/type.vue
@@ -243,9 +243,8 @@ export default {
     },
     //打开对话框
     add() {
-      this.defaultForm();
       this.isEdit = false;
-      this.title = "添加机构类型";
+      this.editData = [];
       this.visible = true;
     },
     //初始化表单

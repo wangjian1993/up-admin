@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 14:01:21
- * @LastEditTime: 2022-04-12 13:55:18
+ * @LastEditTime: 2022-05-12 17:21:21
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/device.vue
@@ -54,21 +54,23 @@
       <div>
         <div class="device-lsit">
           <div class="device-list-header">
-            <span>左侧</span>
+            <!-- <span>左侧</span> -->
             <p>拉头</p>
-            <span>右侧</span>
+            <!-- <span>右侧</span> -->
           </div>
           <div>
             <div class="device-list-content" v-for="(item, index) in deviceList" :key="index">
               <div class="device" v-for="(items, indexs) in item" :key="items.EquipmentId">
-                <div v-if="indexs == 0" class="process" @click="selectDocs(items, 1)">
+                <div v-if="indexs == 0" class="process">
                   <p v-for="fileItem in items.Detail" :key="fileItem.Id">{{ fileItem.FileName }}</p>
                 </div>
-                <div class="device-content">
+                <div class="device-content" @click="selectDocs(items,indexs)">
+                  <img v-if="items.Status" src="@/assets/img/lcd.png" alt="" />
+                  <img v-else src="@/assets/img/lcd-2.png" alt="" />
                   <p>{{ items.EquipmentName }}</p>
-                  <p :class="items.Status ? 'span-t' : 'span-f'"></p>
+                  <!-- <p :class="items.Status ? 'span-t' : 'span-f'"></p> -->
                 </div>
-                <div v-if="indexs == 1" class="process" @click="selectDocs(items, 2)">
+                <div v-if="indexs == 1" class="process">
                   <p v-for="fileItem in items.Detail" :key="fileItem.Id">{{ fileItem.FileName }}</p>
                 </div>
               </div>
@@ -138,12 +140,13 @@ export default {
     docsList() {
       this.isDocs = true;
     },
-    selectDocs(record, direction) {
+    selectDocs(record, index) {
       if (this.isDetail) {
         return;
       }
+      console.log(index);
       this.isDocsList = true;
-      record.direction = direction;
+      record.direction = index % 2;
       this.documentRecord = this.selectDocsList;
       this.deviceItem = record;
     },
@@ -172,6 +175,7 @@ export default {
     },
     //工厂选择
     plantChange(e) {
+      this.deviceList = [];
       this.plantId = e;
       this.getWorkshopList();
       this.workshopId = "";
@@ -179,6 +183,7 @@ export default {
     },
     //车间选择
     workShopChange(e) {
+      this.deviceList = [];
       this.workshopId = e;
       this.getLineList();
       this.lineId = "";
@@ -187,6 +192,7 @@ export default {
     lineChange(e) {
       console.log(e);
       this.lineId = e;
+      this.deviceList = [];
       this.getDeviceList();
     },
     getDeviceList() {
@@ -243,15 +249,15 @@ export default {
   margin-bottom: 5px;
 }
 .device-lsit {
-  width: 550px;
+  width: 750px;
   margin: 0 auto;
   text-align: center;
-  border: 1px #000 solid;
+  // border: 1px #000 solid;
   padding: 10px;
   .device-list-header,
   .device-list-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     span {
       width: 150px;
@@ -272,21 +278,23 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 0;
+    padding: 10px 0;
     .process {
-      width: 130px;
+      width: 250px;
       height: 30px;
-      border: 1px #000 solid;
+      // border: 1px #000 solid;
       text-align: center;
       line-height: 30px;
-      cursor: pointer;
-      p {
-        overflow: hidden;
-        text-overflow: ellipsis; //文本溢出显示省略号
-        white-space: nowrap; //文本不会换行
+      img {
+        width: 15px;
+        height: 12px;
+        margin-right: 2px;
       }
-      &:hover {
-        background: rgb(150, 227, 158);
+      p {
+        // overflow: hidden;
+        // text-overflow: ellipsis; //文本溢出显示省略号
+        // white-space: nowrap; //文本不会换行
+        line-height: 1;
       }
     }
     .device {
@@ -294,18 +302,23 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
       p {
         margin: 0;
       }
       .device-content {
         width: 100px;
         height: 50px;
-        border: 1px #000 solid;
+        // border: 1px #000 solid;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         margin: 0 10px;
+        img {
+          width: 30px;
+          height: 30px;
+        }
       }
       .span-f {
         width: 10px;
