@@ -178,7 +178,7 @@ export default {
       this.$emit("selectDevice", result);
     },
     reset() {
-      this.getDocsList();
+      this.getListAll();
       this.searchForm.resetFields();
     },
     search() {

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-29 17:37:25
- * @LastEditTime: 2022-05-11 09:26:14
+ * @LastEditTime: 2022-05-14 11:48:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/eap.js
@@ -80,4 +80,10 @@ export function getPlcParamsAction(params, action) {
 }
 export function setPlcParamsAction(params, action) {
     return request(`${UP_EAP}/base/params/${action}`, METHOD.POST, params);
+}
+export function getOperationAction(params, action) {
+    return request(`${UP_EAP}/plc/params/${action}`, METHOD.GET, params);
+}
+export function setOperationAction(params, action) {
+    return request(`${UP_EAP}/plc/params/${action}`, METHOD.POST, params);
 }

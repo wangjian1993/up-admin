@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-12 14:11:12
+ * @LastEditTime: 2022-05-14 13:56:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/plcParams.vue
@@ -54,7 +54,7 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button type="primary" @click="add" icon="plus">新增</a-button>
+          <a-button type="primary" @click="add" :disabled="!hasPerm('add')" icon="plus">新增</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="importExcel" icon="import">导入</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="downExcel" icon="import">导入模板下载</a-button>

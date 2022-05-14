@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-12 14:11:33
+ * @LastEditTime: 2022-05-14 14:32:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/plc.vue
@@ -13,6 +13,35 @@
         <a-form layout="horizontal" :form="searchForm">
           <div :class="advanced ? null : 'fold'">
             <a-row>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                    <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['workshopid']" style="width: 200px" placeholder="请选择生产车间" @change="workshopChange">
+                    <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产车间" @change="lineChange">
+                    <a-select-option v-for="item in LineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="设备" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['equimentid']" style="width: 200px" placeholder="请选择设备">
+                    <a-select-option v-for="item in deviceList" :key="item.EquimentId" :value="item.EquimentId">{{ item.EquimentName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+
               <a-col :md="6" :sm="24">
                 <a-form-item label="PLC类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['typeid']" style="width: 200px" placeholder="请选择PLC类型">
@@ -54,7 +83,7 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button type="primary" @click="add" icon="plus">新增</a-button>
+          <a-button type="primary" @click="add" :disabled="!hasPerm('add')" icon="plus">新增</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="importExcel" icon="import">导入</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="downExcel" icon="import">导入模板下载</a-button>
@@ -115,7 +144,7 @@
 </template>
 
 <script>
-import { getPlcAction, setPlcAction } from "@/services/eap.js";
+import { getPlcAction, setPlcAction, getPlantList, getWorkshopAction, getDeviceAction } from "@/services/eap.js";
 import { getParamData } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
@@ -141,8 +170,12 @@ export default {
       isEdit: false,
       isForm: false,
       selectedRowKeys: [],
-      workshopList: [],
       plcBrand: [],
+      plantList: [],
+      workshopList: [],
+      plantId: "",
+      LineList: [],
+      deviceList: [],
       isImport: false,
     };
   },
@@ -156,9 +189,64 @@ export default {
     this.getListAll();
     this.getDeviceType();
     this.getParamData();
+    this.getPlant();
   },
   methods: {
     splitData,
+    getPlant() {
+      let parmas = {
+        entertypecode: "PLANT",
+      };
+      getPlantList(parmas, "getlistbytypecode").then((res) => {
+        if (res.data.success) {
+          this.plantList = res.data.data;
+        }
+      });
+    },
+    plantChange(e) {
+      this.plantId = e;
+      let parmas = {
+        plantid: e,
+      };
+      getWorkshopAction(parmas, "getlist").then((res) => {
+        if (res.data.success) {
+          this.workshopList = res.data.data;
+          this.searchForm.setFieldsValue({
+            workshopid: "",
+            lineid: "",
+            equimentid:""
+          });
+        }
+      });
+    },
+    workshopChange(e) {
+      let parmas = {
+        plantid: this.plantId,
+        workshopid: e,
+      };
+      getPlantList(parmas, "getlist").then((res) => {
+        if (res.data.success) {
+          this.LineList = res.data.data;
+          this.searchForm.setFieldsValue({
+            lineid: "",
+            equimentid:""
+          });
+        }
+      });
+    },
+    lineChange(e){
+      let parmas = {
+        lineid: e,
+      };
+      getDeviceAction(parmas, "getlist").then((res) => {
+        if (res.data.success) {
+          this.deviceList = res.data.data;
+          this.searchForm.setFieldsValue({
+            equimentid:""
+          });
+        }
+      });
+    },
     //重置搜索
     reset() {
       this.isSearch = 0;
@@ -249,6 +337,10 @@ export default {
             status: values.status,
             plccode: values.plccode,
             plcname: values.plcname,
+            plantid: values.plcname,
+            workshopid: values.workshopid,
+            lineid: values.lineid,
+            equimentid: values.equimentid,
           };
           getPlcAction(parmas, "getall").then((res) => {
             if (res.data.success) {

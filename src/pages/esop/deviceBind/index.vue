@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 13:41:09
- * @LastEditTime: 2022-05-12 17:17:19
+ * @LastEditTime: 2022-05-14 09:23:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/index.vue
@@ -69,7 +69,7 @@
               <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['status']" style="width: 200px">
                   <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="treu">已发布</a-select-option>
+                  <a-select-option value="true">已发布</a-select-option>
                   <a-select-option value="false">未发布</a-select-option>
                 </a-select>
               </a-form-item>
@@ -114,7 +114,7 @@
         </template>
         <template slot="Status" slot-scope="text">
           <div>
-            <a-tag color="green" v-if="text != '待审核'">{{ text }}</a-tag>
+            <a-tag color="green" v-if="text == '已审核' || text == '已发布'">{{ text }}</a-tag>
             <a-tag color="red" v-else>{{ text }}</a-tag>
           </div>
         </template>
@@ -220,7 +220,7 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getSopDevice, getSopDocument, deviceSopBind } from "@/services/esop.js";
+import { getSopDocument, deviceSopBind } from "@/services/esop.js";
 import device from "./device.vue";
 export default {
   components: { device },
@@ -306,8 +306,8 @@ export default {
       this.plantid = e;
       this.getWorkshopList();
       this.searchForm.setFieldsValue({
-        workshop: "",
-        line: "",
+        workcenterid: "",
+        lineid: "",
       });
     },
     //车间选择
@@ -315,7 +315,7 @@ export default {
       this.workshopId = e;
       this.getLineList();
       this.searchForm.setFieldsValue({
-        line: "",
+        lineid: "",
       });
     },
     //获取生产工厂
@@ -391,6 +391,7 @@ export default {
             equipmentcode: values.equipmentcode,
             equipmentname: values.equipmentname,
             plantid: values.plantid,
+            lineid: values.lineid,
             workcenterid: values.workcenterid,
             proname: values.proname,
             procode: values.procode,
@@ -398,7 +399,7 @@ export default {
             documentname: values.documentname,
             status: values.status,
           };
-          getSopDevice(parmas, "equipment/get").then((res) => {
+          getSopDocument(parmas, "equipment/get").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };

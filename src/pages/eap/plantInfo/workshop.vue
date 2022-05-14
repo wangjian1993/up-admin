@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 17:25:15
- * @LastEditTime: 2022-05-12 14:09:59
+ * @LastEditTime: 2022-05-14 13:56:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/plantInfo/workshop.vue
@@ -33,7 +33,7 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button type="primary" @click="add" icon="plus">新增</a-button>
+          <a-button type="primary" @click="add" :disabled="!hasPerm('add')" icon="plus">新增</a-button>
           <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>

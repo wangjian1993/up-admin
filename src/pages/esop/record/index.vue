@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 16:01:38
- * @LastEditTime: 2022-04-15 10:16:30
+ * @LastEditTime: 2022-05-14 09:37:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/index.vue
@@ -52,6 +52,20 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
+              <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['workcenterid']" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
+                  <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产产线">
+                  <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
               <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请选择产品大类" v-decorator="['protype']" />
               </a-form-item>
@@ -63,7 +77,7 @@
             </a-col>
           </a-row>
         </div>
-        <span style="float: right; margin-top: 3px;">
+        <span style="display:flex;justify-content: flex-end">
           <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
         </span>
@@ -215,7 +229,7 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getSopDocument, getDeviceList } from "@/services/esop.js";
+import { getSopDocument } from "@/services/esop.js";
 import device from "./device.vue";
 export default {
   components: { device },
@@ -291,8 +305,8 @@ export default {
       this.plantid = e;
       this.getWorkshopList();
       this.searchForm.setFieldsValue({
-        workshop: "",
-        line: "",
+        workshopid: "",
+        lineid: "",
       });
     },
     //车间选择
@@ -300,7 +314,7 @@ export default {
       this.workshopId = e;
       this.getLineList();
       this.searchForm.setFieldsValue({
-        line: "",
+        lineid: "",
       });
     },
     //获取生产工厂
@@ -375,14 +389,17 @@ export default {
               pagesize: this.pagination.pageSize,
               equipmentcode: values.equipmentcode,
               equipmentname: values.equipmentname,
+              documentcode: values.documentcode,
+              documentname: values.documentname,
               plantid: values.plantid,
               workcenterid: values.workcenterid,
               lineid: values.lineid,
-              ipaddress: values.ipaddress,
-              enable: values.enable,
-              status: values.status,
+              procode: values.procode,
+              proname: values.proname,
+              protype: values.protype,
+              protypedetail: values.protypedetail,
           };
-          getDeviceList(parmas, "getinequipment").then((res) => {
+          getSopDocument(parmas, "record/get").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };

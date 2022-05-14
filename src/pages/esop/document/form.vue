@@ -1,62 +1,64 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-05-12 13:53:52
+ * @LastEditTime: 2022-05-14 10:01:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
 -->
 <template>
   <div>
-    <a-modal v-if="visible" :title="isEdit ? '编辑文档' : '添加文档'" :visible="visible" destoryOnClose @ok="handleOk" @cancel="handleCancel" :width="840">
-      <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-row>
-          <a-col :span="12">
-            <a-form-model-item label="文件编码" prop="documentcode" :labelCol="{ span: 6 }">
-              <a-input :disabled="isEdit" v-model="form.documentcode" allowClear placeholder="请输入文件编码" />
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-model-item label="文件名称" prop="documentname" :labelCol="{ span: 6 }">
-              <a-input v-model="form.documentname" allowClear placeholder="请输入文件名称" />
-            </a-form-model-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-model-item ref="plantid" has-feedback label="生产工厂" prop="plantid" :labelCol="{ span: 6 }">
-              <a-select v-model="form.plantid" placeholder="请选择生产工厂">
-                <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
-              </a-select>
-            </a-form-model-item>
-          </a-col>
-          <!-- <a-col :span="12">
+    <a-modal v-if="visible" :title="isEdit ? '编辑文档' : '添加文档'" :maskClosable="false" :visible="visible" destoryOnClose @ok="handleOk" :ok-button-props="{ props: { disabled: spinning } }" @cancel="handleCancel" :width="840">
+      <a-spin tip="上传中" :spinning="spinning">
+        <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+          <a-row>
+            <a-col :span="12">
+              <a-form-model-item label="文件编码" prop="documentcode" :labelCol="{ span: 6 }">
+                <a-input :disabled="isEdit" v-model="form.documentcode" allowClear placeholder="请输入文件编码" />
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item label="文件名称" prop="documentname" :labelCol="{ span: 6 }">
+                <a-input v-model="form.documentname" allowClear placeholder="请输入文件名称" />
+              </a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item ref="plantid" has-feedback label="生产工厂" prop="plantid" :labelCol="{ span: 6 }">
+                <a-select v-model="form.plantid" placeholder="请选择生产工厂">
+                  <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
+                </a-select>
+              </a-form-model-item>
+            </a-col>
+            <!-- <a-col :span="12">
             <a-form-model-item label="版本号" prop="version" :labelCol="{ span: 6 }">
               <a-input v-model="form.version" allowClear placeholder="请输入版本号" />
             </a-form-model-item>
           </a-col> -->
-          <a-col :span="12">
-            <a-form-model-item label="产品大类" :labelCol="{ span: 6 }"><a-input v-model="form.protype" placeholder="请输入产品大类"/></a-form-model-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-model-item label="产品系列" :labelCol="{ span: 6 }"><a-input v-model="form.protypedetail" placeholder="请输入产品系列"/></a-form-model-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-model-item label="工序数量" :labelCol="{ span: 6 }"><a-input-number :min="1" v-model="processValue" placeholder="请输入工序" @change="processChange"/></a-form-model-item>
-          </a-col>
-          <a-col :span="24">
-            <a-form-model-item label="SOP文档" :labelCol="{ span: 3 }">
-              <a-upload :custom-request="uploadFile1" :before-upload="beforeUpload" list-type="picture-card" :default-file-list="defFileList1" :fileList="processList1" :remove="removeFile1"> <a-icon type="plus" /> </a-upload
-            ></a-form-model-item>
-            <div v-for="(item, index) in processValue" :key="index">
-              <a-form-model-item :label="'工序' + (index + 1)" :labelCol="{ span: 3 }">
-                <a-upload :data="{ sort: index + 1 }" :custom-request="uploadFile" list-type="picture-card" :default-file-list="defFileList['sort' + (index + 1)]" :fileList="processList['sort' + (index + 1)]" :remove="removeFile"> <a-icon type="plus" /> </a-upload
+            <a-col :span="12">
+              <a-form-model-item label="产品大类" :labelCol="{ span: 6 }"><a-input v-model="form.protype" placeholder="请输入产品大类"/></a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item label="产品系列" :labelCol="{ span: 6 }"><a-input v-model="form.protypedetail" placeholder="请输入产品系列"/></a-form-model-item>
+            </a-col>
+            <a-col :span="12">
+              <a-form-model-item label="工序数量" :labelCol="{ span: 6 }"><a-input-number :min="1" v-model="processValue" placeholder="请输入工序" @change="processChange"/></a-form-model-item>
+            </a-col>
+            <a-col :span="24">
+              <a-form-model-item label="SOP文档" :labelCol="{ span: 3 }">
+                <a-upload :custom-request="uploadFile1" :before-upload="beforeUpload" list-type="picture-card" :default-file-list="defFileList1" :fileList="processList1" :remove="removeFile1"> <a-icon type="plus" /> </a-upload
               ></a-form-model-item>
-            </div>
-            <!-- <a-upload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :default-file-list="defFileList.sort1">
+              <div v-for="(item, index) in processValue" :key="index">
+                <a-form-model-item :label="'工序' + (index + 1)" :labelCol="{ span: 3 }">
+                  <a-upload :data="{ sort: index + 1 }" :custom-request="uploadFile" list-type="picture-card" :default-file-list="defFileList['sort' + (index + 1)]" :fileList="processList['sort' + (index + 1)]" :remove="removeFile"> <a-icon type="plus" /> </a-upload
+                ></a-form-model-item>
+              </div>
+              <!-- <a-upload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :default-file-list="defFileList.sort1">
               <a-button> <a-icon type="upload" /> Upload </a-button>
             </a-upload> -->
-          </a-col>
-        </a-row>
-      </a-form-model>
+            </a-col>
+          </a-row>
+        </a-form-model>
+      </a-spin>
     </a-modal>
   </div>
 </template>
@@ -131,6 +133,7 @@ export default {
       sortValue: 1,
       processList1: [],
       defFileList1: [],
+      spinning: false,
     };
   },
   mounted() {
@@ -385,6 +388,7 @@ export default {
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
+          this.spinning = true;
           this.form.filecount = this.fileData.length + 1;
           this.form.files = this.fileData;
           this.form.files.unshift(this.fileData1[0]);
@@ -402,6 +406,7 @@ export default {
               if (res.data.success) {
                 this.$message.success("添加成功!");
                 this.$emit("success");
+                this.spinning = false;
               }
             });
           }

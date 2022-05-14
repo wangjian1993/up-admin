@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-06 15:38:52
- * @LastEditTime: 2022-04-06 17:14:43
+ * @LastEditTime: 2022-05-14 09:12:10
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/product/query/index.vue
@@ -31,12 +31,12 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请选择产品大类" v-decorator="['protype']" />
+                <a-input style="width: 200px" allowClear placeholder="请选择产品大类" v-decorator="['protypecode']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="产品系列" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['protypedetail']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['protypedcode']" />
               </a-form-item>
             </a-col>
           </a-row>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-04-15 10:32:24
+ * @LastEditTime: 2022-05-14 08:51:52
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/index.vue
@@ -196,7 +196,7 @@ const columns = [
     align: "center",
   },
   {
-    title: "附近数量",
+    title: "附件数量",
     dataIndex: "FileCount",
     scopedSlots: { customRender: "FileCount" },
     align: "center",

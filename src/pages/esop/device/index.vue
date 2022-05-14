@@ -195,6 +195,12 @@ const columns = [
     align: "center",
   },
   {
+    title: "Mac地址",
+    dataIndex: "MACAddress",
+    scopedSlots: { customRender: "MACAddress" },
+    align: "center",
+  },
+  {
     title: "连接状态",
     dataIndex: "Status",
     scopedSlots: { customRender: "Status" },
@@ -301,17 +307,17 @@ export default {
       this.plantid = e;
       this.getWorkshopList();
       this.searchForm.setFieldsValue({
-        workshop: "",
-        line: "",
+        workcenterid: "",
+        lineid: "",
       });
     },
     //车间选择
     workShopChange(e) {
+      this.searchForm.setFieldsValue({
+        lineid: "",
+      });
       this.workshopId = e;
       this.getLineList();
-      this.searchForm.setFieldsValue({
-        line: "",
-      });
     },
     //获取生产工厂
     getEnterList() {
@@ -339,7 +345,7 @@ export default {
         plantid: this.plantid,
         workshopid: this.workshopId,
       };
-      getSopDocument(parmas, "getlist").then((res) => {
+      getSopDocument(parmas, "getline").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }

@@ -1,65 +1,58 @@
 <template>
   <div>
-    <a-modal v-model="visible" title="选择设备" @cancel="close" @ok="handleOk" centered width="70%">
+    <a-modal v-model="visible" title="选择PLC" @cancel="close" @ok="handleOk" centered width="70%">
       <div>
         <a-form layout="horizontal" :form="searchForm">
           <div>
             <a-row>
               <a-col :md="6" :sm="24">
-                <a-form-item label="设备类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['typeid']" style="width: 200px" placeholder="请选择设备类型">
-                    <a-select-option v-for="item in deviceTypeList" :key="item.ID" :value="item.ID">{{ item.EQUIPMENT_TYPE_NAME }}</a-select-option>
+                <a-form-item label="PLC类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['typeid']" style="width: 200px" placeholder="请选择PLC品牌">
+                    <a-select-option v-for="item in plcTypeList" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="设备品牌" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['brand']" style="width: 200px" placeholder="请选择设备品牌">
-                    <a-select-option v-for="item in deviceBrand" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                <a-form-item label="PLC品牌" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['brand']" style="width: 200px" placeholder="请选择PLC品牌">
+                    <a-select-option v-for="item in plcBrand" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="设备名称/编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入设备名称" v-decorator="['equiment']" />
+                <a-form-item label="PLC名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入PLC名称" v-decorator="['equimentname']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <span>
-                  <a-button type="primary" @click="search">查询</a-button>
-                  <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-                </span>
+                <a-form-item label="PLC编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入PLC编码" v-decorator="['equimentcode']" />
+                </a-form-item>
               </a-col>
             </a-row>
+            <span style="display: flex;justify-content: flex-end">
+              <a-button type="primary" @click="search">查询</a-button>
+              <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+            </span>
           </div>
         </a-form>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-table
             :columns="columns"
-            :data-source="deviceList"
+            :data-source="dataSource"
             :size="size"
             :pagination="pagination"
-            :rowKey="(deviceList) => deviceList.EquimentId"
+            :rowKey="(dataSource) => dataSource.PlcId"
             :row-selection="{
               selectedRowKeys: selectedRowKeys,
               onChange: onSelectChange,
+              type: 'radio',
             }"
             bordered
           >
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-              </div>
-            </template>
-            <template slot="FileSize" slot-scope="text">
-              <p>{{ getFileSize(text) }}</p>
-            </template>
-            <template slot="action" slot-scope="text, record">
-              <div>
-                <a style="margin-right: 8px" @click="preview(record)">
-                  <a-icon type="profile" />
-                  预览
-                </a>
               </div>
             </template>
           </a-table>
@@ -77,37 +70,37 @@ const columns = [
     width: 50,
   },
   {
-    title: "设备名称",
+    title: "PLC名称",
     dataIndex: "EquimentName",
     scopedSlots: { customRender: "EquimentName" },
     align: "center",
   },
   {
-    title: "设备编码",
+    title: "PLC编码",
     dataIndex: "EquimentCode",
     scopedSlots: { customRender: "EquimentCode" },
     align: "center",
   },
   {
-    title: "设备类型",
+    title: "PLC类型",
     dataIndex: "EquimentTypeName",
     scopedSlots: { customRender: "EquimentTypeName" },
     align: "center",
   },
   {
-    title: "设备品牌",
+    title: "PLC品牌",
     dataIndex: "BrandName",
     scopedSlots: { customRender: "BrandName" },
     align: "center",
   },
 ];
-import { getWorkstationAction, getDeviceTypeAction,setWorkstationAction } from "@/services/eap.js";
+import { getPlcAction } from "@/services/eap.js";
 import { getParamData } from "@/services/admin.js";
 export default {
   props: ["deviceInfo"],
   data() {
     return {
-      data: [],
+      dataSource: [],
       columns,
       size: "small",
       visible: true,
@@ -122,11 +115,11 @@ export default {
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
-      deviceList: [],
+      docsList: [],
       isPreview: false,
-      deviceBrand: [],
+      plcBrand: [],
       searchForm: this.$form.createForm(this),
-      deviceTypeList: [],
+      plcTypeList: [],
     };
   },
   created() {
@@ -139,34 +132,34 @@ export default {
       this.isPreview = false;
     },
     getDeviceType() {
-      getDeviceTypeAction("", "getlist").then((res) => {
+      let parmas = {
+        groupcode: "PLC_TYPE",
+      };
+      getParamData(parmas).then((res) => {
         if (res.data.success) {
-          this.deviceTypeList = res.data.data;
+          this.plcTypeList = res.data.data;
         }
       });
     },
     getParamData() {
       let parmas = {
-        groupcode: "EAP_EQUIMENT_BRAND",
+        groupcode: "EAP_PLAC_BRAND",
       };
       getParamData(parmas).then((res) => {
         if (res.data.success) {
-          this.deviceBrand = res.data.data;
+          this.plcBrand = res.data.data;
         }
       });
     },
-    //http://192.168.1.245:6688/api/eap/workstation/getequiment?pageindex=1&pagesize=10
-    //http://192.168.1.245:6688/api/eap/workstation/getequiment?pageindex=1&pagesize=10
-    //http://192.168.1.245:6688/api/eap/workstation/getequiment?pageindex=1&pagesize=10
     getListAll() {
       this.loading = true;
       let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getWorkstationAction(params, "getequiment").then((res) => {
+      getPlcAction(params, "getall").then((res) => {
         if (res.data.success) {
-          this.deviceList = res.data.data.list;
+          this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -184,22 +177,8 @@ export default {
       this.$emit("closeModal");
     },
     handleOk() {
-      let params = {
-        WorkStationId: this.deviceInfo.WorkStationId,
-        EquipmentList: [],
-      };
-      this.selectedRowKeys.forEach((item)=>{
-        params.EquipmentList.push({
-          EquipmentId:item
-        })
-      })
-      setWorkstationAction(params, "bind").then((res) => {
-        if (res.data.success) {
-          this.$message.success("绑定成功");
-          this.$emit("closeModal");
-          this.$emit("success");
-        }
-      });
+      let result = this.dataSource.find((item) => item.PlcId == this.selectedRowKeys[0]);
+      this.$emit("selectPlc", result);
     },
     reset() {
       this.getListAll();
@@ -214,11 +193,12 @@ export default {
             pagesize: this.pagination.pageSize,
             typeid: values.typeid,
             brand: values.brand,
-            equiment: values.equiment,
+            plccode: values.plccode,
+            plcname: values.plcname,
           };
-          getWorkstationAction(parmas, "getequiment").then((res) => {
+          getPlcAction(parmas, "getall").then((res) => {
             if (res.data.success) {
-              this.deviceList = res.data.data.list;
+              this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.totalCount;
               this.pagination = pagination;
