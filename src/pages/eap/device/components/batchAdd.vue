@@ -78,7 +78,7 @@
             </template>
             <template slot="VarDataTypeLen" slot-scope="text, record">
               <div>
-                <a-input-number :min="0" style="width:100px" v-model="record.VarDataTypeLen" size="small" />
+                <a-input style="width:100px" v-model="record.VarDataTypeLen" size="small" />
               </div>
             </template>
             <template slot="VarDataTypeAccuracy" slot-scope="text, record">
@@ -88,12 +88,12 @@
             </template>
             <template slot="VarMaxValue" slot-scope="text, record">
               <div>
-                <a-input-number :min="0" style="width:100px" v-model="record.VarMaxValue" size="small" />
+                <a-input style="width:100px" v-model="record.VarMaxValue" size="small" />
               </div>
             </template>
             <template slot="VarMinValue" slot-scope="text, record">
               <div>
-                <a-input-number :min="0" style="width:100px" v-model="record.VarMinValue" size="small" />
+                <a-input style="width:100px" v-model="record.VarMinValue" size="small" />
               </div>
             </template>
             <template slot="VarPlcAuth" slot-scope="text, record">
