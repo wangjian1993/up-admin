@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-05-16 17:23:35
+ * @LastEditTime: 2022-05-17 14:51:05
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/registration.vue
@@ -133,7 +133,7 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { columns, innerColumns } from "./data";
 import useForm from "./form.vue";
 import schedule from "./schedule.vue";
-import ExportExcel from "@/utils/ExportExcelJS";
+import { exportjsontoexcel } from "@/utils/Export2ExcelJs";
 export default {
   props: ["rolesign"],
   mixins: [PublicVar],
@@ -175,6 +175,9 @@ export default {
       this.scrollY = this.getTableScroll(70);
     });
     this.getEnterList();
+    var str = "AA";
+    str.charCodeAt();
+    console.log(str.charCodeAt());
   },
   methods: {
     splitData,
@@ -368,6 +371,14 @@ export default {
     },
     exportExcel() {
       this.isExportLod = true;
+      let _data = [];
+      const header = [];
+      this.columns.map((item) => {
+        if (item.dataIndex) {
+          header.push(item.title);
+        }
+      });
+      _data.push(header);
       let values = this.searchForm.getFieldsValue();
       if (values["range-time-picker"] != undefined) {
         var createdatestart = this.formatDateTime(values["range-time-picker"][0]);
@@ -385,29 +396,18 @@ export default {
       getDepartmentApi(parmas, "getregisterlist").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
-          const dataSource = list.map((item) => {
-            Object.keys(item).forEach((key) => {
-              // 后端传null node写入会有问题
-              if (item[key] === null) {
-                item[key] = "";
-              }
-              if (Array.isArray(item[key])) {
-                item[key] = item[key].join(",");
+          list.map((item) => {
+            let array = [];
+            this.columns.map((items) => {
+              if (items.dataIndex) {
+                array.push(item[items.dataIndex]);
               }
             });
-            return item;
+            _data.push(array);
           });
-          const header = [];
-          this.columns.map((item) => {
-            if (item.dataIndex) {
-              header.push({ key: item.dataIndex, title: item.title });
-            }
-          });
-          var timestamp = Date.parse(new Date());
-          console.log(header);
-          console.log(dataSource);
           try {
-            ExportExcel(header, dataSource, `登记汇总_${timestamp}.xlsx`);
+            console.log(_data);
+            exportjsontoexcel({ data: _data, filename: `登记汇总_.xlsx` });
             this.$message.success("导出数据成功!");
           } catch (error) {
             console.log(error);

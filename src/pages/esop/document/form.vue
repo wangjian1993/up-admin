@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-05-14 10:01:16
+ * @LastEditTime: 2022-05-17 16:26:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
@@ -22,6 +22,8 @@
                 <a-input v-model="form.documentname" allowClear placeholder="请输入文件名称" />
               </a-form-model-item>
             </a-col>
+          </a-row>
+          <a-row>
             <a-col :span="12">
               <a-form-model-item ref="plantid" has-feedback label="生产工厂" prop="plantid" :labelCol="{ span: 6 }">
                 <a-select v-model="form.plantid" placeholder="请选择生产工厂">
@@ -29,20 +31,19 @@
                 </a-select>
               </a-form-model-item>
             </a-col>
-            <!-- <a-col :span="12">
-            <a-form-model-item label="版本号" prop="version" :labelCol="{ span: 6 }">
-              <a-input v-model="form.version" allowClear placeholder="请输入版本号" />
-            </a-form-model-item>
-          </a-col> -->
             <a-col :span="12">
               <a-form-model-item label="产品大类" :labelCol="{ span: 6 }"><a-input v-model="form.protype" placeholder="请输入产品大类"/></a-form-model-item>
             </a-col>
+          </a-row>
+          <a-row>
             <a-col :span="12">
               <a-form-model-item label="产品系列" :labelCol="{ span: 6 }"><a-input v-model="form.protypedetail" placeholder="请输入产品系列"/></a-form-model-item>
             </a-col>
             <a-col :span="12">
               <a-form-model-item label="工序数量" :labelCol="{ span: 6 }"><a-input-number :min="1" v-model="processValue" placeholder="请输入工序" @change="processChange"/></a-form-model-item>
             </a-col>
+          </a-row>
+          <a-row>
             <a-col :span="24">
               <a-form-model-item label="SOP文档" :labelCol="{ span: 3 }">
                 <a-upload :custom-request="uploadFile1" :before-upload="beforeUpload" list-type="picture-card" :default-file-list="defFileList1" :fileList="processList1" :remove="removeFile1"> <a-icon type="plus" /> </a-upload
@@ -442,8 +443,11 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="less">
 .ant-form-item {
-  margin-bottom: 5px;
+  margin-bottom: 20px;
+}
+.ant-form-.has-error .ant-form-explain {
+  font-size: 10px;
 }
 </style>

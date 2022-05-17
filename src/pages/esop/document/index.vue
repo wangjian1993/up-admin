@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-05-14 08:51:52
+ * @LastEditTime: 2022-05-17 16:15:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/index.vue
@@ -507,8 +507,5 @@ export default {
 }
 /deep/.ant-table-body {
   min-height: 0vh;
-}
-.ant-form-item {
-  margin-bottom: 5px;
 }
 </style>

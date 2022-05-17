@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-10-14 13:51:11
- * @LastEditTime: 2021-10-14 13:52:12
+ * @LastEditTime: 2022-05-17 10:42:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/erp.js
@@ -26,4 +26,7 @@ import {
 }
 export function postERPReportAction(params,action) {
     return request(`${UP_ERP}/report/${action}`, METHOD.POST, params);
+}
+export function getBomPack(params,action) {
+    return request(`${UP_ERP}/bom/${action}`, METHOD.GET, params);
 }

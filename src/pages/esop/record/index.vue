@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 16:01:38
- * @LastEditTime: 2022-05-14 09:37:32
+ * @LastEditTime: 2022-05-17 14:37:05
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/index.vue
@@ -17,12 +17,12 @@
                 <a-input style="width: 200px" allowClear placeholder="请输入设备编号" v-decorator="['equipmentcode']" />
               </a-form-item>
             </a-col>
-             <a-col :md="6" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="设备名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入设备名称" v-decorator="['equipumentname']" />
               </a-form-item>
             </a-col>
-             <a-col :md="6" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['procode']" />
               </a-form-item>
@@ -34,7 +34,7 @@
             </a-col>
           </a-row>
           <a-row>
-             <a-col :md="6" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="文件编号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入文件编号" v-decorator="['documentcode']" />
               </a-form-item>
@@ -70,7 +70,7 @@
                 <a-input style="width: 200px" allowClear placeholder="请选择产品大类" v-decorator="['protype']" />
               </a-form-item>
             </a-col>
-             <a-col :md="6" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="产品系列" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['protypedetail']" />
               </a-form-item>
@@ -295,7 +295,7 @@ export default {
     detail(item) {
       this.isDevice = true;
       this.documentItem = item;
-      console.log(this.documentItem)
+      console.log(this.documentItem);
     },
     close() {
       this.isDevice = false;
@@ -385,19 +385,19 @@ export default {
         if (!err) {
           this.loading = true;
           let parmas = {
-             pageindex: this.pagination.current,
-              pagesize: this.pagination.pageSize,
-              equipmentcode: values.equipmentcode,
-              equipmentname: values.equipmentname,
-              documentcode: values.documentcode,
-              documentname: values.documentname,
-              plantid: values.plantid,
-              workcenterid: values.workcenterid,
-              lineid: values.lineid,
-              procode: values.procode,
-              proname: values.proname,
-              protype: values.protype,
-              protypedetail: values.protypedetail,
+            pageindex: this.pagination.current,
+            pagesize: this.pagination.pageSize,
+            equipmentcode: values.equipmentcode,
+            equipmentname: values.equipmentname,
+            documentcode: values.documentcode,
+            documentname: values.documentname,
+            plantid: values.plantid,
+            workcenterid: values.workcenterid,
+            lineid: values.lineid,
+            procode: values.procode,
+            proname: values.proname,
+            protype: values.protype,
+            protypedetail: values.protypedetail,
           };
           getSopDocument(parmas, "record/get").then((res) => {
             if (res.data.success) {

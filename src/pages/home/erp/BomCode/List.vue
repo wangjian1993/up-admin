@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-04-01 10:38:27
+ * @LastEditTime: 2022-05-17 08:47:33
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
@@ -73,6 +73,7 @@
         <span>
           <!-- <a-button type="primary" @click="search">查询</a-button> -->
           <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+          <a-button type="primary" style="margin-right: 8px" @click="advancedQuery">高级查询</a-button>
           <a style="margin-left: 8px" @click="helpClick('http://192.168.1.245:8080/docs/#/erp/info')"><a-icon type="question-circle" /> 帮助</a>
         </span>
       </a-col>
@@ -227,6 +228,7 @@
       </template>
     </a-table>
     <model-info v-if="isModelInfo" :modelData="mitemcodeData" @closeModal="closeModal"></model-info>
+    <advancedQuery v-if="isAdvancedQuery" />
   </a-card>
 </template>
 <script>
@@ -238,8 +240,9 @@ import { columns } from "./data";
 import { PublicVarErp } from "@/mixins/publicVarErp.js";
 import { bomSort } from "@/mixins/bomSort.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
+import advancedQuery from "./advancedQuery.vue";
 export default {
-  components: { ModelInfo },
+  components: { ModelInfo, advancedQuery },
   mixins: [PublicVarErp, bomSort],
   data() {
     this.components = {
@@ -263,6 +266,7 @@ export default {
       drawingnosign: "",
       shortcutsign: "",
       ScrollPosition: 0,
+      isAdvancedQuery: false,
       searchValue: {
         plantId: "",
         itemcode: "",
@@ -290,11 +294,15 @@ export default {
   methods: {
     splitData,
     modelType,
-    helpClick(url){
-      window.open(url,'_blank')
+    helpClick(url) {
+      window.open(url, "_blank");
     },
     closeModal() {
       this.isModelInfo = false;
+      this.isAdvancedQuery = false;
+    },
+    advancedQuery() {
+      this.isAdvancedQuery = true;
     },
     itemFiltrete(type, text) {
       switch (type) {
@@ -373,14 +381,14 @@ export default {
       this.itemcodesign = "";
       this.itemnamesign = "";
       this.itemspecificationsign = "";
-      this.shortcutsign =''
+      this.shortcutsign = "";
       this.searchValue = {
         itemcode: "",
         itemname: "",
         itemspecification: "",
         drawingno: "",
         approvestatus: "",
-        shortcut:""
+        shortcut: "",
       };
     },
     //关键词搜索

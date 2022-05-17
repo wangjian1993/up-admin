@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2022-04-04 17:53:11
+ * @LastEditTime: 2022-05-17 14:50:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/Export2ExcelJs.js
@@ -88,6 +88,7 @@ export function exportjsontoexcel({
     filename = filename || 'excel-list'
 
     var ws_name = "SheetJS";
+    console.log(data)
     var wb = new Workbook(),
         //将data转化格式 用于接下来动态宽度
         ws = sheet_from_array_of_arrays(data);

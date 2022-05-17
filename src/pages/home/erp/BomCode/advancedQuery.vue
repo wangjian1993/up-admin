@@ -1,59 +1,33 @@
-<!--
- * @Author: max
- * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-05-17 15:29:58
- * @LastEditors: max
- * @Description: 
- * @FilePath: /up-admin/src/pages/home/specimen/departmental/form.vue
--->
-
 <template>
   <div>
-    <a-modal :title="isEdit ? '编辑部门' : '添加部门'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+    <a-modal title="高级查询" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel" width="40%">
       <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-form-model-item ref="EnterpriseId" has-feedback label="公司名称" prop="EnterpriseId">
-          <a-select v-model="form.EnterpriseId" :disabled="isEdit" has-feedback placeholder="请选择设公司名称" @change="enterChange">
-            <a-select-option v-for="item in enterList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
-          </a-select>
+        <a-form-model-item ref="EnterpriseId" has-feedback label="品号" prop="EnterpriseId">
+          <a-input style="width: 200px" v-model="form.SortNumber" allowClear placeholder="请输入品号" />
         </a-form-model-item>
-        <a-form-model-item ref="DepartmentName" has-feedback label="部门名称" prop="DepartmentName">
-          <!-- <a-select v-model="form.DepartmentName" has-feedback placeholder="请选择设公司名称">
-            <a-select-option v-for="item in departmentalList" :key="item.Id" :value="item.Id">{{ item.DepartmentName }}</a-select-option>
-          </a-select> -->
-          <a-input v-model="form.DepartmentName" has-feedback placeholder="请选择设公司名称"></a-input>
+        <a-form-model-item ref="DepartmentName" has-feedback label="品名" prop="DepartmentName">
+          <a-input style="width: 200px" v-model="form.SortNumber" allowClear placeholder="请输入品名" />
         </a-form-model-item>
-        <a-form-model-item label="接收人">
-          <div>
-            <a-tag style="margin:4px 4px" v-for="item in user" :key="item.Id" closable @close="() => handleClose(item.Id)">
-              {{ item.Name }}
-            </a-tag>
-          </div>
-          <a-tag style="background: #fff; borderStyle: dashed;" @click="addUser"> <a-icon type="plus" /> 添加 </a-tag>
+        <a-form-model-item ref="DepartmentName" has-feedback label="规格" prop="DepartmentName">
+          <a-input style="width: 200px" v-model="form.SortNumber" allowClear placeholder="请输入规格" />
         </a-form-model-item>
-        <a-form-model-item ref="SortNumber" has-feedback label="排序" prop="SortNumber">
-          <a-input-number style="width: 200px" :min="0" v-model="form.SortNumber" allowClear placeholder="请输入排序" />
+        <a-form-model-item ref="DepartmentName" has-feedback label="长" prop="DepartmentName">
+          <a-input-number :min="0" style="width: 100px" v-model="form.SortNumber" allowClear placeholder="请输入长" />
         </a-form-model-item>
-        <a-form-model-item ref="Remark" label="备注">
-          <a-textarea v-model="form.Remark" placeholder="请输入备注" :auto-size="{ minRows: 3, maxRows: 5 }" />
+        <a-form-model-item ref="DepartmentName" has-feedback label="宽" prop="DepartmentName">
+          <a-input-number :min="0" style="width: 100px" v-model="form.SortNumber" allowClear placeholder="请输入宽" />
         </a-form-model-item>
-        <a-form-model-item ref="Enable" label="是否启用">
-          <a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
-            <a-radio-button value="N">否</a-radio-button>
-            <a-radio-button value="Y">是</a-radio-button>
-          </a-radio-group>
+        <a-form-model-item ref="DepartmentName" has-feedback label="高" prop="DepartmentName">
+          <a-input-number :min="0" style="width: 200px" v-model="form.SortNumber" allowClear placeholder="请输入高" />
         </a-form-model-item>
       </a-form-model>
-      <userList v-if="isUser" @closeModal="closeModal" :user="user" @success="setUserList" />
     </a-modal>
   </div>
 </template>
 
 <script>
 import { getMaterialSampleApi, setDepartmentApi } from "@/services/web.js";
-import userList from "../components/userList.vue";
 export default {
-  props: ["editData", "isEdit", "enterList"],
-  components: { userList },
   data() {
     return {
       size: "small",
@@ -148,7 +122,7 @@ export default {
               Remark: this.form.Remark, //备注
               Enable: this.form.Enable,
             };
-             this.user.forEach((item) => {
+            this.user.forEach((item) => {
               editForm.ReceiverList.push({
                 ReceiverId: item.Id, //接收人ID
                 ReceiverCode: item.Code, //接收人工号

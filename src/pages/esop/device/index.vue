@@ -70,6 +70,8 @@
       </a-form>
       <div class="operator">
         <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" @click="add" style="margin-left: 8px">添加</a-button>
+        <a-button icon="import" type="primary" :disabled="!hasPerm('import')" @click="importBtn" style="margin-left: 8px">导入</a-button>
+        <a-button icon="download" type="primary" :disabled="!hasPerm('download')" @click="download" style="margin-left: 8px">下载模板</a-button>
         <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <span style="margin-left: 8px">
@@ -139,6 +141,7 @@
           </a-descriptions>
         </a-drawer>
       </div>
+      <ImportExcel v-if="isImport" @closeModal="closeModal" @success="getListAll"/>
     </a-card>
   </div>
 </template>
@@ -234,8 +237,9 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getSopDevice, setSopDevice, getSopDocument } from "@/services/esop.js";
 import Form from "./form.vue";
+import ImportExcel from './ImportExcel.vue'
 export default {
-  components: { Form },
+  components: { Form ,ImportExcel},
   data() {
     return {
       data: [],
@@ -267,6 +271,7 @@ export default {
       lineList: [],
       isForm: false, //添加编辑
       drawerItem: [],
+      isImport: false
     };
   },
   updated() {
@@ -298,9 +303,18 @@ export default {
     onClose() {
       this.isDrawer = false;
     },
+    closeModal(){
+      this.isImport = false
+    },
     detail(item) {
       this.isDrawer = true;
       this.drawerItem = item;
+    },
+    download(){
+      window.open("./upload/ESOP设备导入模板.xlsx", '_blank');
+    },
+    importBtn(){
+      this.isImport = true
     },
     //工厂选择
     plantChange(e) {

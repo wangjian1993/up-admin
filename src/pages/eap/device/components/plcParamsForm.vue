@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:32:20
- * @LastEditTime: 2022-05-11 10:08:10
+ * @LastEditTime: 2022-05-17 16:31:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/components/plcParamsForm.vue
@@ -23,6 +23,8 @@
               <a-input v-model="form.VarCode" allowClear placeholder="请输入参数编码" :disabled="isEdit" />
             </a-form-model-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :span="12">
             <a-form-model-item ref="VarName" has-feedback label="参数名称" prop="VarName">
               <a-input v-model="form.VarName" allowClear placeholder="请输入参数名称" />
@@ -35,6 +37,8 @@
               </a-select>
             </a-form-model-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :span="12">
             <a-form-model-item ref="VarAddress" has-feedback label="参数地址" prop="VarAddress">
               <a-input v-model="form.VarAddress" allowClear placeholder="请输入参数地址" />
@@ -47,6 +51,8 @@
               </a-select>
             </a-form-model-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :span="12">
             <a-form-model-item ref="VarDataTypeLen" has-feedback label="参数类型长度" prop="VarDataTypeLen">
               <a-input v-model="form.VarDataTypeLen" allowClear placeholder="请输入参数类型长度" />
@@ -57,6 +63,8 @@
               <a-input v-model="form.VarDataTypeAccuracy" allowClear placeholder="请输入参数类型精读" />
             </a-form-model-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :span="12">
             <a-form-model-item ref="VarMinValue" has-feedback label="参数最小值" prop="VarMinValue">
               <a-input v-model="form.VarMinValue" allowClear placeholder="请输入参数最小值" />
@@ -67,6 +75,8 @@
               <a-input v-model="form.VarMaxValue" allowClear placeholder="请输入参数最大值" />
             </a-form-model-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :span="12">
             <a-form-model-item ref="VarStandardValue" has-feedback label="参数标准值" prop="VarStandardValue">
               <a-input v-model="form.VarStandardValue" allowClear placeholder="请输入参数标准值" />
@@ -79,6 +89,8 @@
               </a-select>
             </a-form-model-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :span="12">
             <a-form-model-item ref="VarPlcAuth" has-feedback label="PLC权限" prop="VarPlcAuth">
               <a-select v-model="form.VarPlcAuth" :disabled="isEdit" placeholder="请选择PLC权限">
@@ -93,6 +105,8 @@
               </a-select>
             </a-form-model-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :span="12">
             <a-form-model-item ref="VarDesc" label="参数描述">
               <a-textarea v-model="form.VarDesc" placeholder="请输入参数描述" :auto-size="{ minRows: 3, maxRows: 5 }" />

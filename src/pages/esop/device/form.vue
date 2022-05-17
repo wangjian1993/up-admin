@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-05-12 13:55:40
+ * @LastEditTime: 2022-05-17 16:28:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/device/form.vue
@@ -21,6 +21,8 @@
               <a-input v-model="form.equipmentname" allowClear placeholder="请输入设备名称" />
             </a-form-model-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :span="12">
             <a-form-model-item ref="plantid" has-feedback label="生产工厂" prop="plantid" :labelCol="{ span: 6 }">
               <a-select v-model="form.plantid" placeholder="请选择生产工厂" @change="plantChange">
@@ -35,6 +37,8 @@
               </a-select>
             </a-form-model-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :span="12">
             <a-form-model-item ref="lineid" has-feedback label="生产产线" prop="lineid" :labelCol="{ span: 6 }">
               <a-select v-model="form.lineid" placeholder="请选择生产产线">
@@ -47,6 +51,8 @@
               <a-input v-model="form.ipaddress" allowClear placeholder="请输入ip地址" />
             </a-form-model-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :span="12">
             <a-form-model-item label="mac地址" :labelCol="{ span: 6 }"><a-input v-model="form.macaddress" placeholder="请输入mac地址"/></a-form-model-item>
           </a-col>
@@ -55,6 +61,8 @@
               <a-input v-model="form.sort" allowClear placeholder="请输入序号" />
             </a-form-model-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :span="12">
             <a-form-model-item ref="Enable" label="是否启用" :labelCol="{ span: 6 }">
               <a-radio-group :value="form.enable" button-style="solid" @change="enableChange">
@@ -188,7 +196,7 @@ export default {
     },
     handleCancel() {
       this.$emit("close");
-      this.visible = false
+      this.visible = false;
     },
     //工厂选择
     plantChange(e) {
@@ -240,7 +248,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="less">
 .ant-form-item {
   margin-bottom: 5px;
 }
