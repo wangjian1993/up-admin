@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-05-16 09:50:29
+ * @LastEditTime: 2022-05-18 10:41:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/initiate/index.vue
@@ -55,12 +55,13 @@
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
-          @expand="fatherExpand"
+          :expandedRowKeys="expandedRowKeys"
+          @expandedRowsChange="expandedRowsChange"
           @change="handleTableChange"
           :rowKey="(dataSource) => dataSource.FlowId"
           bordered
         >
-          <a-table slot="expandedRowRender" size="small" :columns="innerColumns" :data-source="innerData" :pagination="false">
+          <a-table slot="expandedRowRender" slot-scope="record" size="small" :columns="innerColumns" :data-source="record.PointList" :pagination="false">
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ index + 1 }}</span>
@@ -89,7 +90,7 @@
             <div>
               <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
                 <a-icon type="edit" />
-                发起请求
+                发起填表
               </a>
             </div>
           </template>
@@ -185,16 +186,15 @@ export default {
       this.isEdit = false;
       this.editData = [];
     },
-    fatherExpand(expanded, record) {
-      this.innerData = [];
-      if (expanded) {
-        this.innerData = record.PointList;
-      }
+     expandedRowsChange(expandedRows) {
+      // this.expandedRowKeys = [];
+      this.expandedRowKeys = expandedRows;
     },
     edit(record) {
       this.isForm = true;
       this.isEdit = true;
       this.editData = record;
+      this.expandedRowKeys =[]
     },
     closeModal() {
       this.isForm = false;

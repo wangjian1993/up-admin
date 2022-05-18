@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-05-16 09:56:56
+ * @LastEditTime: 2022-05-18 10:21:52
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/initiate/form.vue
@@ -77,7 +77,7 @@ export default {
   },
   created() {
     if (this.isEdit) {
-      this.form = this.editData;
+      this.form = JSON.parse(JSON.stringify(this.editData));
     }
   },
   methods: {

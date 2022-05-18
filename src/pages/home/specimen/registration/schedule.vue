@@ -54,8 +54,8 @@ const columns = [
   },
   {
     title: "实际处理人",
-    dataIndex: "BrandName",
-    scopedSlots: { customRender: "BrandName" },
+    dataIndex: "UserHandlerActual",
+    scopedSlots: { customRender: "UserHandlerActual" },
     align: "center",
   },
   {

@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-05-16 16:41:53
+ * @LastEditTime: 2022-05-18 14:10:32
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/specimen/registration/index.vue
+ * @FilePath: /up-admin/src/pages/home/specimen/backlog/index.vue
 -->
 <template>
   <div>
@@ -28,7 +28,7 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button type="primary" @click="add" icon="plus">新增</a-button>
+          <!-- <a-button type="primary" @click="add" icon="plus">新增</a-button> -->
           <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <span style="margin-left: 8px">
@@ -41,19 +41,18 @@
           :columns="columns"
           :data-source="dataSource"
           size="small"
-          :scroll="{ y: scrollY,x:3500 }"
+          :scroll="{ y: scrollY, x: 3500 }"
           :loading="loading"
           :pagination="pagination"
           :row-selection="{
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
-          @expand="fatherExpand"
           @change="handleTableChange"
           :rowKey="(dataSource) => dataSource.RegisterId"
           bordered
         >
-          <a-table slot="expandedRowRender" size="small" :columns="innerColumns" :data-source="innerData" :pagination="false">
+          <!-- <a-table slot="expandedRowRender" size="small" :columns="innerColumns" :data-source="innerData" :pagination="false">
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ index + 1 }}</span>
@@ -66,7 +65,7 @@
                 </a-tag>
               </div>
             </template>
-          </a-table>
+          </a-table> -->
           <template slot="index" slot-scope="text, record, index">
             <div>
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -84,7 +83,7 @@
                 <a-icon type="edit" />
                 编辑
               </a>
-               <a style="margin-right: 8px" @click="schedule(record.RegisterId)" :disabled="!hasPerm('edit')">
+              <a style="margin-right: 8px" @click="schedule(record.RegisterId)" :disabled="!hasPerm('edit')">
                 <a-icon type="container" />
                 查看进度
               </a>
@@ -93,7 +92,7 @@
         </a-table>
       </a-card>
       <useForm v-if="isForm" :isEdit="isEdit" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="getListAll" />
-       <schedule v-if="isSchedule" :registerid="registerid" @closeModal="closeModal"/>
+      <schedule v-if="isSchedule" :registerid="registerid" @closeModal="closeModal" />
     </a-spin>
   </div>
 </template>
@@ -109,7 +108,7 @@ import useForm from "./form.vue";
 import schedule from "./schedule.vue";
 export default {
   mixins: [PublicVar],
-  components: { useForm ,schedule },
+  components: { useForm, schedule },
   data() {
     return {
       scrollY: "",
@@ -130,8 +129,8 @@ export default {
       expandedRowKeys: [],
       defaultExpandedRowKeys: [],
       departmentalList: [],
-      isSchedule:false,
-      registerid:""
+      isSchedule: false,
+      registerid: "",
     };
   },
   updated() {
@@ -175,9 +174,9 @@ export default {
       console.log("height", height);
       return height;
     },
-    schedule(id){
-      this.isSchedule =true;
-      this.registerid = id
+    schedule(id) {
+      this.isSchedule = true;
+      this.registerid = id;
     },
     //重置搜索
     reset() {
@@ -193,7 +192,7 @@ export default {
     closeModal() {
       this.isForm = false;
       this.isImport = false;
-      this.isSchedule =false
+      this.isSchedule = false;
     },
     getEnterList() {
       let params = {
@@ -221,7 +220,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterId,
-        usercode:"UP-06648"
+        usercode: localStorage.getItem("account"),
       };
       getDepartmentApi(parmas, "getregisterpersonallist").then((res) => {
         if (res.data.success) {
@@ -254,7 +253,7 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
-            departmentid: values.departmentid
+            usercode: localStorage.getItem("account"),
           };
           getDepartmentApi(parmas, "getflowlistenabley").then((res) => {
             if (res.data.success) {

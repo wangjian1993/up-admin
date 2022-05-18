@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-26 13:41:55
- * @LastEditTime: 2021-11-26 16:35:17
+ * @LastEditTime: 2022-05-18 18:22:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/HistoryAmount.vue
@@ -112,11 +112,13 @@ export default {
     },
     getList() {
       this.loading = true;
+      console.log(this.historyAmountData)
       let parmas = {
         childCode: this.historyAmountData.ChildCode,
         enterpriseid: this.info.EnterpriseId,
         plantid: this.info.PlantId,
         itemcode: this.historyAmountData.ItemCode,
+        lastcode:this.historyAmountData.LastCode
       };
       let url = "";
       if (this.amounType == 1) {

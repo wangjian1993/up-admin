@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-05-17 16:26:57
+ * @LastEditTime: 2022-05-18 17:30:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
@@ -407,6 +407,8 @@ export default {
               if (res.data.success) {
                 this.$message.success("添加成功!");
                 this.$emit("success");
+                this.spinning = false;
+              }else{
                 this.spinning = false;
               }
             });

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-05-17 14:51:05
+ * @LastEditTime: 2022-05-18 11:00:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/registration.vue
@@ -73,20 +73,6 @@
           :rowKey="(dataSource) => dataSource.RegisterId"
           bordered
         >
-          <a-table slot="expandedRowRender" size="small" :columns="innerColumns" :data-source="innerData" :pagination="false">
-            <template slot="index" slot-scope="text, record, index">
-              <div>
-                <span>{{ index + 1 }}</span>
-              </div>
-            </template>
-            <template slot="ReceiverList" slot-scope="record">
-              <div>
-                <a-tag v-for="item in record" :key="item.ReceiverId">
-                  {{ item.ReceiverName }}
-                </a-tag>
-              </div>
-            </template>
-          </a-table>
           <template slot="index" slot-scope="text, record, index">
             <div>
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>

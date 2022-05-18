@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-05-12 15:55:28
+ * @LastEditTime: 2022-05-18 09:45:23
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/material/index.vue
@@ -158,9 +158,11 @@ export default {
     edit(record) {
       this.isForm = true;
       this.isEdit = true;
-      this.editData = record;
+      let item = record;
+      this.editData = item;
     },
     closeModal() {
+      this.editData = [];
       this.isForm = false;
       this.isImport = false;
     },
@@ -172,9 +174,9 @@ export default {
         if (res.data.success) {
           this.enterList = res.data.data;
           this.enterId = this.enterList[0].EnterId;
-           this.searchForm.setFieldsValue({
-            enterpriseid: this.enterId
-          })
+          this.searchForm.setFieldsValue({
+            enterpriseid: this.enterId,
+          });
           this.getListAll();
         }
       });
@@ -248,7 +250,7 @@ export default {
           };
           self.selectedRowKeys.forEach((item) => {
             params.PermissionList.push({
-              DepartmentId: item,
+              PermissionId: item,
             });
           });
           setDepartmentApi(params, "deletepermission").then((res) => {

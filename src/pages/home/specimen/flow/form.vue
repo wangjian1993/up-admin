@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-05-12 15:53:02
+ * @LastEditTime: 2022-05-18 10:54:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/flow/form.vue
@@ -21,11 +21,11 @@
             <a-select-option v-for="item in departmentalList" :key="item.Id" :value="item.Id">{{ item.DepartmentName }}</a-select-option>
           </a-select>
         </a-form-model-item>
-        <a-form-model-item ref="Condition" has-feedback label="条件" prop="Condition">
+        <a-form-model-item ref="Condition" has-feedback label="条件">
           <a-input v-model="form.Condition" allowClear placeholder="请输入排序" />
         </a-form-model-item>
         <a-row>
-          <a-col :span="24" v-for="(formItem, index) in dynamicValidateForm" :key="index">
+          <a-col :span="24" v-for="(formItem, index) in dynamicValidateForm" :key="index" style="border-bottom:1px #e9e9e9 solid;margin: 5px 0;padding:5px 0">
             <a-form-model-item label="接收部门">
               <a-select :disabled="isEdit" v-model="formItem.department.value" has-feedback placeholder="请选择发起部门" style="width:91%" @change="(e) => departmentChange(e, index)">
                 <a-select-option v-for="item in departmentalList" :key="item.Id" :value="item.Id">{{ item.DepartmentName }}</a-select-option>
@@ -100,14 +100,7 @@ export default {
             message: "请选择部门",
             trigger: "blur",
           },
-        ],
-        Condition: [
-          {
-            required: true,
-            message: "请输入条件",
-            trigger: "blur",
-          },
-        ],
+        ]
       },
       departmentalList: [],
       isUser: false,
@@ -171,6 +164,7 @@ export default {
     departmentChange(e, index) {
       console.log(e);
       console.log(index);
+      this.dynamicValidateForm[index].recipient =[]
       let params = {
         departmentid: e,
       };

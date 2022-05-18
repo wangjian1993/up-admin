@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-05-11 16:18:49
+ * @LastEditTime: 2022-05-18 09:44:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/material/form.vue
@@ -94,7 +94,7 @@ export default {
   },
   created() {
     if (this.isEdit) {
-      this.form = this.editData;
+      this.form = JSON.parse(JSON.stringify(this.editData));
       this.form.MaterialPrefix = this.editData.MaterialPrefix.split(",");
       this.enterChange(this.form.EnterpriseId);
       this.editData.PermissionUserList.forEach((item) => {
@@ -148,7 +148,7 @@ export default {
             let editForm = {
               PermissionId: this.form.PermissionId, //部门ID
               PermissionUserList: [],
-              MaterialPrefix:"",
+              MaterialPrefix: "",
               SortNumber: this.form.SortNumber, //排序
               Remark: this.form.Remark, //备注
               Enable: this.form.Enable,

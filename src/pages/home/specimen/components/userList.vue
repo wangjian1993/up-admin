@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2022-05-11 15:00:08
+ * @LastEditTime: 2022-05-18 10:46:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/components/userList.vue
@@ -99,7 +99,7 @@ const columns = [
     align: "center",
   },
 ];
-import { getQuotePermission, getDemandEnter } from "@/services/web.js";
+import {getMaterialSampleApi } from "@/services/web.js";
 export default {
   props: ["user"],
   data() {
@@ -143,7 +143,7 @@ export default {
       let parmas = {
         entertypecode: "COMPANY",
       };
-      getDemandEnter(parmas).then((res) => {
+      getMaterialSampleApi(parmas,'getenterlist').then((res) => {
         if (res.data.success) {
           this.enterList = res.data.data;
           this.enterpriseid = this.enterList[0].EnterId;
@@ -163,7 +163,7 @@ export default {
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterpriseid,
       };
-      getQuotePermission(parmas, "getusers").then((res) => {
+      getMaterialSampleApi(parmas, "getuserslist").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -246,7 +246,7 @@ export default {
             enterpriseid: values.enterpriseid,
             keyword: values.searcValue,
           };
-          getQuotePermission(parmas, "getusers").then((res) => {
+          getMaterialSampleApi(parmas, "getuserslist").then((res) => {
             if (res.data.success) {
               this.list = res.data.data.list;
               const pagination = { ...this.pagination };

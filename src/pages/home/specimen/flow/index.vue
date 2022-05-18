@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-05-12 15:55:10
+ * @LastEditTime: 2022-05-18 10:39:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/flow/index.vue
@@ -57,15 +57,16 @@
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
-          @expand="fatherExpand"
+          :expandedRowKeys="expandedRowKeys"
+          @expandedRowsChange="expandedRowsChange"
           @change="handleTableChange"
           :rowKey="(dataSource) => dataSource.FlowId"
           bordered
         >
-          <a-table slot="expandedRowRender" size="small" :columns="innerColumns" :data-source="innerData" :pagination="false">
+          <a-table slot="expandedRowRender" slot-scope="record" size="small" :columns="innerColumns" :data-source="record.PointList" :pagination="false">
             <template slot="index" slot-scope="text, record, index">
               <div>
-                <span>{{index + 1}}</span>
+                <span>{{ index + 1 }}</span>
               </div>
             </template>
             <template slot="ReceiverList" slot-scope="record">
@@ -138,6 +139,7 @@ export default {
       innerData: [],
       expandedRowKeys: [],
       defaultExpandedRowKeys: [],
+      defFlowId: "",
     };
   },
   updated() {
@@ -192,16 +194,15 @@ export default {
       this.isEdit = false;
       this.editData = [];
     },
-    fatherExpand(expanded, record) {
-      this.innerData = [];
-      if (expanded) {
-        this.innerData = record.PointList;
-      }
+    expandedRowsChange(expandedRows) {
+      // this.expandedRowKeys = [];
+      this.expandedRowKeys = expandedRows;
     },
     edit(record) {
       this.isForm = true;
       this.isEdit = true;
       this.editData = record;
+      this.expandedRowKeys = [];
     },
     closeModal() {
       this.isForm = false;
@@ -216,8 +217,8 @@ export default {
           this.enterList = res.data.data;
           this.enterId = this.enterList[0].EnterId;
           this.searchForm.setFieldsValue({
-            enterpriseid: this.enterId
-          })
+            enterpriseid: this.enterId,
+          });
           this.getListAll();
         }
       });
@@ -237,6 +238,15 @@ export default {
       getDepartmentApi(parmas, "getflowlist").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
+          // this.dataSource.forEach((item) => {
+          //   item.children = item.PointList;
+          // });
+          // console.log(this.innerData);
+          // if (this.defFlowId != "") {
+          //   let defItem = this.dataSource.find((item) => (item.FlowId = this.defFlowId));
+          //   console.log(defItem);
+          //   this.innerData = defItem.PointList;
+          // }
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;

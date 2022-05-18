@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-05-16 17:11:53
+ * @LastEditTime: 2022-05-18 10:27:05
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/form.vue
@@ -201,7 +201,7 @@ export default {
     },
     getUserForm() {
       let params = {
-        usercode: "UP-06648",
+        usercode:localStorage.getItem("account"),
       };
       getMaterialSampleApi(params, "getuserdepartment").then((res) => {
         if (res.data.success) {
@@ -214,7 +214,7 @@ export default {
     onSearch(e) {
       let params = {
         itemcode: e,
-        usercode: "UP-06648",
+        usercode:localStorage.getItem("account"),
       };
       getMaterialSampleApi(params, "getitemmoreinfo").then((res) => {
         if (res.data.success) {

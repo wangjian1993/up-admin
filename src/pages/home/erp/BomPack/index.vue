@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-05-17 11:32:38
+ * @LastEditTime: 2022-05-18 14:37:12
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomPack/index.vue
@@ -16,7 +16,7 @@
         </span>
       </a-col>
     </a-row>
-    <a-table ref="tableRef" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_BUSINESS_ID" bordered>
+    <a-table ref="tableRef" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_CODE" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -84,8 +84,8 @@ export default {
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        docno: values.docno,
-        docname: values.docname,
+        itemcode: values.itemcode,
+        itemname: values.itemname,
         itemspecification: values.itemspecification,
         maxlength: values.maxlength,
         minlength: values.minlength,
@@ -93,6 +93,9 @@ export default {
         minwidth: values.minwidth,
         maxheight: values.maxheight,
         minheight: values.minheight,
+        itemcodesign: values.itemcodesign,
+        itemnamesign:values.itemnamesign,
+        itemspecificationsign:values.itemspecificationsign,
       };
       this.editData = values
       getBomPack(parmas, "get").then((res) => {
