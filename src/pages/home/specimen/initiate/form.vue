@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-05-18 10:21:52
+ * @LastEditTime: 2022-05-19 17:00:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/initiate/form.vue
@@ -17,7 +17,7 @@
         <a-form-model-item ref="DepartmentId" has-feedback label="发起部门" prop="DepartmentId">
           <a-input v-model="form.DepartmentName" :disabled="isEdit" allowClear placeholder="请输入条件" />
         </a-form-model-item>
-        <a-form-model-item ref="Condition" has-feedback label="条件" prop="Condition">
+        <a-form-model-item ref="Condition" has-feedback label="条件">
           <a-input v-model="form.Condition" :disabled="isEdit" allowClear placeholder="请输入条件" />
         </a-form-model-item>
         <a-form-model-item ref="Remark" label="发起人备注">
@@ -56,13 +56,6 @@ export default {
           {
             required: true,
             message: "请选择部门",
-            trigger: "blur",
-          },
-        ],
-        Condition: [
-          {
-            required: true,
-            message: "请输入条件",
             trigger: "blur",
           },
         ],

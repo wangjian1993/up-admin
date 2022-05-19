@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-05-18 11:00:53
+ * @LastEditTime: 2022-05-19 15:53:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/registration.vue
@@ -96,7 +96,7 @@
                 <a-icon type="edit" />
                 编辑
               </a>
-              <a style="margin-right: 8px" @click="schedule(record.RegisterId)" :disabled="!hasPerm('edit')">
+              <a style="margin-right: 8px" @click="schedule(record.RegisterId)" :disabled="!hasPerm('look')">
                 <a-icon type="container" />
                 查看进度
               </a>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-05-18 14:10:32
+ * @LastEditTime: 2022-05-19 16:00:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/index.vue
@@ -83,7 +83,7 @@
                 <a-icon type="edit" />
                 编辑
               </a>
-              <a style="margin-right: 8px" @click="schedule(record.RegisterId)" :disabled="!hasPerm('edit')">
+              <a style="margin-right: 8px" @click="schedule(record.RegisterId)" :disabled="!hasPerm('look')">
                 <a-icon type="container" />
                 查看进度
               </a>
@@ -220,7 +220,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterId,
-        usercode: localStorage.getItem("account"),
+        usercode:localStorage.getItem("account"),
       };
       getDepartmentApi(parmas, "getregisterpersonallist").then((res) => {
         if (res.data.success) {

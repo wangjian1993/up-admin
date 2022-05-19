@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-05-18 14:10:11
+ * @LastEditTime: 2022-05-19 16:00:44
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/form.vue
@@ -74,7 +74,7 @@
           ></a-col>
         </a-row>
       </a-form-model>
-      <a-form-model v-if="userType == '研发' || userType == '工程'" ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-model v-if="userType == '研发/工程'" ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-row>
           <a-col :span="8">
             <a-form-model-item ref="SignEngineer" has-feedback label="签样工程师" prop="SignEngineer"> <a-input v-model="form.SignEngineer" :disabled="!userIsInput" allowClear placeholder="请输入签样工程师" /> </a-form-model-item>
@@ -187,6 +187,10 @@ export default {
           isInput: false,
         },
         {
+          name: "工程",
+          isInput: false,
+        },
+        {
           name: "文控",
           isInput: false,
         },
@@ -196,10 +200,6 @@ export default {
         },
         {
           name: "品质",
-          isInput: false,
-        },
-        {
-          name: "工程",
           isInput: false,
         },
       ],
@@ -234,20 +234,32 @@ export default {
     getUserForm() {
       let params = {
         usercode: localStorage.getItem("account"),
+        flowid: this.editData.FlowId,
       };
       getMaterialSampleApi(params, "getuserdepartment").then((res) => {
         if (res.data.success) {
           if (res.data.data != "") {
             this.userList = res.data.data.UserReceiveDepartment.split(",");
             console.log(this.userList);
+            let obj = {
+              name: "研发/工程",
+              isInput: false,
+            };
             this.userObj.forEach((item) => {
               if (this.userList.includes(item.name)) {
                 item.isInput = true;
               }
-            
+              if ((item.name == "研发" && item.isInput) || (item.name == "工程" && item.isInput)) {
+                console.log(item);
+                obj.isInput = true;
+              }
             });
-              this.userType = this.userObj[0].name;
-              this.userIsInput = this.userObj[0].isInput;
+            this.userObj.splice(0, 1)
+            this.userObj.splice(0, 1)
+            this.userObj.push(obj);
+            console.log(this.userObj);
+            this.userType = this.userObj[0].name;
+            this.userIsInput = this.userObj[0].isInput;
           }
         }
       });
@@ -255,7 +267,7 @@ export default {
     onSearch(e) {
       let params = {
         itemcode: e,
-        usercode: localStorage.getItem("account"),
+        usercode: localStorage.getItem("account")
       };
       getMaterialSampleApi(params, "getitemmoreinfo").then((res) => {
         if (res.data.success) {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-05-18 10:27:05
+ * @LastEditTime: 2022-05-19 15:25:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/form.vue
@@ -9,7 +9,7 @@
 
 <template>
   <div>
-    <a-modal title="编辑" v-if="visible" :visible="visible" destoryOnClose width="60%">
+    <a-modal title="编辑" v-if="visible" :visible="visible" @cancel="handleCancel" destoryOnClose width="60%">
       <template slot="footer">
         <a-button key="back" @click="handleCancel">
           取消
@@ -19,8 +19,8 @@
         </a-button>
       </template>
       <a-radio-group v-model="userType" button-style="solid" style="padding:10px 20px">
-        <a-radio-button :value="item" v-for="(item, index) in userList" :key="index">
-          {{ item }}
+        <a-radio-button :value="item.name" v-for="(item, index) in userObj" :key="index">
+          {{ item.name }}
         </a-radio-button>
       </a-radio-group>
       <a-form-model v-if="userType == '采购'" ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
@@ -71,7 +71,7 @@
           ></a-col>
         </a-row>
       </a-form-model>
-      <a-form-model v-if="userType == '研发'" ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-model v-if="userType == '研发/工程'" ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-row>
           <a-col :span="8">
             <a-form-model-item ref="SignEngineer" has-feedback label="签样工程师" prop="SignEngineer"> <a-input v-model="form.SignEngineer" allowClear placeholder="请输入签样工程师" /> </a-form-model-item>
@@ -175,8 +175,26 @@ export default {
       addUserIndex: -1,
       rawData: [],
       userList: [],
-      userType: "",
+      userType: "研发/工程",
       loading: false,
+       userObj: [
+        {
+          name: "研发/工程",
+          isInput: false,
+        },
+        {
+          name: "文控",
+          isInput: false,
+        },
+        {
+          name: "采购",
+          isInput: false,
+        },
+        {
+          name: "品质",
+          isInput: false,
+        },
+      ],
     };
   },
   created() {
@@ -202,6 +220,7 @@ export default {
     getUserForm() {
       let params = {
         usercode:localStorage.getItem("account"),
+        flowid:this.editData.FlowId
       };
       getMaterialSampleApi(params, "getuserdepartment").then((res) => {
         if (res.data.success) {
@@ -240,7 +259,7 @@ export default {
           }
           let parmas = {
             SubmitSign: type, //提交标识：1,，SAVE-保存 2，SAVEANDSUBMIT-保存并提交到下一节点
-            UserReceiveDepartment: this.userList.join(","), //用户所有接收部门
+            UserReceiveDepartment: "*", //用户所有接收部门
             RegisterId: this.form.RegisterId, //登记ID
             DatetimePurchaseDeliver: this.form.DatetimePurchaseDeliver.format("YYYY-MM-DD HH:mm:ss") || "", //采购送样日期
             ItemCode: this.form.ItemCode, //物料编码
@@ -276,6 +295,8 @@ export default {
               this.$emit("closeModal");
               this.$emit("success");
               this.visible = false;
+              this.loading = false;
+            }else {
               this.loading = false;
             }
           });
