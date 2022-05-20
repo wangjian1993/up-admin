@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-19 17:39:51
+ * @LastEditTime: 2022-05-20 16:53:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/formula/config/index.vue
@@ -29,40 +29,24 @@
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产车间" @change="lineChange">
+                  <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产产线" @change="lineChange">
                     <a-select-option v-for="item in LineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="设备" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['equimentid']" style="width: 200px" placeholder="请选择设备" @change="deviceChange">
-                    <a-select-option v-for="item in deviceList" :key="item.EquimentId" :value="item.EquimentId">{{ item.EquimentName }}</a-select-option>
-                  </a-select>
+                <a-form-item label="配方编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入配方编码" v-decorator="['formulacode']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="PLC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['plcid']" style="width: 200px" placeholder="请选择PLC" @change="plcChange">
-                    <a-select-option v-for="item in plcList" :key="item.PlcId" :value="item.PlcId">{{ item.PlcName }}</a-select-option>
-                  </a-select>
+                <a-form-item label="配方名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入配方名称" v-decorator="['formulaname']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="参数类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['paramtype']" style="width: 200px" placeholder="请选择参数类型">
-                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="参数变量名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入参数变量名称" v-decorator="['paramname']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="参数变量编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入参数变量编码" v-decorator="['paramcode']" />
+                <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入品号" v-decorator="['procode']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -89,7 +73,7 @@
           :columns="columns"
           :data-source="dataSource"
           size="small"
-          :scroll="{ y: scrollY, x: 2600 }"
+          :scroll="{ y: scrollY }"
           :loading="loading"
           :pagination="pagination"
           :row-selection="{
@@ -97,7 +81,7 @@
             onChange: onSelectChange,
           }"
           @change="handleTableChange"
-          :rowKey="(dataSource) => dataSource.VarValueId"
+          :rowKey="(dataSource) => dataSource.FormulaId"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -105,10 +89,16 @@
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="VarIsMust" slot-scope="record">
+          <template slot="Enable" slot-scope="record">
             <div>
-              <a-tag color="green" v-if="record == 'Y'">必填</a-tag>
-              <a-tag color="red" v-else>非必填</a-tag>
+              <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
+              <a-tag color="red" v-else>禁用</a-tag>
+            </div>
+          </template>
+          <template slot="IsComplete" slot-scope="record">
+            <div>
+              <a-tag color="green" v-if="record == 'Y'">是</a-tag>
+              <a-tag color="red" v-else>否</a-tag>
             </div>
           </template>
           <template slot="action" slot-scope="text, record">
@@ -119,25 +109,33 @@
                   删除
                 </a>
               </a-popconfirm>
+              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
+                <a-icon type="edit" />
+                编辑
+              </a>
             </div>
           </template>
         </a-table>
+        <useForm v-if="isForm" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="getListAll" :paramsItem="paramsItem" />
       </a-card>
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getFormulaAction, setFormulaAction, getDeviceAction, getPlantList, getWorkshopAction, getPlcAction } from "@/services/eap.js";
+import { getFormulaAction, setFormulaAction } from "@/services/eap.js";
 import { getParamData } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
+import { formulaMixin } from "@/mixins/formulaMixin.js";
 import { columns } from "./data";
 import ExportExcel from "@/utils/ExportExcelJS";
+import useForm from "./useForm.vue";
 export default {
-  mixins: [PublicVar],
+  mixins: [PublicVar, formulaMixin],
+  components: { useForm },
   data() {
     return {
       scrollY: "",
@@ -152,14 +150,9 @@ export default {
       isForm: false,
       selectedRowKeys: [],
       isImport: false,
-      paramsList: ["PLC_PARAMS_TYPE"],
+      paramsList: ["PLC_PARAMS_TYPE", "PLC_PARAMS_DATA_TYPE", "PLC_PARAMS_ADDRESS_BIT", "PLC_IS_MUST", "PLC_AUTH_RW", "PLC_UUPER_COMPUTER_AUTH"],
       paramsItem: [],
       isBatchAdd: false,
-      workshopList: [],
-      plantList: "",
-      LineList: [],
-      deviceList: [],
-      plcList: [],
     };
   },
   updated() {
@@ -176,82 +169,7 @@ export default {
   methods: {
     splitData,
     //生产工厂
-    getPlant() {
-      let parmas = {
-        entertypecode: "PLANT",
-      };
-      getPlantList(parmas, "getlistbytypecode").then((res) => {
-        if (res.data.success) {
-          this.plantList = res.data.data;
-        }
-      });
-    },
-    //生产工厂选择
-    plantChange(e) {
-      this.plantId = e;
-      let parmas = {
-        plantid: e,
-      };
-      getWorkshopAction(parmas, "getlist").then((res) => {
-        if (res.data.success) {
-          this.workshopList = res.data.data;
-          this.searchForm.setFieldsValue({
-            workshopid: "",
-            lineid: "",
-            equimentid: "",
-            plcid: "",
-          });
-        }
-      });
-    },
-    //生产车间选择
-    workshopChange(e) {
-      let parmas = {
-        plantid: this.plantId,
-        workshopid: e,
-      };
-      getPlantList(parmas, "getlist").then((res) => {
-        if (res.data.success) {
-          this.LineList = res.data.data;
-          this.searchForm.setFieldsValue({
-            lineid: "",
-            equimentid: "",
-            plcid: "",
-          });
-        }
-      });
-    },
-    //生产产线选择
-    lineChange(e) {
-      let parmas = {
-        lineid: e,
-      };
-      getDeviceAction(parmas, "getlist").then((res) => {
-        if (res.data.success) {
-          this.deviceList = res.data.data;
-          this.searchForm.setFieldsValue({
-            equimentid: "",
-            plcid: "",
-          });
-        }
-      });
-    },
-    //设备选择
-    deviceChange(e) {
-      let values = this.searchForm.getFieldsValue();
-      let params = {
-        lineid: values.lineid,
-        equimentid: e,
-      };
-      getPlcAction(params, "getlist").then((res) => {
-        if (res.data.success) {
-          this.plcList = res.data.data;
-          this.searchForm.setFieldsValue({
-            plcid: "",
-          });
-        }
-      });
-    },
+
     //重置搜索
     getParamsData() {
       this.paramsList.forEach((item) => {
@@ -304,7 +222,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getFormulaAction(parmas, "log/getall").then((res) => {
+      getFormulaAction(parmas, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -337,14 +255,11 @@ export default {
             plantid: values.plantid,
             workshopid: values.workshopid,
             lineid: values.lineid,
-            equimentid: values.equimentid,
-            plcid: values.plcid,
-            paramtype: values.paramtype,
-            paramcode: values.paramcode,
-            paramname: values.paramname,
-            varvalueid: values.varvalueid,
+            formulacode: values.formulacode,
+            formulaname: values.formulaname,
+            procode: values.procode,
           };
-          getFormulaAction(parmas, "log/getall").then((res) => {
+          getFormulaAction(parmas, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -378,7 +293,7 @@ export default {
     //单个删除
     onDelete(item) {
       let parmas = [];
-      parmas.push(item.VarValueId);
+      parmas.push(item.FormulaId);
       setFormulaAction(parmas, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
