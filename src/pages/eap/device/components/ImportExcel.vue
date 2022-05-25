@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 14:45:16
- * @LastEditTime: 2022-05-09 15:14:22
+ * @LastEditTime: 2022-05-25 14:19:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/components/ImportExcel.vue
@@ -192,19 +192,22 @@ export default {
                 list.EquimentCode = item[key];
               }
               break;
-            case "设备品牌":
+            case "设备描述":
+              list.EquimentDesc = item[key];
+              break;  
+            case "设备类型名称":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,设备品牌不能为空'`,
+                  ErrorMsg: `第${index + 1}行,设备类型名称不能为空'`,
                 });
               } else {
                 list.Brand = item[key];
               }
               break;
-            case "设备类型":
+            case "设备类型编码":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,设备类型不能为空'`,
+                  ErrorMsg: `第${index + 1}行,设备类型编码不能为空'`,
                 });
               } else {
                 list.EquimentTypeCode = item[key];
@@ -257,7 +260,7 @@ export default {
     },
     // 读取文件
     readFile(file) {
-      let tableHead = ["设备名称", "设备编码", "设备类型", "设备品牌"];
+      let tableHead = ["设备编码", "设备名称", "设备描述", "设备类型编码", "设备类型名称", "设备品牌编码"];
       let tableHead2 = [];
       const reader = new FileReader();
       reader.readAsArrayBuffer(file);

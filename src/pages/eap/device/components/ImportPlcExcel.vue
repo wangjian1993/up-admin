@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 14:45:16
- * @LastEditTime: 2022-05-09 15:13:47
+ * @LastEditTime: 2022-05-25 14:14:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/components/ImportPlcExcel.vue
@@ -210,16 +210,25 @@ export default {
                 list.PlcBrand = item[key];
               }
               break;
-            case "PLC类型":
+            case "PLC类型编码":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,PLC类型不能为空'`,
+                  ErrorMsg: `第${index + 1}行,PLC类型编码不能为空'`,
                 });
               } else {
                 list.PlcTypeCode = item[key];
               }
               break;
-            case "IP地址":
+            case "PLC品牌编码":
+              if (item[key] == "") {
+                this.errorList.push({
+                  ErrorMsg: `第${index + 1}行,PLC品牌编码不能为空'`,
+                });
+              } else {
+                list.PlcBrand = item[key];
+              }
+              break;
+            case "PLCIP地址":
               if (item[key] == "") {
                 this.errorList.push({
                   ErrorMsg: `第${index + 1}行,IP地址不能为空'`,
@@ -228,19 +237,19 @@ export default {
                 list.PlcIp = item[key];
               }
               break;
-            case "端口号":
+            case "PLC端口":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,端口号不能为空'`,
+                  ErrorMsg: `第${index + 1}行,PLC端口不能为空'`,
                 });
               } else {
                 list.PlcPort = item[key];
               }
               break;
-            case "MAC地址":
+            case "PLCMAC地址":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,MAC地址不能为空'`,
+                  ErrorMsg: `第${index + 1}行,PLCMAC地址不能为空'`,
                 });
               } else {
                 list.PlcMac = item[key];
@@ -264,8 +273,8 @@ export default {
       setPlcAction(parmas, "import").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
-          this.$emit('closeModal');
-          this.$emit('success')
+          this.$emit("closeModal");
+          this.$emit("success");
           this.isUpload = false;
         } else {
           this.isUpload = false;
@@ -296,7 +305,7 @@ export default {
     },
     // 读取文件
     readFile(file) {
-      let tableHead = ["设备编码", "PLC名称", "PLC编码", "PLC类型", "PLC品牌", "PLC描述", "IP地址", "端口号", "MAC地址"];
+      let tableHead = ["设备编码", "PLC名称", "PLC编码", "PLC类型编码", "PLC品牌编码", "PLC描述", "PLCIP地址", "PLC端口", "PLCMAC地址"];
       let tableHead2 = [];
       const reader = new FileReader();
       reader.readAsArrayBuffer(file);

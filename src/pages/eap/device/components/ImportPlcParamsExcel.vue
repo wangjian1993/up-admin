@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 14:45:16
- * @LastEditTime: 2022-05-11 08:55:44
+ * @LastEditTime: 2022-05-25 13:43:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/components/ImportPlcParamsExcel.vue
@@ -16,7 +16,7 @@
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="导入PLC列表" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="800">
+    <a-modal v-model="visible" title="导入PLC参数列表" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="800">
       <a-spin tip="导入中..." :spinning="isUpload">
         <div>
           <a-form layout="horizontal">
@@ -174,80 +174,110 @@ export default {
         let list = {};
         for (let key in item) {
           switch (key) {
-            case "设备编码":
+            case "参数类型名称":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,设备编码不能为空'`,
+                  ErrorMsg: `第${index + 1}行,参数类型名称不能为空'`,
                 });
               } else {
-                list.EquimentCode = item[key];
+                list.ParamsTypeName = item[key];
               }
               break;
-            case "PLC名称":
+            case "参数变量编码":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,PLC名称不能为空'`,
+                  ErrorMsg: `第${index + 1}行,参数变量编码不能为空'`,
                 });
               } else {
-                list.PlcName = item[key];
+                list.VarCode = item[key];
               }
               break;
-            case "PLC编码":
+            case "参数变量名称":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,PLC名称不能为空'`,
+                  ErrorMsg: `第${index + 1}行,参数变量名称不能为空'`,
                 });
               } else {
-                list.PlcCode = item[key];
+                list.VarName = item[key];
               }
               break;
-            case "PLC品牌":
+            case "参数变量地址":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,PLC品牌不能为空'`,
+                  ErrorMsg: `第${index + 1}行,参数变量地址不能为空'`,
                 });
               } else {
-                list.PlcBrand = item[key];
+                list.VarAddress = item[key].toString();
               }
               break;
-            case "PLC类型":
+            case "参数变量地址位":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,PLC类型不能为空'`,
+                  ErrorMsg: `第${index + 1}行,参数变量地址位不能为空'`,
                 });
               } else {
-                list.PlcTypeCode = item[key];
+                list.VarAddressBit = item[key].toString();
               }
               break;
-            case "IP地址":
+            case "参数数据类型":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,IP地址不能为空'`,
+                  ErrorMsg: `第${index + 1}行,参数数据类型不能为空'`,
                 });
               } else {
-                list.PlcIp = item[key];
+                list.VarDataType = item[key];
               }
               break;
-            case "端口号":
+            case "数据类型长度":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,端口号不能为空'`,
+                  ErrorMsg: `第${index + 1}行,数据类型长度不能为空'`,
                 });
               } else {
-                list.PlcPort = item[key];
+                list.VarDataTypeLen = item[key].toString();
               }
               break;
-            case "MAC地址":
+            case "数据类型精度":
+              list.PlcMac = item[key].toString();
+              break;
+            case "参数标准值":
+              list.VarStandardValue = item[key].toString();
+              break;
+            case "参数最大值":
+              list.VarMaxValue = item[key].toString();
+              break;
+            case "参数最小值":
+              list.VarMinValue = item[key].toString();
+              break;
+            case "是否必填":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,MAC地址不能为空'`,
+                  ErrorMsg: `第${index + 1}行,数据类型长度不能为空'`,
                 });
               } else {
-                list.PlcMac = item[key];
+                list.VarIsMust = item[key];
               }
               break;
-            case "PLC描述":
-              list.PlcDesc = item[key];
+            case "PLC权限":
+               if (item[key] == "") {
+                this.errorList.push({
+                  ErrorMsg: `第${index + 1}行,数据类型长度不能为空'`,
+                });
+              } else {
+                list.VarPlcAuth = item[key];
+              }
+              break;
+            case "上位机权限":
+               if (item[key] == "") {
+                this.errorList.push({
+                  ErrorMsg: `第${index + 1}行,数据类型长度不能为空'`,
+                });
+              } else {
+                list.UpperComputerAuth = item[key];
+              }
+              break;
+            case "参数描述":
+              list.VarDesc = item[key].toString();
               break;
           }
         }
@@ -256,7 +286,7 @@ export default {
       if (this.errorList.length == 0) {
         this.submitExecl(data);
       } else {
-        this.$message.error("PLC信息格式错误,请修改");
+        this.$message.error("PLC参数格式错误,请修改");
       }
     },
     submitExecl(parmas) {
@@ -264,8 +294,8 @@ export default {
       setPlcParamsAction(parmas, "import").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
-          this.$emit('closeModal');
-          this.$emit('success')
+          this.$emit("closeModal");
+          this.$emit("success");
           this.isUpload = false;
         } else {
           this.isUpload = false;
@@ -296,7 +326,7 @@ export default {
     },
     // 读取文件
     readFile(file) {
-      let tableHead = ["设备编码", "PLC名称", "PLC编码", "PLC类型", "PLC品牌", "PLC描述", "IP地址", "端口号", "MAC地址"];
+      let tableHead = ["参数类型名称", "参数变量编码", "参数变量名称", "参数变量地址", "参数变量地址位", "参数数据类型", "数据类型长度", "数据类型精度", "参数标准值", "参数最大值", "参数最小值", "是否必填", "PLC权限", "上位机权限","参数描述"];
       let tableHead2 = [];
       const reader = new FileReader();
       reader.readAsArrayBuffer(file);

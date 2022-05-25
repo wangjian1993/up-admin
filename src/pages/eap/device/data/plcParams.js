@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-05-11 10:04:50
+ * @LastEditTime: 2022-05-25 10:59:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/data/plcParams.js
@@ -21,7 +21,7 @@ export const columns = [
       align: "center",
     },
     {
-      title: "参数类型名称",
+      title: "参数变量名称",
       dataIndex: "VarName",
       scopedSlots: { customRender: "VarName" },
       align: "center",
@@ -33,7 +33,7 @@ export const columns = [
       align: "center",
     },
     {
-      title: "参数变量名称",
+      title: "PLC名称",
       dataIndex: "PlcName",
       scopedSlots: { customRender: "PlcName" },
       align: "center",

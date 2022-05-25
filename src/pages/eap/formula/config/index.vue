@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-24 14:50:24
+ * @LastEditTime: 2022-05-25 10:28:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/formula/config/index.vue
@@ -59,15 +59,17 @@
         <div class="operator">
           <a-button type="primary" @click="add" :disabled="!hasPerm('add')" icon="plus">新增</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
-          <!-- <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="importExcel" icon="import">导入</a-button>
+          <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="importExcel" icon="import">导入</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="downExcel" icon="import">导入模板下载</a-button>
           <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+          <a-button v-if="hasPerm('send')" icon="arrow-down" type="primary" :disabled="!hasSelected" :loading="loading" @click="allSend" style="margin-left: 8px">配方下发</a-button>
+          <a-button v-else icon="arrow-down" type="primary" disabled :loading="loading" @click="allSend" style="margin-left: 8px">配方下发</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
             </template>
-          </span> -->
+          </span>
         </div>
         <a-table
           :columns="columns"
@@ -114,8 +116,12 @@
                 编辑
               </a>
               <a style="margin-right: 8px" @click="details(record)">
-                <a-icon type="edit" />
+                <a-icon type="container" />
                 查看明细
+              </a>
+              <a style="margin-right: 8px" @click="send(record)" :disabled="!hasPerm('send')">
+                <a-icon type="arrow-down" />
+                配方下发
               </a>
             </div>
           </template>
@@ -127,7 +133,7 @@
 </template>
 
 <script>
-import { getFormulaAction, setFormulaAction } from "@/services/eap.js";
+import { getFormulaAction, setFormulaAction, setPlcAction } from "@/services/eap.js";
 import { getParamData } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
@@ -290,6 +296,45 @@ export default {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
+              self.getListAll();
+            }
+          });
+        },
+        onCancel() {},
+      });
+    },
+    send(item) {
+      let parmas = {
+        LineId: item.LineId,
+        FormulaId: item.FormulaId,
+        PlcId: "",
+      };
+      setPlcAction(parmas, "issued/formula").then((res) => {
+        if (res.data.success) {
+          this.$message.success("配方下发成功!");
+          this.getListAll();
+        }
+      });
+    },
+    allSend() {
+      let self = this;
+      self.$confirm({
+        title: "确定要下发选中内容",
+        onOk() {
+          let params = [];
+          self.dataSource.forEach((item) => {
+            if (self.selectedRowKeys.includes(item.FormulaId)) {
+              params.push({
+                LineId: item.LineId,
+                FormulaId: item.FormulaId,
+                PlcId: "",
+              });
+            }
+          });
+          setPlcAction(params, "issued/formula").then((res) => {
+            if (res.data.success) {
+              self.selectedRowKeys = [];
+              self.$message.success("配方下发成功!");
               self.getListAll();
             }
           });

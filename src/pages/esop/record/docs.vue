@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-06 08:45:19
- * @LastEditTime: 2022-04-15 09:22:11
+ * @LastEditTime: 2022-05-25 15:42:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/docs.vue
@@ -131,11 +131,11 @@ export default {
       if (record.FileType == "image" || record.FileType == "video") {
         this.isPreview = true;
       } else {
-        window.open("http://192.168.1.245:8080" + record.FilePath, "_blank");
+        window.open("." + record.FilePath, "_blank");
       }
     },
     download(record) {
-      window.open("http://192.168.1.245:8080" + record.FilePath, "_blank");
+      window.open("." + record.FilePath, "_blank");
     },
     close() {
       this.$emit("close");

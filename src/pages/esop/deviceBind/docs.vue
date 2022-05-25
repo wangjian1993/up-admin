@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-31 09:19:37
- * @LastEditTime: 2022-05-12 17:20:54
+ * @LastEditTime: 2022-05-25 15:42:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/docs.vue
@@ -131,11 +131,11 @@ export default {
       if (record.FileType == "image" || record.FileType == "video") {
         this.isPreview = true;
       } else {
-        window.open("http://192.168.1.245:8080" + record.FilePath, "_blank");
+        window.open("." + record.FilePath, "_blank");
       }
     },
     download(record) {
-      window.open("http://192.168.1.245:8080" + record.FilePath, "_blank");
+      window.open("." + record.FilePath, "_blank");
     },
     closeModal() {
       this.isPreview = false;

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-05-20 15:19:48
+ * @LastEditTime: 2022-05-25 09:30:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/formula/config/data.js
@@ -108,8 +108,6 @@ export const columns = [
     {
       title: "操作",
       scopedSlots: { customRender: "action" },
-      fixed: "right",
       align: "center",
-      width:100
     },
   ];
