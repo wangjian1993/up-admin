@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-20 17:18:56
+ * @LastEditTime: 2022-05-24 14:42:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/formula/detail/index.vue
@@ -29,24 +29,37 @@
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产产线" @change="lineChange">
+                  <a-select v-decorator="['LineId']" style="width: 200px" placeholder="请选择生产产线" @change="lineChange">
                     <a-select-option v-for="item in LineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="配方编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入配方编码" v-decorator="['formulacode']" />
+                <a-form-item label="设备" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['equimentid']" style="width: 200px" placeholder="请选择设备" @change="deviceChange">
+                    <a-select-option v-for="item in deviceList" :key="item.EquimentId" :value="item.EquimentId">{{ item.EquimentName }}</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="配方名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入配方名称" v-decorator="['formulaname']" />
+                <a-form-item label="PLC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['plcid']" style="width: 200px" placeholder="请选择PLC">
+                    <a-select-option v-for="item in plcList" :key="item.PlcId" :value="item.PlcId">{{ item.PlcName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="配方" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" v-decorator="['formulacode']" allowClear placeholder="请选择配方" disabled>
+                    <a-icon slot="addonAfter" type="plus" @click="isFormula = true" />
+                  </a-input>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入品号" v-decorator="['procode']" />
+                  <a-input style="width: 200px" v-decorator="['procode']" allowClear placeholder="请选择品号" disabled>
+                    <a-icon slot="addonAfter" type="plus" @click="isItemCode = true" />
+                  </a-input>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -117,6 +130,8 @@
           </template>
         </a-table>
       </a-card>
+      <itemCode v-if="isItemCode" @closeModal="closeModal" :plantList="plantList" @selectItemCode="selectItemCode" />
+      <formulaList v-if="isFormula" @closeModal="closeModal" :plantList="plantList" @selectFormula="selectFormula" />
     </a-spin>
   </div>
 </template>
@@ -131,7 +146,10 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { formulaMixin } from "@/mixins/formulaMixin.js";
 import { columns } from "./data";
 import ExportExcel from "@/utils/ExportExcelJS";
+import itemCode from "../components/itemCode.vue";
+import formulaList from "../components/formulaList.vue";
 export default {
+  components: { itemCode, formulaList },
   mixins: [PublicVar, formulaMixin],
   data() {
     return {
@@ -147,9 +165,12 @@ export default {
       isForm: false,
       selectedRowKeys: [],
       isImport: false,
-      paramsList: ["PLC_PARAMS_TYPE", "PLC_PARAMS_DATA_TYPE", "PLC_PARAMS_ADDRESS_BIT", "PLC_IS_MUST", "PLC_AUTH_RW", "PLC_UUPER_COMPUTER_AUTH"],
+      // paramsList: ["PLC_PARAMS_TYPE", "PLC_PARAMS_DATA_TYPE", "PLC_PARAMS_ADDRESS_BIT", "PLC_IS_MUST", "PLC_AUTH_RW", "PLC_UUPER_COMPUTER_AUTH"],
       paramsItem: [],
-      isBatchAdd: false,
+      isItemCode: false,
+      isFormula: false,
+      itemActive: [],
+      formulaActive: [],
     };
   },
   updated() {
@@ -160,11 +181,15 @@ export default {
       this.scrollY = getTableScroll(70);
     });
     this.getListAll();
-    this.getParamsData();
+    // this.getParamsData();
     this.getPlant();
   },
   methods: {
     splitData,
+    closeModal(){
+      this.isItemCode =false;
+      this.isFormula = false;
+    },
     //重置搜索
     getParamsData() {
       this.paramsList.forEach((item) => {
@@ -177,6 +202,18 @@ export default {
           }
           console.log(this.paramsItem.PLC_PARAMS_TYPE);
         });
+      });
+    },
+    selectFormula(result) {
+      this.formulaActive = result;
+      this.searchForm.setFieldsValue({
+        formulacode: result.FormulaName,
+      });
+    },
+    selectItemCode(result) {
+      this.itemActive = result;
+       this.searchForm.setFieldsValue({
+        procode: result.ProCode,
       });
     },
     reset() {
@@ -200,11 +237,6 @@ export default {
       this.isForm = true;
       this.isEdit = true;
       this.editData = record;
-    },
-    closeModal() {
-      this.isForm = false;
-      this.isImport = false;
-      this.isBatchAdd = false;
     },
     //多选
     onSelectChange(selectedRowKeys) {
@@ -249,9 +281,9 @@ export default {
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             workshopid: values.workshopid,
-            lineid: values.lineid,
-            formulacode: values.formulacode,
-            formulaname: values.formulaname,
+            lineid: values.Lineid,
+            plcid: values.plcid,
+            formulacode: this.formulaActive.formulacode,
             procode: values.procode,
           };
           getFormulaAction(parmas, "getall").then((res) => {

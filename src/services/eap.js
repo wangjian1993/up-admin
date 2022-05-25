@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-29 17:37:25
- * @LastEditTime: 2022-05-19 17:39:19
+ * @LastEditTime: 2022-05-24 09:01:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/eap.js
@@ -38,7 +38,12 @@ export function getLineAction(params, action) {
 export function setLineAction(params, action) {
     return request(`${UP_EAP}/line/${action}`, METHOD.POST, params);
 }
-
+export function getLineServiceAction(params, action) {
+    return request(`${UP_EAP}/plc/service/config/${action}`, METHOD.GET, params);
+}
+export function setLineServiceAction(params, action) {
+    return request(`${UP_EAP}/plc/service/config/${action}`, METHOD.POST, params);
+}
 export function getWorkstationAction(params, action) {
     return request(`${UP_EAP}/workstation/${action}`, METHOD.GET, params);
 }

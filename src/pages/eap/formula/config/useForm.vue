@@ -82,7 +82,7 @@
           <a-table :columns="columns" :data-source="dataSource" :size="size" :pagination="false" :rowKey="(dataSource) => dataSource.VarId" bordered>
             <template slot="index" slot-scope="text, record, index">
               <div>
-                <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+                <span>{{ index + 1 }}</span>
               </div>
             </template>
             <template slot="VarAddress" slot-scope="text, record">
@@ -118,6 +118,11 @@
             <template slot="VarMinValue" slot-scope="text, record">
               <div>
                 <a-input style="width:100px" v-model="record.VarMinValue" size="small" />
+              </div>
+            </template>
+            <template slot="VarValue" slot-scope="text, record">
+              <div>
+                <a-input style="width:100px" v-model="record.VarValue" size="small" />
               </div>
             </template>
             <template slot="VarPlcAuth" slot-scope="text, record">
@@ -228,6 +233,12 @@ const columns = [
     align: "center",
   },
   {
+    title: "实际参数值",
+    dataIndex: "VarValue",
+    scopedSlots: { customRender: "VarValue" },
+    align: "center",
+  },
+  {
     title: "PLC权限",
     dataIndex: "VarPlcAuth",
     scopedSlots: { customRender: "VarPlcAuth" },
@@ -246,7 +257,7 @@ const columns = [
     align: "center",
   },
 ];
-import { getPlcAction, getOperationAction, setFormulaAction } from "@/services/eap.js";
+import { getPlcAction, getOperationAction, setFormulaAction, getFormulaAction } from "@/services/eap.js";
 import itemCode from "../components/itemCode.vue";
 import { formulaMixin } from "@/mixins/formulaMixin.js";
 export default {
@@ -259,19 +270,7 @@ export default {
       columns,
       size: "small",
       visible: true,
-      selectedRowKeys: [],
-      pagination: {
-        current: 1,
-        total: 0,
-        pageSize: 20, //每页中显示10条数据
-        showSizeChanger: true,
-        showLessItems: true,
-        showQuickJumper: true,
-        pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
-        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
-      },
       isItemCode: false,
-      plcBrand: [],
       searchForm: this.$form.createForm(this),
       searchForm2: this.$form.createForm(this),
       plcTypeList: [],
@@ -283,8 +282,7 @@ export default {
     if (this.isEdit) {
       this.plantChange(this.editData.PlantId);
       this.workshopChange(this.editData.WorkshopId);
-      //   this.lineChange(this.editData.LineId);
-      //   this.deviceChange()
+      this.lineChange(this.editData.LineId);
       setTimeout(() => {
         this.searchForm.setFieldsValue({
           PlantId: this.editData.PlantId,
@@ -296,9 +294,7 @@ export default {
           paramname: this.editData.ProCode,
         });
       }, 1000);
-      //   set(() => {
-
-      //   });
+       this.getFormulaDetail();
     }
   },
   methods: {
@@ -312,6 +308,32 @@ export default {
       this.itemCodeData = result;
       this.searchForm.setFieldsValue({
         paramname: result.ProCode,
+      });
+    },
+    getFormulaDetail() {
+      let params = {
+        plcid: "",
+        paramstype:  "",
+        formulaid: this.editData.FormulaId,
+      };
+      getFormulaAction(params, "getdetails").then((res) => {
+        if (res.data.success) {
+          console.log("result");
+          this.dataSource = res.data.data;
+        }
+      });
+    },
+    plcChange(e) {
+      let values = this.searchForm.getFieldsValue();
+      let params = {
+        plcid: e,
+        paramstype: values.paramstype,
+      };
+      getOperationAction(params, "getlist").then((res) => {
+        if (res.data.success) {
+          console.log("result");
+          this.dataSource = res.data.data;
+        }
       });
     },
     //参数类型选择

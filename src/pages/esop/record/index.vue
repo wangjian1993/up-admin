@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 16:01:38
- * @LastEditTime: 2022-05-17 14:37:05
+ * @LastEditTime: 2022-05-23 09:21:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/index.vue
@@ -77,20 +77,20 @@
             </a-col>
           </a-row>
         </div>
-        <span style="display:flex;justify-content: flex-end">
+        <span style="float: right; margin-top: 3px;">
           <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
         </span>
       </a-form>
       <div class="operator">
-        <!-- <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" @click="add" style="margin-left: 8px">添加</a-button>
-        <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-        <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+        <!-- <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" @click="add" style="margin-left: 8px">添加</a-button> -->
+        <a-button v-if="hasPerm('publish')" icon="publish" type="primary" :disabled="!hasSelected" :loading="loading" @click="publishAll" style="margin-left: 8px">发布</a-button>
+        <a-button v-else icon="publish" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">发布</a-button>
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
             {{ `共选中 ${selectedRowKeys.length} 条` }}
           </template>
-        </span> -->
+        </span>
       </div>
       <a-table
         v-if="hasPerm('search')"
@@ -105,6 +105,7 @@
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
+           getCheckboxProps:getCheckboxProps
         }"
         bordered
       >
@@ -124,6 +125,10 @@
             <a style="margin-right: 8px" @click="detail(record)">
               <a-icon type="profile" />
               查看
+            </a>
+             <a v-if="record.Enable == 'Y'" style="margin-right: 8px" @click="publish(record)" :disabled="!hasPerm('publish')">
+              <a-icon type="send" />
+              发布
             </a>
           </div>
         </template>
@@ -229,7 +234,7 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getSopDocument } from "@/services/esop.js";
+import { getSopDocument ,publishInfo } from "@/services/esop.js";
 import device from "./device.vue";
 export default {
   components: { device },
@@ -369,6 +374,11 @@ export default {
         }
       });
     },
+    getCheckboxProps: (record) => ({
+      props: {
+        disabled: record.Enable == "N", // Column configuration not to be checked
+      },
+    }),
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
@@ -422,6 +432,34 @@ export default {
         return;
       }
       this.getListAll();
+    },
+     //多选删除
+    publishAll() {
+      let self = this;
+      self.selectedRowKeys.push(null);
+      self.$confirm({
+        title: "确定要发布选中内容",
+        onOk() {
+          publishInfo(self.selectedRowKeys).then((res) => {
+            if (res.data.success) {
+              self.selectedRowKeys = [];
+              self.$message.success("发布成功!");
+              self.getListAll();
+            }
+          });
+        },
+        onCancel() {},
+      });
+    },
+    //单个删除
+    publish(item) {
+      let parmas = [item.RecordId, null];
+      publishInfo(parmas, "delete").then((res) => {
+        if (res.data.success) {
+          this.$message.success("发布成功!");
+          this.getListAll();
+        }
+      });
     },
   },
 };

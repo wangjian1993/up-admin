@@ -4,57 +4,60 @@
       <a-form-model ref="ruleForm" :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-form-model-item ref="itemcode" has-feedback label="品号" prop="itemcode">
           <a-input style="width: 200px" v-model="form.itemcode" allowClear placeholder="请输入品号" />
-           <a-dropdown>
-              <a-button shape="circle" icon="unordered-list" size="small" @click="(e) => e.preventDefault()" />
-              <a-menu slot="overlay">
-                <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemcode', item)">
-                  <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item }}</a>
-                </a-menu-item>
-              </a-menu>
-            </a-dropdown>
+          <a-dropdown style="margin:0 10px">
+            <a-button shape="circle" icon="unordered-list" size="small" @click="(e) => e.preventDefault()" />
+            <a-menu slot="overlay">
+              <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemcode', item)">
+                <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item }}</a>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
+          <span>{{ itemcodesign }}</span>
         </a-form-model-item>
         <a-form-model-item ref="itemname" has-feedback label="品名" prop="itemname">
           <a-input style="width: 200px" v-model="form.itemname" allowClear placeholder="请输入品名" />
-           <a-dropdown>
-              <a-button shape="circle" icon="unordered-list" size="small" @click="(e) => e.preventDefault()" />
-              <a-menu slot="overlay">
-                <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemname', item)">
-                  <a href="javascript:;" :class="itemnamesign == item ? 'menuBg' : ''">{{ item }}</a>
-                </a-menu-item>
-              </a-menu>
-            </a-dropdown>
+          <a-dropdown style="margin:0 10px">
+            <a-button shape="circle" icon="unordered-list" size="small" @click="(e) => e.preventDefault()" />
+            <a-menu slot="overlay">
+              <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemname', item)">
+                <a href="javascript:;" :class="itemnamesign == item ? 'menuBg' : ''">{{ item }}</a>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
+          <span>{{ itemnamesign }}</span>
         </a-form-model-item>
         <a-form-model-item ref="itemspecification" has-feedback label="规格" prop="itemspecification">
           <a-input style="width: 200px" v-model="form.itemspecification" allowClear placeholder="请输入规格" />
-           <a-dropdown>
-              <a-button shape="circle" icon="unordered-list" size="small" @click="(e) => e.preventDefault()" />
-              <a-menu slot="overlay">
-                <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemspecification', item)">
-                  <a href="javascript:;" :class="itemcodesign == item ? 'menuBg' : ''">{{ item }}</a>
-                </a-menu-item>
-              </a-menu>
-            </a-dropdown>
+          <a-dropdown style="margin:0 10px">
+            <a-button shape="circle" icon="unordered-list" size="small" @click="(e) => e.preventDefault()" />
+            <a-menu slot="overlay">
+              <a-menu-item v-for="(item, index) in filtrate" :key="index" @click="itemFiltrete('itemspecification', item)">
+                <a href="javascript:;" :class="itemspecificationsign == item ? 'menuBg' : ''">{{ item }}</a>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
+          <span>{{ itemspecificationsign }}</span>
         </a-form-model-item>
         <a-form-model-item has-feedback label="长">
           <a-input-number :min="0" style="width: 120px" v-model="form.lengths" allowClear placeholder="请输入长" @change="limitsCount('LENGHT')" />
           <a-input-number :min="0" style="width: 80px;margin-left: 10px;" v-model="form.lenghtLimits" allowClear placeholder="公差" @change="limitsCount('LENGHT')" />
           <a-button style="margin-left: 10px;" @click="limitsCount('LENGHT')">计算</a-button>
-          <a-input-number :min="0"  style="width: 80px;margin-left: 10px;" v-model="minlength" allowClear placeholder="最小值" />
-          <a-input-number :min="0"  style="width: 80px;margin-left: 10px;" v-model="maxlength" allowClear placeholder="最大值" />
+          <a-input-number :min="0" style="width: 80px;margin-left: 10px;" v-model="minlength" allowClear placeholder="最小值" />
+          <a-input-number :min="0" style="width: 80px;margin-left: 10px;" v-model="maxlength" allowClear placeholder="最大值" />
         </a-form-model-item>
         <a-form-model-item has-feedback label="宽">
           <a-input-number :min="0" style="width: 120px" v-model="form.widths" allowClear placeholder="请输入宽" @change="limitsCount('LENGHT')" />
           <a-input-number :min="0" style="width: 80px;margin-left: 10px;" v-model="form.widthLimits" allowClear placeholder="公差" @change="limitsCount('WIDHT')" />
           <a-button style="margin-left: 10px;" @click="limitsCount('WIDHT')">计算</a-button>
-          <a-input-number :min="0"  style="width: 80px;margin-left: 10px;" v-model="minwidth" allowClear placeholder="最小值" />
-          <a-input-number :min="0"  style="width: 80px;margin-left: 10px;" v-model="maxwidth" allowClear placeholder="最大值" />
+          <a-input-number :min="0" style="width: 80px;margin-left: 10px;" v-model="minwidth" allowClear placeholder="最小值" />
+          <a-input-number :min="0" style="width: 80px;margin-left: 10px;" v-model="maxwidth" allowClear placeholder="最大值" />
         </a-form-model-item>
         <a-form-model-item has-feedback label="高">
           <a-input-number :min="0" style="width: 120px" v-model="form.heights" allowClear placeholder="请输入高" @change="limitsCount('LENGHT')" />
           <a-input-number :min="0" style="width: 80px;margin-left: 10px;" v-model="form.heightLimits" allowClear placeholder="公差" @change="limitsCount('HEIGHT')" />
           <a-button style="margin-left: 10px;" @click="limitsCount('HEIGHT')">计算</a-button>
-          <a-input-number :min="0"  style="width: 80px;margin-left: 10px;" v-model="minheight" allowClear placeholder="最小值" />
-          <a-input-number :min="0"  style="width: 80px;margin-left: 10px;" v-model="maxheight" allowClear placeholder="最大值" />
+          <a-input-number :min="0" style="width: 80px;margin-left: 10px;" v-model="minheight" allowClear placeholder="最小值" />
+          <a-input-number :min="0" style="width: 80px;margin-left: 10px;" v-model="maxheight" allowClear placeholder="最大值" />
         </a-form-model-item>
       </a-form-model>
     </a-modal>
@@ -84,10 +87,10 @@ export default {
       minwidth: 0,
       minheight: 0,
       maxheight: 0,
-       filtrate: ["不过滤", "包含(A,B,C)", "不包含", "等于", "不等于", "开始于", "结束于", "小于", "小于或等于", "大于", "大于或等于"],
-      itemcodesign:"",
-      itemnamesign:"",
-      itemspecificationsign:""
+      filtrate: ["不过滤", "包含(A,B,C)", "不包含", "等于", "不等于", "开始于", "结束于", "小于", "小于或等于", "大于", "大于或等于"],
+      itemcodesign: "",
+      itemnamesign: "",
+      itemspecificationsign: "",
     };
   },
   created() {
@@ -106,10 +109,13 @@ export default {
     this.minwidth = this.editData.minwidth;
     this.minheight = this.editData.minheight;
     this.maxheight = this.editData.maxheight;
+    this.itemcodesign = this.editData.itemcodesign;
+    this.itemnamesign = this.editData.itemnamesign;
+    this.itemspecificationsign =this.editData.itemspecificationsign;
     console.log(this.form);
   },
   methods: {
-     itemFiltrete(type, text) {
+    itemFiltrete(type, text) {
       switch (type) {
         case "itemcode":
           this.itemcodesign = text;
@@ -121,7 +127,7 @@ export default {
           this.itemspecificationsign = text;
           break;
       }
-      this.handleOk();
+      // this.handleOk();
     },
     close() {
       this.$emit("closeModal");
@@ -160,9 +166,9 @@ export default {
             minwidth: this.minwidth < 0 ? 0 : this.minwidth,
             maxheight: this.maxheight,
             minheight: this.minheight < 0 ? 0 : this.minheight,
-            itemcodesign:this.itemcodesign,
-            itemnamesign:this.itemnamesign,
-            itemspecificationsign:this.itemspecificationsign
+            itemcodesign: this.itemcodesign,
+            itemnamesign: this.itemnamesign,
+            itemspecificationsign: this.itemspecificationsign,
           };
           this.$emit("closeModal");
           this.$emit("success", params);

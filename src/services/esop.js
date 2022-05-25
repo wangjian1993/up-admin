@@ -1,13 +1,13 @@
 /*
  * @Author: max
  * @Date: 2022-03-28 11:04:11
- * @LastEditTime: 2022-04-06 15:45:52
+ * @LastEditTime: 2022-05-23 09:20:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/esop.js
  */
 import {
-    UP_ESOP
+    UP_ESOP,
 } from '@/services/api'
 import {
     request,
@@ -54,4 +54,8 @@ export function getProduct(params, action) {
 
 export function setProduct(params, action) {
     return request(`${UP_ESOP}/product/${action}`, METHOD.POST, params);
+}
+
+export function publishInfo(params) {
+    return request(`${UP_ESOP}/client/mqtt/publishbyid`, METHOD.POST, params);
 }

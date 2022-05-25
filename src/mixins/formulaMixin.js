@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-02-11 13:53:25
- * @LastEditTime: 2022-05-20 16:50:23
+ * @LastEditTime: 2022-05-24 10:11:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/mixins/formulaMixin.js
@@ -81,8 +81,9 @@ export const formulaMixin = {
         //设备选择
         deviceChange(e) {
             let values = this.searchForm.getFieldsValue();
+            console.log("values===",values)
             let params = {
-                lineid: values.lineid,
+                lineid: values.LineId,
                 equimentid: e,
             };
             getPlcAction(params, "getlist").then((res) => {

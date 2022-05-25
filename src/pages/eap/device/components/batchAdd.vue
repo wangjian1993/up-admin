@@ -338,7 +338,7 @@ export default {
       let values = this.searchForm.getFieldsValue();
       let params = {
         plcid: e,
-        paramstype: values.plcid,
+        paramstype: values.paramstype,
       };
       getOperationAction(params, "getlist").then((res) => {
         if (res.data.success) {
