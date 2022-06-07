@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-02-11 13:53:25
- * @LastEditTime: 2022-05-24 10:11:48
+ * @LastEditTime: 2022-05-31 18:12:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/mixins/formulaMixin.js
@@ -64,7 +64,7 @@ export const formulaMixin = {
             });
         },
         //生产产线选择
-        lineChange(e) {
+        lineChange(e,type) {
             let parmas = {
                 lineid: e,
             };
@@ -77,9 +77,12 @@ export const formulaMixin = {
                     });
                 }
             });
+            if(type){
+                this.getDetailList(e)
+            }
         },
         //设备选择
-        deviceChange(e) {
+        deviceChange(e,type) {
             let values = this.searchForm.getFieldsValue();
             console.log("values===",values)
             let params = {
@@ -94,6 +97,9 @@ export const formulaMixin = {
                     });
                 }
             });
+            if(type){
+                this.getDetailList(values.LineId,e)
+            }
         },
     },
 }

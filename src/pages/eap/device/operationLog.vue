@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-16 09:23:22
+ * @LastEditTime: 2022-05-27 13:44:26
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/operationLog.vue
@@ -43,7 +43,7 @@
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="PLC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['plcid']" style="width: 200px" placeholder="请选择PLC" @change="plcChange">
+                  <a-select v-decorator="['plcid']" style="width: 200px" placeholder="请选择PLC">
                     <a-select-option v-for="item in plcList" :key="item.PlcId" :value="item.PlcId">{{ item.PlcName }}</a-select-option>
                   </a-select>
                 </a-form-item>
@@ -98,7 +98,7 @@
             onChange: onSelectChange,
           }"
           @change="handleTableChange"
-          :rowKey="(dataSource) => dataSource.VarValueId"
+          :rowKey="(dataSource) => dataSource.VarValueLogId"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -379,7 +379,7 @@ export default {
     //单个删除
     onDelete(item) {
       let parmas = [];
-      parmas.push(item.VarValueId);
+      parmas.push(item.VarValueLogId);
       setOperationAction(parmas, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");

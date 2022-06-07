@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 14:45:16
- * @LastEditTime: 2022-06-07 09:01:24
+ * @LastEditTime: 2022-05-26 16:30:04
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/eap/device/components/ImportPlcParamsExcel.vue
+ * @FilePath: /up-admin/src/pages/eap/formula/config/ImportExcel.vue
 -->
 <!--
  * @Author: max
@@ -16,7 +16,7 @@
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="导入PLC参数列表" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="800">
+    <a-modal v-model="visible" title="导入配方配置" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="800">
       <a-spin tip="导入中..." :spinning="isUpload">
         <div>
           <a-form layout="horizontal">
@@ -78,7 +78,7 @@
 
 <script>
 import excel from "@/utils/xlsxTool.js";
-import { setPlcParamsAction } from "@/services/eap.js";
+import { setDeviceAction } from "@/services/eap.js";
 const columns = [
   {
     title: "序号",
@@ -174,114 +174,45 @@ export default {
         let list = {};
         for (let key in item) {
           switch (key) {
-            case "参数类型名称":
+            case "设备名称":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,参数类型名称不能为空'`,
+                  ErrorMsg: `第${index + 1}行,设备名称不能为空'`,
                 });
               } else {
-                list.ParamsTypeName = item[key];
+                list.EquimentName = item[key];
               }
               break;
-            case "参数变量编码":
+            case "设备编码":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,参数变量编码不能为空'`,
+                  ErrorMsg: `第${index + 1}行,设备编码不能为空'`,
                 });
               } else {
-                list.VarCode = item[key];
+                list.EquimentCode = item[key];
               }
               break;
-            case "参数变量名称":
+            case "设备描述":
+              list.EquimentDesc = item[key];
+              break;
+            case "设备类型名称":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,参数变量名称不能为空'`,
+                  ErrorMsg: `第${index + 1}行,设备类型名称不能为空'`,
                 });
               } else {
-                list.VarName = item[key];
+                list.Brand = item[key];
               }
               break;
-            case "参数变量地址":
+            case "设备类型编码":
               if (item[key] == "") {
                 this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,参数变量地址不能为空'`,
+                  ErrorMsg: `第${index + 1}行,设备类型编码不能为空'`,
                 });
               } else {
-                list.VarAddress = item[key].toString();
+                list.EquimentTypeCode = item[key];
               }
               break;
-            case "参数变量地址位":
-              if (item[key] == "") {
-                this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,参数变量地址位不能为空'`,
-                });
-              } else {
-                list.VarAddressBit = item[key].toString();
-              }
-              break;
-            case "参数数据类型":
-              if (item[key] == "") {
-                this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,参数数据类型不能为空'`,
-                });
-              } else {
-                list.VarDataType = item[key];
-              }
-              break;
-            case "数据类型长度":
-              if (item[key] == "") {
-                this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,数据类型长度不能为空'`,
-                });
-              } else {
-                list.VarDataTypeLen = item[key].toString();
-              }
-              break;
-            case "数据类型精度":
-              list.PlcMac = item[key].toString();
-              break;
-            case "参数标准值":
-              list.VarStandardValue = item[key].toString();
-              break;
-            case "参数最大值":
-              list.VarMaxValue = item[key].toString();
-              break;
-            case "参数最小值":
-              list.VarMinValue = item[key].toString();
-              break;
-            case "是否必填":
-              if (item[key] == "") {
-                this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,数据类型长度不能为空'`,
-                });
-              } else {
-                list.VarIsMust = item[key];
-              }
-              break;
-            case "PLC权限":
-               if (item[key] == "") {
-                this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,数据类型长度不能为空'`,
-                });
-              } else {
-                list.VarPlcAuth = item[key];
-              }
-              break;
-            case "上位机权限":
-               if (item[key] == "") {
-                this.errorList.push({
-                  ErrorMsg: `第${index + 1}行,数据类型长度不能为空'`,
-                });
-              } else {
-                list.UpperComputerAuth = item[key];
-              }
-              break;
-            case "参数描述":
-              list.VarDesc = item[key].toString();
-              break;
-             case "参数单位":
-              list.VarUnit = item[key].toString();
-              break;  
           }
         }
         data.push(list);
@@ -289,12 +220,12 @@ export default {
       if (this.errorList.length == 0) {
         this.submitExecl(data);
       } else {
-        this.$message.error("PLC参数格式错误,请修改");
+        this.$message.error("设备信息格式错误,请修改");
       }
     },
     submitExecl(parmas) {
       this.isUpload = true;
-      setPlcParamsAction(parmas, "import").then((res) => {
+      setDeviceAction(parmas, "import").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.$emit("closeModal");
@@ -329,7 +260,30 @@ export default {
     },
     // 读取文件
     readFile(file) {
-      let tableHead = ["参数类型名称", "参数变量编码", "参数变量名称", "参数变量地址", "参数变量地址位", "参数数据类型", "数据类型长度", "数据类型精度", "参数标准值","参数单位", "参数最大值", "参数最小值", "是否必填", "PLC权限", "上位机权限","参数描述"];
+      const userRelations = {
+        生产工厂: "PlantCode",
+        生产车间: "WorkshopCode",
+        生产产线: "username",
+        产品型号: "ProCode",
+        配方编码: "FormulaCode",
+        配方名称: "FormulaName",
+        配方描述: "FormulaDesc",
+        Plc编码: "PlcCode",
+        参数类型编码: "ParamsTypeCode",
+        参数编码: "VarCode",
+        参数地址: "VarAddress",
+        参数地址为: "VarAddressBit",
+        数据类型: "VarDataType",
+        数据长度: "VarDataSize",
+        数据精度: "VarDataAccuuacy",
+        参数最大值: "VarMaxValue",
+        参数最小值: "VarMinValue",
+        实际参数值: "VarValue",
+        参数标准值: "VarStdValue",
+        必填项: "IsMust",
+        PLC权限: "PlcAuth",
+        上位机权限: "UpperComputerAuth",
+      };
       let tableHead2 = [];
       const reader = new FileReader();
       reader.readAsArrayBuffer(file);
@@ -342,21 +296,33 @@ export default {
         });
         this.tableData = results; //这里的tableData就是拿到的excel表格中的数据
         this.tableTitle = tableTitle;
-        console.log(this.tableData);
-        this.tableTitle.find((item) => {
-          if (tableHead.includes(item.title)) {
-            console.log(item.title);
-          }
-        });
-        let missing = tableHead.filter(((i) => (a) => a !== tableHead2[i] || !++i)(0));
-        if (missing.length > 0) {
-          missing.forEach((item) => {
-            this.errorList.push({
-              ErrorMsg: `导入的excel缺少"${item}"字段,请重新上传`,
-            });
-            return;
+        results.map((item) => {
+          const obj = {};
+          // 1. 取出这个对象所有的属性名： ['姓名'， ‘手机号']
+          // 2. 遍历这个数组，通过 中文名去 userRelations 找对应英文名， 保存值
+          const zhKeys = Object.keys(item);
+          zhKeys.forEach((zhKey) => {
+            const enKey = userRelations[zhKey];
+            // 如果是时间格式，就要做转换
+            obj[enKey] = item[zhKey];
           });
-        }
+          console.log(obj)
+          return obj;
+        });
+        // this.tableTitle.find((item) => {
+        //   if (tableHead.includes(item.title)) {
+        //     console.log(item.title);
+        //   }
+        // });
+        // let missing = tableHead.filter(((i) => (a) => a !== tableHead2[i] || !++i)(0));
+        // if (missing.length > 0) {
+        //   missing.forEach((item) => {
+        //     this.errorList.push({
+        //       ErrorMsg: `导入的excel缺少"${item}"字段,请重新上传`,
+        //     });
+        //     return;
+        //   });
+        // }
         this.isUpload = false;
       };
     },

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-03-07 10:18:42
+ * @LastEditTime: 2022-06-06 14:52:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/kanban.vue
@@ -112,9 +112,13 @@
         </template>
         <template slot="action" slot-scope="text, record">
           <div>
-            <a style="margin-right: 8px" :disabled="!hasPerm('print')" @click="handlePrint(record)">
+            <a style="margin-right: 8px" :disabled="!hasPerm('print')" @click="handlePrint(record, 'all')">
               <a-icon type="printer" />
               打印工单
+            </a>
+            <a style="margin-right: 8px" :disabled="!hasPerm('print')" @click="handlePrint(record, 'qr')">
+              <a-icon type="printer" />
+              打印二维码
             </a>
             <a style="margin-right: 8px" @click="details(record)">
               <a-icon type="profile" />
@@ -127,12 +131,13 @@
       <remarks v-if="isEdit" :editData="editData" @closeModal="closeEditModal"></remarks>
       <a-details v-if="isDrawer" :detailsId="drawerItem.WorkOrderNo" @closeModal="closeEditModal"></a-details>
       <print v-if="isPrint" :printData="printData" @closeModal="closeEditModal"></print>
+      <PrintQr v-if="isPrintQR" :printData="printData" @closeModal="closeEditModal" />
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getDailyPlanAction, getWorkshopList, getLineList, setDailyPlanAction,getPrintInfo} from "@/services/web.js";
+import { getDailyPlanAction, getWorkshopList, getLineList, setDailyPlanAction, getPrintInfo } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
@@ -143,14 +148,15 @@ import Remarks from "./remarks.vue";
 import ADetails from "./details.vue";
 import { columns } from "./data";
 import Print from "../components/print.vue";
+import PrintQr from "../components/printQr.vue";
 import { PublicVar } from "@/mixins/publicVar.js";
 export default {
-  components: { UserList, Remarks, ADetails, Print },
+  components: { UserList, Remarks, ADetails, Print, PrintQr },
   mixins: [PublicVar],
   data() {
     return {
       scrollY: "",
-     
+
       advanced: true,
       columns,
       dataSource: [],
@@ -170,7 +176,8 @@ export default {
       editData: [],
       isEdit: false,
       isPrint: false,
-      printData:[]
+      printData: [],
+      isPrintQR: false,
     };
   },
   updated() {
@@ -201,14 +208,19 @@ export default {
   },
   methods: {
     splitData,
-    handlePrint(item) {
+    handlePrint(item, type) {
       let parmas = {
         id: item.Id,
       };
       getPrintInfo(parmas, "getprintinfo").then((res) => {
         if (res.data.success) {
-          this.isPrint = true;
-          this.printData = res.data.data
+          if (type == "all") {
+            this.isPrint = true;
+          } else {
+            this.isPrintQR = true;
+          }
+
+          this.printData = res.data.data;
         }
       });
     },
@@ -220,7 +232,8 @@ export default {
       console.log("关闭");
       this.isEdit = false;
       this.isDrawer = false;
-      this.isPrint =false;
+      this.isPrint = false;
+      this.isPrintQR = false;
     },
     closeUserModal() {
       this.isUserList = false;

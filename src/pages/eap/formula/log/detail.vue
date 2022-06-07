@@ -27,18 +27,31 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="配方编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入配方编码" v-decorator="['formulacode']" />
+                <a-form-item label="设备" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['equimentid']" style="width: 200px" placeholder="请选择设备" @change="deviceChange">
+                    <a-select-option v-for="item in deviceList" :key="item.EquimentId" :value="item.EquimentId">{{ item.EquimentName }}</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="配方名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入配方名称" v-decorator="['formulaname']" />
+                <a-form-item label="PLC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['plcid']" style="width: 200px" placeholder="请选择PLC">
+                    <a-select-option v-for="item in plcList" :key="item.PlcId" :value="item.PlcId">{{ item.PlcName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="配方" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" v-decorator="['formulacode']" allowClear placeholder="请选择配方" disabled>
+                    <a-icon slot="addonAfter" type="plus" @click="isFormula = true" />
+                  </a-input>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入品号" v-decorator="['procode']" />
+                  <a-input style="width: 200px" v-decorator="['procode']" allowClear placeholder="请选择品号" disabled>
+                    <a-icon slot="addonAfter" type="plus" @click="isItemCode = true" />
+                  </a-input>
                 </a-form-item>
               </a-col>
             </a-row>
@@ -65,7 +78,7 @@
           :columns="columns"
           :data-source="dataSource"
           size="small"
-          :scroll="{ y: scrollY }"
+          :scroll="{ y: scrollY, x: 2500 }"
           :loading="loading"
           :pagination="pagination"
           :row-selection="{
@@ -73,7 +86,7 @@
             onChange: onSelectChange,
           }"
           @change="handleTableChange"
-          :rowKey="(dataSource) => dataSource.FormulaLogid"
+          :rowKey="(dataSource) => dataSource.FormlaDetailLogId"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -95,14 +108,12 @@
                   删除
                 </a>
               </a-popconfirm>
-              <a style="margin-right: 8px" @click="details(record)">
-                <a-icon type="edit" />
-                查看明细
-              </a>
             </div>
           </template>
         </a-table>
       </a-card>
+      <itemCode v-if="isItemCode" @closeModal="closeModal" :plantList="plantList" @selectItemCode="selectItemCode" />
+      <formulaList v-if="isFormula" @closeModal="closeModal" :plantList="plantList" @selectFormula="selectFormula" />
     </a-spin>
   </div>
 </template>
@@ -114,10 +125,13 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./list";
+import { columns } from "./data";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { formulaMixin } from "@/mixins/formulaMixin.js";
+import itemCode from "../components/itemCode.vue";
+import formulaList from "../components/formulaList.vue";
 export default {
+  components: { itemCode, formulaList },
   mixins: [PublicVar, formulaMixin],
   data() {
     return {
@@ -135,6 +149,10 @@ export default {
       workshopList: [],
       deviceBrand: [],
       isImport: false,
+      isItemCode: false,
+      isFormula: false,
+      formulaActive: [],
+      formulacode:""
     };
   },
   updated() {
@@ -144,7 +162,19 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
     });
-    this.getListAll();
+    if (this.$route.query.code && this.$route.query.code != "") {
+      this.$nextTick(() => {
+        let code = this.$route.query.code;
+        this.formulacode = code;
+        console.log(this.formulacode);
+        this.searchForm.setFieldsValue({
+          formulacode: this.$route.query.code,
+        });
+        this.search();
+      });
+    } else {
+      this.getListAll();
+    }
     this.getPlant();
   },
   methods: {
@@ -164,18 +194,35 @@ export default {
     importExcel() {
       this.isImport = true;
     },
-   details(record) {
-      this.$router.push({ path: "/formula/log/detail", query: { code: record.FormulaCode } });
+    edit(record) {
+      this.isForm = true;
+      this.isEdit = true;
+      this.editData = record;
     },
     closeModal() {
       this.isForm = false;
       this.isImport = false;
+      this.isItemCode = false;
+      this.isFormula = false;
     },
     getDeviceType() {
       getDeviceTypeAction("", "getlist").then((res) => {
         if (res.data.success) {
           this.deviceTypeList = res.data.data;
         }
+      });
+    },
+    selectFormula(result) {
+      this.formulacode = result.FormulaCode;
+      console.log(this.formulaActive);
+      this.searchForm.setFieldsValue({
+        formulacode: result.FormulaName,
+      });
+    },
+    selectItemCode(result) {
+      this.itemActive = result;
+      this.searchForm.setFieldsValue({
+        procode: result.ProCode,
       });
     },
     getParamData() {
@@ -199,7 +246,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getFormulaAction(parmas, "log/getall").then((res) => {
+      getFormulaAction(parmas, "log/getdetailall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -231,12 +278,12 @@ export default {
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             workshopid: values.workshopid,
-            lineid: values.lineid,
+            lineid: values.Lineid,
+            plcid: values.plcid,
+            formulacode: this.formulacode,
             procode: values.procode,
-            formulacode: values.formulacode,
-            formulaname: values.formulaname,
           };
-          getFormulaAction(parmas, "log/getall").then((res) => {
+          getFormulaAction(parmas, "log/getdetailall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -256,7 +303,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          setFormulaAction(self.selectedRowKeys, "log/delete").then((res) => {
+          setFormulaAction(self.selectedRowKeys, "log/detail/delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -270,8 +317,8 @@ export default {
     //单个删除
     onDelete(item) {
       let parmas = [];
-      parmas.push(item.FormulaLogId);
-      setFormulaAction(parmas, "log/delete").then((res) => {
+      parmas.push(item.FormlaDetailLogId);
+      setFormulaAction(parmas, "log/detail/delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
@@ -286,12 +333,12 @@ export default {
         pagesize: this.pagination.total,
         plantid: values.plantid,
         workshopid: values.workshopid,
-        lineid: values.lineid,
+        lineid: values.Lineid,
+        plcid: values.plcid,
+        formulacode: this.formulacode,
         procode: values.procode,
-        formulacode: values.formulacode,
-        formulaname: values.formulaname,
       };
-      getFormulaAction(parmas, "getall").then((res) => {
+      getFormulaAction(parmas, "log/getdetailall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {
@@ -314,7 +361,7 @@ export default {
           });
           var timestamp = Date.parse(new Date());
           try {
-            ExportExcel(header, dataSource, `配方日志_${timestamp}.xlsx`);
+            ExportExcel(header, dataSource, `配方日志明细_${timestamp}.xlsx`);
             this.$message.success("导出数据成功!");
           } catch (error) {
             // console.log(error);

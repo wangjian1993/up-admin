@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-23 10:52:59
- * @LastEditTime: 2022-05-23 10:59:32
+ * @LastEditTime: 2022-06-06 16:05:59
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/formula/log/list.js
@@ -68,11 +68,16 @@ export const columns = [
     dataIndex: "DatetimeCreated",
     scopedSlots: { customRender: "DatetimeCreated" },
     align: "center",
+    customRender: (text) => {
+      let str = text.split('T');
+      let time = str[1].split('.')
+      return str[0] + " " + time[0];
+    }
   },
   {
     title: "操作人",
-    dataIndex: "UserCreated",
-    scopedSlots: { customRender: "UserCreated" },
+    dataIndex: "[UserCreatedName:",
+    scopedSlots: { customRender: "[UserCreatedName:" },
     align: "center",
   },
   {

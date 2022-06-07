@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-05-18 08:56:36
+ * @LastEditTime: 2022-05-27 09:19:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -614,6 +614,7 @@ export default {
         let formula = {};
         excelData.forEach((item) => {
           console.log(item);
+          let ItemCode = item.ItemInfo.ItemCode
           let list = item.ItemInfo.ItemChildList;
           this.exportData = list;
           let info = item.ItemInfo;
@@ -684,9 +685,8 @@ export default {
             });
             _data.push(array);
           });
-          console.log(_data);
           //收缩数据
-          let tree = this.initTree(item.ItemInfo.ItemCode);
+          let tree = this.initTree(ItemCode);
           let treeData = this.calField(tree);
           treeData.map((item) => {
             let array1 = [];
@@ -699,10 +699,10 @@ export default {
           });
           formula.totalPrice = 500;
           formula.process = formula.process + 8;
-          console.log("位置=======",formula)
           let contentList = [];
           let merges2 = []; // 设置表格内容单元格合并
-          let aoa = [..._data, ...contentList]; // 导出的数据
+          let aoa = [..._data, ...contentList]; //展开
+          let aoa1 = [..._data1, ...contentList]; //收缩
           let merges = [...mergeTitle, ...merges2]; // 合并单元格
           // 样式修改
           const sheetCols = [
@@ -724,8 +724,16 @@ export default {
           ];
           let formStyle = {};
           excelArray.push({
-            Sheet: info.ItemCode, // 下方tab切换名称
+            Sheet: info.ItemCode + "展开显示", // 下方tab切换名称
             data: aoa, // 表格数据
+            merges, //  合并单元格
+            autoWidth: false, // 自适应宽度
+            formStyle: formStyle, // 特殊行或列样式
+            sheetCols,
+          });
+          excelArray.push({
+            Sheet: info.ItemCode + "收缩显示", // 下方tab切换名称
+            data: aoa1, // 表格数据
             merges, //  合并单元格
             autoWidth: false, // 自适应宽度
             formStyle: formStyle, // 特殊行或列样式
@@ -768,7 +776,7 @@ export default {
                 bookType: "xlsx", // 导出类型
                 filename: `BOM清单_${timestamp}`, // 导出标题名
                 formula: r.formula,
-                multi:true
+                multi: true,
               });
               this.$message.success("导出数据成功!");
               this.selectedRowKeys = [];
@@ -800,8 +808,8 @@ export default {
           if (Array.isArray(item[key])) {
             item[key] = item[key].join(",");
           }
-          if(key === 'DatetimeCreated'){
-            item[key] =  splitData(item[key])
+          if (key === "DatetimeCreated") {
+            item[key] = splitData(item[key]);
           }
         });
         return item;
@@ -816,7 +824,7 @@ export default {
       try {
         ExportExcel(header, dataSource, `报价列表_${timestamp}.xlsx`);
         this.$message.success("导出数据成功!");
-        this.selectedRowKeys = []
+        this.selectedRowKeys = [];
       } catch (error) {
         // console.log(error);
         this.$message.error("导出数据失败");
@@ -901,6 +909,7 @@ export default {
           });
           console.log(_data);
           //收缩数据
+          console.log("LastCode===",LastCode);
           let tree = this.initTree(LastCode);
           let treeData = this.calField(tree);
           treeData.map((item) => {

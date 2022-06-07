@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-05-19 16:00:50
+ * @LastEditTime: 2022-06-07 17:42:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/index.vue
@@ -29,8 +29,8 @@
         </a-form>
         <div class="operator">
           <!-- <a-button type="primary" @click="add" icon="plus">新增</a-button> -->
-          <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-          <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+          <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allApprove" style="margin-left: 8px">批量审批</a-button>
+          <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allApprove" style="margin-left: 8px">批量审批</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -41,13 +41,14 @@
           :columns="columns"
           :data-source="dataSource"
           size="small"
-          :scroll="{ y: scrollY, x: 3500 }"
+          :scroll="{ y: scrollY, x: 4000 }"
           :loading="loading"
           :pagination="pagination"
           :row-selection="{
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
+          :rowClassName="rowClassName" 
           @change="handleTableChange"
           :rowKey="(dataSource) => dataSource.RegisterId"
           bordered
@@ -91,8 +92,8 @@
           </template>
         </a-table>
       </a-card>
-      <useForm v-if="isForm" :isEdit="isEdit" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="getListAll" />
-      <schedule v-if="isSchedule" :registerid="registerid" @closeModal="closeModal" />
+      <useForm v-if="isForm" :isClone="isClone" :isEdit="isEdit" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="getListAll" />
+      <schedule v-if="isSchedule" :registerid="registerid" @closeModal="closeModal" @success="getEnterList"/>
     </a-spin>
   </div>
 </template>
@@ -106,6 +107,7 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { columns, innerColumns } from "./data";
 import useForm from "./form.vue";
 import schedule from "./schedule.vue";
+import { mapState } from "vuex";
 export default {
   mixins: [PublicVar],
   components: { useForm, schedule },
@@ -131,15 +133,35 @@ export default {
       departmentalList: [],
       isSchedule: false,
       registerid: "",
+      isClone: false,
     };
   },
   updated() {
     renderStripe();
   },
+  watch: {
+    RegisterId: function(value) {
+      if (value && value != "") {
+        this.getEditInfo(value);
+        this.isClone = true;
+      }
+    },
+  },
+  computed: {
+    ...mapState({
+      RegisterId: (start) => start.specimen.RegisterId,
+    }),
+  },
   created() {
+    console.log(this.$store.state);
     this.$nextTick(() => {
       this.scrollY = this.getTableScroll(70);
     });
+    console.log("params===",this.RegisterId);
+    if (this.RegisterId && this.RegisterId != "") {
+      this.getEditInfo(this.RegisterId);
+      this.isClone = true;
+    }
     this.getEnterList();
   },
   methods: {
@@ -194,6 +216,18 @@ export default {
       this.isImport = false;
       this.isSchedule = false;
     },
+    getEditInfo(id) {
+      let params = {
+        registerid: id,
+      };
+      getMaterialSampleApi(params, "getregistersingle").then((res) => {
+        if (res.data.success) {
+          this.isForm = true;
+          this.isEdit = true;
+          this.editData = res.data.data;
+        }
+      });
+    },
     getEnterList() {
       let params = {
         entertypecode: "COMPANY",
@@ -220,7 +254,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterId,
-        usercode:localStorage.getItem("account"),
+        usercode: localStorage.getItem("account"),
       };
       getDepartmentApi(parmas, "getregisterpersonallist").then((res) => {
         if (res.data.success) {
@@ -270,23 +304,23 @@ export default {
       });
     },
     //多选删除
-    allDel() {
+    allApprove() {
       let self = this;
       self.$confirm({
-        title: "确定要删除选中内容",
+        title: "确定要审批选中内容",
         onOk() {
           let params = {
-            FlowList: [],
+            RegisterList: [],
           };
           self.selectedRowKeys.forEach((item) => {
-            params.FlowList.push({
-              FlowId: item,
+            params.RegisterList.push({
+              RegisterId: item
             });
           });
-          setDepartmentApi(params, "deleteflow").then((res) => {
+          setDepartmentApi(params, "batchsubmit").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
-              self.$message.success("删除成功!");
+              self.$message.success("审批成功!");
               self.getListAll();
             }
           });
@@ -310,6 +344,9 @@ export default {
         }
       });
     },
+     rowClassName(record) {
+      return record.IsCurrentPointReturnStatus == "Y" ? "Rowactive" : "";
+    },
   },
 };
 </script>
@@ -320,5 +357,9 @@ export default {
 }
 .ant-form-item {
   margin-bottom: 5px;
+}
+/deep/.Rowactive > td {
+  // background-color: #ed0e0e !important;
+  color: #f60e0e !important;
 }
 </style>

@@ -1,17 +1,20 @@
 <template>
   <div>
-    <a-modal v-model="visible" title="查看进度" @cancel="close" :footer="null" centered width="70%">
+    <a-drawer :visible="visible" title="待办进度" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :headerStyle="{ padding: '10px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
       <div>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-          <a-descriptions size="small">
+          <a-descriptions size="small" :column="4">
+            <a-descriptions-item label="流程编码">
+              {{ dataSource.FlowCode }}
+            </a-descriptions-item>
             <a-descriptions-item label="公司名称">
-              {{dataSource.EnterpriseName}}
+              {{ dataSource.EnterpriseName }}
             </a-descriptions-item>
             <a-descriptions-item label="发起部门">
-              {{dataSource.DepartmentName}}
+              {{ dataSource.DepartmentName }}
             </a-descriptions-item>
             <a-descriptions-item label="条件">
-             {{dataSource.Condition}}
+              {{ dataSource.Condition }}
             </a-descriptions-item>
           </a-descriptions>
           <a-table :columns="columns" :data-source="dataSource.TablePointList" :size="size" :pagination="false" :rowKey="(dataSource) => dataSource.EquimentId" bordered>
@@ -20,10 +23,15 @@
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
               </div>
             </template>
+            <template slot="action" slot-scope="text, record">
+              <a style="margin-right: 8px" v-if="record.PointStatus == '已处理'" @click="rollback(record)">
+                指定回退
+              </a>
+            </template>
           </a-table>
         </a-card>
       </div>
-    </a-modal>
+    </a-drawer>
   </div>
 </template>
 <script>
@@ -45,6 +53,7 @@ const columns = [
     dataIndex: "Receiver",
     scopedSlots: { customRender: "Receiver" },
     align: "center",
+    width: "30%",
   },
   {
     title: "接收时间",
@@ -94,6 +103,11 @@ const columns = [
     scopedSlots: { customRender: "LastDatetimeModified" },
     align: "center",
   },
+  {
+    title: "操作",
+    scopedSlots: { customRender: "action" },
+    align: "center",
+  },
 ];
 import { getMaterialSampleApi } from "@/services/web.js";
 export default {
@@ -125,8 +139,19 @@ export default {
     closeModal() {
       this.isPreview = false;
     },
+    rollback(record) {
+      let params = {
+        pointid: record.PointId,
+      };
+      getMaterialSampleApi(params, "returnflowpoint").then((res) => {
+        if (res.data.success) {
+          this.$emit("closeModal");
+          // this.$emit("success");
+          this.$message.success("回退成功!");
+        }
+      });
+    },
     getListAll() {
-      this.loading = true;
       let params = {
         registerid: this.registerid,
       };

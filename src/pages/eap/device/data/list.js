@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-05-05 14:32:28
+ * @LastEditTime: 2022-05-27 13:41:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/data/list.js
@@ -61,6 +61,11 @@ export const columns = [
       dataIndex: "DatetimeCreated",
       scopedSlots: { customRender: "DatetimeCreated" },
       align: "center",
+      customRender: (text) => {
+        let str = text.split('T');
+        let time = str[1].split('.')
+        return str[0] +" "+ time[0];
+      }
     },
     {
       title: "创建人",

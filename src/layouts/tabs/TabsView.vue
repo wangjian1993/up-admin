@@ -1,39 +1,11 @@
 <template>
   <admin-layout>
-    <contextmenu
-      :itemList="menuItemList"
-      :visible.sync="menuVisible"
-      @select="onMenuSelect"
-    />
-    <tabs-head
-      v-if="multiPage"
-      :active="activePage"
-      :page-list="pageList"
-      @change="changePage"
-      @close="remove"
-      @refresh="refresh"
-      @menuselect="onMenuSelect"
-      @contextmenu="onContextmenu"
-    />
-    <div
-      :class="['tabs-view-content', layout, pageWidth]"
-      :style="`margin-top: ${multiPage ? 0 : 0}px`"
-    >
-      <page-toggle-transition
-        :disabled="animate.disabled"
-        :animate="animate.name"
-        :direction="animate.direction"
-      >
-        <a-keep-alive
-          :exclude-keys="excludeKeys"
-          v-if="multiPage && cachePage"
-          v-model="clearCaches"
-        >
-          <router-view
-            v-if="!refreshing"
-            ref="tabContent"
-            :key="$route.fullPath"
-          />
+    <contextmenu :itemList="menuItemList" :visible.sync="menuVisible" @select="onMenuSelect" />
+    <tabs-head v-if="multiPage" :active="activePage" :page-list="pageList" @change="changePage" @close="remove" @refresh="refresh" @menuselect="onMenuSelect" @contextmenu="onContextmenu" />
+    <div :class="['tabs-view-content', layout, pageWidth]" :style="`margin-top: ${multiPage ? 0 : 0}px`">
+      <page-toggle-transition :disabled="animate.disabled" :animate="animate.name" :direction="animate.direction">
+        <a-keep-alive :exclude-keys="excludeKeys" v-if="multiPage && cachePage" v-model="clearCaches">
+          <router-view v-if="!refreshing" ref="tabContent" :key="$route.fullPath" />
         </a-keep-alive>
         <router-view ref="tabContent" v-else-if="!refreshing" />
       </page-toggle-transition>
@@ -71,13 +43,7 @@ export default {
     };
   },
   computed: {
-    ...mapState("setting", [
-      "multiPage",
-      "cachePage",
-      "animate",
-      "layout",
-      "pageWidth",
-    ]),
+    ...mapState("setting", ["multiPage", "cachePage", "animate", "layout", "pageWidth"]),
     menuItemList() {
       return [
         { key: "1", icon: "vertical-right", text: this.$t("closeLeft") },
@@ -91,16 +57,15 @@ export default {
     },
   },
   created() {
-    console.log("页面缓存multiPage======",this.multiPage)
-     console.log("页面缓存cachePage======",this.cachePage)
+    console.log("页面缓存multiPage======", this.multiPage);
+    console.log("页面缓存cachePage======", this.cachePage);
     this.loadCacheConfig(this.$router?.options?.routes);
     this.loadCachedTabs();
     const route = this.$route;
-    if (
-      this.pageList.findIndex((item) => item.fullPath === route.fullPath) === -1
-    ) {
+    if (this.pageList.findIndex((item) => item.fullPath === route.fullPath) === -1) {
       this.pageList.push(this.createPage(route));
     }
+    console.log(" this.pageList===", this.pageList);
     this.activePage = route.fullPath;
     if (this.multiPage) {
       this.$nextTick(() => {
@@ -122,14 +87,11 @@ export default {
       this.loadCacheConfig(val);
     },
     $route: function(newRoute) {
+      console.log("newRoute==",newRoute)
       this.activePage = newRoute.fullPath;
       if (!this.multiPage) {
         this.pageList = [this.createPage(newRoute)];
-      } else if (
-        this.pageList.findIndex(
-          (item) => item.fullPath === newRoute.fullPath
-        ) === -1
-      ) {
+      } else if (this.pageList.findIndex((item) => item.fullPath === newRoute.fullPath) === -1) {
         this.pageList.push(this.createPage(newRoute));
       }
       if (this.multiPage) {
@@ -152,25 +114,28 @@ export default {
   },
   methods: {
     changePage(key) {
-      console.log("key-====",key);
+      console.log("key-====", key);
       this.activePage = key;
       this.$router.push(key);
     },
     remove(key, next) {
+      console.log("关闭====", key);
+      console.log("关闭====", next);
       if (this.pageList.length === 1) {
         return this.$message.warning(this.$t("warn"));
       }
       //清除缓存
       let index = this.pageList.findIndex((item) => item.fullPath === key);
-      this.clearCaches = this.pageList
-        .splice(index, 1)
-        .map((page) => page.cachedKey);
+      console.log("index====", index);
+      this.clearCaches = this.pageList.splice(index, 1).map((page) => page.cachedKey);
+      console.log(" this.clearCaches====", this.clearCaches);
       if (next) {
         this.$router.push(next);
       } else if (key === this.activePage) {
-        index =
-          index >= this.pageList.length ? this.pageList.length - 1 : index;
+        index = index >= this.pageList.length ? this.pageList.length - 1 : index;
+        console.log(" this.index====", index);
         this.activePage = this.pageList[index].fullPath;
+        console.log(" this.activePage====", this.activePage);
         this.$router.push(this.activePage);
       }
     },
@@ -212,13 +177,9 @@ export default {
     },
     closeOthers(pageKey) {
       // 清除缓存
-      const clearPages = this.pageList.filter(
-        (item) => item.fullPath !== pageKey && !item.unclose
-      );
+      const clearPages = this.pageList.filter((item) => item.fullPath !== pageKey && !item.unclose);
       this.clearCaches = clearPages.map((item) => item.cachedKey);
-      this.pageList = this.pageList.filter(
-        (item) => !clearPages.includes(item)
-      );
+      this.pageList = this.pageList.filter((item) => !clearPages.includes(item));
       // 判断跳转
       if (this.activePage != pageKey) {
         this.activePage = pageKey;
@@ -226,17 +187,11 @@ export default {
       }
     },
     closeLeft(pageKey) {
-      const index = this.pageList.findIndex(
-        (item) => item.fullPath === pageKey
-      );
+      const index = this.pageList.findIndex((item) => item.fullPath === pageKey);
       // 清除缓存
-      const clearPages = this.pageList.filter(
-        (item, i) => i < index && !item.unclose
-      );
+      const clearPages = this.pageList.filter((item, i) => i < index && !item.unclose);
       this.clearCaches = clearPages.map((item) => item.cachedKey);
-      this.pageList = this.pageList.filter(
-        (item) => !clearPages.includes(item)
-      );
+      this.pageList = this.pageList.filter((item) => !clearPages.includes(item));
       // 判断跳转
       if (!this.pageList.find((item) => item.fullPath === this.activePage)) {
         this.activePage = pageKey;
@@ -245,16 +200,10 @@ export default {
     },
     closeRight(pageKey) {
       // 清除缓存
-      const index = this.pageList.findIndex(
-        (item) => item.fullPath === pageKey
-      );
-      const clearPages = this.pageList.filter(
-        (item, i) => i > index && !item.unclose
-      );
+      const index = this.pageList.findIndex((item) => item.fullPath === pageKey);
+      const clearPages = this.pageList.filter((item, i) => i > index && !item.unclose);
       this.clearCaches = clearPages.map((item) => item.cachedKey);
-      this.pageList = this.pageList.filter(
-        (item) => !clearPages.includes(item)
-      );
+      this.pageList = this.pageList.filter((item) => !clearPages.includes(item));
       // 判断跳转
       if (!this.pageList.find((item) => item.fullPath === this.activePage)) {
         this.activePage = pageKey;
@@ -302,8 +251,7 @@ export default {
      */
     closePageListener(event) {
       const { closeRoute, nextRoute } = event.detail;
-      const closePath =
-        typeof closeRoute === "string" ? closeRoute : closeRoute.path;
+      const closePath = typeof closeRoute === "string" ? closeRoute : closeRoute.path;
       this.remove(closePath, nextRoute);
     },
     /**
@@ -319,10 +267,7 @@ export default {
      */
     unloadListener() {
       const tabs = this.pageList.map((item) => ({ ...item, _init_: false }));
-      sessionStorage.setItem(
-        process.env.VUE_APP_TBAS_KEY,
-        JSON.stringify(tabs)
-      );
+      sessionStorage.setItem(process.env.VUE_APP_TBAS_KEY, JSON.stringify(tabs));
     },
     createPage(route) {
       return {
@@ -330,8 +275,7 @@ export default {
         fullPath: route.fullPath,
         loading: false,
         title: route.meta && route.meta.page && route.meta.page.title,
-        unclose:
-          route.meta && route.meta.page && route.meta.page.closable === false,
+        unclose: route.meta && route.meta.page && route.meta.page.closable === false,
       };
     },
     /**
@@ -339,11 +283,8 @@ export default {
      * @param route 页面对应的路由
      */
     setCachedKey(route) {
-      const page = this.pageList.find(
-        (item) => item.fullPath === route.fullPath
-      );
-      page.unclose =
-        route.meta && route.meta.page && route.meta.page.closable === false;
+      const page = this.pageList.find((item) => item.fullPath === route.fullPath);
+      page.unclose = route.meta && route.meta.page && route.meta.page.closable === false;
       if (!page._init_) {
         const vnode = this.$refs.tabContent.$vnode;
         page.cachedKey = vnode.key + vnode.componentOptions.Ctor.cid;
@@ -354,9 +295,7 @@ export default {
      * 加载缓存的 tabs
      */
     loadCachedTabs() {
-      const cachedTabsStr = sessionStorage.getItem(
-        process.env.VUE_APP_TBAS_KEY
-      );
+      const cachedTabsStr = sessionStorage.getItem(process.env.VUE_APP_TBAS_KEY);
       if (cachedTabsStr) {
         try {
           const cachedTabs = JSON.parse(cachedTabsStr);

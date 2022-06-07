@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-14 16:31:12
+ * @LastEditTime: 2022-06-07 09:07:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/operationParams.vue
@@ -16,14 +16,14 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="参数类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['paramtype']" style="width: 200px" placeholder="请选择参数类型">
-                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_TYPE" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="数据类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['datatype']" style="width: 200px" placeholder="请选择数据类型">
-                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_DATA_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_DATA_TYPE" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -71,7 +71,7 @@
           :columns="columns"
           :data-source="dataSource"
           size="small"
-          :scroll="{ y: scrollY, x: 2600 }"
+          :scroll="{ y: scrollY, x: 2200 }"
           :loading="loading"
           :pagination="pagination"
           :row-selection="{
@@ -147,7 +147,7 @@ export default {
       workshopList: [],
       plcBrand: [],
       isImport: false,
-      paramsList: ["PLC_PARAMS_TYPE", "PLC_PARAMS_DATA_TYPE", "PLC_PARAMS_ADDRESS_BIT", "PLC_IS_MUST", "PLC_AUTH_RW", "PLC_UUPER_COMPUTER_AUTH"],
+      paramsList: ["PLC_PARAMS_TYPE", "PLC_PARAMS_DATA_TYPE", "PLC_PARAMS_ADDRESS_BIT", "PLC_IS_MUST", "PLC_AUTH_RW", "PLC_UUPER_COMPUTER_AUTH","DATA_UNIT"],
       paramsItem: [],
       isBatchAdd: false,
     };

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-14 13:56:07
+ * @LastEditTime: 2022-06-07 08:54:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/plcParams.vue
@@ -16,14 +16,14 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="参数类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['paramtype']" style="width: 200px" placeholder="请选择参数类型">
-                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_TYPE" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="数据类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['datatype']" style="width: 200px" placeholder="请选择数据类型">
-                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_DATA_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_DATA_TYPE" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -86,10 +86,10 @@
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="Status" slot-scope="record">
+          <template slot="VarIsMust" slot-scope="record">
             <div>
-              <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
-              <a-tag color="red" v-else>禁用</a-tag>
+              <a-tag color="green" v-if="record == 'Y'">必填</a-tag>
+              <a-tag color="red" v-else>非必填</a-tag>
             </div>
           </template>
           <template slot="action" slot-scope="text, record">
@@ -144,7 +144,7 @@ export default {
       workshopList: [],
       plcBrand: [],
       isImport: false,
-      paramsList: ["PLC_PARAMS_TYPE", "PLC_PARAMS_DATA_TYPE", "PLC_PARAMS_ADDRESS_BIT", "PLC_IS_MUST", "PLC_AUTH_RW", "PLC_UUPER_COMPUTER_AUTH"],
+      paramsList: ["PLC_PARAMS_TYPE", "PLC_PARAMS_DATA_TYPE", "PLC_PARAMS_ADDRESS_BIT", "PLC_IS_MUST", "PLC_AUTH_RW", "PLC_UUPER_COMPUTER_AUTH","DATA_UNIT"],
       paramsItem: [],
     };
   },
@@ -154,9 +154,9 @@ export default {
   created() {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
+      this.getParamsData();
     });
     this.getListAll();
-    this.getParamsData();
   },
   methods: {
     splitData,
@@ -170,7 +170,7 @@ export default {
           if (res.data.success) {
             this.paramsItem[item] = res.data.data;
           }
-          console.log(this.paramsItem.PLC_PARAMS_TYPE);
+          console.log(this.paramsItem);
         });
       });
     },
@@ -305,7 +305,9 @@ export default {
         }
       });
     },
-    downExcel() {},
+    downExcel() {
+      window.open("./Upload/EAP/import/PLC参数模板.xlsx", "_blank");
+    },
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();

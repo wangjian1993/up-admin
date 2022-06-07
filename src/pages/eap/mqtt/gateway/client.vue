@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 09:08:06
- * @LastEditTime: 2022-05-12 14:10:35
+ * @LastEditTime: 2022-06-07 09:34:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/mqtt/gateway/client.vue
@@ -341,7 +341,7 @@ export default {
     onDelete(item) {
       let parmas = [];
       parmas.push(item.Id, null);
-      setMqttClientAction(parmas, "start").then((res) => {
+      setMqttClientAction(parmas, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
@@ -355,7 +355,7 @@ export default {
           parmas.push({
             url: item.Path,
             httpmethod: "Post",
-            clientid: item.ClientCode,
+            clientid: item.EquipmentCode,
             serverip: item.ServerIP,
             serverport: item.ServerPort,
           });
@@ -378,7 +378,7 @@ export default {
           {
             url: record.Path,
             httpmethod: "Post",
-            clientid: record.ClientCode,
+            clientid: record.EquipmentCode,
             serverip: record.ServerIP,
             serverport: record.ServerPort,
           },
@@ -390,7 +390,7 @@ export default {
           {
             url: record.Path,
             httpmethod: "Post",
-            clientid: record.ClientCode,
+            clientid: record.EquipmentCode,
           },
           {}
         );

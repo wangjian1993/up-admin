@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:32:20
- * @LastEditTime: 2022-05-05 14:34:44
+ * @LastEditTime: 2022-06-06 13:42:23
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/components/listForm.vue
@@ -10,14 +10,14 @@
   <div>
     <a-modal :title="isEdit ? '编辑设备配置' : '添加设备配置'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
       <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-form-model-item ref="EquimentTypeId" has-feedback label="设备类型" prop="EquimentTypeId">
-          <a-select v-model="form.EquimentTypeId" :disabled="isEdit" placeholder="请选择设备类型">
-            <a-select-option v-for="item in deviceTypeList" :key="item.ID" :value="item.ID">{{ item.EQUIPMENT_TYPE_NAME }}</a-select-option>
+        <a-form-model-item ref="EquimentTypeCode" has-feedback label="设备类型" prop="EquimentTypeId">
+          <a-select v-model="form.EquimentTypeCode" :disabled="isEdit" placeholder="请选择设备类型">
+            <a-select-option v-for="item in deviceTypeList" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
           </a-select>
         </a-form-model-item>
         <a-form-model-item ref="Brand" has-feedback label="设备品牌" prop="Brand">
           <a-select v-model="form.Brand" :disabled="isEdit" placeholder="请选择设备品牌">
-            <a-select-option v-for="item in deviceBrand" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+            <a-select-option v-for="item in deviceBrand" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
           </a-select>
         </a-form-model-item>
         <a-form-model-item ref="EquimentCode" has-feedback label="设备编码" prop="EquimentCode">
@@ -54,7 +54,7 @@ export default {
       labelCol: { span: 7 },
       wrapperCol: { span: 14 },
       form: {
-        EquimentTypeId: "",
+        EquimentTypeCode: "",
         EquimentCode: "",
         EquimentName: "",
         EquimentDesc: "",
@@ -62,7 +62,7 @@ export default {
         Enable: "Y",
       },
       rules: {
-        EquimentTypeId: [
+        EquimentTypeCode: [
           {
             required: true,
             message: "请选择设备类型",
@@ -116,7 +116,7 @@ export default {
           if (this.isEdit) {
             let editForm = {
               EquimentId: this.form.EquimentId,
-              EquimentTypeId: this.form.EquimentTypeId,
+              EquimentTypeCode: this.form.EquimentTypeCode,
               Brand: this.form.Brand,
               EquimentName: this.form.EquimentName,
               EquimentDesc: this.form.EquimentDesc,

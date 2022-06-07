@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-05-19 17:00:19
+ * @LastEditTime: 2022-05-27 16:43:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/initiate/form.vue
@@ -167,10 +167,14 @@ export default {
           };
           setDepartmentApi(parmas, "addregister").then((res) => {
             if (res.data.success) {
-              this.$message.success("添加成功!");
+              this.$message.success("发起成功!");
               this.$emit("closeModal");
               this.$emit("success");
               this.visible = false;
+              this.$store.dispatch('specimen/registerIdActions',res.data.data.RegisterId)
+              this.$router.push({ path: "/specimen/backlog"})
+              // console.log("dispatch", this.$store.dispatch('specimen/registerIdActions'))
+              // this.$router.push({ name: '待办事宜', params: { id:res.data.data.RegisterId } })
             }
           });
         }

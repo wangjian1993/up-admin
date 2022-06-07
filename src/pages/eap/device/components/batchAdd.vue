@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal title="批量增加/编辑参数" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel" width="90%">
+    <a-modal title="批量增加/编辑参数" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel" width="95%">
       <div>
         <a-form layout="horizontal" :form="searchForm">
           <div>
@@ -43,7 +43,7 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="参数类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['paramstype']" style="width: 200px" placeholder="请选择参数类型" @change="paramsTypeChange">
-                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_TYPE" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -55,7 +55,7 @@
           </div>
         </a-form>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-          <a-table :columns="columns" :data-source="dataSource" :size="size" :pagination="false" :rowKey="(dataSource) => dataSource.VarId" bordered>
+          <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: 500 }" :pagination="false" :rowKey="(dataSource) => dataSource.VarValueId" bordered>
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -67,54 +67,67 @@
               </div>
             </template>
             <template slot="VarAddressBit" slot-scope="text, record">
-              <a-select v-model="record.VarAddressBit" placeholder="请选择参数地址位" size="small" style="width:100px">
-                <a-select-option v-for="item in paramsItem.PLC_PARAMS_ADDRESS_BIT" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+              <a-select v-model="record.VarAddressBit" placeholder="请选择参数地址位" size="small" style="width:50px">
+                <a-select-option v-for="item in paramsItem.PLC_PARAMS_ADDRESS_BIT" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
               </a-select>
             </template>
             <template slot="VarDataType" slot-scope="text, record">
               <a-select v-model="record.VarDataType" placeholder="请选择参数类型" size="small" style="width:100px">
-                <a-select-option v-for="item in paramsItem.PLC_PARAMS_DATA_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                <a-select-option v-for="item in paramsItem.PLC_PARAMS_DATA_TYPE" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
               </a-select>
             </template>
             <template slot="VarDataTypeLen" slot-scope="text, record">
               <div>
-                <a-input style="width:100px" v-model="record.VarDataTypeLen" size="small" />
+                <a-input style="width:60px" v-model="record.VarDataTypeLen" size="small" />
               </div>
             </template>
             <template slot="VarDataTypeAccuracy" slot-scope="text, record">
               <div>
-                <a-input style="width:100px" v-model="record.VarDataTypeAccuracy" size="small" />
+                <a-input style="width:60px" v-model="record.VarDataTypeAccuracy" size="small" />
               </div>
             </template>
             <template slot="VarMaxValue" slot-scope="text, record">
               <div>
-                <a-input style="width:100px" v-model="record.VarMaxValue" size="small" />
+                <a-input style="width:60px" v-model="record.VarMaxValue" size="small" />
               </div>
             </template>
             <template slot="VarMinValue" slot-scope="text, record">
               <div>
-                <a-input style="width:100px" v-model="record.VarMinValue" size="small" />
+                <a-input style="width:60px" v-model="record.VarMinValue" size="small" />
               </div>
             </template>
             <template slot="VarPlcAuth" slot-scope="text, record">
-              <a-select v-model="record.VarPlcAuth" placeholder="请选择PLC权限" size="small" style="width:100px">
+              <a-select v-model="record.VarPlcAuth" disabled placeholder="请选择PLC权限" size="small" style="width:80px">
                 <a-select-option v-for="item in paramsItem.PLC_AUTH_RW" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
               </a-select>
             </template>
             <template slot="VarStandardValue" slot-scope="text, record">
               <div>
-                <a-input style="width:100px" v-model="record.VarStandardValue" size="small" />
+                <a-input style="width:60px" v-model="record.VarStandardValue" size="small" />
               </div>
             </template>
+            <template slot="VarUnit" slot-scope="text, record">
+              <a-select v-model="record.VarUnit" placeholder="请选择参数单位" size="small" style="width:80px">
+                <a-select-option v-for="item in paramsItem.DATA_UNIT" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
+              </a-select>
+            </template>
             <template slot="UpperComputerAuth" slot-scope="text, record">
-              <a-select v-model="record.UpperComputerAuth" placeholder="请选择参数地址位" size="small" style="width:100px">
+              <a-select v-model="record.UpperComputerAuth" disabled placeholder="请选择上位机权限" size="small" style="width:80px">
                 <a-select-option v-for="item in paramsItem.PLC_UUPER_COMPUTER_AUTH" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
               </a-select>
             </template>
             <template slot="VarIsMust" slot-scope="text, record">
-              <a-select v-model="record.VarIsMust" placeholder="请选择参数地址位" size="small" style="width:100px">
+              <a-select v-model="record.VarIsMust" disabled placeholder="请选择是否必填" size="small" style="width:70px">
                 <a-select-option v-for="item in paramsItem.PLC_IS_MUST" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
               </a-select>
+            </template>
+            <template slot="action" slot-scope="text, record, index">
+              <div>
+                <a @click="deleteItem(index)">
+                  <a-icon type="delete" />
+                  删除
+                </a>
+              </div>
             </template>
           </a-table>
         </a-card>
@@ -135,89 +148,116 @@ const columns = [
     dataIndex: "PlcName",
     scopedSlots: { customRender: "PlcName" },
     align: "center",
+    width: 100,
   },
   {
     title: "PLC地址端口",
     dataIndex: "PlcPort",
     scopedSlots: { customRender: "PlcPort" },
     align: "center",
+    width: 100,
   },
   {
     title: "参数类型名",
-    dataIndex: "ParamsTypeName",
-    scopedSlots: { customRender: "ParamsTypeName" },
+    dataIndex: "ParamsTypeCode",
+    scopedSlots: { customRender: "ParamsTypeCode" },
     align: "center",
+    width: 100,
   },
   {
     title: "参数名称",
     dataIndex: "VarName",
     scopedSlots: { customRender: "VarName" },
     align: "center",
+    width: 100,
   },
   {
     title: "参数地址",
     dataIndex: "VarAddress",
     scopedSlots: { customRender: "VarAddress" },
     align: "center",
+    width: 100,
   },
   {
     title: "参数地址位",
     dataIndex: "VarAddressBit",
     scopedSlots: { customRender: "VarAddressBit" },
     align: "center",
+    width: 100,
   },
   {
     title: "数据类型",
     dataIndex: "VarDataType",
     scopedSlots: { customRender: "VarDataType" },
     align: "center",
+    width: 100,
   },
   {
     title: "数据长度",
     dataIndex: "VarDataTypeLen",
     scopedSlots: { customRender: "VarDataTypeLen" },
     align: "center",
+    width: 100,
   },
   {
     title: "数据精度",
     dataIndex: "VarDataTypeAccuracy",
     scopedSlots: { customRender: "VarDataTypeAccuracy" },
     align: "center",
+    width: 100,
   },
   {
     title: "参数最大值",
     dataIndex: "VarMaxValue",
     scopedSlots: { customRender: "VarMaxValue" },
     align: "center",
+    width: 100,
   },
   {
     title: "参数最小值",
     dataIndex: "VarMinValue",
     scopedSlots: { customRender: "VarMinValue" },
     align: "center",
+    width: 100,
   },
   {
     title: "参数标准值",
     dataIndex: "VarStandardValue",
     scopedSlots: { customRender: "VarStandardValue" },
     align: "center",
+    width: 100,
+  },
+   {
+    title: "参数单位",
+    dataIndex: "VarUnit",
+    scopedSlots: { customRender: "VarUnit" },
+    align: "center",
+    width: 100,
   },
   {
     title: "PLC权限",
     dataIndex: "VarPlcAuth",
     scopedSlots: { customRender: "VarPlcAuth" },
     align: "center",
+    width: 100,
   },
   {
     title: "上位机权限",
     dataIndex: "UpperComputerAuth",
     scopedSlots: { customRender: "UpperComputerAuth" },
     align: "center",
+    width: 100,
   },
   {
     title: "是否必填值",
     dataIndex: "VarIsMust",
     scopedSlots: { customRender: "VarIsMust" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "操作",
+    scopedSlots: { customRender: "action" },
     align: "center",
   },
 ];
@@ -343,7 +383,7 @@ export default {
       getOperationAction(params, "getlist").then((res) => {
         if (res.data.success) {
           console.log("result");
-            this.dataSource = res.data.data;
+          this.dataSource = res.data.data;
         }
       });
     },
@@ -383,6 +423,9 @@ export default {
         }
       });
     },
+    deleteItem(index){
+       this.dataSource.splice(index,1)
+    },
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
@@ -408,6 +451,7 @@ export default {
           VarIsMust: item.VarIsMust,
           VarPlcAuth: item.VarPlcAuth,
           UpperComputerAuth: item.UpperComputerAuth,
+          VarUnit:item.VarUnit,
           Enable: item.Enable,
         });
       });

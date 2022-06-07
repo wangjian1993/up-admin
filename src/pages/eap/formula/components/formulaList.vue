@@ -7,21 +7,21 @@
             <a-row>
               <a-col :md="6" :sm="24">
                 <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select :disabled="isEdit" v-decorator="['PlantId']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                  <a-select  v-decorator="['PlantId']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
                     <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select :disabled="isEdit" v-decorator="['WorkshopId']" style="width: 200px" placeholder="请选择生产车间" @change="workshopChange">
+                  <a-select v-decorator="['WorkshopId']" style="width: 200px" placeholder="请选择生产车间" @change="workshopChange">
                     <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select :disabled="isEdit" v-decorator="['LineId']" style="width: 200px" placeholder="请选择生产车间">
+                  <a-select  v-decorator="['LineId']" style="width: 200px" placeholder="请选择生产车间">
                     <a-select-option v-for="item in LineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
                   </a-select>
                 </a-form-item>

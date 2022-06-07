@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-05-19 15:53:54
+ * @LastEditTime: 2022-06-07 16:54:27
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/registration.vue
@@ -39,6 +39,31 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="发起日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['itemcode']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['itemname']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入规格" v-decorator="['itemspecification']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="供应商" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入供应商" v-decorator="['supplier']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="送货采购员" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入送货采购员" v-decorator="['purchaser']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -105,7 +130,7 @@
         </a-table>
       </a-card>
       <useForm v-if="isForm" :isEdit="isEdit" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="getListAll" />
-      <schedule v-if="isSchedule" :registerid="registerid" @closeModal="closeModal" />
+      <schedule v-if="isSchedule" :registerid="registerid" @closeModal="closeModal" @success="getEnterList" />
     </a-spin>
   </div>
 </template>
@@ -161,9 +186,6 @@ export default {
       this.scrollY = this.getTableScroll(70);
     });
     this.getEnterList();
-    var str = "AA";
-    str.charCodeAt();
-    console.log(str.charCodeAt());
   },
   methods: {
     splitData,
@@ -259,6 +281,11 @@ export default {
         tablestatus: "",
         createdatestart: "",
         createdateend: "",
+        itemcode: "",
+        itemname: "",
+        itemspecification: "",
+        supplier: "",
+        purchaser: "",
       };
       getDepartmentApi(parmas, "getregisterlist").then((res) => {
         if (res.data.success) {
@@ -299,6 +326,11 @@ export default {
             tablestatus: values.tablestatus || "",
             createdatestart: createdatestart || "",
             createdateend: createdateend || "",
+            itemcode: values.itemcode || "",
+            itemname: values.itemname || "",
+            itemspecification: values.itemspecification || "",
+            supplier: values.supplier || "",
+            purchaser: values.purchaser || "",
           };
           getDepartmentApi(parmas, "getregisterlist").then((res) => {
             if (res.data.success) {

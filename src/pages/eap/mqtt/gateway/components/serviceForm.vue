@@ -26,10 +26,37 @@
         <a-form-model-item ref="serverip" has-feedback label="服务IP" prop="serverip">
           <a-input v-model="form.serverip" allowClear placeholder="请输入服务IP" />
         </a-form-model-item>
-        <a-form-model-item ref="serverpost" has-feedback label="端口号" prop="serverpost">
+        <!-- <a-form-model-item ref="serverpost" has-feedback label="端口号" prop="serverpost">
           <a-input-number :min="0" v-model="form.serverpost" allowClear placeholder="请输入端口号" />
+        </a-form-model-item> -->
+        <a-row>
+          <a-col :span="24" v-for="(formItem, index) in dynamicValidateForm" :key="index" style="border-bottom:1px #e9e9e9 solid;margin: 5px 0;padding:5px 0">
+            <a-form-model-item label="服务类型">
+              <!-- <a-select :disabled="isEdit" v-model="formItem.protocol.value" has-feedback placeholder="请选择服务类型" style="width:91%" @change="(e) => protocolChange(e, index)">
+                <a-select-option v-for="item in protocolalList" :key="item.Id" :value="item.Id">{{ item.protocolName }}</a-select-option>
+              </a-select> -->
+              <a-select v-model="formItem.protocol" has-feedback placeholder="请选择服务类型" style="width:91%" @change="(e) => departmentChange(e, index)">
+                <a-select-option value="HTTP">
+                  HTTP
+                </a-select-option>
+                <a-select-option value="TCP">
+                  TCP
+                </a-select-option>
+                <a-select-option value="WS">
+                  WS
+                </a-select-option>
+              </a-select>
+              <a-icon v-if="dynamicValidateForm.length > 1" style="margin-left:10px" class="dynamic-delete-button" type="minus-circle-o" @click="removeService(formItem)" />
+            </a-form-model-item>
+            <a-form-model-item label="端口号"> <a-input-number :min="0" v-model="formItem.port" allowClear placeholder="请输入端口号" /> </a-form-model-item
+          ></a-col>
+        </a-row>
+        <a-form-model-item v-if="!isEdit">
+          <div style="text-align: center;">
+            <a-button :disabled="isEdit" type="dashed" style="width: 60%;margin: 0 auto;" @click="addService"> <a-icon type="plus" />添加服务</a-button>
+          </div>
         </a-form-model-item>
-        <a-form-model-item ref="servertype" label="服务类型" prop="servertype">
+        <!-- <a-form-model-item ref="servertype" label="服务类型" prop="servertype">
           <a-select v-model="form.servertype" placeholder="请选择协议类型">
             <a-select-option value="HTTP">
               HTTP
@@ -41,7 +68,7 @@
               WS
             </a-select-option>
           </a-select>
-        </a-form-model-item>
+        </a-form-model-item> -->
         <a-form-model-item ref="path" has-feedback label="执行路径" prop="path">
           <a-input v-model="form.path" allowClear placeholder="请输入执行路径" />
         </a-form-model-item>
@@ -74,8 +101,7 @@ export default {
         servercode: "",
         servername: "",
         serverip: "",
-        serverpost: "",
-        servertype: "",
+        ports: [],
         serverusername: "",
         serverpassword: "",
         path: "",
@@ -150,14 +176,27 @@ export default {
       workshopList: [],
       lineList: [],
       plantId: "",
+      dynamicValidateForm: [
+        {
+          protocol: "",
+          port: "",
+        },
+      ],
     };
   },
   created() {
     this.getPlant();
     if (this.isEdit) {
+      this.dynamicValidateForm = [];
       this.plantChange(this.editData.PlantId);
       this.plantId = this.editData.PlantId;
       this.workshopChange(this.editData.WorkCenterId);
+      this.editData.Ports.forEach((item) => {
+        this.dynamicValidateForm.push({
+          protocol: item.Protocol,
+          port: item.Port,
+        });
+      });
       this.form = {
         plantid: this.editData.PlantId,
         workshopid: this.editData.WorkCenterId,
@@ -175,9 +214,21 @@ export default {
     }
   },
   methods: {
+    addService() {
+      this.dynamicValidateForm.push({
+        protocol: "",
+        port: "",
+      });
+    },
+    removeService(item) {
+      let index = this.dynamicValidateForm.indexOf(item);
+      if (index !== -1) {
+        this.dynamicValidateForm.splice(index, 1);
+      }
+    },
     close() {
       this.$emit("closeModal");
-      this.initialize()
+      this.initialize();
     },
     getPlant() {
       let parmas1 = {
@@ -238,6 +289,7 @@ export default {
         if (valid) {
           if (this.isEdit) {
             this.form.isautostart = this.form.isautostart ? "Y" : "N";
+            this.form.ports = this.dynamicValidateForm;
             let editForm = {
               id: this.editData.Id,
               ...this.form,
@@ -254,6 +306,7 @@ export default {
             //添加
             console.log(this.form);
             this.form.isautostart = this.form.isautostart ? "Y" : "N";
+            this.form.ports = this.dynamicValidateForm;
             let parmas = [this.form, {}];
             setMqttServiceAction(parmas, "add").then((res) => {
               if (res.data.success) {

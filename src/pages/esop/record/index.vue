@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 16:01:38
- * @LastEditTime: 2022-05-23 09:21:47
+ * @LastEditTime: 2022-05-28 15:09:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/index.vue
@@ -85,7 +85,9 @@
       <div class="operator">
         <!-- <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" @click="add" style="margin-left: 8px">添加</a-button> -->
         <a-button v-if="hasPerm('publish')" icon="publish" type="primary" :disabled="!hasSelected" :loading="loading" @click="publishAll" style="margin-left: 8px">发布</a-button>
-        <a-button v-else icon="publish" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">发布</a-button>
+        <a-button v-else icon="publish" type="primary" disabled :loading="loading" style="margin-left: 8px">发布</a-button>
+        <a-button v-if="hasPerm('push')" icon="publish" type="primary" :disabled="!hasSelected" :loading="loading" @click="pushAll" style="margin-left: 8px">推送SOP</a-button>
+        <a-button v-else icon="push" type="primary" disabled :loading="loading" style="margin-left: 8px">推送SOP</a-button>
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
             {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -105,7 +107,7 @@
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
-           getCheckboxProps:getCheckboxProps
+          getCheckboxProps: getCheckboxProps,
         }"
         bordered
       >
@@ -126,9 +128,13 @@
               <a-icon type="profile" />
               查看
             </a>
-             <a v-if="record.Enable == 'Y'" style="margin-right: 8px" @click="publish(record)" :disabled="!hasPerm('publish')">
+            <a v-if="record.Enable == 'Y'" style="margin-right: 8px" @click="publish(record)" :disabled="!hasPerm('publish')">
               <a-icon type="send" />
               发布
+            </a>
+             <a v-if="record.Enable == 'Y'" style="margin-right: 8px" @click="publish(record)" :disabled="!hasPerm('push')">
+              <a-icon type="send" />
+              推送SOP
             </a>
           </div>
         </template>
@@ -234,7 +240,7 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getSopDocument ,publishInfo } from "@/services/esop.js";
+import { getSopDocument, publishInfo } from "@/services/esop.js";
 import device from "./device.vue";
 export default {
   components: { device },
@@ -433,7 +439,7 @@ export default {
       }
       this.getListAll();
     },
-     //多选删除
+    //多选删除
     publishAll() {
       let self = this;
       self.selectedRowKeys.push(null);

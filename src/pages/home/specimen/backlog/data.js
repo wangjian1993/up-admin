@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2022-05-16 11:20:31
+ * @LastEditTime: 2022-06-07 17:43:24
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/specimen/registration/data.js
+ * @FilePath: /up-admin/src/pages/home/specimen/backlog/data.js
  */
 export const columns = [
   {
@@ -12,6 +12,12 @@ export const columns = [
     scopedSlots: { customRender: "index" },
     align: "center",
     width: 50,
+  },
+  {
+    title: "流程编码",
+    dataIndex: "FlowCode",
+    scopedSlots: { customRender: "FlowCode" },
+    align: "center",
   },
   {
     title: "采购送样日期",
@@ -201,6 +207,7 @@ export const columns = [
     dataIndex: "Receiver",
     scopedSlots: { customRender: "Receiver" },
     align: "center",
+    width:300
   },
   {
     title: "状态",

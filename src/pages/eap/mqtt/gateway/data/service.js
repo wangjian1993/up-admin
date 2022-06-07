@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-29 17:35:33
- * @LastEditTime: 2022-05-06 14:28:06
+ * @LastEditTime: 2022-06-01 17:54:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/mqtt/gateway/data/service.js
@@ -51,15 +51,9 @@ export const columns = [
       align: "center",
     },
     {
-      title: "端口号",
-      dataIndex: "ServerPort",
-      scopedSlots: { customRender: "ServerPort" },
-      align: "center",
-    },
-    {
-      title: "协议类型",
-      dataIndex: "ServerType",
-      scopedSlots: { customRender: "ServerType" },
+      title: "服务类型/端口",
+      dataIndex: "Ports",
+      scopedSlots: { customRender: "Ports" },
       align: "center",
     },
     {

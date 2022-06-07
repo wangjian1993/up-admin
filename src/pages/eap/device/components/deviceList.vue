@@ -8,14 +8,14 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="设备类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['typeid']" style="width: 200px" placeholder="请选择设备类型">
-                    <a-select-option v-for="item in deviceTypeList" :key="item.ID" :value="item.ID">{{ item.EQUIPMENT_TYPE_NAME }}</a-select-option>
+                    <a-select-option v-for="item in deviceTypeList" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="设备品牌" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['brand']" style="width: 200px" placeholder="请选择设备品牌">
-                    <a-select-option v-for="item in deviceBrand" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                    <a-select-option v-for="item in deviceBrand" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -94,7 +94,7 @@ const columns = [
     align: "center",
   },
 ];
-import { getDeviceAction, getDeviceTypeAction } from "@/services/eap.js";
+import { getDeviceAction } from "@/services/eap.js";
 import { getParamData } from "@/services/admin.js";
 export default {
   props: ["deviceInfo"],
@@ -132,7 +132,10 @@ export default {
       this.isPreview = false;
     },
     getDeviceType() {
-      getDeviceTypeAction("", "getlist").then((res) => {
+      let parmas = {
+        groupcode: "EAP_EQUIMENT_TYPE",
+      };
+      getParamData(parmas).then((res) => {
         if (res.data.success) {
           this.deviceTypeList = res.data.data;
         }

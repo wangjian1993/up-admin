@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:32:20
- * @LastEditTime: 2022-05-17 16:31:35
+ * @LastEditTime: 2022-06-07 09:05:05
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/components/plcParamsForm.vue
@@ -32,7 +32,7 @@
           </a-col>
           <a-col :span="12">
             <a-form-model-item ref="VarDataType" has-feedback label="参数数据类型" prop="VarDataType">
-              <a-select v-model="form.VarDataType" :disabled="isEdit" placeholder="请选择参数数据类型">
+              <a-select v-model="form.VarDataType" placeholder="请选择参数数据类型">
                 <a-select-option v-for="item in paramsItem.PLC_PARAMS_DATA_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
               </a-select>
             </a-form-model-item>
@@ -46,7 +46,7 @@
           </a-col>
           <a-col :span="12">
             <a-form-model-item ref="VarAddressBit" has-feedback label="参数地址位" prop="VarAddressBit">
-              <a-select v-model="form.VarAddressBit" :disabled="isEdit" placeholder="请选择参数地址位">
+              <a-select v-model="form.VarAddressBit" placeholder="请选择参数地址位">
                 <a-select-option v-for="item in paramsItem.PLC_PARAMS_ADDRESS_BIT" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
               </a-select>
             </a-form-model-item>
@@ -84,7 +84,7 @@
           </a-col>
           <a-col :span="12">
             <a-form-model-item ref="VarIsMust" has-feedback label="是否必填" prop="VarIsMust">
-              <a-select v-model="form.VarIsMust" :disabled="isEdit" placeholder="请选择是否必填">
+              <a-select v-model="form.VarIsMust" placeholder="请选择是否必填">
                 <a-select-option v-for="item in paramsItem.PLC_IS_MUST" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
               </a-select>
             </a-form-model-item>
@@ -93,14 +93,14 @@
         <a-row>
           <a-col :span="12">
             <a-form-model-item ref="VarPlcAuth" has-feedback label="PLC权限" prop="VarPlcAuth">
-              <a-select v-model="form.VarPlcAuth" :disabled="isEdit" placeholder="请选择PLC权限">
+              <a-select v-model="form.VarPlcAuth" placeholder="请选择PLC权限">
                 <a-select-option v-for="item in paramsItem.PLC_AUTH_RW" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
               </a-select>
             </a-form-model-item>
           </a-col>
           <a-col :span="12">
             <a-form-model-item ref="UpperComputerAuth" has-feedback label="上位机权限" prop="UpperComputerAuth">
-              <a-select v-model="form.UpperComputerAuth" :disabled="isEdit" placeholder="请选择上位机权限">
+              <a-select v-model="form.UpperComputerAuth" placeholder="请选择上位机权限">
                 <a-select-option v-for="item in paramsItem.PLC_UUPER_COMPUTER_AUTH" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
               </a-select>
             </a-form-model-item>
@@ -110,6 +110,13 @@
           <a-col :span="12">
             <a-form-model-item ref="VarDesc" label="参数描述">
               <a-textarea v-model="form.VarDesc" placeholder="请输入参数描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
+            </a-form-model-item>
+          </a-col>
+           <a-col :span="12">
+            <a-form-model-item ref="VarUnit" has-feedback label="参数单位" prop="VarUnit">
+              <a-select v-model="form.VarUnit" placeholder="请选择上位机权限">
+                <a-select-option v-for="item in paramsItem.DATA_UNIT" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
+              </a-select>
             </a-form-model-item>
           </a-col>
           <a-col :span="12">
@@ -155,6 +162,7 @@ export default {
         VarIsMust: "",
         VarPlcAuth: "",
         UpperComputerAuth: "",
+        VarUnit:"",
         Enable: "Y",
       },
       rules: {
@@ -274,6 +282,8 @@ export default {
               VarName: this.form.VarName,
               VarPlcAuth: this.form.VarPlcAuth,
               VarStandardValue: this.form.VarStandardValue,
+              VarDesc:this.form.VarDesc,
+              VarUnit: this.form.VarUnit,
             };
             setPlcParamsAction(editForm, "update").then((res) => {
               if (res.data.success) {

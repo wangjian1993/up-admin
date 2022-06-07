@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-14 13:55:55
+ * @LastEditTime: 2022-05-26 11:51:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/list.vue
@@ -16,7 +16,7 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="设备类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['typeid']" style="width: 200px" placeholder="请选择设备类型">
-                    <a-select-option v-for="item in deviceTypeList" :key="item.ID" :value="item.ID">{{ item.EQUIPMENT_TYPE_NAME }}</a-select-option>
+                    <a-select-option v-for="item in deviceTypeList" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -109,13 +109,13 @@
         </a-table>
       </a-card>
       <listForm v-if="isForm" :isEdit="isEdit" :editData="editData" :deviceBrand="deviceBrand" :deviceTypeList="deviceTypeList" @closeModal="closeModal" @success="getListAll" />
-     <ImportExcel v-if="isImport" @closeModal="closeModal" @success="getListAll"/>
+      <ImportExcel v-if="isImport" @closeModal="closeModal" @success="getListAll" />
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getDeviceAction, getDeviceTypeAction, setDeviceAction } from "@/services/eap.js";
+import { getDeviceAction, setDeviceAction } from "@/services/eap.js";
 import { getParamData } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
@@ -127,7 +127,7 @@ import ExportExcel from "@/utils/ExportExcelJS";
 import ImportExcel from "./components/ImportExcel.vue";
 export default {
   mixins: [PublicVar],
-  components: { listForm,ImportExcel },
+  components: { listForm, ImportExcel },
   data() {
     return {
       scrollY: "",
@@ -143,7 +143,7 @@ export default {
       selectedRowKeys: [],
       workshopList: [],
       deviceBrand: [],
-      isImport:false
+      isImport: false,
     };
   },
   updated() {
@@ -171,8 +171,8 @@ export default {
       this.isForm = true;
     },
     //导入
-    importExcel(){
-      this.isImport =true
+    importExcel() {
+      this.isImport = true;
     },
     edit(record) {
       this.isForm = true;
@@ -181,10 +181,13 @@ export default {
     },
     closeModal() {
       this.isForm = false;
-      this.isImport =false
+      this.isImport = false;
     },
     getDeviceType() {
-      getDeviceTypeAction("", "getlist").then((res) => {
+      let parmas = {
+        groupcode: "EAP_EQUIMENT_TYPE",
+      };
+      getParamData(parmas).then((res) => {
         if (res.data.success) {
           this.deviceTypeList = res.data.data;
         }
@@ -289,8 +292,8 @@ export default {
         }
       });
     },
-    downExcel(){
-
+    downExcel() {
+      window.open("./Upload/EAP/import/设备配置模板.xlsx", "_blank");
     },
     exportExcel() {
       this.isExportLod = true;
@@ -304,7 +307,7 @@ export default {
         equimentcode: values.equimentcode,
         equimentname: values.equimentname,
       };
-      getDeviceAction(parmas,"getall").then((res) => {
+      getDeviceAction(parmas, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

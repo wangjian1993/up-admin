@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-05-09 14:52:22
+ * @LastEditTime: 2022-05-27 13:41:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/data/plc.js
@@ -67,8 +67,8 @@ export const columns = [
     },
     {
       title: "PLC状态",
-      dataIndex: "Status",
-      scopedSlots: { customRender: "Status" },
+      dataIndex: "StatusName",
+      scopedSlots: { customRender: "StatusName" },
       align: "center",
     },
     {
@@ -76,6 +76,11 @@ export const columns = [
       dataIndex: "DatetimeCreated",
       scopedSlots: { customRender: "DatetimeCreated" },
       align: "center",
+      customRender: (text) => {
+        let str = text.split('T');
+        let time = str[1].split('.')
+        return str[0] +" "+ time[0];
+      }
     },
     {
       title: "创建人",

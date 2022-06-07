@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-24 14:42:09
+ * @LastEditTime: 2022-06-01 09:23:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/formula/detail/index.vue
@@ -70,7 +70,7 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button type="primary" @click="add" :disabled="!hasPerm('add')" icon="plus">新增</a-button>
+          <!-- <a-button type="primary" @click="add" :disabled="!hasPerm('add')" icon="plus">新增</a-button> -->
           <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <!-- <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="importExcel" icon="import">导入</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('import')" type="primary" @click="downExcel" icon="import">导入模板下载</a-button>
@@ -86,7 +86,7 @@
           :columns="columns"
           :data-source="dataSource"
           size="small"
-          :scroll="{ y: scrollY }"
+          :scroll="{ y: scrollY, x: 2500 }"
           :loading="loading"
           :pagination="pagination"
           :row-selection="{
@@ -94,7 +94,7 @@
             onChange: onSelectChange,
           }"
           @change="handleTableChange"
-          :rowKey="(dataSource) => dataSource.FormulaId"
+          :rowKey="(dataSource) => dataSource.FormlaDetailId"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -171,6 +171,7 @@ export default {
       isFormula: false,
       itemActive: [],
       formulaActive: [],
+      formulacode: "",
     };
   },
   updated() {
@@ -180,14 +181,27 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
     });
-    this.getListAll();
+    if (this.$route.query.code && this.$route.query.code != "") {
+      this.$nextTick(() => {
+        let code = this.$route.query.code;
+        this.formulacode = code;
+        console.log(this.formulacode);
+        this.searchForm.setFieldsValue({
+          formulacode: this.$route.query.code,
+        });
+        this.search();
+      });
+    } else {
+      this.getListAll();
+    }
+
     // this.getParamsData();
     this.getPlant();
   },
   methods: {
     splitData,
-    closeModal(){
-      this.isItemCode =false;
+    closeModal() {
+      this.isItemCode = false;
       this.isFormula = false;
     },
     //重置搜索
@@ -205,14 +219,14 @@ export default {
       });
     },
     selectFormula(result) {
-      this.formulaActive = result;
+      this.formulacode = result.FormulaCode;
       this.searchForm.setFieldsValue({
         formulacode: result.FormulaName,
       });
     },
     selectItemCode(result) {
       this.itemActive = result;
-       this.searchForm.setFieldsValue({
+      this.searchForm.setFieldsValue({
         procode: result.ProCode,
       });
     },
@@ -275,6 +289,7 @@ export default {
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          console.log("搜索=====", this.formulacode);
           this.loading = true;
           let parmas = {
             pageindex: this.pagination.current,
@@ -283,10 +298,10 @@ export default {
             workshopid: values.workshopid,
             lineid: values.Lineid,
             plcid: values.plcid,
-            formulacode: this.formulaActive.formulacode,
+            formulacode: this.formulacode,
             procode: values.procode,
           };
-          getFormulaAction(parmas, "getall").then((res) => {
+          getFormulaAction(parmas, "getdetailall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -336,15 +351,12 @@ export default {
         pagesize: this.pagination.total,
         plantid: values.plantid,
         workshopid: values.workshopid,
-        lineid: values.lineid,
-        equimentid: values.equimentid,
+        lineid: values.Lineid,
         plcid: values.plcid,
-        paramtype: values.paramtype,
-        paramcode: values.paramcode,
-        paramname: values.paramname,
-        varvalueid: values.varvalueid,
+        formulacode: this.formulacode,
+        procode: values.procode,
       };
-      getFormulaAction(parmas, "getall").then((res) => {
+      getFormulaAction(parmas, "getdetailall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {
@@ -367,7 +379,7 @@ export default {
           });
           var timestamp = Date.parse(new Date());
           try {
-            ExportExcel(header, dataSource, `plc运行参数日志_${timestamp}.xlsx`);
+            ExportExcel(header, dataSource, `配方明细_${timestamp}.xlsx`);
             this.$message.success("导出数据成功!");
           } catch (error) {
             // console.log(error);

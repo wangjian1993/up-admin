@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-05-18 10:41:34
+ * @LastEditTime: 2022-06-07 17:17:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/initiate/index.vue
@@ -32,6 +32,7 @@
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="search">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+            <a-button style="margin-left: 8px" type="primary" @click="searchCreator">创建人查询</a-button>
           </span>
         </a-form>
         <div class="operator">
@@ -97,6 +98,7 @@
         </a-table>
       </a-card>
       <useForm v-if="isForm" :isEdit="isEdit" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="getListAll" />
+      <creator v-if="isCreator" @closeModal="closeModal" />
     </a-spin>
   </div>
 </template>
@@ -109,9 +111,10 @@ import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { columns, innerColumns } from "./data";
 import useForm from "./form.vue";
+import creator from "./creator.vue";
 export default {
   mixins: [PublicVar],
-  components: { useForm },
+  components: { useForm, creator },
   data() {
     return {
       scrollY: "",
@@ -132,6 +135,7 @@ export default {
       expandedRowKeys: [],
       defaultExpandedRowKeys: [],
       departmentalList: [],
+      isCreator: false,
     };
   },
   updated() {
@@ -175,6 +179,9 @@ export default {
       console.log("height", height);
       return height;
     },
+    searchCreator() {
+      this.isCreator = true;
+    },
     //重置搜索
     reset() {
       this.isSearch = 0;
@@ -186,19 +193,35 @@ export default {
       this.isEdit = false;
       this.editData = [];
     },
-     expandedRowsChange(expandedRows) {
+    expandedRowsChange(expandedRows) {
       // this.expandedRowKeys = [];
       this.expandedRowKeys = expandedRows;
     },
     edit(record) {
-      this.isForm = true;
-      this.isEdit = true;
-      this.editData = record;
-      this.expandedRowKeys =[]
+      // this.isForm = true;
+      // this.isEdit = true;
+      // this.editData = record;
+      this.expandedRowKeys = [];
+      // console.log(record);
+      // this.$store.dispatch("specimen/registerIdActions", record.RegisterId);
+      // this.$router.push({ path: "/specimen/backlog" });
+      let parmas = {
+        FlowId: record.FlowId, //流程ID
+        Remark: record.Remark, //发起人备注
+      };
+      setDepartmentApi(parmas, "addregister").then((res) => {
+        if (res.data.success) {
+          this.$message.success("发起成功!");
+          this.$store.dispatch("specimen/registerIdActions", res.data.data.RegisterId);
+          this.$router.push({ path: "/specimen/backlog" });
+          // console.log("dispatch", this.$store.dispatch('specimen/registerIdActions'))
+          // this.$router.push({ name: '待办事宜', params: { id:res.data.data.RegisterId } })
+        }
+      });
     },
     closeModal() {
       this.isForm = false;
-      this.isImport = false;
+      this.isCreator = false;
     },
     getEnterList() {
       let params = {
@@ -211,7 +234,7 @@ export default {
           this.searchForm.setFieldsValue({
             enterpriseid: this.enterId,
           });
-          this.enterChange(this.enterId)
+          this.enterChange(this.enterId);
           this.getListAll();
         }
       });
@@ -237,7 +260,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterId,
-        departmentid: ""
+        departmentid: "",
       };
       getDepartmentApi(parmas, "getflowlistenabley").then((res) => {
         if (res.data.success) {
@@ -270,7 +293,7 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
-            departmentid: values.departmentid
+            departmentid: values.departmentid,
           };
           getDepartmentApi(parmas, "getflowlistenabley").then((res) => {
             if (res.data.success) {

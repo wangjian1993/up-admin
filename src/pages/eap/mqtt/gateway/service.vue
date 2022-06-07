@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 09:07:46
- * @LastEditTime: 2022-05-12 14:10:40
+ * @LastEditTime: 2022-06-07 09:42:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/mqtt/gateway/service.vue
@@ -95,6 +95,9 @@
               <a-tag color="green" v-if="text == '已启动'">{{ text }}</a-tag>
               <a-tag color="red" v-else>{{ text }}</a-tag>
             </div>
+          </template>
+          <template slot="Ports" slot-scope="text">
+            <div v-for="(item, index) in text" :key="index">{{ item.Protocol + "/" + item.Port }}</div>
           </template>
           <template slot="action" slot-scope="text, record">
             <div>
@@ -311,7 +314,7 @@ export default {
     onDelete(item) {
       let parmas = [];
       parmas.push(item.Id, null);
-      setMqttServiceAction(parmas, "start").then((res) => {
+      setMqttServiceAction(parmas, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
@@ -322,12 +325,17 @@ export default {
       let parmas = [];
       this.dataSource.forEach((item) => {
         if (this.selectedRowKeys.includes(item.Id)) {
+          let ports = [];
+          item.Ports.forEach((items) => {
+            ports.push({
+              protocol: items.Protocol,
+              port: items.Port,
+            });
+          });
           parmas.push({
             path: item.Path,
             processname: item.ServerName,
-            httpport: item.ServerType == "HTTP" ? item.ServerPort : 0,
-            tcpport: item.ServerType == "TCP" ? item.ServerPort : 0,
-            wsport: item.ServerType == "WS" ? item.ServerPort : 0,
+            ports
           });
         }
       });
@@ -344,13 +352,18 @@ export default {
       let urlType = "";
       if (record.State == "未启动") {
         urlType = "start";
+        let ports = [];
+        record.Ports.forEach((item) => {
+          ports.push({
+            protocol: item.Protocol,
+            port: item.Port,
+          });
+        });
         parmas.push(
           {
             path: record.Path,
             processname: record.ServerName,
-            httpport: record.ServerType == "HTTP" ? record.ServerPort : 0,
-            tcpport: record.ServerType == "TCP" ? record.ServerPort : 0,
-            wsport: record.ServerType == "WS" ? record.ServerPort : 0,
+            ports,
           },
           {}
         );

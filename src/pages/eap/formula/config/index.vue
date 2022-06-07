@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-25 10:28:17
+ * @LastEditTime: 2022-06-07 09:28:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/formula/config/index.vue
@@ -127,6 +127,7 @@
           </template>
         </a-table>
         <useForm v-if="isForm" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="getListAll" :paramsItem="paramsItem" />
+        <ImportExcel v-if="isImport" @closeModal="closeModal" @success="getListAll" />
       </a-card>
     </a-spin>
   </div>
@@ -143,9 +144,10 @@ import { formulaMixin } from "@/mixins/formulaMixin.js";
 import { columns } from "./data";
 import ExportExcel from "@/utils/ExportExcelJS";
 import useForm from "./useForm.vue";
+import ImportExcel from "./ImportExcel.vue";
 export default {
   mixins: [PublicVar, formulaMixin],
-  components: { useForm },
+  components: { useForm, ImportExcel },
   data() {
     return {
       scrollY: "",
@@ -160,7 +162,7 @@ export default {
       isForm: false,
       selectedRowKeys: [],
       isImport: false,
-      paramsList: ["PLC_PARAMS_TYPE", "PLC_PARAMS_DATA_TYPE", "PLC_PARAMS_ADDRESS_BIT", "PLC_IS_MUST", "PLC_AUTH_RW", "PLC_UUPER_COMPUTER_AUTH"],
+      paramsList: ["PLC_PARAMS_TYPE", "PLC_PARAMS_DATA_TYPE", "PLC_PARAMS_ADDRESS_BIT", "PLC_IS_MUST", "PLC_AUTH_RW", "PLC_UUPER_COMPUTER_AUTH","DATA_UNIT"],
       paramsItem: [],
       isBatchAdd: false,
     };
@@ -212,7 +214,7 @@ export default {
       this.isImport = true;
     },
     details(record) {
-      this.$router.push({ path: "/formula/detail", query: { id: record.FormulaId } });
+      this.$router.push({ path: "/formula/detail", query: { code: record.FormulaCode } });
     },
     edit(record) {
       this.isForm = true;
@@ -342,6 +344,7 @@ export default {
         onCancel() {},
       });
     },
+    downExcel() {},
     //单个删除
     onDelete(item) {
       let parmas = [];
@@ -362,12 +365,9 @@ export default {
         plantid: values.plantid,
         workshopid: values.workshopid,
         lineid: values.lineid,
-        equimentid: values.equimentid,
-        plcid: values.plcid,
-        paramtype: values.paramtype,
-        paramcode: values.paramcode,
-        paramname: values.paramname,
-        varvalueid: values.varvalueid,
+        formulacode: values.formulacode,
+        formulaname: values.formulaname,
+        procode: values.procode,
       };
       getFormulaAction(parmas, "getall").then((res) => {
         if (res.data.success) {
@@ -392,7 +392,7 @@ export default {
           });
           var timestamp = Date.parse(new Date());
           try {
-            ExportExcel(header, dataSource, `plc运行参数日志_${timestamp}.xlsx`);
+            ExportExcel(header, dataSource, `配方配置_${timestamp}.xlsx`);
             this.$message.success("导出数据成功!");
           } catch (error) {
             // console.log(error);

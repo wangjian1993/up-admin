@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-14 08:51:07
- * @LastEditTime: 2022-04-22 10:20:05
+ * @LastEditTime: 2022-05-31 09:10:15
  * @LastEditors: max
  * @Description: 后台接口
  * @FilePath: /up-admin/src/services/admin.js
@@ -21,7 +21,7 @@ import {
 export async function getInstitutionList(params) {
 	return request(`${UP_ADMIN}/entertype/getlist`, METHOD.GET, params);
 }
-export async function enterTypeAction(params,action) {
+export async function enterTypeAction(params, action) {
 	return request(`${UP_ADMIN}/entertype/${action}`, METHOD.POST, params);
 }
 
@@ -33,7 +33,7 @@ export async function enterTypeAction(params,action) {
 export async function getEnterList(params) {
 	return request(`${UP_ADMIN}/enter/getlist`, METHOD.GET, params);
 }
-export async function enterAction(params,action) {
+export async function enterAction(params, action) {
 	return request(`${UP_ADMIN}/enter/${action}`, METHOD.POST, params);
 }
 // 组织列表
@@ -251,7 +251,7 @@ export async function getEnterOrgTree(params) {
  * @param {*} action
  * @return {*}
  */
-export async function getLogAction(params,action) {
+export async function getLogAction(params, action) {
 	return request(`${UP_ADMIN}/log/${action}`, METHOD.GET, params);
 }
 
@@ -265,9 +265,16 @@ export async function getLogAction(params,action) {
 export async function getApiList(params) {
 	return request(`${UP_ADMIN}/apiinfo/getall`, METHOD.GET, params);
 }
-export async function getApiAction(params,action) {
+export async function getApiAction(params, action) {
 	return request(`${UP_ADMIN}/apiinfo/${action}`, METHOD.POST, params);
 }
 export async function getModuleList(params) {
 	return request(`${UP_ADMIN}/module/getappmodules`, METHOD.GET, params);
+}
+
+export function setDeviceAction(params, action) {
+	return request(`${UP_ADMIN}/equiment/${action}`, METHOD.POST, params);
+}
+export function getDeviceAction(params, action) {
+	return request(`${UP_ADMIN}/equiment/${action}`, METHOD.GET, params);
 }

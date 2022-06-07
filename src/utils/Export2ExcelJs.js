@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2022-05-17 14:50:12
+ * @LastEditTime: 2022-05-27 09:18:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/Export2ExcelJs.js
@@ -259,7 +259,7 @@ export function exportjsontoexcelMore({
     formula,
     multi
 }, excelStyle) {
-    console.log("formula===",formula)
+    console.log("formula===", formula)
     //判断是否有表名、没有则赋予固定表名
     filename = filename || 'excel-list'
     var wb = new Workbook()
@@ -343,8 +343,11 @@ export function exportjsontoexcelMore({
             //开始位置
             let startIndex = formula.process + 2;
             let endIndex = startIndex + formula.totalPrice;
-            if (Sheet == '展开显示' || multi) {
+            console.log("Sheet.indexOf('展开显示') != -1---",Sheet.indexOf('展开显示') != -1)
+            console.log("multi---",multi)
+            if (Sheet.indexOf('展开显示') != -1) {
                 //金额计算
+                console.log(wb.Sheets[Sheet]);
                 for (let index = startIndex; index <= endIndex; index++) {
                     wb.Sheets[Sheet]['M' + index] = { t: 'n', f: 'ROUND(K' + index + "*L" + index + ',4)' };
                 }

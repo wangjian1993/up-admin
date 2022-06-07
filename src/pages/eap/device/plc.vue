@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-14 14:32:25
+ * @LastEditTime: 2022-05-26 15:56:51
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/plc.vue
@@ -115,10 +115,10 @@
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="Status" slot-scope="record">
+          <template slot="StatusName" slot-scope="record">
             <div>
-              <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
-              <a-tag color="red" v-else>禁用</a-tag>
+              <a-tag color="green" v-if="record == '正常'">{{record}}</a-tag>
+              <a-tag color="red" v-else>{{record}}</a-tag>
             </div>
           </template>
           <template slot="action" slot-scope="text, record">
@@ -384,7 +384,9 @@ export default {
         }
       });
     },
-    downExcel() {},
+    downExcel() {
+       window.open("./Upload/EAP/import/PLC设备模板.xlsx", "_blank");
+    },
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();

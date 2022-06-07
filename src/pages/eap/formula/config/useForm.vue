@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal :title="isEdit ? '编辑配方配置' : '添加配方配置'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel" width="90%">
+    <a-modal :title="isEdit ? '编辑配方配置' : '添加配方配置'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel" width="95%">
       <div>
         <a-form layout="horizontal" :form="searchForm">
           <div>
@@ -21,19 +21,21 @@
               </a-col>
               <a-col :md="8" :sm="24">
                 <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select :disabled="isEdit" v-decorator="['LineId', { rules: [{ required: true, message: '请选择生产工厂' }] }]" style="width: 300px" placeholder="请选择生产车间" @change="lineChange">
+                  <a-select :disabled="isEdit" v-decorator="['LineId', { rules: [{ required: true, message: '请选择生产工厂' }] }]" style="width: 300px" placeholder="请选择生产车间" @change="(e) => lineChange(e, true)">
                     <a-select-option v-for="item in LineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
+            </a-row>
+            <a-row>
               <a-col :md="8" :sm="24">
                 <a-form-item label="配方编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input :disabled="isEdit" style="width: 300px" placeholder="请输入配方编码" v-decorator="['FormulaCode', { rules: [{ required: true, message: '请选择生产工厂' }] }]" />
+                  <a-input :disabled="isEdit" style="width: 300px" placeholder="请输入配方编码" v-decorator="['FormulaCode', { rules: [{ required: true, message: '请输入配方编码' }] }]" />
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
                 <a-form-item label="配方名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 300px" placeholder="请输入配方名称" v-decorator="['FormulaName', { rules: [{ required: true, message: '请选择生产工厂' }] }]" />
+                  <a-input style="width: 300px" placeholder="请输入配方名称" v-decorator="['FormulaName', { rules: [{ required: true, message: '请输入配方名称' }] }]" />
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">
@@ -41,6 +43,8 @@
                   <a-input style="width: 300px" placeholder="请输入配方名称" v-decorator="['FormulaDesc']" />
                 </a-form-item>
               </a-col>
+            </a-row>
+            <a-row>
               <a-col :md="8" :sm="24">
                 <a-form-item label="选择品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-input style="width: 300px" v-decorator="['paramname', { rules: [{ required: true, message: '请选择品号' }] }]" allowClear placeholder="请选择品号" disabled>
@@ -57,93 +61,38 @@
               <a-row>
                 <a-col :md="6" :sm="24">
                   <a-form-item label="设备" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                    <a-select :disabled="isEdit" v-decorator="['equimentid']" style="width: 200px" placeholder="请选择设备" @change="deviceChange">
+                    <a-select v-decorator="['equimentid']" style="width: 200px" placeholder="请选择设备" @change="(e) => deviceChange(e, true)">
                       <a-select-option v-for="item in deviceList" :key="item.EquimentId" :value="item.EquimentId">{{ item.EquimentName }}</a-select-option>
                     </a-select>
                   </a-form-item>
                 </a-col>
                 <a-col :md="6" :sm="24">
                   <a-form-item label="PLC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                    <a-select :disabled="isEdit" v-decorator="['plcid', { rules: [{ required: true, message: '请选择PLC' }] }]" style="width: 200px" placeholder="请选择PLC" @change="plcChange">
+                    <a-select v-decorator="['plcid', { rules: [{ required: true, message: '请选择PLC' }] }]" style="width: 200px" placeholder="请选择PLC" @change="plcChange">
                       <a-select-option v-for="item in plcList" :key="item.PlcId" :value="item.PlcId">{{ item.PlcName }}</a-select-option>
                     </a-select>
                   </a-form-item>
                 </a-col>
                 <a-col :md="6" :sm="24">
                   <a-form-item label="参数类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                    <a-select :disabled="isEdit" v-decorator="['paramstype']" style="width: 200px" placeholder="请选择参数类型" @change="paramsTypeChange">
-                      <a-select-option v-for="item in paramsItem.PLC_PARAMS_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                    <a-select v-decorator="['paramstype']" style="width: 200px" placeholder="请选择参数类型" @change="paramsTypeChange">
+                      <a-select-option v-for="item in paramsItem.PLC_PARAMS_TYPE" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
                     </a-select>
                   </a-form-item>
                 </a-col>
               </a-row>
             </div>
           </a-form>
-          <a-table :columns="columns" :data-source="dataSource" :size="size" :pagination="false" :rowKey="(dataSource) => dataSource.VarId" bordered>
+          <a-table :columns="columns" :data-source="dataSource" :scroll="{ y: 300 }" size="small" :pagination="false" :rowKey="(dataSource) => dataSource.VarId" bordered>
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ index + 1 }}</span>
               </div>
             </template>
-            <template slot="VarAddress" slot-scope="text, record">
-              <div>
-                <a-input style="width:100px" v-model="record.VarAddress" size="small" />
-              </div>
-            </template>
-            <template slot="VarAddressBit" slot-scope="text, record">
-              <a-select v-model="record.VarAddressBit" placeholder="请选择参数地址位" size="small" style="width:100px">
-                <a-select-option v-for="item in paramsItem.PLC_PARAMS_ADDRESS_BIT" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
-              </a-select>
-            </template>
-            <template slot="VarDataType" slot-scope="text, record">
-              <a-select v-model="record.VarDataType" placeholder="请选择参数类型" size="small" style="width:100px">
-                <a-select-option v-for="item in paramsItem.PLC_PARAMS_DATA_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
-              </a-select>
-            </template>
-            <template slot="VarDataTypeLen" slot-scope="text, record">
-              <div>
-                <a-input style="width:100px" v-model="record.VarDataTypeLen" size="small" />
-              </div>
-            </template>
-            <template slot="VarDataTypeAccuracy" slot-scope="text, record">
-              <div>
-                <a-input style="width:100px" v-model="record.VarDataTypeAccuracy" size="small" />
-              </div>
-            </template>
-            <template slot="VarMaxValue" slot-scope="text, record">
-              <div>
-                <a-input style="width:100px" v-model="record.VarMaxValue" size="small" />
-              </div>
-            </template>
-            <template slot="VarMinValue" slot-scope="text, record">
-              <div>
-                <a-input style="width:100px" v-model="record.VarMinValue" size="small" />
-              </div>
-            </template>
             <template slot="VarValue" slot-scope="text, record">
               <div>
-                <a-input style="width:100px" v-model="record.VarValue" size="small" />
+                <a-input style="width:80px" v-model="record.VarValue" size="small" />
               </div>
-            </template>
-            <template slot="VarPlcAuth" slot-scope="text, record">
-              <a-select v-model="record.VarPlcAuth" placeholder="请选择PLC权限" size="small" style="width:100px">
-                <a-select-option v-for="item in paramsItem.PLC_AUTH_RW" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
-              </a-select>
-            </template>
-            <template slot="VarStandardValue" slot-scope="text, record">
-              <div>
-                <a-input style="width:100px" v-model="record.VarStandardValue" size="small" />
-              </div>
-            </template>
-            <template slot="UpperComputerAuth" slot-scope="text, record">
-              <a-select v-model="record.UpperComputerAuth" placeholder="请选择参数地址位" size="small" style="width:100px">
-                <a-select-option v-for="item in paramsItem.PLC_UUPER_COMPUTER_AUTH" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
-              </a-select>
-            </template>
-            <template slot="VarIsMust" slot-scope="text, record">
-              <a-select v-model="record.VarIsMust" placeholder="请选择参数地址位" size="small" style="width:100px">
-                <a-select-option v-for="item in paramsItem.PLC_IS_MUST" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
-              </a-select>
             </template>
           </a-table>
         </a-card>
@@ -158,7 +107,6 @@ const columns = [
     title: "序号",
     scopedSlots: { customRender: "index" },
     align: "center",
-    width: 50,
   },
   {
     title: "PLC名称",
@@ -171,6 +119,9 @@ const columns = [
     dataIndex: "PlcPort",
     scopedSlots: { customRender: "PlcPort" },
     align: "center",
+    customRender: (text, record) => {
+      return record.PlcIp + ":" + record.PlcPort;
+    },
   },
   {
     title: "参数类型名",
@@ -204,14 +155,14 @@ const columns = [
   },
   {
     title: "数据长度",
-    dataIndex: "VarDataTypeLen",
-    scopedSlots: { customRender: "VarDataTypeLen" },
+    dataIndex: "VarDataSize",
+    scopedSlots: { customRender: "VarDataSize" },
     align: "center",
   },
   {
     title: "数据精度",
-    dataIndex: "VarDataTypeAccuracy",
-    scopedSlots: { customRender: "VarDataTypeAccuracy" },
+    dataIndex: "VarDataAccuuacy",
+    scopedSlots: { customRender: "VarDataAccuuacy" },
     align: "center",
   },
   {
@@ -225,6 +176,13 @@ const columns = [
     dataIndex: "VarMinValue",
     scopedSlots: { customRender: "VarMinValue" },
     align: "center",
+  },
+    {
+    title: "参数单位",
+    dataIndex: "VarUnit",
+    scopedSlots: { customRender: "VarUnit" },
+    align: "center",
+    width: 100,
   },
   {
     title: "参数标准值",
@@ -240,24 +198,27 @@ const columns = [
   },
   {
     title: "PLC权限",
-    dataIndex: "VarPlcAuth",
-    scopedSlots: { customRender: "VarPlcAuth" },
+    dataIndex: "PlcAuthName",
+    scopedSlots: { customRender: "PlcAuthName" },
     align: "center",
   },
   {
     title: "上位机权限",
-    dataIndex: "UpperComputerAuth",
-    scopedSlots: { customRender: "UpperComputerAuth" },
+    dataIndex: "UpperComputerAuthName",
+    scopedSlots: { customRender: "UpperComputerAuthName" },
     align: "center",
   },
   {
     title: "是否必填值",
-    dataIndex: "VarIsMust",
-    scopedSlots: { customRender: "VarIsMust" },
+    dataIndex: "IsMust",
+    scopedSlots: { customRender: "IsMust" },
     align: "center",
+    customRender: (text) => {
+      return text == "Y" ? "是" : "否";
+    },
   },
 ];
-import { getPlcAction, getOperationAction, setFormulaAction, getFormulaAction } from "@/services/eap.js";
+import { getPlcAction, setFormulaAction, getFormulaAction } from "@/services/eap.js";
 import itemCode from "../components/itemCode.vue";
 import { formulaMixin } from "@/mixins/formulaMixin.js";
 export default {
@@ -294,7 +255,7 @@ export default {
           paramname: this.editData.ProCode,
         });
       }, 1000);
-       this.getFormulaDetail();
+      this.getFormulaDetail();
     }
   },
   methods: {
@@ -312,8 +273,7 @@ export default {
     },
     getFormulaDetail() {
       let params = {
-        plcid: "",
-        paramstype:  "",
+        lineid: this.editData.LineId,
         formulaid: this.editData.FormulaId,
       };
       getFormulaAction(params, "getdetails").then((res) => {
@@ -326,10 +286,27 @@ export default {
     plcChange(e) {
       let values = this.searchForm.getFieldsValue();
       let params = {
+        lineid: values.LineId,
+        equimentid: values.equimentid,
         plcid: e,
-        paramstype: values.paramstype,
       };
-      getOperationAction(params, "getlist").then((res) => {
+      getFormulaAction(params, "getdetails").then((res) => {
+        if (res.data.success) {
+          console.log("result");
+          this.dataSource = res.data.data;
+        }
+      });
+    },
+    getDetailList(lineid, equimentid, plcid, paramstype) {
+      let values = this.searchForm.getFieldsValue();
+      let params = {
+        lineid: lineid || values.LineId,
+        equimentid: equimentid || values.equimentid,
+        plcid: plcid || values.plcid,
+        paramstype: paramstype || values.paramstype,
+        formulaid: values.formulaid,
+      };
+      getFormulaAction(params, "getdetails").then((res) => {
         if (res.data.success) {
           console.log("result");
           this.dataSource = res.data.data;
@@ -339,16 +316,9 @@ export default {
     //参数类型选择
     paramsTypeChange(e) {
       let values = this.searchForm.getFieldsValue();
-      let params = {
-        plcid: values.plcid,
-        paramstype: e,
-      };
-      getOperationAction(params, "getlist").then((res) => {
-        if (res.data.success) {
-          console.log("result");
-          this.dataSource = res.data.data;
-        }
-      });
+      let values2 = this.searchForm2.getFieldsValue();
+      console.log(values);
+      this.getDetailList(values.LineId, values2.equimentid, values2.plcid, e);
     },
     closeModal() {
       this.isItemCode = false;
@@ -374,20 +344,22 @@ export default {
     handleOk() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
+          console.log("values-===", values);
           if (this.isEdit) {
             let parmas = {
+              FormulaId: this.editData.FormulaId,
               PlantId: values.PlantId,
               WorkshopId: values.WorkshopId,
               LineId: values.LineId,
-              FormulaId: values.FormulaId,
               FormulaCode: values.FormulaCode,
               FormulaName: values.FormulaName,
               FormulaDesc: values.FormulaDesc,
-              ProCode: this.itemCodeData.ProCode,
-              ProName: this.itemCodeData.ProName,
+              ProCode: this.editData.ProCode,
+              ProName: this.editData.ProName,
               FormulaDetails: [],
             };
             this.dataSource.forEach((item) => {
+              console.log("item===", item);
               parmas.FormulaDetails.push({
                 PlcId: item.PlcId,
                 ParamsTypeCode: item.ParamsTypeCode,
@@ -395,22 +367,28 @@ export default {
                 VarAddress: item.VarAddress,
                 VarAddressBit: item.VarAddressBit,
                 VarDataType: item.VarDataType,
-                VarDataSize: item.VarDataTypeLen,
-                VarDataAccuuacy: item.VarDataTypeAccuracy,
+                VarDataSize: item.VarDataTypeLen || "0",
+                VarDataAccuuacy: item.VarDataAccuuacy.toString(),
                 VarMaxValue: item.VarMaxValue,
                 VarMinValue: item.VarMinValue,
                 VarValue: item.VarValue,
-                IsMust: item.VarIsMust,
-                PlcAuth: item.VarPlcAuth,
+                IsMust: item.IsMust,
+                PlcAuth: item.PlcAuth,
                 UpperComputerAuth: item.UpperComputerAuth,
-                VarStdValue: item.VarStandardValue,
+                VarUnit: item.VarUnit,
+                VarStdValue: item.VarStdValue,
               });
             });
             setFormulaAction(parmas, "multiple/update").then((res) => {
-              if (res.data.success) {
+              if (res.data.success && !res.data.data.IsError) {
                 this.$message.success("编辑成功!");
                 this.$emit("closeModal");
                 this.$emit("success");
+              } else {
+                let errorList = res.data.data.list;
+                errorList.forEach((item) => {
+                  this.$message.error(item.RowNum + "," + item.ErrorMsg);
+                });
               }
             });
           } else {
@@ -433,7 +411,7 @@ export default {
                 VarAddress: item.VarAddress,
                 VarAddressBit: item.VarAddressBit,
                 VarDataType: item.VarDataType,
-                VarDataSize: item.VarDataTypeLen,
+                VarDataSize: item.VarDataTypeLen || 0,
                 VarDataAccuuacy: item.VarDataTypeAccuracy,
                 VarMaxValue: item.VarMaxValue,
                 VarMinValue: item.VarMinValue,
@@ -441,14 +419,20 @@ export default {
                 IsMust: item.VarIsMust,
                 PlcAuth: item.VarPlcAuth,
                 UpperComputerAuth: item.UpperComputerAuth,
+                VarUnit: item.VarUnit,
                 VarStdValue: item.VarStandardValue,
               });
             });
             setFormulaAction(parmas, "multiple/add").then((res) => {
-              if (res.data.success) {
+              if (res.data.success && !res.data.data.IsError) {
                 this.$message.success("新增成功!");
                 this.$emit("closeModal");
                 this.$emit("success");
+              } else {
+                let errorList = res.data.data.list;
+                errorList.forEach((item) => {
+                  this.$message.error(item.RowNum + "," + item.ErrorMsg);
+                });
               }
             });
           }

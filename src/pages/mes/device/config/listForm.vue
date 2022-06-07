@@ -1,6 +1,14 @@
+<!--
+ * @Author: max
+ * @Date: 2022-05-05 11:32:20
+ * @LastEditTime: 2022-05-31 10:06:21
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/mes/device/config/listForm.vue
+-->
 <template>
   <div>
-    <a-modal :title="isEdit ? '编辑产线配置' : '添加产线配置'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+    <a-modal :title="isEdit ? '编辑设备配置' : '添加设备配置'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
       <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-form-model-item ref="PlantId" has-feedback label="生产工厂" prop="PlantId">
           <a-select v-model="form.PlantId" :disabled="isEdit" placeholder="请选择生产工厂" @change="plantChange">
@@ -17,31 +25,33 @@
             <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
           </a-select>
         </a-form-model-item>
-        <a-form-model-item ref="ServiceTypeCode" has-feedback label="服务配置类型" prop="ServiceTypeCode">
-          <a-select v-model="form.ServiceTypeCode" :disabled="isEdit" placeholder="请选择服务配置类型">
-            <a-select-option v-for="item in paramsList" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
+        <a-form-model-item ref="EquimentTypeCode" has-feedback label="设备类型" prop="EquimentTypeCode">
+          <a-select v-model="form.EquimentTypeCode" :disabled="isEdit" placeholder="请选择设备类型">
+            <a-select-option v-for="item in deviceTypeList" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
           </a-select>
         </a-form-model-item>
-        <a-form-model-item ref="ConfigCode" has-feedback label="服务配置编码" prop="ConfigCode">
-          <a-input v-model="form.ConfigCode" allowClear placeholder="请输入服务配置编码" :disabled="isEdit" />
+        <a-form-model-item ref="Brand" has-feedback label="设备品牌" prop="Brand">
+          <a-select v-model="form.Brand" :disabled="isEdit" placeholder="请选择设备品牌">
+            <a-select-option v-for="item in deviceBrand" :key="item.ParamCode" :value="item.ParamCode">{{ item.ParamName }}</a-select-option>
+          </a-select>
         </a-form-model-item>
-        <a-form-model-item ref="ConfigName" has-feedback label="服务配置名称" prop="ConfigName">
-          <a-input v-model="form.ConfigName" allowClear placeholder="请输入服务配置名称" />
+        <a-form-model-item ref="EquimentCode" has-feedback label="设备编码" prop="EquimentCode">
+          <a-input v-model="form.EquimentCode" allowClear placeholder="请输入设备编码" :disabled="isEdit" />
         </a-form-model-item>
-        <a-form-model-item ref="IPAddress" has-feedback label="服务ip" prop="IPAddress">
-          <a-input v-model="form.IPAddress" allowClear placeholder="请输入服务ip" />
+        <a-form-model-item ref="EquimentName" has-feedback label="设备名称" prop="EquimentName">
+          <a-input v-model="form.EquimentName" allowClear placeholder="请输入设备名称" />
         </a-form-model-item>
-        <a-form-model-item ref="PortNo" has-feedback label="端口号" prop="PortNo">
-          <a-input-number min="0" v-model="form.PortNo" allowClear placeholder="请输入端口号" />
+        <a-form-model-item ref="IPAddress" has-feedback label="IP地址">
+          <a-input v-model="form.IPAddress" allowClear placeholder="请输入IP地址" />
         </a-form-model-item>
-        <a-form-model-item ref="Account" has-feedback label="连接账号" prop="Account">
-          <a-input v-model="form.Account" allowClear placeholder="请输入连接账号" />
+        <a-form-model-item ref="IPPort" has-feedback label="端口号">
+          <a-input v-model="form.IPPort" allowClear placeholder="请输入端口号" />
         </a-form-model-item>
-        <a-form-model-item ref="Password" has-feedback label="连接密码" prop="Password">
-          <a-input v-model="form.Password" allowClear placeholder="请输入连接密码" />
+        <a-form-model-item ref="MacAddress" has-feedback label="MAC地址" prop="MacAddress">
+          <a-input v-model="form.MacAddress" allowClear placeholder="请输入MAC地址" />
         </a-form-model-item>
-         <a-form-model-item ref="ServiceConnStr" has-feedback label="连接字符串" prop="Password">
-          <a-input v-model="form.ServiceConnStr" allowClear placeholder="请输入连接字符串" />
+        <a-form-model-item ref="EquimentDesc" label="设备描述">
+          <a-textarea v-model="form.EquimentDesc" placeholder="请输入设备描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
         </a-form-model-item>
         <a-form-model-item ref="Enable" label="是否启用">
           <a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
@@ -55,9 +65,10 @@
 </template>
 
 <script>
-import { getPlantList, getWorkshopAction, setLineServiceAction } from "@/services/eap.js";
+import { setDeviceAction } from "@/services/admin.js";
+import { getWorkshopList, getLineList, getDailyPlanAction } from "@/services/web.js";
 export default {
-  props: ["editData", "isEdit", "paramsList"],
+  props: ["editData", "isEdit", "deviceBrand", "deviceTypeList"],
   data() {
     return {
       size: "small",
@@ -67,15 +78,15 @@ export default {
       form: {
         PlantId: "",
         LineId: "",
-        WorkShopId: "",
-        ServiceTypeCode: "",
-        ConfigCode: "",
-        ConfigName: "",
+        WorkshopId: "",
+        EquimentTypeCode: "",
+        EquimentCode: "",
+        EquimentName: "",
+        EquimentDesc: "",
+        Brand: "",
         IPAddress: "",
-        PortNo: "",
-        Account: "",
-        Password: "",
-        ServiceConnStr:"",
+        IPPort: "",
+        MacAddress: "",
         Enable: "Y",
       },
       rules: {
@@ -86,52 +97,52 @@ export default {
             trigger: "blur",
           },
         ],
-        WorkShopId: [
+        LineId: [
           {
             required: true,
             message: "请选择生产车间",
             trigger: "blur",
           },
         ],
-        LineId: [
+        WorkshopId: [
           {
             required: true,
             message: "请选择生产产线",
             trigger: "blur",
           },
         ],
-        ServiceTypeCode: [
+        EquimentTypeCode: [
           {
             required: true,
-            message: "请选择服务配置类型",
+            message: "请选择设备类型",
             trigger: "blur",
           },
         ],
-        ConfigCode: [
+        Brand: [
           {
             required: true,
-            message: "请输入服务配置编码",
+            message: "请选择设备品牌",
             trigger: "blur",
           },
         ],
-        ConfigName: [
+        EquimentCode: [
           {
             required: true,
-            message: "请输入服务配置名称",
+            message: "请输入设备编码",
             trigger: "blur",
           },
         ],
-        IPAddress: [
+        EquimentName: [
           {
             required: true,
-            message: "请输入服务ip",
+            message: "请输入设备名称",
             trigger: "blur",
           },
         ],
-        PortNo: [
+        MacAddress: [
           {
             required: true,
-            message: "请输入服务端口号",
+            message: "请输入MAC地址",
             trigger: "blur",
           },
         ],
@@ -139,16 +150,14 @@ export default {
       plantList: [],
       workshopList: [],
       lineList: [],
-      plantId: "",
     };
   },
   created() {
     this.getPlant();
     if (this.isEdit) {
-      this.plantChange(this.editData.PlantId);
-      this.plantId = this.editData.PlantId;
-      this.workshopChange(this.editData.WorkShopId);
       this.form = this.editData;
+      this.plantChange(this.form.PlantId);
+      this.workshopChange(this.form.WorkShopId);
     }
   },
   methods: {
@@ -158,60 +167,59 @@ export default {
     enableChange(value) {
       this.form.Enable = value.target.value;
     },
+    handleCancel() {
+      this.$emit("closeModal");
+    },
     getPlant() {
-      let parmas1 = {
+      let parmas = {
         entertypecode: "PLANT",
       };
-      getPlantList(parmas1, "getlistbytypecode").then((res) => {
+      getDailyPlanAction(parmas, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
       });
     },
+    //获取车间
     plantChange(e) {
-      this.plantId = e;
-      this.form.WorkShopId = "";
       let parmas = {
         plantid: e,
       };
-      getWorkshopAction(parmas, "getlist").then((res) => {
+      getWorkshopList(parmas, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
+    //获取产线
     workshopChange(e) {
       let parmas = {
-        plantid: this.plantId,
-        workshopid: e,
+        plantid: this.form.PlantId,
+        workshopId: e,
       };
-      getPlantList(parmas, "getlist").then((res) => {
+      getLineList(parmas).then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
       });
-    },
-    handleCancel() {
-      this.$emit("closeModal");
     },
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           if (this.isEdit) {
             let editForm = {
-              PlantId: this.form.PlantId,
+              EquimentId: this.form.EquimentId,
+              PlantId:  this.form.PlantId,
               LineId: this.form.LineId,
-              ServiceTypeCode: this.form.ServiceTypeCode,
-              ConfigId: this.form.ConfigId,
-              ConfigName: this.form.ConfigName,
-              IPAddress: this.form.IPAddress,
-              PortNo: this.form.PortNo,
-              Account: this.form.Account,
-              Password: this.form.Password,
-              ServiceConnStr:this.form.ServiceConnStr,
-              Enable: this.form.Enable,
+              EquimentTypeCode: this.form.EquimentTypeCode,
+              Brand:this.form.Brand,
+              EquimentName:this.form.EquimentName,
+              EquimentDesc: this.form.EquimentDesc,
+              IPAddress:this.form.IPAddress,
+              IPPort: this.form.IPPort,
+              MacAddress: this.form.MacAddress,
             };
-            setLineServiceAction(editForm, "update").then((res) => {
+            setDeviceAction(editForm, "update").then((res) => {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
                 this.$emit("closeModal");
@@ -221,7 +229,7 @@ export default {
             });
           } else {
             //添加
-            setLineServiceAction(this.form, "add").then((res) => {
+            setDeviceAction(this.form, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");
                 this.$emit("closeModal");

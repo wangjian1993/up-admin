@@ -21,12 +21,12 @@
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="PLC名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入PLC名称" v-decorator="['equimentname']" />
+                  <a-input style="width: 200px" placeholder="请输入PLC名称" v-decorator="['plcname']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="PLC编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入PLC编码" v-decorator="['equimentcode']" />
+                  <a-input style="width: 200px" placeholder="请输入PLC编码" v-decorator="['plccode']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -71,26 +71,26 @@ const columns = [
   },
   {
     title: "PLC名称",
-    dataIndex: "EquimentName",
-    scopedSlots: { customRender: "EquimentName" },
+    dataIndex: "PlcName",
+    scopedSlots: { customRender: "PlcName" },
     align: "center",
   },
   {
     title: "PLC编码",
-    dataIndex: "EquimentCode",
-    scopedSlots: { customRender: "EquimentCode" },
+    dataIndex: "PlcCode",
+    scopedSlots: { customRender: "PlcCode" },
     align: "center",
   },
   {
     title: "PLC类型",
-    dataIndex: "EquimentTypeName",
-    scopedSlots: { customRender: "EquimentTypeName" },
+    dataIndex: "PlcTypeName",
+    scopedSlots: { customRender: "PlcTypeName" },
     align: "center",
   },
   {
     title: "PLC品牌",
-    dataIndex: "BrandName",
-    scopedSlots: { customRender: "BrandName" },
+    dataIndex: "PlcBrandName",
+    scopedSlots: { customRender: "PlcBrandName" },
     align: "center",
   },
 ];
