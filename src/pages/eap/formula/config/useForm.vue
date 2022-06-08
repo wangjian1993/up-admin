@@ -186,8 +186,8 @@ const columns = [
   },
   {
     title: "参数标准值",
-    dataIndex: "VarStandardValue",
-    scopedSlots: { customRender: "VarStandardValue" },
+    dataIndex: "VarStdValue",
+    scopedSlots: { customRender: "VarStdValue" },
     align: "center",
   },
   {

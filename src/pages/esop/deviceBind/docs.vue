@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-31 09:19:37
- * @LastEditTime: 2022-05-25 15:42:25
+ * @LastEditTime: 2022-06-08 11:30:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/docs.vue
@@ -16,6 +16,7 @@
             :data-source="docsFile"
             :size="size"
             :pagination="false"
+             :scroll="{ y: 400 }"
             :rowKey="(docsFile) => docsFile.FileCode"
             :row-selection="{
               selectedRowKeys: selectedRowKeys,

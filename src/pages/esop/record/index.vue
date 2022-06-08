@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 16:01:38
- * @LastEditTime: 2022-05-28 15:09:07
+ * @LastEditTime: 2022-06-08 18:13:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/index.vue
@@ -84,10 +84,10 @@
       </a-form>
       <div class="operator">
         <!-- <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" @click="add" style="margin-left: 8px">添加</a-button> -->
-        <a-button v-if="hasPerm('publish')" icon="publish" type="primary" :disabled="!hasSelected" :loading="loading" @click="publishAll" style="margin-left: 8px">发布</a-button>
-        <a-button v-else icon="publish" type="primary" disabled :loading="loading" style="margin-left: 8px">发布</a-button>
-        <a-button v-if="hasPerm('push')" icon="publish" type="primary" :disabled="!hasSelected" :loading="loading" @click="pushAll" style="margin-left: 8px">推送SOP</a-button>
-        <a-button v-else icon="push" type="primary" disabled :loading="loading" style="margin-left: 8px">推送SOP</a-button>
+        <a-button v-if="hasPerm('publish')" icon="publish" type="primary" :disabled="!hasSelected" :loading="loading" @click="publishAll" style="margin-left: 8px">推送SOP</a-button>
+        <a-button v-else icon="check-square" type="primary" disabled :loading="loading" style="margin-left: 8px">推送SOP</a-button>
+        <!-- <a-button v-if="hasPerm('push')" icon="publish" type="primary" :disabled="!hasSelected" :loading="loading" @click="pushAll" style="margin-left: 8px">推送SOP</a-button> -->
+        <!-- <a-button v-else icon="push" type="primary" disabled :loading="loading" style="margin-left: 8px">推送SOP</a-button> -->
         <span style="margin-left: 8px">
           <template v-if="hasSelected">
             {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -129,11 +129,7 @@
               查看
             </a>
             <a v-if="record.Enable == 'Y'" style="margin-right: 8px" @click="publish(record)" :disabled="!hasPerm('publish')">
-              <a-icon type="send" />
-              发布
-            </a>
-             <a v-if="record.Enable == 'Y'" style="margin-right: 8px" @click="publish(record)" :disabled="!hasPerm('push')">
-              <a-icon type="send" />
+              <a-icon type="check-square" />
               推送SOP
             </a>
           </div>

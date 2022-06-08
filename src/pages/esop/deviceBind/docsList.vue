@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 13:38:31
- * @LastEditTime: 2022-04-15 10:33:38
+ * @LastEditTime: 2022-06-08 11:29:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/docsList.vue
@@ -68,6 +68,7 @@
             :data-source="docsList"
             :size="size"
             :pagination="pagination"
+            :scroll="{ y: 400 }"
             :rowKey="(docsList) => docsList.DocumentId"
             :row-selection="{
               selectedRowKeys: selectedRowKeys,

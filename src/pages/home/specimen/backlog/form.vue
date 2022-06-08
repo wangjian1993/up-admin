@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-06-07 17:36:58
+ * @LastEditTime: 2022-06-08 10:00:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/form.vue
@@ -266,7 +266,7 @@ export default {
           isInput: false,
         },
       ],
-      supplierList:[]
+      supplierList: [],
     };
   },
   created() {
@@ -284,7 +284,7 @@ export default {
   methods: {
     moment,
     close() {
-       if (this.isClone) {
+      if (this.isClone) {
         this.$store.dispatch("specimen/closeRegisterId");
       }
       this.$emit("closeModal");
@@ -298,16 +298,16 @@ export default {
       let result = this.userObj.find((item) => item.name == e.target.value);
       this.userIsInput = result.isInput;
     },
-    handleSearch(value){
-       let params = {
-        pageindex:1,
-        pagesize:50,
-        keyword:value
+    handleSearch(value) {
+      let params = {
+        pageindex: 1,
+        pagesize: 50,
+        keyword: value,
       };
-       getMaterialSampleApi(params, "getsupplierlist").then((res) => {
-         this.supplierList =res.data.data.list
-          console.log( this.supplierList);
-       })
+      getMaterialSampleApi(params, "getsupplierlist").then((res) => {
+        this.supplierList = res.data.data.list;
+        console.log(this.supplierList);
+      });
     },
     getUserForm() {
       let params = {

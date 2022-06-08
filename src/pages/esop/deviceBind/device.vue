@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 14:01:21
- * @LastEditTime: 2022-05-12 17:21:21
+ * @LastEditTime: 2022-06-08 11:45:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/device.vue
 -->
 <template>
   <div>
-    <a-modal title="选择设备" :visible="visible" v-if="visible" destoryOnClose :ok-button-props="{ props: { disabled: deviceList.length == 0 } }" @ok="handleOk" @cancel="handleCancel" width="60%">
+    <a-modal title="选择设备" :visible="visible" v-if="visible" destoryOnClose :ok-button-props="{ props: { disabled: deviceList.length == 0 } }" @ok="handleOk" @cancel="handleCancel" width="66%">
       <div>
         <a-row>
           <a-col :md="6" :sm="24" v-if="!isDetail">
@@ -54,24 +54,42 @@
       <div>
         <div class="device-lsit">
           <div class="device-list-header">
-            <!-- <span>左侧</span> -->
+            <span>左侧</span>
             <p>拉头</p>
-            <!-- <span>右侧</span> -->
+            <span>右侧</span>
           </div>
           <div>
             <div class="device-list-content" v-for="(item, index) in deviceList" :key="index">
               <div class="device" v-for="(items, indexs) in item" :key="items.EquipmentId">
                 <div v-if="indexs == 0" class="process">
-                  <p v-for="fileItem in items.Detail" :key="fileItem.Id">{{ fileItem.FileName }}</p>
+                  <p v-for="fileItem in items.Detail" :key="fileItem.Id">
+                    <a-popover title="附件">
+                      <template slot="content">
+                        {{ fileItem.FileName }}
+                      </template>
+                      <span>
+                        {{ fileItem.FileName }}
+                      </span>
+                    </a-popover>
+                  </p>
                 </div>
-                <div class="device-content" @click="selectDocs(items,indexs)">
+                <div class="device-content" @click="selectDocs(items, indexs)">
                   <img v-if="items.Status" src="@/assets/img/lcd.png" alt="" />
                   <img v-else src="@/assets/img/lcd-2.png" alt="" />
                   <p>{{ items.EquipmentName }}</p>
                   <!-- <p :class="items.Status ? 'span-t' : 'span-f'"></p> -->
                 </div>
                 <div v-if="indexs == 1" class="process">
-                  <p v-for="fileItem in items.Detail" :key="fileItem.Id">{{ fileItem.FileName }}</p>
+                  <p v-for="fileItem in items.Detail" :key="fileItem.Id">
+                    <a-popover title="附件">
+                      <template slot="content">
+                        {{ fileItem.FileName }}
+                      </template>
+                      <span>
+                        {{ fileItem.FileName }}
+                      </span>
+                    </a-popover>
+                  </p>
                 </div>
               </div>
             </div>
@@ -85,7 +103,7 @@
       </div>
     </a-modal>
     <docs v-if="isDocsList" :deviceItem="deviceItem" :plantId="plantId" :documentItem="documentRecord" @closeModal="closeModal" @success="success" />
-    <docsList v-if="isDocs" @success="successDocs" />
+    <docsList v-if="isDocs" @closeModal="closeModal" @success="successDocs" />
   </div>
 </template>
 

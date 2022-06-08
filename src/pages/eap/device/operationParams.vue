@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-06-07 09:07:25
+ * @LastEditTime: 2022-06-08 10:10:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/operationParams.vue
@@ -13,6 +13,34 @@
         <a-form layout="horizontal" :form="searchForm">
           <div :class="advanced ? null : 'fold'">
             <a-row>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                    <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['workshopid']" style="width: 200px" placeholder="请选择生产车间" @change="workshopChange">
+                    <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['lineid']" style="width: 200px" placeholder="请选择生产车间" @change="lineChange">
+                    <a-select-option v-for="item in LineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="设备" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['equimentid']" style="width: 200px" placeholder="请选择设备">
+                    <a-select-option v-for="item in deviceList" :key="item.EquimentId" :value="item.EquimentId">{{ item.EquimentName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="参数类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['paramtype']" style="width: 200px" placeholder="请选择参数类型">
@@ -37,15 +65,6 @@
                   <a-input style="width: 200px" placeholder="请输入参数编码" v-decorator="['paramcode']" />
                 </a-form-item>
               </a-col>
-              <!-- <a-col :md="6" :sm="24">
-                <a-form-item label="PLC状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['status']" placeholder="请选择订单状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">启用</a-select-option>
-                    <a-select-option value="0">禁用</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col> -->
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
@@ -71,7 +90,7 @@
           :columns="columns"
           :data-source="dataSource"
           size="small"
-          :scroll="{ y: scrollY, x: 2200 }"
+          :scroll="{ y: scrollY, x: 2400 }"
           :loading="loading"
           :pagination="pagination"
           :row-selection="{
@@ -117,7 +136,7 @@
 </template>
 
 <script>
-import { getOperationAction, setOperationAction } from "@/services/eap.js";
+import { getOperationAction, setOperationAction ,getPlantList ,getWorkshopAction ,getDeviceAction} from "@/services/eap.js";
 import { getParamData } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
@@ -144,12 +163,15 @@ export default {
       isEdit: false,
       isForm: false,
       selectedRowKeys: [],
-      workshopList: [],
       plcBrand: [],
       isImport: false,
       paramsList: ["PLC_PARAMS_TYPE", "PLC_PARAMS_DATA_TYPE", "PLC_PARAMS_ADDRESS_BIT", "PLC_IS_MUST", "PLC_AUTH_RW", "PLC_UUPER_COMPUTER_AUTH","DATA_UNIT"],
       paramsItem: [],
       isBatchAdd: false,
+      plantList:[],
+      workshopList:[],
+      LineList:[],
+      deviceList:[],
     };
   },
   updated() {
@@ -161,9 +183,64 @@ export default {
     });
     this.getListAll();
     this.getParamsData();
+    this.getPlant();
   },
   methods: {
     splitData,
+    getPlant() {
+      let parmas = {
+        entertypecode: "PLANT",
+      };
+      getPlantList(parmas, "getlistbytypecode").then((res) => {
+        if (res.data.success) {
+          this.plantList = res.data.data;
+        }
+      });
+    },
+    plantChange(e) {
+      this.plantId = e;
+      let parmas = {
+        plantid: e,
+      };
+      getWorkshopAction(parmas, "getlist").then((res) => {
+        if (res.data.success) {
+          this.workshopList = res.data.data;
+          this.searchForm.setFieldsValue({
+            workshopid: "",
+            lineid: "",
+            equimentid:""
+          });
+        }
+      });
+    },
+    workshopChange(e) {
+      let parmas = {
+        plantid: this.plantId,
+        workshopid: e,
+      };
+      getPlantList(parmas, "getlist").then((res) => {
+        if (res.data.success) {
+          this.LineList = res.data.data;
+          this.searchForm.setFieldsValue({
+            lineid: "",
+            equimentid:""
+          });
+        }
+      });
+    },
+    lineChange(e){
+      let parmas = {
+        lineid: e,
+      };
+      getDeviceAction(parmas, "getlist").then((res) => {
+        if (res.data.success) {
+          this.deviceList = res.data.data;
+          this.searchForm.setFieldsValue({
+            equimentid:""
+          });
+        }
+      });
+    },
     //重置搜索
     getParamsData() {
       this.paramsList.forEach((item) => {
@@ -250,6 +327,10 @@ export default {
             paramcode: values.paramcode,
             paramname: values.paramname,
             datatype: values.datatype,
+            plantid: values.plantid,
+            workshopid: values.workshopid,
+            lineid:values.lineid,
+            equimentid: values.equimentid,
           };
           getOperationAction(parmas, "getall").then((res) => {
             if (res.data.success) {
@@ -304,6 +385,10 @@ export default {
         paramcode: values.paramcode,
         paramname: values.paramname,
         datatype: values.datatype,
+        plantid: values.plantid,
+        workshopid: values.workshopid,
+        lineid:values.lineid,
+        equimentid: values.equimentid,
       };
       getOperationAction(parmas, "getall").then((res) => {
         if (res.data.success) {

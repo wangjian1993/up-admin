@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-05-26 15:56:51
+ * @LastEditTime: 2022-06-08 10:03:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/plc.vue
@@ -41,7 +41,6 @@
                   </a-select>
                 </a-form-item>
               </a-col>
-
               <a-col :md="6" :sm="24">
                 <a-form-item label="PLC类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['typeid']" style="width: 200px" placeholder="请选择PLC类型">

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-06-07 08:59:40
+ * @LastEditTime: 2022-06-08 10:09:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/device/data/operation.js
@@ -13,6 +13,24 @@ export const columns = [
       scopedSlots: { customRender: "index" },
       align: "center",
       width:50,
+    },
+    {
+      title: "工厂",
+      dataIndex: "PlantName",
+      scopedSlots: { customRender: "PlantName" },
+      align: "center",
+    },
+    {
+      title: "车间",
+      dataIndex: "WorkShopName",
+      scopedSlots: { customRender: "WorkShopName" },
+      align: "center",
+    },
+    {
+      title: "产线",
+      dataIndex: "LIneName",
+      scopedSlots: { customRender: "LIneName" },
+      align: "center",
     },
     {
       title: "设备编码",

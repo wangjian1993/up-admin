@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 17:03:33
- * @LastEditTime: 2022-04-12 13:43:33
+ * @LastEditTime: 2022-06-08 18:10:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/device.vue
@@ -30,15 +30,33 @@
           <div>
             <div class="device-list-content" v-for="(item, index) in deviceList" :key="index">
               <div class="device" v-for="(items, indexs) in item" :key="items.EquipmentId">
-                <div v-if="indexs == 0" class="process" @click="checkDocs(items)">
-                  <p v-for="fileItem in items.Detail" :key="fileItem.Id">{{ fileItem.FileName }}</p>
+                <div v-if="indexs == 0" class="process">
+                  <p v-for="fileItem in items.Detail" :key="fileItem.Id" @click="checkDocs(items)">
+                    <a-popover title="附件">
+                      <template slot="content">
+                        {{ fileItem.FileName }}
+                      </template>
+                      <span>
+                        {{ fileItem.FileName }}
+                      </span>
+                    </a-popover>
+                  </p>
                 </div>
                 <div class="device-content">
                   <p>{{ items.EquipmentName }}</p>
                   <p :class="items.Status ? 'span-t' : 'span-f'"></p>
                 </div>
-                <div v-if="indexs == 1" class="process" @click="checkDocs(items)">
-                  <p v-for="fileItem in items.Detail" :key="fileItem.Id">{{ fileItem.FileName }}</p>
+                <div v-if="indexs == 1" class="process">
+                  <p v-for="fileItem in items.Detail" :key="fileItem.Id" @click="checkDocs(items)">
+                    <a-popover title="附件">
+                      <template slot="content">
+                        {{ fileItem.FileName }}
+                      </template>
+                      <span>
+                        {{ fileItem.FileName }}
+                      </span>
+                    </a-popover>
+                  </p>
                 </div>
               </div>
             </div>
@@ -73,7 +91,7 @@ export default {
   },
   created() {
     this.getDeviceList();
-    console.log("documentItem---",this.documentItem)
+    console.log("documentItem---", this.documentItem);
   },
   methods: {
     handleCancel() {
