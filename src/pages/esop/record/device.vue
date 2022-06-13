@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 17:03:33
- * @LastEditTime: 2022-06-08 18:10:42
+ * @LastEditTime: 2022-06-13 17:10:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/device.vue
@@ -43,8 +43,9 @@
                   </p>
                 </div>
                 <div class="device-content">
-                  <p>{{ items.EquipmentName }}</p>
-                  <p :class="items.Status ? 'span-t' : 'span-f'"></p>
+                  <img v-if="items.Status" src="@/assets/img/lcd.png" alt="" />
+                  <img v-else src="@/assets/img/lcd-2.png" alt="" />
+                  <p>{{ items.EquipmentCode }}</p>
                 </div>
                 <div v-if="indexs == 1" class="process">
                   <p v-for="fileItem in items.Detail" :key="fileItem.Id" @click="checkDocs(items)">

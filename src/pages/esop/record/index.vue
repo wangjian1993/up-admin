@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 16:01:38
- * @LastEditTime: 2022-06-08 18:13:36
+ * @LastEditTime: 2022-06-09 14:13:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/index.vue
@@ -150,18 +150,6 @@ const columns = [
     width: "5%",
   },
   {
-    title: "品号",
-    dataIndex: "EquipmentCode",
-    scopedSlots: { customRender: "EquipmentCode" },
-    align: "center",
-  },
-  {
-    title: "品名",
-    dataIndex: "EquipmentName",
-    scopedSlots: { customRender: "EquipmentName" },
-    align: "center",
-  },
-  {
     title: "文件编号",
     dataIndex: "DocumentCode",
     scopedSlots: { customRender: "DocumentCode" },
@@ -226,6 +214,18 @@ const columns = [
     title: "发布人",
     dataIndex: "Uploader",
     scopedSlots: { customRender: "Uploader" },
+    align: "center",
+  },
+    {
+    title: "品号",
+    dataIndex: "EquipmentCode",
+    scopedSlots: { customRender: "EquipmentCode" },
+    align: "center",
+  },
+  {
+    title: "品名",
+    dataIndex: "EquipmentName",
+    scopedSlots: { customRender: "EquipmentName" },
     align: "center",
   },
   {

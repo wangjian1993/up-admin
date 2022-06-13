@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-06-07 17:17:35
+ * @LastEditTime: 2022-06-09 17:58:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/initiate/index.vue
@@ -27,23 +27,26 @@
                   </a-select>
                 </a-form-item>
               </a-col>
+               <a-col :md="6" :sm="24">
+                
+              </a-col>
             </a-row>
           </div>
-          <span style="float: right; margin-top: 3px;">
+          <span style="display:flex;justify-content: flex-end">
             <a-button type="primary" @click="search">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
             <a-button style="margin-left: 8px" type="primary" @click="searchCreator">创建人查询</a-button>
           </span>
         </a-form>
         <div class="operator">
-          <a-button type="primary" @click="add" icon="plus">新增</a-button>
+          <!-- <a-button type="primary" @click="add" icon="plus">新增</a-button>
           <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
             </template>
-          </span>
+          </span> -->
         </div>
         <a-table
           :columns="columns"
@@ -52,10 +55,6 @@
           :scroll="{ y: scrollY }"
           :loading="loading"
           :pagination="pagination"
-          :row-selection="{
-            selectedRowKeys: selectedRowKeys,
-            onChange: onSelectChange,
-          }"
           :expandedRowKeys="expandedRowKeys"
           @expandedRowsChange="expandedRowsChange"
           @change="handleTableChange"

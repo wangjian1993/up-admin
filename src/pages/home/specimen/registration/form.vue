@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-06-07 17:11:25
+ * @LastEditTime: 2022-06-09 17:52:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/form.vue
@@ -45,7 +45,7 @@
               <a-form-model-item ref="ItemSpecification" has-feedback label="物料型号" prop="ItemSpecification"> <a-textarea :rows="4" v-model="form.ItemSpecification" disabled allowClear placeholder="请输入物料型号" /> </a-form-model-item
             ></a-col>
             <a-col :span="6">
-              <a-form-model-item ref="DrawingNo" has-feedback label="图号" prop="DrawingNo"> <a-input v-model="form.DrawingNo" disabled allowClear placeholder="请输入图号" /> </a-form-model-item
+              <a-form-model-item ref="DrawingNo" has-feedback label="图号" prop="DrawingNo"> <a-input v-model="form.DrawingNo" allowClear placeholder="请输入图号" /> </a-form-model-item
             ></a-col>
             <a-col :span="6">
               <a-form-model-item ref="Supplier" has-feedback label="供应商" prop="Supplier">
@@ -86,7 +86,7 @@
           </a-row>
         </a-form-model>
       </a-card>
-      <a-card class="card" title="研发/工厂" :bordered="false" :bodyStyle="{ padding: '5px' }" :headStyle="{ padding: '5px' }">
+      <a-card class="card" title="研发/工程" :bordered="false" :bodyStyle="{ padding: '5px' }" :headStyle="{ padding: '5px' }">
         <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
           <a-row>
             <a-col :span="6">

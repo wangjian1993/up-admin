@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 13:41:09
- * @LastEditTime: 2022-05-14 09:23:14
+ * @LastEditTime: 2022-06-13 17:19:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/index.vue
@@ -120,11 +120,11 @@
         </template>
         <template slot="action" slot-scope="text, record">
           <div>
-            <a style="margin-right: 8px" v-if="record.Status != '已发布'" @click="edit(record)">
+            <a style="margin-right: 8px" @click="edit(record)">
               <a-icon type="edit" />
               修改
             </a>
-            <a-popconfirm title="确定发布?" v-if="record.Status != '已发布'" @confirm="() => useApprove(record, 'delete')">
+            <a-popconfirm title="确定发布?" @confirm="() => useApprove(record, 'delete')">
               <a style="margin-right: 8px" :disabled="!hasPerm('approve')">
                 <a-icon type="delete" />
                 发布
@@ -152,15 +152,9 @@ const columns = [
     width: "5%",
   },
   {
-    title: "品名",
-    dataIndex: "",
-    scopedSlots: { customRender: "EquipentCode" },
-    align: "center",
-  },
-  {
-    title: "品号",
-    dataIndex: "",
-    scopedSlots: { customRender: "EquipmentName" },
+    title: "生产车间",
+    dataIndex: "WorkCenterName",
+    scopedSlots: { customRender: "WorkCenterName" },
     align: "center",
   },
   {
@@ -207,9 +201,27 @@ const columns = [
     align: "center",
   },
   {
-    title: "关联设备",
-    dataIndex: "CreateTime",
-    scopedSlots: { customRender: "CreateTime" },
+    title: "操作时间",
+    dataIndex: "AduitTime",
+    scopedSlots: { customRender: "AduitTime" },
+    align: "center",
+  },
+  {
+    title: "操作人",
+    dataIndex: "Aduiter",
+    scopedSlots: { customRender: "Aduiter" },
+    align: "center",
+  },
+  {
+    title: "品名",
+    dataIndex: "",
+    scopedSlots: { customRender: "EquipentCode" },
+    align: "center",
+  },
+  {
+    title: "品号",
+    dataIndex: "",
+    scopedSlots: { customRender: "EquipmentName" },
     align: "center",
   },
   {

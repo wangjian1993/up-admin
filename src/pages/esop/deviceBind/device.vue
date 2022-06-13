@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 14:01:21
- * @LastEditTime: 2022-06-08 11:45:03
+ * @LastEditTime: 2022-06-13 17:26:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/device.vue
@@ -76,7 +76,7 @@
                 <div class="device-content" @click="selectDocs(items, indexs)">
                   <img v-if="items.Status" src="@/assets/img/lcd.png" alt="" />
                   <img v-else src="@/assets/img/lcd-2.png" alt="" />
-                  <p>{{ items.EquipmentName }}</p>
+                  <p>{{ items.EquipmentCode }}</p>
                   <!-- <p :class="items.Status ? 'span-t' : 'span-f'"></p> -->
                 </div>
                 <div v-if="indexs == 1" class="process">
@@ -309,9 +309,9 @@ export default {
         margin-right: 2px;
       }
       p {
-        // overflow: hidden;
-        // text-overflow: ellipsis; //文本溢出显示省略号
-        // white-space: nowrap; //文本不会换行
+        overflow: hidden;
+        text-overflow: ellipsis; //文本溢出显示省略号
+        white-space: nowrap; //文本不会换行
         line-height: 1;
       }
     }
