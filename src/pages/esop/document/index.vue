@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-05-17 16:15:41
+ * @LastEditTime: 2022-06-17 10:29:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/index.vue
@@ -139,7 +139,7 @@
                 撤回
               </a>
             </a-popconfirm>
-            <a style="margin-right: 8px" v-if="record.Status == '待审核'" :disabled="!hasPerm('edit')" @click="useEdit(record)">
+            <a style="margin-right: 8px" :disabled="!hasPerm('edit')" @click="useEdit(record)">
               <a-icon type="edit" />
               编辑
             </a>

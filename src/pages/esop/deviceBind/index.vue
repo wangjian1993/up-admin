@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 13:41:09
- * @LastEditTime: 2022-06-13 17:19:41
+ * @LastEditTime: 2022-06-16 11:36:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/index.vue
@@ -55,7 +55,7 @@
                 <a-input style="width: 200px" allowClear placeholder="请输入文档名称" v-decorator="['documentname']" />
               </a-form-item>
             </a-col>
-             <a-col :md="6" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['procode']" />
               </a-form-item>
@@ -195,6 +195,12 @@ const columns = [
     align: "center",
   },
   {
+    title: "版本号",
+    dataIndex: "Version",
+    scopedSlots: { customRender: "Version" },
+    align: "center",
+  },
+  {
     title: "状态",
     dataIndex: "Status",
     scopedSlots: { customRender: "Status" },
@@ -271,7 +277,7 @@ export default {
       documentItem: [],
       editData: [],
       isEdit: false,
-      isDetail:false
+      isDetail: false,
     };
   },
   updated() {
@@ -298,20 +304,24 @@ export default {
   },
   methods: {
     bind() {
-      this.editData = [] ;
+      this.editData = [];
       this.isEdit = false;
       this.isAddDevice = true;
-      this.isDetail = false
+      this.isDetail = false;
     },
     edit(record) {
+      this.editData = [];
       this.isAddDevice = true;
       this.editData = record;
+      this.isDetail = false;
       this.isEdit = true;
     },
     detail(record) {
+      this.editData = [];
+      this.isEdit = false;
       this.isAddDevice = true;
       this.editData = record;
-      this.isDetail =true;
+      this.isDetail = true;
     },
     //工厂选择
     plantChange(e) {
@@ -434,7 +444,7 @@ export default {
       self.selectedRowKeys.push(null);
       let parmas = [];
       this.data.forEach((item) => {
-        console.log("self.selectedRowKeys---",self.selectedRowKeys)
+        console.log("self.selectedRowKeys---", self.selectedRowKeys);
         if (self.selectedRowKeys.includes(item.ID)) {
           parmas.push({
             documentid: item.DocumentId,
@@ -442,7 +452,7 @@ export default {
           });
         }
       });
-      parmas.push({})
+      parmas.push({});
       self.$confirm({
         title: "确定要发布选中内容",
         onOk() {

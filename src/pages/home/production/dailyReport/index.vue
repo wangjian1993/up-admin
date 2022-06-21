@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2022-04-08 08:56:01
+ * @LastEditTime: 2022-06-17 14:12:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/index.vue
@@ -274,16 +274,30 @@ export default {
     //单个删除
     exportExcel() {
       this.isExportLod = true;
+      let values = this.searchForm.getFieldsValue();
+      if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
+        const rangeValue = values["range-time-picker"];
+        var begindate = rangeValue[0].format("YYYY-MM-DD");
+        var enddate = rangeValue[1].format("YYYY-MM-DD");
+      }
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
+        plantid: values.plantid,
+        workshop: values.workshopid,
+        line: values.lineid,
+        orderno: values.orderno,
+        mocode: values.mocode,
+        procode: values.procode,
+        stratdate: begindate,
+        enddate: enddate,
       };
       getDailyReport(parmas, "daily/getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {
             Object.keys(item).forEach((key) => {
-              console.log(key)
+              console.log(key);
               // 后端传null node写入会有问题
               if (item[key] === null) {
                 item[key] = "";
@@ -291,9 +305,9 @@ export default {
               if (Array.isArray(item[key])) {
                 item[key] = item[key].join(",");
               }
-              if(key == 'ProDate'){
-                console.log("1111")
-                item[key] = splitData(item[key])
+              if (key == "ProDate") {
+                console.log("1111");
+                item[key] = splitData(item[key]);
               }
             });
             return item;

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 17:03:33
- * @LastEditTime: 2022-06-13 17:10:55
+ * @LastEditTime: 2022-06-15 14:49:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/device.vue
@@ -192,6 +192,10 @@ export default {
         justify-content: center;
         align-items: center;
         margin: 0 10px;
+        img {
+          width: 30px;
+          height: 30px;
+        }
       }
       .span-f {
         width: 10px;

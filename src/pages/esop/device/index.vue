@@ -46,7 +46,7 @@
               <a-form-item label="连接状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['status']" style="width: 200px">
                   <a-select-option value="">全部</a-select-option>
-                  <a-select-option value="treu">已连接</a-select-option>
+                  <a-select-option value="true">已连接</a-select-option>
                   <a-select-option value="false">未连接</a-select-option>
                 </a-select>
               </a-form-item>
@@ -64,7 +64,7 @@
         </div>
         <span style="float: right; margin-top: 3px;">
           <a style="margin-right: 8px" @click="helpClick('http://192.168.1.245:8080/docs/#/esop/device')"><a-icon type="question-circle" /> 帮助</a>
-          <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
+          <a-button type="primary" @click="search(false)" :disabled="!hasPerm('search')">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
         </span>
       </a-form>
@@ -141,7 +141,7 @@
           </a-descriptions>
         </a-drawer>
       </div>
-      <ImportExcel v-if="isImport" @closeModal="closeModal" @success="getListAll"/>
+      <ImportExcel v-if="isImport" @closeModal="closeModal" @success="getListAll" />
     </a-card>
   </div>
 </template>
@@ -237,9 +237,9 @@ import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getSopDevice, setSopDevice, getSopDocument } from "@/services/esop.js";
 import Form from "./form.vue";
-import ImportExcel from './ImportExcel.vue'
+import ImportExcel from "./ImportExcel.vue";
 export default {
-  components: { Form ,ImportExcel},
+  components: { Form, ImportExcel },
   data() {
     return {
       data: [],
@@ -271,7 +271,7 @@ export default {
       lineList: [],
       isForm: false, //添加编辑
       drawerItem: [],
-      isImport: false
+      isImport: false,
     };
   },
   updated() {
@@ -303,18 +303,18 @@ export default {
     onClose() {
       this.isDrawer = false;
     },
-    closeModal(){
-      this.isImport = false
+    closeModal() {
+      this.isImport = false;
     },
     detail(item) {
       this.isDrawer = true;
       this.drawerItem = item;
     },
-    download(){
-      window.open("./upload/ESOP设备导入模板.xlsx", '_blank');
+    download() {
+      window.open("./upload/ESOP设备导入模板.xlsx", "_blank");
     },
-    importBtn(){
-      this.isImport = true
+    importBtn() {
+      this.isImport = true;
     },
     //工厂选择
     plantChange(e) {
@@ -396,8 +396,12 @@ export default {
       this.searchForm.resetFields();
     },
     //关键词搜索
-    search() {
+    search(isPagination = false) {
       this.searchForm.validateFields((err, values) => {
+        console.log("isPagination===",isPagination)
+        if (!isPagination) {
+          this.pagination.current = 1;
+        }
         if (!err) {
           this.loading = true;
           let parmas = {
@@ -477,7 +481,7 @@ export default {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
       if (this.isSearch) {
-        this.search();
+        this.search(true);
         return;
       }
       this.getListAll();

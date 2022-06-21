@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-04-02 14:26:23
+ * @LastEditTime: 2022-06-21 17:03:49
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -665,6 +665,7 @@ export default {
           { wch: 3 }, // 单位
           { wch: 8 }, // 价格来源
           { wch: 8 }, // E10单价
+          { wch: 8 }, // E10单价
         ];
         excelData.forEach((item) => {
           let _data = [];
@@ -672,13 +673,13 @@ export default {
           for (let i = 0; i < 3; i++) {
             mergeTitle.push({
               s: { r: i, c: 0 },
-              e: { r: i, c: 8 },
+              e: { r: i, c: 9 },
             });
           }
-          _data.push([`产品代码:  ${item.ITEM_CODE}`, null, null, null, null, null, null, null, null]);
-          _data.push([`产品名称:  ${item.ITEM_NAME}`, null, null, null, null, null, null, null, null]);
-          _data.push([`产品规格:  ${item.ITEM_SPECIFICATION}`, null, null, null, null, null, null, null, null]);
-          _data.push(["阶层", "元件品号", "元件品名", "元件规格", "元件图号", "单位", "组成用量", "底数", "插件位置"]);
+          _data.push([`产品代码:  ${item.ITEM_CODE}`, null, null, null, null, null, null, null, null,null]);
+          _data.push([`产品名称:  ${item.ITEM_NAME}`, null, null, null, null, null, null, null, null,null]);
+          _data.push([`产品规格:  ${item.ITEM_SPECIFICATION}`, null, null, null, null, null, null, null, null,null]);
+          _data.push(["阶层", "元件品号", "元件品名", "元件规格", "元件图号", "单位", "组成用量", "底数", "插件位置","备注"]);
           item.childrenArray.map((items) => {
             let array = [];
             if (items.LOWLEVEL) {
@@ -697,9 +698,10 @@ export default {
             array.push(items.QTY_PER);
             array.push(items.DENOMINATOR);
             array.push(items.COMPONENT_LOCATION);
+            array.push(items.REMARK);
             _data.push(array);
           });
-          _data.push(["", "制单:", "", "审核:", "", "核准:", "", "日期:", ""]);
+          _data.push(["", "制单:", "", "审核:", "", "核准:", "", "日期:", "",""]);
           let merges2 = [];
           let merges = [...mergeTitle, ...merges2]; // 合并单元格
           excelArray.push({

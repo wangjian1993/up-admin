@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 14:01:21
- * @LastEditTime: 2022-06-13 17:26:20
+ * @LastEditTime: 2022-06-16 11:36:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/device.vue
@@ -136,6 +136,8 @@ export default {
   created() {
     this.getEnterList();
     if (this.isEdit) {
+      console.log("编辑====")
+      this.deviceList = [];
       this.plantId = this.editData.PlantId;
       this.workshopId = this.editData.WorkCenterId;
       this.lineId = this.editData.LineId;
@@ -145,6 +147,8 @@ export default {
       this.getDeviceList();
     }
     if (this.isDetail) {
+       console.log("详情====")
+      this.deviceList = [];
       this.plantId = this.editData.PlantId;
       this.workshopId = this.editData.WorkCenterId;
       this.lineId = this.editData.LineId;
@@ -214,6 +218,7 @@ export default {
       this.getDeviceList();
     },
     getDeviceList() {
+      this.deviceList =[]
       let parmas = {
         plantid: this.plantId,
         workcenterid: this.workshopId,
@@ -221,6 +226,7 @@ export default {
         documentid: this.selectDocsList.DocumentId,
       };
       getDeviceList(parmas, "getequipment").then((res) => {
+         console.log("this.deviceList===",this.deviceList)
         if (res.data.success) {
           let list = res.data.data.list;
           for (var i = 0; i < list.length; i += 2) {

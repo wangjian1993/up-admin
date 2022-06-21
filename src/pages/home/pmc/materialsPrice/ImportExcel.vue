@@ -1,0 +1,236 @@
+<!--
+ * @Author: max
+ * @Date: 2022-05-05 14:45:16
+ * @LastEditTime: 2022-06-21 11:14:42
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/pages/home/pmc/materialsPrice/ImportExcel.vue
+-->
+<!--
+ * @Author: max
+ * @Date: 2021-09-09 14:55:10
+ * @LastEditTime: 2022-04-11 10:17:44
+ * @LastEditors: max
+ * @Description: 导入execl
+ * @FilePath: /up-admin/src/pages/home/pmc/manufacture/ImportExecl.vue
+-->
+<template>
+  <div>
+    <a-modal v-model="visible" title="导入" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="800">
+      <a-spin tip="导入中..." :spinning="isUpload">
+        <div>
+          <a-form layout="horizontal">
+            <div>
+              <a-row>
+                <a-col :md="8" :sm="24">
+                  <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
+                    <div style="display:flex;">
+                      <a-upload name="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload" :remove="removeFile" :fileList="fileList">
+                        <a-button> <a-icon type="upload" />添加execl文件 </a-button>
+                      </a-upload>
+                    </div>
+                  </a-form-item>
+                </a-col>
+              </a-row>
+            </div>
+          </a-form>
+          <!-- 列表 -->
+          <div class="tab" v-if="this.errorList.length != 0">
+            <a-table :columns="columns" :data-source="errorList" :size="size" :scroll="{ y: true }" :pagination="pagination" :rowKey="(errorList) => errorList.Id" bordered>
+              <template slot="index" slot-scope="text, record, index">
+                <div>
+                  <span>{{ index + 1 }}</span>
+                </div>
+              </template>
+            </a-table>
+          </div>
+        </div>
+      </a-spin>
+    </a-modal>
+  </div>
+</template>
+
+<script>
+import excel from "@/utils/xlsxTool.js";
+import { getMaterialsPrice } from "@/services/web.js";
+const columns = [
+  {
+    title: "序号",
+    scopedSlots: { customRender: "index" },
+    align: "center",
+    width: "10%",
+  },
+  {
+    title: "错误信息",
+    dataIndex: "ErrorMsg",
+    align: "center",
+  },
+];
+export default {
+  props: ["plantArray"],
+  data() {
+    return {
+      size: "small",
+      visible: true,
+      errorList: [],
+      pagination: false,
+      tableTitle: [],
+      columns,
+      tableData: [],
+      plantId: "",
+      workshopId: "",
+      week: "",
+      workshopList: [],
+      lineList: [],
+      lineId: "",
+      people: "",
+      fileList: [],
+      isUpload: false,
+    };
+  },
+  created() {},
+  methods: {
+    //移除文件
+    removeFile() {
+      this.fileList = [];
+      this.errorList = [];
+    },
+    close() {
+      this.$emit("closeModal");
+    },
+    closeModel() {
+      this.this.$el;
+    },
+    //查看详情
+    onClose() {
+      this.isDrawer = false;
+    },
+    //修改对象key
+    transitionKey(list, map) {
+      function toTransition(list) {
+        var newObj = list.constructor === Array ? [] : {};
+        for (let key in list) {
+          var newKey = map[key] ? map[key] : key;
+
+          newObj[newKey] = typeof list[key] === "object" ? toTransition(list[key], map) : list[key];
+        }
+        return newObj;
+      }
+      return toTransition(list);
+    },
+    handleOk() {
+      if (this.isUpload) {
+        return;
+      }
+      if (this.errorList.length > 0) {
+        this.$message.warning("请先检查上传的excel是否正确!");
+        return;
+      }
+      if (this.tableData.length === 0) {
+        this.$message.warning("请先导入excel文件!");
+        return;
+      }
+      if (this.errorList.length == 0) {
+        let params = {
+          ItemList: this.tableData,
+        };
+        this.submitExcel(params);
+      } else {
+        this.$message.error("设备信息格式错误,请修改");
+      }
+    },
+    submitExcel(params) {
+      this.isUpload = true;
+      getMaterialsPrice(params, "extractitemparam").then((res) => {
+        if (res.data.success) {
+          this.$message.success("导入成功!");
+          this.$emit("success",res.data.data.ItemList);
+          this.isUpload = false;
+        } else {
+          this.isUpload = false;
+        }
+      });
+    },
+    //导入execl
+    beforeUpload(file) {
+      const fileExt = file.name
+        .split(".")
+        .pop()
+        .toLocaleLowerCase();
+      let fileList = [...this.fileList, file];
+      this.fileList = fileList.slice(-1);
+      if (fileExt === "xlsx" || fileExt === "xls") {
+        this.readFile(file);
+        this.file = file;
+        this.isUpload = true;
+      } else {
+        this.$Notice.warning({
+          title: "文件类型错误",
+          desc: "文件：" + file.name + "不是EXCEL文件，请选择后缀为.xlsx或者.xls的EXCEL文件。",
+        });
+      }
+      return false;
+    },
+    // 读取文件
+    readFile(file) {
+      const userRelations = {
+        品号: "ItemCode",
+        品名: "ItemName",
+        规格: "ItemSpecification",
+        长: "LenthStr",
+        宽: "WidthStr",
+        厚度: "ThickStr",
+        拼版数: "PinStr",
+        耐压: "PressStr",
+        描述: "Description",
+      };
+      let tableHead2 = [];
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onload = (e) => {
+        const data = e.target.result;
+        const { header, results } = excel.read(data, "array");
+        const tableTitle = header.map((item) => {
+          tableHead2.push(item);
+          return { title: item, key: item };
+        });
+        //this.tableData = results; //这里的tableData就是拿到的excel表格中的数据
+        console.log(this.tableData);
+        this.tableTitle = tableTitle;
+        results.map((item) => {
+          const obj = {};
+          // 1. 取出这个对象所有的属性名： ['姓名'， ‘手机号']
+          // 2. 遍历这个数组，通过 中文名去 userRelations 找对应英文名， 保存值
+          const zhKeys = Object.keys(item);
+          zhKeys.forEach((zhKey) => {
+            const enKey = userRelations[zhKey];
+            // 如果是时间格式，就要做转换
+            obj[enKey] = item[zhKey];
+          });
+          // return obj;
+          this.tableData.push(obj);
+        });
+        this.isUpload = false;
+      };
+    },
+  },
+  components: {},
+};
+</script>
+
+<style lang="less" scoped>
+.rowActive {
+  background: #000;
+}
+.form-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+/deep/.ant-table {
+  min-height: 0vh;
+}
+/deep/.ant-upload-list-item-name {
+  white-space: normal;
+}
+</style>

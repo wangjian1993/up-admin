@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 15:04:20
- * @LastEditTime: 2021-12-03 14:47:12
+ * @LastEditTime: 2022-06-21 14:13:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/personnel/addForm.vue
@@ -23,7 +23,7 @@
           </a-form-model-item>
           <a-form-model-item ref="Lines" has-feedback label="生产产线" prop="Lines">
             <a-select v-model="form.Lines" placeholder="请选择生产产线">
-              <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineCode">{{ item.LineName }}</a-select-option>
+              <a-select-option v-for="item in lineList" :key="item.LineCode" :value="item.LineCode">{{ item.LineName }}</a-select-option>
             </a-select>
           </a-form-model-item>
           <a-form-model-item ref="UserCode" has-feedback label="用户" prop="UserId">
@@ -107,6 +107,7 @@ export default {
       this.form = this.editData;
       this.plantId = this.editData.PlantId;
       this.workshopId = this.editData.WorkshopId;
+      this.form.Lines = this.editData.LineCode
       this.getWorkshopList();
       this.getLineList();
     }

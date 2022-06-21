@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-29 13:58:17
- * @LastEditTime: 2021-11-29 17:33:37
+ * @LastEditTime: 2022-06-21 14:14:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/personnel/data.js
@@ -43,8 +43,8 @@ export const columns = [
     },
     {
         title: "生产产线",
-        dataIndex: "Lines",
-        scopedSlots: { customRender: "Lines" },
+        dataIndex: "LineName",
+        scopedSlots: { customRender: "LineName" },
         align: "center",
         width: 200
     },

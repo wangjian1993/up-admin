@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-06-17 14:57:12
+ * @LastEditTime: 2022-06-17 14:56:05
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/esop/document/form copy.vue
+ * @FilePath: /up-admin/src/pages/esop/document/form copy 2.vue
 -->
 <template>
   <div>
@@ -40,7 +40,7 @@
               <a-form-model-item label="产品系列" :labelCol="{ span: 6 }"><a-input v-model="form.protypedetail" placeholder="请输入产品系列"/></a-form-model-item>
             </a-col>
             <a-col :span="12">
-              <a-form-model-item label="工序数量" :labelCol="{ span: 6 }"><a-input-number :min="1" v-model="processValue" placeholder="请输入工序" @change="processChange"/></a-form-model-item>
+              <a-form-model-item label="工序数量" :labelCol="{ span: 6 }"><a-input-number :min="0" v-model="processValue" placeholder="请输入工序" @change="processChange"/></a-form-model-item>
             </a-col>
           </a-row>
           <a-row>
@@ -71,6 +71,7 @@ function getBase64(img, callback) {
   reader.addEventListener("load", () => callback(reader.result));
   reader.readAsDataURL(img);
 }
+import md5 from "js-md5";
 export default {
   props: ["editData", "isEdit"],
   data() {
@@ -89,9 +90,7 @@ export default {
       fileData1: [],
       FilePrefix: "",
       processValue: 0,
-      processList: {
-        sort1: [],
-      },
+      processList: {},
       form: {
         documentcode: "",
         documentname: "",
@@ -147,6 +146,7 @@ export default {
   },
   methods: {
     removeFile1() {
+      console.log(this.fileData1);
       let params = {
         resourceid: this.fileData1[0].ResourceId,
         filepath: this.fileData1[0].FilePath,
@@ -155,11 +155,15 @@ export default {
         if (res.data.success) {
           this.$message.success("移除成功!");
           this.fileData1 = [];
+          this.processList1 = [];
         }
       });
     },
     removeFile(record) {
+      console.log("fileData===", this.fileData);
+      console.log("record===", record);
       let paramsData = this.fileData.find((item) => item.id == record.uid);
+      console.log("paramsData===", paramsData);
       let params = {
         resourceid: paramsData.ResourceId,
         filepath: paramsData.FilePath,
@@ -181,11 +185,13 @@ export default {
       });
     },
     processChange(e) {
-      if (e > this.sortValue) {
+      console.log(" e===", e);
+      console.log(" this.sortValue===", this.sortValue);
+      if (e >= this.sortValue) {
         this.sortValue = e;
         this.processList["sort" + this.sortValue] = [];
       } else {
-        console.log(typeof this.processList);
+        console.log(this.processList);
         delete this.processList["sort" + this.sortValue];
       }
       this.sortValue = e;
@@ -219,6 +225,14 @@ export default {
                 status: "done",
                 url: item.FilePath,
                 uid: item.ID,
+              });
+              this.fileData1.push({
+                FileName: item.FileName,
+                FilePath: item.FilePath,
+                FilePrefix: item.FilePrefix,
+                ResourceId: item.ResourceId,
+                sort: item.Sort,
+                id: item.ID,
               });
             } else {
               this.processList["sort" + item.Sort].push({
@@ -264,11 +278,39 @@ export default {
       let fileList = [...this.defFileList1, file];
       this.defFileList1 = fileList.slice(-1);
     },
+    //切割字符串
+    group(string, step) {
+      let r = [];
+      for (let i = 0, len = string.length; i < len; i += step) {
+        r.push(string.substr(i, i + step));
+      }
+      // let chunkSize = 10 * 1024 * 1024;
+      // let chunkCount = Math.ceil(base64.length / chunkSize);
+      // for (let i = 0; i < chunkCount; i++) {
+      //   let start = i * chunkSize;
+      //   let end = Math.min(base64.length, start + chunkSize);
+      //   let chunkFile = base64.slice(start, end);
+      //   console.log(chunkFile.length);
+      //   upload(file.name, file.type, file.size, chunkFile, i, chunkCount);
+      // }
+      console.log("length===",r.length)
+      return r;
+    },
+    uploadRequest(params) {
+      new Promise((resolve) => {
+        setSopDocumnet(params, "upload").then((res) => {
+          if (res.data.success) {
+            resolve(res);
+          }
+        });
+      });
+    },
     //总sop 文档上传
     uploadFile1(info) {
       getBase64(info.file, (imageUrl) => {
         this.imageUrl = imageUrl;
-        console.log(info.file);
+        let fileMd5 = md5(imageUrl);
+        let str = this.group(imageUrl, 5000000);
         let fileType = "";
         let fileSuffix = "";
         if (info.file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
@@ -291,36 +333,52 @@ export default {
           fileType = defaType[0];
           fileSuffix = defaType[1];
         }
-        let parmas = {
+        let requestArray = [];
+        let params = {
           filename: info.file.name,
-          filecontent: imageUrl,
           filetype: fileType,
-          filesize: info.file.size,
+          fileprefix: "",
           filesuffix: "." + fileSuffix,
-          filelength: 0,
+          filesize: info.file.size,
+          filelength: "0",
+          filecontent: "",
         };
-        if (this.fileData1.length > 0) {
-          parmas.FilePrefix = this.FilePrefix;
-        }
-        setSopDocumnet(parmas, "upload").then((res) => {
-          if (res.data.success) {
-            this.processList1.push({
-              name: info.file.name,
-              status: "done",
-              uid: info.file.uid,
-            });
-            this.$message.success("上传成功!");
-            if (this.fileData1.length == 0) {
-              this.FilePrefix = res.data.data.FilePrefix;
+        str.forEach((item, index) => {
+          params.filechunk = {
+            identifier: fileMd5,
+            totalChunks: str.length,
+            chunkNumber: index + 1,
+            content: item,
+          };
+          let result = this.uploadRequest(params);
+          requestArray.push(result);
+        });
+        Promise.all(requestArray).then((res) => {
+          console.log("res===", res);
+          params.filechunk = {
+            identifier: fileMd5,
+            totalChunks: str.length,
+          };
+          setSopDocumnet(params, "upload/composefile").then((res) => {
+            if (res.data.success) {
+              this.processList1.push({
+                name: info.file.name,
+                status: "done",
+                uid: info.file.uid,
+              });
+              this.$message.success("上传成功!");
+              if (this.fileData1.length == 0) {
+                this.FilePrefix = res.data.data.FilePrefix;
+              }
+              let fileInfo = {
+                ...res.data.data,
+                ...info.file,
+                sort: 0,
+              };
+              console.log("fileInfo===", fileInfo);
+              this.fileData1.push(fileInfo);
             }
-            let fileInfo = {
-              ...res.data.data,
-              ...info.file,
-              sort: 0,
-            };
-            this.fileData1.push(fileInfo);
-            console.log(" this.fileData", this.fileData1);
-          }
+          });
         });
         this.loading = false;
       });
@@ -329,7 +387,9 @@ export default {
       console.log("info", info);
       getBase64(info.file, (imageUrl) => {
         this.imageUrl = imageUrl;
-        console.log(info.file);
+        let fileMd5 = md5(imageUrl);
+        let str = this.group(imageUrl, 5000000);
+        console.log(str);
         let fileType = "";
         let fileSuffix = "";
         if (info.file.type == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
@@ -352,36 +412,54 @@ export default {
           fileType = defaType[0];
           fileSuffix = defaType[1];
         }
-        let parmas = {
+        let requestArray = [];
+        let params = {
           filename: info.file.name,
-          filecontent: imageUrl,
           filetype: fileType,
-          filesize: info.file.size,
+          fileprefix: "",
           filesuffix: "." + fileSuffix,
-          filelength: 0,
+          filesize: info.file.size,
+          filelength: "0",
+          filecontent: "",
         };
-        if (this.fileData.length > 0) {
-          parmas.FilePrefix = this.FilePrefix;
-        }
-        setSopDocumnet(parmas, "upload").then((res) => {
-          if (res.data.success) {
-            this.processList["sort" + info.data.sort].push({
-              name: info.file.name,
-              status: "done",
-              uid: info.file.uid,
-            });
-            this.$message.success("上传成功!");
-            if (this.fileData.length == 0) {
-              this.FilePrefix = res.data.data.FilePrefix;
+        str.forEach((item, index) => {
+          params.filechunk = {
+            identifier: fileMd5,
+            totalChunks: str.length,
+            chunkNumber: index + 1,
+            content: item,
+          };
+          let result = this.uploadRequest(params);
+          requestArray.push(result);
+        });
+        Promise.all(requestArray).then((res) => {
+          console.log("res===", res);
+          params.filechunk = {
+            identifier: fileMd5,
+            totalChunks: str.length,
+          };
+          setSopDocumnet(params, "upload/composefile").then((res) => {
+            console.log("info.data==", info.data);
+            console.log("this.processList==", this.processList);
+            if (res.data.success) {
+              this.processList["sort" + info.data.sort].push({
+                name: info.file.name,
+                status: "done",
+                uid: info.file.uid,
+              });
+              this.$message.success("上传成功!");
+              if (this.fileData.length == 0) {
+                this.FilePrefix = res.data.data.FilePrefix;
+              }
+              let fileInfo = {
+                ...res.data.data,
+                ...info.file,
+                sort: info.data.sort,
+              };
+              this.fileData.push(fileInfo);
+              console.log(" this.fileData", this.fileData);
             }
-            let fileInfo = {
-              ...res.data.data,
-              ...info.file,
-              sort: info.data.sort,
-            };
-            this.fileData.push(fileInfo);
-            console.log(" this.fileData", this.fileData);
-          }
+          });
         });
         this.loading = false;
       });
@@ -408,7 +486,7 @@ export default {
                 this.$message.success("添加成功!");
                 this.$emit("success");
                 this.spinning = false;
-              }else{
+              } else {
                 this.spinning = false;
               }
             });
