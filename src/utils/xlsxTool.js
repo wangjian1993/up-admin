@@ -90,6 +90,7 @@ export const read = (data, type) => {
     // const fixedData = fixdata(data)
     // const workbook = XLSX.read(btoa(fixedData), { type: 'base64' })
     const workbook = XLSX.read(data, { type: type ,cellDates: true});
+    console.log("workbook===",workbook)
     console.log(workbook.SheetNames)
     const firstSheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[firstSheetName];

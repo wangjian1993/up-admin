@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 16:01:38
- * @LastEditTime: 2022-06-09 14:13:28
+ * @LastEditTime: 2022-06-25 15:01:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/index.vue
@@ -107,7 +107,6 @@
         :row-selection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
-          getCheckboxProps: getCheckboxProps,
         }"
         bordered
       >
@@ -128,7 +127,13 @@
               <a-icon type="profile" />
               查看
             </a>
-            <a v-if="record.Enable == 'Y'" style="margin-right: 8px" @click="publish(record)" :disabled="!hasPerm('publish')">
+            <a-popconfirm title="确定删除?" @confirm="() => onDelete(record, 'delete')">
+              <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+                <a-icon type="delete" />
+                删除
+              </a>
+            </a-popconfirm>
+            <a  style="margin-right: 8px" @click="publish(record)" :disabled="!hasPerm('publish')">
               <a-icon type="check-square" />
               推送SOP
             </a>
@@ -216,6 +221,12 @@ const columns = [
     scopedSlots: { customRender: "Uploader" },
     align: "center",
   },
+   {
+    title: "状态",
+    dataIndex: "Status",
+    scopedSlots: { customRender: "Status" },
+    align: "center",
+  },
     {
     title: "品号",
     dataIndex: "EquipmentCode",
@@ -236,7 +247,7 @@ const columns = [
 ];
 import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
-import { getSopDocument, publishInfo } from "@/services/esop.js";
+import { getSopDocument, publishInfo ,setRecordApi} from "@/services/esop.js";
 import device from "./device.vue";
 export default {
   components: { device },
@@ -453,12 +464,21 @@ export default {
         onCancel() {},
       });
     },
-    //单个删除
-    publish(item) {
-      let parmas = [item.RecordId, null];
-      publishInfo(parmas, "delete").then((res) => {
+    publish(item){
+       let parmas = [item.RecordId, null];
+      publishInfo(parmas).then((res) => {
         if (res.data.success) {
           this.$message.success("发布成功!");
+          this.getListAll();
+        }
+      });
+    },
+    //单个删除
+    onDelete(item) {
+      let parmas = [item.RecordId, null];
+      setRecordApi(parmas, "delete").then((res) => {
+        if (res.data.success) {
+          this.$message.success("删除成功!");
           this.getListAll();
         }
       });

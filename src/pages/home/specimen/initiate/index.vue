@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-06-09 17:58:53
+ * @LastEditTime: 2022-06-23 13:39:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/initiate/index.vue
@@ -211,7 +211,7 @@ export default {
       setDepartmentApi(parmas, "addregister").then((res) => {
         if (res.data.success) {
           this.$message.success("发起成功!");
-          this.$store.dispatch("specimen/registerIdActions", res.data.data.RegisterId);
+          this.$store.dispatch("specimen/registerIdActions", res.data.data);
           this.$router.push({ path: "/specimen/backlog" });
           // console.log("dispatch", this.$store.dispatch('specimen/registerIdActions'))
           // this.$router.push({ name: '待办事宜', params: { id:res.data.data.RegisterId } })

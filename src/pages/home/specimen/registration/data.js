@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2022-05-26 18:08:12
+ * @LastEditTime: 2022-06-29 11:06:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/data.js
@@ -12,37 +12,46 @@ export const columns = [
     scopedSlots: { customRender: "index" },
     align: "center",
     width: 50,
+    fixed: "left",
   },
   {
     title: "流程编码",
     dataIndex: "FlowCode",
     scopedSlots: { customRender: "FlowCode" },
     align: "center",
+    width: 120,
+    fixed: "left",
   },
   {
     title: "采购送样日期",
     dataIndex: "DatetimePurchaseDeliver",
     scopedSlots: { customRender: "DatetimePurchaseDeliver" },
     align: "center",
+    width: 120,
+    fixed: "left",
   },
   {
     title: "物料编码",
     dataIndex: "ItemCode",
     scopedSlots: { customRender: "ItemCode" },
     align: "center",
+    fixed: "left",
+    width: 120,
   },
   {
     title: "物料名称",
     dataIndex: "ItemName",
     scopedSlots: { customRender: "ItemName" },
     align: "center",
+    fixed: "left",
+    width: 120,
   },
   {
     title: "物料型号",
     dataIndex: "ItemSpecification",
     scopedSlots: { customRender: "ItemSpecification" },
     align: "center",
-    width:350
+    width: 350
   },
   {
     title: "图号",
@@ -57,7 +66,7 @@ export const columns = [
     align: "center",
   },
   {
-    title: "首付有承认书",
+    title: "是否有承认书",
     dataIndex: "HasApprovalSheet",
     scopedSlots: { customRender: "HasApprovalSheet" },
     align: "center",
@@ -207,6 +216,7 @@ export const columns = [
     dataIndex: "Receiver",
     scopedSlots: { customRender: "Receiver" },
     align: "center",
+    width: 300,
   },
   {
     title: "状态",
@@ -214,14 +224,14 @@ export const columns = [
     fixed: "right",
     scopedSlots: { customRender: "TableStatus" },
     align: "center",
-    width:80
+    width: 80
   },
   {
     title: "操作",
     scopedSlots: { customRender: "action" },
     fixed: "right",
     align: "center",
-    width:100
+    width: 100
   },
 ];
 export const innerColumns = [{

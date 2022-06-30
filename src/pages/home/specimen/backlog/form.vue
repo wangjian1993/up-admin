@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-06-09 17:54:14
+ * @LastEditTime: 2022-06-30 17:43:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/form.vue
@@ -55,6 +55,8 @@
             <a-col :span="6">
               <a-form-model-item ref="ItemSpecification" has-feedback label="物料型号" prop="ItemSpecification"> <a-textarea :rows="4" v-model="form.ItemSpecification" disabled allowClear placeholder="请输入物料型号" /> </a-form-model-item
             ></a-col>
+          </a-row>
+          <a-row>
             <a-col :span="6">
               <a-form-model-item ref="DrawingNo" has-feedback label="图号" prop="DrawingNo"> <a-input v-model="form.DrawingNo" :disabled="!disabled1" allowClear placeholder="请输入图号" /> </a-form-model-item
             ></a-col>
@@ -79,6 +81,8 @@
             <a-col :span="6">
               <a-form-model-item ref="Quantity" has-feedback label="数量" prop="Quantity"> <a-input v-model="form.Quantity" :disabled="!disabled1" allowClear placeholder="请输入数量" /> </a-form-model-item
             ></a-col>
+          </a-row>
+          <a-row>
             <a-col :span="6">
               <a-form-model-item ref="Purchaser" has-feedback label="送样采购员" prop="Purchaser"> <a-input v-model="form.Purchaser" :disabled="!disabled1" allowClear placeholder="请输入送样采购员" /> </a-form-model-item
             ></a-col>
@@ -104,13 +108,26 @@
               <a-form-model-item ref="SignEngineer" has-feedback label="签样工程师" prop="SignEngineer"> <a-input v-model="form.SignEngineer" :disabled="!disabled2" allowClear placeholder="请输入签样工程师" /> </a-form-model-item>
             </a-col>
             <a-col :span="6">
-              <a-form-model-item ref="ApprovalDepartment" has-feedback label="承认部门" prop="ApprovalDepartment"> <a-input :disabled="!disabled2" v-model="form.ApprovalDepartment" allowClear placeholder="请输入承认部门" /> </a-form-model-item>
+              <a-form-model-item ref="ApprovalDepartment" has-feedback label="承认部门" prop="ApprovalDepartment">
+                <a-select v-model="form.ApprovalDepartment" has-feedback placeholder="请选择承认部门" :disabled="!disabled2">
+                  <a-select-option value="研发部">研发部</a-select-option>
+                  <a-select-option value="工程部">工程部</a-select-option>
+                  <a-select-option value="开发部">开发部</a-select-option>
+                  <a-select-option value="电子组">电子组</a-select-option>
+                </a-select>
+              </a-form-model-item>
             </a-col>
             <a-col :span="6">
               <a-form-model-item ref="DatetimeSign" has-feedback label="签样时间" prop="DatetimeSign"> <a-date-picker v-model="form.DatetimeSign" :disabled="!disabled2" show-time type="date" placeholder="选择签样时间" style="width: 100%;" /> </a-form-model-item>
             </a-col>
             <a-col :span="6">
-              <a-form-model-item ref="SignResult" has-feedback label="签样结果" prop="SignResult"> <a-input v-model="form.SignResult" :disabled="!disabled2" allowClear placeholder="请输入签样结果" /> </a-form-model-item>
+              <a-form-model-item ref="SignResult" has-feedback label="签样结果" prop="SignResult">
+                <a-select v-model="form.SignResult" has-feedback placeholder="请选择签样结果" :disabled="!disabled2">
+                  <a-select-option value="OK">OK</a-select-option>
+                  <a-select-option value="NG">NG</a-select-option>
+                  <a-select-option value="其他">其他</a-select-option>
+                </a-select>
+              </a-form-model-item>
             </a-col>
             <a-col :span="6">
               <a-form-model-item ref="Remark2" has-feedback label="研发备注" prop="Remark2"> <a-input v-model="form.Remark2" :disabled="!disabled2" allowClear placeholder="请输入研发备注" /> </a-form-model-item>
@@ -189,8 +206,9 @@
 <script>
 import { getMaterialSampleApi, setDepartmentApi } from "@/services/web.js";
 import moment from "moment";
+import { mapState } from "vuex";
 export default {
-  props: ["editData", "isEdit", "isClone"],
+  props: ["editData", "isEdit", "isClone", "isEditBnt"],
   data() {
     return {
       size: "small",
@@ -199,6 +217,7 @@ export default {
       wrapperCol: { span: 14 },
       form: {
         ItemCode: "",
+        Supplier: "",
       },
       rules: {
         ItemCode: [
@@ -269,16 +288,31 @@ export default {
       supplierList: [],
     };
   },
+  computed: {
+    ...mapState({
+      RegisterId: (start) => start.specimen.RegisterId,
+      DatetimePurchaseDeliver: (start) => start.specimen.DatetimePurchaseDeliver,
+      Purchaser: (start) => start.specimen.Purchaser,
+      Supplier: (start) => start.specimen.Supplier,
+    }),
+  },
   created() {
     this.getUserForm();
     if (this.isEdit) {
+      console.log("this.editData===", this.editData);
       this.form = JSON.parse(JSON.stringify(this.editData));
+      console.log("this.form===", this.form);
       this.form.DatetimePurchaseDeliver = this.editData.DatetimePurchaseDeliver != null ? moment(this.form.DatetimePurchaseDeliver) : "";
       this.form.DatetimePurchaseRetrieve = this.editData.DatetimePurchaseRetrieve != null ? moment(this.form.DatetimePurchaseRetrieve) : "";
       this.form.DatetimeSign = this.editData.DatetimeSign != null ? moment(this.form.DatetimeSign) : "";
       this.form.DatetimeCtrled = this.editData.DatetimeCtrled != null ? moment(this.form.DatetimeCtrled) : "";
       this.form.DatetimeCtrledAbnormalHandle = this.editData.DatetimeCtrledAbnormalHandle != null ? moment(this.form.DatetimeCtrledAbnormalHandle) : "";
       this.form.DatetimeQicCollect = this.editData.DatetimeQicCollect != null ? moment(this.form.DatetimeQicCollect) : "";
+      if (!this.isEditBnt) {
+        this.form.Purchaser = this.Purchaser;
+        this.form.Supplier = this.Supplier;
+        this.form.DatetimePurchaseDeliver = this.DatetimePurchaseDeliver != null ? moment(this.DatetimePurchaseDeliver) : "";
+      }
     }
   },
   methods: {
@@ -360,6 +394,18 @@ export default {
           this.form.ItemName = res.data.data[0].ItemName;
           this.form.ItemSpecification = res.data.data[0].ItemSpecification;
           this.form.DrawingNo = res.data.data[0].DrawingNo;
+          this.getItemCount(e);
+        }
+      });
+    },
+    getItemCount(e) {
+      let params1 = {
+        itemcode: e,
+      };
+      getMaterialSampleApi(params1, "getitemngtimes").then((res) => {
+        console.log("res.data.data.NgTimes===",res.data.data.NgTimes)
+        if (res.data.success && res.data.data.NgTimes > 2) {
+          this.$message.warning("请物料编码作废过2次");
         }
       });
     },
@@ -375,9 +421,13 @@ export default {
         console.log(valid);
         if (valid) {
           console.log(this.form);
-          if (this.form.ItemCode == "") {
-            this.userType = "采购";
+          if (this.form.ItemCode == null) {
             this.$message.warning("请输入物料编码");
+            this.loading = false;
+            return;
+          }
+          if (this.form.Supplier == null) {
+            this.$message.warning("请选择供应商");
             this.loading = false;
             return;
           }
@@ -386,7 +436,7 @@ export default {
             SubmitSign: type, //提交标识：1,，SAVE-保存 2，SAVEANDSUBMIT-保存并提交到下一节点
             UserReceiveDepartment: this.userList.join(","), //用户所有接收部门
             RegisterId: this.form.RegisterId, //登记ID1
-            DatetimePurchaseDeliver: this.form.DatetimePurchaseDeliver != "" ? this.form.DatetimePurchaseDeliver.format("YYYY-MM-DD HH:mm:ss") : "", //采购送样日期
+            DatetimePurchaseDeliver: this.form.DatetimePurchaseDeliver != null && this.form.DatetimePurchaseDeliver != "" ? this.form.DatetimePurchaseDeliver.format("YYYY-MM-DD HH:mm:ss") : "", //采购送样日期
             ItemCode: this.form.ItemCode, //物料编码
             ItemName: this.form.ItemName, //物料名称
             ItemSpecification: this.form.ItemSpecification, //规格型号
@@ -395,22 +445,22 @@ export default {
             HasApprovalSheet: this.form.HasApprovalSheet, //是否有承认书
             Quantity: this.form.Quantity, //数量
             Purchaser: this.form.Purchaser, //送样采购员
-            DatetimePurchaseRetrieve: this.form.DatetimePurchaseRetrieve != "" ? this.form.DatetimePurchaseRetrieve.format("YYYY-MM-DD HH:mm:ss") : "", //采购取回样品日期
+            DatetimePurchaseRetrieve: this.form.DatetimePurchaseRetrieve != null && this.form.DatetimePurchaseRetrieve != "" ? this.form.DatetimePurchaseRetrieve.format("YYYY-MM-DD HH:mm:ss") : "", //采购取回样品日期
             SampleCategory: this.form.SampleCategory, //样品类别
             CtrledCompany: this.form.CtrledCompany, //受控公司
             Remark1: this.form.Remark1, //采购备注
             SignEngineer: this.form.SignEngineer, //签样工程师
             ApprovalDepartment: this.form.ApprovalDepartment, //承认部门
-            DatetimeSign: this.form.DatetimeSign != "" ? this.form.DatetimeSign.format("YYYY-MM-DD HH:mm:ss") : "", //签样时间
+            DatetimeSign: this.form.DatetimeSign != null && this.form.DatetimeSign != "" ? this.form.DatetimeSign.format("YYYY-MM-DD HH:mm:ss") : "", //签样时间
             SignResult: this.form.SignResult, //签样结果
             Remark2: this.form.Remark2, //研发/工程备注
             CtrledStatus: this.form.CtrledStatus, //受控状态
-            DatetimeCtrled: this.form.DatetimeCtrled != "" ? this.form.DatetimeCtrled.format("YYYY-MM-DD HH:mm:ss") : "", //受控日期
+            DatetimeCtrled: this.form.DatetimeCtrled != null && this.form.DatetimeCtrled != "" ? this.form.DatetimeCtrled.format("YYYY-MM-DD HH:mm:ss") : "", //受控日期
             CtrledAbnormalDescription: this.form.CtrledAbnormalDescription, //受控异常描述
             CtrledAbnormalHandleStatus: this.form.CtrledAbnormalHandleStatus, //异常处理情况
-            DatetimeCtrledAbnormalHandle: this.form.DatetimeCtrledAbnormalHandle != "" ? this.form.DatetimeCtrledAbnormalHandle.format("YYYY-MM-DD HH:mm:ss") : "", //异常处理日期
+            DatetimeCtrledAbnormalHandle: this.form.DatetimeCtrledAbnormalHandle != null && this.form.DatetimeCtrledAbnormalHandle != "" ? this.form.DatetimeCtrledAbnormalHandle.format("YYYY-MM-DD HH:mm:ss") : "", //异常处理日期
             Remark3: this.form.Remark3, //文控备注
-            DatetimeQicCollect: this.form.DatetimeQicCollect != "" ? this.form.DatetimeQicCollect.format("YYYY-MM-DD HH:mm:ss") : "", //IQC收样日期
+            DatetimeQicCollect: this.form.DatetimeQicCollect != null && this.form.DatetimeQicCollect != "" ? this.form.DatetimeQicCollect.format("YYYY-MM-DD HH:mm:ss") : "", //IQC收样日期
             Remark4: this.form.Remark4, //IQC备注
           };
           console.log("parmas===", parmas);
@@ -422,9 +472,8 @@ export default {
               }
               this.$emit("closeModal");
               this.$emit("success");
-              this.visible = false;
-              this.loading = false;
             }
+            this.loading = false;
           });
         } else {
           this.loading = false;

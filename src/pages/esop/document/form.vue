@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-06-17 15:01:50
+ * @LastEditTime: 2022-06-23 16:11:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
@@ -48,11 +48,11 @@
               <a-form-model-item label="SOP文档" :labelCol="{ span: 3 }">
                 <a-upload :custom-request="uploadFile1" :before-upload="beforeUpload" list-type="picture-card" :default-file-list="defFileList1" :fileList="processList1" :remove="removeFile1"> <a-icon type="plus" /> </a-upload
               ></a-form-model-item>
-              <div v-for="(item, index) in processValue" :key="index">
+              <!-- <div v-for="(item, index) in processValue" :key="index">
                 <a-form-model-item :label="'工序' + (index + 1)" :labelCol="{ span: 3 }">
                   <a-upload :data="{ sort: index + 1 }" :custom-request="uploadFile" list-type="picture-card" :default-file-list="defFileList['sort' + (index + 1)]" :fileList="processList['sort' + (index + 1)]" :remove="removeFile"> <a-icon type="plus" /> </a-upload
                 ></a-form-model-item>
-              </div>
+              </div> -->
               <!-- <a-upload action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :default-file-list="defFileList.sort1">
               <a-button> <a-icon type="upload" /> Upload </a-button>
             </a-upload> -->
@@ -187,14 +187,14 @@ export default {
     processChange(e) {
       console.log(" e===", e);
       console.log(" this.sortValue===", this.sortValue);
-      if (e >= this.sortValue) {
-        this.sortValue = e;
-        this.processList["sort" + this.sortValue] = [];
-      } else {
-        console.log(this.processList);
-        delete this.processList["sort" + this.sortValue];
-      }
-      this.sortValue = e;
+      // if (e >= this.sortValue) {
+      //   this.sortValue = e;
+      //   this.processList["sort" + this.sortValue] = [];
+      // } else {
+      //   console.log(this.processList);
+      //   delete this.processList["sort" + this.sortValue];
+      // }
+      // this.sortValue = e;
     },
     getListAll() {
       let parmas = {
@@ -279,12 +279,8 @@ export default {
       this.defFileList1 = fileList.slice(-1);
     },
     //切割字符串
-    group(string, step) {
+    group(string) {
       let r = [];
-      // for (let i = 0, len = string.length; i < len; i += step) {
-      //   console.log(i + step)
-      //   r.push(string.substr(i, i + step));
-      // }
       let chunkSize = 10 * 1024 * 1024;
       let chunkCount = Math.ceil(string.length / chunkSize);
       for (let i = 0; i < chunkCount; i++) {
@@ -297,16 +293,17 @@ export default {
       return r;
     },
     uploadRequest(params) {
-      new Promise((resolve) => {
+      return new Promise((resolve) => {
         setSopDocumnet(params, "upload").then((res) => {
           if (res.data.success) {
-            resolve(res);
+            resolve(res.data);
           }
         });
       });
     },
     //总sop 文档上传
     uploadFile1(info) {
+      this.spinning =true
       getBase64(info.file, (imageUrl) => {
         this.imageUrl = imageUrl;
         let fileMd5 = md5(imageUrl);
@@ -353,6 +350,7 @@ export default {
           let result = this.uploadRequest(params);
           requestArray.push(result);
         });
+        console.log("requestArray===", requestArray);
         Promise.all(requestArray).then((res) => {
           console.log("res===", res);
           params.filechunk = {
@@ -375,12 +373,11 @@ export default {
                 ...info.file,
                 sort: 0,
               };
-              console.log("fileInfo===", fileInfo);
+              this.spinning =false;
               this.fileData1.push(fileInfo);
             }
           });
         });
-        this.loading = false;
       });
     },
     uploadFile(info) {
@@ -478,6 +475,7 @@ export default {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
                 this.$emit("success");
+                this.spinning =false;
               }
             });
           } else {

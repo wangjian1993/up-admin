@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2022-05-27 09:18:31
+ * @LastEditTime: 2022-06-30 11:06:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/Export2ExcelJs.js
@@ -79,7 +79,7 @@ export function exportjsontoexcel({
     data, //格式后的数据
     filename, //表名
     merges = [], //合并单元格格式
-    autoWidth = true,
+    autoWidth = false,
     bookType = 'xlsx',
     formStyle, // 样式修改
 } = {}) {
@@ -87,7 +87,7 @@ export function exportjsontoexcel({
     //判断是否有表名、没有则赋予固定表名
     filename = filename || 'excel-list'
 
-    var ws_name = "SheetJS";
+    var ws_name = "Sheet";
     console.log(data)
     var wb = new Workbook(),
         //将data转化格式 用于接下来动态宽度

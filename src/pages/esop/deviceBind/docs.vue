@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-31 09:19:37
- * @LastEditTime: 2022-06-08 11:30:04
+ * @LastEditTime: 2022-06-23 15:34:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/docs.vue
@@ -16,7 +16,7 @@
             :data-source="docsFile"
             :size="size"
             :pagination="false"
-             :scroll="{ y: 400 }"
+            :scroll="{ y: 400 }"
             :rowKey="(docsFile) => docsFile.FileCode"
             :row-selection="{
               selectedRowKeys: selectedRowKeys,
@@ -54,12 +54,13 @@
 <script>
 const columns = [
   {
-    title: "序号",
-    scopedSlots: { customRender: "index" },
+    title: "展示顺序",
+    dataIndex: "order",
+    scopedSlots: { customRender: "order" },
     align: "center",
     width: 50,
   },
-   {
+  {
     title: "工序",
     dataIndex: "Sort",
     scopedSlots: { customRender: "Sort" },
@@ -153,6 +154,26 @@ export default {
     },
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
+      this.selectedRowKeys.forEach((item, index) => {
+        this.docsFile.forEach((items) => {
+          if (item == items.FileCode) {
+            items.order = index + 1;
+          }
+        });
+      });
+      this.docsFile.forEach((item)=>{
+        if(!this.selectedRowKeys.includes(item.FileCode)){
+          item.order =""
+        }
+      })
+    },
+    getItemIndex(id) {
+      this.selectedRowKeys.forEach((item, index) => {
+        if (item == id) {
+          console.log("index===", index);
+          return index;
+        }
+      });
     },
     close() {
       this.$emit("closeModal");

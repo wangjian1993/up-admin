@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-03-28 11:04:11
- * @LastEditTime: 2022-05-23 09:20:32
+ * @LastEditTime: 2022-06-25 14:58:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/esop.js
@@ -54,6 +54,10 @@ export function getProduct(params, action) {
 
 export function setProduct(params, action) {
     return request(`${UP_ESOP}/product/${action}`, METHOD.POST, params);
+}
+
+export function setRecordApi(params, action) {
+    return request(`${UP_ESOP}/doc/record/${action}`, METHOD.POST, params);
 }
 
 export function publishInfo(params) {

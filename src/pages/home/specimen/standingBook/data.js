@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2022-06-30 10:38:07
+ * @LastEditTime: 2022-06-30 15:33:58
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/specimen/backlog/data.js
+ * @FilePath: /up-admin/src/pages/home/specimen/standingBook/data.js
  */
 export const columns = [
   {
@@ -188,7 +188,7 @@ export const columns = [
     align: "center",
   },
   {
-    title: "填表发起人",
+    title: "填表发起人/导入人",
     dataIndex: "UserCreated",
     scopedSlots: { customRender: "UserCreated" },
     align: "center",
@@ -200,23 +200,10 @@ export const columns = [
     align: "center",
   },
   {
-    title: "发起日期",
+    title: "发起日期/导入日期",
     dataIndex: "DatetimeCreated",
     scopedSlots: { customRender: "DatetimeCreated" },
     align: "center",
-  },
-  {
-    title: "当期节点",
-    dataIndex: "CurrentPoint",
-    scopedSlots: { customRender: "CurrentPoint" },
-    align: "center",
-  },
-  {
-    title: "未处理人",
-    dataIndex: "Receiver",
-    scopedSlots: { customRender: "Receiver" },
-    align: "center",
-    width:300
   },
   {
     title: "状态",
@@ -225,13 +212,6 @@ export const columns = [
     scopedSlots: { customRender: "TableStatus" },
     align: "center",
     width:80
-  },
-  {
-    title: "操作",
-    scopedSlots: { customRender: "action" },
-    fixed: "right",
-    align: "center",
-    width:100
   },
 ];
 export const innerColumns = [{

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-06-07 17:42:48
+ * @LastEditTime: 2022-06-30 17:36:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/index.vue
@@ -28,7 +28,7 @@
           </span>
         </a-form>
         <div class="operator">
-          <!-- <a-button type="primary" @click="add" icon="plus">新增</a-button> -->
+          <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-if="hasPerm('approve')" icon="check-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allApprove" style="margin-left: 8px">批量审批</a-button>
           <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allApprove" style="margin-left: 8px">批量审批</a-button>
           <span style="margin-left: 8px">
@@ -48,7 +48,7 @@
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
-          :rowClassName="rowClassName" 
+          :rowClassName="rowClassName"
           @change="handleTableChange"
           :rowKey="(dataSource) => dataSource.RegisterId"
           bordered
@@ -80,6 +80,12 @@
           </template>
           <template slot="action" slot-scope="text, record">
             <div>
+              <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
+                <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+                  <a-icon type="delete" />
+                  删除
+                </a>
+              </a-popconfirm>
               <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
                 <a-icon type="edit" />
                 编辑
@@ -92,8 +98,8 @@
           </template>
         </a-table>
       </a-card>
-      <useForm v-if="isForm" :isClone="isClone" :isEdit="isEdit" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="getListAll" />
-      <schedule v-if="isSchedule" :registerid="registerid" @closeModal="closeModal" @success="getEnterList"/>
+      <useForm v-if="isForm" :isClone="isClone" :isEditBnt="isEditBnt" :isEdit="isEdit" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="getListAll" />
+      <schedule v-if="isSchedule" :registerid="registerid" @closeModal="closeModal" @success="getEnterList" />
     </a-spin>
   </div>
 </template>
@@ -134,6 +140,7 @@ export default {
       isSchedule: false,
       registerid: "",
       isClone: false,
+      isEditBnt: false,
     };
   },
   updated() {
@@ -157,7 +164,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = this.getTableScroll(70);
     });
-    console.log("params===",this.RegisterId);
+    console.log("params===", this.RegisterId);
     if (this.RegisterId && this.RegisterId != "") {
       this.getEditInfo(this.RegisterId);
       this.isClone = true;
@@ -209,6 +216,8 @@ export default {
     edit(record) {
       this.isForm = true;
       this.isEdit = true;
+      this.isEditBnt = true;
+      console.log("record====", record);
       this.editData = record;
     },
     closeModal() {
@@ -222,6 +231,7 @@ export default {
       };
       getMaterialSampleApi(params, "getregistersingle").then((res) => {
         if (res.data.success) {
+          this.isEditBnt = false;
           this.isForm = true;
           this.isEdit = true;
           this.editData = res.data.data;
@@ -289,7 +299,7 @@ export default {
             enterpriseid: values.enterpriseid,
             usercode: localStorage.getItem("account"),
           };
-          getDepartmentApi(parmas, "getflowlistenabley").then((res) => {
+          getDepartmentApi(parmas, "getregisterpersonallist").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -314,7 +324,7 @@ export default {
           };
           self.selectedRowKeys.forEach((item) => {
             params.RegisterList.push({
-              RegisterId: item
+              RegisterId: item,
             });
           });
           setDepartmentApi(params, "batchsubmit").then((res) => {
@@ -328,23 +338,48 @@ export default {
         onCancel() {},
       });
     },
+     //多选删除
+    allDel() {
+      let self = this;
+      self.$confirm({
+        title: "确定要删除选中内容",
+        onOk() {
+          let params = {
+            RegisterList: [],
+          };
+          self.selectedRowKeys.forEach((item) => {
+            params.RegisterList.push({
+              RegisterId: item,
+            });
+          });
+          setDepartmentApi(params, "deleteregisterpersonal").then((res) => {
+            if (res.data.success) {
+              self.selectedRowKeys = [];
+              self.$message.success("删除成功!");
+              self.getListAll();
+            }
+          });
+        },
+        onCancel() {},
+      });
+    },
     //单个删除
     onDelete(item) {
       let parmas = {
-        FlowList: [
+        RegisterList: [
           {
-            FlowId: item.FlowId, //部门ID
+            RegisterId: item.RegisterId, //部门ID
           },
         ],
       };
-      setDepartmentApi(parmas, "deleteflow").then((res) => {
+      setDepartmentApi(parmas, "deleteregisterpersonal").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
         }
       });
     },
-     rowClassName(record) {
+    rowClassName(record) {
       return record.IsCurrentPointReturnStatus == "Y" ? "Rowactive" : "";
     },
   },

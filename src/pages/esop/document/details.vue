@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 14:02:21
- * @LastEditTime: 2022-05-25 15:29:05
+ * @LastEditTime: 2022-06-23 17:20:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/details.vue
@@ -10,7 +10,7 @@
   <div>
     <a-modal v-model="visible" title="sop文档详情" @cancel="close" :footer="null" centered width="70%">
       <div>
-        <a-descriptions :column="4" size="small">
+        <a-descriptions :column="5" size="small">
           <a-descriptions-item label="文件名称">
             {{ docsInfo.DocumentName }}
           </a-descriptions-item>
@@ -23,9 +23,12 @@
           <a-descriptions-item label="产品系列">
             {{ docsInfo.ProTypeDetail }}
           </a-descriptions-item>
+          <a-descriptions-item>
+            <a-button @click="isUploadFile = true"> <a-icon type="upload" />上传附件</a-button>
+          </a-descriptions-item>
         </a-descriptions>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-          <a-table :columns="columns" :data-source="docsFile" :size="size" :pagination="false" :rowKey="(docsFile) => docsFile.FileCode" bordered>
+          <a-table :columns="columns" :data-source="docsFile" :size="size" :scroll="{ y: 600 }" :pagination="false" :rowKey="(docsFile) => docsFile.FileCode" bordered>
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ index + 1 }}</span>
@@ -55,6 +58,7 @@
         </a-card>
       </div>
       <preview v-if="isPreview" :previewRecord="previewRecord" @close="closeModal" />
+      <uploadFile v-if="isUploadFile" @close="closeModal" :drawerItem="drawerItem" @success="getDocsFile"/>
     </a-modal>
   </div>
 </template>
@@ -104,8 +108,9 @@ const columns = [
 ];
 import { getSopDocument } from "@/services/esop.js";
 import preview from "../components/preview.vue";
+import uploadFile from "./uploadFile.vue";
 export default {
-  components: { preview },
+  components: { preview, uploadFile },
   props: ["drawerItem"],
   data() {
     return {
@@ -117,6 +122,7 @@ export default {
       docsInfo: [],
       isPreview: false,
       previewRecord: [],
+      isUploadFile: false,
     };
   },
   created() {
@@ -125,6 +131,7 @@ export default {
   methods: {
     closeModal() {
       this.isPreview = false;
+      this.isUploadFile = false;
     },
     preview(record) {
       this.previewRecord = record;

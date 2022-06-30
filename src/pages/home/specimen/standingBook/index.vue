@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-06-30 11:10:01
+ * @LastEditTime: 2022-06-30 15:39:06
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/specimen/registration/registration.vue
+ * @FilePath: /up-admin/src/pages/home/specimen/standingBook/index.vue
 -->
 <template>
   <div>
@@ -15,7 +15,7 @@
             <a-row>
               <a-col :md="6" :sm="24">
                 <a-form-item label="公司名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['enterpriseid']" placeholder="请选择公司名称" @change="enterChange">
+                  <a-select v-decorator="['enterpriseid']" placeholder="请选择公司名称">
                     <a-select-option v-for="item in enterList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                   </a-select>
                 </a-form-item>
@@ -75,9 +75,9 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button type="primary" :disabled="selectedRowKeys.length == 0" @click="exportExcel" icon="export">导出</a-button>
-          <a-button type="primary" style="margin-left:10px;" :disabled="dataSource.length == 0" @click="exportExcelAll" icon="export">导出全部</a-button>
-          <a-button v-if="hasPerm('delete') && rolesign == 'ADMIN'" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+          <a-button v-if="hasPerm('import')" icon="import" type="primary" :loading="loading" @click="isImportExcel = true" style="margin-left: 8px">导入</a-button>
+          <a-button type="primary" style="margin-left: 8px" :disabled="selectedRowKeys.length == 0" @click="exportExcel" icon="export">导出</a-button>
+          <!-- <a-button v-else icon="check-circle" type="primary" disabled :loading="loading" @click="allApprove" style="margin-left: 8px">批量审批</a-button> -->
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -88,7 +88,7 @@
           :columns="columns"
           :data-source="dataSource"
           size="small"
-          :scroll="{ y: scrollY, x: 3800 }"
+          :scroll="{ y: scrollY, x: 4000 }"
           :loading="loading"
           :pagination="pagination"
           :row-selection="{
@@ -96,9 +96,23 @@
             onChange: onSelectChange,
           }"
           @change="handleTableChange"
-          :rowKey="(dataSource) => dataSource.RegisterId"
+          :rowKey="(dataSource,index) => dataSource.ItemCode + '_' + index"
           bordered
         >
+          <!-- <a-table slot="expandedRowRender" size="small" :columns="innerColumns" :data-source="innerData" :pagination="false">
+            <template slot="index" slot-scope="text, record, index">
+              <div>
+                <span>{{ index + 1 }}</span>
+              </div>
+            </template>
+            <template slot="ReceiverList" slot-scope="record">
+              <div>
+                <a-tag v-for="item in record" :key="item.ReceiverId">
+                  {{ item.ReceiverName }}
+                </a-tag>
+              </div>
+            </template>
+          </a-table> -->
           <template slot="index" slot-scope="text, record, index">
             <div>
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -112,13 +126,13 @@
           </template>
           <template slot="action" slot-scope="text, record">
             <div>
-              <a-popconfirm v-if="rolesign == 'ADMIN'" title="确定删除?" @confirm="() => onDelete(record)">
+              <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
                 <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                   <a-icon type="delete" />
                   删除
                 </a>
               </a-popconfirm>
-              <a style="margin-right: 8px" v-if="rolesign == 'ADMIN'" @click="edit(record)" :disabled="!hasPerm('edit')">
+              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
                 <a-icon type="edit" />
                 编辑
               </a>
@@ -130,26 +144,23 @@
           </template>
         </a-table>
       </a-card>
-      <useForm v-if="isForm" :isEdit="isEdit" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="getListAll" />
-      <schedule v-if="isSchedule" :registerid="registerid" @closeModal="closeModal" @success="getEnterList" />
+      <ImportExcel v-if="isImportExcel" @closeModal="closeModal" :enterList="enterList" @success="getListAll" />
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getDepartmentApi, setDepartmentApi, getMaterialSampleApi } from "@/services/web.js";
+import { getDepartmentApi, getMaterialSampleApi } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
-// import getTableScroll from "@/utils/setTableHeight";
+import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { columns, innerColumns } from "./data";
-import useForm from "./form.vue";
-import schedule from "./schedule.vue";
+import ImportExcel from "./ImportExcel.vue";
 import { exportjsontoexcel } from "@/utils/Export2ExcelJs";
 export default {
-  props: ["rolesign"],
   mixins: [PublicVar],
-  components: { useForm, schedule },
+  components: { ImportExcel },
   data() {
     return {
       scrollY: "",
@@ -166,65 +177,26 @@ export default {
       selectedRowKeys: [],
       enterList: [],
       enterId: "",
-      innerData: [],
-      expandedRowKeys: [],
-      defaultExpandedRowKeys: [],
+      isImportExcel: false,
       departmentalList: [],
-      isSchedule: false,
-      registerid: "",
     };
   },
   updated() {
     renderStripe();
   },
-  watch: {
-    rolesign(res) {
-      this.rolesign = res;
-    },
-  },
   created() {
+    console.log(this.$store.state);
     this.$nextTick(() => {
-      this.scrollY = this.getTableScroll(70);
+      this.scrollY = getTableScroll(70);
     });
     this.getEnterList();
   },
   methods: {
     splitData,
-    getTableScroll(extraHeight = 70, id) {
-      if (typeof extraHeight == "undefined") {
-        //  默认底部分页64 + 边距10
-        extraHeight = 70;
-      }
-      let tHeader = null;
-      if (id) {
-        tHeader = document.getElementById(id) ? document.getElementById(id).getElementsByClassName("ant-table-thead")[0] : null;
-      } else {
-        tHeader = document.getElementsByClassName("ant-table-thead")[0];
-      }
-      //表格内容距离顶部的距离
-      // console.log("tHeader", tHeader);
-      let tHeaderBottom = 0;
-      let tHeaderTop = 0;
-      if (tHeader) {
-        tHeaderBottom = tHeader.getBoundingClientRect().bottom;
-        tHeaderTop = tHeader.getBoundingClientRect().top;
-      }
-      // let height = document.body.clientHeight - tHeaderBottom - extraHeight
-      let height = `calc(100vh - ${tHeaderBottom + extraHeight}px)`;
-      let height1 = `calc(100vh - ${tHeaderTop + extraHeight}px)`;
-      // document.getElementsByClassName("ant-table")[0].style.maxHeight = `calc(100vh - ${tHeaderBottom}px)`;
-      // document.getElementsByClassName("ant-table")[0].style.mixHeight = `calc(100vh - ${tHeaderBottom}px)`;
-      const table = document.getElementsByClassName("ant-table")[0];
-      table.style.minHeight = height1;
-      // console.log(table);
-      console.log("height", height);
-      return height;
-    },
     schedule(id) {
       this.isSchedule = true;
       this.registerid = id;
     },
-
     //重置搜索
     reset() {
       this.isSearch = 0;
@@ -234,12 +206,22 @@ export default {
     edit(record) {
       this.isForm = true;
       this.isEdit = true;
+      this.isEditBnt = true;
+      console.log("record====", record);
       this.editData = record;
     },
     closeModal() {
-      this.isForm = false;
-      this.isImport = false;
-      this.isSchedule = false;
+      this.isImportExcel = false;
+    },
+    enterChange(e) {
+      let params = {
+        enterpriseid: e,
+      };
+      getMaterialSampleApi(params, "getdeptoptions").then((res) => {
+        if (res.data.success) {
+          this.departmentalList = res.data.data;
+        }
+      });
     },
     getEnterList() {
       let params = {
@@ -257,16 +239,6 @@ export default {
         }
       });
     },
-    enterChange(e) {
-      let params = {
-        enterpriseid: e,
-      };
-      getMaterialSampleApi(params, "getdeptoptions").then((res) => {
-        if (res.data.success) {
-          this.departmentalList = res.data.data;
-        }
-      });
-    },
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
@@ -278,7 +250,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterId,
-        departmentid: this.departmentid,
+        departmentid: "",
         tablestatus: "",
         createdatestart: "",
         createdateend: "",
@@ -288,7 +260,7 @@ export default {
         supplier: "",
         purchaser: "",
       };
-      getDepartmentApi(parmas, "getregisterlist").then((res) => {
+      getDepartmentApi(parmas, "getallregisterlist").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -333,111 +305,22 @@ export default {
             supplier: values.supplier || "",
             purchaser: values.purchaser || "",
           };
-          getDepartmentApi(parmas, "getregisterlist").then((res) => {
+          getDepartmentApi(parmas, "getallregisterlist").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.isSearch = 2;
+            } else {
+              this.dataSource = [];
+              const pagination = { ...this.pagination };
+              pagination.total = 0;
+              this.pagination = pagination;
             }
             this.loading = false;
           });
           // do something
-        }
-      });
-    },
-    //多选删除
-    allDel() {
-      let self = this;
-      self.$confirm({
-        title: "确定要删除选中内容",
-        onOk() {
-          let params = {
-            RegisterList: [],
-          };
-          self.selectedRowKeys.forEach((item) => {
-            params.RegisterList.push({
-              RegisterId: item,
-            });
-          });
-          setDepartmentApi(params, "deleteregister").then((res) => {
-            if (res.data.success) {
-              self.selectedRowKeys = [];
-              self.$message.success("删除成功!");
-              self.getListAll();
-            }
-          });
-        },
-        onCancel() {},
-      });
-    },
-    //单个删除
-    onDelete(item) {
-      let parmas = {
-        RegisterList: [
-          {
-            RegisterId: item.RegisterId, //部门ID
-          },
-        ],
-      };
-      setDepartmentApi(parmas, "deleteregister").then((res) => {
-        if (res.data.success) {
-          this.$message.success("删除成功!");
-          this.getListAll();
-        }
-      });
-    },
-    exportExcelAll() {
-      let values = this.searchForm.getFieldsValue();
-      this.isExportLod = true;
-      let _data = [];
-      const header = [];
-      this.columns.map((item) => {
-        if (item.dataIndex) {
-          header.push(item.title);
-        }
-      });
-      _data.push(header);
-      if (values["range-time-picker"] != undefined) {
-        var createdatestart = values["range-time-picker"][0].format("YYYY-MM-DD");
-        var createdateend = values["range-time-picker"][1].format("YYYY-MM-DD");
-      }
-      let parmas = {
-        pageindex: this.pagination.current,
-        pagesize: this.pagination.total,
-        enterpriseid: this.enterId || "",
-        departmentid: values.departmentid || "",
-        tablestatus: values.tablestatus || "",
-        createdatestart: createdatestart || "",
-        createdateend: createdateend || "",
-        itemcode: values.itemcode || "",
-        itemname: values.itemname || "",
-        itemspecification: values.itemspecification || "",
-        supplier: values.supplier || "",
-        purchaser: values.purchaser || "",
-      };
-      getDepartmentApi(parmas, "getregisterlist").then((res) => {
-        if (res.data.success) {
-          let list = res.data.data.list;
-          list.map((item) => {
-            let array = [];
-            this.columns.map((items) => {
-              if (items.dataIndex) {
-                array.push(item[items.dataIndex] || "");
-              }
-            });
-            _data.push(array);
-          });
-          try {
-            console.log(_data);
-            exportjsontoexcel({ data: _data, filename: `登记汇总_.xlsx` });
-            this.$message.success("导出数据成功!");
-          } catch (error) {
-            console.log(error);
-            this.$message.error("导出数据失败");
-          }
-          this.isExportLod = false;
         }
       });
     },
@@ -452,8 +335,8 @@ export default {
       });
       _data.push(header);
       let list = [];
-      this.dataSource.forEach((item) => {
-        if (this.selectedRowKeys.includes(item.RegisterId)) {
+      this.dataSource.forEach((item,index) => {
+        if (this.selectedRowKeys.includes(item.ItemCode +"_" + index)) {
           list.push(item);
         }
       });
@@ -487,5 +370,9 @@ export default {
 }
 .ant-form-item {
   margin-bottom: 5px;
+}
+/deep/.Rowactive > td {
+  // background-color: #ed0e0e !important;
+  color: #f60e0e !important;
 }
 </style>

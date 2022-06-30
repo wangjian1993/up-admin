@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-06-17 10:29:47
+ * @LastEditTime: 2022-06-23 17:28:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/index.vue
@@ -143,6 +143,10 @@
               <a-icon type="edit" />
               编辑
             </a>
+            <a style="margin-right: 8px" :disabled="!hasPerm('upload')" @click="upload(record)">
+              <a-icon type="upload" />
+              上传
+            </a>
             <a style="margin-right: 8px" @click="detail(record)">
               <a-icon type="profile" />
               查看明细
@@ -153,6 +157,7 @@
       <a-empty v-else description="暂无权限" />
       <Form v-if="isForm" :editData="editData" :isEdit="isEdit" @close="close" @success="success" />
       <useDetails v-if="isDrawer" :drawerItem="drawerItem" @closeModal="close" />
+      <uploadFile v-if="isUploadFile" :drawerItem="uploadData" @close="close" @success="success"/>
     </a-card>
   </div>
 </template>
@@ -248,8 +253,9 @@ import { renderStripe } from "@/utils/stripe.js";
 import { getSopDocument, setSopDocumnet } from "@/services/esop.js";
 import Form from "./form.vue";
 import useDetails from "./details.vue";
+import uploadFile from './uploadFile.vue'
 export default {
-  components: { Form, useDetails },
+  components: { Form, useDetails ,uploadFile },
   data() {
     return {
       data: [],
@@ -283,6 +289,8 @@ export default {
       drawerItem: [],
       editData: [],
       isEdit: false,
+      isUploadFile:false,
+      uploadData:[]
     };
   },
   updated() {
@@ -437,6 +445,10 @@ export default {
     add() {
       this.isForm = true;
     },
+    upload(item){
+      this.isUploadFile = true;
+      this.uploadData = item;
+    },
     useEdit(item) {
       this.isForm = true;
       this.editData = item;
@@ -446,6 +458,8 @@ export default {
       this.isForm = false;
       this.isDrawer = false;
       this.isEdit = false;
+      this.success =false;
+      this.isUploadFile= false;
     },
     success() {
       this.isForm = false;
