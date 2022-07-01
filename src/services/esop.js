@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-03-28 11:04:11
- * @LastEditTime: 2022-06-25 14:58:08
+ * @LastEditTime: 2022-07-01 10:10:23
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/esop.js
@@ -62,4 +62,12 @@ export function setRecordApi(params, action) {
 
 export function publishInfo(params) {
     return request(`${UP_ESOP}/client/mqtt/publishbyid`, METHOD.POST, params);
+}
+
+export function getPushRecord(params, action) {
+    return request(`${UP_ESOP}/client/${action}`, METHOD.GET, params);
+}
+
+export function setPushRecord(params, action) {
+    return request(`${UP_ESOP}/client/${action}`, METHOD.POST, params);
 }

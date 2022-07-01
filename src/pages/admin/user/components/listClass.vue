@@ -145,7 +145,7 @@ export default {
 				pageindex: this.pagination.current,
 				pagesize: this.pagination.pageSize,
 				dimsensionId: this.classItem.OrgDimensionId,
-				enterid: this.enterValue[0]
+				enterid: this.enterValue
 			};
 			getOrginfo(parmas).then(res => {
 				if (res.data.success) {
@@ -209,7 +209,7 @@ export default {
 						pageindex: this.pagination.current,
 						pagesize: this.pagination.pageSize,
 						dimsensionId: this.classItem.OrgDimensionId,
-						enterid: this.enterValue[0],
+						enterid: this.enterValue,
 						keyword: values.searcValue
 					};
 					getOrginfo(parmas).then(res => {

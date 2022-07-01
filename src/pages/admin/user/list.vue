@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-11-15 16:04:02
+ * @LastEditTime: 2022-07-01 15:36:50
  * @LastEditors: max
  * @Description: 用户列表
  * @FilePath: /up-admin/src/pages/admin/user/list.vue
@@ -176,7 +176,7 @@
           </a-card>
         </a-col>
       </a-row>
-      <add-user v-if="addModal" :editItem="editItem" :modalType="modalType" @cloneModal="cloneModal" @succeed="succeed" :enterValue="enterValue"></add-user>
+      <add-user v-if="addModal" :editItem="editItem" :modalType="modalType" @cloneModal="cloneModal" @succeed="succeed" :enterValue="enterId"></add-user>
     </a-spin>
   </div>
 </template>

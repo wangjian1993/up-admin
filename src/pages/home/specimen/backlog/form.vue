@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-06-30 17:43:56
+ * @LastEditTime: 2022-07-01 10:56:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/form.vue
@@ -405,7 +405,7 @@ export default {
       getMaterialSampleApi(params1, "getitemngtimes").then((res) => {
         console.log("res.data.data.NgTimes===",res.data.data.NgTimes)
         if (res.data.success && res.data.data.NgTimes > 2) {
-          this.$message.warning("请物料编码作废过2次");
+          this.$message.warning("该物料编码作废过2次");
         }
       });
     },

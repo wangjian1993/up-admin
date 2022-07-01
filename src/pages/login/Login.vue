@@ -41,7 +41,8 @@
           </a-input-password>
         </a-form-item>
         <div>
-          <a-checkbox style="float: right" :checked="isAccount" @click="cheackAccount">记住账号</a-checkbox>
+          <a-checkbox style="float: right" :checked="isAccount" @click="cheackAccount">记住账号/密码</a-checkbox>
+          <a-checkbox style="float: right" :checked="isAutoLogin" @click="cheackAuto">自动登录</a-checkbox>
           <!-- <a style="float: right">忘记密码</a> -->
         </div>
         <a-form-item><a-button :loading="logging" style="width: 100%;margin-top: 24px" size="large" htmlType="submit" type="primary">登录</a-button></a-form-item>
@@ -56,7 +57,7 @@ import { login } from "@/services/user";
 import { setAuthorization } from "@/utils/request";
 import { loadRoutes } from "@/utils/routerUtil";
 import { mapMutations } from "vuex";
-
+import { encrypto, decrypto } from "@/utils/encrypt";
 export default {
   name: "Login",
   components: { CommonLayout },
@@ -67,6 +68,7 @@ export default {
       form: this.$form.createForm(this),
       routerItem: [],
       isAccount: true,
+      isAutoLogin: true,
       timeList: [
         {
           CN: "早上好",
@@ -105,7 +107,15 @@ export default {
     //设置账号
     this.$nextTick(() => {
       let name = localStorage.getItem("account");
-      this.form.setFieldsValue({ name: name });
+      let isAutoLogin = localStorage.getItem("isAutoLogin");
+      const pws = decrypto(localStorage.getItem("password"));
+      this.form.setFieldsValue({ name: name, password: pws });
+      if (isAutoLogin) {
+        this.logging = true;
+        const name = this.form.getFieldValue("name");
+        const password = this.form.getFieldValue("password");
+        login(name, password).then(this.afterLogin);
+      }
     });
   },
   methods: {
@@ -148,9 +158,17 @@ export default {
         const routesConfig = userModules || [];
         //记住账号
         if (this.isAccount) {
+          console.log("保存账号密码====")
           localStorage.setItem("account", this.form.getFieldValue("name"));
+          localStorage.setItem("password", encrypto(this.form.getFieldValue("password")));
         } else {
           localStorage.removeItem("account");
+          localStorage.removeItem("password");
+        }
+        if (this.isAutoLogin) {
+          localStorage.setItem("isAutoLogin", true);
+        } else {
+          localStorage.removeItem("isAutoLogin");
         }
         // if (routesConfig.length == 0) {
         let workplace = {
@@ -181,6 +199,9 @@ export default {
     },
     cheackAccount() {
       this.isAccount = !this.isAccount;
+    },
+    cheackAuto() {
+      this.isAutoLogin = !this.isAutoLogin;
     },
   },
 };

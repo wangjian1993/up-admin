@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-06-23 16:11:31
+ * @LastEditTime: 2022-07-01 11:44:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
@@ -234,33 +234,9 @@ export default {
                 sort: item.Sort,
                 id: item.ID,
               });
-            } else {
-              this.processList["sort" + item.Sort].push({
-                ...item,
-                name: item.FileName,
-                status: "done",
-                url: item.FilePath,
-                uid: item.ID,
-              });
-              this.defFileList["sort" + item.Sort].push({
-                ...item,
-                name: item.FileName,
-                status: "done",
-                url: item.FilePath,
-                uid: item.ID,
-              });
-              this.fileData.push({
-                FileName: item.FileName,
-                FilePath: item.FilePath,
-                FilePrefix: item.FilePrefix,
-                ResourceId: item.ResourceId,
-                sort: item.Sort,
-                id: item.ID,
-              });
             }
           });
           this.processValue = doc.ProcessCount;
-          console.log(doc);
           this.form = {
             documentcode: doc.DocumentCode,
             documentname: doc.DocumentName,
