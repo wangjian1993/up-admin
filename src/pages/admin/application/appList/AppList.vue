@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-10-11 17:31:04
+ * @LastEditTime: 2022-07-06 09:29:42
  * @LastEditors: max
  * @Description: 应用列表
  * @FilePath: /up-admin/src/pages/admin/application/appList/AppList.vue
@@ -188,6 +188,12 @@ const columns = [
     title: "状态",
     dataIndex: "Enable",
     scopedSlots: { customRender: "enable" },
+    align: "center",
+  },
+   {
+    title: "排序",
+    dataIndex: "Sort",
+    scopedSlots: { customRender: "Sort" },
     align: "center",
   },
   {

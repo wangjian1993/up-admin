@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 16:01:38
- * @LastEditTime: 2022-07-01 11:40:40
+ * @LastEditTime: 2022-07-04 14:22:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/pushRecord/index.vue
@@ -120,7 +120,7 @@
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
-      <useForm v-if="isForm" @closeModal="close" isEdit="isEdit" :editData="editData" />
+      <useForm v-if="isForm" @closeModal="close" />
     </a-card>
   </div>
 </template>

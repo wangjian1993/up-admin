@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2022-04-08 10:24:18
+ * @LastEditTime: 2022-07-07 15:07:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/main.js
@@ -21,11 +21,9 @@ import bootstrap from '@/bootstrap';
 import 'moment/locale/zh-cn';
 //datav
 import dataV from '@jiaminghi/data-view';
-// import echarts from 'echarts'
 // 挂载全局使用的方法
 import VueDraggableResizable from 'vue-draggable-resizable'
 Vue.component('vue-draggable-resizable', VueDraggableResizable)
-// Vue.prototype.$echarts = echarts
 Vue.use(dataV);
 //easyui
 // import 'vx-easyui/dist/themes/default/easyui.css';

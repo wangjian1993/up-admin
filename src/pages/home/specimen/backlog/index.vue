@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-06-30 17:36:38
+ * @LastEditTime: 2022-07-12 10:26:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/index.vue
@@ -160,7 +160,6 @@ export default {
     }),
   },
   created() {
-    console.log(this.$store.state);
     this.$nextTick(() => {
       this.scrollY = this.getTableScroll(70);
     });

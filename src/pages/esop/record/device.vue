@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 17:03:33
- * @LastEditTime: 2022-06-15 14:49:13
+ * @LastEditTime: 2022-07-08 15:31:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/device.vue
@@ -22,50 +22,34 @@
       </a-descriptions>
       <div>
         <div class="device-lsit">
-          <div class="device-list-header">
-            <span>左侧</span>
-            <p>拉头</p>
-            <span>右侧</span>
-          </div>
-          <div>
-            <div class="device-list-content" v-for="(item, index) in deviceList" :key="index">
-              <div class="device" v-for="(items, indexs) in item" :key="items.EquipmentId">
-                <div v-if="indexs == 0" class="process">
-                  <p v-for="fileItem in items.Detail" :key="fileItem.Id" @click="checkDocs(items)">
-                    <a-popover title="附件">
-                      <template slot="content">
-                        {{ fileItem.FileName }}
-                      </template>
-                      <span>
-                        {{ fileItem.FileName }}
-                      </span>
-                    </a-popover>
-                  </p>
-                </div>
-                <div class="device-content">
+          <!-- <div class="device-list-left">
+            <p>{{ item.LineName }}</p>
+          </div> -->
+          <div class="device-list-box">
+            <div class="device-list-content" v-for="(list, index) in deviceList" :key="index">
+              <div class="device" v-for="(items, indexs) in list" :key="indexs">
+                <div class="device-content" v-for="fileItem in items.Detail" :key="fileItem.Id" @click="selectDocs(items, indexs)">
+                  <!-- <a-popover title="Title" >
+                    <template slot="content">
+                      {{ fileItem.FileName }}
+                    </template>
+                    <span>{{ items.EquipmentCode }}</span>
+                  </a-popover> -->
+
+                  <a-popover title="附件">
+                    <template slot="content">
+                      {{ fileItem.FileName }}
+                    </template>
+                    <span>
+                      {{ items.EquipmentCode }}
+                    </span>
+                  </a-popover>
                   <img v-if="items.Status" src="@/assets/img/lcd.png" alt="" />
                   <img v-else src="@/assets/img/lcd-2.png" alt="" />
-                  <p>{{ items.EquipmentCode }}</p>
-                </div>
-                <div v-if="indexs == 1" class="process">
-                  <p v-for="fileItem in items.Detail" :key="fileItem.Id" @click="checkDocs(items)">
-                    <a-popover title="附件">
-                      <template slot="content">
-                        {{ fileItem.FileName }}
-                      </template>
-                      <span>
-                        {{ fileItem.FileName }}
-                      </span>
-                    </a-popover>
-                  </p>
+                  <!-- <p><a-icon type="folder" style="'marginLeft':'10px'" />{{ items.Detail.length }}</p> -->
                 </div>
               </div>
             </div>
-          </div>
-          <div class="device-list-footer">
-            <span></span>
-            <p>拉尾</p>
-            <span></span>
           </div>
         </div>
       </div>
@@ -114,9 +98,17 @@ export default {
       getSopDocument(parmas, "record/getequipment").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
-          for (var i = 0; i < list.length; i += 2) {
-            this.deviceList.push(list.slice(i, i + 2));
+          let array = [];
+          for (let i = 0; i < list.length; i += 2) {
+            let rowArray = list.slice(i, i + 2);
+            if (rowArray[0] != undefined && rowArray[1] != undefined) {
+              array.push(([rowArray[0], rowArray[1]] = [rowArray[1], rowArray[0]]));
+            } else {
+              array.push(rowArray);
+            }
           }
+          this.deviceList = array;
+          console.log(this.deviceList);
         }
       });
     },
@@ -129,50 +121,39 @@ export default {
   margin-bottom: 5px;
 }
 .device-lsit {
-  width: 550px;
-  margin: 0 auto;
-  text-align: center;
   border: 1px #000 solid;
-  padding: 10px;
-  .device-list-header,
-  .device-list-footer {
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  .device-list-left {
+    // display: flex;
+    // height:100%;
+    // border-right: 1px solid #b4b3b3;
+  }
+  .device-list-box {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    span {
-      width: 150px;
-      height: 30px;
-      text-align: center;
-      line-height: 30px;
-      color: rgb(228, 23, 23);
-    }
-    p {
-      width: 180px;
-      height: 30px;
-      border: 1px #000 solid;
-      text-align: center;
-      line-height: 30px;
-    }
   }
   .device-list-content {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 5px 0;
+    flex-direction: column;
     .process {
-      width: 130px;
-      height: 30px;
+      width: 50px;
+      height: 50px;
       border: 1px #000 solid;
       text-align: center;
-      line-height: 30px;
-      cursor: pointer;
+      line-height: 50px;
+      img {
+        width: 15px;
+        height: 12px;
+        margin-right: 2px;
+      }
       p {
         overflow: hidden;
         text-overflow: ellipsis; //文本溢出显示省略号
         white-space: nowrap; //文本不会换行
-      }
-      &:hover {
-        background: rgb(150, 227, 158);
+        line-height: 1;
       }
     }
     .device {
@@ -180,13 +161,15 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 5px;
+      cursor: pointer;
       p {
         margin: 0;
       }
       .device-content {
-        width: 100px;
-        height: 50px;
-        border: 1px #000 solid;
+        // width: 100px;
+        // height: 50px;
+        // border: 1px #000 solid;
         display: flex;
         flex-direction: column;
         justify-content: center;

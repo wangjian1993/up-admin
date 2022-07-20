@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-06-23 17:28:11
+ * @LastEditTime: 2022-07-08 10:14:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/index.vue
@@ -133,7 +133,7 @@
                 审核
               </a>
             </a-popconfirm>
-            <a-popconfirm title="确定撤回?" v-if="record.Status != '已发布'" @confirm="() => useDelete(record, 'retract')">
+            <a-popconfirm title="确定撤回?" v-if="record.Status == '已发布'" @confirm="() => useDelete(record, 'retract')">
               <a style="margin-right: 8px" :disabled="!hasPerm('retract')">
                 <a-icon type="redo" />
                 撤回

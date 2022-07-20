@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 16:01:38
- * @LastEditTime: 2022-07-01 09:24:14
+ * @LastEditTime: 2022-07-04 16:19:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/index.vue
@@ -73,6 +73,14 @@
             <a-col :md="6" :sm="24">
               <a-form-item label="产品系列" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['protypedetail']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['status']" placeholder="请选择状态" style="width: 200px">
+                  <a-select-option value="">全部</a-select-option>
+                  <a-select-option value="正在使用">正在使用</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </a-row>
@@ -420,6 +428,7 @@ export default {
             proname: values.proname,
             protype: values.protype,
             protypedetail: values.protypedetail,
+            status:values.status
           };
           getSopDocument(parmas, "record/get").then((res) => {
             if (res.data.success) {

@@ -44,6 +44,7 @@
 <script>
 import excel from "@/utils/xlsxTool.js";
 import { setDepartmentApi } from "@/services/web.js";
+import moment from "moment";
 const columns = [
   {
     title: "序号",
@@ -166,7 +167,6 @@ export default {
     formatLongDate(date) {
       let dateTime = date.setDate(date.getDate() + 1);
       date = new Date(dateTime);
-      console.log("date-====", date);
       let myyear = date.getFullYear();
       let mymonth = date.getMonth() + 1;
       let myweekday = date.getDate();
@@ -234,6 +234,8 @@ export default {
         });
         //this.tableData = results; //这里的tableData就是拿到的excel表格中的数据
         this.tableTitle = tableTitle;
+        let dateArray = ["DatetimePurchaseDeliver", "DatetimePurchaseRetrieve", "DatetimeSign", "DatetimeCtrled", "DatetimeCtrledAbnormalHandle", "DatetimeQicCollect"];
+        console.log("results", results);
         results.map((item, indes) => {
           console.log();
           const obj = {};
@@ -244,18 +246,11 @@ export default {
             tableHead.forEach((zhKey) => {
               const enKey = userRelations[zhKey];
               // 如果是时间格式，就要做转换
-              if (enKey == "DatetimePurchaseDeliver" && typeof item[zhKey] === "object") {
-                obj[enKey] = this.formatLongDate(item[zhKey]);
-              } else if (enKey == "DatetimePurchaseRetrieve" && typeof item[zhKey] === "object") {
-                obj[enKey] = this.formatLongDate(item[zhKey]);
-              } else if (enKey == "DatetimeSign" && typeof item[zhKey] === "object") {
-                obj[enKey] = this.formatLongDate(item[zhKey]);
-              } else if (enKey == "DatetimeCtrled" && typeof item[zhKey] === "object") {
-                obj[enKey] = this.formatLongDate(item[zhKey]);
-              } else if (enKey == "DatetimeCtrledAbnormalHandle" && typeof item[zhKey] === "object") {
-                obj[enKey] = this.formatLongDate(item[zhKey]);
-              } else if (enKey == "DatetimeQicCollect" && typeof item[zhKey] === "object") {
-                obj[enKey] = this.formatLongDate(item[zhKey]);
+              // console.log("enKey===", enKey);
+              if (dateArray.includes(enKey) && typeof item[zhKey] === "object") {
+                console.log("hahha===", item[zhKey]);
+                console.log("hahha===", moment(item[zhKey]).format("YYYY-MM-DD HH:mm:ss"));
+                obj[enKey] = moment(item[zhKey]).format("YYYY-MM-DD HH:mm:ss");
               } else {
                 obj[enKey] = item[zhKey] || "";
               }

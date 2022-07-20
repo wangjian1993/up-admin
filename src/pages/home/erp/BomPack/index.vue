@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-05-18 14:37:12
+ * @LastEditTime: 2022-07-15 08:45:27
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomPack/index.vue
@@ -12,7 +12,8 @@
       <a-col :md="24" :sm="24">
         <span style="display:flex;justify-content: flex-end">
           <a-button style="margin-right: 8px" @click="reset">重置</a-button>
-          <a-button type="primary" @click="advancedQuery">高级查询</a-button>
+          <a-button type="primary" @click="advancedQuery">高级查询(包材)</a-button>
+          <a-button type="primary" style="margin-left: 8px" @click="advancedQuery">高级查询(线材)</a-button>
         </span>
       </a-col>
     </a-row>
@@ -39,7 +40,7 @@
 </template>
 <script>
 import getTableScroll from "@/utils/setTableHeight";
-import { getBomPack } from "@/services/erp.js";
+import { setBomPack } from "@/services/erp.js";
 import { splitData, modelType } from "@/utils/util.js";
 import { columns } from "./data";
 import { PublicVarErp } from "@/mixins/publicVarErp.js";
@@ -79,26 +80,15 @@ export default {
       this.isAdvancedQuery = false;
     },
     //获取列表数据
-    getListAll(values) {
+    getListAll(values, editValue) {
       this.loading = true;
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
-        itemcode: values.itemcode,
-        itemname: values.itemname,
-        itemspecification: values.itemspecification,
-        maxlength: values.maxlength,
-        minlength: values.minlength,
-        maxwidth: values.maxwidth,
-        minwidth: values.minwidth,
-        maxheight: values.maxheight,
-        minheight: values.minheight,
-        itemcodesign: values.itemcodesign,
-        itemnamesign:values.itemnamesign,
-        itemspecificationsign:values.itemspecificationsign,
+        ...values,
       };
-      this.editData = values
-      getBomPack(parmas, "get").then((res) => {
+      this.editData = editValue;
+      setBomPack(parmas, "get").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -113,7 +103,7 @@ export default {
     //重置搜索
     reset() {
       this.data = [];
-      this.editData =[]
+      this.editData = [];
       this.pagination.total = 0;
       this.pagination.current = 1;
     },

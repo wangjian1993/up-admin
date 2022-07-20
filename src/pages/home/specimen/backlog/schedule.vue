@@ -1,6 +1,6 @@
 <template>
   <div>
-     <a-drawer :visible="visible" title="待办进度" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :headerStyle="{ padding: '10px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
+    <a-drawer :visible="visible" title="待办进度" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :headerStyle="{ padding: '10px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
       <div>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-descriptions size="small" :column="4">
@@ -27,10 +27,14 @@
               <a style="margin-right: 8px" v-if="record.PointStatus == '已处理'" @click="rollback(record)">
                 指定回退
               </a>
+               <a style="margin-right: 8px" @click="editRecipient(record)">
+                更换接收人
+              </a>
             </template>
           </a-table>
         </a-card>
       </div>
+      <recipient v-if="isRecipient" :pointid="pointid" @closeModal="closeModal" @success="getListAll" />
     </a-drawer>
   </div>
 </template>
@@ -53,7 +57,7 @@ const columns = [
     dataIndex: "Receiver",
     scopedSlots: { customRender: "Receiver" },
     align: "center",
-    width:"30%"
+    width: "30%",
   },
   {
     title: "接收时间",
@@ -110,8 +114,10 @@ const columns = [
   },
 ];
 import { getMaterialSampleApi } from "@/services/web.js";
+import recipient from "./recipient.vue";
 export default {
   props: ["registerid"],
+  components: { recipient },
   data() {
     return {
       dataSource: [],
@@ -129,6 +135,8 @@ export default {
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
+      pointid: "",
+      isRecipient: false,
     };
   },
   created() {
@@ -138,6 +146,7 @@ export default {
   methods: {
     closeModal() {
       this.isPreview = false;
+      this.isRecipient = false;
     },
     rollback(record) {
       let params = {
@@ -161,6 +170,20 @@ export default {
           this.dataSource = res.data.data;
         }
       });
+    },
+    editRecipient(record) {
+      this.isRecipient = true;
+      this.pointid = record.PointId;
+      // let params = {
+      //   pointid: record.PointId,
+      // };
+      // getMaterialSampleApi(params, "getonepointinfo").then((res) => {
+      //   if (res.data.success) {
+      //     this.$emit("closeModal");
+      //     this.$emit("success");
+      //     this.$message.success("回退成功!");
+      //   }
+      // });
     },
     close() {
       this.$emit("closeModal");

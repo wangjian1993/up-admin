@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-06-23 13:39:08
+ * @LastEditTime: 2022-07-11 17:23:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/initiate/index.vue
@@ -27,9 +27,7 @@
                   </a-select>
                 </a-form-item>
               </a-col>
-               <a-col :md="6" :sm="24">
-                
-              </a-col>
+              <a-col :md="6" :sm="24"> </a-col>
             </a-row>
           </div>
           <span style="display:flex;justify-content: flex-end">
@@ -48,19 +46,7 @@
             </template>
           </span> -->
         </div>
-        <a-table
-          :columns="columns"
-          :data-source="dataSource"
-          size="small"
-          :scroll="{ y: scrollY }"
-          :loading="loading"
-          :pagination="pagination"
-          :expandedRowKeys="expandedRowKeys"
-          @expandedRowsChange="expandedRowsChange"
-          @change="handleTableChange"
-          :rowKey="(dataSource) => dataSource.FlowId"
-          bordered
-        >
+        <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY }" :loading="loading" :pagination="pagination" :expandedRowKeys="expandedRowKeys" @expandedRowsChange="expandedRowsChange" @change="handleTableChange" :rowKey="(dataSource) => dataSource.FlowId" bordered>
           <a-table slot="expandedRowRender" slot-scope="record" size="small" :columns="innerColumns" :data-source="record.PointList" :pagination="false">
             <template slot="index" slot-scope="text, record, index">
               <div>
@@ -92,12 +78,17 @@
                 <a-icon type="edit" />
                 发起填表
               </a>
+              <a style="margin-right: 8px" @click="batchEdit(record)" :disabled="!hasPerm('edit')">
+                <a-icon type="form" />
+                批量填表
+              </a>
             </div>
           </template>
         </a-table>
       </a-card>
       <useForm v-if="isForm" :isEdit="isEdit" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="getListAll" />
       <creator v-if="isCreator" @closeModal="closeModal" />
+      <batchForm v-if="isBatchForm" @closeModal="closeModal" :editData="editData"/>
     </a-spin>
   </div>
 </template>
@@ -111,9 +102,10 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { columns, innerColumns } from "./data";
 import useForm from "./form.vue";
 import creator from "./creator.vue";
+import batchForm from "./batchForm.vue";
 export default {
   mixins: [PublicVar],
-  components: { useForm, creator },
+  components: { useForm, creator, batchForm },
   data() {
     return {
       scrollY: "",
@@ -135,6 +127,7 @@ export default {
       defaultExpandedRowKeys: [],
       departmentalList: [],
       isCreator: false,
+      isBatchForm: false,
     };
   },
   updated() {
@@ -196,6 +189,11 @@ export default {
       // this.expandedRowKeys = [];
       this.expandedRowKeys = expandedRows;
     },
+    batchEdit(record) {
+      this.editData =record;
+      this.isBatchForm = true;
+      console.log("record",record)
+    },
     edit(record) {
       // this.isForm = true;
       // this.isEdit = true;
@@ -221,6 +219,7 @@ export default {
     closeModal() {
       this.isForm = false;
       this.isCreator = false;
+      this.isBatchForm = false;
     },
     getEnterList() {
       let params = {

@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 14:01:21
- * @LastEditTime: 2022-07-08 15:13:30
+ * @LastEditTime: 2022-06-16 11:36:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/device.vue
 -->
 <template>
   <div>
-    <a-modal title="选择设备" :visible="visible" v-if="visible" destoryOnClose :ok-button-props="{ props: { disabled: deviceList.length == 0 } }" @ok="handleOk" @cancel="handleCancel" width="70%">
+    <a-modal title="选择设备" :visible="visible" v-if="visible" destoryOnClose :ok-button-props="{ props: { disabled: deviceList.length == 0 } }" @ok="handleOk" @cancel="handleCancel" width="66%">
       <div>
         <a-row>
           <a-col :md="6" :sm="24" v-if="!isDetail">
@@ -28,13 +28,13 @@
               </a-select>
             </a-form-item>
           </a-col>
-          <!-- <a-col :md="6" :sm="24">
+          <a-col :md="6" :sm="24">
             <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select :disabled="isDetail" v-model="lineId" style="width: 200px" placeholder="请选择生产产线" @change="lineChange">
                 <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
               </a-select>
             </a-form-item>
-          </a-col> -->
+          </a-col>
         </a-row>
       </div>
       <a-descriptions v-if="selectDocsList.length != 0" :column="4" size="small">
@@ -51,36 +51,53 @@
           {{ selectDocsList.ProTypeDetail }}
         </a-descriptions-item>
       </a-descriptions>
-      <div v-for="item in deviceList" :key="item.LineId">
-        <div class="device-lsit" v-if="item.list.length != 0">
-          <div class="device-list-left">
-            <p>{{ item.LineName }}</p>
+      <div>
+        <div class="device-lsit">
+          <div class="device-list-header">
+            <span>左侧</span>
+            <p>拉头</p>
+            <span>右侧</span>
           </div>
-          <div class="device-list-box">
-            <div class="device-list-content" v-for="(list, index) in item.list" :key="index">
-              <div class="device" v-for="(items, indexs) in list" :key="items.EquipmentId">
-                <div class="device-content" v-for="fileItem in items.Detail" :key="fileItem.Id" @click="selectDocs(items, indexs)">
-                  <!-- <a-popover title="Title" >
-                    <template slot="content">
-                      {{ fileItem.FileName }}
-                    </template>
-                    <span>{{ items.EquipmentCode }}</span>
-                  </a-popover> -->
-
-                  <a-popover title="附件">
-                    <template slot="content">
-                      {{ fileItem.FileName }}
-                    </template>
-                    <span>
-                      {{ items.EquipmentCode }}
-                    </span>
-                  </a-popover>
+          <div>
+            <div class="device-list-content" v-for="(item, index) in deviceList" :key="index">
+              <div class="device" v-for="(items, indexs) in item" :key="items.EquipmentId">
+                <div v-if="indexs == 0" class="process">
+                  <p v-for="fileItem in items.Detail" :key="fileItem.Id">
+                    <a-popover title="附件">
+                      <template slot="content">
+                        {{ fileItem.FileName }}
+                      </template>
+                      <span>
+                        {{ fileItem.FileName }}
+                      </span>
+                    </a-popover>
+                  </p>
+                </div>
+                <div class="device-content" @click="selectDocs(items, indexs)">
                   <img v-if="items.Status" src="@/assets/img/lcd.png" alt="" />
                   <img v-else src="@/assets/img/lcd-2.png" alt="" />
-                  <!-- <p><a-icon type="folder" style="'marginLeft':'10px'" />{{ items.Detail.length }}</p> -->
+                  <p>{{ items.EquipmentCode }}</p>
+                  <!-- <p :class="items.Status ? 'span-t' : 'span-f'"></p> -->
+                </div>
+                <div v-if="indexs == 1" class="process">
+                  <p v-for="fileItem in items.Detail" :key="fileItem.Id">
+                    <a-popover title="附件">
+                      <template slot="content">
+                        {{ fileItem.FileName }}
+                      </template>
+                      <span>
+                        {{ fileItem.FileName }}
+                      </span>
+                    </a-popover>
+                  </p>
                 </div>
               </div>
             </div>
+          </div>
+          <div class="device-list-footer">
+            <span></span>
+            <p>拉尾</p>
+            <span></span>
           </div>
         </div>
       </div>
@@ -116,41 +133,29 @@ export default {
       documentRecord: [],
     };
   },
-  mounted() {
+  created() {
     this.getEnterList();
     if (this.isEdit) {
-      console.log("编辑====");
+      console.log("编辑====")
       this.deviceList = [];
       this.plantId = this.editData.PlantId;
       this.workshopId = this.editData.WorkCenterId;
       this.lineId = this.editData.LineId;
       this.selectDocsList = this.editData;
       this.getWorkshopList();
-      this.deviceList.push({
-        LineName: this.editData.LineName,
-        LineId: this.editData.LineId,
-        list: [],
-      });
-      this.getDeviceList(0);
-      // this.getLineList("single");
-      // this.getDeviceList();
+      this.getLineList();
+      this.getDeviceList();
     }
     if (this.isDetail) {
-      console.log("详情====");
+       console.log("详情====")
       this.deviceList = [];
       this.plantId = this.editData.PlantId;
       this.workshopId = this.editData.WorkCenterId;
       this.lineId = this.editData.LineId;
       this.selectDocsList = this.editData;
       this.getWorkshopList();
-      this.deviceList.push({
-        LineName: this.editData.LineName,
-        LineId: this.editData.LineId,
-        list: [],
-      });
-      this.getDeviceList(0);
-      // this.getLineList("single");
-      // this.getDeviceList();
+      this.getLineList();
+      this.getDeviceList();
     }
   },
   methods: {
@@ -188,7 +193,7 @@ export default {
     success() {
       this.deviceList = [];
       this.isDocsList = false;
-      this.getLineList();
+      this.getDeviceList();
     },
     //工厂选择
     plantChange(e) {
@@ -207,11 +212,13 @@ export default {
     },
     //获取设备
     lineChange(e) {
+      console.log(e);
       this.lineId = e;
       this.deviceList = [];
       this.getDeviceList();
     },
-    getDeviceList(index) {
+    getDeviceList() {
+      this.deviceList =[]
       let parmas = {
         plantid: this.plantId,
         workcenterid: this.workshopId,
@@ -219,18 +226,12 @@ export default {
         documentid: this.selectDocsList.DocumentId,
       };
       getDeviceList(parmas, "getequipment").then((res) => {
+         console.log("this.deviceList===",this.deviceList)
         if (res.data.success) {
           let list = res.data.data.list;
-          let array = [];
-          for (let i = 0; i < list.length; i += 2) {
-            let rowArray = list.slice(i, i + 2);
-            array.push(([rowArray[0], rowArray[1]] = [rowArray[1], rowArray[0]]));
+          for (var i = 0; i < list.length; i += 2) {
+            this.deviceList.push(list.slice(i, i + 2));
           }
-          console.log("array", array);
-
-          // this.deviceList[index].count = array.length;
-          this.deviceList[index].list = array;
-          console.log("deviceList==", this.deviceList);
         }
       });
     },
@@ -260,14 +261,6 @@ export default {
       getSopDocument(parmas, "getline").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
-          this.lineList.forEach((line, index) => {
-            this.lineId = line.LineId;
-            this.deviceList.push({
-              ...line,
-              list: [],
-            });
-            this.getDeviceList(index);
-          });
         }
       });
     },
@@ -280,29 +273,42 @@ export default {
   margin-bottom: 5px;
 }
 .device-lsit {
-  border: 1px #000 solid;
-  padding: 0 10px;
-  display: flex;
-  align-items: center;
-  margin: 10px 0;
-  .device-list-left {
-    // display: flex;
-    // height:100%;
-    // border-right: 1px solid #b4b3b3;
-  }
-  .device-list-box {
+  width: 750px;
+  margin: 0 auto;
+  text-align: center;
+  // border: 1px #000 solid;
+  padding: 10px;
+  .device-list-header,
+  .device-list-footer {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    span {
+      width: 150px;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      color: rgb(228, 23, 23);
+    }
+    p {
+      width: 180px;
+      height: 30px;
+      border: 1px #000 solid;
+      text-align: center;
+      line-height: 30px;
+    }
   }
   .device-list-content {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    flex-direction: column;
+    padding: 10px 0;
     .process {
-      width: 50px;
-      height: 50px;
-      border: 1px #000 solid;
+      width: 250px;
+      height: 30px;
+      // border: 1px #000 solid;
       text-align: center;
-      line-height: 50px;
+      line-height: 30px;
       img {
         width: 15px;
         height: 12px;
@@ -320,14 +326,13 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 5px;
       cursor: pointer;
       p {
         margin: 0;
       }
       .device-content {
-        // width: 100px;
-        // height: 50px;
+        width: 100px;
+        height: 50px;
         // border: 1px #000 solid;
         display: flex;
         flex-direction: column;

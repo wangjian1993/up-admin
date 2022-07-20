@@ -44,29 +44,29 @@ export default {
         file: "",
         equipment: "",
       },
-      rules: {
-        document: [
-          {
-            required: true,
-            message: "请选择sop文档",
-            trigger: "blur",
-          },
-        ],
-        file: [
-          {
-            required: true,
-            message: "请选择文件",
-            trigger: "blur",
-          },
-        ],
-        equipment: [
-          {
-            required: true,
-            message: "请选择设备",
-            trigger: "blur",
-          },
-        ],
-      },
+      // rules: {
+      //   document: [
+      //     {
+      //       required: true,
+      //       message: "请选择sop文档",
+      //       trigger: "change",
+      //     },
+      //   ],
+      //   file: [
+      //     {
+      //       required: true,
+      //       message: "请选择文件",
+      //       trigger: "change",
+      //     },
+      //   ],
+      //   equipment: [
+      //     {
+      //       required: true,
+      //       message: "请选择设备",
+      //       trigger: "change",
+      //     },
+      //   ],
+      // },
       docsItem: [],
       fileItem: [],
       deviceItem: [],
@@ -120,7 +120,18 @@ export default {
       this.$emit("closeModal");
     },
     handleOk() {
-      console.log("提交");
+      if( this.docsItem == ''){
+        this.$message.warning("请先选择sop文档")
+        return
+      }
+      if( this.fileItem == ''){
+         this.$message.warning("请先选择推送文件")
+        return
+      }
+      if( this.deviceItem == ''){
+         this.$message.warning("请先选择设备")
+        return
+      }
       this.$refs.ruleForm.validate((valid) => {
         console.log("valid", valid);
         if (valid) {

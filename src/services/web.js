@@ -1,14 +1,15 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2022-05-11 15:06:34
+ * @LastEditTime: 2022-07-06 09:45:51
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
  */
 import {
     UP_WEB,
-    UP_REPORT
+    UP_REPORT,
+    UP_WMS
 } from '@/services/api'
 import {
     request,
@@ -263,4 +264,8 @@ export function setDepartmentApi(params, action) {
 
 export function getMaterialSampleApi(params, action) {
     return request(`${UP_WEB}/materialsample/${action}`, METHOD.GET, params);
+}
+
+export function getArrivalList(params, action) {
+    return request(`${UP_WMS}/purchasereceive/${action}`, METHOD.GET, params);
 }
