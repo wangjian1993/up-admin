@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-07-07 14:31:51
- * @LastEditTime: 2022-07-20 13:44:16
+ * @LastEditTime: 2022-07-21 17:35:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/schedule/index.vue
@@ -143,9 +143,11 @@ export default {
       let line = this.paramsSplit(paramsArray[4]);
       this.tasks.data = [];
       this.timeValue = date;
+      // console.log("process===", process.env.NODE_ENV);
+      var BASE_URL_MOCK = window.location.host === "113.106.78.83:7003" ? "http://113.106.78.83:7004" : window.location.host === "113.106.78.83:7003" ? "http://192.168.0.240:8081" :"http://192.168.1.245:6688";
       axios({
         method: "GET",
-        url: "http://192.168.0.240:8081/api/kanban/mo/progress/getall?pageindex=1&pagesize=10&process=" + process + "&plant=" + plant + "&workshop=" + workshop + "&line=" + line + "&date=" + date,
+        url: BASE_URL_MOCK + "/api/kanban/mo/progress/getall?pageindex=1&pagesize=10&process=" + process + "&plant=" + plant + "&workshop=" + workshop + "&line=" + line + "&date=" + date,
       }).then((response) => {
         const { data } = response;
         if (data.success) {

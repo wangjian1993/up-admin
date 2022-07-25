@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-07-18 10:31:47
+ * @LastEditTime: 2022-07-23 14:38:52
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/arrival/list/index.vue
@@ -95,11 +95,11 @@
           :scroll="{ y: scrollY }"
           :loading="loading"
           :pagination="pagination"
+          @change="handleTableChange"
           :row-selection="{
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
-          @change="handleTableChange"
           :rowKey="(dataSource, index) => dataSource.DocNo + '_' + index"
           bordered
         >

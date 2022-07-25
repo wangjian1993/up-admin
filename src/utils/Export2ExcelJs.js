@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2022-06-30 11:06:11
+ * @LastEditTime: 2022-07-23 14:19:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/Export2ExcelJs.js
@@ -219,9 +219,34 @@ export function exportjsontoexcel({
 
         }
     }
-
+    let rangeArray1 = ["AI1", 'AJ1', 'AK1', 'AL1', 'AM1', 'AN1', 'AO1', 'AP1', 'AQ1', 'BA1', "BB1", "BC1", "BD1", "BE1", "BF1", "BG1", "BH1", "BI1"];
+    let rangeArray2 = ["AR1", 'AS1', 'AT1', 'AU1', 'AV1', 'AW1', 'AX1', 'AY1', 'AZ1', "BJ1", "BK1", "BL1", "BM1", "BN1", "BO1", "BP1", "BQ1", "BR1"];
     for (var i in dataInfo) {
-        if (i == '!ref' || i == '!merges' || i == '!cols') {
+        if (rangeArray1.includes(i)) {
+            dataInfo[i + ''].s = {
+                border: borderAll,
+                //居中属性left
+                alignment: {
+                    horizontal: "left",
+                    vertical: "left"
+                },
+                fill: { //背景色
+                    fgColor: { rgb: 'F6ED00' }
+                }
+            }
+        } else if (rangeArray2.includes(i)) {
+            dataInfo[i + ''].s = {
+                border: borderAll,
+                //居中属性left
+                alignment: {
+                    horizontal: "left",
+                    vertical: "left"
+                },
+                fill: { //背景色
+                    fgColor: { rgb: '34CDFF' }
+                }
+            }
+        } else if (i == '!ref' || i == '!merges' || i == '!cols') {
 
         } else {
             dataInfo[i + ''].s = {
@@ -343,8 +368,8 @@ export function exportjsontoexcelMore({
             //开始位置
             let startIndex = formula.process + 2;
             let endIndex = startIndex + formula.totalPrice;
-            console.log("Sheet.indexOf('展开显示') != -1---",Sheet.indexOf('展开显示') != -1)
-            console.log("multi---",multi)
+            console.log("Sheet.indexOf('展开显示') != -1---", Sheet.indexOf('展开显示') != -1)
+            console.log("multi---", multi)
             if (Sheet.indexOf('展开显示') != -1) {
                 //金额计算
                 console.log(wb.Sheets[Sheet]);

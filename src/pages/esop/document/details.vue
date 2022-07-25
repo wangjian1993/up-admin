@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 14:02:21
- * @LastEditTime: 2022-06-23 17:20:02
+ * @LastEditTime: 2022-07-22 09:09:52
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/details.vue
@@ -52,13 +52,18 @@
                   <a-icon type="download" />
                   下载
                 </a>
+                <a style="margin-right: 8px" @click="uploadProduct(record)">
+                  <a-icon type="upload" />
+                  上传产品图
+                </a>
               </div>
             </template>
           </a-table>
         </a-card>
       </div>
       <preview v-if="isPreview" :previewRecord="previewRecord" @close="closeModal" />
-      <uploadFile v-if="isUploadFile" @close="closeModal" :drawerItem="drawerItem" @success="getDocsFile"/>
+      <uploadFile v-if="isUploadFile" @close="closeModal" :drawerItem="drawerItem" @success="getDocsFile" />
+      <product v-if="isProduct" @close="closeModal" @success="getDocsFile" :previewRecord="previewRecord" :drawerItem="drawerItem"/>
     </a-modal>
   </div>
 </template>
@@ -109,8 +114,9 @@ const columns = [
 import { getSopDocument } from "@/services/esop.js";
 import preview from "../components/preview.vue";
 import uploadFile from "./uploadFile.vue";
+import product from './product.vue'
 export default {
-  components: { preview, uploadFile },
+  components: { preview, uploadFile ,product},
   props: ["drawerItem"],
   data() {
     return {
@@ -123,6 +129,7 @@ export default {
       isPreview: false,
       previewRecord: [],
       isUploadFile: false,
+      isProduct:false
     };
   },
   created() {
@@ -140,6 +147,10 @@ export default {
       } else {
         window.open("./" + record.FilePath, "_blank");
       }
+    },
+    uploadProduct(record){
+      this.previewRecord = record;
+      this.isProduct =true;
     },
     download(record) {
       window.open("./" + record.FilePath, "_blank");

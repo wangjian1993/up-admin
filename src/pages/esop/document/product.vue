@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2022-07-22 09:01:07
+ * @LastEditTime: 2022-07-22 09:08:42
  * @LastEditors: max
  * @Description: 导入execl
- * @FilePath: /up-admin/src/pages/esop/document/uploadFile.vue
+ * @FilePath: /up-admin/src/pages/esop/document/product.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="上传附件" @cancel="close" :footer="null" :maskClosable="false" centered :width="400">
+    <a-modal v-model="visible" title="上传产品图" @cancel="close" :footer="null" :maskClosable="false" centered :width="400">
       <a-spin tip="上传中..." :spinning="isUpload">
         <div>
           <a-form layout="horizontal">
@@ -41,7 +41,7 @@ function getBase64(img, callback) {
 }
 import md5 from "js-md5";
 export default {
-  props: ["drawerItem"],
+  props: ["previewRecord", "drawerItem"],
   data() {
     return {
       size: "small",
@@ -120,6 +120,8 @@ export default {
           filesize: info.file.size,
           filelength: "0",
           filecontent: "",
+          fileparentid:this.previewRecord.FileParentId,
+          fileclass:this.previewRecord.FileClass
         };
         str.forEach((item, index) => {
           params.filechunk = {

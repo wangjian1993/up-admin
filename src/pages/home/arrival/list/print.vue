@@ -1,85 +1,144 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-07-18 10:35:53
+ * @LastEditTime: 2022-07-23 17:45:37
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/arrival/list/print.vue
 -->
 <template>
-  <a-modal v-model="visible" title="打印到货通知单" v-if="visible" @cancel="close" :footer="null" centered width="70%">
+  <a-modal v-model="visible" title="打印到货通知单" v-if="visible" @cancel="close" :footer="null" centered width="70%" :loading="loading">
     <div style="display: flex;justify-content: flex-end;">
-      <a-button type="primary" class="no-print" v-print="'#printTest'">打印</a-button>
+      <a-button type="primary" class="no-print" @click="printBtn">打印</a-button>
     </div>
-    <div id="printTest">
-      <div v-for="(item, index) in printData" :key="index" style="page-break-after:always">
-        <div class="content always">
-          <div class="content-top">
-            <div class="head-img"><img src="@/assets/img/mb.png" alt="" /></div>
-            <div class="head-title">
-              <p>深圳民爆光电股份有限公司</p>
-              <p>到货通知单</p>
-            </div>
-            <div></div>
-          </div>
-          <div class="info">
-            <ul class="print-top-info">
-              <li>
-                <span>供应商代码:</span>
-                <span> {{ item.SupplierCode }}</span>
-              </li>
-              <li>
-                <span>打印日期:</span>
-                <span> {{ timeStr(item.PrintDate) }}</span>
-              </li>
-              <li>
-                <span>供应商全称:</span>
-                <span> {{ item.SupplierName }}</span>
-              </li>
-              <li>
-                <span>对方单号:</span>
-                <span> {{ item.OrderNo }}</span>
-              </li>
-              <li>
-                <span>单号:</span>
-                <span> {{ item.DocNo }}</span>
-              </li>
-            </ul>
-            <a-descriptions :column="24" bordered size="small">
-              <a-descriptions-item :span="6" label="暂放位置">
-                <!-- {{ item.infoData.StorageLocation || "" }} -->
-              </a-descriptions-item>
-              <a-descriptions-item :span="6" label="交货日期">
-                {{ splitData(item.infoData.ArrivalDate || "") }}
-              </a-descriptions-item>
-              <a-descriptions-item :span="6" label="工单备注">
-                {{ item.infoData.Remark || "" }}
-              </a-descriptions-item>
-              <a-descriptions-item :span="6" label="检验结果"></a-descriptions-item>
-            </a-descriptions>
-            <a-table :columns="columns" :data-source="item.dataSource" size="small" :pagination="false" :rowKey="(data) => data.MitemCode" bordered style="page-break-after:always">
-              <template slot="index" slot-scope="text, record, index">
-                <div>
-                  <span>{{ index + 1 }}</span>
-                </div>
-              </template>
-              <template slot="OK" slot-scope="text">
-                <div>
-                  <span v-if="text"><a-icon type="check"/></span>
-                </div>
-              </template>
-              <template slot="NG" slot-scope="text">
-                <div>
-                  <span v-if="text"><a-icon type="check"/></span>
-                </div>
-              </template>
-            </a-table>
-            <div class="table-footer">
-              <p>制单:</p>
-              <p>核准:</p>
-              <p>品质:</p>
-            </div>
-          </div>
+    <div id="printBox">
+      <div v-for="(item, index) in listData" :key="index">
+        <div :id="'div1_' + index">
+          <DIV style="LINE-HEIGHT: 30px;" class="size16" align="center"
+            ><STRONG><font color="#000000" size="5" style="font-weight:700;">深圳民爆光电股份有限公司</font></STRONG></DIV
+          >
+          <DIV style="LINE-HEIGHT: 30px;" class="size16" align="center"
+            ><STRONG><font color="#000000" size="4" style="font-weight:700;">到货通知单</font></STRONG></DIV
+          >
+          <TABLE border="0" cellSpacing="0" cellPadding="0" width="100%">
+            <TBODY>
+              <TR>
+                <TD width="43%"
+                  ><font color="#000000" size="1"
+                    >供应商代码: <SPAN id="rpt_Pro_Order_List_ctl00_lbl_eShop_Name">{{ item.infoData.SupplierCode }}</SPAN></font
+                  ></TD
+                >
+                <TD width="33%"
+                  ><font color="#000000"><SPAN></SPAN></font
+                ></TD>
+                <TD
+                  ><font color="#000000" size="1">打印时间: {{ item.infoData.PrintDate }}</font></TD
+                ></TR
+              >
+              <TR>
+                <TD style="padding-top:10px"
+                  ><font color="#000000" size="1"
+                    >供应商全称: <SPAN>{{ item.infoData.SupplierName }}</SPAN></font
+                  ></TD
+                >
+                <TD style="padding-top:10px"
+                  ><font color="#000000" size="1"
+                    >对方单号: <SPAN>{{ item.infoData.OrderNo }}</SPAN></font
+                  ></TD
+                >
+                <TD style="padding-top:10px"
+                  ><font color="#000000" size="1">单号: {{ item.infoData.DocNo }}</font></TD
+                ></TR
+              >
+            </TBODY></TABLE
+          >
+        </div>
+        <div :id="'div3_' + index">
+          <table cellSpacing="0" cellPadding="1" width="100%" style="border-collapse:collapse">
+            <tr style="border:1px #000 solid;font-size:11px">
+              <TD width="10%">
+                <DIV align="center"><b>暂放位置</b></DIV></TD
+              >
+              <TD width="20%">
+                <DIV align="center"
+                  ><b>{{ item.infoData.SupplierCode }}</b></DIV
+                ></TD
+              >
+              <TD width="10%">
+                <DIV align="center"><b>交货日期</b></DIV></TD
+              >
+              <TD width="20%">
+                <DIV align="center"
+                  ><b>{{ item.infoData.PrintDate }}</b></DIV
+                ></TD
+              >
+              <TD width="10%">
+                <DIV align="center"><b>工单备注</b></DIV></TD
+              >
+              <TD width="20%">
+                <DIV align="center"><b></b></DIV
+              ></TD>
+              <TD width="10%">
+                <DIV align="center"><b>检验结果</b></DIV></TD
+              >
+            </tr>
+          </table>
+        </div>
+        <div :id="'div2_' + index">
+          <table cellSpacing="0" cellPadding="1" width="100%" style="border-collapse:collapse">
+            <thead>
+              <tr style="border:1px #000 solid;font-size:11px">
+                <TD width="12%">
+                  <DIV align="center"><b>采购订单号</b></DIV></TD
+                >
+                <TD width="10%">
+                  <DIV align="center"><b>品号</b></DIV></TD
+                >
+                <TD width="15%">
+                  <DIV align="center"><b>品名</b></DIV></TD
+                >
+                <TD width="20%">
+                  <DIV align="center"><b>规格</b></DIV></TD
+                >
+                <TD width="5%">
+                  <DIV align="center"><b>单位</b></DIV></TD
+                >
+                <TD width="5%">
+                  <DIV align="center"><b>交货数</b></DIV></TD
+                >
+                <TD width="10%">
+                  <DIV align="center"><b>业务单号</b></DIV></TD
+                >
+                <TD width="5%">
+                  <DIV align="center"><b>备注</b></DIV></TD
+                >
+                <TD width="10%">
+                  <DIV align="center"><b>图号</b></DIV></TD
+                >
+                <TD width="4%">
+                  <DIV align="center"><b>OK</b></DIV></TD
+                >
+                <TD width="4%">
+                  <DIV align="center"><b>NG</b></DIV></TD
+                >
+              </tr>
+            </thead>
+            <tbody class="table-tbody">
+              <tr v-for="items in item.dataSource" :key="items.MitemCode" style="border:1px #000 solid;font-size:11px">
+                <td style="border:1px #000 solid" align="center">{{ items.PuchaseOrderNo }}</td>
+                <td style="border:1px #000 solid" align="center">{{ items.ItemCode }}</td>
+                <td style="border:1px #000 solid" align="center">{{ items.ItemDescription }}</td>
+                <td style="border:1px #000 solid" align="center">{{ items.ItemSpecification }}</td>
+                <td style="border:1px #000 solid" align="center">{{ items.Unit }}</td>
+                <td style="border:1px #000 solid" align="center">{{ items.Qty }}</td>
+                <td style="border:1px #000 solid" align="center">{{ items.DocNo }}</td>
+                <td style="border:1px #000 solid" align="center">{{ items.Remark }}</td>
+                <td style="border:1px #000 solid" align="center">{{ items.DrawingNo }}</td>
+                <td style="border:1px #000 solid" align="center">{{ items.OK == true ? "✔️" : "" }}</td>
+                <td style="border:1px #000 solid" align="center">{{ items.OK == true ? "✔️" : "" }}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -94,78 +153,82 @@ const columns = [
     dataIndex: "OrderNo",
     scopedSlots: { customRender: "OrderNo" },
     align: "center",
-    width: 100,
+    width: "5%",
   },
   {
     title: "品号",
     dataIndex: "ItemCode",
     scopedSlots: { customRender: "ItemCode" },
     align: "center",
-    width: 100,
+    width: "10%",
   },
   {
     title: "品名",
     dataIndex: "ItemDescription",
     scopedSlots: { customRender: "ItemDescription" },
     align: "center",
-    width: 180,
+    width: "15%",
   },
   {
     title: "规格",
     dataIndex: "ItemSpecification",
     scopedSlots: { customRender: "ItemSpecification" },
     align: "center",
-    width: 280,
+    width: "20%",
   },
   {
     title: "单位",
     dataIndex: "Unit",
     scopedSlots: { customRender: "Unit" },
     align: "center",
-    width: 50,
+    width: "5%",
   },
   {
     title: "交货数",
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
+    width: "5%",
   },
   {
     title: "业务单号",
     dataIndex: "DocNo",
     scopedSlots: { customRender: "DocNo" },
     align: "center",
-    width: 90,
+    width: "10%",
   },
   {
     title: "备注",
     dataIndex: "Remark",
     scopedSlots: { customRender: "Remark" },
     align: "center",
+    width: "10%",
   },
   {
     title: "图号",
     dataIndex: "DrawingNo",
     scopedSlots: { customRender: "DrawingNo" },
     align: "center",
-    width: 80,
+    width: "5%",
   },
   {
     title: "OK",
     dataIndex: "OK",
     scopedSlots: { customRender: "OK" },
     align: "center",
-    width: 40,
+    width: "5%",
   },
   {
     title: "NG",
     dataIndex: "NG",
     scopedSlots: { customRender: "NG" },
     align: "center",
-    width: 40,
+    width: "5%",
   },
 ];
 import { splitData } from "@/utils/util";
+import { getLodop } from "@/utils/LodopFuncs"; //导入模块
+var LODOP;
 export default {
   props: ["printData"],
   data() {
@@ -173,10 +236,13 @@ export default {
       data: [],
       infoData: [],
       columns,
+      loading: false,
       isSearch: false,
       isUserList: false,
       visible: true,
       barcodeValue: "",
+      listData: [],
+      dataSource: [],
       barcodeOptions: {
         width: 50,
         height: 50,
@@ -184,11 +250,18 @@ export default {
     };
   },
   created() {
-    this.getPrintData();
+    this.$nextTick(() => {
+      this.getPrintData();
+    });
   },
   methods: {
     splitData,
     timeStr(text) {
+      console.log(text);
+      console.log(text == undefined);
+      if (text == null) {
+        return "";
+      }
       let str = text.split("T");
       let time = str[1].split(".");
       return str[0] + " " + time[0];
@@ -197,19 +270,76 @@ export default {
       this.$emit("closeModal");
       this.data = [];
     },
+    printBtn() {
+      LODOP = getLodop();
+      try {
+        if (LODOP.VERSION) {
+          if (LODOP.CVERSION) {
+            for (let i = 0; i < this.listData.length; i++) {
+              LODOP.PRINT_INIT("到货通知单");
+              var strStyle = "<style> table,td,th {border-width: 1px;border-style: solid;border-collapse: collapse}</style>";
+              LODOP.SET_PRINT_PAGESIZE(0, 2100, 1480, ""); //设置纸张A4打印 横向;
+              LODOP.ADD_PRINT_IMAGE(20, 60, 200, 30, "<img border='0' src='http://192.168.0.240:8080/static/mb.png' width='100' height='80'/>");
+              LODOP.SET_PRINT_STYLEA(0, "Stretch", 1); //(可变形)扩展缩放模式
+              LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
+              LODOP.ADD_PRINT_TABLE(115, "2%", "96%", 155, strStyle + document.getElementById("div3_" + i).innerHTML);
+              LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
+              LODOP.SET_PRINT_STYLEA(0, "LinkedItem", 1);
+              LODOP.ADD_PRINT_TABLE(130, "2%", "96%", 1250, strStyle + document.getElementById("div2_" + i).innerHTML);
+              LODOP.SET_PRINT_STYLEA(0, "Vorient", 3);
+              LODOP.ADD_PRINT_HTM(26, "2%", "96%", 109, document.getElementById("div1_" + i).innerHTML);
+              LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
+              LODOP.SET_PRINT_STYLEA(0, "LinkedItem", 1);
+              LODOP.ADD_PRINT_TEXT(490, 100, "76.25%", 20, "制单:");
+              LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
+              LODOP.ADD_PRINT_TEXT(490, 300, "76.25%", 20, "核准:");
+              LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
+              LODOP.ADD_PRINT_TEXT(490, 500, "76.25%", 20, "品质:");
+              LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
+              LODOP.ADD_PRINT_HTM(1, 600, 300, 100, "总页号：<font color='#0000ff'><span tdata='pageNO'>第##页</span>/<span tdata='pageCount'>共##页</span></font>");
+              LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
+              LODOP.SET_PRINT_STYLEA(0, "Horient", 1);
+              LODOP.SET_PRINT_MODE("CUSTOM_TASK_NAME", "到货通知单" + this.listData[i].infoData.DocNo);
+              LODOP.PRINT();
+              LODOP.SET_PRINT_MODE("AUTO_CLOSE_PREWINDOW", 1);
+              this.$message.success("打印成功!");
+              this.$emit("closeModal");
+            }
+          } else {
+            this.$warning({
+              title: "提示",
+              content: "本机未安装Lodop控件,请先下载安装",
+              onOk() {
+                window.open("http://192.168.1.245:8080/static/CLodop_Setup_for_Win32NT.exe");
+              },
+            });
+          }
+        }
+      } catch (err) {
+        this.$message.error("打印出错了!");
+      }
+    },
+    loadLodop() {
+      window.open("http://192.168.1.245:8080/static/CLodop_Setup_for_Win32NT.exe");
+    },
     getPrintData() {
+      this.loading = true;
+      console.log(this.printData);
       this.printData.forEach((item) => {
         let parmas = {
           docno: item.DocNo,
         };
         getArrivalList(parmas, "single").then((res) => {
           if (res.data.success) {
-            item.dataSource = res.data.data.list;
-            item.infoData = item.dataSource[0];
+            let list = res.data.data.list;
+            this.listData.push({
+              dataSource: list,
+              infoData: list[0],
+            });
+            this.loading = true;
           }
         });
       });
-      console.log(this.printData);
     },
   },
 };
@@ -378,14 +508,17 @@ export default {
     color: #000;
   }
 }
-.table-footer {
-  width: 1080px;
-  position: absolute;
-  bottom: 0px;
-  display: flex;
-  justify-content: space-between;
-  p {
-    width: 33.33%;
-  }
+.table-tbody td {
+  border: 1px solid #000;
 }
+// .table-tfoot {
+//   width: 1080px;
+//   position: absolute;
+//   bottom: 0px;
+//   display: flex;
+//   justify-content: space-between;
+//   tr {
+//     width: 33.33%;
+//   }
+// }
 </style>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-06-30 11:10:01
+ * @LastEditTime: 2022-07-23 17:40:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/registration.vue
@@ -77,7 +77,9 @@
         <div class="operator">
           <a-button type="primary" :disabled="selectedRowKeys.length == 0" @click="exportExcel" icon="export">导出</a-button>
           <a-button type="primary" style="margin-left:10px;" :disabled="dataSource.length == 0" @click="exportExcelAll" icon="export">导出全部</a-button>
+          <a-button type="primary" style="margin-left:10px;" :disabled="dataSource.length == 0" @click="exportExcelDetail" icon="export">导出含进度明细</a-button>
           <a-button v-if="hasPerm('delete') && rolesign == 'ADMIN'" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+           <a-button icon="printer" type="primary" :disabled="!hasSelected" :loading="loading" @click="allPrint" style="margin-left: 8px">打印标签</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -126,12 +128,17 @@
                 <a-icon type="container" />
                 查看进度
               </a>
+              <a style="margin-right: 8px" @click="print(record.RegisterId)" :disabled="!hasPerm('print')">
+                <a-icon type="printer" />
+                打印标签
+              </a>
             </div>
           </template>
         </a-table>
       </a-card>
       <useForm v-if="isForm" :isEdit="isEdit" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="getListAll" />
       <schedule v-if="isSchedule" :registerid="registerid" @closeModal="closeModal" @success="getEnterList" />
+      <print v-if="isPrint" @closeModal="closeModal" :registerid="printData"/>
     </a-spin>
   </div>
 </template>
@@ -142,20 +149,22 @@ import { renderStripe } from "@/utils/stripe.js";
 // import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns, innerColumns } from "./data";
+import { columns, innerColumns, detailColumns } from "./data";
 import useForm from "./form.vue";
 import schedule from "./schedule.vue";
 import { exportjsontoexcel } from "@/utils/Export2ExcelJs";
+import print from "./print.vue";
 export default {
   props: ["rolesign"],
   mixins: [PublicVar],
-  components: { useForm, schedule },
+  components: { useForm, schedule, print },
   data() {
     return {
       scrollY: "",
       advanced: true,
       columns,
       innerColumns,
+      detailColumns,
       dataSource: [],
       deviceTypeList: [],
       isSearch: 0,
@@ -172,6 +181,8 @@ export default {
       departmentalList: [],
       isSchedule: false,
       registerid: "",
+      printData:[],
+      isPrint: false,
     };
   },
   updated() {
@@ -220,11 +231,22 @@ export default {
       console.log("height", height);
       return height;
     },
+    print(id) {
+      this.printData =[]
+      this.isPrint = true;
+      console.log(id);
+      this.printData.push(id);
+      console.log(this.printData);
+    },
+    allPrint(){
+      this.printData =[]
+      this.isPrint = true;
+      this.printData = this.selectedRowKeys
+    },
     schedule(id) {
       this.isSchedule = true;
       this.registerid = id;
     },
-
     //重置搜索
     reset() {
       this.isSearch = 0;
@@ -237,9 +259,11 @@ export default {
       this.editData = record;
     },
     closeModal() {
+      this.selectedRowKeys =[]
       this.isForm = false;
       this.isImport = false;
       this.isSchedule = false;
+      this.isPrint = false;
     },
     getEnterList() {
       let params = {
@@ -385,6 +409,77 @@ export default {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
+        }
+      });
+    },
+    exportExcelDetail() {
+      let values = this.searchForm.getFieldsValue();
+      this.isExportLod = true;
+      let _data = [];
+      const header = [];
+      this.columns.map((item) => {
+        if (item.dataIndex) {
+          header.push(item.title);
+        }
+      });
+      for (let i = 0; i < 4; i++) {
+        this.detailColumns.map((item) => {
+          if (item.dataIndex) {
+            header.push(item.title);
+          }
+        });
+      }
+      _data.push(header);
+      if (values["range-time-picker"] != undefined) {
+        var createdatestart = values["range-time-picker"][0].format("YYYY-MM-DD");
+        var createdateend = values["range-time-picker"][1].format("YYYY-MM-DD");
+      }
+      let parmas = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.total,
+        enterpriseid: this.enterId || "",
+        departmentid: values.departmentid || "",
+        tablestatus: values.tablestatus || "",
+        createdatestart: createdatestart || "",
+        createdateend: createdateend || "",
+        itemcode: values.itemcode || "",
+        itemname: values.itemname || "",
+        itemspecification: values.itemspecification || "",
+        supplier: values.supplier || "",
+        purchaser: values.purchaser || "",
+      };
+      getDepartmentApi(parmas, "getregisterdetaillist").then((res) => {
+        if (res.data.success) {
+          let list = res.data.data.list;
+          // console.log("list", list);
+          list.map((item) => {
+            let array = [];
+            this.columns.map((items) => {
+              if (items.dataIndex) {
+                array.push(item[items.dataIndex] || "");
+              }
+            });
+            item.TablePointList.forEach((detailItem) => {
+              // let detailArray = [];
+              this.detailColumns.map((i) => {
+                if (i.dataIndex) {
+                  array.push(detailItem[i.dataIndex] || "");
+                }
+              });
+              // array.push(detailArray);
+            });
+            // console.log("array====", array);
+            _data.push(array);
+          });
+          try {
+            console.log(_data);
+            exportjsontoexcel({ data: _data, filename: `登记汇总含进度明细_.xlsx` });
+            this.$message.success("导出数据成功!");
+          } catch (error) {
+            console.log(error);
+            this.$message.error("导出数据失败");
+          }
+          this.isExportLod = false;
         }
       });
     },

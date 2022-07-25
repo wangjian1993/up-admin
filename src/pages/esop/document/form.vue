@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-07-01 11:44:17
+ * @LastEditTime: 2022-07-22 08:46:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/form.vue
@@ -41,6 +41,20 @@
             </a-col>
             <a-col :span="12">
               <a-form-model-item label="工序数量" :labelCol="{ span: 6 }"><a-input-number :min="0" v-model="processValue" placeholder="请输入工序" @change="processChange"/></a-form-model-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col :span="12">
+              <a-form-model-item label="自动播放" :labelCol="{ span: 6 }"
+                ><a-radio-group v-model="form.isauto">
+                  <a-radio value="1">
+                    是
+                  </a-radio>
+                  <a-radio value="2">
+                    否
+                  </a-radio>
+                </a-radio-group></a-form-model-item
+              >
             </a-col>
           </a-row>
           <a-row>
@@ -99,6 +113,7 @@ export default {
         protypedetail: "",
         version: 1,
         filecount: "",
+        isauto: "2",
       },
       rules: {
         documentcode: [
@@ -279,7 +294,7 @@ export default {
     },
     //总sop 文档上传
     uploadFile1(info) {
-      this.spinning =true
+      this.spinning = true;
       getBase64(info.file, (imageUrl) => {
         this.imageUrl = imageUrl;
         let fileMd5 = md5(imageUrl);
@@ -349,7 +364,7 @@ export default {
                 ...info.file,
                 sort: 0,
               };
-              this.spinning =false;
+              this.spinning = false;
               this.fileData1.push(fileInfo);
             }
           });
@@ -445,13 +460,14 @@ export default {
           this.form.files = this.fileData;
           this.form.files.unshift(this.fileData1[0]);
           this.form.processcount = this.processValue;
+          this.form.isauto = this.form.isauto == 1 ? true : false;
           if (this.isEdit) {
             this.form.documentid = this.editData.DocumentId;
             setSopDocumnet(this.form, "update").then((res) => {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
                 this.$emit("success");
-                this.spinning =false;
+                this.spinning = false;
               }
             });
           } else {

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2022-06-29 11:06:29
+ * @LastEditTime: 2022-07-23 11:54:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/data.js
@@ -250,3 +250,60 @@ export const innerColumns = [{
   scopedSlots: { customRender: "ReceiverList" },
   align: "center",
 }];
+export const detailColumns = [
+  {
+    title: "顺序",
+    dataIndex: "SortNumber",
+    scopedSlots: { customRender: "SortNumber" },
+    align: "center",
+  },
+  {
+    title: "接收部门",
+    dataIndex: "DepartmentName",
+    scopedSlots: { customRender: "DepartmentName" },
+    align: "center",
+  },
+  {
+    title: "接收人",
+    dataIndex: "Receiver",
+    scopedSlots: { customRender: "Receiver" },
+    align: "center",
+    width: "30%",
+  },
+  {
+    title: "接收时间",
+    dataIndex: "DatetimeReceive",
+    scopedSlots: { customRender: "DatetimeReceive" },
+    align: "center",
+  },
+  {
+    title: "实际处理人",
+    dataIndex: "UserHandlerActual",
+    scopedSlots: { customRender: "UserHandlerActual" },
+    align: "center",
+  },
+  {
+    title: "实际处理时间",
+    dataIndex: "DatetimeHandlerActual",
+    scopedSlots: { customRender: "DatetimeHandlerActual" },
+    align: "center",
+  },
+  {
+    title: "处理耗时",
+    dataIndex: "DatetimeHandlerSpend",
+    scopedSlots: { customRender: "DatetimeHandlerSpend" },
+    align: "center",
+  },
+  {
+    title: "处理状态",
+    dataIndex: "PointStatus",
+    scopedSlots: { customRender: "PointStatus" },
+    align: "center",
+  },
+  {
+    title: "备注",
+    dataIndex: "Remark",
+    scopedSlots: { customRender: "Remark" },
+    align: "center",
+  }
+];

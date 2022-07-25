@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-07-12 10:26:32
+ * @LastEditTime: 2022-07-20 18:25:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/index.vue
@@ -109,16 +109,15 @@ import { getDepartmentApi, setDepartmentApi, getMaterialSampleApi } from "@/serv
 import { renderStripe } from "@/utils/stripe.js";
 // import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
-import { PublicVar } from "@/mixins/publicVar.js";
 import { columns, innerColumns } from "./data";
 import useForm from "./form.vue";
 import schedule from "./schedule.vue";
 import { mapState } from "vuex";
 export default {
-  mixins: [PublicVar],
   components: { useForm, schedule },
   data() {
     return {
+      loading: false,
       scrollY: "",
       advanced: true,
       columns,
@@ -141,6 +140,18 @@ export default {
       registerid: "",
       isClone: false,
       isEditBnt: false,
+      searchForm: this.$form.createForm(this), //输入
+      pagination: {
+        //分页参数
+        current: 1,
+        total: 0,
+        pageSize: 50, //每页中显示10条数据
+        showSizeChanger: true,
+        showLessItems: true,
+        showQuickJumper: true,
+        pageSizeOptions: ["50", "100", "150", "200"], //每页中显示的数据
+        showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
+      },
     };
   },
   updated() {
@@ -155,6 +166,9 @@ export default {
     },
   },
   computed: {
+     hasSelected() {
+      return this.selectedRowKeys.length > 0;
+    },
     ...mapState({
       RegisterId: (start) => start.specimen.RegisterId,
     }),
@@ -337,7 +351,7 @@ export default {
         onCancel() {},
       });
     },
-     //多选删除
+    //多选删除
     allDel() {
       let self = this;
       self.$confirm({
