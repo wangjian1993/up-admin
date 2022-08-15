@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2022-06-17 14:12:11
+ * @LastEditTime: 2022-08-04 14:05:52
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/index.vue
@@ -52,6 +52,18 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
+                <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['proname']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="工序" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['process']" style="width: 200px" placeholder="请选择工序">
+                    <a-select-option v-for="item in processList" :key="item.ProcessCode" :value="item.ProcessCode">{{ item.ProcessName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
                 <a-form-item label="生产日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
                 </a-form-item>
@@ -59,7 +71,7 @@
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="search">查询</a-button>
+            <a-button type="primary" @click="searchBtn">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
           </span>
         </a-form>
@@ -67,7 +79,7 @@
           <a-button v-if="hasPerm('export')" :disabled="dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <a-button v-else type="primary" @click="exportExcel" icon="export">导出</a-button>
         </div>
-        <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
+        <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.OrderNo + '_' + index" bordered>
           <template slot="index" slot-scope="text, record, index">
             <div>
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -112,6 +124,7 @@ export default {
       isEdit: false,
       isPrint: false,
       printData: [],
+      processList: [],
     };
   },
   updated() {
@@ -121,8 +134,9 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
     });
-    this.getListAll();
+    this.search();
     this.getPlant();
+    this.getProcessList();
   },
   methods: {
     splitData,
@@ -134,10 +148,10 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
       this.week = "";
       this.isSearch = 0;
       this.searchForm.resetFields();
+      this.search();
     },
     plantChange(e) {
       if (e == "") return;
@@ -190,6 +204,16 @@ export default {
         }
       });
     },
+    getProcessList() {
+      let parmas = {
+        process: "",
+      };
+      getDailyReport(parmas, "getprocess").then((res) => {
+        if (res.data.success) {
+          this.processList = res.data.data;
+        }
+      });
+    },
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
@@ -235,6 +259,10 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
+    },
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
@@ -256,6 +284,8 @@ export default {
             procode: values.procode,
             stratdate: begindate,
             enddate: enddate,
+            proname: values.proname,
+            process: values.process,
           };
           getDailyReport(parmas, "daily/getall").then((res) => {
             if (res.data.success) {
@@ -291,6 +321,8 @@ export default {
         procode: values.procode,
         stratdate: begindate,
         enddate: enddate,
+        proname: values.proname,
+        process: values.process,
       };
       getDailyReport(parmas, "daily/getall").then((res) => {
         if (res.data.success) {

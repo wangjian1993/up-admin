@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-07-23 17:45:37
+ * @LastEditTime: 2022-07-26 16:25:08
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/arrival/list/print.vue
@@ -15,12 +15,14 @@
       <div v-for="(item, index) in listData" :key="index">
         <div :id="'div1_' + index">
           <DIV style="LINE-HEIGHT: 30px;" class="size16" align="center"
-            ><STRONG><font color="#000000" size="5" style="font-weight:700;">深圳民爆光电股份有限公司</font></STRONG></DIV
+            ><STRONG
+              ><font color="#000000" size="5" style="font-weight:700;">{{ item.company.CompanyName }}</font></STRONG
+            ></DIV
           >
           <DIV style="LINE-HEIGHT: 30px;" class="size16" align="center"
             ><STRONG><font color="#000000" size="4" style="font-weight:700;">到货通知单</font></STRONG></DIV
           >
-          <TABLE border="0" cellSpacing="0" cellPadding="0" width="100%">
+          <TABLE  cellSpacing="0" cellPadding="1" width="100%" style="border-collapse:collapse">
             <TBODY>
               <TR>
                 <TD width="43%"
@@ -131,13 +133,27 @@
                 <td style="border:1px #000 solid" align="center">{{ items.ItemSpecification }}</td>
                 <td style="border:1px #000 solid" align="center">{{ items.Unit }}</td>
                 <td style="border:1px #000 solid" align="center">{{ items.Qty }}</td>
-                <td style="border:1px #000 solid" align="center">{{ items.DocNo }}</td>
+                <td style="border:1px #000 solid" align="center">{{ items.XdemandDocNo }}</td>
                 <td style="border:1px #000 solid" align="center">{{ items.Remark }}</td>
                 <td style="border:1px #000 solid" align="center">{{ items.DrawingNo }}</td>
                 <td style="border:1px #000 solid" align="center">{{ items.OK == true ? "✔️" : "" }}</td>
                 <td style="border:1px #000 solid" align="center">{{ items.OK == true ? "✔️" : "" }}</td>
               </tr>
             </tbody>
+            <tfoot>
+              <tr>
+                <TD colspan="10" format="#" align="center">
+                  <p align="center">
+                    <b  tdata="pageNO">第<font color="#0000FF" size="2" id="pageNO">#</font>页/</b><b tdata="pageCount">总<font color="#0000FF"  size="2" id="pageCount">##</font>页</b>
+                  </p>
+                </TD>
+                <!-- <TD tdata="pageCount" format="#" align="right">
+                  <p align="center">
+                    <b>总<font color="#0000FF">##</font>页</b>
+                  </p></TD
+                > -->
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
@@ -243,6 +259,7 @@ export default {
       barcodeValue: "",
       listData: [],
       dataSource: [],
+      sheetTitle: "",
       barcodeOptions: {
         width: 50,
         height: 50,
@@ -272,39 +289,58 @@ export default {
     },
     printBtn() {
       LODOP = getLodop();
+      if (!LODOP && document.readyState !== "complete") {
+        this.$warning({
+          title: "提示",
+          content: "本机未安装Lodop控件,请先下载安装",
+          onOk() {
+            window.open("http://192.168.1.245:8080/static/CLodop_Setup_for_Win32NT.exe");
+          },
+        });
+        return;
+      }
       try {
         if (LODOP.VERSION) {
           if (LODOP.CVERSION) {
+            LODOP.PRINT_INIT("到货通知单");
+            var strStyle = "<style> table,td,th {border-width: 1px;border-style: solid;border-collapse: collapse}</style>";
+            LODOP.SET_PRINT_PAGESIZE(0, 2100, 1480, ""); //设置纸张A4打印 横向;
             for (let i = 0; i < this.listData.length; i++) {
-              LODOP.PRINT_INIT("到货通知单");
-              var strStyle = "<style> table,td,th {border-width: 1px;border-style: solid;border-collapse: collapse}</style>";
-              LODOP.SET_PRINT_PAGESIZE(0, 2100, 1480, ""); //设置纸张A4打印 横向;
-              LODOP.ADD_PRINT_IMAGE(20, 60, 200, 30, "<img border='0' src='http://192.168.0.240:8080/static/mb.png' width='100' height='80'/>");
+              if (this.listData[i].company.LogoPath == "") {
+                LODOP.ADD_PRINT_IMAGE(20, 60, 200, 30, "<img border='0' src='http://192.168.0.240:8080/static/mb.png' width='100' height='80'/>");
+              } else {
+                LODOP.ADD_PRINT_IMAGE(20, 60, 200, 30, `"<img border='0' :src='http://192.168.0.240:8080/${this.listData[i].company.LogoPath}' width='100' height='80'/>"`);
+              }
               LODOP.SET_PRINT_STYLEA(0, "Stretch", 1); //(可变形)扩展缩放模式
               LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
-              LODOP.ADD_PRINT_TABLE(115, "2%", "96%", 155, strStyle + document.getElementById("div3_" + i).innerHTML);
-              LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
-              LODOP.SET_PRINT_STYLEA(0, "LinkedItem", 1);
-              LODOP.ADD_PRINT_TABLE(130, "2%", "96%", 1250, strStyle + document.getElementById("div2_" + i).innerHTML);
-              LODOP.SET_PRINT_STYLEA(0, "Vorient", 3);
+              //标题
               LODOP.ADD_PRINT_HTM(26, "2%", "96%", 109, document.getElementById("div1_" + i).innerHTML);
               LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
               LODOP.SET_PRINT_STYLEA(0, "LinkedItem", 1);
-              LODOP.ADD_PRINT_TEXT(490, 100, "76.25%", 20, "制单:");
+              //暂放位置
+              LODOP.ADD_PRINT_TABLE(115, "2%", "96%", 155, strStyle + document.getElementById("div3_" + i).innerHTML);
               LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
-              LODOP.ADD_PRINT_TEXT(490, 300, "76.25%", 20, "核准:");
+              LODOP.SET_PRINT_STYLEA(0, "LinkedItem", 1);
+              //table
+              // var stResult=LODOP.GET_VALUE("PRINTSETUP_PAGE_COUNT","0");//获取页数
+              LODOP.ADD_PRINT_TABLE(130, "2%", "96%", 390, strStyle + document.getElementById("div2_" + i).innerHTML);
+              console.log("pageNO====",document.getElementById("div2_" + i).innerHTML)
+              LODOP.SET_PRINT_STYLEA(0, "Vorient", 3);
+              LODOP.ADD_PRINT_TEXT(520, 100, "76.25%", 20, "制单:");
               LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
-              LODOP.ADD_PRINT_TEXT(490, 500, "76.25%", 20, "品质:");
+              LODOP.ADD_PRINT_TEXT(520, 300, "76.25%", 20, "核准:");
+              LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
+              LODOP.ADD_PRINT_TEXT(520, 500, "76.25%", 20, "品质:");
               LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
               LODOP.ADD_PRINT_HTM(1, 600, 300, 100, "总页号：<font color='#0000ff'><span tdata='pageNO'>第##页</span>/<span tdata='pageCount'>共##页</span></font>");
               LODOP.SET_PRINT_STYLEA(0, "ItemType", 1);
               LODOP.SET_PRINT_STYLEA(0, "Horient", 1);
-              LODOP.SET_PRINT_MODE("CUSTOM_TASK_NAME", "到货通知单" + this.listData[i].infoData.DocNo);
-              LODOP.PRINT();
-              LODOP.SET_PRINT_MODE("AUTO_CLOSE_PREWINDOW", 1);
-              this.$message.success("打印成功!");
-              this.$emit("closeModal");
+              LODOP.NewPageA();
             }
+            LODOP.PREVIEW();
+            LODOP.SET_PRINT_MODE("AUTO_CLOSE_PREWINDOW", 1);
+            this.$message.success("打印成功!");
+            this.$emit("closeModal");
           } else {
             this.$warning({
               title: "提示",
@@ -333,6 +369,7 @@ export default {
           if (res.data.success) {
             let list = res.data.data.list;
             this.listData.push({
+              company: res.data.data.company,
               dataSource: list,
               infoData: list[0],
             });
@@ -405,7 +442,10 @@ export default {
 /deep/.ant-descriptions-item {
   padding-bottom: 2px;
 }
-
+/deep/ .ant-modal-content {
+  max-height: 800px;
+  overflow: auto;
+}
 /deep/.ant-descriptions-item-label {
   font-size: 10px;
 }

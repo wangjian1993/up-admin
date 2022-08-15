@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2022-03-24 16:23:24
+ * @LastEditTime: 2022-08-05 15:19:42
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -605,6 +605,8 @@ export default {
               EnterTypeId: self.permissionList[item].EnterTypeId,
               EnterId: self.permissionList[item].EnterId,
               Compartor: self.permissionList[item].Compartor,
+              OrgId: self.userId != "" ? "" : self.orgId,
+              UserId: self.userId,
               ModuleId: self.moduleid,
             });
           });

@@ -6,6 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  <link rel="stylesheet" href="stimulsoft/css/stimulsoft.designer.office2013.whiteblue.css">
+  <link rel="stylesheet" href="stimulsoft/css/stimulsoft.viewer.office2013.whiteblue.css">
+ 
   <title>
     <%= process.env.VUE_APP_NAME %>
   </title>
@@ -132,6 +135,9 @@
       </div>
     </div>
   </div>
+  <script type="text/javascript" src="stimulsoft/js/stimulsoft.reports.js"></script>
+  <script type="text/javascript" src="stimulsoft/js/stimulsoft.viewer.js"></script>
+  <script type="text/javascript" src="stimulsoft/js/stimulsoft.designer.js"></script>
   <!-- require cdn assets js -->
   <% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>
     <script type="text/javascript" src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>

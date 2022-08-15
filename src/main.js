@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2022-07-07 15:07:29
+ * @LastEditTime: 2022-08-11 10:07:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/main.js
@@ -46,6 +46,10 @@ import Print from 'vue-print-nb'
 Vue.use(Print); //注册
 bootstrap({ router, store, i18n, message: Vue.prototype.$message });
 import Viewer from 'v-viewer'
+
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+moment.locale('zh-cn');
 import 'viewerjs/dist/viewer.css'
 Vue.use(Viewer, {
   defaultOptions: {

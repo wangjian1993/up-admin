@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-11-22 10:15:54
+ * @LastEditTime: 2022-07-28 09:23:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/achievement.vue
@@ -12,7 +12,7 @@
       <div :class="advanced ? null : 'fold'">
         <a-row>
           <a-col :md="6" :sm="24">
-            <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+            <a-form-item label="生产工厂1" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
                 <a-select-option value="">全部</a-select-option>
                 <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>

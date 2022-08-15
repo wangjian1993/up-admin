@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-07-08 10:14:07
+ * @LastEditTime: 2022-07-28 09:40:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/index.vue
@@ -74,7 +74,7 @@
         </div>
         <span style="float: right; margin-top: 3px;">
           <a style="margin-right: 8px" @click="helpClick('http://192.168.1.245:8080/docs/#/esop/docs')"><a-icon type="question-circle" /> 帮助</a>
-          <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
+          <a-button type="primary" @click="searchBtn" :disabled="!hasPerm('search')">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
         </span>
       </a-form>
@@ -312,7 +312,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    this.getListAll();
+    this.search();
     this.getEnterList();
   },
   methods: {
@@ -401,9 +401,13 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
       this.week = "";
       this.searchForm.resetFields();
+      this.search();
+    },
+     searchBtn() {
+      this.pagination.current = 1;
+      this.search()
     },
     //关键词搜索
     search() {

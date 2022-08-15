@@ -51,7 +51,7 @@
           </a-row>
         </div>
         <span style="float: right; margin-top: 3px;">
-          <a-button type="primary" @click="search">查询</a-button>
+          <a-button type="primary" @click="searchBtn">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset">重置</a-button>
         </span>
       </a-form>
@@ -254,6 +254,10 @@ export default {
         return;
       }
       this.getListAll();
+    },
+     searchBtn(){
+      this.pagination.current =1;
+      this.search();
     },
     search() {
       this.searchForm.validateFields((err, values) => {

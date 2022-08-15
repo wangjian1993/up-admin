@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 14:02:21
- * @LastEditTime: 2022-07-22 09:09:52
+ * @LastEditTime: 2022-07-29 10:56:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/details.vue
@@ -153,7 +153,7 @@ export default {
       this.isProduct =true;
     },
     download(record) {
-      window.open("./" + record.FilePath, "_blank");
+      window.open("./" + record.DownloadFilePath, "_blank");
     },
     getDocsFile() {
       let parmas = {

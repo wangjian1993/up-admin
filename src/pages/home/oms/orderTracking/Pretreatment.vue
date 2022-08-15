@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-09 11:25:14
- * @LastEditTime: 2021-12-10 09:12:10
+ * @LastEditTime: 2022-07-28 08:39:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/Pretreatment.vue
@@ -32,7 +32,7 @@
         </a-row>
       </div>
       <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search">查询</a-button>
+        <a-button type="primary" @click="searchBtn">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset">重置</a-button>
       </span>
     </a-form>
@@ -79,9 +79,9 @@
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
-        <template slot="Status" slot-scope="text,record">
+        <template slot="Status" slot-scope="text, record">
           <div>
-            <a-tag :color="text === 'PROCESS_FINISHED' || text === 'BOMPROCESSED' || text === 'PROCESSED'?'green':'red'">{{record.StatusName}}</a-tag>
+            <a-tag :color="text === 'PROCESS_FINISHED' || text === 'BOMPROCESSED' || text === 'PROCESSED' ? 'green' : 'red'">{{ record.StatusName }}</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">
@@ -253,6 +253,10 @@ export default {
       this.getListAll();
       this.searchForm.resetFields();
     },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
+    },
     detail(item) {
       // this.$router.push({ path: "/purchase/add", query: { id:item.Id} });
       this.$emit("toDetail", item.BatchNo);
@@ -273,9 +277,9 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             companyid: values.companyid,
-            user:values.user,
-            startdate:startdate,
-            enddate:enddate
+            user: values.user,
+            startdate: startdate,
+            enddate: enddate,
           };
           getPreporcessApi(parmas, "getall").then((res) => {
             if (res.data.success) {

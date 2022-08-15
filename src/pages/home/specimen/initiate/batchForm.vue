@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-07-13 16:18:08
+ * @LastEditTime: 2022-08-11 16:49:15
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/initiate/batchForm.vue
@@ -43,13 +43,16 @@
           <a-col :span="8">
             <a-form-model-item ref="Supplier" has-feedback label="供应商" prop="Supplier">
               <!-- <a-input v-model="form.Supplier"  allowClear placeholder="请输入供应商" /> -->
-              <a-select style="width: 200px;" show-search v-model="form.Supplier" placeholder="请输入供应商" :default-active-first-option="false" :show-arrow="false" :filter-option="false" :not-found-content="null" @search="handleSearch" @change="handleSearch">
+              <a-select style="width: 200px;" show-search v-model="form.Supplier" placeholder="请输入供应商" :default-active-first-option="false" :show-arrow="false" :filter-option="false" :not-found-content="null" @search="handleSearch" @change="(e) => changeSearch(e, index)">
                 <a-select-option v-for="item in supplierList" :value="item.SupplierName" :key="item.RowNumber">
                   {{ item.SupplierName }}
                 </a-select-option>
               </a-select>
             </a-form-model-item></a-col
           >
+          <a-col :span="6">
+              <a-form-model-item ref="SupplierCode" has-feedback label="供应商编码" prop="SupplierCode"> <a-input v-model="form.SupplierCode" disabled allowClear placeholder="请输入供应商编码" /> </a-form-model-item
+            ></a-col>
           <a-col :span="8">
             <a-form-model-item ref="DatetimePurchaseDeliver" has-feedback label="采购送样日期" prop="DatetimePurchaseDeliver"> <a-date-picker @change="(e) => DatetimeChange1(e, index)" v-model="form.DatetimePurchaseDeliver" show-time type="date" placeholder="选择采购送样日期" style="width: 100%;" /> </a-form-model-item
           ></a-col>
@@ -136,6 +139,7 @@ export default {
         Supplier: "",
         DatetimePurchaseDeliver: "",
         Purchaser: "",
+        SupplierCode:"",
       },
       rules: {
         Supplier: [
@@ -206,6 +210,13 @@ export default {
     DatetimeChange(e, index) {
       this.dynamicValidateForm[index].DatetimePurchaseRetrieve = e.format("YYYY-MM-DD HH:mm:ss");
     },
+    changeSearch(e) {
+      this.supplierList.forEach((item) => {
+        if (item.SupplierName == e) {
+          this.form.SupplierCode = item.SupplierCode;
+        }
+      });
+    },
     handleSearch(value) {
       let params = {
         pageindex: 1,
@@ -269,6 +280,7 @@ export default {
             SubmitSign: type, //提交标识：1,，SAVE-保存 2，SAVEANDSUBMIT-保存并提交到下一节点
             FlowId: this.editData.FlowId, //流程ID
             Supplier: this.form.Supplier, //供应商
+            SupplierCode:this.form.SupplierCode,
             DatetimePurchaseDeliver: this.form.DatetimePurchaseDeliver != "" ? this.form.DatetimePurchaseDeliver : "",
             Purchaser: this.form.Purchaser,
             Item: this.dynamicValidateForm,

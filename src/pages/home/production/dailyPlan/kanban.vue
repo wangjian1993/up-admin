@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-06-06 14:52:07
+ * @LastEditTime: 2022-07-28 08:55:15
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/kanban.vue
@@ -76,7 +76,7 @@
           </a-row>
         </div>
         <span style="float: right; margin-top: 3px;">
-          <a-button type="primary" @click="search">查询</a-button>
+          <a-button type="primary" @click="searchBtn">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset">重置</a-button>
           <a @click="toggleAdvanced" style="margin-left: 8px">
             {{ advanced ? "收起" : "展开" }}
@@ -140,7 +140,7 @@
 import { getDailyPlanAction, getWorkshopList, getLineList, setDailyPlanAction, getPrintInfo } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { renderStripe } from "@/utils/stripe.js";
-import getTableScroll from "@/utils/setTableHeight";
+// import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import UserList from "@/components/app-user/UserList";
 import { getParamData } from "@/services/admin.js";
@@ -185,12 +185,12 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(70);
+      this.scrollY = this.getTableScroll(70);
       this.searchForm.setFieldsValue({
         batchid: this.batchid,
       });
     });
-    this.getListAll();
+    this.search();
     this.getPlant();
     this.getParamData();
   },
@@ -208,6 +208,36 @@ export default {
   },
   methods: {
     splitData,
+    getTableScroll(extraHeight = 100, id) {
+      if (typeof extraHeight == "undefined") {
+        //  默认底部分页64 + 边距10
+        extraHeight = 70;
+      }
+      let tHeader = null;
+      if (id) {
+        tHeader = document.getElementById(id) ? document.getElementById(id).getElementsByClassName("ant-table-thead")[0] : null;
+      } else {
+        tHeader = document.getElementsByClassName("ant-table-thead")[0];
+      }
+      //表格内容距离顶部的距离
+      console.log("tHeader", tHeader);
+      let tHeaderBottom = 0;
+      let tHeaderTop = 0;
+      if (tHeader) {
+        tHeaderBottom = tHeader.getBoundingClientRect().bottom;
+        tHeaderTop = tHeader.getBoundingClientRect().top;
+      }
+      // let height = document.body.clientHeight - tHeaderBottom - extraHeight
+      let height = `calc(100vh - ${tHeaderBottom + extraHeight}px)`;
+      let height1 = `calc(100vh - ${tHeaderTop + extraHeight}px)`;
+      // document.getElementsByClassName("ant-table")[0].style.maxHeight = `calc(100vh - ${tHeaderBottom}px)`;
+      // document.getElementsByClassName("ant-table")[0].style.mixHeight = `calc(100vh - ${tHeaderBottom}px)`;
+      const table = document.getElementsByClassName("ant-table")[0];
+      table.style.minHeight = height1;
+      // console.log(table);
+      console.log("height", height);
+      return height;
+    },
     handlePrint(item, type) {
       let parmas = {
         id: item.Id,
@@ -252,10 +282,10 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
       this.week = "";
       this.isSearch = 0;
       this.searchForm.resetFields();
+      this.search();
     },
     //编辑
     remarks(item) {
@@ -372,6 +402,10 @@ export default {
     //收起展开
     toggleAdvanced() {
       this.advanced = !this.advanced;
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     search() {
       this.searchForm.validateFields((err, values) => {
@@ -504,6 +538,6 @@ export default {
   color: #000;
 }
 /deep/.ant-table {
-  min-height: 62vh;
+  min-height: 56vh;
 }
 </style>

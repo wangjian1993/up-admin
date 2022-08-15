@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-01-10 10:39:49
+ * @LastEditTime: 2022-08-10 16:03:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -74,10 +74,15 @@
                   <a-input placeholder="请输入产品品号" allowClear v-decorator="['itemcode']" />
                 </a-form-item>
               </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                  <a-input placeholder="请输入产品规格" allowClear v-decorator="['itemspecification']" />
+                </a-form-item>
+              </a-col>
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="search" :disabled="!hasPerm('search_purchase')">查询</a-button>
+            <a-button type="primary" @click="searchBtn" :disabled="!hasPerm('search_purchase')">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search_purchase')">重置</a-button>
             <a @click="toggleAdvanced" style="margin-left: 8px">
               {{ advanced ? "收起" : "展开" }}
@@ -441,11 +446,15 @@ export default {
               this.searchForm.setFieldsValue({
                 plantid: this.plantList[0].EnterId,
               });
-              this.getCostList();
+              this.search();
             }
           });
         }
       });
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     getCostList() {
       let parmas = {
@@ -457,6 +466,7 @@ export default {
         itemsort: "",
         itemcode: "",
         itemname: "",
+        itemspecification:''
       };
       getCostConfig(parmas, "getquotelist").then((res) => {
         if (res.data.success) {
@@ -485,6 +495,7 @@ export default {
             itemsort: values.itemsort || "",
             itemcode: values.itemcode || "",
             itemname: values.itemname || "",
+            itemspecification:values.itemspecification || ""
           };
           getCostConfig(parmas, "getquotelist").then((res) => {
             if (res.data.success) {

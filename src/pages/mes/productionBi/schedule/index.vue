@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-07-07 14:31:51
- * @LastEditTime: 2022-07-21 17:35:49
+ * @LastEditTime: 2022-08-04 16:13:59
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/schedule/index.vue
@@ -14,6 +14,17 @@
         <a-icon @click="timeBefore" type="left-circle" :style="{ fontSize: '20px', color: '#e7e7e7' }" />
         <a-date-picker v-model="dayTime" class="date-box" @change="dateChange" />
         <a-icon @click="timeAfter" type="right-circle" :style="{ fontSize: '20px', color: '#e7e7e7' }" />
+        <div style="margin-left:20px">
+          <span>产线:</span
+          ><a-select style="width: 120px" @change="lineChange">
+           <a-select-option value="">
+              全部
+            </a-select-option>
+            <a-select-option :value="item.LineCode" v-for="item in lineList" :key="item.LineCode">
+              {{ item.LineName }}
+            </a-select-option>
+          </a-select>
+        </div>
       </div>
       <div class="app-container">
         <div ref="gantt" class="left-container" />
@@ -35,6 +46,11 @@ export default {
       timeValue: "",
       dayTime: "",
       spinning: false,
+      lineList: [],
+      process: "",
+      plant: "",
+      workshop: "",
+      line: "",
       tasks: {
         data: [],
       },
@@ -45,21 +61,37 @@ export default {
       var diyDate = new Date(this.timeValue);
       let date = new Date(diyDate.setDate(diyDate.getDate() - 1));
       let time = date.getFullYear() + "-" + (date.getMonth() + 1 > 9 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1)) + "-" + (date.getDate() > 9 ? date.getDate() : "0" + date.getDate());
-      console.log(time);
+      // console.log(time);
       this.dayTime = time;
+      gantt.clearAll();
+      gantt.parse(this.tasks);
+      gantt.render();
       this.getDataList(time, true);
     },
     timeAfter() {
       var diyDate = new Date(this.timeValue);
       let date = new Date(diyDate.setDate(diyDate.getDate() + 1));
       let time = date.getFullYear() + "-" + (date.getMonth() + 1 > 9 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1)) + "-" + (date.getDate() > 9 ? date.getDate() : "0" + date.getDate());
-      console.log(time);
+      // console.log(time);
       this.dayTime = time;
+      gantt.clearAll();
+      gantt.parse(this.tasks);
+      gantt.render();
       this.getDataList(time, true);
+    },
+    lineChange(e) {
+      console.log("产线");
+      gantt.clearAll();
+      gantt.render();
+      this.line = e;
+      this.getDataList(this.dayTime);
     },
     dateChange(e) {
       let date = e.format("YYYY-MM-DD");
       this.dayTime = date;
+      gantt.clearAll();
+      gantt.parse(this.tasks);
+      gantt.render();
       this.getDataList(date);
     },
     initData() {
@@ -75,10 +107,9 @@ export default {
       gantt.config.date_format = "%Y-%m-%d %H:%i"; //设置数据中的时间格式，对应start_date格式
       gantt.config.columns = [
         //设置列
-        { name: "text", label: "产线", width: "80", align: "center" },
+        { name: "text", label: "产线", width: "60", align: "center" },
         { name: "mocode", label: "工单", width: "120", align: "center" },
-        { name: "StartTime", label: "开始时间", width: "60", align: "center" },
-        { name: "EndTime", label: "结束时间", width: "60", align: "center" },
+        { name: "ProName", label: "产品名称", width: "220", align: "left" },
       ];
       gantt.plugins({
         tooltip: true, //鼠标划过任务是否显示明细
@@ -92,11 +123,11 @@ export default {
       // };
       //自定义工具栏
       gantt.templates.tooltip_text = function(start, end, task) {
-        return "<b>工单:</b> " + task.text + "<br/><b>工作时间:</b> " + new Date(start).getHours() + ":" + new Date(start).getMinutes() + " - " + new Date(end).getHours() + ":" + new Date(end).getMinutes();
+        return "<b>工单:</b> " + task.mocode + "<br/><b>开工时间:</b> " + task.StartTime + "<br/><b>完工时间:</b>" + task.EndTime + "<br/><b>数量:</b>" + task.qty + "<br/><b>产品名称</b>:</b>" + task.ProName;
       };
       gantt.templates.task_text = function(start, end, task) {
         return `
-            <span style="color:white;">${task.qty}</span>
+            <span style="color:#000000;font-weight:700;">${task.qty}</span>
           `;
       };
       //监测到鼠标已经离开包裹着ghtml的div的解决方案
@@ -121,36 +152,43 @@ export default {
       gantt.init(this.$refs.gantt);
       gantt.parse(this.tasks);
       // 数据解析
-      console.log("tasks===", this.tasks);
+      // console.log("tasks===", this.tasks);
     },
     timeFormatting(time) {
-      console.log("time===", time);
+      // console.log("time===", time);
       let t = time.split("T");
       let h = t[1].split(".");
-      console.log(t[0] + " " + h[0]);
+      // console.log(t[0] + " " + h[0]);
       return t[0] + " " + h[0];
     },
     paramsSplit(str) {
       let s = str.split("=");
       return s[1];
     },
+    getLine() {
+      var BASE_URL_MOCK = window.location.host === "113.106.78.83:7003" ? "http://113.106.78.83:7004" : window.location.host === "192.168.0.240:8080" ? "http://192.168.0.240:8081" : "http://192.168.1.245:6688";
+      axios({
+        method: "GET",
+        url: BASE_URL_MOCK + "/api/kanban/mo/progress/getlines?plant=" + this.plant + "&workshop=" + this.workshop,
+      }).then((response) => {
+        console.log(response);
+        this.lineList = response.data.data;
+      });
+    },
     getDataList(date) {
-      let paramsArray = this.$route.path.split("&");
-      console.log("paramsArray", paramsArray);
-      let process = this.paramsSplit(paramsArray[1]);
-      let plant = this.paramsSplit(paramsArray[2]);
-      let workshop = this.paramsSplit(paramsArray[3]);
-      let line = this.paramsSplit(paramsArray[4]);
       this.tasks.data = [];
       this.timeValue = date;
       // console.log("process===", process.env.NODE_ENV);
-      var BASE_URL_MOCK = window.location.host === "113.106.78.83:7003" ? "http://113.106.78.83:7004" : window.location.host === "113.106.78.83:7003" ? "http://192.168.0.240:8081" :"http://192.168.1.245:6688";
+      var BASE_URL_MOCK = window.location.host === "113.106.78.83:7003" ? "http://113.106.78.83:7004" : window.location.host === "192.168.0.240:8080" ? "http://192.168.0.240:8081" : "http://192.168.1.245:6688";
       axios({
         method: "GET",
-        url: BASE_URL_MOCK + "/api/kanban/mo/progress/getall?pageindex=1&pagesize=10&process=" + process + "&plant=" + plant + "&workshop=" + workshop + "&line=" + line + "&date=" + date,
+        url: BASE_URL_MOCK+ "/api/kanban/mo/progress/getall?pageindex=1&pagesize=10&process=" + this.process + "&plant=" + this.plant + "&workshop=" + this.workshop + "&line=" + this.line + "&date=" + date,
       }).then((response) => {
         const { data } = response;
         if (data.success) {
+          if (!data.data) {
+            return;
+          }
           this.ecItem = data.data.Data;
           this.Title = data.data.Title;
           let bgColor;
@@ -167,7 +205,25 @@ export default {
                   bgColor = "rgba(255,115,115,.4)";
                   break;
                 case 3:
-                  bgColor = "rgba(255,207,107,.4)";
+                  bgColor = "rgba(155,207,107,.4)";
+                  break;
+                case 4:
+                  bgColor = "rgba(80,207,107,.4)";
+                  break;
+                case 5:
+                  bgColor = "rgba(255,80,107,.4)";
+                  break;
+                case 6:
+                  bgColor = "rgba(255,207,80,.4)";
+                  break;
+                case 7:
+                  bgColor = "rgba(107,157,107,.4)";
+                  break;
+                case 8:
+                  bgColor = "rgba(25,107,107,.4)";
+                  break;
+                case 9:
+                  bgColor = "rgba(0,207,107,.4)";
                   break;
                 default:
                   bgColor = "rgba(0,187,255,.4)";
@@ -178,12 +234,13 @@ export default {
                 start_date: this.timeFormatting(listItem.StartTime),
                 end_date: this.timeFormatting(listItem.EndTime),
                 mocode: listItem.MoCode,
-                qty: listItem.Quantity,
-                StartTime: listItem.StartTime.substring(11, 16),
-                EndTime: listItem.EndTime.substring(11, 16),
+                qty: listItem.Quantity + "/" + listItem.StartQty,
+                StartTime: this.timeFormatting(listItem.StartTime),
+                EndTime: this.timeFormatting(listItem.EndTime),
                 color: bgColor,
+                ProName: listItem.ProName,
               });
-              console.log(this.tasks.data);
+              // console.log(this.tasks.data);
             });
           });
           this.initData();
@@ -197,15 +254,30 @@ export default {
       // gantt.parse(this.tasks);
     },
   },
+  activated() {
+    gantt.clearAll();
+    gantt.parse(this.tasks);
+    gantt.render();
+    this.getDataList(this.dayTime);
+  },
   created() {
+    gantt.clearAll();
+    gantt.parse(this.tasks);
+    gantt.render();
     // this.$nextTick(() => {
     //   this.getDataList("2022-07-12");
     // });
   },
   mounted() {
     let date = moment().format("YYYY-MM-DD");
+    let paramsArray = this.$route.path.split("&");
+    this.process = this.paramsSplit(paramsArray[1]);
+    this.plant = this.paramsSplit(paramsArray[2]);
+    this.workshop = this.paramsSplit(paramsArray[3]);
+    this.line = this.paramsSplit(paramsArray[4]);
     this.dayTime = date;
     this.getDataList(date);
+    this.getLine();
   },
 };
 </script>
@@ -213,8 +285,8 @@ export default {
 <style scoped>
 .left-container {
   height: 600px;
-  background: url("../../../../assets/img/pageBg.png") no-repeat;
-  background-size: cover;
+  /* background: url("../../../../assets/img/pageBg.png") no-repeat;
+  background-size: cover; */
 }
 .time-box {
   display: flex;
@@ -224,5 +296,8 @@ export default {
 }
 .date-box {
   margin: 0 10px;
+}
+.gantt_tree_content{
+  font-size:10px;
 }
 </style>

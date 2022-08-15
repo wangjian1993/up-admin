@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2022-03-23 10:10:03
+ * @LastEditTime: 2022-07-28 08:54:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/leadIn.vue
@@ -48,7 +48,7 @@
         </a-row>
       </div>
       <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
+        <a-button type="primary" @click="searchBtn" :disabled="!hasPerm('search')">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
         <a-button style="margin-left: 8px" type="primary" @click="importExcel" :disabled="!hasPerm('import')"><a-icon type="import" />导入</a-button>
         <a-button style="margin-left: 8px" type="primary" @click="downloadExcel" :disabled="!hasPerm('down')"><a-icon type="download" />下载模板</a-button>
@@ -260,7 +260,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
     });
-    this.getListAll();
+    this.search();
   },
   methods: {
     errorInfo(record) {
@@ -300,24 +300,9 @@ export default {
       this.getListAll();
     },
     //获取列表数据
-    getListAll() {
-      this.loading = true;
-      let parmas = {
-        pageindex: this.pagination.current,
-        pagesize: this.pagination.pageSize,
-      };
-      getMitemPlanAction(parmas, "getall").then((res) => {
-        if (res.data.success) {
-          this.data = res.data.data.list;
-          const pagination = { ...this.pagination };
-          pagination.total = res.data.data.recordsTotal;
-          this.pagination = pagination;
-          this.loading = false;
-          this.isSearch = false;
-        } else {
-          this.loading = false;
-        }
-      });
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     //关闭弹窗
     onClose() {
@@ -329,9 +314,9 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
       this.week = "";
       this.searchForm.resetFields();
+      this.search()
     },
     //关键词搜索
     search() {

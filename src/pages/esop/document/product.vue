@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-09 14:55:10
- * @LastEditTime: 2022-07-22 09:08:42
+ * @LastEditTime: 2022-07-29 14:15:43
  * @LastEditors: max
  * @Description: 导入execl
  * @FilePath: /up-admin/src/pages/esop/document/product.vue
@@ -120,7 +120,7 @@ export default {
           filesize: info.file.size,
           filelength: "0",
           filecontent: "",
-          fileparentid:this.previewRecord.FileParentId,
+          fileparentid:this.previewRecord.ID,
           fileclass:this.previewRecord.FileClass
         };
         str.forEach((item, index) => {

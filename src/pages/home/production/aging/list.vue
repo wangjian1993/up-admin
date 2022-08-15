@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:57
- * @LastEditTime: 2022-01-12 15:10:57
+ * @LastEditTime: 2022-07-28 08:42:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/aging/list.vue
@@ -32,24 +32,14 @@
           </a-row>
         </div>
         <span style="float: right; margin-top: 3px;">
-          <a-button type="primary" @click="search">查询</a-button>
+          <a-button type="primary" @click="searchBtn">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset">重置</a-button>
         </span>
       </a-form>
       <div class="operator">
         <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
       </div>
-      <a-table
-        :columns="columns"
-        :data-source="dataSource"
-        size="small"
-        :scroll="{ y: scrollY, x: 2400 }"
-        :loading="loading"
-        :pagination="pagination"
-        @change="handleTableChange"
-        :rowKey="(dataSource,index) => dataSource.ProcessId +'_'+index"
-        bordered
-      >
+      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2400 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.ProcessId + '_' + index" bordered>
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -87,13 +77,13 @@ export default {
   created() {
     this.$nextTick(() => {
       let tHeader = document.getElementsByClassName("ant-table-thead")[1];
-      console.log(tHeader)
+      console.log(tHeader);
       let tHeaderBottom = tHeader.getBoundingClientRect().bottom;
       let height = `calc(100vh - ${tHeaderBottom + 70}px)`;
-      console.log("height",height)
-      this.scrollY = height
+      console.log("height", height);
+      this.scrollY = height;
     });
-    this.getListAll();
+    this.search();
     this.getPlant();
   },
   computed: {
@@ -105,9 +95,9 @@ export default {
     splitData,
     //重置搜索
     reset() {
-      this.getListAll();
       this.isSearch = 0;
       this.searchForm.resetFields();
+      this.search();
     },
     plantChange(e) {
       if (e == "") return;
@@ -157,6 +147,10 @@ export default {
         return;
       }
       this.getListAll();
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     search() {
       this.searchForm.validateFields((err, values) => {
@@ -250,4 +244,3 @@ export default {
   overflow: auto;
 }
 </style>
-

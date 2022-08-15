@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-01 17:38:43
- * @LastEditTime: 2022-04-07 15:54:56
+ * @LastEditTime: 2022-08-04 10:38:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/data.js
@@ -38,6 +38,12 @@ export const columns = [
       title: "产线",
       dataIndex: "LineName",
       scopedSlots: { customRender: "LineName" },
+      align: "center",
+    },
+    {
+      title: "生产工序",
+      dataIndex: "ProcessName",
+      scopedSlots: { customRender: "ProcessName" },
       align: "center",
     },
     {
@@ -107,6 +113,13 @@ export const columns = [
       width: "100px",
     },
     {
+      title: "累积开工数量",
+      dataIndex: "StartQty",
+      scopedSlots: { customRender: "StartQty" },
+      align: "center",
+      width: "100px",
+    },
+    {
       title: "产出数量(PCS)",
       dataIndex: "ProQty",
       scopedSlots: { customRender: "ProQty" },
@@ -154,7 +167,14 @@ export const columns = [
       width: "150px",
     },
     {
-      title: "达成率(%)",
+      title: "计划达成率(%)",
+      dataIndex: "PlanCompletionRate",
+      scopedSlots: { customRender: "PlanCompletionRate" },
+      align: "center",
+      width: "100px",
+    },
+    {
+      title: "工单达成率(%)",
       dataIndex: "CompletionRate",
       scopedSlots: { customRender: "CompletionRate" },
       align: "center",

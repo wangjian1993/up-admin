@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-07-01 10:56:46
+ * @LastEditTime: 2022-08-11 16:40:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/form.vue
@@ -52,13 +52,16 @@
             <a-col :span="6">
               <a-form-model-item ref="Supplier" has-feedback label="供应商" prop="Supplier">
                 <!-- <a-input v-model="form.Supplier"  allowClear placeholder="请输入供应商" /> -->
-                <a-select show-search v-model="form.Supplier" placeholder="请输入供应商" :default-active-first-option="false" :show-arrow="false" :filter-option="false" :not-found-content="null" @search="handleSearch" @change="handleSearch">
+                <a-select show-search v-model="form.Supplier" placeholder="请输入供应商" :default-active-first-option="false" :show-arrow="false" :filter-option="false" :not-found-content="null" @search="handleSearch" @change="changeSearch">
                   <a-select-option v-for="item in supplierList" :value="item.SupplierName" :key="item.RowNumber">
                     {{ item.SupplierName }}
                   </a-select-option>
                 </a-select>
               </a-form-model-item></a-col
             >
+            <a-col :span="6">
+              <a-form-model-item ref="SupplierCode" has-feedback label="供应商编码" prop="SupplierCode"> <a-input v-model="form.SupplierCode" disabled allowClear placeholder="请输入供应商编码" /> </a-form-model-item
+            ></a-col>
             <a-col :span="6">
               <a-form-model-item ref="HasApprovalSheet" has-feedback label="是否有承认书" prop="HasApprovalSheet">
                 <a-select v-model="form.HasApprovalSheet" has-feedback placeholder="请选择是否有承认书">
@@ -67,11 +70,11 @@
                 </a-select></a-form-model-item
               >
             </a-col>
-            <a-col :span="6">
-              <a-form-model-item ref="Quantity" has-feedback label="数量" prop="Quantity"> <a-input v-model="form.Quantity" allowClear placeholder="请输入数量" /> </a-form-model-item
-            ></a-col>
           </a-row>
           <a-row>
+             <a-col :span="6">
+              <a-form-model-item ref="Quantity" has-feedback label="数量" prop="Quantity"> <a-input v-model="form.Quantity" allowClear placeholder="请输入数量" /> </a-form-model-item
+            ></a-col>
             <a-col :span="6">
               <a-form-model-item ref="Purchaser" has-feedback label="送样采购员" prop="Purchaser"> <a-input v-model="form.Purchaser" allowClear placeholder="请输入送样采购员" /> </a-form-model-item
             ></a-col>
@@ -301,6 +304,13 @@ export default {
       let result = this.userObj.find((item) => item.name == e.target.value);
       this.userIsInput = result.isInput;
     },
+    changeSearch(e) {
+      this.supplierList.forEach((item) => {
+        if (item.SupplierName == e) {
+          this.form.SupplierCode = item.SupplierCode;
+        }
+      });
+    },
     handleSearch(value) {
       let params = {
         pageindex: 1,
@@ -410,6 +420,7 @@ export default {
             ItemSpecification: this.form.ItemSpecification, //规格型号
             DrawingNo: this.form.DrawingNo, //图号
             Supplier: this.form.Supplier, //供应商
+            SupplierCode:this.form.SupplierCode,
             HasApprovalSheet: this.form.HasApprovalSheet, //是否有承认书
             Quantity: this.form.Quantity, //数量
             Purchaser: this.form.Purchaser, //送样采购员

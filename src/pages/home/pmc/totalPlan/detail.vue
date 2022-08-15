@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-03-23 15:39:23
+ * @LastEditTime: 2022-07-28 09:29:37
  * @LastEditors: max
  * @Description: 物料需求总计划明细
  * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/detail.vue
@@ -55,7 +55,7 @@
         </a-row>
       </div>
       <span style="display:flex;justify-content:flex-end">
-        <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
+        <a-button type="primary" @click="searchBtn" :disabled="!hasPerm('search')">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
       </span>
     </a-form>
@@ -195,8 +195,8 @@ const columns = [
     align: "center",
     width: "5%",
     customRender: (text) => {
-      return text == 'N'?'否':'是';
-    }
+      return text == "N" ? "否" : "是";
+    },
   },
   {
     title: "计划状态",
@@ -261,7 +261,10 @@ export default {
       this.scrollY = getTableScroll(110);
     });
     if (this.batchid == "") {
-      this.getListAll();
+      this.searchForm.setFieldsValue({
+        batchno: this.batchid,
+      });
+      this.search();
     }
   },
   methods: {
@@ -314,9 +317,13 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
       this.week = "";
       this.searchForm.resetFields();
+      this.search();
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     //关键词搜索
     search() {

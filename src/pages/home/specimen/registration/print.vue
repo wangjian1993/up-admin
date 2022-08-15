@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-07-23 17:39:15
+ * @LastEditTime: 2022-08-15 16:44:54
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/specimen/registration/print.vue
@@ -13,97 +13,94 @@
     </div>
     <div id="printBox">
       <div v-for="(item, index) in dataSource" :key="index" :id="'div1_' + index">
-        <table cellSpacing="0" cellPadding="1" border="1" width="100%" style="border-collapse:collapse">
-          <div style="font-size:14px;text-align: center;font-weight: 700;">
-            <p style="margin:0 auto;">深圳民爆光电股份有限公司</p>
-            <p style="margin:0 auto;">物料样品标签</p>
-          </div>
-          <span style="font-size:12px;font-weight: 700;">流水号: {{ item.FlowCode }}</span>
-          <tr style="font-size:10px;height:30px">
-            <td width="50">样品类别</td>
-            <td colspan="3">
-              <p style="margin:0;padding:0">
-                <span><input type="checkbox" name="cb4" value="" />新产品</span>
-                <span><input type="checkbox" name="cb4" value="" />版本升级</span>
-                <span><input type="checkbox" name="cb4" value="" />更换供应商</span>
-              </p>
-              <p style="margin:0;padding:0">
-                <span><input type="checkbox" name="cb4" value="" />惠州民爆</span>
-                <span><input type="checkbox" name="cb4" value="" />惠州分公司</span>
-                <span><input type="checkbox" name="cb4" value="" />其他</span>
-              </p>
-            </td>
-          </tr>
-          <tr style="font-size:10px;height:25px;">
-            <td>供应商</td>
-            <td colspan="3">{{ item.Supplier }}</td>
-          </tr>
-          <tr style="font-size:10px;height:25px;">
-            <td>品号</td>
-            <td>{{ item.ItemCode }}</td>
-            <td width="50px">图号</td>
-            <td width="140px">{{ item.DrawingNo }}</td>
-          </tr>
-          <tr style="font-size:10px;height:25px;">
-            <td>品名</td>
-            <td colspan="3">{{ item.ItemName }}</td>
-          </tr>
-          <tr style="font-size:10px;height:50px;max-height: 50px;overflow: hidden;">
-            <td>规格型号</td>
-            <td colspan="3">
-              <div
-                style="height: 40px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			word-break: break-all;  /* 内容自动换行 */
-			-webkit-box-orient: vertical; /* 垂直排列 */
-			display: -webkit-box;	
-			-webkit-line-clamp:2;"
-              >
-                {{ item.ItemSpecification }}
+        <div style="font-size:14px;text-align: center;font-weight: 700;width: 100%;margin:0 auto">
+          <p style="margin:0 auto;">深圳民爆光电股份有限公司</p>
+          <p style="margin:0 auto;">物料样品标签</p>
+        </div>
+        <span style="font-size:12px;font-weight: 700;">流水号: {{ item.FlowCode }}</span>
+        <table border="1" cellSpacing="0" cellPadding="1" width="100%" style="border-collapse:collapse" bordercolor="#333333">
+          <tr>
+            <td width="53" rowspan="2"  style="font-size:12px;">样品类别</td>
+            <td colspan="3"  style="font-size:10px;">
+              <div style="margin:0;padding:0" :id="'checkbox1_' + index">
+                <span style="display: inline-block;float: right;line-height: 20px;font-size:10px;">(采购选)</span>
+                <span @click="setChecked(0)"><input type="checkbox" id="cb1" name="cbClass" value="" />新产品</span>
+                <span @click="setChecked(1)"><input type="checkbox" name="cbClass" value="" />版本升级</span>
+                <span @click="setChecked(2)"><input type="checkbox" name="cbClass" value="" />更换供应商</span>
               </div>
             </td>
           </tr>
           <tr style="font-size:10px;">
+            <td colspan="3">
+              <div style="margin:0;padding:0">
+                <span style="display: inline-block;float: right;line-height: 20px;font-size:10px;">(工程师勾选)</span>
+                <!-- <span style="display: inline-block;float: right;line-height: 20px;font-size:8px;">未选默认深圳民爆,</span> -->
+                <span @click="setChecked(3)"><input type="checkbox" name="cbClass" />深圳民爆</span>
+                <span @click="setChecked(3)"><input type="checkbox" name="cbClass" />惠州民爆</span>
+                <span @click="setChecked(4)"><input type="checkbox" name="cbClass" />惠州分公司</span>
+               <span @click="setChecked(4)"><input type="checkbox" name="cbClass" />其他</span>
+              </div>
+            </td>
+          </tr>
+          <tr style="font-size:12px;height:25px;">
+            <td>供应商</td>
+            <td colspan="3">{{ item.Supplier }}</td>
+          </tr>
+          <tr style="font-size:12px;height:25px;">
+            <td>品号</td>
+            <td>{{ item.ItemCode }}</td>
+            <td width="40px">图号</td>
+            <td width="110px">{{ item.DrawingNo }}</td>
+          </tr>
+          <tr style="font-size:12px;height:25px;">
+            <td>品名</td>
+            <td colspan="3">{{ item.ItemName }}</td>
+          </tr>
+          <tr style="font-size:12px;height:50px;max-height: 50px;overflow: hidden;">
+            <td>规格型号</td>
+            <td colspan="3">
+              <div style="height: 40px; overflow: hidden; word-break:break-all;">
+                {{ item.ItemSpecification }}
+              </div>
+            </td>
+          </tr>
+          <tr style="font-size:12px;">
             <td>签样结果</td>
             <td colspan="3">
               <p>
-                <span><input type="checkbox" name="cb4" value="" />外观</span>
-                <span><input type="checkbox" name="cb4" value="" />结构</span>
-                <span><input type="checkbox" name="cb4" value="" />电参数</span>
+                <span><input type="checkbox" name="cb1" value="" />外观</span>
+                <span><input type="checkbox" name="cb2" value="" />结构</span>
+                <span><input type="checkbox" name="cb3" value="" />电参数</span>
                 <span><input type="checkbox" name="cb4" value="" />OK</span>
-                <span><input type="checkbox" name="cb4" value="" />NG</span>
-                <span><input type="checkbox" name="cb4" value="" />其他</span>
+                <span><input type="checkbox" name="cb5" value="" />NG</span>
+                <span><input type="checkbox" name="cb6" value="" />其他</span>
               </p>
             </td>
           </tr>
-          <tr style="font-size:10px;">
-            <td>
-              <p style="margin-bottom:5px;padding:0">
-                采购员:
-              </p>
-              <p style="margin:0;padding:0">送样时间:</p>
+          <tr style="font-size:12px;">
+            <td colspan="2">
+              <p style="margin-bottom:0px;padding:0;height:14px;">采购员:{{ item.Purchaser }}</p>
+              <p style="margin:0;padding:0;height:14px;">送样时间:{{ item.DatetimePurchaseDeliver }}</p>
             </td>
-            <td>
-              <p style="margin-bottom:5px;padding:0">{{ item.Purchaser }}</p>
-              <p style="margin:0;padding:0">{{ item.DatetimePurchaseDeliver }}</p>
-            </td>
-            <td rowspan="2" colspan="2">
+            <td rowspan="2" colspan="2" width="130px">
               <p>备注</p>
               <p>{{ item.Remark }}</p>
             </td>
           </tr>
-          <tr style="font-size:10px;">
-            <td>
-              <p style="margin-bottom:5px;padding:0">
+          <tr style="font-size:12px;">
+            <td colspan="2">
+              <p style="margin-bottom:0px;padding:0;height:14px;">
                 工程师:
               </p>
-              <p style="margin:0;padding:0">承认时间:</p>
+              <p style="margin:0;padding:0;font-size:12px;height:14px;">
+                <span style="display: inline-block;float: right;line-height: 14px;font-size:12px;">{{ item.DatetimeSign || "年\u2003\u2003\u2003\u2003月\u2003\u2003\u2003\u2003日" }}</span>
+                <span>承认时间:</span>
+              </p>
             </td>
-            <td>
-              <p style="margin-bottom:5px;padding:0">{{ item.SignEngineer }}</p>
-              <p style="margin:0;padding:0">{{ item.DatetimeSign }}</p>
-            </td>
+            <!-- <td>
+              <p style="margin-bottom:0px;padding:0;height:14px;"></p>
+              <p style="margin:0;padding:0;font-size:12px;height:14px;">{{ item.DatetimeSign || "\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003\u2003年\u2003\u2003\u2003\u2003月\u2003\u2003\u2003\u2003日" }}</p>
+            </td> -->
           </tr>
         </table>
 
@@ -189,6 +186,7 @@ export default {
   props: ["registerid"],
   data() {
     return {
+      cb1: false,
       data: [],
       infoData: [],
       loading: false,
@@ -225,25 +223,71 @@ export default {
       this.$emit("closeModal");
       this.data = [];
     },
+    setChecked(index) {
+      console.log(index);
+      var itemElements = document.getElementsByName("cbClass");
+      for (let i = 0; i < itemElements.length; i++) {
+        if (itemElements[i].checked) {
+          itemElements[i].setAttribute("checked", "checked");
+        } else {
+          itemElements[i].removeAttribute("checked");
+        }
+      }
+    },
     printBtn() {
-      var LODOP;
-      LODOP = getLodop();
-      try {
-        if (!LODOP && document.readyState !== "complete") {
-          this.$message.error("C-Lodop打印控件还没准备好，请稍后再试！");
+      this.dataSource.forEach((item, index) => {
+        let id = "checkbox1_" + index;
+        var inputList = document.getElementById(id).getElementsByTagName("input");
+        console.log("inputList===", inputList);
+        let checkedFlag = true;
+        // console.log("inputList", inputList);
+        for (let i = 0; i < inputList.length; ++i) {
+          console.log("inputList===", inputList[i]);
+          if (inputList[i].checked) {
+            checkedFlag = false;
+          }
+        }
+        // this.$message.error("请先勾选采购必填项,样品类别!");
+        // console.log("checkedFlag===", checkedFlag);
+        if (checkedFlag) {
+          item.checkedFlag = true;
+        } else {
+          item.checkedFlag = false;
+        }
+      });
+      for (let i = 0; i < this.dataSource.length; ++i) {
+        if (this.dataSource[i].checkedFlag) {
+          this.$message.error(this.dataSource[i].FlowCode + ",请先勾选采购必填项,样品类别!");
           return;
         }
+      }
+      // console.log("a===",a)
+      // console.log(document.getElementsByClassName("checkbox-content").getElementsByTagName("input"))
+      var LODOP;
+      LODOP = getLodop();
+      if (!LODOP && document.readyState !== "complete") {
+        this.$warning({
+          title: "提示",
+          content: "本机未安装Lodop控件,请先下载安装",
+          onOk() {
+            window.open("http://192.168.1.245:8080/static/CLodop_Setup_for_Win32NT.exe");
+          },
+        });
+        return;
+      }
+      try {
         if (LODOP.VERSION) {
           if (LODOP.CVERSION) {
-            LODOP.SET_PRINT_COPIES(this.dataSource.length); //设置打印三份
             LODOP.PRINT_INIT("物料样品标签");
             LODOP.SET_PRINT_PAGESIZE(0, 1000, 850, ""); //设置纸张A4打印 横向;
+            // LODOP.SET_PRINT_COPIES(this.dataSource.length); //设置打印三份
+            var strStyle = "<style> table,td,th {border-width: 1px;border-style: solid;border-collapse: collapse}</style>";
             for (let i = 0; i < this.dataSource.length; i++) {
               LODOP.NewPage();
-              var strStyle = "<style> table,td,th {border-width: 1px;border-style: solid;border-collapse: collapse}</style>";
               console.log("dom===", document.getElementById("div1_" + i));
-              LODOP.ADD_PRINT_HTM(5, 5, "98%", 840, strStyle + document.getElementById("div1_" + i).innerHTML);
+              LODOP.ADD_PRINT_HTM(2, 5, "96%", 850, strStyle + document.getElementById("div1_" + i).innerHTML);
             }
+            LODOP.SET_PRINT_MODE("PRINT_PAGE_PERCENT", "Full-Page");
             LODOP.SET_PRINT_MODE("AUTO_CLOSE_PREWINDOW", 1);
             LODOP.PREVIEW();
             this.$message.success("打印成功!");

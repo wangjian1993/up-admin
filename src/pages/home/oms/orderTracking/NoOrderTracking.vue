@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:10:14
- * @LastEditTime: 2021-12-10 09:47:56
+ * @LastEditTime: 2022-07-27 18:17:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/NoOrderTracking.vue
@@ -42,15 +42,32 @@
               </a-select>
             </a-form-item>
           </a-col>
+        </a-row>
+        <a-row>
           <a-col :md="6" :sm="24">
             <a-form-item label="有工单欠数" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-switch v-decorator="['ismodeficiency']" checked-children="是" un-checked-children="否" @change="switchChange" />
             </a-form-item>
           </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="批次号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" allowClear placeholder="请输入批次号" v-decorator="['batchno']" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="工单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" allowClear placeholder="请输入工单号" v-decorator="['mocode']" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="24">
+            <a-form-item label="销售订单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-input style="width: 200px" allowClear placeholder="请输入销售订单号" v-decorator="['saleno']" />
+            </a-form-item>
+          </a-col>
         </a-row>
       </div>
       <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
+        <a-button type="primary" @click="searchBtn" :disabled="!hasPerm('search')">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
       </span>
     </a-form>
@@ -110,7 +127,7 @@
 </template>
 
 <script>
-import getTableScroll from "@/utils/setTableHeight";
+// import getTableScroll from "@/utils/setTableHeight";
 import { renderStripe } from "@/utils/stripe.js";
 import { getOrderApi, setOrderApi } from "@/services/web.js";
 import UserList from "@/components/app-user/UserList";
@@ -162,11 +179,41 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(70);
+      this.scrollY = this.getTableScroll(100);
     });
     // this.getListAll();
   },
   methods: {
+    getTableScroll(extraHeight = 100, id) {
+      if (typeof extraHeight == "undefined") {
+        //  默认底部分页64 + 边距10
+        extraHeight = 70;
+      }
+      let tHeader = null;
+      if (id) {
+        tHeader = document.getElementById(id) ? document.getElementById(id).getElementsByClassName("ant-table-thead")[0] : null;
+      } else {
+        tHeader = document.getElementsByClassName("ant-table-thead")[0];
+      }
+      //表格内容距离顶部的距离
+      console.log("tHeader", tHeader);
+      let tHeaderBottom = 0;
+      let tHeaderTop = 0;
+      if (tHeader) {
+        tHeaderBottom = tHeader.getBoundingClientRect().bottom;
+        tHeaderTop = tHeader.getBoundingClientRect().top;
+      }
+      // let height = document.body.clientHeight - tHeaderBottom - extraHeight
+      let height = `calc(100vh - ${tHeaderBottom + extraHeight}px)`;
+      let height1 = `calc(100vh - ${tHeaderTop + extraHeight}px)`;
+      // document.getElementsByClassName("ant-table")[0].style.maxHeight = `calc(100vh - ${tHeaderBottom}px)`;
+      // document.getElementsByClassName("ant-table")[0].style.mixHeight = `calc(100vh - ${tHeaderBottom}px)`;
+      const table = document.getElementsByClassName("ant-table")[0];
+      table.style.minHeight = height1;
+      // console.log(table);
+      console.log("height", height);
+      return height;
+    },
     companyChange(e) {
       this.departmentList = [];
       this.salesmanList = [];
@@ -237,7 +284,7 @@ export default {
     },
     save(item) {
       let parmas = {
-        CompanyId:this.cacheallData.company,
+        CompanyId: this.cacheallData.company,
         SalesOrderNo: item.SalesOrderNo,
         LineItem: item.LineItem,
         MitemCode: item.MitemCode,
@@ -264,6 +311,7 @@ export default {
     },
     getPaginationList() {
       this.loading = true;
+      let values = this.searchForm.getFieldsValue();
       let parmas = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
@@ -272,6 +320,9 @@ export default {
         department: this.cacheallData.department,
         salesuser: this.cacheallData.salesuser,
         ismodeficiency: this.cacheallData.ismodeficiency,
+        batchno: values.batchno,
+        mocode: values.mocode,
+        saleno: values.saleno,
       };
       getOrderApi(parmas, "getcacheall").then((res) => {
         if (res.data.success) {
@@ -304,6 +355,10 @@ export default {
       this.data = [];
       this.searchForm.resetFields();
     },
+    searchBtn(){
+      this.pagination.current = 1;
+      this.search();
+    },
     //关键词搜索
     search() {
       this.searchForm.validateFields((err, values) => {
@@ -328,6 +383,9 @@ export default {
             department: values.department,
             salesuser: values.salesuser,
             ismodeficiency: values.ismodeficiency ? "Y" : "N",
+            batchno: values.batchno,
+            mocode: values.mocode,
+            saleno: values.saleno,
           };
           getOrderApi(parmas, "getcacheall").then((res) => {
             if (res.data.success) {
@@ -354,7 +412,7 @@ export default {
       this.getPaginationList();
     },
     getExcelList() {
-      // let inputData = this.searchForm.getFieldsValue();
+      let values = this.searchForm.getFieldsValue();
       return new Promise((resolve, reject) => {
         let parmas = {
           pageindex: this.pagination.current,
@@ -364,6 +422,9 @@ export default {
           department: this.cacheallData.department,
           salesuser: this.cacheallData.salesuser,
           ismodeficiency: this.cacheallData.ismodeficiency,
+          batchno: values.batchno,
+          mocode: values.mocode,
+          saleno: values.saleno,
         };
         getOrderApi(parmas, "getcacheall").then((res) => {
           if (res.data.success) {
@@ -485,8 +546,8 @@ export default {
 </script>
 
 <style scoped lang="less">
-/deep/.ant-table-body {
-  min-height: 0vh;
+/deep/.ant-table {
+  min-height: 63vh;
 }
 .MoDeficiencyQtyBg {
   width: 100%;

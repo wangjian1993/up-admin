@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-11-22 10:15:38
+ * @LastEditTime: 2022-07-28 09:01:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/detail.vue
@@ -69,7 +69,7 @@
         </a-row>
       </div>
       <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search">查询</a-button>
+        <a-button type="primary" @click="searchBtn">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset">重置</a-button>
         <a @click="toggleAdvanced" style="margin-left: 8px">
           {{ advanced ? "收起" : "展开" }}
@@ -308,7 +308,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
     });
-    this.getListAll();
+    this.search();
     this.getPlant();
   },
   computed: {
@@ -334,8 +334,9 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
+      // this.getListAll();
       this.searchForm.resetFields();
+      this.search();
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");
@@ -442,6 +443,10 @@ export default {
       minute = minute < 10 ? "0" + minute : minute;
       second = second < 10 ? "0" + second : second;
       return y + "-" + m + "-" + d + " " + h + ":" + minute + ":" + second;
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     search() {
       this.searchForm.validateFields((err, values) => {

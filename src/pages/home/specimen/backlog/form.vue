@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-07-01 10:56:39
+ * @LastEditTime: 2022-08-12 09:33:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/form.vue
@@ -63,13 +63,16 @@
             <a-col :span="6">
               <a-form-model-item ref="Supplier" has-feedback label="供应商" prop="Supplier">
                 <!-- <a-input v-model="form.Supplier"  allowClear placeholder="请输入供应商" /> -->
-                <a-select show-search v-model="form.Supplier" placeholder="请输入供应商" :default-active-first-option="false" :show-arrow="false" :filter-option="false" :not-found-content="null" @search="handleSearch" @change="handleSearch">
+                <a-select show-search v-model="form.Supplier" placeholder="请输入供应商" :default-active-first-option="false" :show-arrow="false" :filter-option="false" :not-found-content="null" @search="handleSearch" @change="changeSearch">
                   <a-select-option v-for="item in supplierList" :value="item.SupplierName" :key="item.RowNumber">
                     {{ item.SupplierName }}
                   </a-select-option>
                 </a-select>
               </a-form-model-item></a-col
             >
+            <a-col :span="6">
+              <a-form-model-item ref="SupplierCode" has-feedback label="供应商编码" prop="SupplierCode"> <a-input v-model="form.SupplierCode" disabled allowClear placeholder="请输入供应商编码" /> </a-form-model-item
+            ></a-col>
             <a-col :span="6">
               <a-form-model-item ref="HasApprovalSheet" has-feedback label="是否有承认书" prop="HasApprovalSheet">
                 <a-select v-model="form.HasApprovalSheet" :disabled="!disabled1" has-feedback placeholder="请选择是否有承认书">
@@ -78,11 +81,11 @@
                 </a-select></a-form-model-item
               >
             </a-col>
+          </a-row>
+          <a-row>
             <a-col :span="6">
               <a-form-model-item ref="Quantity" has-feedback label="数量" prop="Quantity"> <a-input v-model="form.Quantity" :disabled="!disabled1" allowClear placeholder="请输入数量" /> </a-form-model-item
             ></a-col>
-          </a-row>
-          <a-row>
             <a-col :span="6">
               <a-form-model-item ref="Purchaser" has-feedback label="送样采购员" prop="Purchaser"> <a-input v-model="form.Purchaser" :disabled="!disabled1" allowClear placeholder="请输入送样采购员" /> </a-form-model-item
             ></a-col>
@@ -333,6 +336,7 @@ export default {
       this.userIsInput = result.isInput;
     },
     handleSearch(value) {
+      console.log("value===", value);
       let params = {
         pageindex: 1,
         pagesize: 50,
@@ -341,6 +345,13 @@ export default {
       getMaterialSampleApi(params, "getsupplierlist").then((res) => {
         this.supplierList = res.data.data.list;
         console.log(this.supplierList);
+      });
+    },
+    changeSearch(e) {
+      this.supplierList.forEach((item) => {
+        if (item.SupplierName == e) {
+          this.form.SupplierCode = item.SupplierCode;
+        }
       });
     },
     getUserForm() {
@@ -403,7 +414,7 @@ export default {
         itemcode: e,
       };
       getMaterialSampleApi(params1, "getitemngtimes").then((res) => {
-        console.log("res.data.data.NgTimes===",res.data.data.NgTimes)
+        console.log("res.data.data.NgTimes===", res.data.data.NgTimes);
         if (res.data.success && res.data.data.NgTimes > 2) {
           this.$message.warning("该物料编码作废过2次");
         }
@@ -442,6 +453,7 @@ export default {
             ItemSpecification: this.form.ItemSpecification, //规格型号
             DrawingNo: this.form.DrawingNo, //图号
             Supplier: this.form.Supplier, //供应商
+            SupplierCode:this.form.SupplierCode,
             HasApprovalSheet: this.form.HasApprovalSheet, //是否有承认书
             Quantity: this.form.Quantity, //数量
             Purchaser: this.form.Purchaser, //送样采购员

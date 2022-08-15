@@ -1,5 +1,5 @@
 let path = require('path')
-const webpack = require('webpack')
+// const webpack = require('webpack')
 const ThemeColorReplacer = require('webpack-theme-color-replacer')
 const { getThemeColors, modifyVars } = require('./src/utils/themeUtil')
 const { resolveCss } = require('./src/utils/theme-color-replacer-extend')
@@ -66,7 +66,7 @@ module.exports = {
       })
     )
     // Ignore all locale files of moment.js
-    config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/))
+    // config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/))
     // 生产环境下将资源压缩成gzip格式
     if (isProd) {
       // add `CompressionWebpack` plugin to webpack plugins

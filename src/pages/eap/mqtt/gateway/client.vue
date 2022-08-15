@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 09:08:06
- * @LastEditTime: 2022-06-07 09:34:35
+ * @LastEditTime: 2022-07-28 10:01:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/mqtt/gateway/client.vue
@@ -61,7 +61,7 @@
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="search">查询</a-button>
+            <a-button type="primary" @click="searchBtn">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
           </span>
         </a-form>
@@ -169,7 +169,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
     });
-    this.getListAll();
+    this.search();
     this.getPlant();
     this.getServiceList();
     this.getDeviceList();
@@ -180,7 +180,7 @@ export default {
     reset() {
       this.isSearch = 0;
       this.searchForm.resetFields();
-      this.getListAll();
+      this.search();
     },
     getServiceList() {
       let parmas = {
@@ -289,6 +289,10 @@ export default {
         return;
       }
       this.getListAll();
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     search() {
       this.searchForm.validateFields((err, values) => {

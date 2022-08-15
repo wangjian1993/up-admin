@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2022-03-23 15:02:31
+ * @LastEditTime: 2022-07-28 09:26:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/detail.vue
@@ -51,7 +51,7 @@
           </a-row>
         </div>
         <span style="float: right; margin-top: 3px;">
-          <a-button type="primary" @click="search">查询</a-button>
+          <a-button type="primary" @click="searchBtn">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset">重置</a-button>
           <a @click="toggleAdvanced" style="margin-left: 8px">
             {{ advanced ? "收起" : "展开" }}
@@ -266,7 +266,7 @@ export default {
       this.scrollY = getTableScroll(115);
       console.log(this.scrollY);
     });
-    this.getListAll();
+    this.search();
     this.getPlant();
   },
   computed: {
@@ -300,9 +300,9 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
       this.week = "";
       this.searchForm.resetFields();
+      this.search();
     },
     weekChange(date, dateString) {
       let str = dateString.split("-");
@@ -360,6 +360,10 @@ export default {
     //收起展开
     toggleAdvanced() {
       this.advanced = !this.advanced;
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     search() {
       this.searchForm.validateFields((err, values) => {

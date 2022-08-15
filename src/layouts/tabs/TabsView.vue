@@ -57,15 +57,15 @@ export default {
     },
   },
   created() {
-    console.log("页面缓存multiPage======", this.multiPage);
-    console.log("页面缓存cachePage======", this.cachePage);
+    // console.log("页面缓存multiPage======", this.multiPage);
+    // console.log("页面缓存cachePage======", this.cachePage);
     this.loadCacheConfig(this.$router?.options?.routes);
     this.loadCachedTabs();
     const route = this.$route;
     if (this.pageList.findIndex((item) => item.fullPath === route.fullPath) === -1) {
       this.pageList.push(this.createPage(route));
     }
-    console.log(" this.pageList===", this.pageList);
+    // console.log(" this.pageList===", this.pageList);
     this.activePage = route.fullPath;
     if (this.multiPage) {
       this.$nextTick(() => {
@@ -87,7 +87,7 @@ export default {
       this.loadCacheConfig(val);
     },
     $route: function(newRoute) {
-      console.log("newRoute==",newRoute)
+      // console.log("newRoute==",newRoute)
       this.activePage = newRoute.fullPath;
       if (!this.multiPage) {
         this.pageList = [this.createPage(newRoute)];
@@ -114,28 +114,28 @@ export default {
   },
   methods: {
     changePage(key) {
-      console.log("key-====", key);
+      // console.log("key-====", key);
       this.activePage = key;
       this.$router.push(key);
     },
     remove(key, next) {
-      console.log("关闭====", key);
-      console.log("关闭====", next);
+      // console.log("关闭====", key);
+      // console.log("关闭====", next);
       if (this.pageList.length === 1) {
         return this.$message.warning(this.$t("warn"));
       }
       //清除缓存
       let index = this.pageList.findIndex((item) => item.fullPath === key);
-      console.log("index====", index);
+      // console.log("index====", index);
       this.clearCaches = this.pageList.splice(index, 1).map((page) => page.cachedKey);
-      console.log(" this.clearCaches====", this.clearCaches);
+      // console.log(" this.clearCaches====", this.clearCaches);
       if (next) {
         this.$router.push(next);
       } else if (key === this.activePage) {
         index = index >= this.pageList.length ? this.pageList.length - 1 : index;
-        console.log(" this.index====", index);
+        // console.log(" this.index====", index);
         this.activePage = this.pageList[index].fullPath;
-        console.log(" this.activePage====", this.activePage);
+        // console.log(" this.activePage====", this.activePage);
         this.$router.push(this.activePage);
       }
     },

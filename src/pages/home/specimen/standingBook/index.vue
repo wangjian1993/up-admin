@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-06-30 15:39:06
+ * @LastEditTime: 2022-07-28 09:35:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/standingBook/index.vue
@@ -70,7 +70,7 @@
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="search">查询</a-button>
+            <a-button type="primary" @click="searchBtn">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
           </span>
         </a-form>
@@ -201,7 +201,7 @@ export default {
     reset() {
       this.isSearch = 0;
       this.searchForm.resetFields();
-      this.getListAll();
+      this.getEnterList();
     },
     edit(record) {
       this.isForm = true;
@@ -235,7 +235,7 @@ export default {
           this.searchForm.setFieldsValue({
             enterpriseid: this.enterId,
           });
-          this.getListAll();
+          this.search();
         }
       });
     },
@@ -282,6 +282,10 @@ export default {
         return;
       }
       this.getListAll();
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search()
     },
     search() {
       this.searchForm.validateFields((err, values) => {

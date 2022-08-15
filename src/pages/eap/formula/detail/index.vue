@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-06-01 09:23:49
+ * @LastEditTime: 2022-07-28 10:00:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/formula/detail/index.vue
@@ -65,7 +65,7 @@
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="search">查询</a-button>
+            <a-button type="primary" @click="searchBtn">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
           </span>
         </a-form>
@@ -233,7 +233,7 @@ export default {
     reset() {
       this.isSearch = 0;
       this.searchForm.resetFields();
-      this.getListAll();
+      this.search();
     },
     batchAdd() {
       this.isBatchAdd = true;
@@ -285,6 +285,10 @@ export default {
         return;
       }
       this.getListAll();
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     search() {
       this.searchForm.validateFields((err, values) => {

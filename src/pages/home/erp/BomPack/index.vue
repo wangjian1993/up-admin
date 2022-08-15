@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-07-15 08:45:27
+ * @LastEditTime: 2022-07-29 15:46:34
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomPack/index.vue
@@ -12,8 +12,8 @@
       <a-col :md="24" :sm="24">
         <span style="display:flex;justify-content: flex-end">
           <a-button style="margin-right: 8px" @click="reset">重置</a-button>
-          <a-button type="primary" @click="advancedQuery">高级查询(包材)</a-button>
-          <a-button type="primary" style="margin-left: 8px" @click="advancedQuery">高级查询(线材)</a-button>
+          <a-button type="primary" @click="advancedQuery(1)">高级查询(包材)</a-button>
+          <a-button type="primary" style="margin-left: 8px" @click="advancedQuery(2)">高级查询(线材)</a-button>
         </span>
       </a-col>
     </a-row>
@@ -35,7 +35,7 @@
         <a-tag :color="text === 'Y' ? 'green' : text === 'N' ? '#0000ff' : 'red'">{{ text == "Y" ? "生效" : text == "N" ? "未生效" : "失效" }}</a-tag>
       </template>
     </a-table>
-    <advancedQuery v-if="isAdvancedQuery" @closeModal="closeModal" :editData="editData" @success="getListAll" />
+    <advancedQuery v-if="isAdvancedQuery" :queryType="queryType" @closeModal="closeModal" :editData="editData" @success="getListAll" />
   </a-card>
 </template>
 <script>
@@ -63,6 +63,7 @@ export default {
       selectedRows: [],
       isAdvancedQuery: false,
       editData: [],
+      queryType: "",
     };
   },
   created() {
@@ -73,7 +74,8 @@ export default {
   methods: {
     splitData,
     modelType,
-    advancedQuery() {
+    advancedQuery(type) {
+      this.queryType = type;
       this.isAdvancedQuery = true;
     },
     closeModal() {
@@ -88,7 +90,8 @@ export default {
         ...values,
       };
       this.editData = editValue;
-      setBomPack(parmas, "get").then((res) => {
+      let url = this.queryType == 1 ? "get2" : "get";
+      setBomPack(parmas, url).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };

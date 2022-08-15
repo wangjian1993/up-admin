@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-01-17 11:27:04
+ * @LastEditTime: 2022-07-28 08:45:21
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/list.vue
@@ -76,7 +76,7 @@
           </a-row>
         </div>
         <span style="float: right; margin-top: 3px;">
-          <a-button type="primary" @click="search">查询</a-button>
+          <a-button type="primary" @click="searchBtn">查询</a-button>
           <a-button style="margin-left: 8px" @click="reset">重置</a-button>
           <a @click="toggleAdvanced" style="margin-left: 8px">
             {{ advanced ? "收起" : "展开" }}
@@ -206,7 +206,7 @@ export default {
         batchid: this.batchid,
       });
     });
-    this.getListAll();
+    this.search();
     this.getPlant();
     this.getParamData();
   },
@@ -350,6 +350,10 @@ export default {
           this.loading = false;
         }
       });
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     //分页
     handleTableChange(pagination) {

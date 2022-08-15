@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2022-03-25 17:29:56
+ * @LastEditTime: 2022-07-28 08:59:27
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/pmc/manufacture/leadIn.vue
@@ -54,7 +54,7 @@
         </a-row>
       </div>
       <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
+        <a-button type="primary" @click="searchBtn" :disabled="!hasPerm('search')">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
         <a-button style="margin-left: 8px" type="primary" @click="importExcel" :disabled="!hasPerm('import')"><a-icon type="import" />导入</a-button>
         <a-button style="margin-left: 8px" type="primary" @click="downloadExcel" :disabled="!hasPerm('down')"><a-icon type="download" />下载模板</a-button>
@@ -243,7 +243,7 @@ export default {
       this.scrollY = getTableScroll(70);
     });
     this.getPlant();
-    this.getListAll();
+    this.search();
   },
   methods: {
     //pmc选择
@@ -343,8 +343,8 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
       this.searchForm.resetFields();
+      this.search()
     },
     //格式化时间
     formatDateTime(inputTime) {
@@ -361,6 +361,10 @@ export default {
       minute = minute < 10 ? "0" + minute : minute;
       second = second < 10 ? "0" + second : second;
       return y + "-" + m + "-" + d + " " + h + ":" + minute + ":" + second;
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     //关键词搜索
     search() {

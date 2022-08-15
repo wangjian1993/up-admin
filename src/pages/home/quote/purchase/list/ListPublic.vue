@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-05-27 09:19:46
+ * @LastEditTime: 2022-08-10 16:04:21
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -73,10 +73,15 @@
                 <a-input placeholder="请输入产品品号" allowClear v-decorator="['itemcode']" />
               </a-form-item>
             </a-col>
+             <a-col :md="6" :sm="24">
+              <a-form-item label="规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
+                <a-input placeholder="请输入产品规格" allowClear v-decorator="['itemspecification']" />
+              </a-form-item>
+            </a-col>
           </a-row>
         </div>
         <span style="float: right; margin-top: 3px;">
-          <a-button type="primary" :disabled="!hasPerm('search_public')" @click="search">查询</a-button>
+          <a-button type="primary" :disabled="!hasPerm('search_public')" @click="searchBtn">查询</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('search_public')" @click="reset">重置</a-button>
           <!-- <a-button style="margin-left: 8px" @click="batchSearch">批量查询</a-button> -->
           <a @click="toggleAdvanced" style="margin-left: 8px">
@@ -426,7 +431,7 @@ export default {
               this.searchForm.setFieldsValue({
                 plantid: this.plantList[0].EnterId,
               });
-              this.getCostList();
+              this.search();
             }
           });
         }
@@ -444,6 +449,7 @@ export default {
         itemsort: "",
         itemcode: "",
         itemname: "",
+        itemspecification:""
       };
       getCostConfig(parmas, "getquotelistcommon").then((res) => {
         if (res.data.success) {
@@ -459,6 +465,10 @@ export default {
         this.loading = false;
       });
     },
+    searchBtn(){
+      this.pagination.current =1;
+      this.search();
+    },
     //搜素
     search() {
       this.searchForm.validateFields((err, values) => {
@@ -473,6 +483,7 @@ export default {
             itemsort: values.itemsort || "",
             itemcode: values.itemcode || "",
             itemname: values.itemname || "",
+            itemspecification: values.itemspecification || "",
           };
           getCostConfig(parmas, "getquotelistcommon").then((res) => {
             if (res.data.success) {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-30 13:39:50
- * @LastEditTime: 2021-11-16 13:53:39
+ * @LastEditTime: 2022-07-28 09:25:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/material/leadIn.vue
@@ -33,7 +33,7 @@
         </a-row>
       </div>
       <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
+        <a-button type="primary" @click="searchBtn" :disabled="!hasPerm('search')">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
         <a-button style="margin-left: 8px" type="primary" @click="importExcel" :disabled="!hasPerm('import')"><a-icon type="import" />导入</a-button>
         <a-button style="margin-left: 8px" type="primary" @click="downloadExcel" :disabled="!hasPerm('down')"><a-icon type="download" />下载模板</a-button>
@@ -205,7 +205,7 @@ export default {
       this.scrollY = getTableScroll(70);
     });
     this.getPlant();
-    this.getListAll();
+    this.search();
   },
   methods: {
     //pmc选择
@@ -275,9 +275,13 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
       this.week = "";
       this.searchForm.resetFields();
+      this.search();
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     //关键词搜索
     search() {

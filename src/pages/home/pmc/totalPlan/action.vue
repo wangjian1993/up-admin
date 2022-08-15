@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2021-11-16 13:53:47
+ * @LastEditTime: 2022-07-28 09:28:11
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/Action.vue
+ * @FilePath: /up-admin/src/pages/home/pmc/totalPlan/action.vue
 -->
 <template>
   <div>
@@ -43,7 +43,7 @@
         </a-row>
       </div>
       <span style="float: right; margin-top: 3px;">
-        <a-button type="primary" @click="search" :disabled="!hasPerm('search')">查询</a-button>
+        <a-button type="primary" @click="searchBtn" :disabled="!hasPerm('search')">查询</a-button>
         <a-button style="margin-left: 8px" @click="reset" :disabled="!hasPerm('search')">重置</a-button>
       </span>
     </a-form>
@@ -207,7 +207,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    this.getListAll();
+    this.search();
     console.log("plantList", this.plantList);
   },
   methods: {
@@ -257,9 +257,13 @@ export default {
     },
     //重置搜索
     reset() {
-      this.getListAll();
       this.week=""
       this.searchForm.resetFields();
+       this.search();
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     //关键词搜索
     search() {

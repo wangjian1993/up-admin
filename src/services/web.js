@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2022-07-06 09:45:51
+ * @LastEditTime: 2022-08-15 10:31:50
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -189,6 +189,12 @@ export function getPrintInfo(params, action) {
 export function setPrintInfo(params, action) {
     return request(`${UP_WEB}/production/print/${action}`, METHOD.POST, params);
 }
+export function setPrePrintInfo(params, action) {
+    return request(`${UP_WEB}/pre/production/print/${action}`, METHOD.POST, params);
+}
+export function setSamplePrintInfo(params, action) {
+    return request(`${UP_WEB}/sample/production/print/${action}`, METHOD.POST, params);
+}
 export function setDailyPlanAction(params, action) {
     return request(`${UP_WEB}/production/dailyplan/${action}`, METHOD.POST, params);
 }
@@ -226,6 +232,18 @@ export function getStartWorkApi(params, action) {
 }
 export function setStartWorkApi(params, action) {
     return request(`${UP_WEB}/process/report/${action}`, METHOD.POST, params);
+}
+export function getPreStartWorkApi(params, action) {
+    return request(`${UP_WEB}/pre/process/report/${action}`, METHOD.GET, params);
+}
+export function setPreStartWorkApi(params, action) {
+    return request(`${UP_WEB}/pre/process/report/${action}`, METHOD.POST, params);
+}
+export function setSampleStartWorkApi(params, action) {
+    return request(`${UP_WEB}/sample/process/report/${action}`, METHOD.POST, params);
+}
+export function getSampleStartWorkApi(params, action) {
+    return request(`${UP_WEB}/sample/process/report/${action}`, METHOD.GET, params);
 }
 //返工
 export function getReworkApi(params, action) {

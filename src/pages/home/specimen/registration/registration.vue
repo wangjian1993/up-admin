@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-07-23 17:40:00
+ * @LastEditTime: 2022-07-28 09:33:52
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/registration.vue
@@ -70,8 +70,9 @@
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="search">查询</a-button>
+            <a-button type="primary" @click="searchBtn">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+            <a-button style="margin-left: 8px" @click="down">下载打印机驱动</a-button>
           </span>
         </a-form>
         <div class="operator">
@@ -79,7 +80,7 @@
           <a-button type="primary" style="margin-left:10px;" :disabled="dataSource.length == 0" @click="exportExcelAll" icon="export">导出全部</a-button>
           <a-button type="primary" style="margin-left:10px;" :disabled="dataSource.length == 0" @click="exportExcelDetail" icon="export">导出含进度明细</a-button>
           <a-button v-if="hasPerm('delete') && rolesign == 'ADMIN'" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-           <a-button icon="printer" type="primary" :disabled="!hasSelected" :loading="loading" @click="allPrint" style="margin-left: 8px">打印标签</a-button>
+          <a-button icon="printer" type="primary" :disabled="!hasSelected" :loading="loading" @click="allPrint" style="margin-left: 8px">打印标签</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -138,7 +139,7 @@
       </a-card>
       <useForm v-if="isForm" :isEdit="isEdit" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="getListAll" />
       <schedule v-if="isSchedule" :registerid="registerid" @closeModal="closeModal" @success="getEnterList" />
-      <print v-if="isPrint" @closeModal="closeModal" :registerid="printData"/>
+      <print v-if="isPrint" @closeModal="closeModal" :registerid="printData" />
     </a-spin>
   </div>
 </template>
@@ -181,7 +182,7 @@ export default {
       departmentalList: [],
       isSchedule: false,
       registerid: "",
-      printData:[],
+      printData: [],
       isPrint: false,
     };
   },
@@ -232,16 +233,16 @@ export default {
       return height;
     },
     print(id) {
-      this.printData =[]
+      this.printData = [];
       this.isPrint = true;
       console.log(id);
       this.printData.push(id);
       console.log(this.printData);
     },
-    allPrint(){
-      this.printData =[]
+    allPrint() {
+      this.printData = [];
       this.isPrint = true;
-      this.printData = this.selectedRowKeys
+      this.printData = this.selectedRowKeys;
     },
     schedule(id) {
       this.isSchedule = true;
@@ -251,7 +252,7 @@ export default {
     reset() {
       this.isSearch = 0;
       this.searchForm.resetFields();
-      this.getListAll();
+      this.getEnterList();
     },
     edit(record) {
       this.isForm = true;
@@ -259,7 +260,7 @@ export default {
       this.editData = record;
     },
     closeModal() {
-      this.selectedRowKeys =[]
+      this.selectedRowKeys = [];
       this.isForm = false;
       this.isImport = false;
       this.isSchedule = false;
@@ -277,7 +278,7 @@ export default {
           this.searchForm.setFieldsValue({
             enterpriseid: this.enterId,
           });
-          this.getListAll();
+          this.search();
         }
       });
     },
@@ -290,6 +291,9 @@ export default {
           this.departmentalList = res.data.data;
         }
       });
+    },
+    down(){
+      window.open("http://192.168.1.245:8080/static/CLodop_Setup_for_Win32NT.exe");
     },
     //多选
     onSelectChange(selectedRowKeys) {
@@ -334,6 +338,10 @@ export default {
         return;
       }
       this.getListAll();
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search()
     },
     search() {
       this.searchForm.validateFields((err, values) => {

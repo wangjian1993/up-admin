@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal title="高级查询" :visible="visible" @ok="handleOk" @cancel="handleCancel" width="50%">
+    <a-modal :title="queryType == 1 ?'包材高级查询':'线材高级查询'" :visible="visible" @ok="handleOk" @cancel="handleCancel" width="50%">
       <a-form-model ref="ruleForm" :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-form-model-item has-feedback label="品号" v-for="(domain, index) in itemcodeForm" :key="'itemcodeForm' + index">
           <a-input style="width: 200px" v-model="domain.value" allowClear placeholder="请输入品号" />
@@ -77,7 +77,7 @@
 
 <script>
 export default {
-  props: ["editData"],
+  props: ["editData","queryType"],
   data() {
     return {
       size: "small",
