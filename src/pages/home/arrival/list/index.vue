@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-07-23 14:38:52
+ * @LastEditTime: 2022-08-20 13:52:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/arrival/list/index.vue
@@ -52,7 +52,7 @@
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
-            <a-button type="primary" @click="search">查询</a-button>
+            <a-button type="primary" @click="searchBtn">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
           </span>
         </a-form>
@@ -81,7 +81,7 @@
             </a-radio-button>
           </a-radio-group>
           <a-button v-if="hasPerm('print')" icon="print" type="primary" :disabled="!hasSelected" :loading="loading" @click="printBatch" style="margin-left: 8px">打印</a-button>
-          <a-button v-else icon="print" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">打印</a-button>
+          <a-button v-else icon="print" type="primary" disabled :loading="loading" style="margin-left: 8px">打印</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -154,7 +154,7 @@ export default {
       selectedRowKeys: [],
       enterList: [],
       enterId: "",
-      listType: "全部",
+      listType: "未审核",
       plantList: [],
     };
   },
@@ -166,7 +166,7 @@ export default {
       this.scrollY = getTableScroll(70);
     });
 
-    this.getListAll();
+    this.search();
     this.getPlantList();
   },
   methods: {
@@ -176,12 +176,13 @@ export default {
       this.isSearch = 0;
       this.searchForm.resetFields();
       this.listType = "全部";
-      this.getListAll();
+      this.search();
     },
     typeChange() {
       this.search();
     },
     closeModal() {
+      this.selectedRowKeys = [];
       this.isPrint = false;
     },
     //多选
@@ -196,27 +197,6 @@ export default {
       });
     },
     //获取列表
-    getListAll() {
-      this.loading = true;
-      let parmas = {
-        pageindex: this.pagination.current,
-        pagesize: this.pagination.pageSize,
-        listType: "全部",
-      };
-      getArrivalList(parmas, "get").then((res) => {
-        if (res.data.success) {
-          this.dataSource = res.data.data.list;
-          console.log("dataSource===", this.dataSource);
-          const pagination = { ...this.pagination };
-          pagination.total = res.data.data.totalCount;
-          this.pagination = pagination;
-          this.loading = false;
-          this.isSearch = 0;
-        } else {
-          this.loading = false;
-        }
-      });
-    },
     //分页
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
@@ -229,9 +209,8 @@ export default {
     },
     print(record) {
       this.printData = [];
-      this.isPrint = true;
       this.printData.push(record);
-      console.log("record===", record);
+      this.isPrint = true;
     },
     printBatch() {
       this.printData = [];
@@ -241,6 +220,10 @@ export default {
           this.printData.push(item);
         }
       });
+    },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
     },
     search() {
       this.searchForm.validateFields((err, values) => {

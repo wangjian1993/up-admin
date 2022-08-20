@@ -1,13 +1,14 @@
 /*
  * @Author: max
  * @Date: 2021-07-14 08:51:07
- * @LastEditTime: 2022-05-31 09:10:15
+ * @LastEditTime: 2022-08-18 10:09:55
  * @LastEditors: max
  * @Description: 后台接口
  * @FilePath: /up-admin/src/services/admin.js
  */
 import {
-	UP_ADMIN
+	UP_ADMIN,
+	UP_TPL
 } from '@/services/api';
 import {
 	request,
@@ -35,6 +36,9 @@ export async function getEnterList(params) {
 }
 export async function enterAction(params, action) {
 	return request(`${UP_ADMIN}/enter/${action}`, METHOD.POST, params);
+}
+export async function getEnterTypeList(params) {
+	return request(`${UP_ADMIN}/enter/getlistbytypecode`, METHOD.GET, params);
 }
 // 组织列表
 /**
@@ -277,4 +281,12 @@ export function setDeviceAction(params, action) {
 }
 export function getDeviceAction(params, action) {
 	return request(`${UP_ADMIN}/equiment/${action}`, METHOD.GET, params);
+}
+
+//模板
+export function setTemplateAction(params, action) {
+	return request(`${UP_TPL}/print/${action}`, METHOD.POST, params);
+}
+export function getTemplateAction(params, action) {
+	return request(`${UP_TPL}/print/${action}`, METHOD.GET, params);
 }

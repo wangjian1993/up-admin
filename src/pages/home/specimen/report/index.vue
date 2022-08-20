@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-08-15 16:44:35
+ * @LastEditTime: 2022-08-20 15:18:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/report/index.vue
@@ -67,11 +67,18 @@
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="是否签样" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['isqy']" placeholder="请选择状态">
+                  <a-select style="width: 200px" v-decorator="['isqy']" placeholder="请选择状态">
                     <a-select-option value="">全部</a-select-option>
                     <a-select-option value="是">是</a-select-option>
                     <a-select-option value="否">否</a-select-option>
                   </a-select>
+                </a-form-item>
+              </a-col>
+               <a-col :md="6" :sm="24">
+                <a-form-item label="交易次数" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input-number :min="0" style="width: 80px" allowClear placeholder="请输入开始数量" v-decorator="['transtimesstart']" />
+                  <span>~</span>
+                   <a-input-number :min="0" style="width: 80px" allowClear placeholder="请输入结束数量" v-decorator="['transtimesend']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -279,6 +286,8 @@ export default {
             suppliercode: values.suppliercode,
             suppliername: values.suppliername,
             isqy: values.isqy,
+            transtimesstart: values.transtimesstart,
+            transtimesend: values.transtimesend,
           };
           getDepartmentApi(parmas, "firstpurchaseqyreport").then((res) => {
             if (res.data.success) {

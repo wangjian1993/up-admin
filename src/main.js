@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2022-08-11 10:07:22
+ * @LastEditTime: 2022-08-17 17:17:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/main.js
@@ -56,6 +56,18 @@ Vue.use(Viewer, {
     zIndex: 9999
   }
 })
+
+import {hiPrintPlugin} from 'vue-plugin-hiprint'
+Vue.use(hiPrintPlugin);
+
+import Storage from 'vue-ls'
+let options = {
+  namespace: 'hiPrint-',
+  name: 'ls',
+  storage: 'local',
+};
+Vue.use(Storage, options);
+
 new Vue({
   router,
   store,

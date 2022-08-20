@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2022-08-15 11:31:41
+ * @LastEditTime: 2022-08-18 09:54:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/api.js
@@ -42,5 +42,6 @@ module.exports = {
   UP_REPORT: `${BASE_URL_MOCK}/api/report`,
   UP_EAP: `${BASE_URL_MOCK}/api/eap`,
   UP_MQTT: `${BASE_URL_MOCK}/api/mqtt`,
-  UP_SRM: `${BASE_URL_MOCK}/api/srm`
+  UP_SRM: `${BASE_URL_MOCK}/api/srm`,
+  UP_TPL:`${BASE_URL_MOCK}/api/template`
 }

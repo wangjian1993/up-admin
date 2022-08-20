@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2022-08-15 10:31:50
+ * @LastEditTime: 2022-08-19 16:36:25
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -204,6 +204,14 @@ export function getProductionPersonnel(params, action) {
 }
 export function setProductionPersonnel(params, action) {
     return request(`${UP_WEB}/production/dept/${action}`, METHOD.POST, params);
+}
+
+//报工修改
+export function getModifyAction(params, action) {
+    return request(`${UP_WEB}/production/modify/${action}`, METHOD.GET, params);
+}
+export function setModifyAction(params, action) {
+    return request(`${UP_WEB}/production/modify/${action}`, METHOD.POST, params);
 }
 //工序产线配置
 export function getProcessLine(params, action) {

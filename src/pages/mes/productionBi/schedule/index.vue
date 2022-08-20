@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-07-07 14:31:51
- * @LastEditTime: 2022-08-04 16:13:59
+ * @LastEditTime: 2022-08-19 14:12:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/schedule/index.vue
@@ -17,7 +17,7 @@
         <div style="margin-left:20px">
           <span>产线:</span
           ><a-select style="width: 120px" @change="lineChange">
-           <a-select-option value="">
+            <a-select-option value="">
               全部
             </a-select-option>
             <a-select-option :value="item.LineCode" v-for="item in lineList" :key="item.LineCode">
@@ -182,7 +182,7 @@ export default {
       var BASE_URL_MOCK = window.location.host === "113.106.78.83:7003" ? "http://113.106.78.83:7004" : window.location.host === "192.168.0.240:8080" ? "http://192.168.0.240:8081" : "http://192.168.1.245:6688";
       axios({
         method: "GET",
-        url: BASE_URL_MOCK+ "/api/kanban/mo/progress/getall?pageindex=1&pagesize=10&process=" + this.process + "&plant=" + this.plant + "&workshop=" + this.workshop + "&line=" + this.line + "&date=" + date,
+        url: BASE_URL_MOCK + "/api/kanban/mo/progress/getall?pageindex=1&pagesize=10&process=" + this.process + "&plant=" + this.plant + "&workshop=" + this.workshop + "&line=" + this.line + "&date=" + date,
       }).then((response) => {
         const { data } = response;
         if (data.success) {
@@ -278,6 +278,12 @@ export default {
     this.dayTime = date;
     this.getDataList(date);
     this.getLine();
+    setInterval(() => {
+      gantt.clearAll();
+      gantt.parse(this.tasks);
+      gantt.render();
+      this.getDataList(this.dayTime);
+    }, 180000);
   },
 };
 </script>
@@ -297,7 +303,7 @@ export default {
 .date-box {
   margin: 0 10px;
 }
-.gantt_tree_content{
-  font-size:10px;
+.gantt_tree_content {
+  font-size: 10px;
 }
 </style>

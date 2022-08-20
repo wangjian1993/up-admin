@@ -95,13 +95,6 @@ export const columns = [
         width: 80,
     },
     {
-        title: "库存成本",
-        dataIndex: "AMOUNT_COST",
-        scopedSlots: { customRender: "AMOUNT_COST" },
-        align: "center",
-        width: 120,
-    },
-    {
         title: "第二数量",
         dataIndex: "SECOND_QTY",
         scopedSlots: { customRender: "SECOND_QTY" },

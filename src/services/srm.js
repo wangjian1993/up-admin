@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-10 16:38:42
- * @LastEditTime: 2022-08-15 15:44:34
+ * @LastEditTime: 2022-08-16 14:00:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/srm.js
@@ -50,4 +50,13 @@ export function getAuthentication(params, action) {
 }
 export function getSupplierAction(params, action) {
     return request(`${UP_SRM}/supplier/${action}`, METHOD.GET, params);
+}
+
+//客户订单
+export function getClientOrder(params, action) {
+    return request(`${UP_SRM}/clientpurchase/${action}`, METHOD.GET, params);
+}
+
+export function getClientChange(params, action) {
+    return request(`${UP_SRM}/clientpurchasechange/${action}`, METHOD.GET, params);
 }
