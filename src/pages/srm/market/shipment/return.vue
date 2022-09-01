@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-12 15:54:43
+ * @LastEditTime: 2022-08-25 09:31:47
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/receiving/return.vue
+ * @FilePath: /up-admin/src/pages/srm/market/shipment/return.vue
 -->
 <template>
   <div>
@@ -144,7 +144,7 @@
 </template>
 
 <script>
-import { getReturn } from "@/services/srm.js";
+import { getClientReturn } from "@/services/srm.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
@@ -239,7 +239,7 @@ export default {
             var startreceiptdatetime = rangeValue[0].format("YYYY-MM-DD");
             var endreceiptdatetime = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.keyword,
@@ -264,7 +264,7 @@ export default {
             endreceiptdatetime: endreceiptdatetime,
             purchasetype: values.purchasetype,
           };
-          getReturn(parmas, "get").then((res) => {
+          getClientReturn(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -281,7 +281,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         typeid: values.typeid,
@@ -290,7 +290,7 @@ export default {
         plccode: values.plccode,
         plcname: values.plcname,
       };
-      getReturn(parmas, "get").then((res) => {
+      getClientReturn(params, "get").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

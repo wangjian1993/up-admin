@@ -426,20 +426,20 @@ export default {
     },
     //获取需求公司
     getDemandEnter() {
-      let parmas = {
+      let params = {
         entertypecode: "COMPANY",
       };
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getDemandEnter(parmas).then((res) => {
+      getDemandEnter(params).then((res) => {
         if (res.data.success) {
           this.enterList = res.data.data;
           this.enterpriseid = this.enterList[0].EnterId;
           this.searchForm.setFieldsValue({
             enterpriseid: this.enterList[0].EnterId,
           });
-          getDemandEnter(parmas1).then((res) => {
+          getDemandEnter(params1).then((res) => {
             if (res.data.success) {
               this.plantList = res.data.data;
               this.plantid = this.plantList[0].EnterId;
@@ -457,7 +457,7 @@ export default {
       this.search();
     },
     getCostList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterpriseid,
@@ -468,7 +468,7 @@ export default {
         itemname: "",
         itemspecification:''
       };
-      getCostConfig(parmas, "getquotelist").then((res) => {
+      getCostConfig(params, "getquotelist").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -486,7 +486,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
@@ -497,7 +497,7 @@ export default {
             itemname: values.itemname || "",
             itemspecification:values.itemspecification || ""
           };
-          getCostConfig(parmas, "getquotelist").then((res) => {
+          getCostConfig(params, "getquotelist").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -520,11 +520,11 @@ export default {
     },
     //审核
     onAudit(item) {
-      let parmas = {
+      let params = {
         Id: item.Id,
         StatusCheck: item.StatusCheck == "Y" ? "N" : "Y",
       };
-      addCost(parmas, "checkquote").then((res) => {
+      addCost(params, "checkquote").then((res) => {
         if (res.data.success) {
           this.$message.success("审核成功!");
           this.getCostList();
@@ -533,11 +533,11 @@ export default {
     },
     //删除
     onDelete(item) {
-      let parmas = {
+      let params = {
         Id: item.Id,
         IsDelete: "Y",
       };
-      addCost(parmas, "deletequote").then((res) => {
+      addCost(params, "deletequote").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getCostList();
@@ -695,10 +695,10 @@ export default {
     },
     //导出数据
     handleExcel(id, LastCode) {
-      let parmas = {
+      let params = {
         Id: id,
       };
-      getCostConfig(parmas, "getquotedetail").then((res) => {
+      getCostConfig(params, "getquotedetail").then((res) => {
         if (res.data.success) {
           let list = res.data.data.ItemInfo.ItemChildList;
           this.exportData = list;

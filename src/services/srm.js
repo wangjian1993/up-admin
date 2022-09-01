@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-10 16:38:42
- * @LastEditTime: 2022-08-16 14:00:54
+ * @LastEditTime: 2022-08-25 10:17:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/srm.js
@@ -22,6 +22,9 @@ import {
 //采购收货管理
 export function getPurchaseOrders(params, action) {
     return request(`${UP_SRM}/purchase/${action}`, METHOD.GET, params);
+}
+export function setPurchaseOrders(params, action) {
+    return request(`${UP_SRM}/purchase/${action}`, METHOD.POST, params);
 }
 
 export function getPurchaseChange(params, action) {
@@ -59,4 +62,13 @@ export function getClientOrder(params, action) {
 
 export function getClientChange(params, action) {
     return request(`${UP_SRM}/clientpurchasechange/${action}`, METHOD.GET, params);
+}
+
+//送货单通知
+export function getClientDelivery(params, action) {
+    return request(`${UP_SRM}/clientdelivery/${action}`, METHOD.GET, params);
+}
+//客户退货
+export function getClientReturn(params, action) {
+    return request(`${UP_SRM}/clientreturn/${action}`, METHOD.GET, params);
 }

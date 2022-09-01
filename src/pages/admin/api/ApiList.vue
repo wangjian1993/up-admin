@@ -401,11 +401,11 @@ export default {
     },
     //获取应用类型
     getAppTypeList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 50,
       };
-      getAppTypeList(parmas).then((res) => {
+      getAppTypeList(params).then((res) => {
         if (res.data.success) {
           this.appTypeData = res.data.data.list;
           this.defaultAppTypeId = res.data.data.list[0].AppTypeId;
@@ -416,10 +416,10 @@ export default {
       });
     },
     getAppMdules() {
-      let parmas = {
+      let params = {
         apptypeid: this.appTypeId,
       };
-      getModuleList(parmas).then((res) => {
+      getModuleList(params).then((res) => {
         if (res.data.success) {
           if (res.data.data.length > 0) {
             this.appTreeData = res.data.data;
@@ -468,7 +468,7 @@ export default {
           }
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             moduleid: this.moduleid,
@@ -477,7 +477,7 @@ export default {
             apicode: values.apicode,
             apimethod: values.apimethod,
           };
-          getApiList(parmas).then((res) => {
+          getApiList(params).then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -491,13 +491,13 @@ export default {
       });
     },
     getApiList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         moduleid: this.moduleid,
         buttonid: this.buttonid,
       };
-      getApiList(parmas).then((res) => {
+      getApiList(params).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -611,9 +611,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.ApiId);
-      getApiAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.ApiId);
+      getApiAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getApiList();

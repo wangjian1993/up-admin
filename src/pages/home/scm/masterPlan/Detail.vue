@@ -438,10 +438,10 @@ export default {
       this.week = str[1].replace("周", "");
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getScmAction(parmas1, "requirement/getlistbytypecode").then((res) => {
+      getScmAction(params1, "requirement/getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -450,7 +450,7 @@ export default {
     },
     getStatistic() {
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         plantid: values.plantid,
         batchid: values.batchid,
         week: this.week,
@@ -459,7 +459,7 @@ export default {
         mitemcode: values.mitemcode,
         mitemname: values.mitemname,
       };
-      getScmAction(parmas, "requirement/detail/gettotal").then((res) => {
+      getScmAction(params, "requirement/detail/gettotal").then((res) => {
         if (res.data.success) {
           this.statistic = res.data.data;
         }
@@ -507,7 +507,7 @@ export default {
         return;
       }
       this.statisticType = "";
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         batchid: this.batchid || "",
@@ -515,7 +515,7 @@ export default {
       this.searchForm.setFieldsValue({
         batchid: this.batchid,
       });
-      getScmAction(parmas, "requirement/detail/getall").then((res) => {
+      getScmAction(params, "requirement/detail/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           this.setPurchaseOrderMatchList();
@@ -537,7 +537,7 @@ export default {
         this.pagination.current = 1;
       }
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         plantid: values.plantid,
@@ -549,7 +549,7 @@ export default {
         mitemname: values.mitemname,
         fastcondition: this.statisticType,
       };
-      getScmAction(parmas, "requirement/detail/getall").then((res) => {
+      getScmAction(params, "requirement/detail/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           this.setPurchaseOrderMatchList();
@@ -592,7 +592,7 @@ export default {
           if (this.week != "") {
             var w = this.week;
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -603,7 +603,7 @@ export default {
             mitemcode: values.mitemcode,
             mitemname: values.mitemname,
           };
-          getScmAction(parmas, "requirement/detail/getall").then((res) => {
+          getScmAction(params, "requirement/detail/getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               this.setPurchaseOrderMatchList();
@@ -622,7 +622,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         plantid: values.plantid,
@@ -634,7 +634,7 @@ export default {
         mitemname: values.mitemname,
         fastcondition: this.statisticType,
       };
-      getScmAction(parmas, "requirement/detail/getall").then((res) => {
+      getScmAction(params, "requirement/detail/getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           list.forEach((item) => {

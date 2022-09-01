@@ -195,7 +195,7 @@ export default {
             var starttime = rangeValue[0].format("YYYY-MM-DD");
             var endtime = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.keyword,
@@ -205,7 +205,7 @@ export default {
             endtime: endtime,
             status: values.status,
           };
-          getSupplierAction(parmas, "get").then((res) => {
+          getSupplierAction(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -222,7 +222,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         typeid: values.typeid,
@@ -231,7 +231,7 @@ export default {
         plccode: values.plccode,
         plcname: values.plcname,
       };
-      getSupplierAction(parmas, "get").then((res) => {
+      getSupplierAction(params, "get").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

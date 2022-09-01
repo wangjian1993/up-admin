@@ -142,10 +142,10 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      let parmas = {
+      let params = {
         id: this.orderInfo.ProPlanId,
       };
-      getPrintInfo(parmas, "getprintinfo").then((res) => {
+      getPrintInfo(params, "getprintinfo").then((res) => {
         if (res.data.success) {
           this.isPrint = true;
           this.printData = res.data.data;
@@ -190,12 +190,12 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      let parmas = {
+      let params = {
         ScanCode: this.orderValue,
         ProcessCode: "ASSEMBLE_PROCESS",
         ProcessStatus: "PROCESS_START",
       };
-      setStartWorkApi(parmas, "scan").then((res) => {
+      setStartWorkApi(params, "scan").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
@@ -223,13 +223,13 @@ export default {
       this.getHistoryList();
     },
     getHistoryList() {
-      let parmas = {
+      let params = {
         ProPlanId: this.orderInfo.ProPlanId,
         MoCode: this.orderInfo.MoCode,
         ProcessStatus: "PROCESS_START",
       };
       this.orderList = [];
-      setStartWorkApi(parmas, "gethisreports").then((res) => {
+      setStartWorkApi(params, "gethisreports").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
@@ -269,7 +269,7 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      let parmas = {
+      let params = {
         ProPlanId: this.orderInfo.ProPlanId,
         PlantId: this.orderInfo.PlantId,
         WorkshopId: this.orderInfo.WorkshopId,
@@ -284,7 +284,7 @@ export default {
         PerQty: this.peopleQty,
         ColorTemperature: this.ColorTemperature,
       };
-      setStartWorkApi(parmas, "submit").then((res) => {
+      setStartWorkApi(params, "submit").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;

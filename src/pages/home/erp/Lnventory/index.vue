@@ -154,10 +154,10 @@ export default {
       this.mitemcodeData.plantId = values.plantid;
     },
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getERPReportAction(parmas, "getenterlist").then((res) => {
+      getERPReportAction(params, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantId = this.plantList[0].PlantId;
@@ -180,13 +180,13 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             itemcode: values.itemcode,
           };
-          getERPReportAction(parmas, "inventorytransactiondetails").then((res) => {
+          getERPReportAction(params, "inventorytransactiondetails").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };

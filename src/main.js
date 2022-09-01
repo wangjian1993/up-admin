@@ -56,17 +56,17 @@ Vue.use(Viewer, {
     zIndex: 9999
   }
 })
+//hiprint 打印
+// import {hiPrintPlugin} from 'vue-plugin-hiprint'
+// Vue.use(hiPrintPlugin);
 
-import {hiPrintPlugin} from 'vue-plugin-hiprint'
-Vue.use(hiPrintPlugin);
-
-import Storage from 'vue-ls'
-let options = {
-  namespace: 'hiPrint-',
-  name: 'ls',
-  storage: 'local',
-};
-Vue.use(Storage, options);
+// import Storage from 'vue-ls'
+// let options = {
+//   namespace: 'hiPrint-',
+//   name: 'ls',
+//   storage: 'local',
+// };
+// Vue.use(Storage, options);
 
 new Vue({
   router,

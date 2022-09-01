@@ -179,10 +179,10 @@ export default {
       });
     },
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "EAP_EQUIMENT_BRAND",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.deviceBrand = res.data.data;
         }
@@ -195,11 +195,11 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getFormulaAction(parmas, "log/getall").then((res) => {
+      getFormulaAction(params, "log/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -230,7 +230,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -240,7 +240,7 @@ export default {
             formulacode: values.formulacode,
             formulaname: values.formulaname,
           };
-          getFormulaAction(parmas, "log/getall").then((res) => {
+          getFormulaAction(params, "log/getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -273,9 +273,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.FormulaLogId);
-      setFormulaAction(parmas, "log/delete").then((res) => {
+      let params = [];
+      params.push(item.FormulaLogId);
+      setFormulaAction(params, "log/delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
@@ -285,7 +285,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         plantid: values.plantid,
@@ -295,7 +295,7 @@ export default {
         formulacode: values.formulacode,
         formulaname: values.formulaname,
       };
-      getFormulaAction(parmas, "getall").then((res) => {
+      getFormulaAction(params, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

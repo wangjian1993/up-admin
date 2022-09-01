@@ -140,10 +140,10 @@ export default {
     },
     getLoTraceList() {
       console.log("this.TraceId", this.traceId);
-      let parmas = {
+      let params = {
         traceid: this.traceId,
       };
-      getLogAction(parmas, "gettrace").then((res) => {
+      getLogAction(params, "gettrace").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.SqlExecuLogs;
           this.traceInfo = res.data.data;

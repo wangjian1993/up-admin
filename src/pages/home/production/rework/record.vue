@@ -163,10 +163,10 @@ export default {
       });
     },
     getLineList() {
-      let parmas = {
+      let params = {
         workshopid: this.workshopId,
       };
-      getReworkApi(parmas, "getline").then((res) => {
+      getReworkApi(params, "getline").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data.result;
         }
@@ -219,11 +219,11 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      let parmas = {
+      let params = {
         ScanCode: this.orderValue,
         ProcessStatus: "PROCESS_REWORK",
       };
-      setReworkApi(parmas, "scan").then((res) => {
+      setReworkApi(params, "scan").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           this.reworkQty = 0;
@@ -305,9 +305,9 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      let parmas = [];
+      let params = [];
       this.reworkList.map((item) => {
-        parmas.push({
+        params.push({
           ProPlanId: item.ProPlanId,
           ReworkWorkshopId: this.ReworkWorkshopId,
           ReworkLineId: this.ReworkLineId,
@@ -318,7 +318,7 @@ export default {
           ScanCodeType: item.ScanCodeType,
         });
       });
-      setReworkApi(parmas, "submit").then((res) => {
+      setReworkApi(params, "submit").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;

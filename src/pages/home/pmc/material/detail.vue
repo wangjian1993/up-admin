@@ -309,10 +309,10 @@ export default {
       this.week = str[1].replace("周", "");
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getMitemrequirement(parmas1, "getlistbytypecode").then((res) => {
+      getMitemrequirement(params1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -326,7 +326,7 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         batchid: this.batchid || "",
@@ -334,7 +334,7 @@ export default {
       this.searchForm.setFieldsValue({
         batchid: this.batchid,
       });
-      getMitemrequirement(parmas, "getdetails").then((res) => {
+      getMitemrequirement(params, "getdetails").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -375,7 +375,7 @@ export default {
           if (this.week != "") {
             var w = this.week;
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -385,7 +385,7 @@ export default {
             mitemcode: values.mitemcode,
             mitemname: values.mitemname,
           };
-          getMitemrequirement(parmas, "getdetails").then((res) => {
+          getMitemrequirement(params, "getdetails").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -401,11 +401,11 @@ export default {
     },
     exportExcel() {
       this.isExportLod = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
       };
-      getMitemrequirement(parmas, "getdetails").then((res) => {
+      getMitemrequirement(params, "getdetails").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

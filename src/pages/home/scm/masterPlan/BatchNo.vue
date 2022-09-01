@@ -120,11 +120,11 @@ export default {
       this.$emit("closeModal");
     },
     getList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize
       };
-      getScmAction(parmas, "manualmatch/getbatchlist").then((res) => {
+      getScmAction(params, "manualmatch/getbatchlist").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -161,13 +161,13 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             batchno: values.batchno,
           };
-          getScmAction(parmas, "manualmatch/getbatchlist").then((res) => {
+          getScmAction(params, "manualmatch/getbatchlist").then((res) => {
             if (res.data.success) {
               this.list = res.data.data.list;
               const pagination = { ...this.pagination };

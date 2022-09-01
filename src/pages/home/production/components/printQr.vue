@@ -182,8 +182,8 @@ export default {
     },
     updatedStatu() {
       console.log("打印=====");
-      let parmas = [this.printData.id];
-      setPrintInfo(parmas, "update").then((res) => {
+      let params = [this.printData.id];
+      setPrintInfo(params, "update").then((res) => {
         if (res.data.success) {
           this.$message.success("打印成功!");
         }

@@ -54,10 +54,10 @@ export default {
     },
     //获取需求工厂
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getSupplierAction(parmas1, "reply/getlistbytypecode").then((res) => {
+      getSupplierAction(params1, "reply/getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }

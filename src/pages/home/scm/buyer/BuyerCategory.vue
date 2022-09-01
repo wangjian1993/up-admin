@@ -142,12 +142,12 @@ export default {
       this.$emit("closeModal");
     },
     getList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
       let url = this.modelTypes == 1 ? "getcategorys" : "getmitems";
-      getBuyerAction(parmas, url).then((res) => {
+      getBuyerAction(params, url).then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -194,15 +194,15 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = [];
+          let params = [];
           if (this.modelTypes == 1) {
-            parmas = {
+            params = {
               pageindex: this.pagination.current,
               pagesize: this.pagination.pageSize,
               keyword: values.keyword,
             };
           } else {
-            parmas = {
+            params = {
               pageindex: this.pagination.current,
               pagesize: this.pagination.pageSize,
               category: values.keyword,
@@ -211,7 +211,7 @@ export default {
           }
 
           let url = this.modelTypes == 1 ? "getcategorys" : "getmitems";
-          getBuyerAction(parmas, url).then((res) => {
+          getBuyerAction(params, url).then((res) => {
             if (res.data.success) {
               this.list = res.data.data.list;
               const pagination = { ...this.pagination };

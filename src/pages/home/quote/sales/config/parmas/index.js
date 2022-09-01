@@ -4,7 +4,7 @@
  * @LastEditTime: 2021-08-17 10:39:12
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/offer/sales/config/parmas/index.js
+ * @FilePath: /up-admin/src/pages/offer/sales/config/params/index.js
  */
-import Parmas from './Parmas.vue';
-export default Parmas;
+import params from './params.vue';
+export default params;

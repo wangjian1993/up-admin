@@ -97,13 +97,13 @@ export default {
     },
     //关闭对话框
     handleOk() {
-      let parmas = {
+      let params = {
         BatchId: this.adjustData.BatchId,
         DetailId: this.adjustData.DetailId,
         PurchaseId: this.adjustData.PurchaseId,
         PurchaseChangeDate: this.dateString,
       };
-      setSupplierAction(parmas, "reply/changedeliverydate").then((res) => {
+      setSupplierAction(params, "reply/changedeliverydate").then((res) => {
         if (res.data.success) {
           this.$message.success("调整供应商交期成功!");
           this.$emit("closeModal");

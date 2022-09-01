@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-16 09:55:25
+ * @LastEditTime: 2022-08-30 14:32:26
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/supplier/notification.vue
@@ -21,7 +21,7 @@
             >
             <a-col :md="6" :sm="24">
               <a-form-item label="" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 300px" placeholder="请输入搜索内容" v-decorator="['keyword']" />
+                <a-input style="width: 300px" allowClear placeholder="请输入标题" v-decorator="['keyword']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -195,7 +195,7 @@ export default {
             var starttime = rangeValue[0].format("YYYY-MM-DD");
             var endtime = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.keyword,
@@ -205,7 +205,7 @@ export default {
             endtime: endtime,
             status: values.status,
           };
-          getSupplierAction(parmas, "get").then((res) => {
+          getSupplierAction(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -222,7 +222,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         typeid: values.typeid,
@@ -231,7 +231,7 @@ export default {
         plccode: values.plccode,
         plcname: values.plcname,
       };
-      getSupplierAction(parmas, "get").then((res) => {
+      getSupplierAction(params, "get").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

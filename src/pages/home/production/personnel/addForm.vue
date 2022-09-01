@@ -136,21 +136,21 @@ export default {
       this.isDrawer = false;
     },
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getWorkshopList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
     getLineList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopId: this.workshopId,
       };
-      getLineList(parmas).then((res) => {
+      getLineList(params).then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }

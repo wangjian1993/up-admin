@@ -19,10 +19,10 @@ export const formulaMixin = {
     },
     methods: {
         getPlant() {
-            let parmas = {
+            let params = {
                 entertypecode: "PLANT",
             };
-            getPlantList(parmas, "getlistbytypecode").then((res) => {
+            getPlantList(params, "getlistbytypecode").then((res) => {
                 if (res.data.success) {
                     this.plantList = res.data.data;
                 }
@@ -31,10 +31,10 @@ export const formulaMixin = {
         //生产工厂选择
         plantChange(e) {
             this.plantId = e;
-            let parmas = {
+            let params = {
                 plantid: e,
             };
-            getWorkshopAction(parmas, "getlist").then((res) => {
+            getWorkshopAction(params, "getlist").then((res) => {
                 if (res.data.success) {
                     this.workshopList = res.data.data;
                     this.searchForm.setFieldsValue({
@@ -48,11 +48,11 @@ export const formulaMixin = {
         },
         //生产车间选择
         workshopChange(e) {
-            let parmas = {
+            let params = {
                 plantid: this.plantId,
                 workshopid: e,
             };
-            getPlantList(parmas, "getlist").then((res) => {
+            getPlantList(params, "getlist").then((res) => {
                 if (res.data.success) {
                     this.LineList = res.data.data;
                     this.searchForm.setFieldsValue({
@@ -65,10 +65,10 @@ export const formulaMixin = {
         },
         //生产产线选择
         lineChange(e,type) {
-            let parmas = {
+            let params = {
                 lineid: e,
             };
-            getDeviceAction(parmas, "getlist").then((res) => {
+            getDeviceAction(params, "getlist").then((res) => {
                 if (res.data.success) {
                     this.deviceList = res.data.data;
                     this.searchForm.setFieldsValue({

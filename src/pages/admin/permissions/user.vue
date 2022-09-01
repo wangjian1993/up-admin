@@ -136,10 +136,10 @@ export default {
       this.searchForm.resetFields();
     },
     company(e) {
-      let parmas = {
+      let params = {
         enterid: e,
       };
-      getUserPermission(parmas, "org/gettop").then((res) => {
+      getUserPermission(params, "org/gettop").then((res) => {
         if (res.data.success) {
           this.department = res.data.data;
         }
@@ -160,12 +160,12 @@ export default {
       });
     },
     appChange(e) {
-      let parmas = {
+      let params = {
         app: e,
         menutype: "menu",
         menusur: "",
       };
-      getUserPermission(parmas, "menu/getall").then((res) => {
+      getUserPermission(params, "menu/getall").then((res) => {
         if (res.data.success) {
           this.menuList = res.data.data;
         }
@@ -178,11 +178,11 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getUserPermission(parmas, "getall").then((res) => {
+      getUserPermission(params, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           console.log(this.dataSource);
@@ -216,7 +216,7 @@ export default {
           this.loading = true;
           console.log("Received values of form: ", values);
           //   let name = encodeURI(values.username);
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterid: values.enterid,
@@ -225,7 +225,7 @@ export default {
             appid: values.appid,
             menuid: values.menuid,
           };
-          getUserPermission(parmas, "getall").then((res) => {
+          getUserPermission(params, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -242,7 +242,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         enterid: values.enterid,
@@ -251,7 +251,7 @@ export default {
         appid: values.appid,
         menuid: values.menuid,
       };
-      getUserPermission(parmas, "getall").then((res) => {
+      getUserPermission(params, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

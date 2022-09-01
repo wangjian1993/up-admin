@@ -187,11 +187,11 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      let parmas = {
+      let params = {
         ScanCode: this.orderValue.trim(),
         ProcessStatus: "PROCESS_FINISHED",
       };
-      setPreStartWorkApi(parmas, "scan").then((res) => {
+      setPreStartWorkApi(params, "scan").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
@@ -235,13 +235,13 @@ export default {
       });
     },
     getHistoryList() {
-      let parmas = {
+      let params = {
         ProPlanId: this.orderInfo.ProPlanId,
         MoCode: this.orderInfo.MoCode,
         ProcessStatus: "PROCESS_FINISHED",
       };
       this.orderList = [];
-      setPreStartWorkApi(parmas, "gethisreports").then((res) => {
+      setPreStartWorkApi(params, "gethisreports").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
@@ -288,14 +288,14 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      let parmas = [];
+      let params = [];
       let url = "";
       let resultType = "";
       if (this.selectType == "Multiple" && this.multipleList.length > 1) {
         url = "multiplesubmit";
         resultType = 0;
         this.multipleList.forEach((item) => {
-          parmas.push({
+          params.push({
             ProPlanId: item.ProPlanId,
             PlantId: item.PlantId,
             WorkshopId: item.WorkshopId,
@@ -311,7 +311,7 @@ export default {
       } else {
         url = "submit";
         resultType = 1;
-        parmas = {
+        params = {
           ProPlanId: this.orderInfo.ProPlanId,
           PlantId: this.orderInfo.PlantId,
           WorkshopId: this.orderInfo.WorkshopId,
@@ -324,7 +324,7 @@ export default {
           ScrapedQty: this.scrapQty,
         };
       }
-      setPreStartWorkApi(parmas, url).then((res) => {
+      setPreStartWorkApi(params, url).then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
@@ -348,13 +348,13 @@ export default {
       });
     },
     listUpdate(item) {
-      let parmas = {
+      let params = {
         Id: item.Id,
         ReportQty: item.ReportQty,
         ScrapedQty: item.ScrapedQty,
         ProcessStatus: "PROCESS_FINISHED",
       };
-      setPreStartWorkApi(parmas, "update").then((res) => {
+      setPreStartWorkApi(params, "update").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.data.IsSuccess) {
           res.data.message.content = res.data.data.Msg;

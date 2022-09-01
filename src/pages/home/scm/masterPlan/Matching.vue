@@ -195,21 +195,21 @@ export default {
     },
     //获取物料信息
     getMitemsByBatch() {
-      let parmas = {
+      let params = {
         batchid: this.batchnoData.BatchId,
       };
-      getScmAction(parmas, "manualmatch/getmitemsbybatch").then((res) => {
+      getScmAction(params, "manualmatch/getmitemsbybatch").then((res) => {
         if (res.data.success) {
           this.materialData = res.data.data;
         }
       });
     },
     getRequirementDates() {
-      let parmas = {
+      let params = {
         batchid: this.batchnoData.BatchId,
         mitemcode: this.mitemList.MitemCode,
       };
-      getScmAction(parmas, "manualmatch/getrequirementdates").then((res) => {
+      getScmAction(params, "manualmatch/getrequirementdates").then((res) => {
         if (res.data.success) {
           this.materialDates = res.data.data;
           console.log(res.data.data);

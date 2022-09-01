@@ -145,13 +145,13 @@ export default {
     //搜索
     onSearch(value) {
       this.setPage();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         orgid: this.id,
         username: value,
       };
-      getOrgUser(parmas).then((res) => {
+      getOrgUser(params).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -172,12 +172,12 @@ export default {
     //获取机构类型列表
     getOrgUser(id) {
       this.id = id;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         orgid: id,
       };
-      getOrgUser(parmas).then((res) => {
+      getOrgUser(params).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -204,7 +204,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          let parmas = {
+          let params = {
             OrgId: self.id,
             OrgUserInfo: [],
           };
@@ -212,9 +212,9 @@ export default {
             let obj = {
               UserId: item,
             };
-            parmas.OrgUserInfo.push(obj);
+            params.OrgUserInfo.push(obj);
           });
-          orginfoAction(parmas, "removeuser").then((res) => {
+          orginfoAction(params, "removeuser").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("移除成功!");
@@ -229,7 +229,7 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = {
+      let params = {
         OrgId: this.id,
         OrgUserInfo: [
           {
@@ -238,7 +238,7 @@ export default {
         ],
       };
       //分页切换
-      orginfoAction(parmas, "removeuser").then((res) => {
+      orginfoAction(params, "removeuser").then((res) => {
         if (res.data.success) {
           this.$message.success("移除成功!");
           this.getOrgUser(this.id);

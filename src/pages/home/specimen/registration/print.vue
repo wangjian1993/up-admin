@@ -310,10 +310,10 @@ export default {
     getPrintData() {
       this.loading = true;
       this.registerid.forEach((item) => {
-        let parmas = {
+        let params = {
           registerid: item,
         };
-        getDepartmentApi(parmas, "printregister").then((res) => {
+        getDepartmentApi(params, "printregister").then((res) => {
           if (res.data.success) {
             console.log("更新====", res);
             this.dataSource.push(res.data.data);

@@ -146,7 +146,7 @@ export default {
         this.$message.warning("请先导入excel文件!");
         return;
       }
-      let parmas = [];
+      let params = [];
       //合并表格头部和内容数据
       let arr = [];
       let table = this.tableData;
@@ -176,21 +176,21 @@ export default {
               break;
           }
         }
-        parmas.push(list);
+        params.push(list);
       });
       if (this.errorList.length == 0) {
-        this.submitExecl(parmas);
+        this.submitExecl(params);
       } else {
         this.$message.error("物料信息格式错误,请修改");
       }
     },
     //提交
-    submitExecl(parmas) {
+    submitExecl(params) {
       if (this.isUpload) {
         return;
       }
       this.isUpload = true;
-      setBuyerAction(parmas, "import").then((res) => {
+      setBuyerAction(params, "import").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.close();

@@ -185,10 +185,10 @@ export default {
     //重置搜索
     getParamsData() {
       this.paramsList.forEach((item) => {
-        let parmas = {
+        let params = {
           groupcode: item,
         };
-        getParamData(parmas).then((res) => {
+        getParamData(params).then((res) => {
           if (res.data.success) {
             this.paramsItem[item] = res.data.data;
           }
@@ -233,11 +233,11 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getFormulaAction(parmas, "getall").then((res) => {
+      getFormulaAction(params, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -268,7 +268,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -278,7 +278,7 @@ export default {
             formulaname: values.formulaname,
             procode: values.procode,
           };
-          getFormulaAction(parmas, "getall").then((res) => {
+          getFormulaAction(params, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -310,12 +310,12 @@ export default {
       });
     },
     send(item) {
-      let parmas = {
+      let params = {
         LineId: item.LineId,
         FormulaId: item.FormulaId,
         PlcId: "",
       };
-      setPlcAction(parmas, "issued/formula").then((res) => {
+      setPlcAction(params, "issued/formula").then((res) => {
         if (res.data.success) {
           this.$message.success("配方下发成功!");
           this.getListAll();
@@ -351,9 +351,9 @@ export default {
     downExcel() {},
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.FormulaId);
-      setFormulaAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.FormulaId);
+      setFormulaAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
@@ -363,7 +363,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         plantid: values.plantid,
@@ -373,7 +373,7 @@ export default {
         formulaname: values.formulaname,
         procode: values.procode,
       };
-      getFormulaAction(parmas, "getall").then((res) => {
+      getFormulaAction(params, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

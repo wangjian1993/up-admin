@@ -243,12 +243,12 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         batchno: this.batchid || "",
       };
-      getMitemrequirement(parmas, "masterplan/getmergedetails").then((res) => {
+      getMitemrequirement(params, "masterplan/getmergedetails").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -311,7 +311,7 @@ export default {
           if (this.week != "") {
             var w = this.week;
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -322,7 +322,7 @@ export default {
             startdate: begindt,
             enddate: enddt,
           };
-          getMitemrequirement(parmas, "masterplan/getmergedetails").then((res) => {
+          getMitemrequirement(params, "masterplan/getmergedetails").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               if (this.data.length > 0) {
@@ -381,9 +381,9 @@ export default {
     },
     //单个删除
     actionBnt(item, type) {
-      let parmas = [];
-      parmas.push(item.Id);
-      mitemrequirementAction(parmas, type).then((res) => {
+      let params = [];
+      params.push(item.Id);
+      mitemrequirementAction(params, type).then((res) => {
         if (res.data.success) {
           if (type == "approved") {
             this.$message.success("审批成功!");
@@ -408,12 +408,12 @@ export default {
     handleExcel() {
       this.isExportLod =true
       let inputData = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         batchno: inputData.batchno,
       };
-      getMitemrequirement(parmas, "masterplan/getmergedetails").then((res) => {
+      getMitemrequirement(params, "masterplan/getmergedetails").then((res) => {
         if (res.data.success) {
           var _data = [];
           let dataSource = [];

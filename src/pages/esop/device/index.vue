@@ -335,31 +335,31 @@ export default {
     },
     //获取生产工厂
     getEnterList() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getSopDocument(parmas, "getplant").then((res) => {
+      getSopDocument(params, "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
       });
     },
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantid,
       };
-      getSopDocument(parmas, "getworkcenter").then((res) => {
+      getSopDocument(params, "getworkcenter").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
     getLineList() {
-      let parmas = {
+      let params = {
         plantid: this.plantid,
         workshopid: this.workshopId,
       };
-      getSopDocument(parmas, "getline").then((res) => {
+      getSopDocument(params, "getline").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
@@ -368,11 +368,11 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getSopDevice(parmas, "get").then((res) => {
+      getSopDevice(params, "get").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -404,7 +404,7 @@ export default {
         }
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             equipmentcode: values.equipmentcode,
@@ -416,7 +416,7 @@ export default {
             enable: values.enable,
             status: values.status,
           };
-          getSopDevice(parmas, "get").then((res) => {
+          getSopDevice(params, "get").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -468,8 +468,8 @@ export default {
     },
     //单个删除
     useDelete(item) {
-      let parmas = [item.EquipmentId, null];
-      setSopDevice(parmas, "delete").then((res) => {
+      let params = [item.EquipmentId, null];
+      setSopDevice(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();

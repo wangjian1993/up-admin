@@ -370,12 +370,12 @@ export default {
           // console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.searcValue,
           };
-          getInstitutionList(parmas).then((res) => {
+          getInstitutionList(params).then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -389,11 +389,11 @@ export default {
     },
     //获取机构类型列表
     getInstitutionList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getInstitutionList(parmas).then((res) => {
+      getInstitutionList(params).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -487,9 +487,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.EnterTypeId);
-      enterTypeAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.EnterTypeId);
+      enterTypeAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getInstitutionList();

@@ -4,7 +4,7 @@
  * @LastEditTime: 2021-10-30 09:16:45
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/utils/BomParmas.js
+ * @FilePath: /up-admin/src/utils/BomParams.js
  */
 //生效状态
 export function stateType(type) {

@@ -270,19 +270,19 @@ export default {
           this.getEnterTree();
         }
       });
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 50,
       };
       //机构列表获取
-      getInstitutionList(parmas).then((res) => {
+      getInstitutionList(params).then((res) => {
         if (res.data.success) {
           this.enterTypeList = res.data.data.list;
           this.getEnterList(this.enterTypeList[0].EnterTypeCode);
         }
       });
       //用户类型获取
-      getUserTypeList(parmas).then((res) => {
+      getUserTypeList(params).then((res) => {
         if (res.data.success) {
           this.userTypeData = res.data.data.list;
           this.defaultUserTypeId = res.data.data.list[0].UserTypeId;
@@ -290,7 +290,7 @@ export default {
         }
       });
       //应用类型获取
-      getAppTypeList(parmas).then((res) => {
+      getAppTypeList(params).then((res) => {
         if (res.data.success) {
           this.appTypeData = res.data.data.list;
           this.defaultAppTypeId = res.data.data.list[0].AppTypeId;
@@ -301,12 +301,12 @@ export default {
     },
     //获取机构列表
     getEnterList(id) {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 50,
         entertype: id,
       };
-      getEnterList(parmas).then((res) => {
+      getEnterList(params).then((res) => {
         if (res.data.success) {
           this.enterList = res.data.data.list;
         }
@@ -315,11 +315,11 @@ export default {
     //获取机构树形结构
     getEnterTree() {
       this.enterTreeData = [];
-      let parmas = {
+      let params = {
         type: this.defaultEnterType,
         typeid: this.defaultEnterTypeId,
       };
-      getEnterOrgTree(parmas).then((res) => {
+      getEnterOrgTree(params).then((res) => {
         if (res.data.success) {
           this.enterTreeData = res.data.data;
           //没有机构
@@ -346,12 +346,12 @@ export default {
     //获取用户列表
     getPermissionUser() {
       this.userLoading = true;
-      let parmas = {
+      let params = {
         enterpriseid: this.enterid,
         orgid: this.orgId,
         usertypeid: this.userTypeId,
       };
-      getPermissionUser(parmas).then((res) => {
+      getPermissionUser(params).then((res) => {
         if (res.data.success) {
           this.userTreeData = res.data.data;
           this.userLoading = false;
@@ -363,13 +363,13 @@ export default {
       this.expandedKeys = [];
       this.treeArray = [];
       this.treeJ = 0;
-      let parmas = {
+      let params = {
         enterid: this.userId != "" ? "" : this.enterid,
         orgid: this.userId != "" ? "" : this.orgId,
         userid: this.userId,
         apptypeid: this.appTypeId,
       };
-      getAppMdules(parmas).then((res) => {
+      getAppMdules(params).then((res) => {
         if (res.data.success) {
           if (res.data.data.length > 0) {
             this.appTreeData = res.data.data;
@@ -382,10 +382,10 @@ export default {
     },
     //获取快码
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "OPERATORS_CODE",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.parmaData = res.data.data;
         }
@@ -418,12 +418,12 @@ export default {
     },
     //获取权限列表
     getPermissionList() {
-      let parmas = {
+      let params = {
         moduleid: this.moduleid,
         userid: this.userId,
         orgid: this.userId != "" ? "" : this.orgId,
       };
-      getPermissionList(parmas).then((res) => {
+      getPermissionList(params).then((res) => {
         if (res.data.success) {
           this.permissionList = res.data.data;
         }
@@ -523,7 +523,7 @@ export default {
     },
     //确认按钮
     handleOk() {
-      let parmas = {
+      let params = {
         EnterTypeId: this.form.EnterTypeId,
         EnterId: this.form.EnterId,
         OrgId: this.userId != "" ? "" : this.orgId,
@@ -531,7 +531,7 @@ export default {
         Compartor: this.form.Compartor,
         ModuleId: this.moduleid,
       };
-      setPermission(parmas, "add").then((res) => {
+      setPermission(params, "add").then((res) => {
         if (res.data.success) {
           this.$message.success("添加成功!");
           this.getPermissionList();
@@ -580,13 +580,13 @@ export default {
           });
         }
       });
-      let parmas = {
+      let params = {
         ModuleList: resArray,
         UserId: this.userId,
         EnterId: this.userId != "" ? "" : this.enterid,
         OrgId: this.userId != "" ? "" : this.orgId,
       };
-      setPermission(parmas, "setpermission").then((res) => {
+      setPermission(params, "setpermission").then((res) => {
         if (res.data.success) {
           this.$message.success("设置成功!");
           this.ModuleList = [];

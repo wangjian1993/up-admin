@@ -182,10 +182,10 @@ export default {
       this.getLineList();
     },
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getDailyPlanAction(parmas, "getlistbytypecode").then((res) => {
+      getDailyPlanAction(params, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -194,10 +194,10 @@ export default {
     },
     //获取车间
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getWorkshopList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
@@ -205,11 +205,11 @@ export default {
     },
     //获取产线
     getLineList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopId: this.workshopId,
       };
-      getLineList(parmas).then((res) => {
+      getLineList(params).then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
@@ -228,11 +228,11 @@ export default {
       // pagination.total = data.data.recordsTotal;
       // this.pagination = pagination;
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getPreStartWorkApi(parmas, "v2/getall").then((res) => {
+      getPreStartWorkApi(params, "v2/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -268,14 +268,14 @@ export default {
           //   var startdate = rangeValue[0].format("YYYY-MM-DD");
           //   var enddate = rangeValue[1].format("YYYY-MM-DD");
           // }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             salesno: values.salesno,
             mocode: values.mocode,
           };
-          getPreStartWorkApi(parmas, "v2/getall").then((res) => {
+          getPreStartWorkApi(params, "v2/getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -291,11 +291,11 @@ export default {
     },
     exportExcel() {
       this.isExportLod = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
       };
-      getPreStartWorkApi(parmas, "getall").then((res) => {
+      getPreStartWorkApi(params, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

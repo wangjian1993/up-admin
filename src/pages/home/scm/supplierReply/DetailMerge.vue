@@ -211,11 +211,11 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getSupplierAction(parmas, "reply/getmergedetails").then((res) => {
+      getSupplierAction(params, "reply/getmergedetails").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -274,7 +274,7 @@ export default {
           if (this.week != "") {
             var w = this.week;
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -285,7 +285,7 @@ export default {
             startdate: begindt,
             enddate: enddt,
           };
-          getSupplierAction(parmas, "reply/getmergedetails").then((res) => {
+          getSupplierAction(params, "reply/getmergedetails").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               if (this.data.length > 0) {
@@ -318,12 +318,12 @@ export default {
     handleExcel() {
       this.isExportLod = true;
       let inputData = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         batchno: inputData.batchno,
       };
-      getSupplierAction(parmas, "reply/getmergedetails").then((res) => {
+      getSupplierAction(params, "reply/getmergedetails").then((res) => {
         if (res.data.success) {
           var _data = [];
           let dataSource = [];

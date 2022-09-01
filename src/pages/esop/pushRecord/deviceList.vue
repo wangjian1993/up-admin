@@ -218,11 +218,11 @@ export default {
       this.isPreview = false;
     },
     getSopDevice() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getSopDevice(parmas, "get").then((res) => {
+      getSopDevice(params, "get").then((res) => {
         if (res.data.success) {
           this.deviceList = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -265,31 +265,31 @@ export default {
     },
     //获取生产工厂
     getEnterList() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getSopDocument(parmas, "getplant").then((res) => {
+      getSopDocument(params, "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
       });
     },
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantid,
       };
-      getSopDocument(parmas, "getworkcenter").then((res) => {
+      getSopDocument(params, "getworkcenter").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
     getLineList() {
-      let parmas = {
+      let params = {
         plantid: this.plantid,
         workshopid: this.workshopId,
       };
-      getSopDocument(parmas, "getline").then((res) => {
+      getSopDocument(params, "getline").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
@@ -308,7 +308,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             equipmentcode: values.equipmentcode,
@@ -320,7 +320,7 @@ export default {
             enable: values.enable,
             status: values.status,
           };
-          getSopDevice(parmas, "get").then((res) => {
+          getSopDevice(params, "get").then((res) => {
             if (res.data.success) {
               this.deviceList = res.data.data.list;
               const pagination = { ...this.pagination };

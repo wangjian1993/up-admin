@@ -392,7 +392,7 @@ const columns1 = [
 ];
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
-import { feedSystem, modelType, stateType, variationType } from "@/utils/BomParmas.js";
+import { feedSystem, modelType, stateType, variationType } from "@/utils/BomParams.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
   props: ["info"],
@@ -466,12 +466,12 @@ export default {
     },
     getList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         ecnchangeorder: this.info.DOC_NO,
       };
-      getERPReportAction(parmas, "getbomchangeinfo").then((res) => {
+      getERPReportAction(params, "getbomchangeinfo").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -488,13 +488,13 @@ export default {
     },
     getDateil() {
       this.dateilLoading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         ecnid: this.dateil.ECN_ID,
         ecndid: this.dateil.ECN_D_ID,
       };
-      getERPReportAction(parmas, "getbomchangedetailinfo").then((res) => {
+      getERPReportAction(params, "getbomchangedetailinfo").then((res) => {
         if (res.data.success) {
           this.detailData = res.data.data.list;
           const pagination = { ...this.pagination };

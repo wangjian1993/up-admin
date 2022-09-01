@@ -356,7 +356,7 @@ export default {
   methods: {
     splitData,
     save(item) {
-      let parmas = {
+      let params = {
         PlantCode: item.PlantCode,
         OrderNo: item.OrderNo,
         MitemCode: item.MitemCode,
@@ -366,7 +366,7 @@ export default {
         ReturnQty: item.ReturnQty,
         ScrapQty: item.ScrapQty,
       };
-      setQualityAction(parmas, "saved").then((res) => {
+      setQualityAction(params, "saved").then((res) => {
         if (res.data.success) {
           this.$message.success("保存成功!");
           this.getListAll();
@@ -376,7 +376,7 @@ export default {
     },
     check(item) {
       console.log(item);
-      let parmas = {
+      let params = {
         PlantCode: item.PlantCode,
         OrderNo: item.OrderNo,
         MitemCode: item.MitemCode,
@@ -386,7 +386,7 @@ export default {
         ReturnQty: item.ReturnQty,
         ScrapQty: item.ScrapQty,
       };
-      setQualityAction(parmas, "approved").then((res) => {
+      setQualityAction(params, "approved").then((res) => {
         if (res.data.success) {
           this.$message.success("保存成功!");
           this.getListAll();
@@ -404,9 +404,9 @@ export default {
       this.selectedRowKeys.forEach((item) => {
         this.batchData.push(this.dataSource[item]);
       });
-      let parmas = [];
+      let params = [];
       this.batchData.forEach((item) => {
-        parmas.push({
+        params.push({
           PlantCode: item.PlantCode,
           OrderNo: item.OrderNo,
           MitemCode: item.MitemCode,
@@ -417,7 +417,7 @@ export default {
           ScrapQty: item.ScrapQty || 0,
         });
       });
-      setQualityAction(parmas, "approvedmultiple").then((res) => {
+      setQualityAction(params, "approvedmultiple").then((res) => {
         if (res.data.success) {
           this.$message.success("审核成功!");
           this.getListAll();
@@ -432,20 +432,20 @@ export default {
       this.getStatistic();
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getQualityAction(parmas1, "getenterlist").then((res) => {
+      getQualityAction(params1, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
       });
     },
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "PURCHASE_QT_STATUS",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.stateList = res.data.data;
         }
@@ -486,13 +486,13 @@ export default {
     getListAll() {
       this.loading = true;
       this.statisticType = "";
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         istoday: "",
         isapproaved: "",
       };
-      getQualityAction(parmas, "getall").then((res) => {
+      getQualityAction(params, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -514,7 +514,7 @@ export default {
       this.today = istoday;
       this.approaved = isapproaved;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         istoday: istoday,
@@ -525,7 +525,7 @@ export default {
         mitemname: values.mitemname,
         status: values.status,
       };
-      getQualityAction(parmas, "getall").then((res) => {
+      getQualityAction(params, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -568,7 +568,7 @@ export default {
           this.loading = true;
           this.dataSourcedata = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -579,7 +579,7 @@ export default {
             istoday: "",
             isapproaved: "",
           };
-          getQualityAction(parmas, "getall").then((res) => {
+          getQualityAction(params, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

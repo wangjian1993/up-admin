@@ -30,8 +30,8 @@ export async function getBomBaseConfig() {
  * @returns {Promise<AxiosResponse<T>>}
  */
 export async function setBomBaseConfig(parma) {
-	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
+	let params = qs.stringify(parma)
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, params, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
@@ -43,8 +43,8 @@ export async function setBomBaseConfig(parma) {
  * @returns {Promise<AxiosResponse<T>>}
  */
 export async function setVersionsConfig(parma) {
-	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
+	let params = qs.stringify(parma)
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, params, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
@@ -56,8 +56,8 @@ export async function setVersionsConfig(parma) {
  * @returns {Promise<AxiosResponse<T>>}
  */
 export async function getVersionsManage(parma) {
-	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
+	let params = qs.stringify(parma)
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, params, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
@@ -69,8 +69,8 @@ export async function getVersionsManage(parma) {
  * @returns {Promise<AxiosResponse<T>>}
  */
 export async function setVersionsAudit(parma) {
-	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
+	let params = qs.stringify(parma)
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, params, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
@@ -82,16 +82,16 @@ export async function setVersionsAudit(parma) {
  * @returns {Promise<AxiosResponse<T>>}
  */
 export async function getVersionsDetail(parma) {
-	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
+	let params = qs.stringify(parma)
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, params, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
 	})
 }
 export async function getCompanyBomCost(parma) {
-	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
+	let params = qs.stringify(parma)
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, params, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
@@ -103,8 +103,8 @@ export async function getCompanyBomCost(parma) {
  * @return {*}
  */
 export async function getBomSerchList(parma) {
-	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}/e10_api.php`, METHOD.POST, parmas, {
+	let params = qs.stringify(parma)
+	return request(`${MB_CLOUD}/e10_api.php`, METHOD.POST, params, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}
@@ -116,8 +116,8 @@ export async function getBomSerchList(parma) {
  * @return {*}
  */
 export async function bomForm(parma) {
-	let parmas = qs.stringify(parma)
-	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, parmas, {
+	let params = qs.stringify(parma)
+	return request(`${MB_CLOUD}/bom_cost_api.php`, METHOD.POST, params, {
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
 		}

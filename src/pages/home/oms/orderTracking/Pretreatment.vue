@@ -273,7 +273,7 @@ export default {
             var startdate = rangeValue[0].format("YYYY-MM-DD");
             var enddate = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             companyid: values.companyid,
@@ -281,7 +281,7 @@ export default {
             startdate: startdate,
             enddate: enddate,
           };
-          getPreporcessApi(parmas, "getall").then((res) => {
+          getPreporcessApi(params, "getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -295,11 +295,11 @@ export default {
     },
     //获取机构类型列表
     getListAll() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getPreporcessApi(parmas, "getall").then((res) => {
+      getPreporcessApi(params, "getall").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -360,9 +360,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.Id);
-      setPreporcessApi(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.Id);
+      setPreporcessApi(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();

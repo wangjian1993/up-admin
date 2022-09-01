@@ -258,12 +258,12 @@ export default {
     },
     //获取组织维度数据
     getList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         dimsensionId: this.classItem.OrgDimensionId,
       };
-      getOrgLevelList(parmas).then((res) => {
+      getOrgLevelList(params).then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -297,13 +297,13 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             dimsensionId: this.classItem.OrgDimensionId,
             keyword: values.searcValue,
           };
-          getOrgLevelList(parmas).then((res) => {
+          getOrgLevelList(params).then((res) => {
             if (res.data.success) {
               this.list = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -349,7 +349,7 @@ export default {
         if (valid) {
           //编辑
           if (this.isEdit) {
-            let parmas = {
+            let params = {
               OrgLevelCode: this.form.OrgLevelCode,
               OrgLevelName: this.form.OrgLevelName,
               Enable: this.form.Enable,
@@ -357,7 +357,7 @@ export default {
               OrgLevelId: this.form.OrgLevelId,
               EnterId: "",
             };
-            orgLevelAction(parmas, "update").then((res) => {
+            orgLevelAction(params, "update").then((res) => {
               if (res.data.success) {
                 this.$message.success("编辑成功!");
                 this.defaultForm();
@@ -367,7 +367,7 @@ export default {
             });
           } else {
             //添加
-            let parmas = {
+            let params = {
               OrgLevelCode: this.form.OrgLevelCode,
               OrgLevelName: this.form.OrgLevelName,
               Enable: this.form.Enable,
@@ -375,7 +375,7 @@ export default {
               OrgDimensionId: this.classItem.OrgDimensionId,
               EnterId: "",
             };
-            orgLevelAction(parmas, "add").then((res) => {
+            orgLevelAction(params, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");
                 this.getList();
@@ -412,9 +412,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.OrgLevelId);
-      orgLevelAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.OrgLevelId);
+      orgLevelAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getList();

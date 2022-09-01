@@ -144,11 +144,11 @@ export default {
       this.isPreview = false;
     },
     getDocsFile() {
-      let parmas = {
+      let params = {
         recordid: this.documentItem.RecordId,
         equipmentid: this.deviceItem.EquipmentId,
       };
-      getSopDocument(parmas, "record/getfile").then((res) => {
+      getSopDocument(params, "record/getfile").then((res) => {
         if (res.data.success) {
           this.docsFile = res.data.data.list;
         }

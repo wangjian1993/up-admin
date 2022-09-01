@@ -4,7 +4,7 @@
  * @LastEditTime: 2021-11-16 13:55:25
  * @LastEditors: max
  * @Description: 报价参数配置
- * @FilePath: /up-admin/src/pages/home/quote/config/parmas/Parmas.vue
+ * @FilePath: /up-admin/src/pages/home/quote/config/params/params.vue
 -->
 <template>
   <!-- 搜索 -->
@@ -354,20 +354,20 @@ export default {
   methods: {
     //获取需求公司
     getDemandEnter() {
-      let parmas = {
+      let params = {
         entertypecode: "COMPANY",
       };
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getDemandEnter(parmas).then((res) => {
+      getDemandEnter(params).then((res) => {
         if (res.data.success) {
           this.enterList = res.data.data;
           this.enterpriseid = this.enterList[0].EnterId;
           this.searchForm.setFieldsValue({
             enterpriseid: this.enterList[0].EnterId,
           });
-          getDemandEnter(parmas1).then((res) => {
+          getDemandEnter(params1).then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -414,13 +414,13 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
             plantid: values.plantid,
           };
-          getCostList(parmas).then((res) => {
+          getCostList(params).then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -437,13 +437,13 @@ export default {
     //获取机构类型列表
     getCostList() {
       this.loading =true
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterpriseid,
         plantid: this.plantid,
       };
-      getCostList(parmas).then((res) => {
+      getCostList(params).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -528,14 +528,14 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          let parmas =[]
+          let params =[]
           self.selectedRowKeys.forEach((item) => {
             let obj = {
               Id: item,
             };
-            parmas.push(obj);
+            params.push(obj);
           });
-          costAction(parmas, "deletecostbase").then((res) => {
+          costAction(params, "deletecostbase").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -548,10 +548,10 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = {
+      let params = {
         "Id":item.Id
       };
-      costAction(parmas, "deletecostbase").then((res) => {
+      costAction(params, "deletecostbase").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getCostList();

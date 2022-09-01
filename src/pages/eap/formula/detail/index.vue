@@ -207,10 +207,10 @@ export default {
     //重置搜索
     getParamsData() {
       this.paramsList.forEach((item) => {
-        let parmas = {
+        let params = {
           groupcode: item,
         };
-        getParamData(parmas).then((res) => {
+        getParamData(params).then((res) => {
           if (res.data.success) {
             this.paramsItem[item] = res.data.data;
           }
@@ -259,11 +259,11 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getFormulaAction(parmas, "getdetailall").then((res) => {
+      getFormulaAction(params, "getdetailall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -295,7 +295,7 @@ export default {
         if (!err) {
           console.log("搜索=====", this.formulacode);
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -305,7 +305,7 @@ export default {
             formulacode: this.formulacode,
             procode: values.procode,
           };
-          getFormulaAction(parmas, "getdetailall").then((res) => {
+          getFormulaAction(params, "getdetailall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -338,9 +338,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.FormulaId);
-      setFormulaAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.FormulaId);
+      setFormulaAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
@@ -350,7 +350,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         plantid: values.plantid,
@@ -360,7 +360,7 @@ export default {
         formulacode: this.formulacode,
         procode: values.procode,
       };
-      getFormulaAction(parmas, "getdetailall").then((res) => {
+      getFormulaAction(params, "getdetailall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

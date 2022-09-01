@@ -212,13 +212,13 @@ export default {
       this.getDeviceList();
     },
     getDeviceList(index) {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workcenterid: this.workshopId,
         lineid: this.lineId,
         documentid: this.selectDocsList.DocumentId,
       };
-      getDeviceList(parmas, "getequipment").then((res) => {
+      getDeviceList(params, "getequipment").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           let array = [];
@@ -243,21 +243,21 @@ export default {
       });
     },
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
       };
-      getSopDocument(parmas, "getworkcenter").then((res) => {
+      getSopDocument(params, "getworkcenter").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
     getLineList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopid: this.workshopId,
       };
-      getSopDocument(parmas, "getline").then((res) => {
+      getSopDocument(params, "getline").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
           this.lineList.forEach((line, index) => {

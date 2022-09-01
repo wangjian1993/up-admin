@@ -286,7 +286,7 @@ export default {
     getListAll() {
       console.log("batchid", this.batchid);
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         batchno: this.batchid || "",
@@ -298,7 +298,7 @@ export default {
           });
         });
       }
-      getMitemrequirement(parmas, "masterplan/getdetails").then((res) => {
+      getMitemrequirement(params, "masterplan/getdetails").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -336,7 +336,7 @@ export default {
           if (this.week != "") {
             var w = this.week;
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -347,7 +347,7 @@ export default {
             planstatus: values.planstatus,
             batchno: values.batchno,
           };
-          getMitemrequirement(parmas, "masterplan/getdetails").then((res) => {
+          getMitemrequirement(params, "masterplan/getdetails").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -402,9 +402,9 @@ export default {
     },
     //单个删除
     actionBnt(item, type) {
-      let parmas = [];
-      parmas.push(item.Id);
-      mitemrequirementAction(parmas, type).then((res) => {
+      let params = [];
+      params.push(item.Id);
+      mitemrequirementAction(params, type).then((res) => {
         if (res.data.success) {
           if (type == "approved") {
             this.$message.success("审批成功!");

@@ -296,11 +296,11 @@ export default {
     },
     //获取机构类型
     getInstitutionList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 100,
       };
-      getInstitutionList(parmas).then((res) => {
+      getInstitutionList(params).then((res) => {
         if (res.data.success) {
           this.enterTypeList = res.data.data.list;
           this.enterTypeVale = this.enterTypeList[0].EnterTypeId;
@@ -311,10 +311,10 @@ export default {
     },
     //获取机构树形数据
     getTreeList() {
-      let parmas = {
+      let params = {
         entertypeid: this.entertypeid,
       };
-      getEnterTree(parmas).then((res) => {
+      getEnterTree(params).then((res) => {
         if (res.data.success) {
           this.treeList = res.data.data;
           this.enterValue.push(this.treeList[0].Id);
@@ -325,11 +325,11 @@ export default {
     },
     //获取机构类型列表
     getOrganizationList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 100,
       };
-      getOrganizationList(parmas).then((res) => {
+      getOrganizationList(params).then((res) => {
         if (res.data.success) {
           this.orgList = res.data.data.list;
           this.leverValue = this.orgList[0].OrgDimensionId;
@@ -341,12 +341,12 @@ export default {
     },
     //获取组织等级
     getList(id) {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 100,
         dimsensionId: id,
       };
-      getOrgLevelList(parmas).then((res) => {
+      getOrgLevelList(params).then((res) => {
         if (res.data.success) {
           this.LevelList = res.data.data.list;
         }
@@ -354,13 +354,13 @@ export default {
     },
     //获取组织列表
     getOrginfo() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         dimsensionId: this.dimsensionId,
         enterid: this.enterid,
       };
-      getOrginfo(parmas).then((res) => {
+      getOrginfo(params).then((res) => {
         if (res.data.success) {
           this.tabData = res.data.data.list;
           if(this.tabData.length < 1){
@@ -466,9 +466,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.OrgId);
-      orginfoAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.OrgId);
+      orginfoAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getOrginfo();

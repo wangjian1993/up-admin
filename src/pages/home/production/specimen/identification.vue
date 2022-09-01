@@ -167,11 +167,11 @@ export default {
       this.selectedRowKeys = selectedRowKeys;
     },
     getPrintList() {
-      let parmas = [];
+      let params = [];
       this.orderList.map((item) => {
-        parmas.push(item.Id);
+        params.push(item.Id);
       });
-      setSamplePrintInfo(parmas, "getmitemprint").then((res) => {
+      setSamplePrintInfo(params, "getmitemprint").then((res) => {
         if (res.data.success) {
           this.data = res.data.data;
           this.pagination.total = this.data.length;

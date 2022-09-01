@@ -176,10 +176,10 @@ export default {
       this.getLineList();
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getDailyReport(parmas1, "getplantlist").then((res) => {
+      getDailyReport(params1, "getplantlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -188,10 +188,10 @@ export default {
     },
     //获取车间
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
       };
-      getDailyReport(parmas, "getworkshoplist").then((res) => {
+      getDailyReport(params, "getworkshoplist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
@@ -199,20 +199,20 @@ export default {
     },
     //获取产线
     getLineList() {
-      let parmas = {
+      let params = {
         workshop: this.workshopId,
       };
-      getDailyReport(parmas, "getlinelist").then((res) => {
+      getDailyReport(params, "getlinelist").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
       });
     },
     getProcessList() {
-      let parmas = {
+      let params = {
         process: "",
       };
-      getDailyReport(parmas, "getprocess").then((res) => {
+      getDailyReport(params, "getprocess").then((res) => {
         if (res.data.success) {
           this.processList = res.data.data;
         }
@@ -225,14 +225,14 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getDailyReport(parmas, "daily/getall").then((res) => {
+      getDailyReport(params, "daily/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
-          this.addListParmas();
+          this.addListparams();
           const pagination = { ...this.pagination };
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
@@ -243,7 +243,7 @@ export default {
         }
       });
     },
-    addListParmas() {
+    addListparams() {
       this.dataSource.map((item) => {
         item.material = "";
         item.production_remarks = "";
@@ -277,7 +277,7 @@ export default {
             var begindate = rangeValue[0].format("YYYY-MM-DD");
             var enddate = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -291,7 +291,7 @@ export default {
             proname: values.proname,
             process: values.process,
           };
-          getDailyReport(parmas, "daily/gettotal").then((res) => {
+          getDailyReport(params, "daily/gettotal").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -314,7 +314,7 @@ export default {
         var begindate = rangeValue[0].format("YYYY-MM-DD");
         var enddate = rangeValue[1].format("YYYY-MM-DD");
       }
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         plantid: values.plantid,
@@ -328,7 +328,7 @@ export default {
         proname: values.proname,
         process: values.process,
       };
-      getDailyReport(parmas, "daily/gettotal").then((res) => {
+      getDailyReport(params, "daily/gettotal").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

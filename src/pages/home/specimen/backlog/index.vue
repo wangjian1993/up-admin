@@ -273,13 +273,13 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterId,
         usercode: localStorage.getItem("account"),
       };
-      getDepartmentApi(parmas, "getregisterpersonallist").then((res) => {
+      getDepartmentApi(params, "getregisterpersonallist").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -310,13 +310,13 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
             usercode: localStorage.getItem("account"),
           };
-          getDepartmentApi(parmas, "getregisterpersonallist").then((res) => {
+          getDepartmentApi(params, "getregisterpersonallist").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -382,14 +382,14 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = {
+      let params = {
         RegisterList: [
           {
             RegisterId: item.RegisterId, //部门ID
           },
         ],
       };
-      setDepartmentApi(parmas, "deleteregisterpersonal").then((res) => {
+      setDepartmentApi(params, "deleteregisterpersonal").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();

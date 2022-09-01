@@ -274,11 +274,11 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getDailyPlan(parmas, "getall").then((res) => {
+      getDailyPlan(params, "getall").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -293,31 +293,31 @@ export default {
     },
     //获取需求工厂
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getDailyPlan(parmas, "getlistbytypecode").then((res) => {
+      getDailyPlan(params, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
       });
     },
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getWorkshopList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
     getLineList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopId: this.workshopId,
       };
-      getLineList(parmas).then((res) => {
+      getLineList(params).then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
@@ -378,7 +378,7 @@ export default {
             var begindt = this.formatDateTime(values["range-time-picker"][0]);
             var enddt = this.formatDateTime(values["range-time-picker"][1]);
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -389,7 +389,7 @@ export default {
             startdate: begindt,
             enddate: enddt,
           };
-          getDailyPlan(parmas, "getall").then((res) => {
+          getDailyPlan(params, "getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -445,9 +445,9 @@ export default {
     //单个删除
     actionBnt(item, type) {
       console.log(item);
-      let parmas = [];
-      parmas.push(item.Id);
-      dailyPlanAction(parmas, type).then((res) => {
+      let params = [];
+      params.push(item.Id);
+      dailyPlanAction(params, type).then((res) => {
         if (res.data.success) {
           if (type == "approved") {
             this.$message.success("审批成功!");

@@ -229,7 +229,7 @@
     <div>
       <a-drawer width="700" placement="right" :visible="isDrawer" @close="onClose">
         <a-descriptions title="机构列表详情" :column="2">
-           <a-descriptions-item label="机构logo"><a-avatar shape="square" :size="80" :src="`./${drawerItem.EnterLogo}`"/></a-descriptions-item>
+          <a-descriptions-item label="机构logo"><a-avatar shape="square" :size="80" :src="`./${drawerItem.EnterLogo}`"/></a-descriptions-item>
           <a-descriptions-item label="机构中文名">{{ drawerItem.EnterName }}</a-descriptions-item>
           <a-descriptions-item label="管理员邮箱">{{ drawerItem.EnterEMail }}</a-descriptions-item>
           <a-descriptions-item label="机构英文名">{{ drawerItem.EnterEnName }}</a-descriptions-item>
@@ -332,7 +332,7 @@ const columns = [
     align: "center",
   },
 ];
-import { getEnterList, getInstitutionList, enterAction, uploadFile } from "@/services/admin.js";
+import { getEnterList, getInstitutionList, enterAction, uploadFile, getEnterSingle } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 function getBase64(img, callback) {
@@ -433,6 +433,7 @@ export default {
       scrollY: "",
       isSearch: false,
       imageUrl: "",
+      fileData:[]
     };
   },
   updated() {
@@ -457,12 +458,12 @@ export default {
         console.log(info.file);
         let typeArray = info.file.type.split("/");
         let fileType = typeArray[1].toUpperCase();
-        let parmas = {
+        let params = {
           FileName: info.file.name,
           FileContent: imageUrl,
           FileSuffix: "." + fileType,
         };
-        uploadFile(parmas).then((res) => {
+        uploadFile(params).then((res) => {
           if (res.data.success) {
             this.$message.success("上传成功!");
             this.fileData = res.data.data;
@@ -506,11 +507,11 @@ export default {
     },
     //获取机构类型
     getInstitutionList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 100,
       };
-      getInstitutionList(parmas).then((res) => {
+      getInstitutionList(params).then((res) => {
         if (res.data.success) {
           this.selectList = res.data.data.list;
         }
@@ -551,13 +552,13 @@ export default {
         if (!err) {
           this.dataSource = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             entertype: values.entertype,
             keyword: values.enter,
           };
-          getEnterList(parmas).then((res) => {
+          getEnterList(params).then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -576,11 +577,11 @@ export default {
     },
     //获取机构类型列表
     getEnterList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getEnterList(parmas).then((res) => {
+      getEnterList(params).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -640,25 +641,38 @@ export default {
         this.supSelectList.push(i);
       });
       this.isSuperior = false;
-      this.getInstitutionList();
+      // this.getInstitutionList();
       this.visible = true;
       this.isEdit = true;
       this.title = "编辑机构";
-      this.form = item;
-      this.supSelectList.filter((items, index) => {
-        if (items.EnterId == item.EnterId) {
-          this.supSelectList.splice(index, 1);
+      let params = {
+        id: item.EnterId,
+      };
+      getEnterSingle(params).then((res) => {
+        if (res.data.success) {
+          let list = res.data.data;
+          this.form = list;
+          if (list.EnterLogo != "") {
+            this.imageUrl = "./" + list.EnterLogo;
+          }
+          this.supSelectList.filter((items, index) => {
+            if (items.EnterId == list.EnterId) {
+              this.supSelectList.splice(index, 1);
+            }
+          });
+          if (item.SuperiorEnterId == 0) {
+            this.form.SuperiorEnterId = "顶级";
+          }
         }
       });
-      if (item.SuperiorEnterId == 0) {
-        this.form.SuperiorEnterId = "顶级";
-      }
     },
     //确定按钮
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
+        console.log("valid",valid)
         if (valid) {
           //编辑数据
+          console.log("isEdit",this.isEdit)
           if (this.isEdit) {
             let editForm = {
               EnterId: this.form.EnterId,
@@ -694,6 +708,7 @@ export default {
             });
           } else {
             //添加数据
+            console.log(this.fileData.ResourceId)
             this.form.EnterLogo = this.fileData.ResourceId || "";
             enterAction(this.form, "add").then((res) => {
               if (res.data.success) {
@@ -726,9 +741,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.EnterId);
-      enterAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.EnterId);
+      enterAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getEnterList();

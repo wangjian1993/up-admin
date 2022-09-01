@@ -192,42 +192,42 @@ export default {
     },
     //获取生产工厂
     getEnterList() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getProductionPersonnel(parmas, "getlistbytypecode").then((res) => {
+      getProductionPersonnel(params, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
       });
     },
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantid,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getWorkshopList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
     getLineList() {
-      let parmas = {
+      let params = {
         plantid: this.plantid,
         workshopid: this.workshopId,
       };
-      getLineList(parmas, "getlist").then((res) => {
+      getLineList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
       });
     },
     getCategorysList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: 100,
       };
-      getProductionPersonnel(parmas, "getcategorys").then((res) => {
+      getProductionPersonnel(params, "getcategorys").then((res) => {
         if (res.data.success) {
           this.categorysList = res.data.data.list;
         }
@@ -250,7 +250,7 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -258,7 +258,7 @@ export default {
             line: values.line,
             user: values.user,
           };
-          getProductionPersonnel(parmas, "getall").then((res) => {
+          getProductionPersonnel(params, "getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -275,11 +275,11 @@ export default {
     //获取机构类型列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getProductionPersonnel(parmas, "getall").then((res) => {
+      getProductionPersonnel(params, "getall").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -309,15 +309,15 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          let parmas = [];
+          let params = [];
           self.selectedRowKeys.forEach((item) => {
-            parmas.push({
+            params.push({
               PlantId: self.data[item].PlantId,
               UserCode:  self.data[item].UserCode,
               WorkshopId:  self.data[item].WorkshopId,
             });
           });
-          setProductionPersonnel(parmas, "delete").then((res) => {
+          setProductionPersonnel(params, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -330,13 +330,13 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push({
+      let params = [];
+      params.push({
         UserCode: item.UserCode,
         PlantId: item.PlantId,
         WorkshopId: item.WorkshopId,
       });
-      setProductionPersonnel(parmas, "delete").then((res) => {
+      setProductionPersonnel(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();

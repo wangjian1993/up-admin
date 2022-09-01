@@ -253,10 +253,10 @@ export default {
     },
     //获取需求公司
     getDemandEnter() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getDemandEnter(parmas1).then((res) => {
+      getDemandEnter(params1).then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.searchForm.setFieldsValue({
@@ -288,13 +288,13 @@ export default {
         if (!err) {
           this.costLoading = true;
           this.searchData = values;
-          let parmas = {
+          let params = {
             querysign: this.pageType == 1 ? "ALL" : "SFG",
             itemcode: values.itemcode,
             plantid: values.plantid,
             querytype: this.pageType == 1 ? values.querytype : "",
           };
-          getCostConfig(parmas, "getbommaterialprice").then((res) => {
+          getCostConfig(params, "getbommaterialprice").then((res) => {
             if (res.data.success) {
               this.tableData = res.data.data.ItemInfo.ItemChildList;
               this.costInfo = res.data.data.ItemInfo;

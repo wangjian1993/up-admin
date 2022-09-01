@@ -238,21 +238,21 @@ export default {
     },
     //pmc选择
     getDepartment() {
-      let parmas = {
+      let params = {
         companycode: this.companycode,
       };
-      getOrderApi(parmas, "getdepartments").then((res) => {
+      getOrderApi(params, "getdepartments").then((res) => {
         if (res.data.success) {
           this.departmentList = res.data.data;
         }
       });
     },
     getSalesman() {
-      let parmas = {
+      let params = {
         companycode: this.companycode,
         deptname: this.deptname,
       };
-      getOrderApi(parmas, "getdeptusers").then((res) => {
+      getOrderApi(params, "getdeptusers").then((res) => {
         if (res.data.success) {
           this.salesmanList = res.data.data;
         }
@@ -283,14 +283,14 @@ export default {
       this.isTotalQty = false;
     },
     save(item) {
-      let parmas = {
+      let params = {
         CompanyId: this.cacheallData.company,
         SalesOrderNo: item.SalesOrderNo,
         LineItem: item.LineItem,
         MitemCode: item.MitemCode,
         UpdatePlanShipDate: item.PlanShipDate,
       };
-      setOrderApi(parmas, "update").then((res) => {
+      setOrderApi(params, "update").then((res) => {
         if (res.data.success) {
           this.$message.success("保存成功!");
           this.getPaginationList();
@@ -312,7 +312,7 @@ export default {
     getPaginationList() {
       this.loading = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         company: this.cacheallData.company,
@@ -324,7 +324,7 @@ export default {
         mocode: values.mocode,
         saleno: values.saleno,
       };
-      getOrderApi(parmas, "getcacheall").then((res) => {
+      getOrderApi(params, "getcacheall").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -375,7 +375,7 @@ export default {
           this.cacheallData.department = values.department;
           this.cacheallData.salesuser = values.salesuser;
           this.cacheallData.ismodeficiency = values.ismodeficiency ? "Y" : "N";
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             company: values.company,
@@ -387,7 +387,7 @@ export default {
             mocode: values.mocode,
             saleno: values.saleno,
           };
-          getOrderApi(parmas, "getcacheall").then((res) => {
+          getOrderApi(params, "getcacheall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -414,7 +414,7 @@ export default {
     getExcelList() {
       let values = this.searchForm.getFieldsValue();
       return new Promise((resolve, reject) => {
-        let parmas = {
+        let params = {
           pageindex: this.pagination.current,
           pagesize: 500,
           company: this.cacheallData.company,
@@ -426,7 +426,7 @@ export default {
           mocode: values.mocode,
           saleno: values.saleno,
         };
-        getOrderApi(parmas, "getcacheall").then((res) => {
+        getOrderApi(params, "getcacheall").then((res) => {
           if (res.data.success) {
             let list = res.data.data.list;
             resolve(list);

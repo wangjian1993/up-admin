@@ -355,21 +355,21 @@ export default {
   },
   methods: {
     getDemandEnter() {
-      let parmas = {
+      let params = {
         entertypecode: "COMPANY",
       };
-      let parmas2 = {
+      let params2 = {
         groupcode: "QUOTE_PERMISSION_TYPE",
       };
-      let parmas3 = {
+      let params3 = {
         groupcode: "FEB_QUOTE_PERMISSION",
       };
-      getParamData(parmas2).then((res) => {
+      getParamData(params2).then((res) => {
         if (res.data.success) {
           this.permissionType = res.data.data;
         }
       });
-      getParamData(parmas3).then((res) => {
+      getParamData(params3).then((res) => {
         if (res.data.success) {
           res.data.data.forEach((items) => {
             this.actionList.push({
@@ -379,7 +379,7 @@ export default {
           });
         }
       });
-      getDemandEnter(parmas).then((res) => {
+      getDemandEnter(params).then((res) => {
         if (res.data.success) {
           this.enterList = res.data.data;
           this.enterpriseid = this.enterList[0].EnterId;
@@ -416,12 +416,12 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.searcValue,
           };
-          getQuotePermission(parmas, "getall").then((res) => {
+          getQuotePermission(params, "getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -438,11 +438,11 @@ export default {
     //获取机构类型列表
     getAuthoData() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getQuotePermission(parmas, "getall").then((res) => {
+      getQuotePermission(params, "getall").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -488,8 +488,8 @@ export default {
       this.isEdit = true;
       this.nametags = [];
       this.categorytags = [];
-      let parmas = { id: item.QuotePermissionId };
-      getQuotePermission(parmas, "getsingle").then((res) => {
+      let params = { id: item.QuotePermissionId };
+      getQuotePermission(params, "getsingle").then((res) => {
         if (res.data.success) {
           this.form = res.data.data;
           //获取名称,大类编辑id
@@ -643,9 +643,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.QuotePermissionId);
-      quotePermissionAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.QuotePermissionId);
+      quotePermissionAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getAuthoData();

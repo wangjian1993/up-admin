@@ -184,13 +184,13 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             lineid: values.LineId,
             procode: values.procode,
           };
-          getFormulaAction(parmas, "product/getlist").then((res) => {
+          getFormulaAction(params, "product/getlist").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

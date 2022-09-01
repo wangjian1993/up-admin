@@ -170,10 +170,10 @@ export default {
     getList() {
       this.loading = true;
       console.log(this.batchid);
-      let parmas = {
+      let params = {
         batchid: this.batchid,
       };
-      getMitemrequirement(parmas, "masterplan/geterrmatchs").then((res) => {
+      getMitemrequirement(params, "masterplan/geterrmatchs").then((res) => {
         if (res.data.success) {
           this.list = res.data.data;
           const pagination = { ...this.pagination };
@@ -217,17 +217,17 @@ export default {
       });
     },
     handleOk() {
-      let parmas = [];
+      let params = [];
       this.list.map((items) => {
         if (items.isInput) {
-          parmas.push({
+          params.push({
             Id: items.Id,
             UpdateQty: items.UpdateQty,
             IsDel: items.IsDel ? "Y" : "N",
           });
         }
       });
-      mitemrequirementAction(parmas, "masterplan/errupdate").then((res) => {
+      mitemrequirementAction(params, "masterplan/errupdate").then((res) => {
         if (res.data.success) {
           this.$message.success(`提示批次号【${this.BatchNo}】异常匹配信息处理成功!`);
           this.$emit("succeed");

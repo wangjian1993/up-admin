@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-09-07 09:01:37
+ * @LastEditTime: 2022-08-31 09:42:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/router/async/config.async.js
@@ -14,6 +14,8 @@ const routesConfig = [
   'login',
   'root',
   'none',
+  'supplierLogin',
+  'supplierRegister',
   {
     router: 'exp404',
     path: '*',

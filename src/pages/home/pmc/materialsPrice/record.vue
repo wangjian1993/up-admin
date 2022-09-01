@@ -258,7 +258,7 @@ export default {
             var DateApproveEnd = rangeValue[1].format("YYYY-MM-DD");
           }
           this.loading = true;
-          let parmas = {
+          let params = {
             PageIndex: this.pagination.current,
             PageSize: this.pagination.pageSize,
             SupplierCode: values.suppliercode.toString(),
@@ -277,7 +277,7 @@ export default {
             DateApproveStart: DateApproveStart || "", //审核时间Start
             DateApproveEnd: DateApproveEnd || "", //审核时间End
           };
-          getMaterialsPrice(parmas, "getsubmitrecord").then((res) => {
+          getMaterialsPrice(params, "getsubmitrecord").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

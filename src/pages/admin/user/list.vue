@@ -176,7 +176,7 @@
           </a-card>
         </a-col>
       </a-row>
-      <add-user v-if="addModal" :editItem="editItem" :modalType="modalType" @cloneModal="cloneModal" @succeed="succeed" :enterValue="enterId"></add-user>
+      <add-user v-if="addModal" :editItem="editItem" :modalType="modalType" @closeModal="closeModal" @succeed="succeed" :enterValue="enterId"></add-user>
     </a-spin>
   </div>
 </template>
@@ -310,11 +310,11 @@ export default {
   },
   methods: {
     getInstitutionList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 100,
       };
-      getInstitutionList(parmas).then((res) => {
+      getInstitutionList(params).then((res) => {
         if (res.data.success) {
           this.enterTypeList = res.data.data.list;
           this.enterTypeVale = this.enterTypeList[0].EnterTypeId;
@@ -325,11 +325,11 @@ export default {
     },
     //获取用户类型
     getUsetType() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 50,
       };
-      getUserTypeList(parmas).then((res) => {
+      getUserTypeList(params).then((res) => {
         if (res.data.success) {
           this.usetTypeList = res.data.data.list;
         }
@@ -349,10 +349,10 @@ export default {
       this.getTreeList();
     },
     getTreeList() {
-      let parmas = {
+      let params = {
         entertypeid: this.entertypeid,
       };
-      getEnterTree(parmas).then((res) => {
+      getEnterTree(params).then((res) => {
         if (res.data.success) {
           this.treeList = res.data.data;
           if (this.treeList.length == 0) {
@@ -397,7 +397,7 @@ export default {
           console.log(values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.key,
@@ -405,7 +405,7 @@ export default {
             enable: values.enable,
             UserTypeId: values.UserTypeId,
           };
-          getUserList(parmas).then((res) => {
+          getUserList(params).then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -419,12 +419,12 @@ export default {
     },
     //获取机构类型列表
     getUserList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterid: this.enterId,
       };
-      getUserList(parmas).then((res) => {
+      getUserList(params).then((res) => {
         if (res.data.success) {
           this.tableLoading = false;
           this.data = res.data.data.list;
@@ -457,7 +457,7 @@ export default {
       this.addModal = true;
       this.modalType = "add";
     },
-    cloneModal() {
+    closeModal() {
       this.addModal = false;
     },
     //关闭对话框
@@ -519,9 +519,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.UserId);
-      userAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.UserId);
+      userAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getUserList();

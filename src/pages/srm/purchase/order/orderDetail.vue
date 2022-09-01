@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-11 17:54:28
+ * @LastEditTime: 2022-08-30 14:21:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/order/orderDetail.vue
@@ -24,7 +24,7 @@
             >
             <a-col :md="6" :sm="24">
               <a-form-item label="" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 300px" placeholder="请输入搜索内容" v-decorator="['keyword']" />
+                <a-input style="width: 300px" placeholder="请输入供应商,采购单号,产品,采购员" v-decorator="['keyword']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -226,7 +226,7 @@ export default {
             var startdeliverydatetime = rangeValue[0].format("YYYY-MM-DD");
             var enddeliverydatetime = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.keyword,
@@ -243,7 +243,7 @@ export default {
             receiptstatus: values.receiptstatus,
             purchasetype: values.purchasetype,
           };
-          getPurchaseOrders(parmas, "getdetail").then((res) => {
+          getPurchaseOrders(params, "getdetail").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -260,7 +260,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         typeid: values.typeid,
@@ -269,7 +269,7 @@ export default {
         plccode: values.plccode,
         plcname: values.plcname,
       };
-      getPurchaseOrders(parmas, "get").then((res) => {
+      getPurchaseOrders(params, "get").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

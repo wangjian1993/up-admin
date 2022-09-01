@@ -230,12 +230,12 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterId,
       };
-      getDepartmentApi(parmas, "getflowlist").then((res) => {
+      getDepartmentApi(params, "getflowlist").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           // this.dataSource.forEach((item) => {
@@ -271,12 +271,12 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
           };
-          getDepartmentApi(parmas, "getflowlist").then((res) => {
+          getDepartmentApi(params, "getflowlist").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -317,14 +317,14 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = {
+      let params = {
         FlowList: [
           {
             FlowId: item.FlowId, //部门ID
           },
         ],
       };
-      setDepartmentApi(parmas, "deleteflow").then((res) => {
+      setDepartmentApi(params, "deleteflow").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();

@@ -197,11 +197,11 @@ export default {
   methods: {
     //获取机构类型
     getInstitutionList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 100,
       };
-      getInstitutionList(parmas).then((res) => {
+      getInstitutionList(params).then((res) => {
         if (res.data.success) {
           this.selectList = res.data.data.list;
         }

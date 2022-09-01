@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-16 09:36:57
+ * @LastEditTime: 2022-08-26 10:51:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/client/notification.vue
@@ -56,6 +56,7 @@
           </div>
         </a-form>
         <div class="operator">
+          <a-button style="margin-left: 8px" :disabled="hasPerm('add')" type="primary" @click="add" icon="plus">新建通知</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
@@ -107,6 +108,7 @@
         </a-table>
       </a-card>
     </a-spin>
+    <Add v-if="isAdd" @closeModal="closeModal" />
   </div>
 </template>
 
@@ -116,24 +118,27 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data/authentication";
+import { columns } from "./data/notification";
 import ExportExcel from "@/utils/ExportExcelJS";
+import Add from "./components/add.vue";
 export default {
   mixins: [PublicVar],
+  components: { Add },
   data() {
     return {
       scrollY: "",
       advanced: false,
+      isAdd: false,
       columns,
       dataSource: [],
       isSearch: 0,
       isExportLod: false,
       selectedRowKeys: [],
       isImport: false,
-      listType: "全部",
+      listType: "发件箱",
       isDetail: false,
       docno: "",
-      tagItem: ["全部", "临近到期", "已到期", "待确认", "待回复", "已完成"],
+      tagItem: ["发件箱", "收件箱", "未发送"],
     };
   },
   updated() {
@@ -154,6 +159,9 @@ export default {
       this.listType = "全部";
       this.search();
     },
+    add() {
+      this.isAdd = true;
+    },
     toggleAdvanced() {
       this.advanced = !this.advanced;
       if (this.advanced) {
@@ -166,7 +174,7 @@ export default {
       console.log("scrollY===", this.scrollY);
     },
     closeModal() {
-      this.isDetail = false;
+      this.isAdd = false;
     },
     //多选
     onSelectChange(selectedRowKeys) {
@@ -195,7 +203,7 @@ export default {
             var starttime = rangeValue[0].format("YYYY-MM-DD");
             var endtime = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.keyword,
@@ -205,7 +213,7 @@ export default {
             endtime: endtime,
             status: values.status,
           };
-          getSupplierAction(parmas, "get").then((res) => {
+          getSupplierAction(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -222,7 +230,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         typeid: values.typeid,
@@ -231,7 +239,7 @@ export default {
         plccode: values.plccode,
         plcname: values.plcname,
       };
-      getSupplierAction(parmas, "get").then((res) => {
+      getSupplierAction(params, "get").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

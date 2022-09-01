@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:40:45
- * @LastEditTime: 2022-07-28 08:57:27
+ * @LastEditTime: 2022-08-22 14:11:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/Result.vue
@@ -37,7 +37,7 @@
         <a-button v-if="hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
         <a-button v-else type="primary" disabled @click="exportExcel" icon="export">导出</a-button>
       </div>
-      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2200 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
+      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2300 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -192,10 +192,10 @@ export default {
       this.week = str[1].replace("周", "");
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getMitemPlanAction(parmas1, "result/getlistbytypecode").then((res) => {
+      getMitemPlanAction(params1, "result/getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -209,7 +209,7 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         batchno: this.batchid || "",
@@ -217,7 +217,7 @@ export default {
       this.searchForm.setFieldsValue({
         batchno: this.batchid,
       });
-      getMitemPlanAction(parmas, "result/getall").then((res) => {
+      getMitemPlanAction(params, "result/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -258,7 +258,7 @@ export default {
           if (this.week != "") {
             var w = this.week;
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -268,7 +268,7 @@ export default {
             mitemcode: values.mitemcode,
             mitemname: values.mitemname,
           };
-          getMitemPlanAction(parmas, "result/getall").then((res) => {
+          getMitemPlanAction(params, "result/getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -286,12 +286,12 @@ export default {
     getExcelList() {
       let inputData = this.searchForm.getFieldsValue();
       return new Promise((resolve, reject) => {
-        let parmas = {
+        let params = {
           pageindex: this.pagination.current,
           pagesize: 500,
           batchno: inputData.batchno,
         };
-        getMitemPlanAction(parmas, "result/getall").then((res) => {
+        getMitemPlanAction(params, "result/getall").then((res) => {
           if (res.data.success) {
             let list = res.data.data.list;
             resolve(list);
@@ -310,7 +310,7 @@ export default {
       let _data = [];
       let excelArray = [];
       let mergeTitle = [];
-      const hear = ["计划批号", "生产工厂", "子件品号", "子件品名", "子件规格", "需求日期", "库存数量", "待排产需求总数量", "待产需求总数量", "未来可用需求总量", "已预留总数", "可用总数", "需求数量", "采购在途数量", "到货未入数", "PMC", "业务单号"];
+      const hear = ["计划批号", "生产工厂", "子件品号", "子件品名", "子件规格", "需求日期", "库存数量", "待排产需求总数量", "待产需求总数量", "未来可用需求总量", "已预留总数", "可用总数", "需求数量", "采购在途数量", "到货未入数","己请末购数", "PMC", "业务单号"];
       _data.push(hear);
       list.map((item) => {
         let array = [];
@@ -343,6 +343,7 @@ export default {
         { wch: 8 }, // 用量
         { wch: 8 }, // 金额
         { wch: 8 }, // 提示
+         { wch: 8 }, // 提示
         { wch: 20 }, // 备注
         { wch: 20 }, // 备注
       ];

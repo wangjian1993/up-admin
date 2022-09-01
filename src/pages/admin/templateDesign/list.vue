@@ -96,7 +96,7 @@
         </template>
       </a-table></a-card
     >
-    <printModal v-if="isShowPrint" @succeed="search" @cloneModal="cloneModal" :orgList="orgList" :templateType="templateType" :isEdit="isEdit" :editData="editData"/>
+    <printModal v-if="isShowPrint" @succeed="search" @closeModal="closeModal" :orgList="orgList" :templateType="templateType" :isEdit="isEdit" :editData="editData"/>
   </div>
 </template>
 <script>
@@ -147,7 +147,7 @@ export default {
       this.search();
       this.getInstitutionList();
     },
-    cloneModal() {
+    closeModal() {
       this.isShowPrint = false;
     },
     //多选
@@ -161,10 +161,10 @@ export default {
       this.search();
     },
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "TEMPLATE_TYPE",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.templateType = res.data.data;
         }
@@ -172,11 +172,11 @@ export default {
     },
     //获取机构类型列表
     getInstitutionList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: 100,
       };
-      getInstitutionList(parmas).then((res) => {
+      getInstitutionList(params).then((res) => {
         if (res.data.success) {
           this.orgList = res.data.data.list;
         }
@@ -232,9 +232,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.Id);
-      setTemplateAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.Id);
+      setTemplateAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.search();
@@ -245,7 +245,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.keyword,
@@ -253,7 +253,7 @@ export default {
             companyid: values.companyid,
             type: values.type,
           };
-          getTemplateAction(parmas, "get").then((res) => {
+          getTemplateAction(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

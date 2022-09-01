@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-15 09:32:47
+ * @LastEditTime: 2022-08-25 09:28:23
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/receiving/consignee.vue
+ * @FilePath: /up-admin/src/pages/srm/market/shipment/inform.vue
 -->
 <template>
   <div>
@@ -12,16 +12,10 @@
       <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
         <a-form layout="horizontal" :form="searchForm">
           <a-row>
-             <a-col :span="6">
+            <a-col :span="6">
               <a-radio-group style="margin-top: 5px;" default-value="全部" v-model="listType" button-style="solid" @change="searchBtn">
-                <a-radio-button value="全部">
-                  全部
-                </a-radio-button>
-                <a-radio-button value="签收中">
-                  签收中
-                </a-radio-button>
-                <a-radio-button value="待签收">
-                  待签收
+                <a-radio-button v-for="(item, index) in tagItem" :value="item" :key="index">
+                  {{ item }}
                 </a-radio-button>
               </a-radio-group></a-col
             >
@@ -38,32 +32,46 @@
           <div :class="advanced ? null : 'fold'" v-if="advanced">
             <a-row>
               <a-col :md="6" :sm="24">
-                <a-form-item label="供应商" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入供应商" v-decorator="['supplier']" />
+                <a-form-item label="客户" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入供应商" v-decorator="['client']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="采购单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-form-item label="客户单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-input style="width: 200px" placeholder="请输入采购单号" v-decorator="['purchaseorderno']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="送货单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入送货单号" v-decorator="['supplierorderno']" />
+                  <a-input style="width: 200px" placeholder="请输入送货单号" v-decorator="['orderno']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="收货单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入收货单号" v-decorator="['orderno']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="收货日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-form-item label="送货日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-range-picker style="width: 300px" v-decorator="['range-time-picker1']" />
                 </a-form-item>
               </a-col>
+               <a-col :md="6" :sm="24">
+                <a-form-item label="预计到厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
+                </a-form-item>
+              </a-col>
+               <a-col :md="6" :sm="24">
+                <a-form-item label="到货日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-range-picker style="width: 300px" v-decorator="['range-time-picker3']" />
+                </a-form-item>
+              </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="收货状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-form-item label="采购类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['purchasetype']" placeholder="请选择送货状态" style="width: 200px">
+                    <a-select-option value="">全部</a-select-option>
+                    <a-select-option value="1">启用</a-select-option>
+                    <a-select-option value="0">禁用</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="送货状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['deliverystatus']" placeholder="请选择送货状态" style="width: 200px">
                     <a-select-option value="">全部</a-select-option>
                     <a-select-option value="1">启用</a-select-option>
@@ -72,12 +80,50 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="单别" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['ordertype']" placeholder="请选择物流状态" style="width: 200px">
+                <a-form-item label="物流状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['shippingstatus']" placeholder="请选择物流状态" style="width: 200px">
                     <a-select-option value="">全部</a-select-option>
                     <a-select-option value="1">启用</a-select-option>
                     <a-select-option value="0">禁用</a-select-option>
                   </a-select>
+                </a-form-item>
+              </a-col>
+           <a-col :md="6" :sm="24">
+                <a-form-item label="收货仓库" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入收货仓库" v-decorator="['receiptwarehouse']" />
+                </a-form-item>
+              </a-col>
+            <a-col :md="6" :sm="24">
+                <a-form-item label="送货类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['deliverytype']" placeholder="请选择物流状态" style="width: 200px">
+                    <a-select-option value="">全部</a-select-option>
+                    <a-select-option value="1">启用</a-select-option>
+                    <a-select-option value="0">禁用</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+               <a-col :md="6" :sm="24">
+                <a-form-item label="送货方式" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['deliverymethod']" placeholder="请选择物流状态" style="width: 200px">
+                    <a-select-option value="">全部</a-select-option>
+                    <a-select-option value="1">启用</a-select-option>
+                    <a-select-option value="0">禁用</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+               <a-col :md="6" :sm="24">
+                <a-form-item label="采购员" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入采购员" v-decorator="['purchaseuser']" />
+                </a-form-item>
+              </a-col>
+               <a-col :md="6" :sm="24">
+                <a-form-item label="采购说明" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入采购说明" v-decorator="['purchasedescription']" />
+                </a-form-item>
+              </a-col>
+               <a-col :md="6" :sm="24">
+                <a-form-item label="送货地址" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入送货地址" v-decorator="['deliveryaddress']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -114,11 +160,21 @@
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="StatusName" slot-scope="record">
-            <div>
-              <a-tag color="green" v-if="record == '正常'">{{ record }}</a-tag>
-              <a-tag color="red" v-else>{{ record }}</a-tag>
-            </div>
+          <template slot="ReceiptWarehouseTitle">
+            <p>收货仓库</p>
+            <p>预计到厂</p>
+          </template>
+          <template slot="ReceiptWarehouse" slot-scope="text, record">
+            <p>{{ record.ReceiptWarehouse }}</p>
+            <p>{{ record.PlanDatetime }}</p>
+          </template>
+          <template slot="DeliveryTypeTitle">
+            <p>送货类型</p>
+            <p>送货方式</p>
+          </template>
+          <template slot="DeliveryType" slot-scope="text, record">
+            <p>{{ record.ReceiptWarehouse }}</p>
+            <p>{{ record.PlanDatetime }}</p>
           </template>
           <template slot="action" slot-scope="text, record">
             <div>
@@ -144,12 +200,12 @@
 </template>
 
 <script>
-import { getArrival } from "@/services/srm.js";
+import { getClientDelivery } from "@/services/srm.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data/consignee";
+import { columns } from "./data/inform";
 import ExportExcel from "@/utils/ExportExcelJS";
 import consigneeDetail from "./components/consigneeDetail.vue";
 export default {
@@ -168,6 +224,7 @@ export default {
       listType: "全部",
       isDetail: false,
       docno: "",
+      tagItem: ["全部", "签收中", "待签收", "已发货", "已到货"],
     };
   },
   updated() {
@@ -239,12 +296,16 @@ export default {
             var startreceiptdatetime = rangeValue[0].format("YYYY-MM-DD");
             var endreceiptdatetime = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.keyword,
             tag: this.listType,
+            client:values.client,
             purchaseorderno: values.purchaseorderno,
+            orderno: values.orderno,
+            product: values.product,
+            purchaseuser: values.purchaseuser,
             deliverystatus: values.deliverystatus,
             shippingstatus: values.shippingstatus,
             receiptwarehouse: values.receiptwarehouse,
@@ -252,10 +313,6 @@ export default {
             deliverymethod: values.deliverymethod,
             purchasedescription: values.purchasedescription,
             deliveryaddress: values.deliveryaddress,
-            supplier: values.supplier,
-            orderno: values.orderno,
-            product: values.product,
-            purchaseuser: values.purchaseuser,
             startdeliverydatetime: startdeliverydatetime,
             enddeliverydatetime: enddeliverydatetime,
             startplandatetime: startplandatetime,
@@ -264,7 +321,7 @@ export default {
             endreceiptdatetime: endreceiptdatetime,
             purchasetype: values.purchasetype,
           };
-          getArrival(parmas, "get").then((res) => {
+          getClientDelivery(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -281,7 +338,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         typeid: values.typeid,
@@ -290,7 +347,7 @@ export default {
         plccode: values.plccode,
         plcname: values.plcname,
       };
-      getArrival(parmas, "get").then((res) => {
+      getClientDelivery(params, "get").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

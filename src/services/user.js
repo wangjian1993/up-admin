@@ -1,13 +1,13 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-09-28 14:51:03
+ * @LastEditTime: 2022-08-31 15:36:46
  * @LastEditors: max
  * @Description: 用户相关api
  * @FilePath: /up-admin/src/services/user.js
  */
-import {request, METHOD, removeAuthorization} from '@/utils/request';
-import {UP_USER} from './api'
+import { request, METHOD, removeAuthorization } from '@/utils/request';
+import { UP_USER, UP_SRM } from './api'
 /**
  * 登录服务
  * @param name 账户名
@@ -18,16 +18,20 @@ export async function login(name, password) {
   return request(`${UP_USER}/user/uservalidate`, METHOD.POST, {
     userName: name,
     userPwd: password
-  },false);
+  }, false);
+}
+//供应商注册
+export async function supplierLogin(params) {
+  return request(`${UP_SRM}/supplier/login`, METHOD.POST, params, false);
 }
 
 /**
  * @description: 更新用户信息
- * @param {*} parmas
+ * @param {*} params
  * @return {*}
  */
-export async function loginUpdate(parmas) {
-  return request(`${UP_USER}/user/update`, METHOD.POST,parmas);
+export async function loginUpdate(params) {
+  return request(`${UP_USER}/user/update`, METHOD.POST, params);
 }
 /**
  * @description: 获取用户信息
@@ -42,8 +46,8 @@ export async function getUserInfo() {
  * @param {*}
  * @return {*}
  */
-export async function changePwd(parmas) {
-  return request(`${UP_USER}/user/changepwd`, METHOD.POST,parmas);
+export async function changePwd(params) {
+  return request(`${UP_USER}/user/changepwd`, METHOD.POST, params);
 }
 /**
  * 退出登录

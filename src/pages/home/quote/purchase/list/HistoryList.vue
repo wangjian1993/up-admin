@@ -221,7 +221,7 @@ export default {
     },
     getList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.historyData.EnterpriseId,
@@ -234,7 +234,7 @@ export default {
       }else {
         url ='getquotehistorycommon'
       }
-      getCostConfig(parmas, url).then((res) => {
+      getCostConfig(params, url).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -253,11 +253,11 @@ export default {
       this.isAddModal = false;
     },
     onAudit(item){
-       let parmas = {
+       let params = {
         Id: item.Id,
         StatusCheck: item.StatusCheck == "Y" ? "N" : "Y",
       };
-      addCost(parmas, "checkquote").then((res) => {
+      addCost(params, "checkquote").then((res) => {
         if (res.data.success) {
           this.$message.success("审核成功!");
           this.getList();
@@ -265,11 +265,11 @@ export default {
       });
     },
     onDelete(item){
-       let parmas = {
+       let params = {
         Id: item.Id,
         IsDelete: "Y",
       };
-      addCost(parmas, "deletequote").then((res) => {
+      addCost(params, "deletequote").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getList();

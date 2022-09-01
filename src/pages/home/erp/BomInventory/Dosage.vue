@@ -124,7 +124,7 @@ const columns = [
 ];
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
-import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
+import { feedSystem, modelType, stateType } from "@/utils/BomParams.js";
 export default {
   props: ["info"],
   data() {
@@ -174,11 +174,11 @@ export default {
     //获取列表数据
     getList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         warehouseid: this.info.WAREHOUSE_ID,
         itemid: this.info.ITEM_ID,
       };
-      getERPReportAction(parmas, "getstockrestinfo").then((res) => {
+      getERPReportAction(params, "getstockrestinfo").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };

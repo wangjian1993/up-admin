@@ -145,10 +145,10 @@ export default {
     },
     getDetailList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         orderno: this.orderno,
       };
-      getReturn(parmas, "single").then((res) => {
+      getReturn(params, "single").then((res) => {
         if (res.data.success) {
           this.orderList = res.data.data.order;
           this.detailList = res.data.data.detail;

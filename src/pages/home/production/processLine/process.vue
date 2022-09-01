@@ -243,10 +243,10 @@ export default {
   },
   methods: {
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getProcessLine(parmas1, "getlistbytypecode").then((res) => {
+      getProcessLine(params1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -282,13 +282,13 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             process: values.process,
           };
-          getProcessLine(parmas, "getall").then((res) => {
+          getProcessLine(params, "getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -303,11 +303,11 @@ export default {
     },
     //获取机构类型列表
     getListAll() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getProcessLine(parmas, "getall").then((res) => {
+      getProcessLine(params, "getall").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -400,9 +400,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.Id);
-      setProcessLine(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.Id);
+      setProcessLine(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();

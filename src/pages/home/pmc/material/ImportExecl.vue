@@ -172,7 +172,7 @@ export default {
         this.$message.warning("请先导入excel文件!");
         return;
       }
-      let parmas = {
+      let params = {
         PlantId: this.plantId,
         Week: this.week,
         RequirementList: [],
@@ -246,19 +246,19 @@ export default {
               break;
           }
         }
-        parmas.RequirementList.push(list);
+        params.RequirementList.push(list);
       });
       console.log(this.errorList);
       if (this.errorList.length == 0) {
-        this.submitExecl(parmas);
+        this.submitExecl(params);
       } else {
         this.$message.error("物料信息格式错误,请修改");
       }
     },
     //提交
-    submitExecl(parmas) {
+    submitExecl(params) {
       this.isUpload = true;
-      mitemrequirementAction(parmas, "importv2").then((res) => {
+      mitemrequirementAction(params, "importv2").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.close();

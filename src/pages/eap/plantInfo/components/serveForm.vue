@@ -159,10 +159,10 @@ export default {
       this.form.Enable = value.target.value;
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getPlantList(parmas1, "getlistbytypecode").then((res) => {
+      getPlantList(params1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -171,21 +171,21 @@ export default {
     plantChange(e) {
       this.plantId = e;
       this.form.WorkShopId = "";
-      let parmas = {
+      let params = {
         plantid: e,
       };
-      getWorkshopAction(parmas, "getlist").then((res) => {
+      getWorkshopAction(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
     workshopChange(e) {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopid: e,
       };
-      getPlantList(parmas, "getlist").then((res) => {
+      getPlantList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }

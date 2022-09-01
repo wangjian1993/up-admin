@@ -246,26 +246,26 @@ export default {
   },
   methods: {
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "LAYOUT",
       };
-      let parmas1 = {
+      let params1 = {
         groupcode: "CONFIG_TYPE",
       };
-      let parmas2 = {
+      let params2 = {
         groupcode: "LINK_TYPE",
       };
-      getParamData(parmas1).then((res) => {
+      getParamData(params1).then((res) => {
         if (res.data.success) {
           this.configTypeList = res.data.data;
         }
       });
-      getParamData(parmas2).then((res) => {
+      getParamData(params2).then((res) => {
         if (res.data.success) {
           this.linkTypeList = res.data.data;
         }
       });
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.layoutList = res.data.data;
         }
@@ -313,12 +313,12 @@ export default {
         console.log(info.file);
         let typeArray = info.file.type.split("/");
         let fileType = typeArray[1].toUpperCase();
-        let parmas = {
+        let params = {
           FileName: info.file.name,
           FileContent: imageUrl,
           FileSuffix: "." + fileType,
         };
-        uploadFile(parmas).then((res) => {
+        uploadFile(params).then((res) => {
           if (res.data.success) {
             this.$message.success("上传成功!");
             this.fileData = res.data.data;
@@ -356,11 +356,11 @@ export default {
     },
     //获取用户类型
     getAppTypeList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 50,
       };
-      getAppTypeList(parmas).then((res) => {
+      getAppTypeList(params).then((res) => {
         if (res.data.success) {
           this.appTypeList = res.data.data.list;
           if (this.appTypeList[0].AppTypeCode == "MOBILE") {
@@ -416,7 +416,7 @@ export default {
                 this.$message.success("编辑成功!");
                 this.defaultForm();
                 this.$emit("succeed");
-                this.$emit("cloneModal");
+                this.$emit("closeModal");
               }
             });
           } else {
@@ -429,7 +429,7 @@ export default {
                 this.$message.success("添加成功!");
                 this.defaultForm();
                 this.$emit("succeed");
-                this.$emit("cloneModal");
+                this.$emit("closeModal");
               }
             });
           }
@@ -437,7 +437,7 @@ export default {
       });
     },
     handleCancel() {
-      this.$emit("cloneModal");
+      this.$emit("closeModal");
       this.defaultForm();
     },
     iconSelect() {

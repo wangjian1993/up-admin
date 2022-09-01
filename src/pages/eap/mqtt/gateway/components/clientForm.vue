@@ -177,10 +177,10 @@ export default {
       this.initialize();
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getPlantList(parmas1, "getlistbytypecode").then((res) => {
+      getPlantList(params1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -189,21 +189,21 @@ export default {
     plantChange(e) {
       this.plantId = e;
       this.form.workshopid = "";
-      let parmas = {
+      let params = {
         plantid: e,
       };
-      getWorkshopAction(parmas, "getlist").then((res) => {
+      getWorkshopAction(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
     workshopChange(e) {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopid: e,
       };
-      getPlantList(parmas, "getlist").then((res) => {
+      getPlantList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
@@ -236,8 +236,8 @@ export default {
             console.log(this.form);
             this.form.isautostart = this.form.isautostart ? "Y" : "N";
             this.form.isautoconnect = this.form.isautoconnect ? "Y" : "N";
-            let parmas = [this.form, {}];
-            setMqttClientAction(parmas, "add").then((res) => {
+            let params = [this.form, {}];
+            setMqttClientAction(params, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");
                 this.$emit("closeModal");

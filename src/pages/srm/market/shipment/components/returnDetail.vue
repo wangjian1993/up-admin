@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-08-12 16:09:15
+ * @LastEditTime: 2022-08-25 09:33:26
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/receiving/components/returnDetail.vue
+ * @FilePath: /up-admin/src/pages/srm/market/shipment/components/returnDetail.vue
 -->
 <template>
   <div>
@@ -90,7 +90,7 @@
 
 <script>
 import { info1, info2, columns } from "../data/returnDetail";
-import { getReturn } from "@/services/srm.js";
+import { getClientReturn } from "@/services/srm.js";
 import { splitData } from "@/utils/util.js";
 export default {
   props: ["orderno"],
@@ -145,10 +145,10 @@ export default {
     },
     getDetailList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         orderno: this.orderno,
       };
-      getReturn(parmas, "single").then((res) => {
+      getClientReturn(params, "single").then((res) => {
         if (res.data.success) {
           this.orderList = res.data.data.order;
           this.detailList = res.data.data.detail;

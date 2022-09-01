@@ -4,7 +4,7 @@
  * @LastEditTime: 2021-08-17 13:49:14
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/quote/sales/config/parmas/Parmas.vue
+ * @FilePath: /up-admin/src/pages/quote/sales/config/params/params.vue
 -->
 <template>
  <div>

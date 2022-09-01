@@ -153,7 +153,7 @@ export default {
     },
     getBomInfo(bom) {
       return new Promise((resolve) => {
-        let parmas = {
+        let params = {
           pageindex: 1,
           pagesize: 1,
           plantid: this.plantId,
@@ -169,7 +169,7 @@ export default {
           drawingnosign: "",
           shortcutsign: "",
         };
-        getERPReportAction(parmas, "getbominfo").then((res) => {
+        getERPReportAction(params, "getbominfo").then((res) => {
           if (res.data.success) {
             let list = res.data.data.list[0];
             resolve(list);

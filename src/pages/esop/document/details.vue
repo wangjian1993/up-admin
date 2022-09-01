@@ -156,10 +156,10 @@ export default {
       window.open("./" + record.DownloadFilePath, "_blank");
     },
     getDocsFile() {
-      let parmas = {
+      let params = {
         id: this.drawerItem.DocumentId,
       };
-      getSopDocument(parmas, "single").then((res) => {
+      getSopDocument(params, "single").then((res) => {
         if (res.data.success) {
           this.docsFile = res.data.data.files;
           this.docsInfo = res.data.data.doc;

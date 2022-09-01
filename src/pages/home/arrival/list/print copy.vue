@@ -401,10 +401,10 @@ export default {
       this.loading = true;
       console.log(this.printData);
       this.printData.forEach((item) => {
-        let parmas = {
+        let params = {
           docno: item.DocNo,
         };
-        getArrivalList(parmas, "single").then((res) => {
+        getArrivalList(params, "single").then((res) => {
           if (res.data.success) {
             let list = res.data.data.list;
             this.listData.push({

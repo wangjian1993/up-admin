@@ -180,10 +180,10 @@ export default {
   methods: {
     splitData,
     getPlantList() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getPlantList(parmas).then((res) => {
+      getPlantList(params).then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -201,7 +201,7 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: 10000,
         rolesign: "COMMON",
@@ -217,7 +217,7 @@ export default {
         goodspicktimestart: "",
         goodspicktimeend: "",
       };
-      getOrderList(parmas).then((res) => {
+      getOrderList(params).then((res) => {
         if (res.data.success) {
           this.dataSource = this.handlerDatas(res.data.data.list);
           const pagination = { ...this.pagination };
@@ -269,7 +269,7 @@ export default {
             var goodspicktimestart = rangeValue1[0].format("YYYY-MM-DD");
             var goodspicktimeend = rangeValue1[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             rolesign: "COMMON",
@@ -285,7 +285,7 @@ export default {
             goodspicktimestart: goodspicktimestart || "",
             goodspicktimeend: goodspicktimeend || "",
           };
-          getOrderList(parmas).then((res) => {
+          getOrderList(params).then((res) => {
             if (res.data.success) {
               this.dataSource = this.handlerDatas(res.data.data.list);
               const pagination = { ...this.pagination };

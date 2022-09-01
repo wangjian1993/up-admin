@@ -198,7 +198,7 @@ export default {
         this.$message.warning("请先导入待排产计划!");
         return;
       }
-      // let parmas = [];
+      // let params = [];
       //合并表格头部和内容数据
       let arr1 = [];
       let table1 = this.tableData1;
@@ -249,8 +249,8 @@ export default {
       }
     },
     //上传导入数据
-    submitExecl(parmas) {
-      setMitemPlanAction(parmas, "import").then((res) => {
+    submitExecl(params) {
+      setMitemPlanAction(params, "import").then((res) => {
         if (res.data.success) {
           this.$message.success("导入成功!");
           this.close();

@@ -35,14 +35,14 @@
             {{ editData.ToCountry }}
           </a-descriptions-item>
           <a-descriptions-item label="出货方式">
-            <a-select style="width: 130px" placeholder="选择出货方式" v-model="saveParmas.ShipmentWay">
+            <a-select style="width: 130px" placeholder="选择出货方式" v-model="saveparams.ShipmentWay">
               <a-select-option v-for="item in expressList" :key="item.ParamName">
                 {{ item.ParamName }}
               </a-select-option>
             </a-select>
           </a-descriptions-item>
           <a-descriptions-item label="是否验货">
-            <a-select style="width: 130px" v-model="saveParmas.IsExamine" placeholder="选择是否验货">
+            <a-select style="width: 130px" v-model="saveparams.IsExamine" placeholder="选择是否验货">
               <a-select-option value="1">
                 是
               </a-select-option>
@@ -52,18 +52,18 @@
             </a-select>
           </a-descriptions-item>
           <a-descriptions-item label="约定验货时间">
-            <a-date-picker style="width: 130px" :disabled-date="disabledDate" v-model="saveParmas.GoodsExamineTime" @change="GoodsExamineTimeChange" />
+            <a-date-picker style="width: 130px" :disabled-date="disabledDate" v-model="saveparams.GoodsExamineTime" @change="GoodsExamineTimeChange" />
           </a-descriptions-item>
           <a-descriptions-item label="约定提货时间">
-            <a-date-picker style="width: 130px" :disabled-date="disabledDate1" v-model="saveParmas.GoodsPickTime" @change="GoodsPickTimeChange" />
+            <a-date-picker style="width: 130px" :disabled-date="disabledDate1" v-model="saveparams.GoodsPickTime" @change="GoodsPickTimeChange" />
           </a-descriptions-item>
           <a-descriptions-item label="生产工厂">
-            <a-select v-model="saveParmas.PlantName" style="width: 150px" placeholder="请选择生产工厂">
+            <a-select v-model="saveparams.PlantName" style="width: 150px" placeholder="请选择生产工厂">
               <a-select-option v-for="item in plantList" :key="item.PlantName" :value="item.PlantName">{{ item.PlantName }}</a-select-option>
             </a-select>
           </a-descriptions-item>
           <a-descriptions-item label="备注">
-            <a-input placeholder="请输入备注" v-model="saveParmas.Remark" />
+            <a-input placeholder="请输入备注" v-model="saveparams.Remark" />
           </a-descriptions-item>
         </a-descriptions>
         <a-table
@@ -138,7 +138,7 @@ export default {
       orderInfo: [],
       expressList: [], //快递类型
       plantList: [],
-      saveParmas: {
+      saveparams: {
         Id: "",
         ShipmentWay: "",
         IsExamine: "",
@@ -160,20 +160,20 @@ export default {
     },
   },
   created() {
-    this.getParmasData();
+    this.getparamsData();
     this.getPlantList();
     console.log(this.editData);
     this.$nextTick(() => {
       this.searchForm.setFieldsValue({
         pinumber: this.editData.PiNumber,
       });
-      this.saveParmas.Id = this.editData.Id;
-      this.saveParmas.ShipmentWay = this.editData.ShipmentWay;
-      this.saveParmas.IsExamine = this.editData.IsExamine;
-      this.saveParmas.GoodsExamineTime = this.editData.GoodsExamineTime;
-      this.saveParmas.GoodsPickTime = this.editData.GoodsPickTime;
-      this.saveParmas.PlantName = this.editData.PlantName;
-      this.saveParmas.Remark = this.editData.Remark;
+      this.saveparams.Id = this.editData.Id;
+      this.saveparams.ShipmentWay = this.editData.ShipmentWay;
+      this.saveparams.IsExamine = this.editData.IsExamine;
+      this.saveparams.GoodsExamineTime = this.editData.GoodsExamineTime;
+      this.saveparams.GoodsPickTime = this.editData.GoodsPickTime;
+      this.saveparams.PlantName = this.editData.PlantName;
+      this.saveparams.Remark = this.editData.Remark;
       this.data = this.editData.group;
       this.data.map((item) => {
         this.selectedRowKeys.push(item.ItemCode);
@@ -210,20 +210,20 @@ export default {
       }
     },
     getPlantList() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getPlantList(parmas).then((res) => {
+      getPlantList(params).then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
       });
     },
-    getParmasData() {
-      let parmas = {
+    getparamsData() {
+      let params = {
         groupcode: "SHIPPING_METHOD",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.expressList = res.data.data;
         }
@@ -238,7 +238,7 @@ export default {
       this.searchForm.resetFields();
       this.data = [];
       this.orderInfo = [];
-      this.saveParmas = {
+      this.saveparams = {
         PiNumber: "",
         CustomerCode: "",
         ToCountry: "",
@@ -257,10 +257,10 @@ export default {
         if (!err) {
           this.loading = true;
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pinumber: values.pinumber,
           };
-          getOrderInfo(parmas).then((res) => {
+          getOrderInfo(params).then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               this.orderInfo = this.data[0];
@@ -275,59 +275,59 @@ export default {
       });
     },
     GoodsExamineTimeChange(value, dateString) {
-      this.saveParmas.GoodsExamineTime = dateString;
+      this.saveparams.GoodsExamineTime = dateString;
     },
     GoodsPickTimeChange(value, dateString) {
-      this.saveParmas.GoodsPickTime = dateString;
+      this.saveparams.GoodsPickTime = dateString;
     },
     save() {
-      if (this.saveParmas.ShipmentWay == "") {
+      if (this.saveparams.ShipmentWay == "") {
         this.$message.warning("请选择出货方式!");
         return;
       }
-      if (this.saveParmas.ShipmentWay == "") {
+      if (this.saveparams.ShipmentWay == "") {
         this.$message.warning("请选择出货方式!");
         return;
       }
-      if (this.saveParmas.ShipmentWay == "") {
+      if (this.saveparams.ShipmentWay == "") {
         this.$message.warning("请选择出货方式!");
         return;
       }
-      if (this.saveParmas.IsExamine == "") {
+      if (this.saveparams.IsExamine == "") {
         this.$message.warning("请选择是否验货!");
         return;
       }
-      if (this.saveParmas.PlantName == "") {
+      if (this.saveparams.PlantName == "") {
         this.$message.warning("请选择生产工厂!");
         return;
       }
-      console.log(this.saveParmas.GoodsExamineTime);
-      if (this.saveParmas.IsExamine == 1 && this.saveParmas.GoodsExamineTime == "") {
+      console.log(this.saveparams.GoodsExamineTime);
+      if (this.saveparams.IsExamine == 1 && this.saveparams.GoodsExamineTime == "") {
         this.$message.warning("请选择验货时间!");
         return;
       }
-      if (this.saveParmas.IsExamine == 1 && this.saveParmas.GoodsExamineTime >= this.saveParmas.GoodsPickTime) {
+      if (this.saveparams.IsExamine == 1 && this.saveparams.GoodsExamineTime >= this.saveparams.GoodsPickTime) {
         this.$message.warning("验货时间不能大于提货时间!");
         return;
       }
-      if (this.saveParmas.GoodsPickTime == "") {
+      if (this.saveparams.GoodsPickTime == "") {
         this.$message.warning("请选择提货时间!");
         return;
       }
-      this.saveParmas.PiNumber = this.orderInfo.PiNumber;
-      this.saveParmas.CustomerCode = this.orderInfo.CustomerCode;
-      this.saveParmas.ToCountry = this.orderInfo.ToCountry;
+      this.saveparams.PiNumber = this.orderInfo.PiNumber;
+      this.saveparams.CustomerCode = this.orderInfo.CustomerCode;
+      this.saveparams.ToCountry = this.orderInfo.ToCountry;
       //验货时间
       //提货时间
       this.data.map((item) => {
         if (this.selectedRowKeys.includes(item.ItemCode)) {
-          this.saveParmas.PlantChild.push({
+          this.saveparams.PlantChild.push({
             Id: item.Cid,
             ShipmentQtyNow: item.ShipmentQtyNow,
           });
         }
       });
-      editShipment(this.saveParmas).then((res) => {
+      editShipment(this.saveparams).then((res) => {
         if (res.data.success) {
           this.reset();
           this.$message.success("提交成功!");

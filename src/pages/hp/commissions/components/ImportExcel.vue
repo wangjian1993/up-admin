@@ -136,7 +136,7 @@ export default {
         this.$message.warning("请先导入excel文件!");
         return;
       }
-      let parmas = {
+      let params = {
         ZkRate: [],
       };
       //拼接后台数据
@@ -146,23 +146,23 @@ export default {
             ErrorMsg: `第${index + 1}行,折扣率:数据'${item.ZkRate}'错误,必须在0-1范围内`,
           });
         }
-        parmas.ZkRate.push({
+        params.ZkRate.push({
           MoNo: item.MoNo,
           ctrno: item.ctrno,
           ZkRate: item.ZkRate,
         });
       });
       if (this.errorList.length == 0) {
-        this.submitExecl(parmas);
+        this.submitExecl(params);
       } else {
         this.isShowTable = true;
         this.$message.error("导入信息格式错误,请修改");
       }
     },
     //提交
-    submitExecl(parmas) {
+    submitExecl(params) {
       this.isUpload = true;
-      importDiscountList(parmas).then((res) => {
+      importDiscountList(params).then((res) => {
         if (res.data.ErrorNum == 0) {
           this.$message.success("导入成功!");
           this.close();

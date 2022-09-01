@@ -237,7 +237,7 @@ export default {
             var startreceivedate = values["range-time-picker2"][0].format("YYYY-MM-DD");
             var endreceivedate = values["range-time-picker2"][1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             type: this.listType,
@@ -250,7 +250,7 @@ export default {
             startreceivedate: startreceivedate,
             endreceivedate: endreceivedate,
           };
-          getArrivalList(parmas, "get").then((res) => {
+          getArrivalList(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

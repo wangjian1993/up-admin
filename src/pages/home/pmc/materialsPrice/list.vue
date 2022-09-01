@@ -214,7 +214,7 @@ export default {
     },
     update() {
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         PageIndex: this.pagination.current,
         PageSize: this.pagination.pageSize,
         Sign: "SUBMIT",
@@ -229,7 +229,7 @@ export default {
         BhStr: values.bhstr != undefined ? values.bhstr.toString() : "",
         ScgyStr: values.scgystr != undefined ? values.scgystr.toString() : "",
       };
-      getMaterialsPrice(parmas,'bindfun').then((res) => {
+      getMaterialsPrice(params,'bindfun').then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -248,7 +248,7 @@ export default {
             return;
           }
           this.loading = true;
-          let parmas = {
+          let params = {
             PageIndex: this.pagination.current,
             PageSize: this.pagination.pageSize,
             Sign: "GET",
@@ -263,7 +263,7 @@ export default {
             BhStr: values.bhstr != undefined ? values.bhstr.toString() : "",
             ScgyStr: values.scgystr != undefined ? values.scgystr.toString() : "",
           };
-          getMaterialsPrice(parmas,'bindfun').then((res) => {
+          getMaterialsPrice(params,'bindfun').then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

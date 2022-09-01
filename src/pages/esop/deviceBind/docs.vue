@@ -143,10 +143,10 @@ export default {
       this.isPreview = false;
     },
     getDocsFile() {
-      let parmas = {
+      let params = {
         documentid: this.documentItem.DocumentId,
       };
-      getDeviceList(parmas, "getfile").then((res) => {
+      getDeviceList(params, "getfile").then((res) => {
         if (res.data.success) {
           this.docsFile = res.data.data.list;
         }

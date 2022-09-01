@@ -320,10 +320,10 @@ export default {
   methods: {
     //获取生产工厂
     getDemandEnter() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getDemandEnter(parmas).then((res) => {
+      getDemandEnter(params).then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -331,10 +331,10 @@ export default {
     },
     //获取车间列表
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantid,
       };
-      getWorkshopList(parmas).then((res) => {
+      getWorkshopList(params).then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
@@ -395,14 +395,14 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             workshop: values.workshop,
             line: values.line,
           };
-          getLineAll(parmas).then((res) => {
+          getLineAll(params).then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -419,11 +419,11 @@ export default {
     //获取机构类型列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getLineAll(parmas).then((res) => {
+      getLineAll(params).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -518,9 +518,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.LineId);
-      lineAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.LineId);
+      lineAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();

@@ -183,22 +183,22 @@ export default {
       this.search();
     },
     getServiceList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 1000,
       };
-      getMqttServiceAction(parmas, "get").then((res) => {
+      getMqttServiceAction(params, "get").then((res) => {
         if (res.data.success) {
           this.serviceList = res.data.data.list;
         }
       });
     },
     getDeviceList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 1000,
       };
-      getDeviceAction(parmas, "getall").then((res) => {
+      getDeviceAction(params, "getall").then((res) => {
         if (res.data.success) {
           this.deviceList = res.data.data.list;
         }
@@ -225,10 +225,10 @@ export default {
       this.editData = [];
     },
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getPlantList(parmas, "getlistbytypecode").then((res) => {
+      getPlantList(params, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -236,21 +236,21 @@ export default {
     },
     plantChange(e) {
       this.plantId = e;
-      let parmas = {
+      let params = {
         plantid: e,
       };
-      getWorkshopAction(parmas, "getlist").then((res) => {
+      getWorkshopAction(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
     workshopChange(e) {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopid: e,
       };
-      getPlantList(parmas, "getlist").then((res) => {
+      getPlantList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.LineList = res.data.data;
         }
@@ -263,11 +263,11 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getMqttClientAction(parmas, "get").then((res) => {
+      getMqttClientAction(params, "get").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -298,7 +298,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -309,7 +309,7 @@ export default {
             clientcode: values.clientcode,
             clientname: values.clientname,
           };
-          getMqttClientAction(parmas, "get").then((res) => {
+          getMqttClientAction(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -343,9 +343,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.Id, null);
-      setMqttClientAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.Id, null);
+      setMqttClientAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
@@ -353,10 +353,10 @@ export default {
       });
     },
     startClient() {
-      let parmas = [];
+      let params = [];
       this.dataSource.forEach((item) => {
         if (this.selectedRowKeys.includes(item.Id)) {
-          parmas.push({
+          params.push({
             url: item.Path,
             httpmethod: "Post",
             clientid: item.EquipmentCode,
@@ -365,8 +365,8 @@ export default {
           });
         }
       });
-      parmas.push({});
-      setMqttClientAction(parmas, "start").then((res) => {
+      params.push({});
+      setMqttClientAction(params, "start").then((res) => {
         if (res.data.success) {
           this.$message.success("启动成功!");
           this.getListAll();
@@ -374,11 +374,11 @@ export default {
       });
     },
     switchBtn(record) {
-      let parmas = [];
+      let params = [];
       let urlType = "";
       if (record.State == "未启动") {
         urlType = "start";
-        parmas.push(
+        params.push(
           {
             url: record.Path,
             httpmethod: "Post",
@@ -390,7 +390,7 @@ export default {
         );
       } else {
         urlType = "stop";
-        parmas.push(
+        params.push(
           {
             url: record.Path,
             httpmethod: "Post",
@@ -399,7 +399,7 @@ export default {
           {}
         );
       }
-      setMqttClientAction(parmas, urlType).then((res) => {
+      setMqttClientAction(params, urlType).then((res) => {
         if (res.data.success) {
           if (urlType == "start") {
             this.$message.success("启动成功!");
@@ -413,14 +413,14 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         plantid: values.plantid,
         workshopid: values.workshopid,
         line: values.line,
       };
-      getMqttClientAction(parmas, "getall").then((res) => {
+      getMqttClientAction(params, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

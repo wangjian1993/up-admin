@@ -272,7 +272,7 @@ export default {
     renderStripe();
   },
   created() {
-    this.getParmasData();
+    this.getparamsData();
     let array = { ...this.initialization };
     this.data.push(array);
   },
@@ -294,7 +294,7 @@ export default {
         this.data = newData;
       }
     },
-    getParmasData() {
+    getparamsData() {
       //渠道
       getParamData({
         groupcode: "CHANNEL",

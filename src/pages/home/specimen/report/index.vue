@@ -271,7 +271,7 @@ export default {
             var createdatestart = values["range-time-picker"][0].format("YYYY-MM-DD");
             var docdateend = values["range-time-picker"][1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
@@ -289,7 +289,7 @@ export default {
             transtimesstart: values.transtimesstart,
             transtimesend: values.transtimesend,
           };
-          getDepartmentApi(parmas, "firstpurchaseqyreport").then((res) => {
+          getDepartmentApi(params, "firstpurchaseqyreport").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -322,7 +322,7 @@ export default {
         var createdatestart = values["range-time-picker"][0].format("YYYY-MM-DD");
         var docdateend = values["range-time-picker"][1].format("YYYY-MM-DD");
       }
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: 30000,
         enterpriseid: values.enterpriseid,
@@ -338,7 +338,7 @@ export default {
         suppliername: values.suppliername,
         isqy: values.isqy,
       };
-      getDepartmentApi(parmas, "firstpurchaseqyreport").then((res) => {
+      getDepartmentApi(params, "firstpurchaseqyreport").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list
           list.map((item) => {

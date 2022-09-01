@@ -174,10 +174,10 @@ export default {
       this.mitemcodeData.plantId = values.plantid;
     },
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getERPReportAction(parmas, "getenterlist").then((res) => {
+      getERPReportAction(params, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantId = this.plantList[0].PlantId;
@@ -218,7 +218,7 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         plantid: this.plantId,
@@ -226,7 +226,7 @@ export default {
         itemname: "",
         itemspecification: "",
       };
-      getERPReportAction(parmas, "getbomlist").then((res) => {
+      getERPReportAction(params, "getbomlist").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -257,11 +257,11 @@ export default {
     getChildList(record) {
       this.expandedRowKeys.push(record.BOM_ID);
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         plantid: values.plantid,
         itemcode: record.ITEM_CODE,
       };
-      getERPReportAction(parmas, "getbomchildlevel").then((res) => {
+      getERPReportAction(params, "getbomchildlevel").then((res) => {
         if (res.data.success) {
           this.treeList = res.data.data.list;
           console.log(this.treeList);
@@ -285,7 +285,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -301,7 +301,7 @@ export default {
             approvestatus: "",
             shortcutsign: "",
           };
-          getERPReportAction(parmas, "getbomlist").then((res) => {
+          getERPReportAction(params, "getbomlist").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };

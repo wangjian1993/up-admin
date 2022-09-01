@@ -290,21 +290,21 @@ export default {
     },
     //获取生产工厂
     getDemandEnter() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getBuyerAction(parmas, "getenterlist").then((res) => {
+      getBuyerAction(params, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
       });
     },
     getCategorysList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: 100,
       };
-      getBuyerAction(parmas, "getcategorys").then((res) => {
+      getBuyerAction(params, "getcategorys").then((res) => {
         if (res.data.success) {
           this.categorysList = res.data.data.list;
         }
@@ -369,13 +369,13 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             user: values.user,
           };
-          getBuyerAction(parmas,'getall').then((res) => {
+          getBuyerAction(params,'getall').then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -392,11 +392,11 @@ export default {
     //获取机构类型列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getBuyerAction(parmas, "getall").then((res) => {
+      getBuyerAction(params, "getall").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -496,13 +496,13 @@ export default {
               codeArray.push(item.MitemCode);
             });
             console.log(this.form);
-            let parmas = {
+            let params = {
               PlantId: this.form.PlantId,
               UserId: this.form.UserId,
               MitemCategoryCodes: this.form.MitemCategoryCodes.join(","),
               MitemCodes: codeArray.join(","),
             };
-            setBuyerAction(parmas, "add").then((res) => {
+            setBuyerAction(params, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");
                 this.getListAll();
@@ -520,14 +520,14 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          let parmas = [];
+          let params = [];
           self.selectedRowKeys.forEach((item) => {
-            parmas.push({
+            params.push({
               PlantId: self.data[item].PlantId,
               UserId: self.data[item].UserId,
             });
           });
-          setBuyerAction(parmas, "delete").then((res) => {
+          setBuyerAction(params, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -540,12 +540,12 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push({
+      let params = [];
+      params.push({
         PlantId: item.PlantId,
         UserId: item.UserId,
       });
-      setBuyerAction(parmas, "delete").then((res) => {
+      setBuyerAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();

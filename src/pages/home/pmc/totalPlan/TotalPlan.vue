@@ -62,10 +62,10 @@ export default {
       this.activeKey = key;
     },
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "MITEM_REQUIREMENT_STATUS",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.stateList = res.data.data;
         }
@@ -73,10 +73,10 @@ export default {
     },
     //获取需求工厂
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getMitemrequirement(parmas1, "masterplan/getlistbytypecode").then((res) => {
+      getMitemrequirement(params1, "masterplan/getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }

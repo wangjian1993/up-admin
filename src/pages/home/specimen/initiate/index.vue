@@ -202,11 +202,11 @@ export default {
       // console.log(record);
       // this.$store.dispatch("specimen/registerIdActions", record.RegisterId);
       // this.$router.push({ path: "/specimen/backlog" });
-      let parmas = {
+      let params = {
         FlowId: record.FlowId, //流程ID
         Remark: record.Remark, //发起人备注
       };
-      setDepartmentApi(parmas, "addregister").then((res) => {
+      setDepartmentApi(params, "addregister").then((res) => {
         if (res.data.success) {
           this.$message.success("发起成功!");
           this.$store.dispatch("specimen/registerIdActions", res.data.data);
@@ -254,13 +254,13 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterId,
         departmentid: "",
       };
-      getDepartmentApi(parmas, "getflowlistenabley").then((res) => {
+      getDepartmentApi(params, "getflowlistenabley").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -291,13 +291,13 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
             departmentid: values.departmentid,
           };
-          getDepartmentApi(parmas, "getflowlistenabley").then((res) => {
+          getDepartmentApi(params, "getflowlistenabley").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -338,14 +338,14 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = {
+      let params = {
         FlowList: [
           {
             FlowId: item.FlowId, //部门ID
           },
         ],
       };
-      setDepartmentApi(parmas, "deleteflow").then((res) => {
+      setDepartmentApi(params, "deleteflow").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();

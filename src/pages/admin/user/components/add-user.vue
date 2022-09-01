@@ -245,12 +245,12 @@ export default {
         console.log(info.file);
         let typeArray = info.file.type.split("/");
         let fileType = typeArray[1].toUpperCase();
-        let parmas = {
+        let params = {
           FileName: info.file.name,
           FileContent: imageUrl,
           FileSuffix: "." + fileType,
         };
-        uploadFile(parmas).then((res) => {
+        uploadFile(params).then((res) => {
           if (res.data.success) {
             this.$message.success("上传成功!");
             this.fileData = res.data.data;
@@ -281,22 +281,22 @@ export default {
     },
     //获取用户类型
     getUsetType() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 50,
       };
-      getUserTypeList(parmas).then((res) => {
+      getUserTypeList(params).then((res) => {
         if (res.data.success) {
           this.usetTypeList = res.data.data.list;
         }
       });
     },
     getOrganizationList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 50,
       };
-      getOrganizationList(parmas).then((res) => {
+      getOrganizationList(params).then((res) => {
         if (res.data.success) {
           this.orgList = res.data.data.list;
           this.form.UserInOrgList.forEach((item) => {
@@ -435,7 +435,7 @@ export default {
       });
     },
     handleCancel() {
-      this.$emit("cloneModal");
+      this.$emit("closeModal");
       this.defaultForm();
     },
   },

@@ -310,10 +310,10 @@ export default {
         this.form.UpperComputerAuth = "";
         this.form.VarUnit =""
       }
-      let parmas = {
+      let params = {
         paramstype: e,
       };
-      getPlcParamsAction(parmas, "getlist").then((res) => {
+      getPlcParamsAction(params, "getlist").then((res) => {
         if (res.data.success) {
           this.paramsList = res.data.data;
         }

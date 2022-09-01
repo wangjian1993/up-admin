@@ -165,11 +165,11 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      let parmas = {
+      let params = {
         ScanCode: this.orderValue,
         ProcessStatus: "PROCESS_REWORK",
       };
-      setAgeingApi(parmas, "scan").then((res) => {
+      setAgeingApi(params, "scan").then((res) => {
         res.data.message.time = getTimeData();
         this.orderList = [];
         if (res.data.success) {
@@ -212,7 +212,7 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      let parmas = {
+      let params = {
         ScanCode: this.orderInfo.ScanCode,
         ScanCodeType: this.orderInfo.ScanCodeType,
         MoCode: this.orderInfo.MoCode,
@@ -221,7 +221,7 @@ export default {
         ProCode: this.orderInfo.ProCode,
         ProName: this.orderInfo.ProName,
       };
-      setAgeingApi(parmas, "submit").then((res) => {
+      setAgeingApi(params, "submit").then((res) => {
         res.data.message.time = getTimeData();
         if (res.data.success) {
           res.data.message.IsSuccess = res.data.data.IsSuccess;

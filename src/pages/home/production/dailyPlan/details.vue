@@ -112,12 +112,12 @@ export default {
     },
     getList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         mocode: this.detailsId,
       };
-      getDailyPlanAction(parmas, "kanban/getmopicks").then((res) => {
+      getDailyPlanAction(params, "kanban/getmopicks").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data;
           const pagination = { ...this.pagination };

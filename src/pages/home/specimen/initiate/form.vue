@@ -161,11 +161,11 @@ export default {
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          let parmas = {
+          let params = {
             FlowId: this.form.FlowId, //流程ID
             Remark: this.form.Remark, //发起人备注
           };
-          setDepartmentApi(parmas, "addregister").then((res) => {
+          setDepartmentApi(params, "addregister").then((res) => {
             if (res.data.success) {
               this.$message.success("发起成功!");
               this.$emit("closeModal");

@@ -346,7 +346,7 @@ export default {
         if (!err) {
           console.log("values-===", values);
           if (this.isEdit) {
-            let parmas = {
+            let params = {
               FormulaId: this.editData.FormulaId,
               PlantId: values.PlantId,
               WorkshopId: values.WorkshopId,
@@ -360,7 +360,7 @@ export default {
             };
             this.dataSource.forEach((item) => {
               console.log("item===", item);
-              parmas.FormulaDetails.push({
+              params.FormulaDetails.push({
                 PlcId: item.PlcId,
                 ParamsTypeCode: item.ParamsTypeCode,
                 VarId: item.VarId,
@@ -379,7 +379,7 @@ export default {
                 VarStdValue: item.VarStdValue,
               });
             });
-            setFormulaAction(parmas, "multiple/update").then((res) => {
+            setFormulaAction(params, "multiple/update").then((res) => {
               if (res.data.success && !res.data.data.IsError) {
                 this.$message.success("编辑成功!");
                 this.$emit("closeModal");
@@ -392,7 +392,7 @@ export default {
               }
             });
           } else {
-            let parmas = {
+            let params = {
               PlantId: values.PlantId,
               WorkshopId: values.WorkshopId,
               LineId: values.LineId,
@@ -404,7 +404,7 @@ export default {
               FormulaDetails: [],
             };
             this.dataSource.forEach((item) => {
-              parmas.FormulaDetails.push({
+              params.FormulaDetails.push({
                 PlcId: item.PlcId,
                 ParamsTypeCode: item.ParamsTypeCode,
                 VarId: item.VarId,
@@ -423,7 +423,7 @@ export default {
                 VarStdValue: item.VarStandardValue,
               });
             });
-            setFormulaAction(parmas, "multiple/add").then((res) => {
+            setFormulaAction(params, "multiple/add").then((res) => {
               if (res.data.success && !res.data.data.IsError) {
                 this.$message.success("新增成功!");
                 this.$emit("closeModal");

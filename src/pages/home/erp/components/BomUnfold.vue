@@ -206,7 +206,7 @@ const columns = [
 ];
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
-import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
+import { feedSystem, modelType, stateType } from "@/utils/BomParams.js";
 import ModelInfo from "./ModelInfo.vue";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 export default {
@@ -274,11 +274,11 @@ export default {
     getList() {
       console.log(this.ModelInfo);
       this.loading = true;
-      let parmas = {
+      let params = {
         plantid: this.ModelInfo.plantId,
         itemcode: this.ModelInfo.ITEM_CODE,
       };
-      getERPReportAction(parmas, "getbomchildlevel").then((res) => {
+      getERPReportAction(params, "getbomchildlevel").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           this.list = this.initTree(this.ModelInfo.ITEM_CODE);

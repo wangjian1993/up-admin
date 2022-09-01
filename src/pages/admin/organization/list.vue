@@ -336,11 +336,11 @@ export default {
   },
   methods: {
     getInstitutionList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 100,
       };
-      getInstitutionList(parmas).then((res) => {
+      getInstitutionList(params).then((res) => {
         if (res.data.success) {
           this.selectList = res.data.data.list;
         }
@@ -379,12 +379,12 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.searcValue,
           };
-          getOrganizationList(parmas).then((res) => {
+          getOrganizationList(params).then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -398,11 +398,11 @@ export default {
     },
     //获取机构类型列表
     getOrganizationList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getOrganizationList(parmas).then((res) => {
+      getOrganizationList(params).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -494,9 +494,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.OrgDimensionId);
-      orgdimensionAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.OrgDimensionId);
+      orgdimensionAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getOrganizationList();

@@ -177,7 +177,7 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         rolesign: this.rolesign,
@@ -187,7 +187,7 @@ export default {
         importdatestart: "",
         importdateend: "",
       };
-      getMonthlyTaskList(parmas).then((res) => {
+      getMonthlyTaskList(params).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -226,7 +226,7 @@ export default {
           }
           console.log("Received values of form: ", values);
           let jobNumber = this.rolesign == "ADMIN" ? values.employeecode : localStorage.getItem("userName");
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             rolesign: this.rolesign,
@@ -236,7 +236,7 @@ export default {
             importdatestart: importdatestart || "",
             importdateend: importdateend || "",
           };
-          getMonthlyTaskList(parmas).then((res) => {
+          getMonthlyTaskList(params).then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -253,10 +253,10 @@ export default {
       });
     },
     useDelete(item) {
-      let parmas = {
+      let params = {
         EmployeeCode: item.EmployeeCode,
       };
-      deleteItem(parmas).then((res) => {
+      deleteItem(params).then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
@@ -271,7 +271,7 @@ export default {
         var importdatestart = rangeValue[0].format("YYYY-MM-DD");
         var importdateend = rangeValue[1].format("YYYY-MM-DD");
       }
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 10000,
         rolesign: this.rolesign,
@@ -280,7 +280,7 @@ export default {
         importdatestart: importdatestart || "",
         importdateend: importdateend || "",
       };
-      getMonthlyTaskList(parmas).then((res) => {
+      getMonthlyTaskList(params).then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

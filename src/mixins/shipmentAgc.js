@@ -15,24 +15,24 @@ export const ShipmentExport = {
     },
     methods: {
         exportExcel(record, type) {
-            let parmas = [];
+            let params = [];
             let id = "";
             if (type != "all") {
-                parmas.push(record);
+                params.push(record);
                 id = record.PiNumber;
             } else {
                 if (this.dataSource.length == 0) {
                     return;
                 }
-                parmas = this.dataSource;
+                params = this.dataSource;
                 id = this.dataSource[0].PiNumber;
             }
-            parmas.forEach(item => {
+            params.forEach(item => {
                 item.StatusCheck = item.StatusCheck == 2 ? '未处理' : item.StatusCheck == 1 ? '已处理' : '不需要处理';
                 item.IsShipment = item.IsShipment == 'N' ? '未出货' : '已出货';
             });
-            console.log(parmas);
-            exportExcel(parmas, this.columns, id)
+            console.log(params);
+            exportExcel(params, this.columns, id)
                 .then(() => {
                     this.$message.success("导出成功!");
                 })

@@ -83,7 +83,7 @@
           </div>
         </template>
       </a-table>
-      <useForm v-if="isEdit" :editData="editData" @cloneModal="cloneModal" @succeed="searchBtn" />
+      <useForm v-if="isEdit" :editData="editData" @closeModal="closeModal" @succeed="searchBtn" />
     </a-card>
   </div>
 </template>
@@ -129,7 +129,7 @@ export default {
       this.searchForm.resetFields();
       this.searchBtn();
     },
-    cloneModal() {
+    closeModal() {
       this.isEdit = false;
     },
     edit(item) {
@@ -165,7 +165,7 @@ export default {
             var startdate = rangeValue[0].format("YYYY-MM-DD");
             var enddate = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             mocode: values.mocode ,
@@ -174,7 +174,7 @@ export default {
             startdate: startdate ,
             enddate: enddate,
           };
-          getModifyAction(parmas, "getall").then((res) => {
+          getModifyAction(params, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -207,9 +207,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.ReportId);
-      setModifyAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.ReportId);
+      setModifyAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.search();

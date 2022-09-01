@@ -191,10 +191,10 @@ export default {
       this.sortValue = e;
     },
     getListAll() {
-      let parmas = {
+      let params = {
         id: this.editData.DocumentId,
       };
-      getSopDocument(parmas, "single").then((res) => {
+      getSopDocument(params, "single").then((res) => {
         if (res.data.success) {
           let doc = res.data.data.doc;
           let files = res.data.data.files;
@@ -291,7 +291,7 @@ export default {
           fileType = defaType[0];
           fileSuffix = defaType[1];
         }
-        let parmas = {
+        let params = {
           filename: info.file.name,
           filecontent: imageUrl,
           filetype: fileType,
@@ -300,9 +300,9 @@ export default {
           filelength: 0,
         };
         if (this.fileData1.length > 0) {
-          parmas.FilePrefix = this.FilePrefix;
+          params.FilePrefix = this.FilePrefix;
         }
-        setSopDocumnet(parmas, "upload").then((res) => {
+        setSopDocumnet(params, "upload").then((res) => {
           if (res.data.success) {
             this.processList1.push({
               name: info.file.name,
@@ -352,7 +352,7 @@ export default {
           fileType = defaType[0];
           fileSuffix = defaType[1];
         }
-        let parmas = {
+        let params = {
           filename: info.file.name,
           filecontent: imageUrl,
           filetype: fileType,
@@ -361,9 +361,9 @@ export default {
           filelength: 0,
         };
         if (this.fileData.length > 0) {
-          parmas.FilePrefix = this.FilePrefix;
+          params.FilePrefix = this.FilePrefix;
         }
-        setSopDocumnet(parmas, "upload").then((res) => {
+        setSopDocumnet(params, "upload").then((res) => {
           if (res.data.success) {
             this.processList["sort" + info.data.sort].push({
               name: info.file.name,
@@ -431,10 +431,10 @@ export default {
     },
     //获取生产工厂
     getEnterList() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getSopDocument(parmas, "getplant").then((res) => {
+      getSopDocument(params, "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }

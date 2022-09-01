@@ -46,10 +46,10 @@ export default {
       });
     },
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "DAILY_PRODUCTION_PLAN_STATUS",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.stateList = res.data.data;
         }

@@ -78,12 +78,12 @@ export default {
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          let parmas = {
+          let params = {
             ReportId: this.editData.ReportId,
             ReportQty: this.form.EditQty,
             ProcessId: this.editData.ProcessId,
           };
-          setModifyAction(parmas, "update").then((res) => {
+          setModifyAction(params, "update").then((res) => {
             if (res.data.success) {
               this.$emit("closeModal");
               this.$emit("succeed");

@@ -228,10 +228,10 @@ export default {
       this.getLineList();
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getDailyPlanAction(parmas1, "getlistbytypecode").then((res) => {
+      getDailyPlanAction(params1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.getWorkshopList();
@@ -240,10 +240,10 @@ export default {
     },
     //获取车间
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getWorkshopList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
           this.getLineList();
@@ -252,11 +252,11 @@ export default {
     },
     //获取产线
     getLineList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopId: this.workshopId,
       };
-      getLineList(parmas).then((res) => {
+      getLineList(params).then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }

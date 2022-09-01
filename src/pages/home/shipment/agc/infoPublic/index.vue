@@ -157,14 +157,14 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         createdatestart: "",
         createdateend: "",
         statuscheck: "",
       };
-      getOrderInfoAgc(parmas, "getplantfinance").then((res) => {
+      getOrderInfoAgc(params, "getplantfinance").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -223,14 +223,14 @@ export default {
             var createdatestart = rangeValue1[0].format("YYYY-MM-DD");
             var createdateend = rangeValue1[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             createdatestart: createdatestart || "",
             createdateend: createdateend || "",
             statuscheck: values.statuscheck || "",
           };
-          getOrderInfoAgc(parmas, "getplantfinance").then((res) => {
+          getOrderInfoAgc(params, "getplantfinance").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

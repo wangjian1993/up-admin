@@ -212,18 +212,18 @@ export default {
   },
   methods: {
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "SQL_STATE",
       };
-      let parmas2 = {
+      let params2 = {
         groupcode: "SQL_EXECU_MEHTOD",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.sqlState = res.data.data;
         }
       });
-      getParamData(parmas2).then((res) => {
+      getParamData(params2).then((res) => {
         if (res.data.success) {
           this.sqlMehtod = res.data.data;
         }
@@ -285,7 +285,7 @@ export default {
           }
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             begindt: begindt,
@@ -295,7 +295,7 @@ export default {
             type: values.type,
             orderdesc: values.orderdesc ? "Y" : "N",
           };
-          getLogAction(parmas, "getsqlloglist").then((res) => {
+          getLogAction(params, "getsqlloglist").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -310,11 +310,11 @@ export default {
     },
     //获取机构类型列表
     getLogList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getLogAction(parmas, "getsqlloglist").then((res) => {
+      getLogAction(params, "getsqlloglist").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };

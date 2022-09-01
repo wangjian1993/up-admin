@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-15 09:32:47
+ * @LastEditTime: 2022-08-30 14:32:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/consignee.vue
@@ -12,22 +12,19 @@
       <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
         <a-form layout="horizontal" :form="searchForm">
           <a-row>
-             <a-col :span="6">
+            <a-col :span="6">
               <a-radio-group style="margin-top: 5px;" default-value="全部" v-model="listType" button-style="solid" @change="searchBtn">
-                <a-radio-button value="全部">
-                  全部
+                <a-radio-button value="采购收货单">
+                  采购收货单
                 </a-radio-button>
-                <a-radio-button value="签收中">
-                  签收中
-                </a-radio-button>
-                <a-radio-button value="待签收">
-                  待签收
+                <a-radio-button value="采购入库单">
+                  采购入库单
                 </a-radio-button>
               </a-radio-group></a-col
             >
             <a-col :md="6" :sm="24">
               <a-form-item label="" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 300px" placeholder="请输入搜索内容" v-decorator="['keyword']" />
+                <a-input style="width: 300px" allowClear placeholder="请输入供应商,采购单号,送货单号,收货单号" v-decorator="['keyword']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -96,7 +93,7 @@
           </span>
         </div>
         <a-table
-          :columns="columns"
+          :columns="columnsData"
           :data-source="dataSource"
           size="small"
           :scroll="{ y: scrollY }"
@@ -138,7 +135,7 @@
           </template>
         </a-table>
       </a-card>
-      <consigneeDetail v-if="isDetail" :orderno="orderno" @closeModal="closeModal" />
+      <consigneeDetail v-if="isDetail" :orderno="orderno" :tabType="tabType" @closeModal="closeModal" />
     </a-spin>
   </div>
 </template>
@@ -149,7 +146,7 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data/consignee";
+import { columns, columns1 } from "./data/consignee";
 import ExportExcel from "@/utils/ExportExcelJS";
 import consigneeDetail from "./components/consigneeDetail.vue";
 export default {
@@ -159,13 +156,15 @@ export default {
     return {
       scrollY: "",
       advanced: false,
-      columns,
+      columnsData: columns,
+      columns1,
       dataSource: [],
       isSearch: 0,
       isExportLod: false,
       selectedRowKeys: [],
       isImport: false,
-      listType: "全部",
+      listType: "采购收货单",
+      tabType: 1,
       isDetail: false,
       docno: "",
     };
@@ -191,10 +190,8 @@ export default {
     toggleAdvanced() {
       this.advanced = !this.advanced;
       if (this.advanced) {
-        console.log("打开====");
         this.scrollY = getTableScroll(160);
       } else {
-        console.log("关闭====");
         this.scrollY = getTableScroll(-20);
       }
       console.log("scrollY===", this.scrollY);
@@ -215,8 +212,10 @@ export default {
     detail(record) {
       this.isDetail = true;
       this.orderno = record.DocNo;
+      this.tabType = this.listType == "采购入库单" ? columns1 : columns;
     },
-    searchBtn() {
+    searchBtn(e) {
+      this.columnsData = e.target.value == "采购入库单" ? columns1 : columns;
       this.pagination.current = 1;
       this.search();
     },
@@ -239,7 +238,7 @@ export default {
             var startreceiptdatetime = rangeValue[0].format("YYYY-MM-DD");
             var endreceiptdatetime = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.keyword,
@@ -264,7 +263,7 @@ export default {
             endreceiptdatetime: endreceiptdatetime,
             purchasetype: values.purchasetype,
           };
-          getArrival(parmas, "get").then((res) => {
+          getArrival(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -281,7 +280,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         typeid: values.typeid,
@@ -290,7 +289,7 @@ export default {
         plccode: values.plccode,
         plcname: values.plcname,
       };
-      getArrival(parmas, "get").then((res) => {
+      getArrival(params, "get").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

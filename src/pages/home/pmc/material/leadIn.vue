@@ -236,11 +236,11 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getMitemrequirement(parmas, "getall").then((res) => {
+      getMitemrequirement(params, "getall").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -255,10 +255,10 @@ export default {
     },
     //获取需求工厂
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getMitemrequirement(parmas1, "getlistbytypecode").then((res) => {
+      getMitemrequirement(params1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -294,14 +294,14 @@ export default {
           if (this.week != "") {
             var w = this.week;
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             week: w,
             pmc: values.pmc,
           };
-          getMitemrequirement(parmas, "getall").then((res) => {
+          getMitemrequirement(params, "getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -357,9 +357,9 @@ export default {
     //单个删除
     actionBnt(item, type) {
       console.log(item);
-      let parmas = [];
-      parmas.push(item.Id);
-      mitemrequirementAction(parmas, type).then((res) => {
+      let params = [];
+      params.push(item.Id);
+      mitemrequirementAction(params, type).then((res) => {
         if (res.data.success) {
           if (type == "approved") {
             this.$message.success("审批成功!");

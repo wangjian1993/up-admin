@@ -223,9 +223,9 @@ export default {
         this.$message.error("设备信息格式错误,请修改");
       }
     },
-    submitExecl(parmas) {
+    submitExecl(params) {
       this.isUpload = true;
-      setDeviceAction(parmas, "import").then((res) => {
+      setDeviceAction(params, "import").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.$emit("closeModal");

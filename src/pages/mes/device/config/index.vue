@@ -185,10 +185,10 @@ export default {
   methods: {
     splitData,
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getDailyPlanAction(parmas, "getlistbytypecode").then((res) => {
+      getDailyPlanAction(params, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -196,10 +196,10 @@ export default {
     },
     //获取车间
     plantChange(e) {
-      let parmas = {
+      let params = {
         plantid: e,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getWorkshopList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
@@ -208,11 +208,11 @@ export default {
     //获取产线
     workshopChange(e) {
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         plantid: values.plantid,
         workshopId: e,
       };
-      getLineList(parmas).then((res) => {
+      getLineList(params).then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
@@ -243,20 +243,20 @@ export default {
       this.isImport = false;
     },
     getDeviceType() {
-      let parmas = {
+      let params = {
         groupcode: "BASE_EQUIMENT_TYPE",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.deviceTypeList = res.data.data;
         }
       });
     },
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "BASE_EQUIMENT_BRAND",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.deviceBrand = res.data.data;
         }
@@ -269,11 +269,11 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getDeviceAction(parmas, "getall").then((res) => {
+      getDeviceAction(params, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -300,7 +300,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             typeid: values.typeid,
@@ -312,7 +312,7 @@ export default {
             workshopid: values.workshopid,
             lineid: values.lineid,
           };
-          getDeviceAction(parmas, "getall").then((res) => {
+          getDeviceAction(params, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -345,9 +345,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.EquimentId);
-      setDeviceAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.EquimentId);
+      setDeviceAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
@@ -360,7 +360,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         typeid: values.typeid,
@@ -369,7 +369,7 @@ export default {
         equimentcode: values.equimentcode,
         equimentname: values.equimentname,
       };
-      getDeviceAction(parmas, "getall").then((res) => {
+      getDeviceAction(params, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

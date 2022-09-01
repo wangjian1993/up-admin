@@ -229,10 +229,10 @@ export default {
       };
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getDailyPlanAction(parmas1, "getlistbytypecode").then((res) => {
+      getDailyPlanAction(params1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -241,10 +241,10 @@ export default {
     },
     //获取车间
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getWorkshopList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
@@ -297,11 +297,11 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getPlanList(parmas).then((res) => {
+      getPlanList(params).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           this.data.forEach((item) => {
@@ -356,13 +356,13 @@ export default {
               plantname = item.EnterName;
             }
           });
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantname: plantname,
             workcentername: values.workcentername,
           };
-          getPlanList(parmas, "getall").then((res) => {
+          getPlanList(params, "getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               this.data.forEach((item) => {
@@ -387,10 +387,10 @@ export default {
       }
       console.log(this.planDate);
       let planD = this.planDate.format("YYYY-MM-DD HH:mm:ss");
-      let parmas = [];
+      let params = [];
       this.data.map((item) => {
         if (this.selectedRowKeys.includes(item.DocNo)) {
-          parmas.push({
+          params.push({
             docno: item.DocNo,
             docname: item.DocName,
             plantname: item.PlantName,
@@ -405,8 +405,8 @@ export default {
           });
         }
       });
-      parmas.push({});
-      setPlan(parmas).then((res) => {
+      params.push({});
+      setPlan(params).then((res) => {
         if (res.data.success) {
           this.$message.success("发布成功");
           this.planDate = 0;

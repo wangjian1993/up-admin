@@ -84,14 +84,14 @@ export default {
     //获取列表数据
     getListAll(values, editValue) {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         ...values,
       };
       this.editData = editValue;
       let url = this.queryType == 1 ? "get2" : "get";
-      setBomPack(parmas, url).then((res) => {
+      setBomPack(params, url).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };

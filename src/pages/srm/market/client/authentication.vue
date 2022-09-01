@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-15 15:44:49
+ * @LastEditTime: 2022-08-26 09:33:38
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/supplier/authentication.vue
+ * @FilePath: /up-admin/src/pages/srm/market/client/authentication.vue
 -->
 <template>
   <div>
@@ -116,7 +116,7 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data/authentication";
+import { columns } from "./data/detail";
 import ExportExcel from "@/utils/ExportExcelJS";
 export default {
   mixins: [PublicVar],
@@ -195,7 +195,7 @@ export default {
             var starttime = rangeValue[0].format("YYYY-MM-DD");
             var endtime = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.keyword,
@@ -205,7 +205,7 @@ export default {
             endtime: endtime,
             status: values.status,
           };
-          getAuthentication(parmas, "get").then((res) => {
+          getAuthentication(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -222,7 +222,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         typeid: values.typeid,
@@ -231,7 +231,7 @@ export default {
         plccode: values.plccode,
         plcname: values.plcname,
       };
-      getAuthentication(parmas, "get").then((res) => {
+      getAuthentication(params, "get").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

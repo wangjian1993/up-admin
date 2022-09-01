@@ -160,13 +160,13 @@ export default {
       this.$emit("closeModal");
     },
     getList(id) {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         orgid: id,
         enterid: this.enterId,
       };
-      getUserList(parmas).then((res) => {
+      getUserList(params).then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -193,14 +193,14 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             orgid: this.id,
             enterid: this.enterId,
             keyword: values.searcValue,
           };
-          getUserList(parmas).then((res) => {
+          getUserList(params).then((res) => {
             if (res.data.success) {
               this.list = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -214,7 +214,7 @@ export default {
     },
     //打开对话框
     add(item) {
-      let parmas = {
+      let params = {
         OrgId: this.id,
         OrgUserInfo: [
           {
@@ -222,7 +222,7 @@ export default {
           },
         ],
       };
-      orginfoAction(parmas,'adduser').then((res) => {
+      orginfoAction(params,'adduser').then((res) => {
         if (res.data.success) {
           this.$message.success("添加成功!");
           this.$emit("succeed");
@@ -234,7 +234,7 @@ export default {
       self.$confirm({
         title: "确定要添加选中内容",
         onOk() {
-          let parmas = {
+          let params = {
             OrgId: self.id,
             OrgUserInfo:[],
           };
@@ -242,9 +242,9 @@ export default {
             let obj = {
               UserId: item,
             };
-            parmas.OrgUserInfo.push(obj);
+            params.OrgUserInfo.push(obj);
           });
-          orginfoAction(parmas,'adduser').then((res) => {
+          orginfoAction(params,'adduser').then((res) => {
             if (res.data.success) {
               self.$message.success("添加成功!");
               self.$emit("succeed");

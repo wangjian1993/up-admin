@@ -1,11 +1,12 @@
 /*
  * @Author: max
  * @Date: 2022-08-11 13:55:08
- * @LastEditTime: 2022-08-15 09:50:35
+ * @LastEditTime: 2022-08-30 14:07:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/data/consigneeDetail.js
  */
+//出库
 export const info1 = [{
     title: '供应商',
     dataIndex: "SupplierFullName"
@@ -20,6 +21,26 @@ export const info1 = [{
     dataIndex: "DifferenceReason"
 }, {
     title: '收货日期',
+    dataIndex: "ReceiptStatus"
+}, {
+    title: '送货日期',
+    dataIndex: "DocDate"
+}];
+//入库
+export const info4 = [{
+    title: '供应商',
+    dataIndex: "SupplierFullName"
+}, {
+    title: '入库单号',
+    dataIndex: "ArrivalOrderNo"
+}, {
+    title: '送货通知单号',
+    dataIndex: "PurchaseOrderNo"
+}, {
+    title: '入库状态',
+    dataIndex: "DifferenceReason"
+}, {
+    title: '入库日期',
     dataIndex: "ReceiptStatus"
 }, {
     title: '送货日期',

@@ -163,7 +163,7 @@ export default {
       this.$emit("closeModal");
     },
     getList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterArray.EnterId,
@@ -174,7 +174,7 @@ export default {
       } else {
         url = "getusers";
       }
-      getQuotePermission(parmas, url).then((res) => {
+      getQuotePermission(params, url).then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -238,7 +238,7 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: this.enterArray.EnterId,
@@ -250,7 +250,7 @@ export default {
           } else {
             url = "getusers";
           }
-          getQuotePermission(parmas, url).then((res) => {
+          getQuotePermission(params, url).then((res) => {
             if (res.data.success) {
               this.list = res.data.data.list;
               const pagination = { ...this.pagination };

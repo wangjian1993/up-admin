@@ -155,10 +155,10 @@ export default {
   methods: {
     splitData,
     getServeType() {
-      let parmas = {
+      let params = {
         groupcode: "LINE_SERVICE_CONFIG_TYPE",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.paramsList = res.data.data;
         }
@@ -189,10 +189,10 @@ export default {
       this.isForm = false;
     },
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getPlantList(parmas, "getlistbytypecode").then((res) => {
+      getPlantList(params, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -200,21 +200,21 @@ export default {
     },
     plantChange(e) {
       this.plantId = e;
-      let parmas = {
+      let params = {
         plantid: e,
       };
-      getWorkshopAction(parmas, "getlist").then((res) => {
+      getWorkshopAction(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
     workshopChange(e) {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopid: e,
       };
-      getPlantList(parmas, "getlist").then((res) => {
+      getPlantList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.LineList = res.data.data;
         }
@@ -227,11 +227,11 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getLineServiceAction(parmas, "getall").then((res) => {
+      getLineServiceAction(params, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -262,7 +262,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -272,7 +272,7 @@ export default {
             servicecode: values.servicecode,
             servicename: values.servicename,
           };
-          getLineServiceAction(parmas, "getall").then((res) => {
+          getLineServiceAction(params, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -305,9 +305,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.ConfigId);
-      setLineServiceAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.ConfigId);
+      setLineServiceAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
@@ -317,14 +317,14 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         plantid: values.plantid,
         workshopid: values.workshopid,
         line: values.line,
       };
-      getLineServiceAction(parmas, "getall").then((res) => {
+      getLineServiceAction(params, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

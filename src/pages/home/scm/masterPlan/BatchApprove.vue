@@ -280,10 +280,10 @@ export default {
     },
     //获取物料信息
     getMitemsByBatch() {
-      let parmas = {
+      let params = {
         batchid: this.batchnoData.BatchId,
       };
-      getScmAction(parmas, "manualmatch/getmitemsbybatch").then((res) => {
+      getScmAction(params, "manualmatch/getmitemsbybatch").then((res) => {
         if (res.data.success) {
           this.materialData = res.data.data;
         }
@@ -296,11 +296,11 @@ export default {
       this.getList();
     },
     getRequirementDates() {
-      let parmas = {
+      let params = {
         batchid: this.batchnoData.BatchId,
         mitemcode: this.mitemList.MitemCode,
       };
-      getScmAction(parmas, "manualmatch/getrequirementdates").then((res) => {
+      getScmAction(params, "manualmatch/getrequirementdates").then((res) => {
         if (res.data.success) {
           this.materialDates = res.data.data;
           console.log(res.data.data);
@@ -313,12 +313,12 @@ export default {
     },
     getList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         mitemcode: this.mitemList.MitemCode,
       };
-      getScmAction(parmas, "manualmatch/getpurchaseorders").then((res) => {
+      getScmAction(params, "manualmatch/getpurchaseorders").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           this.list.map((item,index) => {
@@ -362,7 +362,7 @@ export default {
       this.isBatchNo = true;
     },
     handleOk() {
-      let parmas = {
+      let params = {
         PlantId: this.batchnoData.PlantId,
         BatchId: this.batchnoData.BatchId,
         MitemCode: this.mitemList.MitemCode,
@@ -372,7 +372,7 @@ export default {
       };
       this.list.map((items) => {
         if (this.selectedRowKeys.indexOf(items.Id) > -1) {
-          parmas.MatchList.push({
+          params.MatchList.push({
             PurchaseOrderNo: items.PurchaseOrderNo,
             SupplierCode: items.SupplierCode,
             LineItem: items.LineItem,
@@ -381,7 +381,7 @@ export default {
           });
         }
       });
-      setScmAction(parmas, "manualmatch/addv2").then((res) => {
+      setScmAction(params, "manualmatch/addv2").then((res) => {
         if (res.data.success) {
           this.$message.success("手动匹配成功!");
           this.$emit("succeed");

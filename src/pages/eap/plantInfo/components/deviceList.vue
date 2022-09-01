@@ -146,10 +146,10 @@ export default {
       });
     },
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "EAP_EQUIMENT_BRAND",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.deviceBrand = res.data.data;
         }
@@ -209,14 +209,14 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             typeid: values.typeid,
             brand: values.brand,
             equiment: values.equiment,
           };
-          getWorkstationAction(parmas, "getequiment").then((res) => {
+          getWorkstationAction(params, "getequiment").then((res) => {
             if (res.data.success) {
               this.deviceList = res.data.data.list;
               const pagination = { ...this.pagination };

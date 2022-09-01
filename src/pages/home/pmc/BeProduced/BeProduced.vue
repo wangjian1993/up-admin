@@ -44,20 +44,20 @@ export default {
   methods: {
     //获取需求工厂
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getMitemPlanAction(parmas1, "getlistbytypecode").then((res) => {
+      getMitemPlanAction(params1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
       });
     },
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "MITEM_OUTPUT_PLAN_STATUS",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.stateList = res.data.data;
         }

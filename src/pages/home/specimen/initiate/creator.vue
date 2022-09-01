@@ -108,10 +108,10 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             itemcode: values.itemcode,
           };
-          getMaterialSampleApi(parmas, "getitemcodecreatedinfo").then((res) => {
+          getMaterialSampleApi(params, "getitemcodecreatedinfo").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data
             }

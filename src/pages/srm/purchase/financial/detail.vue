@@ -189,10 +189,10 @@ export default {
     },
     getDetailList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         docno: this.docno,
       };
-      getPurchaseOrders(parmas, "single").then((res) => {
+      getPurchaseOrders(params, "single").then((res) => {
         if (res.data.success) {
           this.orderList = res.data.data.order;
           this.detailList = res.data.data.detail;

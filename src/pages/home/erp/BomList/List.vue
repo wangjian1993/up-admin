@@ -426,10 +426,10 @@ export default {
       console.log("this.mitemcodeData", this.mitemcodeData);
     },
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getERPReportAction(parmas, "getenterlist").then((res) => {
+      getERPReportAction(params, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.searchValue.plantId = this.plantList[0].PlantId;
@@ -440,7 +440,7 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         plantid: this.plantId,
@@ -450,7 +450,7 @@ export default {
         approvestatus: "",
         
       };
-      getERPReportAction(parmas, "getbomlist").then((res) => {
+      getERPReportAction(params, "getbomlist").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -499,7 +499,7 @@ export default {
       }
       // this.selectedRowKeys = [];
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         plantid: this.searchValue.plantId,
@@ -515,7 +515,7 @@ export default {
         drawingnosign: this.drawingnosign,
         shortcutsign: this.shortcutsign,
       };
-      getERPReportAction(parmas, "getbomlist").then((res) => {
+      getERPReportAction(params, "getbomlist").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -566,11 +566,11 @@ export default {
         let excelData = [];
         console.log("selectedRowKeys===", this.selectedRowKeys);
         this.printArray.forEach((item) => {
-          let parmas = {
+          let params = {
             plantid: this.searchValue.plantId,
             itemcode: item.ITEM_CODE,
           };
-          getERPReportAction(parmas, "getbomchildlevel").then((res) => {
+          getERPReportAction(params, "getbomchildlevel").then((res) => {
             // let children = res.data.data.list;
             this.excelList = res.data.data.list;
             let treeList = this.initTree(item.ITEM_CODE);
@@ -594,11 +594,11 @@ export default {
       return new Promise((resolve) => {
         this.treeArray = [];
         this.excelList = [];
-        let parmas = {
+        let params = {
           plantid: this.searchValue.plantId,
           itemcode: itemcode,
         };
-        getERPReportAction(parmas, "getbomchildlevel").then((res) => {
+        getERPReportAction(params, "getbomchildlevel").then((res) => {
           this.excelList = res.data.data.list;
           let treeList = this.initTree(itemcode);
           this.treeArray = [];
@@ -612,11 +612,11 @@ export default {
         //     if (items.BOM_ID == item) {
         //       this.treeArray = [];
         //       this.excelList = [];
-        //       let parmas = {
+        //       let params = {
         //         plantid: this.searchValue.plantId,
         //         itemcode: items.ITEM_CODE,
         //       };
-        //       getERPReportAction(parmas, "getbomchildlevel").then((res) => {
+        //       getERPReportAction(params, "getbomchildlevel").then((res) => {
         //         // let children = res.data.data.list;
         //         this.excelList = res.data.data.list;
         //         this.excelList = this.initTree(items.ITEM_CODE);

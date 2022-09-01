@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2021-10-14 10:45:40
+ * @LastEditTime: 2022-08-26 10:55:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/components/app-user/UserList.vue
@@ -122,10 +122,10 @@ export default {
   },
   methods: {
     getDemandEnter() {
-      let parmas = {
+      let params = {
         entertypecode: "COMPANY",
       };
-      getDemandEnter(parmas).then((res) => {
+      getDemandEnter(params).then((res) => {
         if (res.data.success) {
           this.enterList = res.data.data;
           this.enterpriseid =this.enterList[0].EnterId
@@ -140,12 +140,12 @@ export default {
       this.$emit("closeModal");
     },
     getList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterpriseid,
       };
-      getQuotePermission(parmas, "getusers").then((res) => {
+      getQuotePermission(params, "getusers").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -187,13 +187,13 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
             keyword: values.searcValue,
           };
-          getQuotePermission(parmas, "getusers").then((res) => {
+          getQuotePermission(params, "getusers").then((res) => {
             if (res.data.success) {
               this.list = res.data.data.list;
               const pagination = { ...this.pagination };

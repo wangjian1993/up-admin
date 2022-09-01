@@ -147,7 +147,7 @@ export default {
         this.$message.warning("请先导入excel文件!");
         return;
       }
-      let parmas = {
+      let params = {
         Task: [],
       };
       //拼接后台数据
@@ -168,7 +168,7 @@ export default {
           });
         }
         console.log(typeof item.TheYear);
-        parmas.Task.push({
+        params.Task.push({
           EmployeeName: item.EmployeeName,
           EmployeeCode: item.EmployeeCode,
           TheYear: Number(item.TheYear),
@@ -177,16 +177,16 @@ export default {
         });
       });
       if (this.errorList.length == 0) {
-        this.submitExecl(parmas);
+        this.submitExecl(params);
       } else {
         this.isShowTable = true;
         this.$message.error("导入信息格式错误,请修改");
       }
     },
     //提交
-    submitExecl(parmas) {
+    submitExecl(params) {
       this.isUpload = true;
-      importMonthlyTaskList(parmas).then((res) => {
+      importMonthlyTaskList(params).then((res) => {
         if (res.data.AddNum > 0) {
           this.$message.success("导入成功!");
           this.close();

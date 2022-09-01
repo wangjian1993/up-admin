@@ -1,3 +1,11 @@
+/*
+ * @Author: max
+ * @Date: 2021-06-23 09:27:52
+ * @LastEditTime: 2022-08-31 09:47:19
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/router/index.js
+ */
 import Vue from 'vue'
 import Router from 'vue-router'
 import {formatRoutes} from '@/utils/routerUtil'
@@ -7,7 +15,7 @@ Vue.use(Router)
 // 不需要登录拦截的路由配置
 const loginIgnore = {
   names: ['404', '403'],      //根据路由名称匹配
-  paths: ['/login'],   //根据路由fullPath匹配
+  paths: ['/login','/supplier/login','/supplier/register'],   //根据路由fullPath匹配
   /**
    * 判断路由是否包含在该配置中
    * @param route vue-router 的 route 对象

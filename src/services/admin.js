@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-14 08:51:07
- * @LastEditTime: 2022-08-18 10:09:55
+ * @LastEditTime: 2022-09-01 10:18:16
  * @LastEditors: max
  * @Description: 后台接口
  * @FilePath: /up-admin/src/services/admin.js
@@ -39,6 +39,9 @@ export async function enterAction(params, action) {
 }
 export async function getEnterTypeList(params) {
 	return request(`${UP_ADMIN}/enter/getlistbytypecode`, METHOD.GET, params);
+}
+export async function getEnterSingle(params) {
+	return request(`${UP_ADMIN}/enter/getsingle`, METHOD.GET, params);
 }
 // 组织列表
 /**
@@ -289,4 +292,12 @@ export function setTemplateAction(params, action) {
 }
 export function getTemplateAction(params, action) {
 	return request(`${UP_TPL}/print/${action}`, METHOD.GET, params);
+}
+
+//采购域
+export function setDomain(params, action) {
+	return request(`${UP_ADMIN}/purchase/area/${action}`, METHOD.POST, params);
+}
+export function getDomain(params, action) {
+	return request(`${UP_ADMIN}/purchase/area/${action}`, METHOD.GET, params);
 }

@@ -242,11 +242,11 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getScmAction(parmas, "requirement/getall").then((res) => {
+      getScmAction(params, "requirement/getall").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -280,7 +280,7 @@ export default {
           if (this.week != "") {
             var w = this.week;
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -288,7 +288,7 @@ export default {
             pmc: values.pmc,
             status:values.status
           };
-          getScmAction(parmas, "requirement/getall").then((res) => {
+          getScmAction(params, "requirement/getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -338,9 +338,9 @@ export default {
     },
     //单个删除
     actionBnt(item, type) {
-      let parmas = [];
-      parmas.push(item.Id);
-      setScmAction(parmas, type).then((res) => {
+      let params = [];
+      params.push(item.Id);
+      setScmAction(params, type).then((res) => {
         if (res.data.success) {
           if (type == "approved") {
             this.$message.success("审批成功!");

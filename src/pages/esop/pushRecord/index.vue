@@ -289,31 +289,31 @@ export default {
     },
     //获取生产工厂
     getEnterList() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getSopDocument(parmas, "getplant").then((res) => {
+      getSopDocument(params, "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
       });
     },
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantid,
       };
-      getSopDocument(parmas, "getworkcenter").then((res) => {
+      getSopDocument(params, "getworkcenter").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
     getLineList() {
-      let parmas = {
+      let params = {
         plantid: this.plantid,
         workshopid: this.workshopId,
       };
-      getSopDocument(parmas, "getline").then((res) => {
+      getSopDocument(params, "getline").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
@@ -322,11 +322,11 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getPushRecord(parmas, "getsendrecord").then((res) => {
+      getPushRecord(params, "getsendrecord").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -364,7 +364,7 @@ export default {
             var starttime = rangeValue[0].format("YYYY-MM-DD");
             var endtime = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid || "",
@@ -378,7 +378,7 @@ export default {
             starttime: starttime || "",
             endtime: endtime || "",
           };
-          getPushRecord(parmas, "getsendrecord").then((res) => {
+          getPushRecord(params, "getsendrecord").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };

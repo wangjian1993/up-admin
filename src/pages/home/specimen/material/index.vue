@@ -188,12 +188,12 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterId,
       };
-      getDepartmentApi(parmas, "getpermissionlist").then((res) => {
+      getDepartmentApi(params, "getpermissionlist").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -220,12 +220,12 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
           };
-          getDepartmentApi(parmas, "getpermissionlist").then((res) => {
+          getDepartmentApi(params, "getpermissionlist").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -266,14 +266,14 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = {
+      let params = {
         PermissionList: [
           {
             PermissionId: item.PermissionId, //部门ID
           },
         ],
       };
-      setDepartmentApi(parmas, "deletepermission").then((res) => {
+      setDepartmentApi(params, "deletepermission").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();

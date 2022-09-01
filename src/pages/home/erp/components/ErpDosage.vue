@@ -292,7 +292,7 @@ const columns = [
 ];
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
-import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
+import { feedSystem, modelType, stateType } from "@/utils/BomParams.js";
 import ModelInfo from "./ModelInfo.vue";
 import BomUnfold from "./BomUnfold.vue";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
@@ -374,10 +374,10 @@ export default {
     },
     getList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         bomid: this.info.BOM_ID || this.info.ITEM_BUSINESS_ID,
       };
-      getERPReportAction(parmas, "getbomusinginfo").then((res) => {
+      getERPReportAction(params, "getbomusinginfo").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };

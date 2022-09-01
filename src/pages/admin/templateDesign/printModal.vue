@@ -30,6 +30,7 @@
           <a-col :span="24">
             <a-form-model-item ref="CompanyId" has-feedback label="机构名称" prop="CompanyId">
               <a-select :disabled="isEdit" v-model="form.CompanyId" placeholder="请选择机构名称">
+                <a-select-option value="*">全部</a-select-option>
                 <a-select-option :value="item.EnterId" v-for="item in companyList" :key="item.EnterId">{{ item.EnterName }}</a-select-option>
               </a-select>
             </a-form-model-item>
@@ -135,7 +136,7 @@ export default {
                 this.$message.success("编辑成功!");
                 this.isForm = false;
                 this.$emit("succeed");
-                this.$emit("cloneModal");
+                this.$emit("closeModal");
               }
             });
           } else {
@@ -145,7 +146,7 @@ export default {
                 this.$message.success("添加成功!");
                 this.isForm = false;
                 this.$emit("succeed");
-                this.$emit("cloneModal");
+                this.$emit("closeModal");
               }
             });
           }
@@ -171,7 +172,7 @@ export default {
       var report = new window.Stimulsoft.Report.StiReport();
       report.dictionary.databases.clear();
       this.isForm = false;
-      this.$emit("cloneModal");
+      this.$emit("closeModal");
     },
     // 调用打印机打印数据
     print() {

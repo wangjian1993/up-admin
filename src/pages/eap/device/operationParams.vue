@@ -188,10 +188,10 @@ export default {
   methods: {
     splitData,
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getPlantList(parmas, "getlistbytypecode").then((res) => {
+      getPlantList(params, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -199,10 +199,10 @@ export default {
     },
     plantChange(e) {
       this.plantId = e;
-      let parmas = {
+      let params = {
         plantid: e,
       };
-      getWorkshopAction(parmas, "getlist").then((res) => {
+      getWorkshopAction(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
           this.searchForm.setFieldsValue({
@@ -214,11 +214,11 @@ export default {
       });
     },
     workshopChange(e) {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopid: e,
       };
-      getPlantList(parmas, "getlist").then((res) => {
+      getPlantList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.LineList = res.data.data;
           this.searchForm.setFieldsValue({
@@ -229,10 +229,10 @@ export default {
       });
     },
     lineChange(e){
-      let parmas = {
+      let params = {
         lineid: e,
       };
-      getDeviceAction(parmas, "getlist").then((res) => {
+      getDeviceAction(params, "getlist").then((res) => {
         if (res.data.success) {
           this.deviceList = res.data.data;
           this.searchForm.setFieldsValue({
@@ -244,10 +244,10 @@ export default {
     //重置搜索
     getParamsData() {
       this.paramsList.forEach((item) => {
-        let parmas = {
+        let params = {
           groupcode: item,
         };
-        getParamData(parmas).then((res) => {
+        getParamData(params).then((res) => {
           if (res.data.success) {
             this.paramsItem[item] = res.data.data;
           }
@@ -289,11 +289,11 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getOperationAction(parmas, "getall").then((res) => {
+      getOperationAction(params, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -324,7 +324,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             paramtype: values.paramtype,
@@ -336,7 +336,7 @@ export default {
             lineid:values.lineid,
             equimentid: values.equimentid,
           };
-          getOperationAction(parmas, "getall").then((res) => {
+          getOperationAction(params, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -369,9 +369,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.VarValueId);
-      setOperationAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.VarValueId);
+      setOperationAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
@@ -382,7 +382,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         paramtype: values.paramtype,
@@ -394,7 +394,7 @@ export default {
         lineid:values.lineid,
         equimentid: values.equimentid,
       };
-      getOperationAction(parmas, "getall").then((res) => {
+      getOperationAction(params, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

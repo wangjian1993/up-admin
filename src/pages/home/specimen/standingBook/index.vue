@@ -246,7 +246,7 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterId,
@@ -260,7 +260,7 @@ export default {
         supplier: "",
         purchaser: "",
       };
-      getDepartmentApi(parmas, "getallregisterlist").then((res) => {
+      getDepartmentApi(params, "getallregisterlist").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -295,7 +295,7 @@ export default {
             var createdatestart = values["range-time-picker"][0].format("YYYY-MM-DD");
             var createdateend = values["range-time-picker"][1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
@@ -309,7 +309,7 @@ export default {
             supplier: values.supplier || "",
             purchaser: values.purchaser || "",
           };
-          getDepartmentApi(parmas, "getallregisterlist").then((res) => {
+          getDepartmentApi(params, "getallregisterlist").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

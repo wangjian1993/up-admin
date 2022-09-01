@@ -211,7 +211,7 @@ export default {
     };
   },
   created() {
-    this.getParmasData();
+    this.getparamsData();
     this.data.push(this.editData);
   },
   methods: {
@@ -229,7 +229,7 @@ export default {
     disabledDate1(current) {
       return current && current < moment().endOf("day");
     },
-    getParmasData() {
+    getparamsData() {
       getParamData({
         groupcode: "CHANNEL",
       }).then((res) => {

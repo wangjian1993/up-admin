@@ -167,12 +167,12 @@ export default {
         console.log(info.file);
         // let typeArray = info.file.type.split("/");
         // let fileType = typeArray[1].toUpperCase();
-        let parmas = {
+        let params = {
           FileName: info.file.name,
           FileContent: imageUrl,
           FileSuffix: ".jpg",
         };
-        uploadFile(parmas).then((res) => {
+        uploadFile(params).then((res) => {
           if (res.data.success) {
             this.$message.success("上传成功!");
             this.fileData = res.data.data;
@@ -204,14 +204,14 @@ export default {
     saveInfo() {
       this.user.Photo = this.fileData.ResourceId || this.user.Photo;
       console.log(this.user);
-      let parmas = {
+      let params = {
         UserName: this.user.UserName,
         Email: this.user.Email,
         EnterWechatAccount: this.user.EnterWechatAccount,
         MobilePhone: this.user.MobilePhone,
         Photo: this.user.Photo,
       };
-      loginUpdate(parmas).then((res) => {
+      loginUpdate(params).then((res) => {
         if (res.data.success) {
           this.$message.success("修改成功!");
           this.getUserInfo();

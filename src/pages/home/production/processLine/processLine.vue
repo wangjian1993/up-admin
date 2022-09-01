@@ -194,20 +194,20 @@ export default {
       });
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getProcessLine(parmas1, "line/getlistbytypecode").then((res) => {
+      getProcessLine(params1, "line/getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
       });
     },
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantid,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getWorkshopList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
@@ -243,14 +243,14 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             process: values.process,
             workshop:values.workshop
           };
-          getProcessLine(parmas, "line/getall").then((res) => {
+          getProcessLine(params, "line/getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -265,11 +265,11 @@ export default {
     },
     //获取机构类型列表
     getListAll() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getProcessLine(parmas, "line/getall").then((res) => {
+      getProcessLine(params, "line/getall").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -298,17 +298,17 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          let parmas = [];
+          let params = [];
           self.data.forEach((item) => {
             if (self.selectedRowKeys.includes(item.ProcessId)) {
-              parmas.push({
+              params.push({
                 PlantId: item.PlantId,
                 ProcessId: item.ProcessId,
                 WorkshopId: item.WorkshopId,
               });
             }
           });
-          setProcessLine(parmas, "line/delete").then((res) => {
+          setProcessLine(params, "line/delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -321,13 +321,13 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push({
+      let params = [];
+      params.push({
         PlantId: item.PlantId,
         ProcessId: item.ProcessId,
         WorkshopId: item.WorkshopId,
       });
-      setProcessLine(parmas, "line/delete").then((res) => {
+      setProcessLine(params, "line/delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();

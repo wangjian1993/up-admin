@@ -421,9 +421,9 @@ export default {
       //   this.$message.error("生产日计划数据格式错误,请修改");
       // }
     },
-    submitExecl(parmas) {
+    submitExecl(params) {
       this.isUpload = true;
-      dailyPlanAction(parmas, "importv2").then((res) => {
+      dailyPlanAction(params, "importv2").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.close();

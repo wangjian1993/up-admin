@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-08-11 15:22:47
+ * @LastEditTime: 2022-08-25 10:20:27
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/order/detail.vue
@@ -113,16 +113,16 @@
           zIndex: 1,
         }"
       >
-        <a-button type="danger" :style="{ marginRight: '8px' }" @click="handleCancel">
+        <a-button type="danger" :style="{ marginRight: '8px' }" @click="actionBtn('return')">
           退回
         </a-button>
-         <a-button  type="primary" :style="{ marginRight: '8px' }" @click="handleCancel">
+        <a-button type="primary" :style="{ marginRight: '8px' }" @click="actionBtn('agree')">
           同意
         </a-button>
-        <a-button  type="primary" :style="{ marginRight: '8px' }" @click="handleCancel">
+        <a-button type="primary" :style="{ marginRight: '8px' }" @click="handleCancel">
           提醒
         </a-button>
-        <a-button  type="primary" :style="{ marginRight: '8px' }" @click="handleCancel">
+        <a-button type="primary" :style="{ marginRight: '8px' }" @click="handleCancel">
           打印
         </a-button>
       </div>
@@ -132,7 +132,7 @@
 
 <script>
 import { info1, info2, info3, columns, columnKeys } from "./data/detail";
-import { getPurchaseOrders } from "@/services/srm.js";
+import { getPurchaseOrders, setPurchaseOrders } from "@/services/srm.js";
 import { splitData } from "@/utils/util.js";
 export default {
   props: ["docno"],
@@ -189,10 +189,10 @@ export default {
     },
     getDetailList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         docno: this.docno,
       };
-      getPurchaseOrders(parmas, "single").then((res) => {
+      getPurchaseOrders(params, "single").then((res) => {
         if (res.data.success) {
           this.orderList = res.data.data.order;
           this.detailList = res.data.data.detail;
@@ -219,10 +219,16 @@ export default {
     onClose() {
       this.isDrawer = false;
     },
-    handleTableChange(pagination) {
-      this.pagination.current = pagination.current;
-      this.pagination.pageSize = pagination.pageSize;
-      this.getList();
+    actionBtn(action) {
+      setPurchaseOrders;
+      let params = [this.docno];
+      setPurchaseOrders(params, action).then((res) => {
+        if (res.data.success) {
+          let content = action == "agree" ? "同意成功" : "退回成功";
+          this.$message.success(content);
+          this.$emit("closeModal");
+        }
+      });
     },
     //关闭对话框
     handleCancel() {

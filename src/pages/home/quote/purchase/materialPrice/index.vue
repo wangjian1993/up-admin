@@ -209,10 +209,10 @@ export default {
     },
     //获取需求公司
     getDemandEnter() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getDemandEnter(parmas1).then((res) => {
+      getDemandEnter(params1).then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -228,13 +228,13 @@ export default {
         if (!err) {
           this.dataSource = [];
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             itemcode: values.itemcode || "",
           };
-          getCostConfig(parmas, "getmaterialpricedetail").then((res) => {
+          getCostConfig(params, "getmaterialpricedetail").then((res) => {
             if (res.data.success) {
               console.log(res.data.data);
               if (!res.data.data) {

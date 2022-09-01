@@ -173,7 +173,7 @@ const columns = [
 ];
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
-import { feedSystem, modelType } from "@/utils/BomParmas.js";
+import { feedSystem, modelType } from "@/utils/BomParams.js";
 import { general, storage, production, plant, finance } from "./common";
 import { uploadFile } from "@/services/admin.js";
 // import { jsPDF } from "jspdf";
@@ -241,10 +241,10 @@ export default {
       this.$emit("closeModal");
     },
     getImg() {
-      let parmas = {
+      let params = {
         itemcode: this.modelData.ITEM_CODE || this.modelData.itemcode,
       };
-      getERPReportAction(parmas, "getitemimage").then((res) => {
+      getERPReportAction(params, "getitemimage").then((res) => {
         if (res.data.success) {
           console.log(res.data.data.ContentBase64);
           this.imgUrl = "data:image/jpg;base64," + res.data.data.ContentBase64 || res.data.data.ImgUrl;
@@ -253,12 +253,12 @@ export default {
       });
     },
     updated(info) {
-      let parmas = {
+      let params = {
         FileName: info.FileName,
         FileContent: info.FileContent,
         FileSuffix: info.FileSuffix,
       };
-      uploadFile(parmas).then((res) => {
+      uploadFile(params).then((res) => {
         if (res.data.success) {
           // this.$message.success("上传成功!");
           this.imgUrl = res.data.data.ImgUrl;
@@ -268,11 +268,11 @@ export default {
     getList() {
       this.loading = true;
       console.log(this.modelData);
-      let parmas = {
+      let params = {
         plantid: this.modelData.Owner_Org_ROid || this.modelData.plantid,
         itemcode: this.modelData.ITEM_CODE || this.modelData.itemcode,
       };
-      getERPReportAction(parmas, "getbomdetailinfo").then((res) => {
+      getERPReportAction(params, "getbomdetailinfo").then((res) => {
         if (res.data.success) {
           this.info = Object.assign(res.data.data.info_1[0], res.data.data.info_2[0]);
           console.log(this.info);

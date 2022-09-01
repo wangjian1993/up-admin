@@ -90,12 +90,12 @@ export default {
       this.deviceItem = item;
     },
     getDeviceList() {
-      let parmas = {
+      let params = {
         recordid: this.documentItem.RecordId,
         lineid: this.documentItem.LineId,
         documentid: this.documentItem.DocumentId,
       };
-      getSopDocument(parmas, "record/getequipment").then((res) => {
+      getSopDocument(params, "record/getequipment").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           let array = [];

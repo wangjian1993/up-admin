@@ -108,15 +108,15 @@ export default {
       this.data = [];
     },
     updatedStatu() {
-      let parmas = [];
+      let params = [];
       this.printData.map((item) => {
-        parmas.push({
+        params.push({
           Id: item.Id,
           Remarks: item.Remarks,
           Status: "PRINTED",
         });
       });
-      setPrintInfo(parmas, "mitemupdate").then((res) => {
+      setPrintInfo(params, "mitemupdate").then((res) => {
         if (res.data.success) {
           this.$message.success("打印成功!");
         }

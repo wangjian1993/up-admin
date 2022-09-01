@@ -133,7 +133,7 @@ import { renderStripe } from "@/utils/stripe.js";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
 import ErpDosage from "../components/ErpDosage.vue";
-import { feedSystem, modelType, stateType } from "@/utils/BomParmas.js";
+import { feedSystem, modelType, stateType } from "@/utils/BomParams.js";
 import { columns } from "./data";
 import { PublicVarErp } from "@/mixins/publicVarErp.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
@@ -190,10 +190,10 @@ export default {
       this.mitemcodeData.plantId = values.plantid;
     },
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getERPReportAction(parmas, "getenterlist").then((res) => {
+      getERPReportAction(params, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.searchForm.setFieldsValue({
@@ -205,7 +205,7 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         plantid: this.plantId,
@@ -218,7 +218,7 @@ export default {
         lastmodifieddatestart: "",
         lastmodifieddateend: "",
       };
-      getERPReportAction(parmas, "bomreversequery").then((res) => {
+      getERPReportAction(params, "bomreversequery").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -263,7 +263,7 @@ export default {
             var lastmodifieddateend = rangeValue2[1].format("YYYY-MM-DD");
           }
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid || "",
@@ -276,7 +276,7 @@ export default {
             lastmodifieddatestart: lastmodifieddatestart || "",
             lastmodifieddateend: lastmodifieddateend || "",
           };
-          getERPReportAction(parmas, "bomreversequery").then((res) => {
+          getERPReportAction(params, "bomreversequery").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };

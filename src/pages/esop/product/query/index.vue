@@ -218,10 +218,10 @@ export default {
     },
     //获取生产工厂
     getEnterList() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getSopDocument(parmas, "getplant").then((res) => {
+      getSopDocument(params, "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           // this.plantid = this.plantList[0].PlantId;
@@ -232,7 +232,7 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         plantid: this.plantid,
@@ -241,7 +241,7 @@ export default {
         protypecode: "",
         protypedcode: "",
       };
-      getProduct(parmas, "getproductlist").then((res) => {
+      getProduct(params, "getproductlist").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -269,7 +269,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -278,7 +278,7 @@ export default {
             protypecode: values.protypecode || "",
             protypedcode: values.protypedcode || "",
           };
-          getProduct(parmas, "getproductlist").then((res) => {
+          getProduct(params, "getproductlist").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };

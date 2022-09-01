@@ -113,7 +113,7 @@ export default {
     getList() {
       this.loading = true;
       console.log(this.historyAmountData)
-      let parmas = {
+      let params = {
         childCode: this.historyAmountData.ChildCode,
         enterpriseid: this.info.EnterpriseId,
         plantid: this.info.PlantId,
@@ -126,7 +126,7 @@ export default {
       } else {
         url = "getpricehistorysum";
       }
-      getCostConfig(parmas, url).then((res) => {
+      getCostConfig(params, url).then((res) => {
         if (res.data.success) {
           if (this.amounType == 1) {
             this.dataSource = res.data.data.PriceHistory;

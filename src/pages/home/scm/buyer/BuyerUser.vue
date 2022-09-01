@@ -118,11 +118,11 @@ export default {
       this.$emit("closeModal");
     },
     getList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getBuyerAction(parmas, "getusers").then((res) => {
+      getBuyerAction(params, "getusers").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -161,12 +161,12 @@ export default {
           this.data = [];
           this.pagination.total = 0;
           this.pagination.current = 1;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.searcValue,
           };
-          getBuyerAction(parmas, "getusers").then((res) => {
+          getBuyerAction(params, "getusers").then((res) => {
             if (res.data.success) {
               this.list = res.data.data.list;
               const pagination = { ...this.pagination };

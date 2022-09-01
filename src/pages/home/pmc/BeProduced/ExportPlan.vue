@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-18 08:39:23
- * @LastEditTime: 2022-04-08 15:50:23
+ * @LastEditTime: 2022-08-22 14:11:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/pmc/BeProduced/ExportPlan.vue
@@ -204,6 +204,13 @@ const columns = [
     width: 100,
   },
   {
+      title: "己请末购数",
+      dataIndex: "RequestedNotPurchasedQty",
+      scopedSlots: { customRender: "RequestedNotPurchasedQty" },
+      align: "center",
+      width: 100,
+    },
+  {
     title: "PMC",
     dataIndex: "Pmcs",
     scopedSlots: { customRender: "Pmcs" },
@@ -324,6 +331,13 @@ const excelHead = [
     align: "center",
     width: 100,
   },
+   {
+      title: "己请末购数",
+      dataIndex: "RequestedNotPurchasedQty",
+      scopedSlots: { customRender: "RequestedNotPurchasedQty" },
+      align: "center",
+      width: 100,
+    },
   {
     title: "PMC",
     dataIndex: "Pmcs",
@@ -416,10 +430,10 @@ export default {
       this.week = str[1].replace("周", "");
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getMitemPlanAction(parmas1, "result/getlistbytypecode").then((res) => {
+      getMitemPlanAction(params1, "result/getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -433,11 +447,11 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getMitemPlanAction(parmas, "result/getexport").then((res) => {
+      getMitemPlanAction(params, "result/getexport").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -471,13 +485,13 @@ export default {
           console.log("Received values of form: ", values);
           this.dataSourcedata = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
             batchno: values.batchno,
           };
-          getMitemPlanAction(parmas, "result/getexport").then((res) => {
+          getMitemPlanAction(params, "result/getexport").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -506,13 +520,13 @@ export default {
     getExcelList() {
       let inputData = this.searchForm.getFieldsValue();
       return new Promise((resolve, reject) => {
-        let parmas = {
+        let params = {
           pageindex: this.pagination.current,
           pagesize: 500,
           plantid: inputData.plantid,
           batchno: inputData.batchno,
         };
-        getMitemPlanAction(parmas, "result/getexport").then((res) => {
+        getMitemPlanAction(params, "result/getexport").then((res) => {
           if (res.data.success) {
             let list = res.data.data.list;
             resolve(list);
@@ -531,7 +545,7 @@ export default {
       let _data = [];
       let excelArray = [];
       let mergeTitle = [];
-      const hear = ["计划批号", "生产工厂", "子件品号", "子件品名", "子件规格", "需求日期", "库存数量", "待排产需求总数量", "待产需求总数量", "未来可用需求总量", "已预留总数", "可用总数", "需求数量", "采购在途数量", "到货未入数", "PMC", "业务单号"];
+      const hear = ["计划批号", "生产工厂", "子件品号", "子件品名", "子件规格", "需求日期", "库存数量", "待排产需求总数量", "待产需求总数量", "未来可用需求总量", "已预留总数", "可用总数", "需求数量", "采购在途数量", "到货未入数","己请末购数", "PMC", "业务单号"];
       _data.push(hear);
       list.map((item) => {
         let array = [];
@@ -562,6 +576,7 @@ export default {
         { wch: 8 }, // 用量
         { wch: 8 }, // 金额
         { wch: 8 }, // 提示
+         { wch: 8 }, // 提示
         { wch: 20 }, // 备注
         { wch: 20 }, // 备注
       ];

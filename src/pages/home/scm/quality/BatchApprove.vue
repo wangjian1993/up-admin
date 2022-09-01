@@ -130,10 +130,10 @@ export default {
       this.$emit("closeModal");
     },
     handleOk() {
-      let parmas = [];
+      let params = [];
       this.batchData.forEach((item) => {
         console.log(item);
-        parmas.push({
+        params.push({
           PlantCode: item.PlantCode,
           OrderNo: item.OrderNo,
           MitemCode: item.MitemCode,
@@ -144,7 +144,7 @@ export default {
           ScrapQty: item.ScrapQty || 0,
         });
       });
-      setQualityAction(parmas, "approvedmultiple").then((res) => {
+      setQualityAction(params, "approvedmultiple").then((res) => {
         if (res.data.success) {
           this.$message.success("审核成功!");
           this.$emit("succeed");

@@ -171,10 +171,10 @@ export default {
       this.$emit("closeModal");
     },
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getDailyPlanAction(parmas, "getlistbytypecode").then((res) => {
+      getDailyPlanAction(params, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -182,10 +182,10 @@ export default {
     },
     //获取车间
     plantChange(e) {
-      let parmas = {
+      let params = {
         plantid: e,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getWorkshopList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
@@ -193,11 +193,11 @@ export default {
     },
     //获取产线
     workshopChange(e) {
-      let parmas = {
+      let params = {
         plantid: this.form.PlantId,
         workshopId: e,
       };
-      getLineList(parmas).then((res) => {
+      getLineList(params).then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }

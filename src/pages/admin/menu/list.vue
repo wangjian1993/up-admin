@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-12-08 09:27:02
+ * @LastEditTime: 2022-09-01 09:36:45
  * @LastEditors: max
  * @Description: 菜单管理
  * @FilePath: /up-admin/src/pages/admin/menu/list.vue
@@ -46,7 +46,7 @@
               </a-col>
               <a-col>
                 <div style="margin-top: 3px">
-                  <a-button :disabled="!hasPerm('search')" type="primary" icon="search" style="margin:0 10px" @click="search">搜索</a-button>
+                  <a-button :disabled="!hasPerm('search')" type="primary" icon="search" style="margin:0 10px" @click="searchBtn">搜索</a-button>
                   <a-button :disabled="!hasPerm('search')" @click="reset" icon="reload">重置</a-button>
                 </div></a-col
               >
@@ -463,7 +463,7 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll();
     });
-    this.getMenuList();
+    this.search();
     this.getAppInfoList();
     this.getParamData();
   },
@@ -566,48 +566,50 @@ export default {
     //重置搜索
     reset() {
       this.pagination.current = 1;
-      this.getMenuList();
+      this.search();
       this.searchForm.resetFields();
+    },
+    searchBtn(){
+      this.pagination.current = 1;
+      this.search();
     },
     //关键词搜索
     search() {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           console.log("Received values of form: ", values);
-          this.data = [];
-          this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             apptypeid: values.AppTypeId,
             appid: values.AppId,
             keyword: values.key,
           };
-          getMenuList(parmas).then((res) => {
+          getMenuList(params).then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
               pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
-              this.isSearch = true;
             }
+            this.loading = false;
           });
           // do something
         }
       });
     },
     getAppInfoList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 50,
       };
-      getAppInfoList(parmas).then((res) => {
+      getAppInfoList(params).then((res) => {
         if (res.data.success) {
           this.appData = res.data.data.list;
         }
       });
 
-      getAppTypeList(parmas).then((res) => {
+      getAppTypeList(params).then((res) => {
         if (res.data.success) {
           this.appTypeData = res.data.data.list;
         }
@@ -615,11 +617,11 @@ export default {
     },
     //获取机构类型列表
     getMenuList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getMenuList(parmas).then((res) => {
+      getMenuList(params).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -673,10 +675,10 @@ export default {
     },
     edit(item) {
       console.log(item);
-      let parmas = {
+      let params = {
         id: item.ModuleId,
       };
-      getMenuInfo(parmas).then((res) => {
+      getMenuInfo(params).then((res) => {
         if (res.data.success) {
           this.visible = true;
           this.isEdit = true;
@@ -722,7 +724,7 @@ export default {
                 this.$message.success("编辑成功!");
                 this.defaultForm();
                 this.visible = false;
-                this.getMenuList();
+                this.search();
               }
             });
           } else {
@@ -735,7 +737,7 @@ export default {
             menuAction(this.form, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");
-                this.getMenuList();
+                this.search();
                 this.defaultForm();
                 this.visible = false;
               }
@@ -758,7 +760,7 @@ export default {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
-              self.getMenuList();
+              self.search();
             }
           });
         },
@@ -767,12 +769,12 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.ModuleId);
-      menuAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.ModuleId);
+      menuAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
-          this.getMenuList();
+          this.search();
         }
       });
     },

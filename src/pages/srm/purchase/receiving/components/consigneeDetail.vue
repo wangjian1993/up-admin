@@ -1,17 +1,22 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-08-15 09:56:12
+ * @LastEditTime: 2022-08-30 14:11:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/components/consigneeDetail.vue
 -->
 <template>
   <div>
-    <a-drawer :visible="visible" title="采购收货详情" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :bodyStyle="{ padding: '5px 10px' }">
+    <a-drawer :visible="visible" :title="tabType == 1 ? '采购收货详情' : '采购入库单详情'" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :bodyStyle="{ padding: '5px 10px' }">
       <a-spin tip="loading..." :spinning="loading">
-        <a-descriptions :column="5" bordered size="small">
+        <a-descriptions :column="5" bordered size="small" v-if="tabType == 1">
           <a-descriptions-item v-for="(item, index) in info1" :key="index" :label="item.title">
+            {{ orderList[item.dataIndex] }}
+          </a-descriptions-item>
+        </a-descriptions>
+        <a-descriptions :column="5" bordered size="small" v-else>
+          <a-descriptions-item v-for="(item, index) in info4" :key="index" :label="item.title">
             {{ orderList[item.dataIndex] }}
           </a-descriptions-item>
         </a-descriptions>
@@ -22,7 +27,7 @@
         </a-descriptions>
         <a-card title="收货明细" class="card" :bordered="false" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px' }">
           <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :scroll="{ y: auto, x: true }" :rowKey="(list) => list.ItemCode" bordered>
-           <template slot="footer">
+            <template slot="footer">
               <a-table ref="total-table" class="total-table" :columns="columnKeys" :dataSource="totalData" :showHeader="false" :pagination="false" size="small" />
             </template>
             <template slot="index" slot-scope="text, record, index">
@@ -100,16 +105,17 @@
 </template>
 
 <script>
-import { info1, info2, columns ,columnKeys } from "../data/consigneeDetail";
+import { info1, info4, info2, columns, columnKeys } from "../data/consigneeDetail";
 import { getArrival } from "@/services/srm.js";
 import { splitData } from "@/utils/util.js";
 export default {
-  props: ["orderno"],
+  props: ["orderno", "listType"],
   data() {
     return {
       size: "small",
       info1,
       info2,
+      info4,
       columns,
       columnKeys,
       totalData: [
@@ -156,10 +162,10 @@ export default {
     },
     getDetailList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         orderno: this.orderno,
       };
-      getArrival(parmas, "single").then((res) => {
+      getArrival(params, "single").then((res) => {
         if (res.data.success) {
           this.orderList = res.data.data.order;
           this.detailList = res.data.data.detail;
@@ -202,7 +208,7 @@ p {
   padding: 0;
   margin: 0;
 }
-/deep/.ant-table-footer{
+/deep/.ant-table-footer {
   padding: 0;
 }
 .rowActive {

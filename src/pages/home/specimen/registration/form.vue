@@ -410,7 +410,7 @@ export default {
             return;
           }
           console.log(this.form);
-          let parmas = {
+          let params = {
             SubmitSign: type, //提交标识：1,，SAVE-保存 2，SAVEANDSUBMIT-保存并提交到下一节点
             UserReceiveDepartment: "*", //用户所有接收部门
             RegisterId: this.form.RegisterId, //登记ID1
@@ -442,8 +442,8 @@ export default {
             DatetimeQicCollect: this.form.DatetimeQicCollect != "" && this.form.DatetimeQicCollect != null ? this.form.DatetimeQicCollect.format("YYYY-MM-DD HH:mm:ss") : "", //IQC收样日期
             Remark4: this.form.Remark4, //IQC备注
           };
-          console.log("parmas===", parmas);
-          setDepartmentApi(parmas, "editregister").then((res) => {
+          console.log("params===", params);
+          setDepartmentApi(params, "editregister").then((res) => {
             if (res.data.success) {
               this.$message.success("编辑成功!");
               if (this.isClone) {

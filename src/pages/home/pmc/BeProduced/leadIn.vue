@@ -333,7 +333,7 @@ export default {
             var begindate = rangeValue[0].format("YYYY-MM-DD HH:mm:ss");
             var enddate = rangeValue[1].format("YYYY-MM-DD HH:mm:ss");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -344,7 +344,7 @@ export default {
             begindate: begindate,
             enddate: enddate,
           };
-          getMitemPlanAction(parmas, "getall").then((res) => {
+          getMitemPlanAction(params, "getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -377,9 +377,9 @@ export default {
     },
     //单个删除
     actionBnt(item) {
-      let parmas = [];
-      parmas.push(item.Id);
-      setMitemPlanAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.Id);
+      setMitemPlanAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();

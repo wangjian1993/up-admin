@@ -292,9 +292,9 @@ export default {
         this.$message.error("PLC参数格式错误,请修改");
       }
     },
-    submitExecl(parmas) {
+    submitExecl(params) {
       this.isUpload = true;
-      setPlcParamsAction(parmas, "import").then((res) => {
+      setPlcParamsAction(params, "import").then((res) => {
         if (res.data.success && !res.data.data.IsError) {
           this.$message.success("导入成功!");
           this.$emit("closeModal");

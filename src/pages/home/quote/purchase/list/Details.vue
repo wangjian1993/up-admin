@@ -268,10 +268,10 @@ export default {
     },
     getList() {
       this.loading = true;
-      let parmas = {
+      let params = {
         Id: this.detailsId,
       };
-      getCostConfig(parmas, "getquotedetail").then((res) => {
+      getCostConfig(params, "getquotedetail").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.ItemInfo.ItemChildList;
           this.list.forEach((item,index) => {

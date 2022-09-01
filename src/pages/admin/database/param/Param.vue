@@ -449,13 +449,13 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.searcValue,
             groupid: this.groupId,
           };
-          getParamList(parmas).then((res) => {
+          getParamList(params).then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -470,11 +470,11 @@ export default {
     },
     //获取机构类型列表
     getParamGroupList() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 100,
       };
-      getParamGroupList(parmas).then((res) => {
+      getParamGroupList(params).then((res) => {
         if (res.data.success) {
           this.groupData = res.data.data;
           this.groupValue.push(this.groupData[0].ParamGroupId);
@@ -484,12 +484,12 @@ export default {
       });
     },
     getParamList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         groupid: this.groupId,
       };
-      getParamList(parmas).then((res) => {
+      getParamList(params).then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -601,9 +601,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.ParamId);
-      paramAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.ParamId);
+      paramAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getParamList();
@@ -622,10 +622,10 @@ export default {
     },
     onSearch() {
       console.log(this.groupSearch);
-      let parmas = {
+      let params = {
         keyword: this.groupSearch,
       };
-      getParamGroupList(parmas).then((res) => {
+      getParamGroupList(params).then((res) => {
         if (res.data.success) {
           this.groupData = res.data.data;
         }

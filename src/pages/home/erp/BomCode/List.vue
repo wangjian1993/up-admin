@@ -333,10 +333,10 @@ export default {
     },
     //工厂获取
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getERPReportAction(parmas, "getenterlist").then((res) => {
+      getERPReportAction(params, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.searchValue.plantId = this.plantList[0].PlantId;
@@ -349,7 +349,7 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize + 1,
         plantid: this.plantId,
@@ -357,7 +357,7 @@ export default {
         itemname: "",
         itemspecification: "",
       };
-      getERPReportAction(parmas, "getbominfo").then((res) => {
+      getERPReportAction(params, "getbominfo").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -402,7 +402,7 @@ export default {
         return;
       }
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         plantid: this.searchValue.plantId,
@@ -418,7 +418,7 @@ export default {
         drawingnosign: this.drawingnosign,
         shortcutsign: this.shortcutsign,
       };
-      getERPReportAction(parmas, "getbominfo").then((res) => {
+      getERPReportAction(params, "getbominfo").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           this.data = list;

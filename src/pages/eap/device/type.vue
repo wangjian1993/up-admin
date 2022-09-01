@@ -206,11 +206,11 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
           };
-          getDeviceTypeAction(parmas).then((res) => {
+          getDeviceTypeAction(params).then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -225,11 +225,11 @@ export default {
     },
     //获取机构类型列表
     getDeviceTypeAction() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getDeviceTypeAction(parmas, "getlist").then((res) => {
+      getDeviceTypeAction(params, "getlist").then((res) => {
         if (res.data.success) {
           this.data = res.data.data;
           const pagination = { ...this.pagination };

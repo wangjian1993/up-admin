@@ -78,15 +78,15 @@ export default {
     },
     updatedStatu() {
       console.log("打印=====");
-      let parmas = [];
+      let params = [];
       this.printData.map((item) => {
-        parmas.push({
+        params.push({
           Id: item.Id,
           Remarks: item.Remarks,
           Status: "PRINTED",
         });
       });
-      setPrintInfo(parmas, "reworkupdate").then((res) => {
+      setPrintInfo(params, "reworkupdate").then((res) => {
         if (res.data.success) {
           this.$message.success("打印成功!");
         }

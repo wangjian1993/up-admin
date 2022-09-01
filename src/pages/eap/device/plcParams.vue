@@ -163,10 +163,10 @@ export default {
     //重置搜索
     getParamsData() {
       this.paramsList.forEach((item) => {
-        let parmas = {
+        let params = {
           groupcode: item,
         };
-        getParamData(parmas).then((res) => {
+        getParamData(params).then((res) => {
           if (res.data.success) {
             this.paramsItem[item] = res.data.data;
           }
@@ -198,20 +198,20 @@ export default {
       this.isImport = false;
     },
     getDeviceType() {
-      let parmas = {
+      let params = {
         groupcode: "PLC_TYPE",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.plcTypeList = res.data.data;
         }
       });
     },
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "EAP_PLAC_BRAND",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.plcBrand = res.data.data;
         }
@@ -224,11 +224,11 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getPlcParamsAction(parmas, "getall").then((res) => {
+      getPlcParamsAction(params, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -259,7 +259,7 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             paramtype: values.paramtype,
@@ -267,7 +267,7 @@ export default {
             paramname: values.paramname,
             datatype: values.datatype,
           };
-          getPlcParamsAction(parmas, "getall").then((res) => {
+          getPlcParamsAction(params, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -300,9 +300,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.VarId);
-      setPlcParamsAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.VarId);
+      setPlcParamsAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getListAll();
@@ -315,7 +315,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         paramtype: values.paramtype,
@@ -323,7 +323,7 @@ export default {
         paramname: values.paramname,
         datatype: values.datatype,
       };
-      getPlcParamsAction(parmas, "getall").then((res) => {
+      getPlcParamsAction(params, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

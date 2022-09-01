@@ -140,10 +140,10 @@ export default {
   },
   methods: {
     getDemandEnter() {
-      let parmas = {
+      let params = {
         entertypecode: "COMPANY",
       };
-      getMaterialSampleApi(parmas,'getenterlist').then((res) => {
+      getMaterialSampleApi(params,'getenterlist').then((res) => {
         if (res.data.success) {
           this.enterList = res.data.data;
           this.enterpriseid = this.enterList[0].EnterId;
@@ -158,12 +158,12 @@ export default {
       this.$emit("closeModal");
     },
     getList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         enterpriseid: this.enterpriseid,
       };
-      getMaterialSampleApi(parmas, "getuserslist").then((res) => {
+      getMaterialSampleApi(params, "getuserslist").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -240,13 +240,13 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
             keyword: values.searcValue,
           };
-          getMaterialSampleApi(parmas, "getuserslist").then((res) => {
+          getMaterialSampleApi(params, "getuserslist").then((res) => {
             if (res.data.success) {
               this.list = res.data.data.list;
               const pagination = { ...this.pagination };

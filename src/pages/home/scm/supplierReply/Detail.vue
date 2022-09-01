@@ -464,10 +464,10 @@ export default {
       });
     },
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "MITEM_REQUIREMENT_STATUS",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.stateList = res.data.data;
         }
@@ -514,11 +514,11 @@ export default {
         this.pagination.current = 1;
       }
       this.statisticType = "";
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getSupplierAction(parmas, "reply/getall").then((res) => {
+      getSupplierAction(params, "reply/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           this.setPurchaseOrderMatchList();
@@ -540,7 +540,7 @@ export default {
       }
       this.statisticType = type;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         plantid: values.plantid,
@@ -552,7 +552,7 @@ export default {
         mitemname: values.mitemname,
         fastcondition: this.statisticType,
       };
-      getSupplierAction(parmas, "reply/getall").then((res) => {
+      getSupplierAction(params, "reply/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           this.setPurchaseOrderMatchList();
@@ -595,7 +595,7 @@ export default {
           if (this.week != "") {
             var w = this.week;
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -606,7 +606,7 @@ export default {
             mitemcode: values.mitemcode,
             mitemname: values.mitemname,
           };
-          getSupplierAction(parmas, "reply/getall").then((res) => {
+          getSupplierAction(params, "reply/getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               this.setPurchaseOrderMatchList();
@@ -666,7 +666,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         plantid: values.plantid,
@@ -678,7 +678,7 @@ export default {
         mitemname: values.mitemname,
         fastcondition: this.statisticType,
       };
-      getSupplierAction(parmas, "reply/getall").then((res) => {
+      getSupplierAction(params, "reply/getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           list.forEach((item) => {

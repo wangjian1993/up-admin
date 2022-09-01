@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-09-23 10:39:45
+ * @LastEditTime: 2022-08-31 10:30:51
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/router/async/router.map.js
@@ -19,6 +19,18 @@ const routerMap = {
     authority: '*',
     path: '/login',
     component: () => import('@/pages/login')
+  },
+  supplierLogin: {
+    authority: '*',
+    name: "供应商登录",
+    path: '/supplier/login',
+    component: () => import('@/pages/supplier/login.vue')
+  },
+  supplierRegister: {
+    authority: '*',
+    name: "供应商注册",
+    path: '/supplier/register',
+    component: () => import('@/pages/supplier/register.vue')
   },
   root: {
     path: '/',

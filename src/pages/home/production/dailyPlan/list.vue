@@ -266,10 +266,10 @@ export default {
       this.week = str[1].replace("周", "");
     },
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "DAILY_PRODUCTION_PLAN_STATUS",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.stateList = res.data.data;
         }
@@ -294,10 +294,10 @@ export default {
       this.getLineList();
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getDailyPlanAction(parmas1, "getlistbytypecode").then((res) => {
+      getDailyPlanAction(params1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -306,10 +306,10 @@ export default {
     },
     //获取车间
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getWorkshopList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
@@ -317,11 +317,11 @@ export default {
     },
     //获取产线
     getLineList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopId: this.workshopId,
       };
-      getLineList(parmas).then((res) => {
+      getLineList(params).then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }
@@ -334,11 +334,11 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getDailyPlanAction(parmas, "getall").then((res) => {
+      getDailyPlanAction(params, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -379,7 +379,7 @@ export default {
             var begindate = rangeValue[0].format("YYYY-MM-DD");
             var enddate = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -393,7 +393,7 @@ export default {
             begindate: begindate,
             enddate: enddate,
           };
-          getDailyPlanAction(parmas, "getall").then((res) => {
+          getDailyPlanAction(params, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -409,9 +409,9 @@ export default {
     },
     //单个删除
     onDelete(item) {
-      let parmas = [];
-      parmas.push(item.Id);
-      setDailyPlanAction(parmas, "delete").then((res) => {
+      let params = [];
+      params.push(item.Id);
+      setDailyPlanAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.getParamGroupList();
@@ -437,11 +437,11 @@ export default {
     },
     exportExcel() {
       this.isExportLod = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
       };
-      getDailyPlanAction(parmas, "getall").then((res) => {
+      getDailyPlanAction(params, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

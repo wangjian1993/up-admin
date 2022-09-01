@@ -254,7 +254,7 @@ export default {
             var startreceiptdatetime = rangeValue[0].format("YYYY-MM-DD");
             var endreceiptdatetime = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.keyword,
@@ -276,7 +276,7 @@ export default {
             purchasedescription:values.purchasedescription,
             deliveryaddress: values.deliveryaddress,
           };
-          getDelivery(parmas, "getdetail").then((res) => {
+          getDelivery(params, "getdetail").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -293,7 +293,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         typeid: values.typeid,
@@ -302,7 +302,7 @@ export default {
         plccode: values.plccode,
         plcname: values.plcname,
       };
-      getDelivery(parmas, "get").then((res) => {
+      getDelivery(params, "get").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

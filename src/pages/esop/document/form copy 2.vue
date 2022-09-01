@@ -197,10 +197,10 @@ export default {
       this.sortValue = e;
     },
     getListAll() {
-      let parmas = {
+      let params = {
         id: this.editData.DocumentId,
       };
-      getSopDocument(parmas, "single").then((res) => {
+      getSopDocument(params, "single").then((res) => {
         if (res.data.success) {
           let doc = res.data.data.doc;
           let files = res.data.data.files;
@@ -509,10 +509,10 @@ export default {
     },
     //获取生产工厂
     getEnterList() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getSopDocument(parmas, "getplant").then((res) => {
+      getSopDocument(params, "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }

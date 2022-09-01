@@ -314,7 +314,7 @@ export default {
           }
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             begindt: begindt,
@@ -323,7 +323,7 @@ export default {
             apiurl: values.apiurl,
             orderdesc: values.orderdesc ? "Y" : "N",
           };
-          getLogAction(parmas, "getall").then((res) => {
+          getLogAction(params, "getall").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -338,11 +338,11 @@ export default {
     },
     //获取机构类型列表
     getLogList() {
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getLogAction(parmas, "getall").then((res) => {
+      getLogAction(params, "getall").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };

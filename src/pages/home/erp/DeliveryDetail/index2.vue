@@ -339,10 +339,10 @@ export default {
     },
     //工厂获取
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getERPReportAction(parmas, "getenterlist").then((res) => {
+      getERPReportAction(params, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.searchValue.plantId = this.plantList[0].PlantId;
@@ -391,7 +391,7 @@ export default {
         var transactiondate = this.searchValue.transactiondate.format("YYYY-MM-DD");
       }
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         plantid: this.searchValue.plantId,
@@ -413,7 +413,7 @@ export default {
         docnoasign: this.docnoasign,
         docnorsign: this.docnorsign,
       };
-      getERPReportAction(parmas, "suppliersupplydetails").then((res) => {
+      getERPReportAction(params, "suppliersupplydetails").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           list.map((item, index) => {

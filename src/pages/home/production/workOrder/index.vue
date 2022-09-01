@@ -129,10 +129,10 @@ export default {
       this.searchForm.resetFields();
     },
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getDailyPlanAction(parmas, "getlistbytypecode").then((res) => {
+      getDailyPlanAction(params, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -145,7 +145,7 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         plantname: "",
@@ -156,7 +156,7 @@ export default {
         datetimeplanstart1: "",
         datetimeplanstart2: "",
       };
-      getWorkOrderList(parmas).then((res) => {
+      getWorkOrderList(params).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -193,7 +193,7 @@ export default {
             var begindate = rangeValue[0].format("YYYY-MM-DD");
             var enddate = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantname: values.plantname || "",
@@ -204,7 +204,7 @@ export default {
             datetimeplanstart1: begindate || "",
             datetimeplanstart2: enddate || "",
           };
-          getWorkOrderList(parmas).then((res) => {
+          getWorkOrderList(params).then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };

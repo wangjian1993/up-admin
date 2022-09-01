@@ -176,7 +176,7 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         rolesign: this.rolesign,
@@ -187,7 +187,7 @@ export default {
         importdatestart: this.dateFormat[0],
         importdateend: this.dateFormat[1],
       };
-      getOrderList(parmas).then((res) => {
+      getOrderList(params).then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -224,7 +224,7 @@ export default {
             var importdateend = rangeValue[1].format("YYYY-MM-DD");
           }
           console.log("Received values of form: ", values);
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             rolesign: this.rolesign,
@@ -235,7 +235,7 @@ export default {
             importdatestart: importdatestart || "",
             importdateend: importdateend || "",
           };
-          getOrderList(parmas).then((res) => {
+          getOrderList(params).then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -257,7 +257,7 @@ export default {
         var importdatestart = rangeValue[0].format("YYYY-MM-DD");
         var importdateend = rangeValue[1].format("YYYY-MM-DD");
       }
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 10000,
         rolesign: this.rolesign,
@@ -266,7 +266,7 @@ export default {
         importdatestart: importdatestart || "",
         importdateend: importdateend || "",
       };
-      getOrderList(parmas).then((res) => {
+      getOrderList(params).then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

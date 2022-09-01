@@ -47,20 +47,20 @@ export default {
       this.activeKey = key;
     },
     getCompany() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "COMPANY",
       };
-      getOrderApi(parmas1, "getlistbytypecode").then((res) => {
+      getOrderApi(params1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.companyList = res.data.data;
         }
       });
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getOrderApi(parmas1, "getlistbytypecode").then((res) => {
+      getOrderApi(params1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }

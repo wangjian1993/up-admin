@@ -486,11 +486,11 @@ export default {
     //复制发布
     editCost() {
       this.costLoading = true;
-      let parmas = {
+      let params = {
         id: this.$route.query.id,
         sign: this.$route.query.sign,
       };
-      getCostConfig(parmas, "getbomdetail2").then((res) => {
+      getCostConfig(params, "getbomdetail2").then((res) => {
         if (res.data.success) {
           this.tableData = res.data.data.ItemInfo.ItemChildList;
           this.tableData.forEach((item, index) => {
@@ -501,13 +501,13 @@ export default {
           this.costList = res.data.data.CostBaseList;
           this.cost.materialTotal = this.costInfo.MaterialCost;
           this.cost.ultimatelyTotal = this.costInfo.FinalCost;
-          let parmas = {
+          let params = {
             itemcode: this.costInfo.ItemCode,
             enterpriseid: this.costInfo.EnterpriseId,
             plantid: this.costInfo.PlantId,
           };
-          this.searchForm.setFieldsValue(parmas);
-          this.searchData = parmas;
+          this.searchForm.setFieldsValue(params);
+          this.searchData = params;
           this.countCost();
           this.isAgainCost = true;
           this.isSearch = true;
@@ -517,13 +517,13 @@ export default {
     },
     //获取需求公司
     getDemandEnter() {
-      let parmas = {
+      let params = {
         entertypecode: "COMPANY",
       };
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getDemandEnter(parmas).then((res) => {
+      getDemandEnter(params).then((res) => {
         if (res.data.success) {
           this.enterList = res.data.data;
           this.searchForm.setFieldsValue({
@@ -531,7 +531,7 @@ export default {
           });
         }
       });
-      getDemandEnter(parmas1).then((res) => {
+      getDemandEnter(params1).then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.searchForm.setFieldsValue({
@@ -801,7 +801,7 @@ export default {
           return;
         }
         console.log("执行了后面");
-        let parmas = {
+        let params = {
           CostBaseList: cost,
           ItemChildList: this.tableData,
           EnterpriseId: this.searchData.enterpriseid,
@@ -815,7 +815,7 @@ export default {
           FinalCost: this.cost.ultimatelyTotal,
           Remark: this.quoteRemark,
         };
-        addCost(parmas, "addnewquote").then((res) => {
+        addCost(params, "addnewquote").then((res) => {
           if (res.data.success) {
             this.$message.success("保存成功!");
             this.reset();

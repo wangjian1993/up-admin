@@ -165,7 +165,7 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         createdatestart: "",
@@ -173,7 +173,7 @@ export default {
         groupnum: 1,
         statuscheck: "",
       };
-      getOrderInfoAgc(parmas, "getplantshipping").then((res) => {
+      getOrderInfoAgc(params, "getplantshipping").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -232,7 +232,7 @@ export default {
             var createdatestart = rangeValue1[0].format("YYYY-MM-DD");
             var createdateend = rangeValue1[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             createdatestart: createdatestart || "",
@@ -240,7 +240,7 @@ export default {
             groupnum: 1,
             statuscheck: values.statuscheck || "",
           };
-          getOrderInfoAgc(parmas, "getplantshipping").then((res) => {
+          getOrderInfoAgc(params, "getplantshipping").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -255,14 +255,14 @@ export default {
       });
     },
     onShipment(item, type) {
-      let parmas = {
+      let params = {
         PlantList: [],
       };
       if (type == "Radio") {
-        parmas.PlantList.push({
+        params.PlantList.push({
           Id: item.Id,
         });
-        confirmShipmentAgc(parmas).then((res) => {
+        confirmShipmentAgc(params).then((res) => {
           if (res.data.success) {
             this.$message.success("出货成功!");
             this.getListAll();
@@ -276,12 +276,12 @@ export default {
             self.dataSource.map((item, index) => {
               let id = item.Id + "_" + index;
               if (self.selectedRowKeys.includes(id)) {
-                parmas.PlantList.push({
+                params.PlantList.push({
                   Id: item.Id,
                 });
               }
             });
-            confirmShipmentAgc(parmas).then((res) => {
+            confirmShipmentAgc(params).then((res) => {
               if (res.data.success) {
                 self.$message.success("出货成功!");
                 self.getListAll();

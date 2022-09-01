@@ -40,6 +40,16 @@
             <a-icon slot="prefix" type="lock" />
           </a-input-password>
         </a-form-item>
+        <a-form-item>
+          <a-select default-value="1" v-model="loginType">
+            <a-select-option value="1">
+              民爆职员
+            </a-select-option>
+            <a-select-option value="2">
+              供应商
+            </a-select-option>
+          </a-select>
+        </a-form-item>
         <div>
           <a-checkbox style="float: right" :checked="isAccount" @click="cheackAccount">记住账号/密码</a-checkbox>
           <a-checkbox style="float: right" :checked="isAutoLogin" @click="cheackAuto">自动登录</a-checkbox>
@@ -53,7 +63,7 @@
 
 <script>
 import CommonLayout from "@/layouts/CommonLayout";
-import { login } from "@/services/user";
+import { login, supplierLogin } from "@/services/user";
 import { setAuthorization } from "@/utils/request";
 import { loadRoutes } from "@/utils/routerUtil";
 import { mapMutations } from "vuex";
@@ -69,6 +79,7 @@ export default {
       routerItem: [],
       isAccount: true,
       isAutoLogin: true,
+      loginType: "1",
       timeList: [
         {
           CN: "早上好",
@@ -114,7 +125,9 @@ export default {
         this.logging = true;
         const name = this.form.getFieldValue("name");
         const password = this.form.getFieldValue("password");
-        login(name, password).then(this.afterLogin);
+        if (this.loginType == 1) {
+          login(name, password).then(this.afterLogin);
+        }
       }
     });
   },
@@ -127,7 +140,34 @@ export default {
           this.logging = true;
           const name = this.form.getFieldValue("name");
           const password = this.form.getFieldValue("password");
-          login(name, password).then(this.afterLogin);
+          //普通用户登录
+          if (this.loginType == 1) {
+            login(name, password).then(this.afterLogin);
+          }
+          //供应商登录
+          if (this.loginType == 2) {
+            console.log("供应商登录====")
+            var isPhone = /^[1][3,4,5,7,8][0-9]{9}$/; //手机
+            let regEmail = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+            let formType = 1;
+            console.log("供应商登录====",isPhone)
+            console.log("供应商登录====",regEmail)
+            console.log("供应商登录====",isPhone.test(name))
+            console.log("供应商登录====",regEmail.test(name))
+            if (isPhone.test(name)) {
+              formType = 1;
+            } else if (regEmail.test(name)) {
+              formType = 2;
+            }
+            let params = {
+              type:formType, // 登录类型，0为手机号，1为邮箱
+              islogin: true, // 是否登录、注册
+              username: name,
+              password: password,
+            };
+            console.log("params===",params)
+            supplierLogin(params).then(this.afterLogin);
+          }
         }
       });
     },
@@ -158,7 +198,7 @@ export default {
         const routesConfig = userModules || [];
         //记住账号
         if (this.isAccount) {
-          console.log("保存账号密码====")
+          console.log("保存账号密码====");
           localStorage.setItem("account", this.form.getFieldValue("name"));
           localStorage.setItem("password", encrypto(this.form.getFieldValue("password")));
         } else {

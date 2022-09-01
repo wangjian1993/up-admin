@@ -112,11 +112,11 @@ export default {
   },
   methods: {
     getListAll() {
-      let parmas = {
+      let params = {
         pageindex: 1,
         pagesize: 100,
       };
-      getProcessLine(parmas, "getall").then((res) => {
+      getProcessLine(params, "getall").then((res) => {
         if (res.data.success) {
           this.processList = res.data.data.list;
         }
@@ -130,21 +130,21 @@ export default {
       this.isDrawer = false;
     },
     getWorkshopList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
       };
-      getWorkshopList(parmas, "getlist").then((res) => {
+      getWorkshopList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
       });
     },
     getLineList() {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopId: this.workshopId,
       };
-      getLineList(parmas).then((res) => {
+      getLineList(params).then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }

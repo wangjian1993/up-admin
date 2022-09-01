@@ -178,10 +178,10 @@ export default {
     },
     //获取物料信息
     getDatile() {
-      let parmas = {
+      let params = {
         detailid: this.disposeData.Id,
       };
-      getSupplierAction(parmas, "reply/getconfirmlist").then((res) => {
+      getSupplierAction(params, "reply/getconfirmlist").then((res) => {
         if (res.data.success) {
           this.list = res.data.data;
           this.list.map((item) => {
@@ -191,12 +191,12 @@ export default {
       });
     },
     consent(item) {
-      let parmas = {
+      let params = {
         BatchId: item.BatchId,
         DetailId: item.DetailId,
         PurchaseId: item.PurchaseId,
       };
-      setSupplierAction(parmas, "reply/agree").then((res) => {
+      setSupplierAction(params, "reply/agree").then((res) => {
         if (res.data.success) {
           this.$message.success("同意供应商交期成功!");
           this.$emit("succeed");

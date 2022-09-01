@@ -201,12 +201,12 @@ export default {
     getList() {
       this.loading = true;
       console.log(this.MitemCode);
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
         mitemcode: this.MitemCode,
       };
-      getScmAction(parmas, "manualmatch/getpurchaseorders").then((res) => {
+      getScmAction(params, "manualmatch/getpurchaseorders").then((res) => {
         if (res.data.success) {
           this.list = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -243,7 +243,7 @@ export default {
           console.log("Received values of form: ", values);
           this.data = [];
           this.pagination.total = 0;
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -251,7 +251,7 @@ export default {
             mitemcode: values.mitemcode,
             supplier: values.supplier,
           };
-          getScmAction(parmas, "manualmatch/getpurchaseorders").then((res) => {
+          getScmAction(params, "manualmatch/getpurchaseorders").then((res) => {
             if (res.data.success) {
               this.list = res.data.data.list;
               const pagination = { ...this.pagination };

@@ -152,7 +152,7 @@ export default {
         this.$message.warning("请先导入excel文件!");
         return;
       }
-      let parmas = {
+      let params = {
         Rate: [],
       };
       //拼接后台数据
@@ -172,7 +172,7 @@ export default {
             ErrorMsg: `第${index + 1}行,月度任务提成率:数据'${item.TaskTcRate}'错误,必须在0-1范围内`,
           });
         }
-        parmas.Rate.push({
+        params.Rate.push({
           RateStart:Number(item.RateStart),
           RateEnd:Number(item.RateEnd),
           TaskTcRate:Number(item.TaskTcRate),
@@ -181,16 +181,16 @@ export default {
         });
       });
       if (this.errorList.length == 0) {
-        this.submitExecl(parmas);
+        this.submitExecl(params);
       } else {
         this.isShowTable = true;
         this.$message.error("导入信息格式错误,请修改");
       }
     },
     //提交
-    submitExecl(parmas) {
+    submitExecl(params) {
       this.isUpload = true;
-      importFinishingList(parmas).then((res) => {
+      importFinishingList(params).then((res) => {
         if (res.data.data.AddNum > 0) {
           this.$message.success("导入成功!");
           this.close();

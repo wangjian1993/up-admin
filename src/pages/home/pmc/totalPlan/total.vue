@@ -240,10 +240,10 @@ export default {
   },
   methods: {
     getParamData() {
-      let parmas = {
+      let params = {
         groupcode: "MITEM_REQUIREMENT_PLAN_PUBLISH",
       };
-      getParamData(parmas).then((res) => {
+      getParamData(params).then((res) => {
         if (res.data.success) {
           this.stateList = res.data.data;
         }
@@ -280,11 +280,11 @@ export default {
     //获取列表数据
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getMitemrequirement(parmas, "masterplan/getgrenatelist").then((res) => {
+      getMitemrequirement(params, "masterplan/getgrenatelist").then((res) => {
         if (res.data.success) {
           this.data = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -318,7 +318,7 @@ export default {
           if (this.week != "") {
             var w = this.week;
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -327,7 +327,7 @@ export default {
             publishstatus: values.publishstatus,
             batchno: values.batchno,
           };
-          getMitemrequirement(parmas, "masterplan/getgrenatelist").then((res) => {
+          getMitemrequirement(params, "masterplan/getgrenatelist").then((res) => {
             if (res.data.success) {
               this.data = res.data.data.list;
               const pagination = { ...this.pagination };

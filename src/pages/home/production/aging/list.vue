@@ -104,10 +104,10 @@ export default {
       this.plantId = e;
     },
     getPlant() {
-      let parmas1 = {
+      let params1 = {
         entertypecode: "PLANT",
       };
-      getAgeingApi(parmas1, "getlistbytypecode").then((res) => {
+      getAgeingApi(params1, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
@@ -121,11 +121,11 @@ export default {
     //获取列表
     getListAll() {
       this.loading = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getAgeingApi(parmas, "getall").then((res) => {
+      getAgeingApi(params, "getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           const pagination = { ...this.pagination };
@@ -161,7 +161,7 @@ export default {
             var startdate = rangeValue[0].format("YYYY-MM-DD");
             var enddate = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
@@ -169,7 +169,7 @@ export default {
             startdate: startdate,
             enddate: enddate,
           };
-          getAgeingApi(parmas, "getall").then((res) => {
+          getAgeingApi(params, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -185,11 +185,11 @@ export default {
     },
     exportExcel() {
       this.isExportLod = true;
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
       };
-      getAgeingApi(parmas, "getall").then((res) => {
+      getAgeingApi(params, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

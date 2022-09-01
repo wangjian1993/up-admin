@@ -83,11 +83,11 @@ export default {
     },
     getPrintData(DocNo) {
       return new Promise((resolve) => {
-        let parmas = {
+        let params = {
           docno: DocNo,
           count: 100,
         };
-        getArrivalList(parmas, "print").then((res) => {
+        getArrivalList(params, "print").then((res) => {
           if (res.data.success) {
             let dataJson = res.data.data.list;
             this.temp = res.data.data.template.TemplateDesign;

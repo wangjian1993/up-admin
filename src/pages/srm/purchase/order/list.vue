@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-11 17:52:57
+ * @LastEditTime: 2022-08-30 14:34:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/order/list.vue
@@ -14,32 +14,14 @@
           <a-row>
             <a-col :span="8">
               <a-radio-group style="margin-top: 5px;" default-value="全部" v-model="listType" button-style="solid" @change="searchBtn">
-                <a-radio-button value="全部">
-                  全部
-                </a-radio-button>
-                <a-radio-button value="待确认">
-                  待确认
-                </a-radio-button>
-                <a-radio-button value="差异待处理">
-                  差异待处理
-                </a-radio-button>
-                <a-radio-button value="已退回">
-                  已退回
-                </a-radio-button>
-                <a-radio-button value="已冻结">
-                  已冻结
-                </a-radio-button>
-                <a-radio-button value="未结案">
-                  未结案
-                </a-radio-button>
-                <a-radio-button value="已结案">
-                  已结案
+               <a-radio-button v-for="(item, index) in tagItem" :value="item" :key="index">
+                  {{ item }}
                 </a-radio-button>
               </a-radio-group></a-col
             >
             <a-col :md="6" :sm="24">
               <a-form-item label="" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 300px" placeholder="请输入搜索内容" v-decorator="['keyword']" />
+                <a-input style="width: 300px" allowClear placeholder="请输入供应商,采购单号,产品,采购员" v-decorator="['keyword']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -194,6 +176,7 @@ export default {
       listType: "全部",
       isDetail: false,
       docno: "",
+      tagItem: ["全部", "待发布", "差异待处理", "待答交", "已退回", "待签章","暂停执行"],
     };
   },
   updated() {
@@ -260,7 +243,7 @@ export default {
             var startdeliverydatetime = rangeValue[0].format("YYYY-MM-DD");
             var enddeliverydatetime = rangeValue[1].format("YYYY-MM-DD");
           }
-          let parmas = {
+          let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.keyword,
@@ -277,7 +260,7 @@ export default {
             receiptstatus: values.receiptstatus,
             purchasetype: values.purchasetype,
           };
-          getPurchaseOrders(parmas, "get").then((res) => {
+          getPurchaseOrders(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -294,7 +277,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let values = this.searchForm.getFieldsValue();
-      let parmas = {
+      let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
         typeid: values.typeid,
@@ -303,7 +286,7 @@ export default {
         plccode: values.plccode,
         plcname: values.plcname,
       };
-      getPurchaseOrders(parmas, "get").then((res) => {
+      getPurchaseOrders(params, "get").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

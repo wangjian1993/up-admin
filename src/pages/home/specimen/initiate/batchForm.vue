@@ -276,7 +276,7 @@ export default {
           if (!isFlag) {
             return;
           }
-          let parmas = {
+          let params = {
             SubmitSign: type, //提交标识：1,，SAVE-保存 2，SAVEANDSUBMIT-保存并提交到下一节点
             FlowId: this.editData.FlowId, //流程ID
             Supplier: this.form.Supplier, //供应商
@@ -285,7 +285,7 @@ export default {
             Purchaser: this.form.Purchaser,
             Item: this.dynamicValidateForm,
           };
-          setDepartmentApi(parmas, "addregistermulti").then((res) => {
+          setDepartmentApi(params, "addregistermulti").then((res) => {
             if (res.data.success) {
               this.$message.success("发起成功!");
               this.$emit("closeModal");

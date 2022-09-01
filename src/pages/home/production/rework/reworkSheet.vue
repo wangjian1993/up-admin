@@ -167,11 +167,11 @@ export default {
       this.selectedRowKeys = selectedRowKeys;
     },
     getPrintList() {
-      let parmas = [];
+      let params = [];
       this.orderList.map((item) => {
-        parmas.push(item.Id);
+        params.push(item.Id);
       });
-      setPrintInfo(parmas, "getreworkprint").then((res) => {
+      setPrintInfo(params, "getreworkprint").then((res) => {
         if (res.data.success) {
           this.data = res.data.data;
           this.pagination.total = this.data.length;

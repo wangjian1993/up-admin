@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-07-07 14:31:51
- * @LastEditTime: 2022-08-19 14:12:49
+ * @LastEditTime: 2022-08-24 14:09:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/schedule/index.vue
@@ -38,6 +38,7 @@ import moment from "moment"; // moment格式化时间
 import gantt from "dhtmlx-gantt"; // 引入模块
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
 import axios from "axios";
+var time = "";
 export default {
   name: "ganttEchart",
   data() {
@@ -66,7 +67,7 @@ export default {
       gantt.clearAll();
       gantt.parse(this.tasks);
       gantt.render();
-      this.getDataList(time, true);
+      this.getDataList(time);
     },
     timeAfter() {
       var diyDate = new Date(this.timeValue);
@@ -77,7 +78,7 @@ export default {
       gantt.clearAll();
       gantt.parse(this.tasks);
       gantt.render();
-      this.getDataList(time, true);
+      this.getDataList(time);
     },
     lineChange(e) {
       console.log("产线");
@@ -175,7 +176,7 @@ export default {
         this.lineList = response.data.data;
       });
     },
-    getDataList(date) {
+    getDataList(date, isLoad = false) {
       this.tasks.data = [];
       this.timeValue = date;
       // console.log("process===", process.env.NODE_ENV);
@@ -243,7 +244,9 @@ export default {
               // console.log(this.tasks.data);
             });
           });
-          this.initData();
+          if (!isLoad) {
+            this.initData();
+          }
         }
       });
       this.spinning = false;
@@ -253,6 +256,14 @@ export default {
       // // 数据解析
       // gantt.parse(this.tasks);
     },
+  },
+  destroyed() {
+    clearInterval(time);
+    console.log("guanbi=-=====");
+  },
+  beforeDestroy() {
+    console.log("销毁=-=====");
+    clearInterval(time); //关闭
   },
   activated() {
     gantt.clearAll();
@@ -264,9 +275,9 @@ export default {
     gantt.clearAll();
     gantt.parse(this.tasks);
     gantt.render();
-    // this.$nextTick(() => {
-    //   this.getDataList("2022-07-12");
-    // });
+    time = setInterval(() => {
+      this.getDataList(this.dayTime, true);
+    }, 180000);
   },
   mounted() {
     let date = moment().format("YYYY-MM-DD");
@@ -278,12 +289,6 @@ export default {
     this.dayTime = date;
     this.getDataList(date);
     this.getLine();
-    setInterval(() => {
-      gantt.clearAll();
-      gantt.parse(this.tasks);
-      gantt.render();
-      this.getDataList(this.dayTime);
-    }, 180000);
   },
 };
 </script>

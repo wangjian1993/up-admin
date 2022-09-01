@@ -298,10 +298,10 @@ export default {
   methods: {
     //生产工厂
     getPlant() {
-      let parmas = {
+      let params = {
         entertypecode: "PLANT",
       };
-      getPlantList(parmas, "getlistbytypecode").then((res) => {
+      getPlantList(params, "getlistbytypecode").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -310,10 +310,10 @@ export default {
     //生产工厂选择
     plantChange(e) {
       this.plantId = e;
-      let parmas = {
+      let params = {
         plantid: e,
       };
-      getWorkshopAction(parmas, "getlist").then((res) => {
+      getWorkshopAction(params, "getlist").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
           this.searchForm.setFieldsValue({
@@ -327,11 +327,11 @@ export default {
     },
     //生产车间选择
     workshopChange(e) {
-      let parmas = {
+      let params = {
         plantid: this.plantId,
         workshopid: e,
       };
-      getPlantList(parmas, "getlist").then((res) => {
+      getPlantList(params, "getlist").then((res) => {
         if (res.data.success) {
           this.LineList = res.data.data;
           this.searchForm.setFieldsValue({
@@ -344,10 +344,10 @@ export default {
     },
     //生产产线选择
     lineChange(e) {
-      let parmas = {
+      let params = {
         lineid: e,
       };
-      getDeviceAction(parmas, "getlist").then((res) => {
+      getDeviceAction(params, "getlist").then((res) => {
         if (res.data.success) {
           this.deviceList = res.data.data;
           this.searchForm.setFieldsValue({
@@ -473,7 +473,7 @@ export default {
     //   this.searchForm.validateFields((err, values) => {
     //     if (!err) {
     //       this.loading = true;
-    //       let parmas = {
+    //       let params = {
     //         pageindex: this.pagination.current,
     //         pagesize: this.pagination.pageSize,
     //         typeid: values.typeid,
@@ -481,7 +481,7 @@ export default {
     //         plccode: values.plccode,
     //         plcname: values.plcname,
     //       };
-    //       getPlcAction(parmas, "getall").then((res) => {
+    //       getPlcAction(params, "getall").then((res) => {
     //         if (res.data.success) {
     //           this.dataSource = res.data.data.list;
     //           const pagination = { ...this.pagination };
