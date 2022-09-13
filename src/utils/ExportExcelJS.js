@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-07 14:19:07
- * @LastEditTime: 2022-05-17 14:00:20
+ * @LastEditTime: 2022-09-13 14:52:23
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/ExportExcelJS.js
@@ -15,11 +15,6 @@ import XLSX from 'xlsx';
  * @param {String} fileName: '导出结果.xlsx'
  * */
 export default function ExportExcel(headers, data, fileName = '导出结果.xlsx') {
-    console.log(headers)
-    headers.map((item, i)=>{
-        console.log(item);
-        console.log(i);
-    })
     const _headers = headers
         .map((item, i) =>Object.assign({}, { key: item.key, title: item.title, position: String.fromCharCode(65 + i) + 1 }))
         .reduce((prev, next) => Object.assign({}, prev, { [next.position]: { key: next.key, v: next.title } }), {});
@@ -32,12 +27,9 @@ export default function ExportExcel(headers, data, fileName = '导出结果.xlsx
         .reduce((prev, next) => Object.assign({}, prev, { [next.position]: { v: next.content } }), {});
 
     // 合并 headers 和 data
-    console.log("_headers===", _headers)
     const output = Object.assign({}, _headers, _data);
-    console.log("output===", output)
     // 获取所有单元格的位置
     const outputPos = Object.keys(output);
-    console.log("outputPos===", outputPos)
     // 计算出范围 ,["A1",..., "H2"]
     const ref = `${outputPos[0]}:${outputPos[outputPos.length - 1]}`;
     // 构建 workbook 对象

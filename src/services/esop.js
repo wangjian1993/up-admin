@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-03-28 11:04:11
- * @LastEditTime: 2022-07-01 10:10:23
+ * @LastEditTime: 2022-09-13 10:50:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/esop.js
@@ -70,4 +70,20 @@ export function getPushRecord(params, action) {
 
 export function setPushRecord(params, action) {
     return request(`${UP_ESOP}/client/${action}`, METHOD.POST, params);
+}
+//客诉列表
+export function getComplaint(params, action) {
+    return request(`${UP_ESOP}/repository/${action}`, METHOD.GET, params);
+}
+
+export function setComplaint(params, action) {
+    return request(`${UP_ESOP}/repository/${action}`, METHOD.POST, params);
+}
+
+export function getInspection(params, action) {
+    return request(`${UP_ESOP}/inspection/${action}`, METHOD.GET, params);
+}
+
+export function setInspection(params, action) {
+    return request(`${UP_ESOP}/inspection/${action}`, METHOD.POST, params);
 }

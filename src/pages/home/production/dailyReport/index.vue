@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2022-08-04 14:05:52
+ * @LastEditTime: 2022-09-13 15:31:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/index.vue
@@ -93,7 +93,7 @@
 
 <script>
 import { getDailyReport } from "@/services/web.js";
-import ExportExcel from "@/utils/ExportExcelJS";
+import { exportjsontoexcelMore } from "@/utils/ExportExcel";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
@@ -311,7 +311,7 @@ export default {
         var enddate = rangeValue[1].format("YYYY-MM-DD");
       }
       let params = {
-        pageindex: this.pagination.current,
+        pageindex: 1,
         pagesize: this.pagination.total,
         plantid: values.plantid,
         workshop: values.workshopid,
@@ -326,36 +326,70 @@ export default {
       };
       getDailyReport(params, "daily/getall").then((res) => {
         if (res.data.success) {
+          let _data = [];
+          let excelArray = [];
           let list = res.data.data.list;
-          const dataSource = list.map((item) => {
-            Object.keys(item).forEach((key) => {
-              console.log(key);
-              // 后端传null node写入会有问题
-              if (item[key] === null) {
-                item[key] = "";
-              }
-              if (Array.isArray(item[key])) {
-                item[key] = item[key].join(",");
-              }
-              if (key == "ProDate") {
-                console.log("1111");
-                item[key] = splitData(item[key]);
-              }
-            });
-            return item;
-          });
           const header = [];
           this.columns.map((item) => {
             if (item.dataIndex) {
-              header.push({ key: item.dataIndex, title: item.title });
+              header.push(item.title);
             }
           });
-          var timestamp = Date.parse(new Date());
+          _data.push(header);
+          list.map((item) => {
+            let array = [];
+            this.columns.map((items) => {
+              if (items.dataIndex) {
+                array.push(item[items.dataIndex] || "");
+              }
+            });
+            console.log("array===", array);
+            _data.push(array);
+          });
+          let sumProQty = list.reduce((prev, curr) => prev + parseInt(curr.ProQty), 0);
+          console.log(sumProQty);
+          let collect = ["","","","","","","","","","","","","","","合计",sumProQty,"","","","","","","",""]
+          _data.push(collect);
+          const sheetCols = [
+            { wch: 8 }, // 序号
+            { wch: 8 }, // 阶次
+            { wch: 8 }, // 类型
+            { wch: 8 }, // 上阶BOM号
+            { wch: 8 }, // 品号
+            { wch: 8 }, // 品号
+            { wch: 8 }, // 料名
+            { wch: 8 }, //  产品规格
+            { wch: 8 }, // 单位
+            { wch: 8 }, // 价格来源
+            { wch: 15 }, // E10单价
+            { wch: 25 }, // 单价
+            { wch: 25 }, // 用量
+            { wch: 8 }, // 金额
+            { wch: 8 }, // 提示
+            { wch: 8 }, // 备注
+            { wch: 8 }, // 备注
+          ];
+          let contentList = [];
+          let aoa = [..._data, ...contentList]; // 导出的数据
+          let merges = []; // 合并单元格
+          let formStyle = {};
+          excelArray.push({
+            Sheet: `供应商价格`, // 下方tab切换名称
+            data: aoa, // 表格数据
+            merges, //  合并单元格
+            autoWidth: false, // 自适应宽度
+            formStyle: formStyle, // 特殊行或列样式
+            sheetCols,
+          });
           try {
-            ExportExcel(header, dataSource, `生产日报表_${timestamp}.xlsx`);
+            var timestamp = Date.parse(new Date());
+            exportjsontoexcelMore({
+              dataList: excelArray,
+              bookType: "xlsx", // 导出类型
+              filename: `生产日报表_` + timestamp, // 导出标题名
+            });
             this.$message.success("导出数据成功!");
           } catch (error) {
-            // console.log(error);
             this.$message.error("导出数据失败");
           }
           this.isExportLod = false;

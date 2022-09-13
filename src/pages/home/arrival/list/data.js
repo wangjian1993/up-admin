@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2022-07-06 09:53:18
+ * @LastEditTime: 2022-09-02 15:49:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/arrival/list/data.js

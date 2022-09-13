@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-08-20 13:52:50
+ * @LastEditTime: 2022-09-02 15:48:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/arrival/list/index.vue
@@ -47,6 +47,11 @@
                     <a-select-option value="已打印">已打印</a-select-option>
                     <a-select-option value="未打印">未打印</a-select-option>
                   </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="制单人" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入制单人" v-decorator="['createuser']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -249,6 +254,7 @@ export default {
             endcreatedate: endcreatedate,
             startreceivedate: startreceivedate,
             endreceivedate: endreceivedate,
+            createuser:values.createuser,
           };
           getArrivalList(params, "get").then((res) => {
             if (res.data.success) {

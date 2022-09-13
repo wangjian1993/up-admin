@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-08-21 13:48:38
+ * @LastEditTime: 2022-09-02 14:42:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/store/modules/account.js
@@ -14,9 +14,23 @@ export default {
     roles: null,
     head:null,
     routesConfig: null,
-    menuList:[]
+    menuList:[],
+    companyList:[]
   },
   getters: {
+    companyList:state => {
+      console.log(state.companyList);
+      if (state.companyList.length == 0) {
+        try {
+          const list = localStorage.getItem("COMPANY_LIST")
+          state.companyList = JSON.parse(list);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      console.log("companyList===",state.companyList)
+      return state.companyList;
+    },
     head:state => {
       if (!state.head) {
         try {
@@ -80,6 +94,11 @@ export default {
     setUser (state, user) {
       state.user = user
       localStorage.setItem(process.env.VUE_APP_USER_KEY, JSON.stringify(user))
+    },
+    setCompanyList (state, list) {
+      console.log("list====",list)
+      state.companyList = list
+      localStorage.setItem('COMPANY_LIST', JSON.stringify(list))
     },
     setUserHead(state, data){
       state.head = data;

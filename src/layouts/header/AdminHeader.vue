@@ -1,3 +1,11 @@
+<!--
+ * @Author: max
+ * @Date: 2022-04-01 08:52:31
+ * @LastEditTime: 2022-09-07 10:46:56
+ * @LastEditors: max
+ * @Description: 
+ * @FilePath: /up-admin/src/layouts/header/AdminHeader.vue
+-->
 <template>
   <a-layout-header :class="[headerTheme, 'admin-header']">
     <div :class="['admin-header-wide', layout, pageWidth]">
@@ -17,36 +25,26 @@
         <i-menu class="head-menu" :theme="headerTheme" mode="horizontal" :options="menuData" @select="onSelect" />
       </div>
       <div :class="['admin-header-right', headerTheme]">
+        <!-- <HeaderCompany/> -->
         <div class="header-item" @click="clickFullscreen"><a-icon :type="fullScreenIcon" /></div>
         <header-help class="header-item" />
         <header-avatar class="header-item" />
-        <!-- <a-dropdown class="lang header-item">
-          <div><a-icon type="global" /> {{ langAlias }}</div>
-          <a-menu
-            @click="(val) => setLang(val.key)"
-            :selected-keys="[lang]"
-            slot="overlay"
-          >
-            <a-menu-item v-for="lang in langList" :key="lang.key">{{
-              lang.key.toLowerCase() + " " + lang.name
-            }}</a-menu-item>
-          </a-menu>
-        </a-dropdown> -->
       </div>
     </div>
   </a-layout-header>
 </template>
 
 <script>
-import HeaderHelp from './HeaderHelp.vue';
+import HeaderHelp from "./HeaderHelp.vue";
 import HeaderAvatar from "./HeaderAvatar";
+// import HeaderCompany from './HeaderCompany.vue'
 import IMenu from "@/components/menu/menu";
 import screenfull from "screenfull";
 import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "AdminHeader",
-  components: { IMenu, HeaderAvatar ,HeaderHelp},
+  components: { IMenu, HeaderAvatar, HeaderHelp},
   props: ["collapsed", "menuData", "breadcrumb"],
   data() {
     return {
@@ -55,6 +53,7 @@ export default {
         { key: "HK", name: "繁體中文", alias: "繁體" },
         { key: "US", name: "English", alias: "English" },
       ],
+      company: "请选择公司",
       isFullscreen: false,
       fullScreenIcon: "fullscreen",
     };
@@ -74,7 +73,7 @@ export default {
     menuWidth() {
       const { layout } = this;
       const headWidth = layout === "head" ? "100% - 200px" : "100%";
-      const extraWidth = "300px";
+      const extraWidth = "600px";
       return `calc(${headWidth} - ${extraWidth})`;
     },
   },

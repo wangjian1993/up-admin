@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2021-12-13 09:48:12
+ * @LastEditTime: 2022-09-13 11:17:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/util.js
@@ -118,5 +118,23 @@ export function getTimeData() {
   //获取当前系统时间  格式(yyyy-mm-dd hh:mm:ss)
   let currentFormatDate = year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
   return currentFormatDate;
+}
+
+// 大写转换
+export function upperJSONKey(jsonObj){
+  for (var key in jsonObj){
+    jsonObj[key.toUpperCase()] = jsonObj[key];
+    delete(jsonObj[key]);
+  }
+  return jsonObj;
+}
+ 
+// 小写转换
+export function lowerJSONKey(jsonObj){
+  for (var key in jsonObj){
+    jsonObj[key.toLowerCase()] = jsonObj[key];
+    delete(jsonObj[key]);
+  }
+  return jsonObj;
 }
 const _toString = Object.prototype.toString

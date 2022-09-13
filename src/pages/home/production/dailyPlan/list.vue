@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-23 13:59:52
- * @LastEditTime: 2022-07-28 08:45:21
+ * @LastEditTime: 2022-09-13 14:50:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/list.vue
@@ -160,7 +160,6 @@
 <script>
 import { getDailyPlanAction, getWorkshopList, getLineList, setDailyPlanAction } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcelJS";
-
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
@@ -438,7 +437,7 @@ export default {
     exportExcel() {
       this.isExportLod = true;
       let params = {
-        pageindex: this.pagination.current,
+        pageindex:1,
         pagesize: this.pagination.total,
       };
       getDailyPlanAction(params, "getall").then((res) => {
@@ -464,6 +463,7 @@ export default {
           });
           var timestamp = Date.parse(new Date());
           try {
+            console.log("dataSource===",dataSource)
             ExportExcel(header, dataSource, `产线生产日计划_${timestamp}.xlsx`);
             this.$message.success("导出数据成功!");
           } catch (error) {

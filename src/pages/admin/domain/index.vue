@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 17:25:15
- * @LastEditTime: 2022-09-01 10:51:56
+ * @LastEditTime: 2022-09-02 16:12:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/admin/domain/index.vue
@@ -149,7 +149,7 @@ export default {
         }
       });
     },
-    //多选
+    // 多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
@@ -215,7 +215,7 @@ export default {
     onDelete(item) {
       let params = [];
       params.push(item.Id);
-      setDomain(params, "delete").then((res) => {
+      setDomain(params, "remove").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.search();

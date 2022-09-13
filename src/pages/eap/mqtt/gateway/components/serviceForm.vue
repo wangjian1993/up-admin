@@ -4,7 +4,7 @@
       <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-form-model-item ref="plantid" has-feedback label="生产工厂" prop="plantid">
           <a-select v-model="form.plantid" :disabled="isEdit" placeholder="请选择生产工厂" @change="plantChange">
-            <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+            <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
           </a-select>
         </a-form-model-item>
         <a-form-model-item ref="workshopid" has-feedback label="生产车间" prop="workshopid">
@@ -85,7 +85,8 @@
 </template>
 
 <script>
-import { getPlantList, getWorkshopAction, setMqttServiceAction } from "@/services/eap.js";
+import {setMqttServiceAction } from "@/services/eap.js";
+import {getSopDocument} from '@/services/esop.js'
 export default {
   props: ["editData", "isEdit"],
   data() {
@@ -234,7 +235,7 @@ export default {
       let params1 = {
         entertypecode: "PLANT",
       };
-      getPlantList(params1, "getlistbytypecode").then((res) => {
+      getSopDocument(params1, "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -246,7 +247,7 @@ export default {
       let params = {
         plantid: e,
       };
-      getWorkshopAction(params, "getlist").then((res) => {
+      getSopDocument(params, "getworkcenter").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
@@ -257,7 +258,7 @@ export default {
         plantid: this.plantId,
         workshopid: e,
       };
-      getPlantList(params, "getlist").then((res) => {
+      getSopDocument(params, "getline").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }

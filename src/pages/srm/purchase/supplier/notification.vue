@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-30 14:32:26
+ * @LastEditTime: 2022-09-05 15:34:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/supplier/notification.vue
@@ -37,13 +37,13 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="到期时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-form-item label="发送时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-range-picker style="width: 300px" v-decorator="['range-time-picker1']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['status']" placeholder="请选择订单状态" style="width: 200px">
+                  <a-select v-decorator="['status']" placeholder="请选择状态" style="width: 200px">
                     <a-select-option :value="item" v-for="(item, index) in tagItem" :key="index">{{ item }}</a-select-option>
                   </a-select>
                 </a-form-item>
@@ -56,6 +56,7 @@
           </div>
         </a-form>
         <div class="operator">
+          <a-button style="margin-left: 8px" type="primary" @click="add" icon="plus">创建通知</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
@@ -74,7 +75,7 @@
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
-          :rowKey="(dataSource) => dataSource.PlcId"
+          :rowKey="(dataSource) => dataSource.Id"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -90,36 +91,45 @@
           </template>
           <template slot="action" slot-scope="text, record">
             <div>
-              <a style="margin-right: 8px" @click="detail(record)">
-                <a-icon type="container" />
-                查看
-              </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('warn')">
-                <a-icon type="bell" />
-                提醒
-              </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('print')">
-                <a-icon type="printer" />
-                打印
-              </a>
+              <a-popconfirm title="确定删除?" @confirm="() => onDelete(record, 'delete')">
+                <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+                  <a-icon type="delete" />
+                  删除
+                </a>
+              </a-popconfirm>
+              <a-popconfirm title="确定发送?" @confirm="() => onDelete(record)">
+                <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+                  <a-icon type="delete" />
+                  发送
+                </a>
+              </a-popconfirm>
+              <a-popconfirm title="确定作废?" @confirm="() => onDelete(record, 'invalid')">
+                <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+                  <a-icon type="delete" />
+                  作废
+                </a>
+              </a-popconfirm>
             </div>
           </template>
         </a-table>
       </a-card>
+      <AddNotification v-if="isAdd" @closeModal="closeModal" @success="search" />
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getSupplierAction } from "@/services/srm.js";
+import { getNotification, setNotification } from "@/services/srm.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data/authentication";
+import { columns } from "./data/notification";
 import ExportExcel from "@/utils/ExportExcelJS";
+import AddNotification from "./component/addNotification.vue";
 export default {
   mixins: [PublicVar],
+  components: { AddNotification },
   data() {
     return {
       scrollY: "",
@@ -131,9 +141,9 @@ export default {
       selectedRowKeys: [],
       isImport: false,
       listType: "全部",
-      isDetail: false,
+      isAdd: false,
       docno: "",
-      tagItem: ["全部", "临近到期", "已到期", "待确认", "待回复", "已完成"],
+      tagItem: ["全部", "发件箱", "收件箱", "未发送"],
     };
   },
   updated() {
@@ -166,7 +176,7 @@ export default {
       console.log("scrollY===", this.scrollY);
     },
     closeModal() {
-      this.isDetail = false;
+      this.isAdd = false;
     },
     //多选
     onSelectChange(selectedRowKeys) {
@@ -178,9 +188,8 @@ export default {
       this.pagination.pageSize = pagination.pageSize;
       this.search();
     },
-    detail(record) {
-      this.isDetail = true;
-      this.docno = record.OrderNo;
+    add() {
+      this.isAdd = true;
     },
     searchBtn() {
       this.pagination.current = 1;
@@ -205,7 +214,7 @@ export default {
             endtime: endtime,
             status: values.status,
           };
-          getSupplierAction(params, "get").then((res) => {
+          getNotification(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -216,6 +225,16 @@ export default {
             this.loading = false;
           });
           // do something
+        }
+      });
+    },
+    onDelete(item, url) {
+      let params = [item.Id];
+      setNotification(params, url).then((res) => {
+        if (res.data.success) {
+          let content = url == "delete" ? "删除成功" : "作废成功";
+          this.$message.success(content);
+          this.search();
         }
       });
     },
@@ -231,7 +250,7 @@ export default {
         plccode: values.plccode,
         plcname: values.plcname,
       };
-      getSupplierAction(params, "get").then((res) => {
+      getNotification(params, "get").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

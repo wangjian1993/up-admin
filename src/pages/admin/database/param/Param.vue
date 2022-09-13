@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2021-10-12 14:18:39
+ * @LastEditTime: 2022-09-08 11:53:02
  * @LastEditors: max
  * @Description: 快码列表
  * @FilePath: /up-admin/src/pages/admin/database/param/Param.vue
@@ -11,7 +11,7 @@
     <!-- 搜索 -->
     <a-row>
       <a-col style="padding: 0 5px" :span="6">
-        <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px'}" title="快码组:">
+        <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }" title="快码组:">
           <a-row>
             <a-col :xs="12" :sm="16"><a-input-search placeholder="搜索快码组" :disabled="!hasPerm('searchGroup')" v-model="groupSearch" enter-button @search="onSearch"/></a-col>
             <a-col :xs="12" :sm="8"><a-button :disabled="!hasPerm('addGroup')" type="primary" style="margin-left: 20px;" @click="addGroup">添加组</a-button></a-col>
@@ -32,7 +32,8 @@
             <a-row type="flex" justify="space-between">
               <a-col :span="8">
                 <div>
-                  <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="form">添加</a-button>
+                  <a-button :disabled="!hasPerm('add')" @click="add" type="primary" icon="plus">添加</a-button>
+                  <a-button :disabled="!hasPerm('add')" style="margin-left: 8px" @click="batchAdd" type="primary" icon="plus">批量添加</a-button>
                   <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
                   <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
                   <span style="margin-left: 8px">
@@ -48,14 +49,7 @@
                     <a-form layout="horizontal" :form="searchForm" class="form-box">
                       <div>
                         <a-form-item>
-                          <a-input
-                            placeholder="请输入快码编码/名称"
-                            allowClear
-                            style="width: 300px"
-                            v-decorator="[
-                              'searcValue'
-                            ]"
-                          />
+                          <a-input placeholder="请输入快码编码/名称" allowClear style="width: 300px" v-decorator="['searcValue']" />
                         </a-form-item>
                       </div>
                       <div style="margin-top: 3px;margin-left:10px">
@@ -253,6 +247,7 @@
         </a-card>
       </a-col>
     </a-row>
+    <BatchAdd v-if="isBatchAdd" :groupItem="groupItem" @closeModal="handleCancel" @success="getParamGroupList"/>
   </div>
 </template>
 <script>
@@ -307,7 +302,9 @@ const columns = [
 ];
 import { getParamGroupList, getParamList, paramAction, paramGroupAction } from "@/services/admin.js";
 import { renderStripe } from "@/utils/stripe.js";
+import BatchAdd from "./batchAdd.vue";
 export default {
+  components: { BatchAdd },
   data() {
     return {
       groupData: [],
@@ -404,6 +401,8 @@ export default {
           },
         ],
       },
+      isBatchAdd:false,
+      groupItem:[]
     };
   },
   updated() {
@@ -496,7 +495,7 @@ export default {
           pagination.total = res.data.data.recordsTotal;
           this.pagination = pagination;
           this.loading = false;
-        }else {
+        } else {
           this.loading = false;
         }
       });
@@ -510,6 +509,10 @@ export default {
       this.isEdit = false;
       this.visible = true;
       this.form.ParamGroupId = this.groupId;
+    },
+    batchAdd(){
+      this.isBatchAdd = true;
+      this.groupItem = this.groupData.find((item) =>item.ParamGroupId == this.groupId)
     },
     defaultForm() {
       this.form = {
@@ -526,6 +529,7 @@ export default {
     handleCancel() {
       this.visible = false;
       this.groupVisible = false;
+      this.isBatchAdd = false;
     },
     edit(item) {
       this.visible = true;
@@ -635,9 +639,9 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-/deep/ .ant-table{
-  min-height:77vh;
-  max-height:77vh;
+/deep/ .ant-table {
+  min-height: 77vh;
+  max-height: 77vh;
   overflow: auto;
 }
 </style>

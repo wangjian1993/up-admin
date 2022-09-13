@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-15 15:43:03
+ * @LastEditTime: 2022-09-06 10:30:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/supplier/archives.vue
@@ -57,6 +57,7 @@
         </a-form>
         <div class="operator">
           <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
+          <a-button style="margin-left: 8px" :disabled="!hasPerm('add') && dataSource.length == 0" type="primary" @click="invite" icon="usergroup-add">邀请供应商</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -74,7 +75,7 @@
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
-          :rowKey="(dataSource) => dataSource.PlcId"
+          :rowKey="(dataSource) => dataSource.Id"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -82,9 +83,15 @@
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="StatusName" slot-scope="record">
+          <template slot="Status" slot-scope="record">
             <div>
-              <a-tag color="green" v-if="record == '正常'">{{ record }}</a-tag>
+              <a-tag color="green" v-if="record == '有效'">{{ record }}</a-tag>
+              <a-tag color="red" v-else>{{ record }}</a-tag>
+            </div>
+          </template>
+          <template slot="InviteStatus" slot-scope="record">
+            <div>
+              <a-tag color="green" v-if="record == '已加入'">{{ record }}</a-tag>
               <a-tag color="red" v-else>{{ record }}</a-tag>
             </div>
           </template>
@@ -94,32 +101,47 @@
                 <a-icon type="container" />
                 查看
               </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('warn')">
-                <a-icon type="bell" />
-                提醒
+              <a v-if="record.InviteStatus == '已加入'" style="margin-right: 8px" @click="actionBtn(record, 'remove')" :disabled="!hasPerm('relieve')">
+                <a-icon type="stop" />
+                解除
               </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('print')">
-                <a-icon type="printer" />
-                打印
+              <a style="margin-right: 8px" @click="authority(record.Id)" :disabled="!hasPerm('astrict')">
+                <a-icon type="warning" />
+                交易限制
+              </a>
+              <a v-if="record.InviteStatus != '已加入'" style="margin-right: 8px" @click="actionBtn(record, 'agree')" :disabled="!hasPerm('ok')">
+                <a-icon type="check-circle" />
+                同意
+              </a>
+              <a v-if="record.InviteStatus != '已加入'" style="margin-right: 8px" @click="actionBtn(record, 'reject')" :disabled="!hasPerm('ng')">
+                <a-icon type="close-circle" />
+                拒绝
               </a>
             </div>
           </template>
         </a-table>
       </a-card>
     </a-spin>
+    <invite v-if="isInvite" @closeModal="closeModal" @success="search" />
+    <inviteDetail v-if="isDetail" :detailId="detailId" @closeModal="closeModal" />
+    <authority v-if="isAuthority" :authorityId="authorityId" @closeModal="closeModal"/>
   </div>
 </template>
 
 <script>
-import { getSupplierAction } from "@/services/srm.js";
+import { getSupplierAction, setSupplierAction } from "@/services/srm.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data/authentication";
+import { columns } from "./data/archives";
 import ExportExcel from "@/utils/ExportExcelJS";
+import invite from "./component/invite.vue";
+import inviteDetail from "./component/inviteDetail.vue";
+import authority from "./component/authority.vue";
 export default {
   mixins: [PublicVar],
+  components: { invite, inviteDetail, authority },
   data() {
     return {
       scrollY: "",
@@ -133,7 +155,11 @@ export default {
       listType: "全部",
       isDetail: false,
       docno: "",
-      tagItem: ["全部", "临近到期", "已到期", "待确认", "待回复", "已完成"],
+      isInvite: false,
+      isAuthority:false,
+      detailId: "",
+      authorityId:"",
+      tagItem: ["全部", "邀请中", "已加入", "未加入", "黑名单", "临近到期", "已过期"],
     };
   },
   updated() {
@@ -165,7 +191,16 @@ export default {
       }
       console.log("scrollY===", this.scrollY);
     },
+    authority(Id){
+      this.authorityId = Id;
+      this.isAuthority = true
+    },
+    detail(record) {
+      this.isDetail = true;
+      this.detailId = record.Id;
+    },
     closeModal() {
+      this.isInvite = false;
       this.isDetail = false;
     },
     //多选
@@ -178,9 +213,8 @@ export default {
       this.pagination.pageSize = pagination.pageSize;
       this.search();
     },
-    detail(record) {
-      this.isDetail = true;
-      this.docno = record.OrderNo;
+    invite() {
+      this.isInvite = true;
     },
     searchBtn() {
       this.pagination.current = 1;
@@ -216,6 +250,15 @@ export default {
             this.loading = false;
           });
           // do something
+        }
+      });
+    },
+    actionBtn(record, url) {
+      let params = [record.Id];
+      setSupplierAction(params, url).then((res) => {
+        if (res.data.success) {
+          this.$message.success("操作成功!");
+          this.search();
         }
       });
     },

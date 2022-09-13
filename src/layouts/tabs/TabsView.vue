@@ -57,12 +57,12 @@ export default {
     },
   },
   created() {
-    // console.log("页面缓存multiPage======", this.multiPage);
-    // console.log("页面缓存cachePage======", this.cachePage);
     this.loadCacheConfig(this.$router?.options?.routes);
     this.loadCachedTabs();
     const route = this.$route;
+    // console.log("route",route)
     if (this.pageList.findIndex((item) => item.fullPath === route.fullPath) === -1) {
+      // console.log(" this.createPage===", this.createPage(route));
       this.pageList.push(this.createPage(route));
     }
     // console.log(" this.pageList===", this.pageList);
@@ -296,6 +296,7 @@ export default {
      */
     loadCachedTabs() {
       const cachedTabsStr = sessionStorage.getItem(process.env.VUE_APP_TBAS_KEY);
+      // console.log("cachedTabsStr=====",cachedTabsStr)
       if (cachedTabsStr) {
         try {
           const cachedTabs = JSON.parse(cachedTabsStr);
@@ -305,6 +306,7 @@ export default {
         } catch (e) {
           console.warn("failed to load cached tabs, got exception:", e);
         } finally {
+          // console.log("删除====")
           sessionStorage.removeItem(process.env.VUE_APP_TBAS_KEY);
         }
       }

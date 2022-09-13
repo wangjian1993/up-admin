@@ -1,38 +1,53 @@
 /*
  * @Author: max
  * @Date: 2022-08-11 13:55:08
- * @LastEditTime: 2022-08-11 15:07:17
+ * @LastEditTime: 2022-09-02 16:37:15
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/order/data/detail.js
+ * @FilePath: /up-admin/src/pages/srm/purchase/supplier/data/detail.js
  */
-export const info1 = [{
-    title: '采购方',
-    dataIndex: "PurchaseEnterprise"
+export const info = [{
+    title: '供应商编号',
+    dataIndex: "SupplierCode"
 }, {
-    title: '采购单号',
-    dataIndex: "OrderNo"
-}, {
-    title: '供应商',
+    title: '供应商名称',
     dataIndex: "SupplierFullName"
 }, {
-    title: '采购类型',
-    dataIndex: "PurchaseType"
+    title: '供应商简称',
+    dataIndex: "SupplierName"
 }, {
-    title: '打印状态',
-    dataIndex: "PrintStatus"
+    title: '纳税人识别号',
+    dataIndex: "TaxpayerIdNumber"
 }, {
-    title: '差异原因',
-    dataIndex: "DifferenceReason"
+    title: 'ERP分类',
+    dataIndex: "ErpType"
 }, {
-    title: '收货状态',
-    dataIndex: "ReceiptStatus"
+    title: '付款条件',
+    dataIndex: "PaymentTerm"
 }, {
-    title: '订单状态',
-    dataIndex: "PurchaseStatus"
+    title: '国家',
+    dataIndex: "Nation"
 }, {
-    title: '订单附件',
-    dataIndex: "FilePath"
+    title: '省份',
+    dataIndex: "Province"
+}, {
+    title: '城市',
+    dataIndex: "City"
+}, {
+    title: '币别',
+    dataIndex: "Currency"
+}, {
+    title: '邀约状态',
+    dataIndex: "InviteStatus"
+}, {
+    title: '供应商状态',
+    dataIndex: "Status"
+}, {
+    title: '邀约人',
+    dataIndex: "InviteUser"
+}, {
+    title: '邀约时间',
+    dataIndex: "InviteTime"
 }];
 export const info2 = [{
     title: '采购日期',

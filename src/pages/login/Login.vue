@@ -40,7 +40,7 @@
             <a-icon slot="prefix" type="lock" />
           </a-input-password>
         </a-form-item>
-        <a-form-item>
+        <!-- <a-form-item>
           <a-select default-value="1" v-model="loginType">
             <a-select-option value="1">
               民爆职员
@@ -49,7 +49,7 @@
               供应商
             </a-select-option>
           </a-select>
-        </a-form-item>
+        </a-form-item> -->
         <div>
           <a-checkbox style="float: right" :checked="isAccount" @click="cheackAccount">记住账号/密码</a-checkbox>
           <a-checkbox style="float: right" :checked="isAutoLogin" @click="cheackAuto">自动登录</a-checkbox>
@@ -132,7 +132,7 @@ export default {
     });
   },
   methods: {
-    ...mapMutations("account", ["setUser", "setPermissions", "setRoles", "setMenu", "setUserHead"]),
+    ...mapMutations("account", ["setUser", "setPermissions", "setRoles", "setMenu", "setUserHead",'setCompanyList']),
     onSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err) => {
@@ -189,9 +189,10 @@ export default {
       this.logging = false;
       const loginRes = res.data;
       if (loginRes.success) {
-        const { userName, userModules, PhotoUrl } = loginRes.data;
+        const { userName, userModules, PhotoUrl ,userCompany } = loginRes.data;
         this.setUser(userName);
         this.setUserHead("./" + PhotoUrl);
+        this.setCompanyList(userCompany)
         var inFifteenMinutes = new Date(new Date().getTime() + 4 * 60 * 60 * 1000);
         setAuthorization({ token: res.headers.token, expireAt: inFifteenMinutes });
         this.$message.success(this.timeFix().CN + "，欢迎回来!", 3);

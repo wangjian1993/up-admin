@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 09:07:46
- * @LastEditTime: 2022-07-28 10:02:10
+ * @LastEditTime: 2022-09-13 16:14:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/eap/mqtt/gateway/service.vue
@@ -16,7 +16,7 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
-                    <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                    <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -125,7 +125,8 @@
 </template>
 
 <script>
-import { getMqttServiceAction, getPlantList, setMqttServiceAction, getWorkshopAction } from "@/services/eap.js";
+import { getMqttServiceAction, setMqttServiceAction } from "@/services/eap.js";
+import {getSopDocument} from '@/services/esop.js'
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
@@ -197,7 +198,7 @@ export default {
       let params = {
         entertypecode: "PLANT",
       };
-      getPlantList(params, "getlistbytypecode").then((res) => {
+      getSopDocument(params, "getplant").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
         }
@@ -208,7 +209,7 @@ export default {
       let params = {
         plantid: e,
       };
-      getWorkshopAction(params, "getlist").then((res) => {
+      getSopDocument(params, "getworkcenter").then((res) => {
         if (res.data.success) {
           this.workshopList = res.data.data;
         }
@@ -219,7 +220,7 @@ export default {
         plantid: this.plantId,
         workshopid: e,
       };
-      getPlantList(params, "getlist").then((res) => {
+      getSopDocument(params, "getline").then((res) => {
         if (res.data.success) {
           this.LineList = res.data.data;
         }
