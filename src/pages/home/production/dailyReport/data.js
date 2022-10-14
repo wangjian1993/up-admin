@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-01 17:38:43
- * @LastEditTime: 2022-08-04 10:38:48
+ * @LastEditTime: 2022-10-07 17:12:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/data.js
@@ -15,9 +15,10 @@
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/data.js
  */
 import { splitData } from "@/utils/util.js";
-export const columns = [
+export const columnsData = [
     {
       title: "序号",
+      dataIndex:"index",
       scopedSlots: { customRender: "index" },
       align: "center",
       width:50,
@@ -27,30 +28,35 @@ export const columns = [
       dataIndex: "PlantName",
       scopedSlots: { customRender: "PlantName" },
       align: "center",
+      width:100,
     },
     {
       title: "生产车间",
       dataIndex: "WorkShopName",
       scopedSlots: { customRender: "WorkShopName" },
       align: "center",
+      width:100,
     },
     {
       title: "产线",
       dataIndex: "LineName",
       scopedSlots: { customRender: "LineName" },
       align: "center",
+      width:100,
     },
     {
       title: "生产工序",
       dataIndex: "ProcessName",
       scopedSlots: { customRender: "ProcessName" },
       align: "center",
+      width:100,
     },
     {
       title: "生产日期",
       dataIndex: "ProDate",
       scopedSlots: { customRender: "ProDate" },
       align: "center",
+      width:100,
       customRender: (text) => {
         return splitData(text);
       }
@@ -60,36 +66,42 @@ export const columns = [
       dataIndex: "ProTimeQuantum",
       scopedSlots: { customRender: "ProTimeQuantum" },
       align: "center",
+      width:100,
     },
     {
       title: "订单号",
       dataIndex: "OrderNo",
       scopedSlots: { customRender: "OrderNo" },
       align: "center",
+      width:100,
     },
     {
       title: "订单数量",
       dataIndex: "OrderQty",
       scopedSlots: { customRender: "OrderQty" },
       align: "center",
+      width:100,
     },
     {
       title: "工单号",
       dataIndex: "MoCode",
       scopedSlots: { customRender: "MoCode" },
       align: "center",
+      width:100,
     },
     {
       title: "工单数量",
       dataIndex: "MoQty",
       scopedSlots: { customRender: "MoQty" },
       align: "center",
+      width:100,
     },
     {
       title: "成品编码",
       dataIndex: "ProCode",
       scopedSlots: { customRender: "ProCode" },
       align: "center",
+      width:100,
     },
     {
       title: "品名",
@@ -152,12 +164,14 @@ export const columns = [
       dataIndex: "WorkHour",
       scopedSlots: { customRender: "WorkHour" },
       align: "center",
+      width:100,
     },
     {
       title: "人均产能/H",
       dataIndex: "PerCapitaCapacity",
       scopedSlots: { customRender: "PerCapitaCapacity" },
       align: "center",
+      width:100,
     },
     {
       title: "标准产能(PCS)",
@@ -177,6 +191,13 @@ export const columns = [
       title: "工单达成率(%)",
       dataIndex: "CompletionRate",
       scopedSlots: { customRender: "CompletionRate" },
+      align: "center",
+      width: "100px",
+    },
+    {
+      title: "备注",
+      dataIndex: "Remarks",
+      scopedSlots: { customRender: "Remarks" },
       align: "center",
       width: "100px",
     },

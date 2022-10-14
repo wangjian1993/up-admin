@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-30 14:32:03
+ * @LastEditTime: 2022-09-15 10:33:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/consignee.vue
@@ -62,9 +62,7 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="收货状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['deliverystatus']" placeholder="请选择送货状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">启用</a-select-option>
-                    <a-select-option value="0">禁用</a-select-option>
+                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -149,6 +147,7 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { columns, columns1 } from "./data/consignee";
 import ExportExcel from "@/utils/ExportExcelJS";
 import consigneeDetail from "./components/consigneeDetail.vue";
+import { getParamData } from "@/services/admin.js";
 export default {
   components: { consigneeDetail },
   mixins: [PublicVar],
@@ -167,6 +166,7 @@ export default {
       tabType: 1,
       isDetail: false,
       docno: "",
+      paramsList: ["ORDER_STATE","PROCUREMENT_TYPE","RECEIPT_STATE"],
     };
   },
   updated() {
@@ -180,11 +180,23 @@ export default {
   },
   methods: {
     splitData,
+    getParamsData() {
+      this.paramsList.forEach((item) => {
+        let params = {
+          groupcode: item,
+        };
+        getParamData(params).then((res) => {
+          if (res.data.success) {
+            this.paramsItem[item] = res.data.data;
+          }
+        });
+      });
+    },
     //重置搜索
     reset() {
       this.isSearch = 0;
       this.searchForm.resetFields();
-      this.listType = "全部";
+      this.listType = "采购收货单";
       this.search();
     },
     toggleAdvanced() {
@@ -212,7 +224,7 @@ export default {
     detail(record) {
       this.isDetail = true;
       this.orderno = record.DocNo;
-      this.tabType = this.listType == "采购入库单" ? columns1 : columns;
+      this.tabType = this.listType;
     },
     searchBtn(e) {
       this.columnsData = e.target.value == "采购入库单" ? columns1 : columns;

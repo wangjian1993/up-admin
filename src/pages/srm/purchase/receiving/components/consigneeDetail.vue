@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-08-30 14:11:19
+ * @LastEditTime: 2022-09-15 10:31:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/components/consigneeDetail.vue
 -->
 <template>
   <div>
-    <a-drawer :visible="visible" :title="tabType == 1 ? '采购收货详情' : '采购入库单详情'" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :bodyStyle="{ padding: '5px 10px' }">
+    <a-drawer :visible="visible" :title="tabType +'详情'" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :bodyStyle="{ padding: '5px 10px' }">
       <a-spin tip="loading..." :spinning="loading">
         <a-descriptions :column="5" bordered size="small" v-if="tabType == 1">
           <a-descriptions-item v-for="(item, index) in info1" :key="index" :label="item.title">
@@ -109,7 +109,7 @@ import { info1, info4, info2, columns, columnKeys } from "../data/consigneeDetai
 import { getArrival } from "@/services/srm.js";
 import { splitData } from "@/utils/util.js";
 export default {
-  props: ["orderno", "listType"],
+  props: ["orderno", "tabType"],
   data() {
     return {
       size: "small",
@@ -164,6 +164,7 @@ export default {
       this.loading = true;
       let params = {
         orderno: this.orderno,
+        tag: this.tabType,
       };
       getArrival(params, "single").then((res) => {
         if (res.data.success) {

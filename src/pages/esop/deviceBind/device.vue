@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 14:01:21
- * @LastEditTime: 2022-07-08 15:13:30
+ * @LastEditTime: 2022-09-22 17:53:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/device.vue
@@ -58,7 +58,7 @@
           </div>
           <div class="device-list-box">
             <div class="device-list-content" v-for="(list, index) in item.list" :key="index">
-              <div class="device" v-for="(items, indexs) in list" :key="items.EquipmentId">
+              <div class="device" v-for="(items, indexs) in list" :key="indexs">
                 <div class="device-content" v-for="fileItem in items.Detail" :key="fileItem.Id" @click="selectDocs(items, indexs)">
                   <!-- <a-popover title="Title" >
                     <template slot="content">
@@ -226,11 +226,18 @@ export default {
             let rowArray = list.slice(i, i + 2);
             array.push(([rowArray[0], rowArray[1]] = [rowArray[1], rowArray[0]]));
           }
-          console.log("array", array);
-
-          // this.deviceList[index].count = array.length;
-          this.deviceList[index].list = array;
-          console.log("deviceList==", this.deviceList);
+          if (array.length > 0) {
+            // array[array.length - 1][0] = array[array.length - 1][0] == undefined ? array[array.length - 1][1] : array[array.length - 1][0];
+            console.log("array[array.length - 1][0]---",array[array.length - 1][0] == undefined)
+            if (array[array.length - 1][0] == undefined) {
+              console.log("删除=====")
+              array[array.length - 1].splice(0,1);
+              console.log("删除=====",array[array.length - 1])
+            }
+            console.log("去最后一个", array);
+            this.deviceList[index].list = array;
+            console.log("deviceList==", this.deviceList);
+          }
         }
       });
     },

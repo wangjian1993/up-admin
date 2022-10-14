@@ -66,21 +66,15 @@ const columns = [
     width: "10%",
   },
   {
-    title: "用户账号",
+    title: "供应商编码",
     dataIndex: "Code",
     scopedSlots: { customRender: "Code" },
     align: "center",
   },
   {
-    title: "用户名称",
+    title: "供应商名称",
     dataIndex: "Name",
     scopedSlots: { customRender: "Name" },
-    align: "center",
-  },
-  {
-    title: "用户类型",
-    dataIndex: "SurperName",
-    scopedSlots: { customRender: "SurperName" },
     align: "center",
   },
 ];

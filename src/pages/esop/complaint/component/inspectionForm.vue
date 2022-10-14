@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-09-13 14:27:43
+ * @LastEditTime: 2022-09-24 09:59:10
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/complaint/component/inspectionForm.vue
@@ -83,7 +83,7 @@ export default {
         executivestandard: "",
         files: [],
       },
-      filesList: {},
+      filesList: [],
       rules: {
         customercode: [
           {
@@ -138,22 +138,30 @@ export default {
       spinning: false,
       department: [],
       isUserList: false,
+      BASE_URL_MOCK:""
     };
   },
   created() {
     if (this.isEdit) {
       this.form = lowerJSONKey(this.editData);
+      if (process.env.NODE_ENV == "production") {
+      //正式服
+      this.BASE_URL_MOCK = window.location.origin;
+    } else {
+      //测试
+      this.BASE_URL_MOCK ="http://192.168.1.245:8080";
+    }
       this.$nextTick(() => {
         this.form.files.forEach((item) => {
           let obj = {
             ...item,
             name: item.FileName,
             status: "done",
-            url: item.FilePath,
+            url:this.BASE_URL_MOCK +item.FilePath,
             uid: item.Id,
           };
           this.fileList.push(obj);
-          this.filesList = {
+          this.filesList.push({
             FileName: item.FileName,
             FilePath: item.FilePath,
             FilePrefix: item.FilePrefix,
@@ -161,7 +169,7 @@ export default {
             sort: item.Sort,
             id: item.Id,
             uid: item.Id,
-          };
+          });
         });
         this.form.files = []
       });
@@ -172,15 +180,22 @@ export default {
       console.log(e);
       this.form[str] = e.format("YYYY-MM-DD");
     },
-    removeFile() {
+    removeFile(record) {
+      let paramsData = this.filesList.find((item) => item.uid == record.uid);
+      console.log("paramsData===", paramsData);
       let params = {
-        resourceid: this.filesList.ResourceId,
-        filepath: this.filesList.FilePath,
+        resourceid: paramsData.ResourceId,
+        filepath: paramsData.FilePath,
       };
       setSopDocumnet(params, "deletefile").then((res) => {
         if (res.data.success) {
           this.$message.success("移除成功!");
-          this.filesList = {};
+          this.filesList.map((item, index) => {
+            if (item.uid == record.uid) {
+              this.fileList.splice(index, 1);
+              this.filesList.splice(index, 1)
+            }
+          });
         }
       });
     },
@@ -258,7 +273,11 @@ export default {
           };
           setSopDocumnet(params, "upload/composefile").then((res) => {
             if (res.data.success) {
-              this.filesList = res.data.data;
+              this.filesList.push({
+                ...res.data.data,
+                ...info.file,
+                sort: info.data.sort,
+              });
             }
             this.spinning = false;
           });
@@ -278,8 +297,10 @@ export default {
         if (valid) {
           this.spinning = true;
           this.form.files = []
-          this.form.files.push({
-            id: this.filesList.ResourceId,
+          this.filesList.forEach((item) => {
+            this.form.files.push({
+              id: item.ResourceId,
+            });
           });
           if (this.isEdit) {
             this.form.id = this.editData.id;

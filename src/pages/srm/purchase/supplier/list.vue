@@ -48,8 +48,7 @@
             </div>
           </a-form>
           <div class="operator">
-            <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
-            <a-button style="margin-left: 8px" :disabled="!hasPerm('add') && dataSource.length == 0" type="primary" @click="invite" icon="usergroup-add">邀请供应商</a-button>
+            <a-button style="margin-left: 8px" type="primary" @click="isSetClass = true" icon="usergroup-add">设置资质分类</a-button>
             <span style="margin-left: 8px">
               <template v-if="hasSelected">
                 {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -90,10 +89,10 @@
             <template slot="action" slot-scope="text, record">
               <div>
                 <a style="margin-right: 8px" @click="detail(record)">
-                  <a-icon type="container" />
+                  <a-icon type="plus" />
                   查看
                 </a>
-                <a v-if="record.InviteStatus == '已加入'" style="margin-right: 8px" @click="actionBtn(record, 'remove')" :disabled="!hasPerm('relieve')">
+                <!-- <a v-if="record.InviteStatus == '已加入'" style="margin-right: 8px" @click="actionBtn(record, 'remove')" :disabled="!hasPerm('relieve')">
                   <a-icon type="stop" />
                   解除
                 </a>
@@ -108,25 +107,27 @@
                 <a v-if="record.InviteStatus != '已加入'" style="margin-right: 8px" @click="actionBtn(record, 'reject')" :disabled="!hasPerm('ng')">
                   <a-icon type="close-circle" />
                   拒绝
-                </a>
+                </a> -->
               </div>
             </template>
           </a-table>
         </a-card>
+        <SetClass v-if="isSetClass" @closeModal="closeModal"/>
       </a-spin>
     </div>
   </template>
   
   <script>
-  import { getAuthentication } from "@/services/srm.js";
+  import { getQuaList } from "@/services/srm.js";
   import { renderStripe } from "@/utils/stripe.js";
   import getTableScroll from "@/utils/setTableHeight";
   import { splitData } from "@/utils/util.js";
   import { PublicVar } from "@/mixins/publicVar.js";
   import { columns } from "./data/list";
-  import ExportExcel from "@/utils/ExportExcelJS";
+  import SetClass from './component/setClass.vue'
   export default {
     mixins: [PublicVar],
+    components: {SetClass},
     data() {
       return {
         scrollY: "",
@@ -144,6 +145,7 @@
         isAuthority:false,
         detailId: "",
         authorityId:"",
+        isSetClass:false,
         tagItem: ["全部", "邀请中", "已加入", "未加入", "黑名单", "临近到期", "已过期"],
       };
     },
@@ -187,6 +189,7 @@
       closeModal() {
         this.isInvite = false;
         this.isDetail = false;
+        this.isSetClass = false;
       },
       //多选
       onSelectChange(selectedRowKeys) {
@@ -224,7 +227,7 @@
               endtime: endtime,
               status: values.status,
             };
-            getAuthentication(params, "get").then((res) => {
+            getQuaList(params, "get").then((res) => {
               if (res.data.success) {
                 this.dataSource = res.data.data.list;
                 const pagination = { ...this.pagination };
@@ -237,52 +240,7 @@
             // do something
           }
         });
-      },
-      exportExcel() {
-        this.isExportLod = true;
-        let values = this.searchForm.getFieldsValue();
-        let params = {
-          pageindex: this.pagination.current,
-          pagesize: this.pagination.total,
-          typeid: values.typeid,
-          brand: values.brand,
-          status: values.status,
-          plccode: values.plccode,
-          plcname: values.plcname,
-        };
-        getAuthentication(params, "get").then((res) => {
-          if (res.data.success) {
-            let list = res.data.data.list;
-            const dataSource = list.map((item) => {
-              Object.keys(item).forEach((key) => {
-                // 后端传null node写入会有问题
-                if (item[key] === null) {
-                  item[key] = "";
-                }
-                if (Array.isArray(item[key])) {
-                  item[key] = item[key].join(",");
-                }
-              });
-              return item;
-            });
-            const header = [];
-            columns.map((item) => {
-              if (item.dataIndex) {
-                header.push({ key: item.dataIndex, title: item.title });
-              }
-            });
-            var timestamp = Date.parse(new Date());
-            try {
-              ExportExcel(header, dataSource, `PLC列表_${timestamp}.xlsx`);
-              this.$message.success("导出数据成功!");
-            } catch (error) {
-              // console.log(error);
-              this.$message.error("导出数据失败");
-            }
-            this.isExportLod = false;
-          }
-        });
-      },
+      }
     },
   };
   </script>

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-10 16:38:42
- * @LastEditTime: 2022-09-07 15:25:15
+ * @LastEditTime: 2022-09-28 11:36:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/srm.js
@@ -14,6 +14,21 @@ import {
     METHOD
 } from '@/utils/request';
 const Enterpriseld = localStorage.getItem("COMPANY_ID") || ""
+//上传图片
+export function updateFile(params) {
+    return request(`${UP_SRM}/common/upload`, METHOD.POST, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
+export function deleteFile(params) {
+    return request(`${UP_SRM}/common/deletefile`, METHOD.POST, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
 
 //采购收货管理
 export function getPurchaseOrders(params, action) {
@@ -73,7 +88,28 @@ export function getBill(params, action) {
 
 //供应商管理
 export function getAuthentication(params, action) {
+    return request(`${UP_SRM}/qua/supplier/${action}`, METHOD.GET, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
+export function setAuthentication(params, action) {
+    return request(`${UP_SRM}/qua/supplier/${action}`, METHOD.POST, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
+export function getQuaList(params, action) {
     return request(`${UP_SRM}/qua/${action}`, METHOD.GET, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
+export function setQuaList(params, action) {
+    return request(`${UP_SRM}/qua/${action}`, METHOD.POST, params, {
         headers: {
             Enterpriseld: Enterpriseld,
         }
@@ -168,6 +204,21 @@ export function getExpense(params, action) {
 }
 export function setExpense(params, action) {
     return request(`${UP_SRM}/expense/${action}`, METHOD.POST, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
+//交易权限
+export function getPermission(params, action) {
+    return request(`${UP_SRM}/permission/${action}`, METHOD.GET, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
+export function setPermission(params, action) {
+    return request(`${UP_SRM}/permission/${action}`, METHOD.POST, params, {
         headers: {
             Enterpriseld: Enterpriseld,
         }

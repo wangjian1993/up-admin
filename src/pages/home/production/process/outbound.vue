@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2022-04-20 17:06:37
+ * @LastEditTime: 2022-10-08 16:19:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/outbound.vue
@@ -322,6 +322,7 @@ export default {
           ProcessStatus: "PROCESS_FINISHED",
           ReportQty: this.receiveQty,
           ScrapedQty: this.scrapQty,
+          Remarks:this.remark
         };
       }
       setStartWorkApi(params, url).then((res) => {

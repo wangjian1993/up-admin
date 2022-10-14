@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-09-06 10:30:55
+ * @LastEditTime: 2022-09-15 09:58:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/supplier/archives.vue
@@ -21,7 +21,7 @@
             >
             <a-col :md="6" :sm="24">
               <a-form-item label="" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 300px" placeholder="请输入搜索内容" v-decorator="['keyword']" />
+                <a-input style="width: 300px" placeholder="请输入供应商.邀请人" v-decorator="['keyword']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -32,18 +32,18 @@
           <div :class="advanced ? null : 'fold'" v-if="advanced">
             <a-row>
               <a-col :md="6" :sm="24">
-                <a-form-item label="标题" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入标题" v-decorator="['title']" />
+                <a-form-item label="供应商" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入供应商" v-decorator="['supplier']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="到期时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-range-picker style="width: 300px" v-decorator="['range-time-picker1']" />
+                <a-form-item label="邀请人" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入邀请人" v-decorator="['inviteuser']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['status']" placeholder="请选择订单状态" style="width: 200px">
+                <a-form-item label="供应商状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['status']" placeholder="请选择供应商状态" style="width: 200px">
                     <a-select-option :value="item" v-for="(item, index) in tagItem" :key="index">{{ item }}</a-select-option>
                   </a-select>
                 </a-form-item>
@@ -124,7 +124,7 @@
     </a-spin>
     <invite v-if="isInvite" @closeModal="closeModal" @success="search" />
     <inviteDetail v-if="isDetail" :detailId="detailId" @closeModal="closeModal" />
-    <authority v-if="isAuthority" :authorityId="authorityId" @closeModal="closeModal"/>
+    <authority v-if="isAuthority" :authorityId="authorityId" @closeModal="closeModal" />
   </div>
 </template>
 
@@ -156,9 +156,9 @@ export default {
       isDetail: false,
       docno: "",
       isInvite: false,
-      isAuthority:false,
+      isAuthority: false,
       detailId: "",
-      authorityId:"",
+      authorityId: "",
       tagItem: ["全部", "邀请中", "已加入", "未加入", "黑名单", "临近到期", "已过期"],
     };
   },
@@ -191,9 +191,9 @@ export default {
       }
       console.log("scrollY===", this.scrollY);
     },
-    authority(Id){
+    authority(Id) {
       this.authorityId = Id;
-      this.isAuthority = true
+      this.isAuthority = true;
     },
     detail(record) {
       this.isDetail = true;
@@ -224,19 +224,12 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          if (values["range-time-picker1"] && values["range-time-picker1"].length == 2) {
-            const rangeValue = values["range-time-picker1"];
-            var starttime = rangeValue[0].format("YYYY-MM-DD");
-            var endtime = rangeValue[1].format("YYYY-MM-DD");
-          }
           let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             keyword: values.keyword,
-            tag: this.listType,
-            title: values.title,
-            starttime: starttime,
-            endtime: endtime,
+            supplier: values.supplier,
+            inviteuser: values.inviteuser,
             status: values.status,
           };
           getSupplierAction(params, "get").then((res) => {
@@ -268,11 +261,10 @@ export default {
       let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
-        typeid: values.typeid,
-        brand: values.brand,
+        keyword: values.keyword,
+        supplier: values.supplier,
+        inviteuser: values.inviteuser,
         status: values.status,
-        plccode: values.plccode,
-        plcname: values.plcname,
       };
       getSupplierAction(params, "get").then((res) => {
         if (res.data.success) {

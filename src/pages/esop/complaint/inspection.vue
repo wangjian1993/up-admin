@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-09-13 11:10:19
+ * @LastEditTime: 2022-09-24 16:59:30
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/complaint/inspection.vue
@@ -19,34 +19,34 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="订单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['orderno']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入订单号" v-decorator="['orderno']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="客户代码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入客户代码" v-decorator="['itemclass']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入客户代码" v-decorator="['customercode']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="常规型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入常规型号" v-decorator="['itemclass']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入常规型号" v-decorator="['itemno']" />
               </a-form-item>
             </a-col>
           </a-row>
           <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="客户型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入客户型号" v-decorator="['itemclass']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入客户型号" v-decorator="['customerno']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="不良现象" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入不良现象" v-decorator="['itemclass']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入不良现象" v-decorator="['unpleasantsight']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="后续执行标准" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入后续执行标准" v-decorator="['itemtype']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入后续执行标准" v-decorator="['executivestandard']" />
               </a-form-item>
             </a-col>
           </a-row>
@@ -58,6 +58,8 @@
       </a-form>
       <div class="operator">
         <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" :loading="loading" @click="add" style="margin-left: 8px">添加</a-button>
+        <a-button icon="import" type="primary" :disabled="!hasPerm('import')" :loading="loading" @click="isImport = true" style="margin-left: 8px">导入</a-button>
+        <a-button icon="download" type="primary" :loading="loading" @click="downExcel" style="margin-left: 8px">导入模板下载</a-button>
         <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <span style="margin-left: 8px">
@@ -93,6 +95,13 @@
             <a-tag color="red" v-else>{{ text }}</a-tag>
           </div>
         </template>
+        <template slot="Files" slot-scope="list">
+          <div>
+            <viewer>
+              <a-avatar v-for="(item, index) in list" :key="index" shape="square" style="margin:5px" :size="48" :src="BASE_URL_MOCK + item.FilePath" />
+            </viewer>
+          </div>
+        </template>
         <template slot="action" slot-scope="text, record">
           <div>
             <a-popconfirm title="确定删除?" @confirm="() => useDelete(record, 'delete')">
@@ -110,6 +119,7 @@
       </a-table>
       <a-empty v-else description="暂无权限" />
       <inspectionForm v-if="isForm" :editData="editData" :isEdit="isEdit" @close="onClose" @success="search" />
+      <ImportExcel v-if="isImport" :importType="2" @closeModal="onClose" @success="searchBtn" />
     </a-card>
   </div>
 </template>
@@ -121,8 +131,9 @@ import { getInspection, setInspection } from "@/services/esop.js";
 import inspectionForm from "./component/inspectionForm.vue";
 import { columns } from "./data/inspection";
 import { PublicVar } from "@/mixins/publicVar.js";
+import ImportExcel from "./component/ImportExcel.vue";
 export default {
-  components: { inspectionForm },
+  components: { inspectionForm, ImportExcel },
   mixins: [PublicVar],
   data() {
     return {
@@ -134,6 +145,8 @@ export default {
       isForm: false,
       uploadData: [],
       isUser: false,
+      isImport: false,
+      BASE_URL_MOCK: "",
     };
   },
   updated() {
@@ -144,14 +157,25 @@ export default {
       this.scrollY = getTableScroll();
     });
     this.search();
+    if (process.env.NODE_ENV == "production") {
+      //正式服
+      this.BASE_URL_MOCK = window.location.origin;
+    } else {
+      //测试
+      this.BASE_URL_MOCK ="http://192.168.1.245:8080";
+    }
   },
   methods: {
     onClose() {
       this.isForm = false;
+      this.isImport = false;
     },
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
+    },
+    downExcel() {
+      window.open("./Upload/excel/20211008/产品验货导入模板.xlsx", "_blank");
     },
     //重置搜索
     reset() {
@@ -173,32 +197,17 @@ export default {
             var uploadstarttime = rangeValue[0].format("YYYY-MM-DD");
             var uploadendtime = rangeValue[1].format("YYYY-MM-DD");
           }
-          if (values["range-time-picker1"] && values["range-time-picker1"].length == 2) {
-            const rangeValue = values["range-time-picker1"];
-            var salestarttime = rangeValue[0].format("YYYY-MM-DD");
-            var saleendtime = rangeValue[1].format("YYYY-MM-DD");
-          }
-          if (values["range-time-picker2"] && values["range-time-picker2"].length == 2) {
-            const rangeValue = values["range-time-picker2"];
-            var reportstarttime = rangeValue[0].format("YYYY-MM-DD");
-            var reportendtime = rangeValue[1].format("YYYY-MM-DD");
-          }
           let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            customername: values.customername,
-            businessuser: values.businessuser,
-            orderno: values.orderno,
-            itemcode: values.itemcode,
-            itemtype: values.itemtype,
-            department: values.department,
-            reportno: values.reportno,
-            salestarttime: salestarttime,
-            saleendtime: saleendtime,
             uploadstarttime: uploadstarttime,
             uploadendtime: uploadendtime,
-            reportstarttime: reportstarttime,
-            reportendtime: reportendtime,
+            orderno: values.orderno,
+            customercode: values.customercode,
+            customerno: values.customerno,
+            itemno: values.itemno,
+            unpleasantsight: values.unpleasantsight,
+            executivestandard: values.executivestandard,
           };
           getInspection(params, "get").then((res) => {
             if (res.data.success) {
@@ -220,6 +229,7 @@ export default {
       this.editData = [];
       this.isEdit = false;
     },
+    //编辑
     useEdit(item) {
       getInspection({ id: item.Id }, "single").then((res) => {
         if (res.data.success) {

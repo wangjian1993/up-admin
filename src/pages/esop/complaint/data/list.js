@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-09-09 08:57:17
- * @LastEditTime: 2022-09-09 09:12:14
+ * @LastEditTime: 2022-09-24 14:56:05
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/complaint/data/list.js
@@ -13,7 +13,7 @@ export const columns = [
         title: "序号",
         scopedSlots: { customRender: "index" },
         align: "center",
-        width: "5%",
+        width:50,
     },
     {
         title: "客诉日期",
@@ -80,12 +80,14 @@ export const columns = [
         dataIndex: "NgDesc",
         scopedSlots: { customRender: "NgDesc" },
         align: "center",
+        width:200
     },
     {
         title: "分析结果",
         dataIndex: "AnalysisResults",
         scopedSlots: { customRender: "AnalysisResults" },
         align: "center",
+        width:400
     },
     {
         title: "责任部门",
@@ -110,6 +112,14 @@ export const columns = [
         dataIndex: "ImproveStrategy",
         scopedSlots: { customRender: "ImproveStrategy" },
         align: "center",
+        width:300
+    },
+    {
+        title: "图片",
+        dataIndex: "Files",
+        scopedSlots: { customRender: "Files" },
+        align: "center",
+        width:200
     },
     {
         title: "备注",
@@ -121,5 +131,7 @@ export const columns = [
         title: "操作",
         scopedSlots: { customRender: "action" },
         align: "center",
+        fixed: "right",
+        width:100
     },
 ];

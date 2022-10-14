@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2022-09-13 15:31:36
+ * @LastEditTime: 2022-10-07 17:32:21
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/index.vue
@@ -70,16 +70,34 @@
               </a-col>
             </a-row>
           </div>
+
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="searchBtn">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+            <!-- <a-button style="margin:0 10px;" type="primary" shape="circle" icon="setting" /> -->
+            <a-popover v-model="poped" trigger="click" placement="leftBottom">
+              <template slot="title">
+                <a-checkbox :checked="chkAll" :indeterminate="indeterminate" @change="ckAllChange">全部</a-checkbox>
+              </template>
+              <template slot="content">
+                <a-checkbox-group v-model="ckValues" :options="columnList" @change="ckChange" style="width: 120px;">
+                  <span slot="label" :title="option.title" slot-scope="option" style="width:300px">{{ option.title }}</span>
+                </a-checkbox-group>
+                <a-divider style="margin:5px; " />
+                <a-space>
+                  <a-button type="primary" size="small" @click="createColumns">确认</a-button>
+                  <a-button type="primary" size="small" @click="poped = false">取消</a-button>
+                </a-space>
+              </template>
+              <a-button type="primary" style="margin:0 10px;" icon="table" shape="circle" />
+            </a-popover>
           </span>
         </a-form>
         <div class="operator">
           <a-button v-if="hasPerm('export')" :disabled="dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <a-button v-else type="primary" @click="exportExcel" icon="export">导出</a-button>
         </div>
-        <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.OrderNo + '_' + index" bordered>
+        <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: true }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.OrderNo + '_' + index" bordered>
           <template slot="index" slot-scope="text, record, index">
             <div>
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -98,14 +116,19 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data";
+import { columnsData } from "./data";
 export default {
   mixins: [PublicVar],
   data() {
     return {
+      ckValues: [], //checkgroup设置值
+      chkAll: true, //全选
+      indeterminate: false, //模糊状态
+      poped: false, //弹窗显示
+      columns: [], //显示列
+      columnList: columnsData, //全部列
       scrollY: "",
       advanced: true,
-      columns,
       dataSource: [],
       isDrawer: false,
       plantList: [],
@@ -132,7 +155,25 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(70);
+      this.scrollY = getTableScroll(100);
+      let local = JSON.parse(localStorage.getItem("REPORT_COLUMN"));
+      this.columnList.forEach((col) => {
+        col.value = col.dataIndex; //设置value值，用于checkedgroup
+      });
+      if (local) {
+        this.ckValues = [];
+        local.forEach((col) => {
+          this.ckValues.push(col.value);
+        });
+      } else {
+        this.createChGroupValue(); //初始全部选中
+      }
+      this.createColumns(); //生成显示列
+      // this.setDelCol(); //设置删除标记列的显示样式
+      let primaryKey = this.columns.find((f) => f.primaryKey == true);
+      if (primaryKey) {
+        this.primaryKey = primaryKey.dataIndex;
+      }
     });
     this.search();
     this.getPlant();
@@ -140,6 +181,42 @@ export default {
   },
   methods: {
     splitData,
+    createChGroupValue() {
+      this.ckValues = [];
+      this.columnList.forEach((col) => {
+        this.ckValues.push(col.value);
+      });
+    },
+    ckChange(checkedList) {
+      console.log("checkedList===", this.columnList);
+      this.indeterminate = !!checkedList.length && checkedList.length < this.columnList.length;
+      this.chkAll = checkedList.length === this.columnList.length;
+    },
+    ckAllChange(e) {
+      this.chkAll = e.target.checked;
+      this.indeterminate = false;
+      if (this.chkAll) {
+        this.createChGroupValue();
+      } else {
+        this.ckValues = [];
+      }
+    },
+    createColumns() {
+      if (this.ckValues.length == 0) {
+        this.$message.error("请至少留下一列");
+        return;
+      }
+      this.columns = [];
+      this.ckValues.forEach((item) => {
+        let col = this.columnList.find((f) => f.dataIndex == item);
+        console.log("col===", col);
+        if (col) {
+          this.columns.push(col);
+        }
+      });
+      this.poped = false;
+      localStorage.setItem("REPORT_COLUMN", JSON.stringify(this.columns));
+    },
     //查看详情
     details(item) {
       console.log("111====", item);
@@ -348,8 +425,8 @@ export default {
           });
           let sumProQty = list.reduce((prev, curr) => prev + parseInt(curr.ProQty), 0);
           console.log(sumProQty);
-          let collect = ["","","","","","","","","","","","","","","合计",sumProQty,"","","","","","","",""]
-          _data.push(collect);
+          // let collect = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "合计", sumProQty, "", "", "", "", "", "", "", "", ""];
+          // _data.push(collect);
           const sheetCols = [
             { wch: 8 }, // 序号
             { wch: 8 }, // 阶次
@@ -374,7 +451,7 @@ export default {
           let merges = []; // 合并单元格
           let formStyle = {};
           excelArray.push({
-            Sheet: `供应商价格`, // 下方tab切换名称
+            Sheet: `生产日报表`, // 下方tab切换名称
             data: aoa, // 表格数据
             merges, //  合并单元格
             autoWidth: false, // 自适应宽度

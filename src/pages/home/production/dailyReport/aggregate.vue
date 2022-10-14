@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2022-08-05 18:06:24
+ * @LastEditTime: 2022-10-07 17:34:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/aggregate.vue
@@ -74,6 +74,22 @@
           <span style="float: right; margin-top: 3px;">
             <a-button type="primary" @click="searchBtn">查询</a-button>
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+            <a-popover v-model="poped" trigger="click" placement="leftBottom">
+              <template slot="title">
+                <a-checkbox :checked="chkAll" :indeterminate="indeterminate" @change="ckAllChange">全部</a-checkbox>
+              </template>
+              <template slot="content">
+                <a-checkbox-group v-model="ckValues" :options="columnList" @change="ckChange" style="width: 120px;">
+                  <span slot="label" :title="option.title" slot-scope="option" style="width:300px">{{ option.title }}</span>
+                </a-checkbox-group>
+                <a-divider style="margin:5px; " />
+                <a-space>
+                  <a-button type="primary" size="small" @click="createColumns">确认</a-button>
+                  <a-button type="primary" size="small" @click="poped = false">取消</a-button>
+                </a-space>
+              </template>
+              <a-button type="primary" style="margin:0 10px;" icon="table" shape="circle" />
+            </a-popover>
           </span>
         </a-form>
         <div class="operator">
@@ -102,14 +118,19 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./aggregate";
+import { columnsData } from "./aggregate";
 export default {
   mixins: [PublicVar],
   data() {
     return {
+      ckValues: [], //checkgroup设置值
+      chkAll: true, //全选
+      indeterminate: false, //模糊状态
+      poped: false, //弹窗显示
+      columns: [], //显示列
+      columnList: columnsData, //全部列
       scrollY: "",
       advanced: true,
-      columns,
       dataSource: [],
       isDrawer: false,
       plantList: [],
@@ -136,7 +157,25 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      this.scrollY = getTableScroll(70);
+      this.scrollY = getTableScroll(100);
+      let local = JSON.parse(localStorage.getItem("AGGREGATE_COLUMN"));
+      this.columnList.forEach((col) => {
+        col.value = col.dataIndex; //设置value值，用于checkedgroup
+      });
+      if (local) {
+        this.ckValues = [];
+        local.forEach((col) => {
+          this.ckValues.push(col.value);
+        });
+      } else {
+        this.createChGroupValue(); //初始全部选中
+      }
+      this.createColumns(); //生成显示列
+      // this.setDelCol(); //设置删除标记列的显示样式
+      let primaryKey = this.columns.find((f) => f.primaryKey == true);
+      if (primaryKey) {
+        this.primaryKey = primaryKey.dataIndex;
+      }
     });
     this.search();
     this.getPlant();
@@ -144,6 +183,42 @@ export default {
   },
   methods: {
     splitData,
+    createChGroupValue() {
+      this.ckValues = [];
+      this.columnList.forEach((col) => {
+        this.ckValues.push(col.value);
+      });
+    },
+    ckChange(checkedList) {
+      console.log("checkedList===", this.columnList);
+      this.indeterminate = !!checkedList.length && checkedList.length < this.columnList.length;
+      this.chkAll = checkedList.length === this.columnList.length;
+    },
+    ckAllChange(e) {
+      this.chkAll = e.target.checked;
+      this.indeterminate = false;
+      if (this.chkAll) {
+        this.createChGroupValue();
+      } else {
+        this.ckValues = [];
+      }
+    },
+    createColumns() {
+      if (this.ckValues.length == 0) {
+        this.$message.error("请至少留下一列");
+        return;
+      }
+      this.columns = [];
+      this.ckValues.forEach((item) => {
+        let col = this.columnList.find((f) => f.dataIndex == item);
+        console.log("col===", col);
+        if (col) {
+          this.columns.push(col);
+        }
+      });
+      this.poped = false;
+      localStorage.setItem("AGGREGATE_COLUMN", JSON.stringify(this.columns));
+    },
     //查看详情
     details(item) {
       console.log("111====", item);

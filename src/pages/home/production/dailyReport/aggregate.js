@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-01 17:38:43
- * @LastEditTime: 2022-08-05 18:07:27
+ * @LastEditTime: 2022-10-12 14:30:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/aggregate.js
@@ -15,9 +15,10 @@
  * @FilePath: /up-admin/src/pages/home/production/dailyPlan/data.js
  */
 import { splitData } from "@/utils/util.js";
-export const columns = [
+export const columnsData = [
     {
       title: "序号",
+      dataIndex:"index",
       scopedSlots: { customRender: "index" },
       align: "center",
       width:50,
@@ -127,6 +128,13 @@ export const columns = [
       title: "尚欠数量(PCS)",
       dataIndex: "DeficiencyQty",
       scopedSlots: { customRender: "DeficiencyQty" },
+      align: "center",
+      width:100,
+    },
+    {
+      title: "备注",
+      dataIndex: "Remarks",
+      scopedSlots: { customRender: "Remarks" },
       align: "center",
       width:100,
     },

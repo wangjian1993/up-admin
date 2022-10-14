@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-08-10 16:04:21
+ * @LastEditTime: 2022-09-15 13:54:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -208,6 +208,12 @@ const columns = [
   {
     title: "最终成本",
     dataIndex: "FinalCost",
+    align: "center",
+    width: "5%",
+  },
+  {
+    title: "加工费",
+    dataIndex: "JgfCost",
     align: "center",
     width: "5%",
   },

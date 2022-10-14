@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-30 14:05:19
- * @LastEditTime: 2022-09-06 10:56:44
+ * @LastEditTime: 2022-09-27 13:55:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/supplier/data/authentication.js
@@ -17,58 +17,66 @@ export const columns = [
     },
     {
         title: "供应商编码",
+        dataIndex: "SupplierCode",
+        scopedSlots: { customRender: "SupplierCode" },
+        align: "center",
+    },
+    {
+        title: "供应商名称",
+        dataIndex: "SupplierFullName",
+        scopedSlots: { customRender: "SupplierFullName" },
+        align: "center",
+    },
+    {
+        title: "标题",
+        dataIndex: "Title",
+        scopedSlots: { customRender: "Title" },
+        align: "center",
+    },
+    {
+        title: "资质文件编码",
+        dataIndex: "Code",
+        scopedSlots: { customRender: "Code" },
+        align: "center",
+    },
+    {
+        title: "资质分类",
         dataIndex: "Name",
         scopedSlots: { customRender: "Name" },
         align: "center",
     },
     {
-        title: "供应商名称",
-        dataIndex: "Department",
-        scopedSlots: { customRender: "Department" },
-        align: "center",
-    },
-    {
-        title: "标题",
-        dataIndex: "fax",
-        scopedSlots: { customRender: "fax" },
-        align: "center",
-    },
-    {
-        title: "资质文件编码",
-        dataIndex: "MobilePhone",
-        scopedSlots: { customRender: "MobilePhone" },
-        align: "center",
-    },
-    {
-        title: "资质分类",
-        dataIndex: "Phone",
-        scopedSlots: { customRender: "Phone" },
-        align: "center",
-    },
-    {
         title: "是否必要",
-        dataIndex: "Email",
-        scopedSlots: { customRender: "Email" },
+        dataIndex: "IsRequired",
+        scopedSlots: { customRender: "IsRequired" },
         align: "center",
     },
     {
         title: "有效期",
-        dataIndex: "Wechat",
-        scopedSlots: { customRender: "Wechat" },
+        dataIndex: "Expired",
+        scopedSlots: { customRender: "Expired" },
         align: "center",
     },
     {
-        title: "资质类型",
-        scopedSlots: { customRender: "action" },
+        title: "到期日期",
+        dataIndex: "ExpiredLength",
+        scopedSlots: { customRender: "ExpiredLength" },
         align: "center",
     },
     {
-        title: "到期日",
-        scopedSlots: { customRender: "action" },
+        title: "附件",
+        dataIndex: "FileName",
+        scopedSlots: { customRender: "FileName" },
         align: "center",
     },
     {
         title: "状态",
+        dataIndex: "Status",
+        scopedSlots: { customRender: "Status" },
+        align: "center",
+    },
+    {
+        title: "操作",
         scopedSlots: { customRender: "action" },
         align: "center",
     },

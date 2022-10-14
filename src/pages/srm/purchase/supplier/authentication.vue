@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-15 15:44:49
+ * @LastEditTime: 2022-09-29 14:06:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/supplier/authentication.vue
@@ -21,7 +21,7 @@
             >
             <a-col :md="6" :sm="24">
               <a-form-item label="" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 300px" placeholder="请输入搜索内容" v-decorator="['keyword']" />
+                <a-input style="width: 300px" placeholder="请输入标题" v-decorator="['keyword']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -43,7 +43,7 @@
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['status']" placeholder="请选择订单状态" style="width: 200px">
+                  <a-select v-decorator="['status']" placeholder="请选择状态" style="width: 200px">
                     <a-select-option :value="item" v-for="(item, index) in tagItem" :key="index">{{ item }}</a-select-option>
                   </a-select>
                 </a-form-item>
@@ -56,7 +56,7 @@
           </div>
         </a-form>
         <div class="operator">
-          <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
+          <!-- <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button> -->
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -74,7 +74,7 @@
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
-          :rowKey="(dataSource) => dataSource.PlcId"
+          :rowKey="(dataSource) => dataSource.Id"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -90,36 +90,40 @@
           </template>
           <template slot="action" slot-scope="text, record">
             <div>
-              <a style="margin-right: 8px" @click="detail(record)">
-                <a-icon type="container" />
-                查看
+              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
+                <a-icon type="edit" />
+                编辑
               </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('warn')">
-                <a-icon type="bell" />
-                提醒
+              <a style="margin-right: 8px" @click="useSend(record)" :disabled="!hasPerm('send')">
+                <a-icon type="send" />
+                发送
               </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('print')">
-                <a-icon type="printer" />
-                打印
-              </a>
+              <a-popconfirm title="确定删除?" @confirm="() => useDelete(record)">
+                <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+                  <a-icon type="delete" />
+                  删除
+                </a>
+              </a-popconfirm>
             </div>
           </template>
         </a-table>
       </a-card>
+      <AuthenticationForm v-if="isForm" :editData="editData" @closeModal="closeModal" @success="searchBtn" />
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getAuthentication } from "@/services/srm.js";
+import { getAuthentication, setAuthentication } from "@/services/srm.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { columns } from "./data/authentication";
-import ExportExcel from "@/utils/ExportExcelJS";
+import AuthenticationForm from "./component/authenticationForm.vue";
 export default {
   mixins: [PublicVar],
+  components: { AuthenticationForm },
   data() {
     return {
       scrollY: "",
@@ -131,8 +135,8 @@ export default {
       selectedRowKeys: [],
       isImport: false,
       listType: "全部",
-      isDetail: false,
-      docno: "",
+      isForm: false,
+      editData: [],
       tagItem: ["全部", "临近到期", "已到期", "待确认", "待回复", "已完成"],
     };
   },
@@ -166,7 +170,7 @@ export default {
       console.log("scrollY===", this.scrollY);
     },
     closeModal() {
-      this.isDetail = false;
+      this.isForm = false;
     },
     //多选
     onSelectChange(selectedRowKeys) {
@@ -178,9 +182,28 @@ export default {
       this.pagination.pageSize = pagination.pageSize;
       this.search();
     },
-    detail(record) {
-      this.isDetail = true;
-      this.docno = record.OrderNo;
+    edit(record) {
+      this.isForm = true;
+      this.editData = record;
+    },
+    //单个删除
+    useDelete(item) {
+      let params = [item.Id];
+      setAuthentication(params, "delete").then((res) => {
+        if (res.data.success) {
+          this.$message.success("删除成功!");
+          this.searchBtn();
+        }
+      });
+    },
+    useSend(item) {
+      let params = [item.Id];
+      setAuthentication(params, "send").then((res) => {
+        if (res.data.success) {
+          this.$message.success("发送成功!");
+          this.searchBtn();
+        }
+      });
     },
     searchBtn() {
       this.pagination.current = 1;
@@ -216,51 +239,6 @@ export default {
             this.loading = false;
           });
           // do something
-        }
-      });
-    },
-    exportExcel() {
-      this.isExportLod = true;
-      let values = this.searchForm.getFieldsValue();
-      let params = {
-        pageindex: this.pagination.current,
-        pagesize: this.pagination.total,
-        typeid: values.typeid,
-        brand: values.brand,
-        status: values.status,
-        plccode: values.plccode,
-        plcname: values.plcname,
-      };
-      getAuthentication(params, "get").then((res) => {
-        if (res.data.success) {
-          let list = res.data.data.list;
-          const dataSource = list.map((item) => {
-            Object.keys(item).forEach((key) => {
-              // 后端传null node写入会有问题
-              if (item[key] === null) {
-                item[key] = "";
-              }
-              if (Array.isArray(item[key])) {
-                item[key] = item[key].join(",");
-              }
-            });
-            return item;
-          });
-          const header = [];
-          columns.map((item) => {
-            if (item.dataIndex) {
-              header.push({ key: item.dataIndex, title: item.title });
-            }
-          });
-          var timestamp = Date.parse(new Date());
-          try {
-            ExportExcel(header, dataSource, `PLC列表_${timestamp}.xlsx`);
-            this.$message.success("导出数据成功!");
-          } catch (error) {
-            // console.log(error);
-            this.$message.error("导出数据失败");
-          }
-          this.isExportLod = false;
         }
       });
     },

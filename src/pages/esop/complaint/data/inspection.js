@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-09-09 08:57:17
- * @LastEditTime: 2022-09-13 10:55:42
+ * @LastEditTime: 2022-09-24 09:23:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/complaint/data/inspection.js
@@ -50,18 +50,21 @@ export const columns = [
         dataIndex: "UnpleasantSight",
         scopedSlots: { customRender: "UnpleasantSight" },
         align: "center",
+        width:300
     },
     {
         title: "图片",
         dataIndex: "Files",
         scopedSlots: { customRender: "Files" },
         align: "center",
+        width:200
     },
     {
         title: "后续执行标准",
         dataIndex: "ExecutiveStandard",
         scopedSlots: { customRender: "ExecutiveStandard" },
         align: "center",
+        width:300
     },
     {
         title: "操作",

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-09-13 13:54:04
+ * @LastEditTime: 2022-09-26 09:59:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/complaint/list.vue
@@ -19,29 +19,29 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="客户名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入设备名称" v-decorator="['customername']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入客户名称" v-decorator="['customername']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="业务员" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入产品大类" v-decorator="['businessuser']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入业务员" v-decorator="['businessuser']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="订单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['orderno']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入订单号" v-decorator="['orderno']" />
               </a-form-item>
             </a-col>
           </a-row>
           <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="产品型号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['itemclass']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入产品型号" v-decorator="['itemcode']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="产品类别" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['itemtype']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入产品类别" v-decorator="['itemtype']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -52,13 +52,13 @@
 
             <a-col :md="6" :sm="24">
               <a-form-item label="责任部门" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['department']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入责任部门" v-decorator="['department']" />
               </a-form-item>
             </a-col>
           </a-row>
           <a-row>
             <a-col :md="6" :sm="24">
-              <a-form-item label="出货日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+              <a-form-item label="8D报告回复日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
               </a-form-item>
             </a-col>
@@ -78,6 +78,9 @@
       <div class="operator">
         <a-button icon="plus" type="primary" :disabled="!hasPerm('add')" :loading="loading" @click="add" style="margin-left: 8px">添加</a-button>
         <a-button icon="import" type="primary" :disabled="!hasPerm('import')" :loading="loading" @click="isImport = true" style="margin-left: 8px">导入</a-button>
+        <a-button icon="download" type="primary" :loading="loading" @click="downExcel" style="margin-left: 8px">导入模板下载</a-button>
+        <a-button v-if="hasPerm('send')" icon="bell" type="primary" :disabled="!hasSelected" :loading="loading" @click="allSend" style="margin-left: 8px">推送</a-button>
+        <a-button v-else icon="bell" type="primary" disabled :loading="loading" style="margin-left: 8px">推送</a-button>
         <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
         <span style="margin-left: 8px">
@@ -91,7 +94,7 @@
         :columns="columns"
         :data-source="data"
         size="small"
-        :scroll="{ y: scrollY }"
+        :scroll="{ y: scrollY, x: 2600 }"
         :loading="loading"
         :pagination="pagination"
         @change="handleTableChange"
@@ -113,6 +116,13 @@
             <a-tag color="red" v-else>{{ text }}</a-tag>
           </div>
         </template>
+        <template slot="Files" slot-scope="list">
+          <div>
+            <viewer>
+              <a-avatar v-for="(item, index) in list" :key="index" shape="square" style="margin:5px" :size="48" :src="BASE_URL_MOCK + item.FilePath" />
+            </viewer>
+          </div>
+        </template>
         <template slot="action" slot-scope="text, record">
           <div>
             <a-popconfirm title="确定删除?" @confirm="() => useDelete(record, 'delete')">
@@ -125,12 +135,17 @@
               <a-icon type="edit" />
               编辑
             </a>
+            <a style="margin-right: 8px" :disabled="!hasPerm('send')" @click="send(record)">
+              <a-icon type="bell" />
+              推送
+            </a>
           </div>
         </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
       <ListForm v-if="isForm" :editData="editData" :isEdit="isEdit" @close="onClose" @success="searchBtn" />
-      <ImportExcel v-if="isImport" @closeModal="onClose" @success="searchBtn" />
+      <ImportExcel v-if="isImport" :importType="1" @closeModal="onClose" @success="searchBtn" />
+      <Send v-if="isSend" @closeModal="onClose" :sendData="sendData"/>
     </a-card>
   </div>
 </template>
@@ -143,8 +158,9 @@ import ListForm from "./component/listForm.vue";
 import { columns } from "./data/list";
 import { PublicVar } from "@/mixins/publicVar.js";
 import ImportExcel from "./component/ImportExcel.vue";
+import Send from "./component/send.vue";
 export default {
-  components: { ListForm, ImportExcel },
+  components: { ListForm, ImportExcel, Send },
   mixins: [PublicVar],
   data() {
     return {
@@ -157,6 +173,9 @@ export default {
       uploadData: [],
       isUser: false,
       isImport: false,
+      BASE_URL_MOCK: "",
+      isSend:false,
+      sendData:false
     };
   },
   updated() {
@@ -167,11 +186,22 @@ export default {
       this.scrollY = getTableScroll();
     });
     this.search();
+    if (process.env.NODE_ENV == "production") {
+      //正式服
+      this.BASE_URL_MOCK = window.location.origin;
+    } else {
+      //测试
+      this.BASE_URL_MOCK = "http://192.168.1.245:8080";
+    }
   },
   methods: {
     onClose() {
       this.isForm = false;
       this.isImport = false;
+      this.isSend = false;
+    },
+    downExcel() {
+      window.open("./Upload/excel/20211008/客诉信息导入模板.xlsx", "_blank");
     },
     //多选
     onSelectChange(selectedRowKeys) {
@@ -277,6 +307,16 @@ export default {
           this.search();
         }
       });
+    },
+    send(item){
+      this.sendData =[]
+      this.sendData.push(item.Id);
+      this.isSend = true;
+    },
+    allSend(){
+      this.sendData =[]
+      this.sendData = this.selectedRowKeys;
+      this.isSend = true;
     },
     //分压
     handleTableChange(pagination) {

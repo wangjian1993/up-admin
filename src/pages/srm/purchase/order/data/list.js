@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-08-10 16:54:58
+ * @LastEditTime: 2022-09-15 10:16:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/order/data/list.js
@@ -18,6 +18,12 @@ export const columns = [
         title: "供应商",
         dataIndex: "SupplierFullName",
         scopedSlots: { customRender: "SupplierFullName" },
+        align: "center",
+    },
+    {
+        title: "采购单号",
+        dataIndex: "OrderNo",
+        scopedSlots: { customRender: "OrderNo" },
         align: "center",
     },
     {

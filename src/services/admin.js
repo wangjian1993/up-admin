@@ -1,14 +1,15 @@
 /*
  * @Author: max
  * @Date: 2021-07-14 08:51:07
- * @LastEditTime: 2022-09-01 10:18:16
+ * @LastEditTime: 2022-10-11 09:35:21
  * @LastEditors: max
  * @Description: 后台接口
  * @FilePath: /up-admin/src/services/admin.js
  */
 import {
 	UP_ADMIN,
-	UP_TPL
+	UP_TPL,
+	UP_JOB
 } from '@/services/api';
 import {
 	request,
@@ -300,4 +301,11 @@ export function setDomain(params, action) {
 }
 export function getDomain(params, action) {
 	return request(`${UP_ADMIN}/purchase/area/${action}`, METHOD.GET, params);
+}
+
+export function setJob(params, action) {
+	return request(`${UP_JOB}/job/${action}`, METHOD.POST, params);
+}
+export function getJob(params, action) {
+	return request(`${UP_JOB}/job/${action}`, METHOD.GET, params);
 }

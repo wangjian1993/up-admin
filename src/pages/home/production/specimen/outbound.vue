@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2022-08-11 08:43:31
+ * @LastEditTime: 2022-10-10 08:55:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/specimen/outbound.vue
@@ -306,6 +306,7 @@ export default {
             ProcessStatus: "PROCESS_FINISHED",
             ReportQty: item.ReportQty,
             ScrapedQty: item.ScrapedQty,
+            Remarks:this.remark
           });
         });
       } else {
@@ -322,6 +323,7 @@ export default {
           ProcessStatus: "PROCESS_FINISHED",
           ReportQty: this.receiveQty,
           ScrapedQty: this.scrapQty,
+          Remarks:this.remark
         };
       }
       setSampleStartWorkApi(params, url).then((res) => {

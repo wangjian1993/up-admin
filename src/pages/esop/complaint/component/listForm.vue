@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-09-13 16:36:41
+ * @LastEditTime: 2022-09-24 10:00:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/complaint/component/listForm.vue
@@ -33,10 +33,10 @@
           </a-row>
           <a-row>
             <a-col :span="12">
-              <a-form-model-item label="产品型号" prop="itemtype" :labelCol="{ span: 6 }"><a-input v-model="form.itemtype" placeholder="请输入产品型号"/></a-form-model-item>
+              <a-form-model-item label="产品型号" prop="itemcode" :labelCol="{ span: 6 }"><a-input v-model="form.itemcode" placeholder="请输入产品型号"/></a-form-model-item>
             </a-col>
             <a-col :span="12">
-              <a-form-model-item label="产品类别" prop="itemcode" :labelCol="{ span: 6 }"><a-input :min="0" v-model="form.itemcode" placeholder="请输入产品类别"/></a-form-model-item>
+              <a-form-model-item label="产品类别" prop="itemtype" :labelCol="{ span: 6 }"><a-input :min="0" v-model="form.itemtype" placeholder="请输入产品类别"/></a-form-model-item>
             </a-col>
           </a-row>
           <a-row>
@@ -272,6 +272,7 @@ export default {
       department: [],
       isUserList: false,
       departName: [],
+      BASE_URL_MOCK:""
     };
   },
   created() {
@@ -279,6 +280,13 @@ export default {
     if (this.isEdit) {
       this.form = lowerJSONKey(this.editData);
       this.fileList = this.form.files;
+      if (process.env.NODE_ENV == "production") {
+      //正式服
+      this.BASE_URL_MOCK = window.location.origin;
+    } else {
+      //测试
+      this.BASE_URL_MOCK ="http://192.168.1.245:8080";
+    }
       this.$nextTick(() => {
         this.departName = [this.form.department];
         console.log("this.departName==",this.departName)
@@ -287,7 +295,7 @@ export default {
             ...item,
             name: item.FileName,
             status: "done",
-            url: item.FilePath,
+            url: this.BASE_URL_MOCK +item.FilePath,
             uid: item.Id,
           };
           if (item.Sort == 1) {
@@ -339,8 +347,7 @@ export default {
       this.form.ngrate = rate.toFixed(2);
     },
     removeFile(record) {
-      console.log(record);
-      console.log(this.filesList);
+      console.log("this.filesList===",this.filesList)
       let paramsData = this.filesList.find((item) => item.uid == record.uid);
       console.log("paramsData===", paramsData);
       let params = {
@@ -467,7 +474,6 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
           this.spinning = true;
-
           this.filesList.forEach((item) => {
             this.form.files.push({
               id: item.ResourceId,

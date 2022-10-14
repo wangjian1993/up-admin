@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2022-07-29 09:43:53
+ * @LastEditTime: 2022-10-08 16:21:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/preProcess/pullIn.vue
@@ -292,7 +292,8 @@ export default {
         ReportQty: this.receiveQty,
         ScrapedQty: 0,
         PerQty: this.peopleQty,
-        ColorTemperature:this.ColorTemperature
+        ColorTemperature:this.ColorTemperature,
+        Remarks:this.remark
       };
       setPreStartWorkApi(params, "submit").then((res) => {
         res.data.message.time = getTimeData();

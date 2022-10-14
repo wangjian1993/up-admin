@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-09-05 15:34:47
+ * @LastEditTime: 2022-09-19 10:44:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/supplier/notification.vue
@@ -83,9 +83,9 @@
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="StatusName" slot-scope="record">
+          <template slot="Status" slot-scope="record">
             <div>
-              <a-tag color="green" v-if="record == '正常'">{{ record }}</a-tag>
+              <a-tag color="green" v-if="record == '已发送'">{{ record }}</a-tag>
               <a-tag color="red" v-else>{{ record }}</a-tag>
             </div>
           </template>
@@ -97,23 +97,27 @@
                   删除
                 </a>
               </a-popconfirm>
-              <a-popconfirm title="确定发送?" @confirm="() => onDelete(record)">
+              <a-popconfirm v-if="record.Status != '已发送'" title="确定发送?" @confirm="() => onDelete(record)">
                 <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                   <a-icon type="delete" />
                   发送
                 </a>
               </a-popconfirm>
-              <a-popconfirm title="确定作废?" @confirm="() => onDelete(record, 'invalid')">
+              <a-popconfirm v-if="record.Status != '已作废'" title="确定作废?" @confirm="() => onDelete(record, 'invalid')">
                 <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
                   <a-icon type="delete" />
                   作废
                 </a>
               </a-popconfirm>
+              <a style="margin-right: 8px" :disabled="!hasPerm('edit')" @click="onEdit(record)">
+                <a-icon type="edit" />
+                编辑
+              </a>
             </div>
           </template>
         </a-table>
       </a-card>
-      <AddNotification v-if="isAdd" @closeModal="closeModal" @success="search" />
+      <AddNotification v-if="isForm" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="search" />
     </a-spin>
   </div>
 </template>
@@ -141,9 +145,10 @@ export default {
       selectedRowKeys: [],
       isImport: false,
       listType: "全部",
-      isAdd: false,
+      isForm: false,
       docno: "",
       tagItem: ["全部", "发件箱", "收件箱", "未发送"],
+      editData:[]
     };
   },
   updated() {
@@ -176,7 +181,7 @@ export default {
       console.log("scrollY===", this.scrollY);
     },
     closeModal() {
-      this.isAdd = false;
+      this.isForm = false;
     },
     //多选
     onSelectChange(selectedRowKeys) {
@@ -188,8 +193,18 @@ export default {
       this.pagination.pageSize = pagination.pageSize;
       this.search();
     },
+    onEdit(record){
+      getNotification({ id: record.Id }, "single").then((res) => {
+        if (res.data.success) {
+          this.isForm = true;
+          this.editData = res.data.data;
+          console.log(" this.editData===", this.editData)
+          this.isEdit = true;
+        }
+      });
+    },
     add() {
-      this.isAdd = true;
+      this.isForm = true;
     },
     searchBtn() {
       this.pagination.current = 1;

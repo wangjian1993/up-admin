@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-30 14:34:36
+ * @LastEditTime: 2022-09-15 10:22:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/order/list.vue
@@ -64,27 +64,21 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="订单状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['purchasestatus']" placeholder="请选择订单状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">启用</a-select-option>
-                    <a-select-option value="0">禁用</a-select-option>
+                    <a-select-option v-for="item in paramsItem.PLC_PARAMS_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="收货状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['receiptstatus']" placeholder="请选择收货状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">启用</a-select-option>
-                    <a-select-option value="0">禁用</a-select-option>
+                    <a-select-option v-for="item in paramsItem.RECEIPT_STATE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="采购类性" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['purchasetype']" placeholder="请选择采购类性" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">启用</a-select-option>
-                    <a-select-option value="0">禁用</a-select-option>
+                    <a-select-option v-for="item in paramsItem.PROCUREMENT_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -160,6 +154,7 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { columns } from "./data/list";
 import ExportExcel from "@/utils/ExportExcelJS";
 import Detail from "./detail.vue";
+import { getParamData } from "@/services/admin.js";
 export default {
   components: { Detail },
   mixins: [PublicVar],
@@ -177,6 +172,8 @@ export default {
       isDetail: false,
       docno: "",
       tagItem: ["全部", "待发布", "差异待处理", "待答交", "已退回", "待签章","暂停执行"],
+      paramsList: ["ORDER_STATE","PROCUREMENT_TYPE","RECEIPT_STATE"],
+      paramsItem:[]
     };
   },
   updated() {
@@ -190,6 +187,18 @@ export default {
   },
   methods: {
     splitData,
+    getParamsData() {
+      this.paramsList.forEach((item) => {
+        let params = {
+          groupcode: item,
+        };
+        getParamData(params).then((res) => {
+          if (res.data.success) {
+            this.paramsItem[item] = res.data.data;
+          }
+        });
+      });
+    },
     //重置搜索
     reset() {
       this.isSearch = 0;

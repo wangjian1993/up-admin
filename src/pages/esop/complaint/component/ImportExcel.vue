@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-17 15:33:10
- * @LastEditTime: 2022-09-13 13:49:59
+ * @LastEditTime: 2022-09-22 14:03:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/complaint/component/ImportExcel.vue
@@ -9,7 +9,7 @@
 
 <template>
   <div>
-    <a-modal v-model="visible" title="导入客诉文件" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="500">
+    <a-modal v-model="visible" :title="importType == 1 ? '导入客诉文件' : '导入验货标准'" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="500">
       <a-spin tip="导入中..." :spinning="isUpload">
         <div>
           <a-form layout="horizontal">
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { setComplaint } from "@/services/esop.js";
+import { setComplaint, setInspection } from "@/services/esop.js";
 function getBase64(img, callback) {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result));
@@ -54,7 +54,7 @@ const columns = [
   },
 ];
 export default {
-  props: ["plantArray"],
+  props: ["plantArray", "importType"],
   data() {
     return {
       size: "small",
@@ -92,21 +92,34 @@ export default {
       this.isUpload = true;
       console.log(this.file);
       getBase64(this.file, (baseUrl) => {
-        console.log(baseUrl)
+        console.log(baseUrl);
         let params = {
           filename: this.file.name,
           content: baseUrl,
         };
-        setComplaint(params, "import").then((res) => {
-          if (res.data.success && !res.data.data.IsError) {
-            this.$message.success("导入成功!");
-            this.$emit("closeModal");
-            this.$emit("success");
-            this.isUpload = false;
-          } else {
-            this.isUpload = false;
-          }
-        });
+        if (this.importType == 1) {
+          setComplaint(params, "import").then((res) => {
+            if (res.data.success) {
+              this.$message.success("导入成功!");
+              this.$emit("closeModal");
+              this.$emit("success");
+              this.isUpload = false;
+            } else {
+              this.isUpload = false;
+            }
+          });
+        } else {
+          setInspection(params, "import").then((res) => {
+            if (res.data.success) {
+              this.$message.success("导入成功!");
+              this.$emit("closeModal");
+              this.$emit("success");
+              this.isUpload = false;
+            } else {
+              this.isUpload = false;
+            }
+          });
+        }
       });
     },
     //导入execl
