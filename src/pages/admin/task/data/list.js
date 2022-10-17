@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-30 14:05:19
- * @LastEditTime: 2022-10-12 17:24:09
+ * @LastEditTime: 2022-10-14 11:32:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/admin/task/data/list.js
@@ -19,6 +19,18 @@ export const columns = [
       title: "创建时间",
       dataIndex: "CreateTime",
       scopedSlots: { customRender: "CreateTime" },
+      align: "center",
+    },
+    {
+      title: "最近运行时间",
+      dataIndex: "LastRunTime",
+      scopedSlots: { customRender: "LastRunTime" },
+      align: "center",
+    },
+    {
+      title: "最近结束时间",
+      dataIndex: "LastStopTime",
+      scopedSlots: { customRender: "LastStopTime" },
       align: "center",
     },
     {

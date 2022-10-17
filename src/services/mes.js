@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-29 16:34:37
- * @LastEditTime: 2022-10-13 15:07:58
+ * @LastEditTime: 2022-10-14 09:50:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/mes.js
@@ -44,4 +44,11 @@ export function getCraft(params, action) {
 }
 export function setCraft(params, action) {
     return request(`${UP_WEB}/powersupply/process/routing/${action}`, METHOD.POST, params);
+}
+
+export function getPeople(params, action) {
+    return request(`${UP_WEB}/powersupply/production/dept/${action}`, METHOD.GET, params);
+}
+export function setPeople(params, action) {
+    return request(`${UP_WEB}/powersupply/production/dept/${action}`, METHOD.POST, params);
 }

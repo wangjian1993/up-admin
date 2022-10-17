@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 17:25:15
- * @LastEditTime: 2022-10-14 11:29:56
+ * @LastEditTime: 2022-10-14 11:15:57
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/admin/task/index.vue
+ * @FilePath: /up-admin/src/pages/mes/power/production/people/index.vue
 -->
 <template>
   <div>
@@ -14,44 +14,29 @@
           <div :class="advanced ? null : 'fold'">
             <a-row>
               <a-col :md="6" :sm="24">
-                <a-form-item label="Job名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入Job名称" v-decorator="['name']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="耗时" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入耗时" v-decorator="['time']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="API路径" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入API路径" v-decorator="['methodpath']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="请求方式" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['method']">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="POST">POST</a-select-option>
-                    <a-select-option value="GET">GET</a-select-option>
-                    <a-select-option value="PUT">PUT</a-select-option>
-                    <a-select-option value="DELETE">DELETE</a-select-option>
+                <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                    <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['status']">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="正在执行">正在执行</a-select-option>
-                    <a-select-option value="已结束">已结束</a-select-option>
-                    <a-select-option value="已关闭">已关闭</a-select-option>
+                <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['workshop']" style="width: 200px" placeholder="请选择生产车间" @change="workshopChange">
+                    <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
+                <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['line']" style="width: 200px" placeholder="请选择生产产线">
+                    <a-select-option v-for="item in LineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="员工姓名/工号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" placeholder="请输入员工姓名/工号" v-decorator="['user']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -63,6 +48,7 @@
         </a-form>
         <div class="operator">
           <a-button type="primary" @click="add" :disabled="!hasPerm('add')" icon="plus">新增</a-button>
+          <a-button style="margin-left: 8px" :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <span style="margin-left: 8px">
@@ -83,7 +69,7 @@
             onChange: onSelectChange,
           }"
           @change="handleTableChange"
-          :rowKey="(dataSource) => dataSource.Id"
+          :rowKey="(dataSource) => dataSource.WorkShopId"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -91,14 +77,11 @@
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="Status" slot-scope="text">
+          <template slot="Enable" slot-scope="record">
             <div>
-              <a-tag color="green" v-if="text !== '待运行'">{{ text }}</a-tag>
-              <a-tag color="red" v-else>{{ text }}</a-tag>
+              <a-tag color="green" v-if="record == 'Y'">启用</a-tag>
+              <a-tag color="red" v-else>禁用</a-tag>
             </div>
-          </template>
-          <template slot="Result" slot-scope="text, record">
-            <a @click="result(record)">查看结果</a>
           </template>
           <template slot="action" slot-scope="text, record">
             <div>
@@ -112,36 +95,26 @@
                 <a-icon type="edit" />
                 编辑
               </a>
-              <a style="margin-right: 8px" @click="switchBtn(record, 'stop')" :disabled="!hasPerm('edit')">
-                <a-icon type="play-circle" />
-                停止
-              </a>
-              <a style="margin-right: 8px" @click="switchBtn(record, 'start')" :disabled="!hasPerm('edit')">
-                <a-icon type="play-circle" />
-                启动
-              </a>
             </div>
           </template>
         </a-table>
       </a-card>
-      <Result v-if="isResult" @closeModal="closeModal" :resultId="resultId" />
-      <listForm v-if="isForm" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="search" />
+      <People v-if="isForm" :isEdit="isEdit" :editData="editData" :plantList="plantList" @closeModal="closeModal" @success="searchBtn" />
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getJob, setJob } from "@/services/admin.js";
+import { getPeople, setPeople ,getPowerPlant } from "@/services/mes.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data/list";
-import listForm from "./listForm.vue";
-import Result from "./result.vue";
+import { columns } from "./data/data";
+import People from "./components/people.vue";
 export default {
   mixins: [PublicVar],
-  components: { listForm, Result },
+  components: { People },
   data() {
     return {
       scrollY: "",
@@ -149,14 +122,17 @@ export default {
       columns,
       dataSource: [],
       plantList: [],
+      workshopList:[],
+      LineList:[],
       isSearch: 0,
       isExportLod: false,
       editData: [],
       isEdit: false,
       isForm: false,
       selectedRowKeys: [],
-      isResult: false,
-      resultId: "",
+      plantId:"",
+      workshopId:"",
+      LineId:""
     };
   },
   updated() {
@@ -167,6 +143,7 @@ export default {
       this.scrollY = getTableScroll(70);
     });
     this.search();
+    this.getPlant();
   },
   methods: {
     splitData,
@@ -188,25 +165,59 @@ export default {
     },
     closeModal() {
       this.isForm = false;
-      this.isResult = false;
     },
-    // 多选
+    plantChange(e) {
+      this.plantId = e;
+      this.getWorkshopList();
+      this.workshopId = "";
+      this.LineId = "";
+    },
+    //车间选择
+    workshopChange(e) {
+      this.workshopId = e;
+      this.getLineList();
+      this.LineId = "";
+    },
+    getPlant() {
+      let params = {
+        entertypecode: "PLANT",
+      };
+      getPeople(params, "getlistbytypecode").then((res) => {
+        if (res.data.success) {
+          this.plantList = res.data.data;
+        }
+      });
+    },
+    getWorkshopList() {
+      let params = {
+        plantid: this.plantId,
+      };
+      getPowerPlant(params, "workshop/getlist").then((res) => {
+        if (res.data.success) {
+          this.workshopList = res.data.data;
+        }
+      });
+    },
+    getLineList() {
+      let params = {
+        plantid: this.plantId,
+        workshopId: this.workshopId,
+      };
+      getPowerPlant(params,"line/getlist").then((res) => {
+        if (res.data.success) {
+          this.LineList = res.data.data;
+        }
+      });
+    },
+    //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
-    },
-    result(record) {
-      this.isResult = true;
-      this.resultId = record.Id;
     },
     //分页
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
-      if (this.isSearch == 2) {
-        this.search();
-        return;
-      }
-      this.getListAll();
+      this.search();
     },
     //收起展开
     toggleAdvanced() {
@@ -220,27 +231,19 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
-            const rangeValue = values["range-time-picker"];
-            var starttime = rangeValue[0].format("YYYY-MM-DD");
-            var endtime = rangeValue[1].format("YYYY-MM-DD");
-          }
           let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            name: values.name,
-            methodpath: values.methodpath,
-            method: values.method,
-            time: values.time,
-            status: values.status,
-            starttime: starttime,
-            endtime: endtime,
+            plantid: values.plantid,
+            workshop: values.workshop,
+            line: values.line,
+            user: values.user,
           };
-          getJob(params, "get").then((res) => {
+          getPeople(params, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
-              pagination.total = res.data.data.totalCount;
+              pagination.total = res.data.data.recordsTotal;
               this.pagination = pagination;
               this.isSearch = 2;
             }
@@ -250,28 +253,27 @@ export default {
         }
       });
     },
-    switchBtn(item, str) {
-      let params = [];
-      params.push(item.Id);
-      setJob(params, str).then((res) => {
-        if (res.data.success) {
-          let content = str == 'start' ?'启动成功':'停止成功'
-          this.$message.success(content);
-          this.search();
-        }
-      });
-    },
     //多选删除
     allDel() {
       let self = this;
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          setJob(self.selectedRowKeys, "delete").then((res) => {
+          let params = [];
+          self.data.forEach((item) => {
+            if (self.selectedRowKeys.includes(item.ProcessId)) {
+              params.push({
+                UserCode: item.UserCode,
+                PlantId: item.PlantId,
+                WorkshopId: item.WorkshopId,
+              });
+            }
+          });
+          setPeople(params, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
-              self.search();
+              self.searchBtn();
             }
           });
         },
@@ -281,11 +283,15 @@ export default {
     //单个删除
     onDelete(item) {
       let params = [];
-      params.push(item.Id);
-      setJob(params, "delete").then((res) => {
+      params.push({
+        UserCode: item.UserCode,
+        PlantId: item.PlantId,
+        WorkshopId: item.WorkshopId,
+      });
+      setPeople(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
-          this.search();
+          this.searchBtn();
         }
       });
     },

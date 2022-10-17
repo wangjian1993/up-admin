@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 15:04:20
- * @LastEditTime: 2022-10-13 17:16:50
+ * @LastEditTime: 2022-10-14 16:04:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/production/process/components/craftForm.vue
@@ -32,21 +32,75 @@
             </a-radio-group>
           </a-form-model-item>
         </a-form-model>
-        <div style="margin-left:100px;margin-top: 40px;">
-          <a-transfer :data-source="mockData" :titles="['工序名称', '工艺工序']" :target-keys="targetKeys" :selected-keys="selectedKeys" :render="(item) => item.title" :disabled="disabled" @change="handleChange" @selectChange="handleSelectChange" />
-        </div>
+        <a-row>
+          <!-- <a-col :span="24" v-for="(formItem, index) in dynamicValidateForm" :key="index" style="border-bottom:1px #e9e9e9 solid;margin: 5px 0;padding:5px 0">
+            <a-form-model-item label="参数">
+              <a-select style="width: 100px" placeholder="请选择生产工序" v-model="form.PlantId">
+                <a-select-option v-for="item in mockData" :key="item.Id" :value="item.Id">{{ item.ProcessName }}</a-select-option>
+              </a-select>
+              <a-icon v-if="dynamicValidateForm.length > 1" style="margin-left:10px" class="dynamic-delete-button" type="minus-circle-o" @click="removeService(formItem)" />
+            </a-form-model-item>
+          </a-col> -->
+          <a-table :columns="columns" :data-source="dataSource" size="small" :pagination="false">
+            <template slot="index" slot-scope="text, record, index">
+              <div>
+                <span>{{ index + 1 }}</span>
+              </div>
+            </template>
+            <template slot="ProcessName" slot-scope="test, record">
+              <a-select style="width: 100px" placeholder="请选择生产工序" v-model="record.Id" @change="(e) => processChange(e)">
+                <a-select-option v-for="item in mockData" :key="item.Id" :value="item.Id" :disabled="item.disabled">{{ item.ProcessName }}</a-select-option>
+              </a-select>
+            </template>
+            <template slot="action" slot-scope="text, record, index">
+              <div>
+                <a-popconfirm title="确定删除?" @confirm="() => onDelete(index, record.ProcessId)">
+                  <a style="margin-right: 8px">
+                    <a-icon type="delete" />
+                    删除
+                  </a>
+                </a-popconfirm>
+              </div>
+            </template>
+          </a-table>
+        </a-row>
+        <a-form-model-item v-if="!isEdit">
+          <div style="text-align: center;">
+            <a-button :disabled="isEdit" type="dashed" style="width: 60%;margin: 0 auto;" @click="addService"> <a-icon type="plus" />添加工艺路线</a-button>
+          </div>
+        </a-form-model-item>
       </div>
     </a-modal>
   </div>
 </template>
 
 <script>
+const columns = [
+  {
+    title: "序号",
+    scopedSlots: { customRender: "index" },
+    align: "center",
+  },
+  {
+    title: "生产工序名称",
+    dataIndex: "ProcessName",
+    scopedSlots: { customRender: "ProcessName" },
+    align: "center",
+  },
+  {
+    title: "操作",
+    scopedSlots: { customRender: "action" },
+    align: "center",
+  },
+];
 import { setCraft, getProcess } from "@/services/mes.js";
 export default {
   props: ["plantList", "editData", "isEdit"],
   data() {
     return {
+      columns,
       mockData: [],
+      dataSource: [],
       targetKeys: [],
       selectedKeys: [],
       disabled: false,
@@ -100,38 +154,58 @@ export default {
       isUserList: false,
       processList: [],
       processType: [],
+      dynamicValidateForm: [],
+      newData: [],
     };
   },
   created() {
     this.getProcessLine();
     if (this.isEdit) {
       this.form = this.editData;
-      this.form.LineCodes = this.editData.LineCodes.split(",");
-      this.plantId = this.editData.PlantId;
-      this.workshopId = this.editData.WorkshopId;
+      this.form.RoutingDetails.forEach((item) => {
+        this.newData.push(item.ProcessId);
+        this.dataSource.push({
+          ProcessName: item.ProcessName,
+          ProcessId: item.ProcessId,
+          Id: item.ProcessId,
+        });
+      });
     }
   },
   methods: {
-    handleChange(nextTargetKeys, direction, moveKeys) {
-      console.log("nextTargetKeys===", moveKeys);
-      // this.targetKeys = nextTargetKeys.reverse();
-      if (direction == "right") {
-        moveKeys.map((item) => {
-          this.targetKeys.push(item);
-        });
-      } else {
-        this.targetKeys = nextTargetKeys;
-      }
-
-      // console.log("targetKeys: ", this.targetKeys);
-      console.log("direction: ", direction);
-      // console.log("moveKeys: ", moveKeys);
+    addService() {
+      this.dataSource.push({
+        ProcessName: "",
+        Step: "",
+      });
     },
-    handleSelectChange(sourceSelectedKeys, targetSelectedKeys) {
-      this.selectedKeys = [...sourceSelectedKeys, ...targetSelectedKeys];
+    //选择工艺
+    processChange(e) {
+      console.log(e);
+      let findData = this.mockData.find((item) => item.Id == e);
+      let newIds = [];
+      this.dataSource.forEach((item) => {
+        newIds.push(item.Id);
+        if (item.Id == e) {
+          item.ProcessId = findData.Id;
+        }
+      });
+      this.mockData.forEach((item) => {
+        if (newIds.includes(item.Id)) {
+          item.disabled = true;
+        }else {
+          item.disabled = false;
+        }
+      });
+      console.log(this.dataSource);
     },
-    handleDisable(disabled) {
-      this.disabled = disabled;
+    onDelete(index, id) {
+      this.dataSource.splice(index, 1);
+      this.mockData.forEach((item) => {
+        if (item.Id == id) {
+          item.disabled = false;
+        }
+      });
     },
     close() {
       this.$emit("closeModal");
@@ -147,11 +221,18 @@ export default {
           list.forEach((item) => {
             this.mockData.push({
               ...item,
-              key: item.Id,
-              title: item.ProcessName,
               disabled: false,
             });
           });
+          if (this.isEdit) {
+            console.log("this.newData", this.newData);
+            this.mockData.forEach((item) => {
+              if (this.newData.includes(item.Id)) {
+                item.disabled = true;
+              }
+            });
+            console.log("this.mockData===", this.mockData);
+          }
         }
       });
     },
@@ -167,14 +248,23 @@ export default {
         console.log(valid);
         if (valid) {
           //编辑
+          this.form.RoutingDetails = [];
+          this.dataSource.forEach((item, index) => {
+            this.form.RoutingDetails.push({
+              ProcessId: item.ProcessId,
+              Step: index + 1,
+            });
+          });
+          console.log(" this.form.RoutingDetails===", this.form.RoutingDetails);
           if (this.isEdit) {
             let editForm = {
-              Id: this.form.Id,
-              ProcessName: this.form.ProcessName,
-              ProcessDesc: this.form.ProcessDesc,
-              Step: this.form.Step,
+              RoutingId: this.form.RoutingId,
+              PlantId: this.form.PlantId,
+              RoutingCode: this.form.RoutingCode,
+              RoutingName: this.form.RoutingName,
+              RoutingDesc: this.form.RoutingDesc,
               Enable: this.form.Enable,
-              ProcessTypeCode: this.form.ProcessTypeCode,
+              RoutingDetails: this.form.RoutingDetails,
             };
             setCraft(editForm, "update").then((res) => {
               if (res.data.success) {
@@ -184,18 +274,6 @@ export default {
               }
             });
           } else {
-            //添加
-            console.log(" this.mockData", this.mockData);
-            console.log(" this.targetKeys", this.targetKeys);
-            this.mockData.forEach((item) => {
-              if (this.targetKeys.includes(item.key)) {
-                this.form.RoutingDetails.push({
-                  ProcessId: item.Id,
-                  Step: item.Step,
-                });
-              }
-            });
-            console.log(this.form);
             setCraft(this.form, "add").then((res) => {
               if (res.data.success) {
                 this.$message.success("添加成功!");

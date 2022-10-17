@@ -1,11 +1,12 @@
 /*
  * @Author: max
  * @Date: 2022-10-13 10:24:14
- * @LastEditTime: 2022-10-13 14:34:46
+ * @LastEditTime: 2022-10-14 11:22:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/production/process/data/line.js
  */
+// import {splitData} from '@/utils/util';
 export const columns = [
     {
         title: "序号",
@@ -47,7 +48,11 @@ export const columns = [
         dataIndex: "DateTimeCreated",
         scopedSlots: { customRender: "DateTimeCreated" },
         align: "center",
-        width:200
+        width:200,
+        customRender: (text) => {
+            let str  = text.split("T")
+            return str[0] + " " + str[1];
+        }
     },
     {
         title: "创建人",

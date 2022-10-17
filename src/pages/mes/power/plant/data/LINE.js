@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2022-04-30 14:05:19
- * @LastEditTime: 2022-05-06 18:08:41
+ * @LastEditTime: 2022-10-14 11:23:37
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/eap/plantInfo/data/LINE.js
+ * @FilePath: /up-admin/src/pages/mes/power/plant/data/LINE.js
  */
 
 // import { splitData } from "@/utils/util.js";
@@ -56,6 +56,10 @@ export const columns = [
       dataIndex: "DateTimeCreated",
       scopedSlots: { customRender: "DateTimeCreated" },
       align: "center",
+      customRender: (text) => {
+        let str  = text.split("T")
+        return str[0] + " " + str[1];
+    }
     },
     {
       title: "创建人",
@@ -68,6 +72,10 @@ export const columns = [
       dataIndex: "DateTimeModified",
       scopedSlots: { customRender: "DateTimeModified" },
       align: "center",
+      customRender: (text) => {
+        let str  = text.split("T")
+        return str[0] + " " + str[1];
+    }
     },
     {
       title: "修改人",
