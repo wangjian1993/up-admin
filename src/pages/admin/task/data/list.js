@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2022-04-30 14:05:19
- * @LastEditTime: 2022-10-14 11:32:13
+ * @LastEditTime: 2022-10-18 10:40:23
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/admin/task/data/list.js
+ * @FilePath: \up-admin\src\pages\admin\task\data\list.js
  */
 
 // import { splitData } from "@/utils/util.js";
@@ -73,12 +73,6 @@ export const columns = [
       title: "定时启动时间",
       dataIndex: "StartTime",
       scopedSlots: { customRender: "StartTime" },
-      align: "center",
-    },
-    {
-      title: "定时结束时间",
-      dataIndex: "EndTime",
-      scopedSlots: { customRender: "EndTime" },
       align: "center",
     },
     {

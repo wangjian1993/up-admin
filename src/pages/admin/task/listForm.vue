@@ -5,13 +5,13 @@
         <a-form-model-item has-feedback label="Job名称" prop="jobname">
           <a-input v-model="form.jobname" allowClear placeholder="请输入Job名称" :disabled="isEdit" />
         </a-form-model-item>
-        <a-form-model-item has-feedback label="执行次数" prop="runnum">
+        <a-form-model-item has-feedback label="执行次数">
           <a-input-number :min="0" v-model="form.runnum" allowClear placeholder="请输入执行次数" />
         </a-form-model-item>
-        <a-form-model-item has-feedback label="执行频率" prop="runtimingnum">
+        <a-form-model-item has-feedback label="执行频率">
           <a-input v-model="form.runtimingnum" suffix="单位/次" allowClear placeholder="请输入执行频率" />
         </a-form-model-item>
-        <a-form-model-item has-feedback label="单位" prop="unit">
+        <a-form-model-item has-feedback label="单位">
           <a-select v-model="form.unit" allowClear placeholder="请选择单位">
             <a-select-option value="天">天</a-select-option>
             <a-select-option value="时">时</a-select-option>
@@ -19,13 +19,13 @@
             <a-select-option value="秒">秒</a-select-option>
           </a-select>
         </a-form-model-item>
-        <a-form-model-item has-feedback label="定时启动时间" prop="starttime">
+        <a-form-model-item has-feedback label="定时启动时间">
           <a-date-picker v-model="form.starttime" show-time type="date" placeholder="启动时间" style="width: 100%;" @change="startChange" />
         </a-form-model-item>
-        <a-form-model-item has-feedback label="定时关闭时间" prop="endtime">
+        <!-- <a-form-model-item has-feedback label="定时关闭时间">
           <a-date-picker v-model="form.endtime" show-time type="date" placeholder="关闭时间" style="width: 100%;" @change="endChange" />
-        </a-form-model-item>
-        <a-form-model-item has-feedback label="执行API" prop="methodpath">
+        </a-form-model-item> -->
+        <a-form-model-item has-feedback label="执行API">
           <a-input-group compact>
             <a-select style="width: 200px" placeholder="请选择工序类型" v-model="host">
               <a-select-option v-for="item in hostList" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamValue }}</a-select-option>
@@ -33,7 +33,7 @@
             <a-input style="width: 200px" v-model="form.methodpath" allowClear placeholder="请输入执行API" />
           </a-input-group>
         </a-form-model-item>
-        <a-form-model-item has-feedback label="请求方式" prop="method">
+        <a-form-model-item has-feedback label="请求方式">
           <a-select v-model="form.method" allowClear placeholder="请输入请求方式">
             <a-select-option value="POST">POST</a-select-option>
             <a-select-option value="GET">GET</a-select-option>
@@ -81,7 +81,6 @@ export default {
         runnum: 0,
         unit: "",
         runtimingnum: 0,
-        endtime: "",
         starttime: "",
         methodpath: "",
         method: "",
@@ -215,7 +214,6 @@ export default {
               methodpath: this.host + this.form.methodpath,
               method: this.form.method,
               unit: this.form.unit,
-              endtime: this.form.endtime,
               parameters: this.form.parameters,
             };
             // let obj = {};

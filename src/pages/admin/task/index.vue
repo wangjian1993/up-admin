@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 17:25:15
- * @LastEditTime: 2022-10-14 11:29:56
+ * @LastEditTime: 2022-10-17 17:26:57
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/admin/task/index.vue
+ * @FilePath: \up-admin\src\pages\admin\task\index.vue
 -->
 <template>
   <div>
@@ -63,6 +63,10 @@
         </a-form>
         <div class="operator">
           <a-button type="primary" @click="add" :disabled="!hasPerm('add')" icon="plus">新增</a-button>
+          <a-button v-if="hasPerm('start')" icon="play-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allSwitchBtn('start')" style="margin-left: 8px">启动</a-button>
+          <a-button v-else icon="play-circle" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">启动</a-button>
+          <a-button v-if="hasPerm('stop')" icon="pause-circle" type="primary" :disabled="!hasSelected" :loading="loading" @click="allSwitchBtn('stop')" style="margin-left: 8px">停止</a-button>
+          <a-button v-else icon="pause-circle" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">停止</a-button>
           <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
           <span style="margin-left: 8px">
@@ -103,20 +107,20 @@
           <template slot="action" slot-scope="text, record">
             <div>
               <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
-                <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+                <a style="margin-right: 8px" v-if="record.Status != '执行中'" :disabled="!hasPerm('delete')">
                   <a-icon type="delete" />
                   删除
                 </a>
               </a-popconfirm>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
+              <a style="margin-right: 8px" v-if="record.Status != '执行中'" @click="edit(record)" :disabled="!hasPerm('edit')">
                 <a-icon type="edit" />
                 编辑
               </a>
-              <a style="margin-right: 8px" @click="switchBtn(record, 'stop')" :disabled="!hasPerm('edit')">
-                <a-icon type="play-circle" />
+              <a style="margin-right: 8px" v-if="record.Status == '执行中'" @click="switchBtn(record, 'stop')" :disabled="!hasPerm('stop')">
+                <a-icon type="pause-circle" />
                 停止
               </a>
-              <a style="margin-right: 8px" @click="switchBtn(record, 'start')" :disabled="!hasPerm('edit')">
+              <a style="margin-right: 8px" v-if="record.Status != '执行中'" @click="switchBtn(record, 'start')" :disabled="!hasPerm('start')">
                 <a-icon type="play-circle" />
                 启动
               </a>
@@ -252,25 +256,26 @@ export default {
     },
     switchBtn(item, str) {
       let params = [];
-      params.push(item.Id);
+      params.push(item.Id,null);
       setJob(params, str).then((res) => {
         if (res.data.success) {
-          let content = str == 'start' ?'启动成功':'停止成功'
+          let content = str == "start" ? "启动成功" : "停止成功";
           this.$message.success(content);
           this.search();
         }
       });
     },
     //多选删除
-    allDel() {
+    allSwitchBtn(str) {
       let self = this;
       self.$confirm({
-        title: "确定要删除选中内容",
+        title: "确定选中内容",
         onOk() {
-          setJob(self.selectedRowKeys, "delete").then((res) => {
+          setJob(self.selectedRowKeys, str).then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
-              self.$message.success("删除成功!");
+              let content = str == "start" ? "启动成功" : "停止成功";
+              self.$message.success(content);
               self.search();
             }
           });
