@@ -63,6 +63,7 @@
 
 <script>
 import CommonLayout from "@/layouts/CommonLayout";
+// import { login, supplierLogin, getUserCompany } from "@/services/user";
 import { login, supplierLogin } from "@/services/user";
 import { setAuthorization } from "@/utils/request";
 import { loadRoutes } from "@/utils/routerUtil";
@@ -132,7 +133,7 @@ export default {
     });
   },
   methods: {
-    ...mapMutations("account", ["setUser", "setPermissions", "setRoles", "setMenu", "setUserHead",'setCompanyList']),
+    ...mapMutations("account", ["setUser", "setPermissions", "setRoles", "setMenu", "setUserHead", "setCompanyList"]),
     onSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err) => {
@@ -146,26 +147,26 @@ export default {
           }
           //供应商登录
           if (this.loginType == 2) {
-            console.log("供应商登录====")
+            // console.log("供应商登录====")
             var isPhone = /^[1][3,4,5,7,8][0-9]{9}$/; //手机
             let regEmail = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
             let formType = 1;
-            console.log("供应商登录====",isPhone)
-            console.log("供应商登录====",regEmail)
-            console.log("供应商登录====",isPhone.test(name))
-            console.log("供应商登录====",regEmail.test(name))
+            // console.log("供应商登录====",isPhone)
+            // console.log("供应商登录====",regEmail)
+            // console.log("供应商登录====",isPhone.test(name))
+            // console.log("供应商登录====",regEmail.test(name))
             if (isPhone.test(name)) {
               formType = 1;
             } else if (regEmail.test(name)) {
               formType = 2;
             }
             let params = {
-              type:formType, // 登录类型，0为手机号，1为邮箱
+              type: formType, // 登录类型，0为手机号，1为邮箱
               islogin: true, // 是否登录、注册
               username: name,
               password: password,
             };
-            console.log("params===",params)
+            console.log("params===", params);
             supplierLogin(params).then(this.afterLogin);
           }
         }
@@ -189,10 +190,17 @@ export default {
       this.logging = false;
       const loginRes = res.data;
       if (loginRes.success) {
-        const { userName, userModules, PhotoUrl ,userCompany } = loginRes.data;
+        // const { userName, userModules, PhotoUrl ,userId } = loginRes.data;
+        const { userName, userModules, PhotoUrl } = loginRes.data;
         this.setUser(userName);
         this.setUserHead("./" + PhotoUrl);
-        this.setCompanyList(userCompany)
+        // getUserCompany().then((res) => {
+        //   console.log(res);
+        //   if (res.data.success) {
+        //     this.setCompanyList(res.data.data);
+        //     localStorage.setItem('userId',userId)
+        //   }
+        // });
         var inFifteenMinutes = new Date(new Date().getTime() + 4 * 60 * 60 * 1000);
         setAuthorization({ token: res.headers.token, expireAt: inFifteenMinutes });
         this.$message.success(this.timeFix().CN + "，欢迎回来!", 3);

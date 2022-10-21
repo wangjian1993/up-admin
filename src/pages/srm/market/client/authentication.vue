@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-26 09:33:38
+ * @LastEditTime: 2022-10-20 09:48:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/client/authentication.vue
@@ -94,14 +94,14 @@
                 <a-icon type="container" />
                 查看
               </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('warn')">
+              <!-- <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('warn')">
                 <a-icon type="bell" />
                 提醒
               </a>
               <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('print')">
                 <a-icon type="printer" />
                 打印
-              </a>
+              </a> -->
             </div>
           </template>
         </a-table>
@@ -116,7 +116,7 @@ import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
-import { columns } from "./data/detail";
+import { columns } from "./data/authentication";
 import ExportExcel from "@/utils/ExportExcelJS";
 export default {
   mixins: [PublicVar],

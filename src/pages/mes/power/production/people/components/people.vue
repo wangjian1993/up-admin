@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 15:04:20
- * @LastEditTime: 2022-10-14 10:09:07
+ * @LastEditTime: 2022-10-19 15:23:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/production/people/components/people.vue
@@ -105,10 +105,10 @@ export default {
   created() {
     if (this.isEdit) {
       this.form = this.editData;
-      this.form.Lines = this.editData.Lines.split(",")
+      this.form.Lines = this.editData.LineName;
       this.plantId = this.editData.PlantId;
       this.workshopId = this.editData.WorkshopId;
-      this.form.Lines = this.editData.LineCode
+      this.form.Lines = this.editData.LineCode;
       this.getWorkshopList();
       this.getLineList();
     }
@@ -151,7 +151,7 @@ export default {
         plantid: this.plantId,
         workshopId: this.workshopId,
       };
-      getPowerPlant(params,"line/getlist").then((res) => {
+      getPowerPlant(params, "line/getlist").then((res) => {
         if (res.data.success) {
           this.lineList = res.data.data;
         }

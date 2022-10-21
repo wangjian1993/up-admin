@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2022-08-31 15:36:46
+ * @LastEditTime: 2022-10-19 10:29:15
  * @LastEditors: max
  * @Description: 用户相关api
  * @FilePath: /up-admin/src/services/user.js
@@ -19,6 +19,14 @@ export async function login(name, password) {
     userName: name,
     userPwd: password
   }, false);
+}
+//获取登陆用户公司
+export async function getUserCompany(params) {
+  return request(`${UP_SRM}/permission/config/getcompanys`, METHOD.GET, params);
+}
+
+export async function setUserCompany(params) {
+  return request(`${UP_SRM}/permission/config/update`, METHOD.POST, params);
 }
 //供应商注册
 export async function supplierLogin(params) {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-30 14:31:04
- * @LastEditTime: 2022-10-13 10:56:54
+ * @LastEditTime: 2022-10-19 16:46:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/production/process/process.vue
@@ -69,6 +69,12 @@
         <template slot="EnableName" slot-scope="text">
           <div>
             <a-tag :color="text == '启用' ? 'green' : 'red'" v-if="text == '启用'">{{ text }}</a-tag>
+          </div>
+        </template>
+        <template slot="IsAgeing" slot-scope="record">
+          <div>
+            <a-tag color="green" v-if="record == 'Y'">是</a-tag>
+            <a-tag color="red" v-else>否</a-tag>
           </div>
         </template>
         <template slot="action" slot-scope="text, record">

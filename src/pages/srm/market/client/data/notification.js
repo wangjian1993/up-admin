@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-08-26 09:32:11
+ * @LastEditTime: 2022-10-20 09:36:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/client/data/notification.js
@@ -16,38 +16,38 @@ export const columns = [
     },
     {
         title: "标题",
-        dataIndex: "SupplierCode",
-        scopedSlots: { customRender: "SupplierCode" },
-        align: "center",
-    },
-    {
-        title: "重要度",
-        dataIndex: "SupplierFullName",
-        scopedSlots: { customRender: "SupplierFullName" },
-        align: "center",
-    },
-    {
-        title: "发送日期",
         dataIndex: "Title",
         scopedSlots: { customRender: "Title" },
         align: "center",
     },
     {
+        title: "重要度",
+        dataIndex: "Priority",
+        scopedSlots: { customRender: "Priority" },
+        align: "center",
+    },
+    {
+        title: "发送日期",
+        dataIndex: "SendTime",
+        scopedSlots: { customRender: "SendTime" },
+        align: "center",
+    },
+    {
         title: "发件企业编码",
-        dataIndex: "ExpiredLength",
+        dataIndex: "SendCompany",
         scopedSlots: { customRender: "ExpiredLength" },
         align: "center",
     },
     {
         title: "发件企业名称",
-        dataIndex: "Expired",
-        scopedSlots: { customRender: "Expired" },
+        dataIndex: "SendCompany",
+        scopedSlots: { customRender: "SendCompany" },
         align: "center",
     },
     {
         title: "附件",
-        dataIndex: "Status",
-        scopedSlots: { customRender: "Status" },
+        dataIndex: "FileCount",
+        scopedSlots: { customRender: "FileCount" },
         align: "center",
     },
     {

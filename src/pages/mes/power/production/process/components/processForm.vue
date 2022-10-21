@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 15:04:20
- * @LastEditTime: 2022-10-13 11:02:08
+ * @LastEditTime: 2022-10-19 16:45:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/production/process/components/processForm.vue
@@ -33,6 +33,12 @@
           <a-form-model-item ref="ProcessDesc" label="工序描述">
             <a-textarea v-model="form.ProcessDesc" placeholder="请输入工序描述" :auto-size="{ minRows: 3, maxRows: 5 }" />
           </a-form-model-item>
+          <a-form-model-item ref="IsAgeing" label="是否老化">
+            <a-radio-group :value="form.IsAgeing" button-style="solid" @change="isAgeingChange">
+              <a-radio-button value="N">否</a-radio-button>
+              <a-radio-button value="Y">是</a-radio-button>
+            </a-radio-group>
+          </a-form-model-item>
           <a-form-model-item ref="Enable" label="是否启用">
             <a-radio-group :value="form.Enable" button-style="solid" @change="enableChange">
               <a-radio-button value="N">否</a-radio-button>
@@ -62,6 +68,7 @@ export default {
         Step: "",
         Enable: "Y",
         ProcessTypeCode: "POWER_SUPPLY",
+        IsAgeing:"N"
       },
       rules: {
         PlantId: [
@@ -135,6 +142,9 @@ export default {
     enableChange(value) {
       this.form.Enable = value.target.value;
     },
+    isAgeingChange(value){
+      this.form.IsAgeing = value.target.value;
+    },
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         console.log(valid)
@@ -147,7 +157,8 @@ export default {
               ProcessDesc: this.form.ProcessDesc,
               Step: this.form.Step,
               Enable: this.form.Enable,
-              ProcessTypeCode:this.form.ProcessTypeCode
+              ProcessTypeCode:this.form.ProcessTypeCode,
+              IsAgeing:this.form.IsAgeing
             };
             setProcess(editForm, "update").then((res) => {
               if (res.data.success) {

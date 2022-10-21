@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-25 09:28:23
+ * @LastEditTime: 2022-10-20 14:18:21
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/shipment/inform.vue
@@ -33,12 +33,12 @@
             <a-row>
               <a-col :md="6" :sm="24">
                 <a-form-item label="客户" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入供应商" v-decorator="['client']" />
+                  <a-input style="width: 200px" placeholder="请输入客户" v-decorator="['client']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="客户单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入采购单号" v-decorator="['purchaseorderno']" />
+                  <a-input style="width: 200px" placeholder="请输入客户单号" v-decorator="['purchaseorderno']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
@@ -63,28 +63,22 @@
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="采购类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['purchasetype']" placeholder="请选择送货状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">启用</a-select-option>
-                    <a-select-option value="0">禁用</a-select-option>
+                  <a-select v-decorator="['purchasetype']" placeholder="请选择采购类型" style="width: 200px">
+                    <a-select-option v-for="item in paramsItem.PROCUREMENT_TYPE" :key="item.ParamCode" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="送货状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['deliverystatus']" placeholder="请选择送货状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">启用</a-select-option>
-                    <a-select-option value="0">禁用</a-select-option>
+                    <a-select-option v-for="item in paramsItem.DELIVERY_STATE" :key="item.ParamCode" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
                 <a-form-item label="物流状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['shippingstatus']" placeholder="请选择物流状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">启用</a-select-option>
-                    <a-select-option value="0">禁用</a-select-option>
+                    <a-select-option v-for="item in paramsItem.SHIPPING_STATE" :key="item.ParamCode" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -95,19 +89,15 @@
               </a-col>
             <a-col :md="6" :sm="24">
                 <a-form-item label="送货类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['deliverytype']" placeholder="请选择物流状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">启用</a-select-option>
-                    <a-select-option value="0">禁用</a-select-option>
+                  <a-select v-decorator="['deliverytype']" placeholder="请选择送货类型" style="width: 200px">
+                    <a-select-option v-for="item in paramsItem.DELIVER_TYPE" :key="item.ParamCode" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
                <a-col :md="6" :sm="24">
                 <a-form-item label="送货方式" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['deliverymethod']" placeholder="请选择物流状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">启用</a-select-option>
-                    <a-select-option value="0">禁用</a-select-option>
+                  <a-select v-decorator="['deliverymethod']" placeholder="请选择送货方式" style="width: 200px">
+                    <a-select-option v-for="item in paramsItem.DELIVER_MODE" :key="item.ParamCode" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -134,6 +124,7 @@
           </div>
         </a-form>
         <div class="operator">
+          <a-button style="margin-left: 8px" :disabled="!hasPerm('add')" type="primary" @click="addDelivery" icon="plus">新建送货单</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
@@ -173,8 +164,8 @@
             <p>送货方式</p>
           </template>
           <template slot="DeliveryType" slot-scope="text, record">
-            <p>{{ record.ReceiptWarehouse }}</p>
-            <p>{{ record.PlanDatetime }}</p>
+            <p>{{ record.DeliveryMethod }}</p>
+            <p>{{ record.DeliveryType }}</p>
           </template>
           <template slot="action" slot-scope="text, record">
             <div>
@@ -195,6 +186,7 @@
         </a-table>
       </a-card>
       <consigneeDetail v-if="isDetail" :orderno="orderno" @closeModal="closeModal" />
+      <DeliveryForm v-if="isAddDelivery" :paramsItem="paramsItem"  @closeModal="closeModal"/>
     </a-spin>
   </div>
 </template>
@@ -208,8 +200,10 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { columns } from "./data/inform";
 import ExportExcel from "@/utils/ExportExcelJS";
 import consigneeDetail from "./components/consigneeDetail.vue";
+import { getParamData } from "@/services/admin.js";
+import DeliveryForm from './components/deliveryForm.vue';
 export default {
-  components: { consigneeDetail },
+  components: { consigneeDetail ,DeliveryForm },
   mixins: [PublicVar],
   data() {
     return {
@@ -223,8 +217,11 @@ export default {
       isImport: false,
       listType: "全部",
       isDetail: false,
+      isAddDelivery:false,
       docno: "",
       tagItem: ["全部", "签收中", "待签收", "已发货", "已到货"],
+      paramsList: ["DELIVER_TYPE","DELIVER_MODE","SHIPPING_STATE","DELIVERY_STATE","PROCUREMENT_TYPE"],
+      paramsItem:[]
     };
   },
   updated() {
@@ -235,9 +232,23 @@ export default {
       this.scrollY = getTableScroll(70);
     });
     this.search();
+    this.getParamData();
   },
   methods: {
     splitData,
+    getParamData() {
+      this.paramsList.forEach((item) => {
+        let params = {
+          groupcode: item,
+        };
+        getParamData(params).then((res) => {
+          if (res.data.success) {
+            this.paramsItem[item] = res.data.data;
+          }
+          console.log(this.paramsItem.PLC_PARAMS_TYPE);
+        });
+      });
+    },
     //重置搜索
     reset() {
       this.isSearch = 0;
@@ -249,15 +260,19 @@ export default {
       this.advanced = !this.advanced;
       if (this.advanced) {
         console.log("打开====");
-        this.scrollY = getTableScroll(160);
+        this.scrollY = getTableScroll(280);
       } else {
         console.log("关闭====");
-        this.scrollY = getTableScroll(-20);
+        this.scrollY = getTableScroll(-110);
       }
       console.log("scrollY===", this.scrollY);
     },
     closeModal() {
       this.isDetail = false;
+      this.isAddDelivery = false
+    },
+    addDelivery(){
+      this.isAddDelivery = true;
     },
     //多选
     onSelectChange(selectedRowKeys) {

@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-08-15 09:56:12
+ * @LastEditTime: 2022-10-20 10:16:51
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/receiving/components/consigneeDetail.vue
+ * @FilePath: /up-admin/src/pages/srm/market/shipment/components/consigneeDetail.vue
 -->
 <template>
   <div>
-    <a-drawer :visible="visible" title="采购收货详情" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :bodyStyle="{ padding: '5px 10px' }">
+    <a-drawer :visible="visible" title="送货详情" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :bodyStyle="{ padding: '5px 10px' }">
       <a-spin tip="loading..." :spinning="loading">
         <a-descriptions :column="5" bordered size="small">
           <a-descriptions-item v-for="(item, index) in info1" :key="index" :label="item.title">

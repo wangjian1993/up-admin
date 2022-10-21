@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 08:52:31
- * @LastEditTime: 2022-09-07 10:46:56
+ * @LastEditTime: 2022-10-21 15:06:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/layouts/header/AdminHeader.vue
@@ -44,7 +44,7 @@ import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "AdminHeader",
-  components: { IMenu, HeaderAvatar, HeaderHelp},
+  components: { IMenu, HeaderAvatar, HeaderHelp },
   props: ["collapsed", "menuData", "breadcrumb"],
   data() {
     return {

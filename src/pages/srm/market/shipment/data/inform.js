@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-08-25 09:17:34
+ * @LastEditTime: 2022-10-20 10:07:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/shipment/data/inform.js
@@ -16,14 +16,14 @@ export const columns = [
     },
     {
         title: "送货通知单号",
-        dataIndex: "DocNo",
-        scopedSlots: { customRender: "DocNo" },
+        dataIndex: "OrderNo",
+        scopedSlots: { customRender: "OrderNo" },
         align: "center",
     },
     {
         title: "送货日期",
-        dataIndex: "DocDate",
-        scopedSlots: { customRender: "DocDate" },
+        dataIndex: "DeliveryDatetime",
+        scopedSlots: { customRender: "DeliveryDatetime" },
         align: "center",
     },
     {

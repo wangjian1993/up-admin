@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-10-20 08:59:06
+ * @LastEditTime: 2022-10-20 09:29:57
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/market/client/data/authentication.js
+ * @FilePath: /up-admin/src/pages/srm/market/client/data/archives.js
  */
 // import { splitData } from "@/utils/util.js";
 export const columns = [
@@ -15,31 +15,32 @@ export const columns = [
         width: 50,
     },
     {
-        title: "客户",
-        dataIndex: "SupplierFullName",
-        scopedSlots: { customRender: "SupplierFullName" },
+        title: "客户编码",
+        dataIndex: "ClientCode",
+        scopedSlots: { customRender: "ClientCode" },
         align: "center",
     },
     {
-        title: "标题",
-        dataIndex: "Name",
-        scopedSlots: { customRender: "Name" },
+        title: "客户名称",
+        dataIndex: "ClientFullName",
+        scopedSlots: { customRender: "ClientFullName" },
         align: "center",
     },
     {
-        title: "有效期",
-        dataIndex: "ExpiredLength",
-        scopedSlots: { customRender: "ExpiredLength" },
+        title: "客户简称",
+        dataIndex: "ClientName",
+        scopedSlots: { customRender: "ClientName" },
+        align: "center",
+        width: 300,
+    },
+    {
+        title: "邀约状态",
+        dataIndex: "InviteStatus",
+        scopedSlots: { customRender: "InviteStatus" },
         align: "center",
     },
     {
-        title: "到期日期",
-        dataIndex: "Expired",
-        scopedSlots: { customRender: "Expired" },
-        align: "center",
-    },
-    {
-        title: "状态",
+        title: "客户状态",
         dataIndex: "Status",
         scopedSlots: { customRender: "Status" },
         align: "center",

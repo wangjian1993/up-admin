@@ -1,38 +1,29 @@
 /*
  * @Author: max
  * @Date: 2022-08-11 13:55:08
- * @LastEditTime: 2022-08-11 15:07:17
+ * @LastEditTime: 2022-10-20 10:02:23
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/order/data/detail.js
+ * @FilePath: /up-admin/src/pages/srm/market/client/data/detail.js
  */
-export const info1 = [{
-    title: '采购方',
-    dataIndex: "PurchaseEnterprise"
+export const info = [{
+    title: '客户编号',
+    dataIndex: "ClientCode"
 }, {
-    title: '采购单号',
-    dataIndex: "OrderNo"
+    title: '客户名称',
+    dataIndex: "ClientFullName"
 }, {
-    title: '供应商',
-    dataIndex: "SupplierFullName"
+    title: '客户简称',
+    dataIndex: "ClientName"
 }, {
-    title: '采购类型',
-    dataIndex: "PurchaseType"
+    title: '邀约状态',
+    dataIndex: "InviteStatus"
 }, {
-    title: '打印状态',
-    dataIndex: "PrintStatus"
+    title: '客户状态',
+    dataIndex: "Status"
 }, {
-    title: '差异原因',
-    dataIndex: "DifferenceReason"
-}, {
-    title: '收货状态',
-    dataIndex: "ReceiptStatus"
-}, {
-    title: '订单状态',
-    dataIndex: "PurchaseStatus"
-}, {
-    title: '订单附件',
-    dataIndex: "FilePath"
+    title: '纳税认识别号',
+    dataIndex: "Address"
 }];
 export const info2 = [{
     title: '采购日期',

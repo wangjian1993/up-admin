@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-29 17:25:28
- * @LastEditTime: 2022-10-12 14:38:14
+ * @LastEditTime: 2022-10-19 11:27:23
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/plant/line.vue
@@ -225,7 +225,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          setPowerPlant(self.selectedRowKeys, "delete").then((res) => {
+          setPowerPlant(self.selectedRowKeys, "line/delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -240,7 +240,7 @@ export default {
     onDelete(item) {
       let params = [];
       params.push(item.LineId);
-      setPowerPlant(params, "delete").then((res) => {
+      setPowerPlant(params, "line/delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.searchBtn();

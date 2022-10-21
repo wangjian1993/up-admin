@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-10 16:38:42
- * @LastEditTime: 2022-09-28 11:36:56
+ * @LastEditTime: 2022-10-20 09:34:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/srm.js
@@ -219,6 +219,36 @@ export function getPermission(params, action) {
 }
 export function setPermission(params, action) {
     return request(`${UP_SRM}/permission/${action}`, METHOD.POST, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
+
+//客户档案
+export function getClientList(params, action) {
+    return request(`${UP_SRM}/client/${action}`, METHOD.GET, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
+export function setClientList(params, action) {
+    return request(`${UP_SRM}/client/${action}`, METHOD.POST, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
+export function getClientNews(params, action) {
+    return request(`${UP_SRM}/client/news/${action}`, METHOD.GET, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
+export function setClientNews(params, action) {
+    return request(`${UP_SRM}/client/news/${action}`, METHOD.POST, params, {
         headers: {
             Enterpriseld: Enterpriseld,
         }

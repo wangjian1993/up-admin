@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 15:04:20
- * @LastEditTime: 2022-10-14 16:04:09
+ * @LastEditTime: 2022-10-19 14:03:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/production/process/components/craftForm.vue
@@ -48,7 +48,7 @@
               </div>
             </template>
             <template slot="ProcessName" slot-scope="test, record">
-              <a-select style="width: 100px" placeholder="请选择生产工序" v-model="record.Id" @change="(e) => processChange(e)">
+              <a-select style="width: 200px" placeholder="请选择生产工序" v-model="record.Id" @change="(e) => processChange(e)">
                 <a-select-option v-for="item in mockData" :key="item.Id" :value="item.Id" :disabled="item.disabled">{{ item.ProcessName }}</a-select-option>
               </a-select>
             </template>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2022-09-02 15:35:56
+ * @LastEditTime: 2022-10-19 10:37:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/layouts/header/HeaderCompany.vue
@@ -15,7 +15,7 @@
       <span class="name" @click="isClick = true">{{ companyName }}</span>
     </div>
     <a-select v-model="companyId" style="width: 200px;margin:0 5px" v-if="isClick" @change="companyChange">
-      <a-select-option :value="item.CompanyId" v-for="item in companyList" :key="item.CompanyId">
+      <a-select-option :value="item.Id" v-for="item in companyList" :key="item.Id">
         {{ item.CompanyName }}
       </a-select-option>
     </a-select>
@@ -25,7 +25,7 @@
 
 <script>
 import { mapGetters } from "vuex";
-import { logout } from "@/services/user";
+import { logout, setUserCompany } from "@/services/user";
 
 export default {
   name: "HeaderAvatar",
@@ -42,18 +42,30 @@ export default {
   created() {
     this.companyName = localStorage.getItem("COMPANY_NAME") || "请选择公司";
     this.companyId = localStorage.getItem("COMPANY_ID");
+    console.log("companyId==",this.companyId)
+    console.log("companyName==",this.companyName)
   },
   methods: {
     companyChange(e) {
-      let company = this.companyList.find((item) => item.CompanyId == e);
-      let key = sessionStorage.getItem(process.env.VUE_APP_TBAS_KEY);
-      console.log("key===", key);
-      localStorage.setItem("COMPANY_ID", company.CompanyId);
-      localStorage.setItem("COMPANY_NAME", company.CompanyName);
-      this.companyName = company.CompanyName;
-      this.companyId = company.CompanyId;
-      sessionStorage.removeItem(process.env.VUE_APP_TBAS_KEY);
-      location.reload();
+      let params = {
+        userid: localStorage.getItem("userId"),
+        companyid: e,
+      };
+      console.log("params", params);
+      setUserCompany(params).then((res) => {
+        if (res.data.success) {
+          let company = this.companyList.find((item) => item.Id == e);
+          // let key = sessionStorage.getItem(process.env.VUE_APP_TBAS_KEY);
+          // console.log("key===", key);
+          localStorage.setItem("COMPANY_ID", company.Id);
+          localStorage.setItem("COMPANY_NAME", company.CompanyName);
+          this.companyName = company.CompanyName;
+          this.companyId = company.Id;
+          this.$message.success("修改成功");
+          sessionStorage.removeItem(process.env.VUE_APP_TBAS_KEY);
+          location.reload();
+        }
+      });
     },
     logout() {
       let selt = this;

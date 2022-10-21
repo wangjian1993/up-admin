@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-30 14:42:25
- * @LastEditTime: 2022-10-14 11:22:25
+ * @LastEditTime: 2022-10-19 16:46:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/production/process/data/process.js
@@ -53,6 +53,12 @@ export const columns = [
         title: "状态",
         dataIndex: "EnableName",
         scopedSlots: { customRender: "EnableName" },
+        align: "center",
+    },
+    {
+        title: "是否老化",
+        dataIndex: "IsAgeing",
+        scopedSlots: { customRender: "IsAgeing" },
         align: "center",
     },
     {
