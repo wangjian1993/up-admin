@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-29 16:34:37
- * @LastEditTime: 2022-10-14 09:50:03
+ * @LastEditTime: 2022-10-28 17:16:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/mes.js
@@ -51,4 +51,21 @@ export function getPeople(params, action) {
 }
 export function setPeople(params, action) {
     return request(`${UP_WEB}/powersupply/production/dept/${action}`, METHOD.POST, params);
+}
+
+export function getProcessReport(params, action) {
+    return request(`${UP_WEB}/powersupply/process/report/${action}`, METHOD.POST, params);
+}
+export function getReleases(params, action) {
+    return request(`${UP_WEB}/powersupply/process/report/${action}`, METHOD.GET, params);
+}
+export function setProcessReport(params, action) {
+    return request(`${UP_WEB}/powersupply/process/report/${action}`, METHOD.POST, params);
+}
+
+export function getProcessAging(params, action) {
+    return request(`${UP_WEB}/powersupply/process/ageing/${action}`, METHOD.POST, params);
+}
+export function getProcessAgingList(params, action) {
+    return request(`${UP_WEB}/powersupply/process/ageing/${action}`, METHOD.GET, params);
 }

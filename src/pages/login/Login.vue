@@ -63,8 +63,8 @@
 
 <script>
 import CommonLayout from "@/layouts/CommonLayout";
-// import { login, supplierLogin, getUserCompany } from "@/services/user";
-import { login, supplierLogin } from "@/services/user";
+import { login, supplierLogin, getUserCompany } from "@/services/user";
+// import { login, supplierLogin } from "@/services/user";
 import { setAuthorization } from "@/utils/request";
 import { loadRoutes } from "@/utils/routerUtil";
 import { mapMutations } from "vuex";
@@ -190,17 +190,17 @@ export default {
       this.logging = false;
       const loginRes = res.data;
       if (loginRes.success) {
-        // const { userName, userModules, PhotoUrl ,userId } = loginRes.data;
-        const { userName, userModules, PhotoUrl } = loginRes.data;
+        const { userName, userModules, PhotoUrl ,userId } = loginRes.data;
+        // const { userName, userModules, PhotoUrl } = loginRes.data;
         this.setUser(userName);
         this.setUserHead("./" + PhotoUrl);
-        // getUserCompany().then((res) => {
-        //   console.log(res);
-        //   if (res.data.success) {
-        //     this.setCompanyList(res.data.data);
-        //     localStorage.setItem('userId',userId)
-        //   }
-        // });
+        getUserCompany().then((res) => {
+          console.log(res);
+          if (res.data.success) {
+            this.setCompanyList(res.data.data);
+            localStorage.setItem('userId',userId)
+          }
+        });
         var inFifteenMinutes = new Date(new Date().getTime() + 4 * 60 * 60 * 1000);
         setAuthorization({ token: res.headers.token, expireAt: inFifteenMinutes });
         this.$message.success(this.timeFix().CN + "，欢迎回来!", 3);

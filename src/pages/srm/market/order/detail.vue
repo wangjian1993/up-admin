@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-08-16 13:44:27
+ * @LastEditTime: 2022-11-02 10:23:33
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/order/detail.vue
@@ -53,6 +53,20 @@
             </a-descriptions>
             <a-card title="产品明细" class="card" :bordered="false" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px' }">
               <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :rowKey="(list) => list.ItemCode" bordered>
+                <a-table slot="expandedRowRender" slot-scope="text" :columns="innerColumns" :data-source="text.Children" :pagination="false">
+                  <template slot="action" slot-scope="text, record">
+                    <div>
+                      <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
+                        <a-icon type="edit" />
+                        编辑
+                      </a>
+                      <a style="margin-right: 8px" @click="onDelete(record)" :disabled="!hasPerm('delete')">
+                        <a-icon type="delete" />
+                        删除
+                      </a>
+                    </div>
+                  </template>
+                </a-table>
                 <template slot="footer">
                   <a-table ref="total-table" class="total-table" :columns="columnKeys" :dataSource="totalData" :showHeader="false" :bordered="false" :pagination="false" size="small" />
                 </template>
@@ -123,6 +137,14 @@
                   <p>{{ record.Money }}</p>
                   <p>{{ record.Tax }}</p>
                 </template>
+                <template slot="action" slot-scope="text, record">
+                  <div>
+                    <a style="margin-right: 8px" @click="add(record)" :disabled="!hasPerm('add')">
+                      <a-icon type="plus" />
+                      添加答交
+                    </a>
+                  </div>
+                </template>
               </a-table>
             </a-card>
           </div>
@@ -133,16 +155,18 @@
           <p>Content of Tab Pane 2</p>
         </a-tab-pane>
       </a-tabs>
+      <Response v-if="isResponse" @closeModal="closeModal" :isEdit="isEdit" :editData="editData" :orderData="orderList" @success="getDetailList" />
     </a-drawer>
   </div>
 </template>
-
 <script>
-import { info1, info2, info3, columns, columnKeys } from "./data/detail";
-import { getPurchaseOrders } from "@/services/srm.js";
+import { info1, info2, info3, columns, columnKeys ,innerColumns } from "./data/detail";
+import { getClientOrder ,setClientOrder } from "@/services/srm.js";
 import { splitData } from "@/utils/util.js";
+import Response from "./components/response.vue";
 export default {
   props: ["docno"],
+  components: { Response },
   data() {
     return {
       size: "small",
@@ -151,6 +175,7 @@ export default {
       info3,
       columns,
       columnKeys,
+      innerColumns,
       totalData: [
         {
           totalQty: "订单数量:0",
@@ -180,6 +205,9 @@ export default {
       isUnfold: false,
       isCloneBtn: false,
       scrollY: "",
+      isResponse: false,
+      editData:[],
+      isEdit:false
     };
   },
   created() {
@@ -193,13 +221,24 @@ export default {
     closeModal() {
       this.isModelInfo = false;
       this.isUnfold = false;
+      this.isResponse = false;
+    },
+    add(record) {
+      this.orderData = record;
+      this.isResponse = true;
+      this.isEdit =false
+    },
+    edit(record){
+      this.isEdit =true
+      this.editData = record;
+      this.isResponse = true;
     },
     getDetailList() {
       this.loading = true;
       let params = {
         docno: this.docno,
       };
-      getPurchaseOrders(params, "single").then((res) => {
+      getClientOrder(params, "single").then((res) => {
         if (res.data.success) {
           this.orderList = res.data.data.order;
           this.detailList = res.data.data.detail;
@@ -220,6 +259,17 @@ export default {
           ];
         }
         this.loading = false;
+      });
+    },
+     //单个删除
+     onDelete(item) {
+      let params = [];
+      params.push(item.Id);
+      setClientOrder(params, "delete").then((res) => {
+        if (res.data.success) {
+          this.$message.success("删除成功!");
+          this.getApiList();
+        }
       });
     },
     //查看详情

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-25 09:29:41
+ * @LastEditTime: 2022-11-03 11:57:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/shipment/detail.vue

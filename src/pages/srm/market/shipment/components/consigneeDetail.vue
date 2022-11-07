@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-10-20 10:16:51
+ * @LastEditTime: 2022-11-03 15:04:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/shipment/components/consigneeDetail.vue
@@ -15,14 +15,14 @@
             {{ orderList[item.dataIndex] }}
           </a-descriptions-item>
         </a-descriptions>
-        <a-descriptions style="margin:10px 0" :column="5" title="交易信息" bordered size="small">
-          <a-descriptions-item v-for="(item, index) in info2" :key="index" :label="item.title">
+        <a-descriptions style="margin:10px 0" :column="5" title="物流信息" bordered size="small">
+          <a-descriptions-item v-for="(item, index) in info3" :key="index" :label="item.title">
             {{ orderList[item.dataIndex] }}
           </a-descriptions-item>
         </a-descriptions>
         <a-card title="收货明细" class="card" :bordered="false" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px' }">
           <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :scroll="{ y: auto, x: true }" :rowKey="(list) => list.ItemCode" bordered>
-           <template slot="footer">
+            <template slot="footer">
               <a-table ref="total-table" class="total-table" :columns="columnKeys" :dataSource="totalData" :showHeader="false" :pagination="false" size="small" />
             </template>
             <template slot="index" slot-scope="text, record, index">
@@ -30,41 +30,29 @@
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
               </div>
             </template>
-            <template slot="DrawingNo" slot-scope="text, record">
-              <p>{{ record.DrawingNo || "" }}</p>
-              <p>{{ record.OrderDrawingNo || "" }}</p>
+            <template slot="purchasedetailidTitle">
+              <p>交货日期</p>
+              <p>排定日期</p>
             </template>
-            <template slot="QtyTtile">
-              <p>收货数量</p>
-              <p>收货单位</p>
+            <template slot="purchasedetailid" slot-scope="text, record">
+              <p>{{ record.PurchaseDatetime }}</p>
+              <p>{{ record.deliverydatetime }}</p>
             </template>
-            <template slot="Qty" slot-scope="text, record">
+            <template slot="ReceiptWarehouseTitle">
+              <p>交货数量</p>
+              <p>排定数量</p>
+            </template>
+            <template slot="deliveryqty" slot-scope="text, record">
               <p>{{ record.Qty }}</p>
               <p>{{ record.Unit }}</p>
             </template>
-            <template slot="PriceQtyTitle">
+            <template slot="priceqtyTitle">
               <p>计价数量</p>
               <p>计价单位</p>
             </template>
-            <template slot="PriceQty" slot-scope="text, record">
+            <template slot="priceqty" slot-scope="text, record">
               <p>{{ record.PriceQty }}</p>
               <p>{{ record.PriceUnit }}</p>
-            </template>
-            <template slot="PriceTitle">
-              <p>单位</p>
-              <p>总金额</p>
-            </template>
-            <template slot="Price" slot-scope="text, record">
-              <p>{{ record.Price }}</p>
-              <p>{{ record.Rate }}</p>
-            </template>
-            <template slot="InStoreQtyTtile">
-              <p>入库数量</p>
-              <p>退货数量</p>
-            </template>
-            <template slot="InStoreQty" slot-scope="text, record">
-              <p>{{ record.InStoreQty }}</p>
-              <p>{{ record.ReturnQty }}</p>
             </template>
           </a-table>
         </a-card>
@@ -100,16 +88,16 @@
 </template>
 
 <script>
-import { info1, info2, columns ,columnKeys } from "../data/consigneeDetail";
-import { getArrival } from "@/services/srm.js";
+import { info1, info3, columns, columnKeys } from "../data/consigneeDetail";
+import { getClientDelivery } from "@/services/srm.js";
 import { splitData } from "@/utils/util.js";
 export default {
-  props: ["orderno"],
+  props: ["orderId"],
   data() {
     return {
       size: "small",
       info1,
-      info2,
+      info3,
       columns,
       columnKeys,
       totalData: [
@@ -157,9 +145,9 @@ export default {
     getDetailList() {
       this.loading = true;
       let params = {
-        orderno: this.orderno,
+        id: this.orderId,
       };
-      getArrival(params, "single").then((res) => {
+      getClientDelivery(params, "single").then((res) => {
         if (res.data.success) {
           this.orderList = res.data.data.order;
           this.detailList = res.data.data.detail;
@@ -202,7 +190,7 @@ p {
   padding: 0;
   margin: 0;
 }
-/deep/.ant-table-footer{
+/deep/.ant-table-footer {
   padding: 0;
 }
 .rowActive {

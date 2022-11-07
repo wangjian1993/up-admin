@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-11 13:55:08
- * @LastEditTime: 2022-08-16 13:41:26
+ * @LastEditTime: 2022-11-02 10:07:24
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/order/data/detail.js
@@ -138,9 +138,8 @@ export const columns = [
         width: 80,
     },
     {
-        title: "请购人",
-        dataIndex: "PurchaseUser",
-        scopedSlots: { customRender: "PurchaseUser" },
+        title: "操作",
+        scopedSlots: { customRender: "action" },
         align: "center",
         width: 105,
     },
@@ -164,6 +163,50 @@ export const columnKeys = [
         title: "交货金额",
         dataIndex: "totalOrderMoney",
         scopedSlots: { customRender: "totalOrderMoney" },
+        align: "center",
+        width: 105,
+    },
+]
+export const innerColumns = [
+    {
+        title: "变更信息",
+        dataIndex: "Type",
+        scopedSlots: { customRender: "Type" },
+        align: "center",
+    },
+    {
+        title: "交货日期",
+        dataIndex: "ChangeDatetime",
+        scopedSlots: { customRender: "ChangeDatetime" },
+        align: "center",
+    },
+    {
+        title: "采购数量",
+        dataIndex: "ChangeQty",
+        scopedSlots: { customRender: "ChangeQty" },
+        align: "center",
+    },
+    {
+        title: "单价",
+        dataIndex: "ChangePrice",
+        scopedSlots: { customRender: "ChangePrice" },
+        align: "center",
+    },
+    {
+        title: "金额",
+        dataIndex: "ChangeAmount",
+        scopedSlots: { customRender: "ChangeAmount" },
+        align: "center",
+    },
+    {
+        title: "备注",
+        dataIndex: "Remark",
+        scopedSlots: { customRender: "Remark" },
+        align: "center",
+    },
+    {
+        title: "操作",
+        scopedSlots: { customRender: "action" },
         align: "center",
         width: 105,
     },

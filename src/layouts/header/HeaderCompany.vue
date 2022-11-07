@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 08:26:18
- * @LastEditTime: 2022-10-19 10:37:45
+ * @LastEditTime: 2022-11-02 14:20:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/layouts/header/HeaderCompany.vue
@@ -59,6 +59,7 @@ export default {
           // console.log("key===", key);
           localStorage.setItem("COMPANY_ID", company.Id);
           localStorage.setItem("COMPANY_NAME", company.CompanyName);
+          localStorage.setItem("COMPANY_CODE", company.CompanyCode);
           this.companyName = company.CompanyName;
           this.companyId = company.Id;
           this.$message.success("修改成功");

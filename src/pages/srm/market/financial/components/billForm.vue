@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-11-04 10:13:14
+ * @LastEditTime: 2022-11-04 11:45:13
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/market/shipment/components/deliveryForm.vue
+ * @FilePath: /up-admin/src/pages/srm/market/financial/components/deliveryForm.vue
 -->
 
 <template>
@@ -149,7 +149,6 @@
         </a-button>
       </div>
     </a-drawer>
-    <OrderList v-if="isAddOrder" :orderType="orderType" :plantCode="plantCode" :orderList="detailList" @closeModal="closeModal" @success="setTableData" />
   </div>
 </template>
 
@@ -157,10 +156,8 @@
 import { setClientDelivery, getClientDelivery } from "@/services/srm.js";
 import moment from "moment";
 import { columns, columnKeys } from "../data/addDelivery.js";
-import OrderList from "./orderList.vue";
 export default {
   props: ["isEdit", "paramsItem", "orderId"],
-  components: { OrderList },
   data() {
     return {
       size: "small",

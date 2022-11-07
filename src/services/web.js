@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2022-08-19 16:36:25
+ * @LastEditTime: 2022-10-29 08:54:46
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -294,4 +294,13 @@ export function getMaterialSampleApi(params, action) {
 
 export function getArrivalList(params, action) {
     return request(`${UP_WMS}/purchasereceive/${action}`, METHOD.GET, params);
+}
+
+
+//仪器校准管理
+export function getInstrument(params, action) {
+    return request(`${UP_WEB}/instrument/${action}`, METHOD.GET, params);
+}
+export function setInstrument(params, action) {
+    return request(`${UP_WEB}/instrument/${action}`, METHOD.POST, params);
 }

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2022-11-01 17:57:30
+ * @LastEditTime: 2022-10-27 10:38:39
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -14,8 +14,9 @@
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-row>
             <a-col :xs="12" :sm="12"><span class="card-title">机构类型/组织维度:</span></a-col>
+           
             <a-col :xs="12" :sm="12">
-              <a-tree-select v-model="defaultEnterTypeId" allowClear style="width: 100%" :tree-data="enterTypeData" :replaceFields="replaceFields1" tree-default-expand-all @change="enterTypeSelect"> </a-tree-select>
+              <a-tree-select  v-model="defaultEnterTypeId" allowClear style="width: 100%" :tree-data="enterTypeData" :replaceFields="replaceFields1" tree-default-expand-all @change="enterTypeSelect"> </a-tree-select>
             </a-col>
           </a-row>
           <a-row>
@@ -23,13 +24,9 @@
               <!-- <a-button size="small" @click="expandHandle">{{
               expandAll ? "全部收起" : "全部展开"
             }}</a-button> -->
-              <div v-if="!isShowSupplier" style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
-                <a-tree ref="enterTree" :default-selected-keys="enterValue" @select="enterTreeClick" v-if="enterTreeData.length" :tree-data="enterTreeData" :load-data="onLoadData" :replaceFields="replaceFields" default-expand-all></a-tree>
-               
+              <div style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
+                <a-tree ref="enterTree" :default-selected-keys="enterValue" @select="enterTreeClick" v-if="enterTreeData.length" :tree-data="enterTreeData" :replaceFields="replaceFields" default-expand-all></a-tree>
                 <a-empty v-if="enterTreeData.length == 0" />
-              </div>
-              <div v-else style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
-                <div>当前供应商:{{supplierData.Name}}<a-button type="primary" @click="isSelectSupplier = true">选择供应商</a-button></div>
               </div>
             </a-col>
           </a-row>
@@ -135,7 +132,6 @@
         </a-card>
       </a-col>
     </a-row>
-    <SupplierList v-if="isSelectSupplier" @closeModal="closeModal" :defaultEnterType="defaultEnterType" :defaultEnterTypeId="defaultEnterTypeId" @success="setCompanyList" />
   </div>
 </template>
 
@@ -164,9 +160,7 @@ const columns = [
   },
 ];
 import { getInstitutionList, getAppTypeList, getAppMdules, getPermissionList, setPermission, getParamData, getEnterOrgList, getEnterOrgTree, getUserTypeList, getPermissionUser, getEnterList } from "@/services/admin.js";
-import SupplierList from "./supplierList.vue";
 export default {
-  components: { SupplierList },
   data() {
     return {
       columns,
@@ -252,14 +246,11 @@ export default {
       treeA: 0,
       treeArray: [],
       parmaData: [],
-      userLoading: false,
+      userLoading: true,
       moduleid: "",
       enterTypeList: [],
       enterList: [],
-      expandAll: false,
-      isSelectSupplier: false,
-      supplierData:[],
-      isShowSupplier:false,
+      expandAll:false
     };
   },
   watch: {},
@@ -273,24 +264,6 @@ export default {
     this.getParamData();
   },
   methods: {
-    closeModal() {
-      this.isSelectSupplier = false;
-    },
-    setCompanyList(record) {
-      console.log("record=", record[0]);
-      this.supplierData = record[0]
-      this.isNotEnter = false;
-      // this.enterValue.push(this.record[0].Id);
-      if (record[0].Type == "ORG") {
-        this.enterid = "";
-        this.orgId = record[0].Id;
-      } else {
-        this.orgId = "";
-        this.enterid = record[0].Id;
-      }
-      this.getPermissionUser();
-      this.getAppMdules();
-    },
     expandHandle() {
       console.log(this.$refs.enterTree);
       this.expandAll = !this.expandAll;
@@ -311,14 +284,10 @@ export default {
       //机构类型获取
       getEnterOrgList().then((res) => {
         if (res.data.success) {
-          console.log("机构类型======", res.data);
           this.enterTypeData = res.data.data;
           this.defaultEnterTypeId = res.data.data[0].TypeId;
           this.defaultEnterType = res.data.data[0].Type;
-          this.isShowSupplier = res.data.data[0].TypeName == "供应商机构"
-          if (res.data.data[0].TypeName !== "供应商机构") {
-            this.getEnterTree();
-          }
+          this.getEnterTree();
         }
       });
       let params = {
@@ -369,12 +338,10 @@ export default {
       let params = {
         type: this.defaultEnterType,
         typeid: this.defaultEnterTypeId,
-        pageindex: 1,
-        pagesize: 50,
       };
       getEnterOrgTree(params).then((res) => {
         if (res.data.success) {
-          this.enterTreeData = res.data.data.list;
+          this.enterTreeData = res.data.data;
           //没有机构
           if (this.enterTreeData.length == 0) {
             this.userTreeData = [];
@@ -519,7 +486,6 @@ export default {
     },
     //菜单选择===
     appTreeClick(e) {
-      ` `;
       this.moduleid = e[0];
       this.getPermissionList();
     },
@@ -532,32 +498,7 @@ export default {
       this.appTreeData = [];
       this.treeJ = 0;
       this.expandedKeys = [];
-      this.supplierData = []
-      this.isShowSupplier = data.TypeName == "供应商机构"
-      if (data.TypeName !== "供应商机构") {
-        this.getEnterTree();
-      }
-    },
-    onLoadData(treeNode) {
-      console.log("treeNode===", treeNode);
-      // const _this = this;
-      // return new Promise((resolve) => {
-      //   if (Array.isArray(treeNode.dataRef.children) && treeNode.dataRef.children.length) {
-      //     console.log("treeNode.dataRef.children", treeNode.dataRef.children);
-      //     resolve();
-      //     return;
-      //   }
-      //   //如果没有值，根据当前节点id获取子节点并挂在树节点中，添加到对应父节点的children中
-      //   publicapi
-      //     .constructionQueryOrg(treeNode.dataRef.id)
-      //     .then((res) => {
-      //       treeNode.dataRef.children = res;
-      //       _this.orgTree = [..._this.orgTree];
-      //       console.log("treeNode.dataRef.children", treeNode.dataRef.children);
-      //     })
-      //     .catch();
-      //   resolve();
-      // });
+      this.getEnterTree();
     },
     //机构类型选择
     addEnterTypeSelect(e) {
@@ -701,6 +642,7 @@ export default {
       });
     },
   },
+  components: {},
 };
 </script>
 

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 08:52:31
- * @LastEditTime: 2022-10-21 15:06:38
+ * @LastEditTime: 2022-11-02 14:18:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/layouts/header/AdminHeader.vue
@@ -25,7 +25,7 @@
         <i-menu class="head-menu" :theme="headerTheme" mode="horizontal" :options="menuData" @select="onSelect" />
       </div>
       <div :class="['admin-header-right', headerTheme]">
-        <!-- <HeaderCompany/> -->
+        <HeaderCompany/>
         <div class="header-item" @click="clickFullscreen"><a-icon :type="fullScreenIcon" /></div>
         <header-help class="header-item" />
         <header-avatar class="header-item" />
@@ -37,14 +37,14 @@
 <script>
 import HeaderHelp from "./HeaderHelp.vue";
 import HeaderAvatar from "./HeaderAvatar";
-// import HeaderCompany from './HeaderCompany.vue'
+import HeaderCompany from './HeaderCompany.vue'
 import IMenu from "@/components/menu/menu";
 import screenfull from "screenfull";
 import { mapState, mapMutations } from "vuex";
 
 export default {
   name: "AdminHeader",
-  components: { IMenu, HeaderAvatar, HeaderHelp },
+  components: { IMenu, HeaderAvatar, HeaderHelp,HeaderCompany},
   props: ["collapsed", "menuData", "breadcrumb"],
   data() {
     return {

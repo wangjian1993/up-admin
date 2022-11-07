@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-10-20 14:18:21
+ * @LastEditTime: 2022-11-04 08:45:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/shipment/inform.vue
@@ -143,7 +143,7 @@
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
-          :rowKey="(dataSource) => dataSource.PlcId"
+          :rowKey="(dataSource) => dataSource.Id"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -173,26 +173,28 @@
                 <a-icon type="container" />
                 查看
               </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('warn')">
-                <a-icon type="bell" />
-                提醒
+              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
+                <a-icon type="edit" />
+                编辑
               </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('print')">
-                <a-icon type="printer" />
-                打印
-              </a>
+              <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
+                <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+                  <a-icon type="delete" />
+                  删除
+                </a>
+              </a-popconfirm>
             </div>
           </template>
         </a-table>
       </a-card>
-      <consigneeDetail v-if="isDetail" :orderno="orderno" @closeModal="closeModal" />
-      <DeliveryForm v-if="isAddDelivery" :paramsItem="paramsItem"  @closeModal="closeModal"/>
+      <consigneeDetail v-if="isDetail" :orderId="orderId" @closeModal="closeModal" />
+      <DeliveryForm v-if="isAddDelivery" :isEdit="isEdit" :orderId="orderId" :paramsItem="paramsItem"  @closeModal="closeModal" @success="searchBtn"/>
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getClientDelivery } from "@/services/srm.js";
+import { getClientDelivery ,setClientDelivery } from "@/services/srm.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
@@ -221,7 +223,9 @@ export default {
       docno: "",
       tagItem: ["全部", "签收中", "待签收", "已发货", "已到货"],
       paramsList: ["DELIVER_TYPE","DELIVER_MODE","SHIPPING_STATE","DELIVERY_STATE","PROCUREMENT_TYPE"],
-      paramsItem:[]
+      paramsItem:[],
+      orderId:"",
+      isEdit:false,
     };
   },
   updated() {
@@ -286,7 +290,12 @@ export default {
     },
     detail(record) {
       this.isDetail = true;
-      this.orderno = record.DocNo;
+      this.orderId = record.Id;
+    },
+    edit(record){
+      this.isEdit  = true;
+      this.orderId = record.Id;
+      this.isAddDelivery = true;
     },
     searchBtn() {
       this.pagination.current = 1;
@@ -347,6 +356,16 @@ export default {
             this.loading = false;
           });
           // do something
+        }
+      });
+    },
+    onDelete(item) {
+      let params = [];
+      params.push(item.Id);
+      setClientDelivery(params, "delete").then((res) => {
+        if (res.data.success) {
+          this.$message.success("删除成功!");
+          this.searchBtn();
         }
       });
     },

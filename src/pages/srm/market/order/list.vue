@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-16 10:03:21
+ * @LastEditTime: 2022-11-02 11:24:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/order/list.vue
@@ -135,14 +135,14 @@
                 <a-icon type="container" />
                 查看
               </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('warn')">
+              <!-- <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('warn')">
                 <a-icon type="bell" />
                 提醒
               </a>
               <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('print')">
                 <a-icon type="printer" />
                 打印
-              </a>
+              </a> -->
             </div>
           </template>
         </a-table>
@@ -182,7 +182,7 @@ export default {
       listType: "全部",
       isDetail: false,
       docno: "",
-      tagItem: ["全部", "待确认", "退回待确认", "已冻结", "未结案", "待签章"],
+      tagItem: ["全部","已确认", "待确认", "退回待确认", "已冻结", "未结案", "待签章"],
     };
   },
   updated() {

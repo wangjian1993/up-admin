@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-10 16:38:42
- * @LastEditTime: 2022-10-20 09:34:46
+ * @LastEditTime: 2022-11-03 11:30:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/srm.js
@@ -152,6 +152,13 @@ export function getClientOrder(params, action) {
         }
     });
 }
+export function setClientOrder(params, action) {
+    return request(`${UP_SRM}/clientpurchase/${action}`, METHOD.POST, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
 
 export function getClientChange(params, action) {
     return request(`${UP_SRM}/clientpurchasechange/${action}`, METHOD.GET, params, {
@@ -164,6 +171,13 @@ export function getClientChange(params, action) {
 //送货单通知
 export function getClientDelivery(params, action) {
     return request(`${UP_SRM}/clientdelivery/${action}`, METHOD.GET, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
+export function setClientDelivery(params, action) {
+    return request(`${UP_SRM}/clientdelivery/${action}`, METHOD.POST, params, {
         headers: {
             Enterpriseld: Enterpriseld,
         }

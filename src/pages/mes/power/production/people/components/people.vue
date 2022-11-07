@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 15:04:20
- * @LastEditTime: 2022-10-19 15:23:12
+ * @LastEditTime: 2022-10-28 16:48:24
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/production/people/components/people.vue

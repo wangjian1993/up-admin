@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-10-20 10:21:31
+ * @LastEditTime: 2022-11-04 10:50:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/shipment/data/detail.js
@@ -22,8 +22,8 @@ export const columns = [
     },
     {
         title: "送货通知单",
-        dataIndex: "PurchaseOrderNo",
-        scopedSlots: { customRender: "PurchaseOrderNo" },
+        dataIndex: "OrderNo",
+        scopedSlots: { customRender: "OrderNo" },
         align: "center",
     },
     {

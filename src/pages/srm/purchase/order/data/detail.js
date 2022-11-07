@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-11 13:55:08
- * @LastEditTime: 2022-08-11 15:07:17
+ * @LastEditTime: 2022-11-02 09:01:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/order/data/detail.js
