@@ -21,7 +21,7 @@
           </a-descriptions-item>
         </a-descriptions>
         <a-card title="收货明细" class="card" :bordered="false" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px' }">
-          <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :scroll="{ y: auto, x: true }" :rowKey="(list) => list.ItemCode" bordered>
+          <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :scroll="{  x: true }" :rowKey="(list) => list.ItemCode" bordered>
             <template slot="footer">
               <a-table ref="total-table" class="total-table" :columns="columnKeys" :dataSource="totalData" :showHeader="false" :pagination="false" size="small" />
             </template>

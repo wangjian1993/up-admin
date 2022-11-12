@@ -11,7 +11,7 @@
                 </a-select>
               </a-form-item>
             </a-col>
-            <!-- <a-col :md="6" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-select v-decorator="['workshopid']" style="width: 200px" placeholder="请选择生产车间" @change="workshopChange">
                   <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
@@ -24,15 +24,14 @@
                   <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
                 </a-select>
               </a-form-item>
-            </a-col> -->
-            <!-- <a-col :md="6" :sm="24">
-              <a-form-item label="PMC" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input placeholder="请输入PMC" disabled allowClear style="width: 150px" v-decorator="['pmc']" />
-                <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input placeholder="请输入品号" allowClear style="width: 150px" v-decorator="['procode']" />
               </a-form-item>
-            </a-col> -->
-            <!-- </a-row>
-          <a-row> -->
+            </a-col>
+          </a-row>
+          <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="工单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入生产批号" v-decorator="['mocode']" />
@@ -40,14 +39,14 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="业务单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['salesno']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['orderno']" />
               </a-form-item>
             </a-col>
-            <!-- <a-col :md="6" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="生产日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
               </a-form-item>
-            </a-col> -->
+            </a-col>
           </a-row>
         </div>
         <span style="float: right; margin-top: 3px;">
@@ -58,28 +57,36 @@
       <div class="operator">
         <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
       </div>
-      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2800 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.ProcessId + '_' + index" bordered>
+      <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: 2000 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.ProcessId + '_' + index" bordered>
         <template slot="index" slot-scope="text, record, index">
           <div>
             <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
           </div>
         </template>
+        <template slot="action" slot-scope="text, record">
+          <div>
+            <a style="margin-right: 8px" @click="detail(record)">
+              <a-icon type="container" />
+              投料明细
+            </a>
+          </div>
+        </template>
       </a-table>
-      <user-list v-if="isUserList" @closeModal="closeUserModal" @okModal="okUserModal"></user-list>
     </a-spin>
+    <ListDetail v-if="isDetail" :detailInfo="detailInfo" @closeModal="closeModal" />
   </div>
 </template>
 
 <script>
-import { getPowerPlant, getReleases } from "@/services/mes.js";
+import { getPowerPlant, getQrCodeList } from "@/services/mes.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { splitData } from "@/utils/util.js";
-import UserList from "@/components/app-user/UserList";
 import { columns } from "./list.data";
 import { PublicVar } from "@/mixins/publicVar.js";
+import ListDetail from "./listDetail.vue";
 export default {
-  components: { UserList },
   mixins: [PublicVar],
+  components: { ListDetail },
   data() {
     return {
       advanced: true,
@@ -99,20 +106,22 @@ export default {
       lineList: [],
       workshopId: "",
       editData: [],
-      isEdit: false,
+      isDetail: false,
       scrollY: "",
+      detailInfo: [],
     };
   },
   created() {
     this.$nextTick(() => {
       console.log("啊哈哈哈哈====", document.getElementsByClassName("ant-table-thead"));
-      let tHeader = document.getElementsByClassName("ant-table-thead")[4];
+      let tHeader = document.getElementsByClassName("ant-table-thead")[1];
       console.log("啊哈哈哈哈====", tHeader.getBoundingClientRect());
       let tHeaderBottom = tHeader.getBoundingClientRect().bottom;
       console.log("tHeaderBottom---", tHeaderBottom);
       let height = `calc(100vh - ${tHeaderBottom + 70}px)`;
       // let table = document.getElementsByClassName('ant-table')[5];
       // table.style.minHeight = height;
+      console.log("height==",height);
       this.scrollY = height;
     });
     this.searchBtn();
@@ -129,33 +138,23 @@ export default {
     //pmc选择
     setTableHeigh() {
       console.log("啊哈哈哈哈====", document.getElementsByClassName("ant-table-thead"));
-      let tHeader = document.getElementsByClassName("ant-table-thead")[4];
+      let tHeader = document.getElementsByClassName("ant-table-thead")[1];
       console.log("啊哈哈哈哈====", tHeader.getBoundingClientRect());
       let tHeaderBottom = tHeader.getBoundingClientRect().bottom;
       console.log("tHeaderBottom---", tHeaderBottom);
-      let height = `calc(100vh - ${tHeaderBottom + 70}px)`;
+      let height = `calc(100vh - ${tHeaderBottom + 90}px)`;
       // let table = document.getElementsByClassName('ant-table')[5];
       // table.style.minHeight = height;
+      console.log("height====");
       this.scrollY = height;
     },
-    userSearch() {
-      this.isUserList = true;
-    },
-    closeEditModal() {
-      this.isEdit = false;
-    },
-    closeUserModal() {
-      this.isUserList = false;
-    },
-    okUserModal(item) {
-      this.isUserList = false;
-      this.searchForm.setFieldsValue({
-        pmc: item.Name,
-      });
-    },
     //关闭弹出框
-    onClose() {
-      this.isDrawer = false;
+    closeModal() {
+      this.isDetail = false;
+    },
+    detail(record) {
+      this.isDetail = true;
+      this.detailInfo = record;
     },
     //重置搜索
     reset() {
@@ -215,6 +214,11 @@ export default {
         }
       });
     },
+    //多选
+    onSelectChange(selectedRowKeys) {
+      this.selectedRowKeys = selectedRowKeys;
+    },
+    //获取列表
     //分页
     handleTableChange(pagination) {
       this.pagination.current = pagination.current;
@@ -223,6 +227,7 @@ export default {
         this.search();
         return;
       }
+      this.getListAll();
     },
     searchBtn() {
       this.pagination.current = 1;
@@ -232,19 +237,24 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
-          // if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
-          //   const rangeValue = values["range-time-picker"];
-          //   var startdate = rangeValue[0].format("YYYY-MM-DD");
-          //   var enddate = rangeValue[1].format("YYYY-MM-DD");
-          // }
+          if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
+            const rangeValue = values["range-time-picker"];
+            var startdate = rangeValue[0].format("YYYY-MM-DD");
+            var enddate = rangeValue[1].format("YYYY-MM-DD");
+          }
           let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             plantid: values.plantid,
-            salesno: values.salesno,
+            workshopid: values.workshopid,
+            lineid: values.lineid,
+            procode: values.procode,
             mocode: values.mocode,
+            orderno: values.orderno,
+            startdate: startdate,
+            enddate: enddate,
           };
-          getReleases(params, "getall").then((res) => {
+          getQrCodeList(params, "getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -264,7 +274,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
       };
-      getReleases(params, "getall").then((res) => {
+      getQrCodeList(params, "getall").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {
@@ -315,6 +325,6 @@ export default {
 //   color: #000;
 // }
 /deep/.ant-table {
-  min-height: 65vh;
+  min-height: 63vh;
 }
 </style>

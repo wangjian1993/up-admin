@@ -1,32 +1,27 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-11-11 10:40:33
+ * @LastEditTime: 2022-11-11 10:38:28
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/receiving/components/consigneeDetail.vue
+ * @FilePath: /up-admin/src/pages/srm/purchase/receiving/components/deliveryDetail.vue
 -->
 <template>
   <div>
-    <a-drawer :visible="visible" :title="tabType +'详情'" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :bodyStyle="{ padding: '5px 10px' }">
+    <a-drawer :visible="visible" title="送货通知详情" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :bodyStyle="{ padding: '5px 10px' }">
       <a-spin tip="loading..." :spinning="loading">
-        <a-descriptions :column="5" bordered size="small" v-if="tabType == '采购收货单'">
-          <a-descriptions-item v-for="(item, index) in info1" :key="index" :label="item.title">
-            {{ orderList[item.dataIndex] }}
-          </a-descriptions-item>
-        </a-descriptions>
-        <a-descriptions :column="5" bordered size="small" v-else>
+        <a-descriptions :column="5" bordered size="small">
           <a-descriptions-item v-for="(item, index) in info4" :key="index" :label="item.title">
             {{ orderList[item.dataIndex] }}
           </a-descriptions-item>
         </a-descriptions>
-        <a-descriptions style="margin:10px 0" :column="5" title="交易信息" bordered size="small">
-          <a-descriptions-item v-for="(item, index) in info2" :key="index" :label="item.title">
+        <a-descriptions style="margin:10px 0" :column="5" title="物流信息" bordered size="small">
+          <a-descriptions-item v-for="(item, index) in info3" :key="index" :label="item.title">
             {{ orderList[item.dataIndex] }}
           </a-descriptions-item>
         </a-descriptions>
         <a-card title="收货明细" class="card" :bordered="false" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px' }">
-          <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :scroll="{  x: true }" :rowKey="(list,index) => list.ItemCode + '_'+index" bordered>
+          <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :scroll="{ y: true, x: true }" :rowKey="(list) => list.Id" bordered>
             <template slot="footer">
               <a-table ref="total-table" class="total-table" :columns="columnKeys" :dataSource="totalData" :showHeader="false" :pagination="false" size="small" />
             </template>
@@ -35,41 +30,46 @@
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
               </div>
             </template>
-            <template slot="DrawingNo" slot-scope="text, record">
-              <p>{{ record.DrawingNo || "" }}</p>
-              <p>{{ record.OrderDrawingNo || "" }}</p>
+            <template slot="purchasedetailidTitle">
+              <p>交货日期</p>
+              <p>排定日期</p>
             </template>
-            <template slot="QtyTtile">
-              <p>收货数量</p>
-              <p>收货单位</p>
+            <template slot="purchasedetailid" slot-scope="text, record">
+              <p>{{ record.PurchaseDatetime }}</p>
+              <p>{{ record.deliverydatetime }}</p>
             </template>
-            <template slot="Qty" slot-scope="text, record">
+            <template slot="ReceiptWarehouseTitle">
+              <p>交货数量</p>
+              <p>排定数量</p>
+            </template>
+            <template slot="deliveryqty" slot-scope="text, record">
+              <p>{{ record.Qty }}</p>
+              <p>{{ record.PlanDatetime }}</p>
+            </template>
+            <template slot="deliveryqtyTitle">
+              <p>送货数量</p>
+              <p>送货单位</p>
+            </template>
+            <template slot="deliveryqty" slot-scope="text, record">
               <p>{{ record.Qty }}</p>
               <p>{{ record.Unit }}</p>
             </template>
-            <template slot="PriceQtyTitle">
+            <template slot="priceqtyTitle">
               <p>计价数量</p>
               <p>计价单位</p>
             </template>
-            <template slot="PriceQty" slot-scope="text, record">
+            <template slot="priceqty" slot-scope="text, record">
               <p>{{ record.PriceQty }}</p>
               <p>{{ record.PriceUnit }}</p>
             </template>
-            <template slot="PriceTitle">
-              <p>单位</p>
-              <p>总金额</p>
-            </template>
-            <template slot="Price" slot-scope="text, record">
-              <p>{{ record.Price }}</p>
-              <p>{{ record.Rate }}</p>
-            </template>
-            <template slot="InStoreQtyTtile">
+            <template slot="receivingTitle">
+              <p>收货数量</p>
               <p>入库数量</p>
               <p>退货数量</p>
             </template>
-            <template slot="InStoreQty" slot-scope="text, record">
-              <p>{{ record.InStoreQty }}</p>
-              <p>{{ record.ReturnQty }}</p>
+            <template slot="receiving" slot-scope="text, record">
+              <p>{{ record.ReceiptWarehouse }}</p>
+              <p>{{ record.PlanDatetime }}</p>
             </template>
           </a-table>
         </a-card>
@@ -105,22 +105,21 @@
 </template>
 
 <script>
-import { info1, info4, info2, columns, columnKeys } from "../data/consigneeDetail";
-import { getArrival } from "@/services/srm.js";
+import { info4, info3, columns, columnKeys } from "../data/deliveryDetail";
+import { getDelivery } from "@/services/srm.js";
 import { splitData } from "@/utils/util.js";
 export default {
-  props: ["orderno", "tabType"],
+  props: ["docno"],
   data() {
     return {
       size: "small",
-      info1,
-      info2,
+      info3,
       info4,
       columns,
       columnKeys,
       totalData: [
         {
-          totalQty: "收货数量合计:0",
+          totalQty: "送货总数:0",
           priceQty: "计价数量合计:0",
         },
       ],
@@ -163,25 +162,23 @@ export default {
     getDetailList() {
       this.loading = true;
       let params = {
-        orderno: this.orderno,
-        tag: this.tabType,
+        id: this.docno,
       };
-      getArrival(params, "single").then((res) => {
+      getDelivery(params, "single").then((res) => {
         if (res.data.success) {
           this.orderList = res.data.data.order;
           this.detailList = res.data.data.detail;
-          let qty = 0;
           let price = 0;
           this.detailList.forEach((item) => {
-            qty += item.Qty;
             price += item.PriceQty;
           });
           this.totalData = [
             {
-              totalQty: "收货数量合计:" + qty,
+              totalQty: "送货总数:" + this.orderList.OrderCount,
               priceQty: "计价数量合计:" + price,
             },
           ];
+          console.log(this.totalData)
         }
         this.loading = false;
       });

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-11 13:55:08
- * @LastEditTime: 2022-11-02 10:07:24
+ * @LastEditTime: 2022-11-09 09:32:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/order/data/detail.js
@@ -71,8 +71,6 @@ export const columns = [
         dataIndex: "product_info",  //产品
         scopedSlots: { customRender: "product_info" },
         slots: { title: "productTitle" },
-        align: "left",
-        width: 110,
     },
     {
         dataIndex: "PurchaseWarehouse",   //收货仓位

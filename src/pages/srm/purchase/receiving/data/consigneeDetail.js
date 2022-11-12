@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-11 13:55:08
- * @LastEditTime: 2022-08-30 14:07:50
+ * @LastEditTime: 2022-11-11 10:06:51
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/data/consigneeDetail.js
@@ -12,16 +12,16 @@ export const info1 = [{
     dataIndex: "SupplierFullName"
 }, {
     title: '收货单号',
-    dataIndex: "ArrivalOrderNo"
+    dataIndex: "DocNo"
 }, {
     title: '送货通知单号',
-    dataIndex: "PurchaseOrderNo"
+    dataIndex: "OrderNo"
 }, {
     title: '收货状态',
-    dataIndex: "DifferenceReason"
+    dataIndex: "Status"
 }, {
     title: '收货日期',
-    dataIndex: "ReceiptStatus"
+    dataIndex: "DocDate"
 }, {
     title: '送货日期',
     dataIndex: "DocDate"
@@ -32,7 +32,7 @@ export const info4 = [{
     dataIndex: "SupplierFullName"
 }, {
     title: '入库单号',
-    dataIndex: "ArrivalOrderNo"
+    dataIndex: "DocNo"
 }, {
     title: '送货通知单号',
     dataIndex: "PurchaseOrderNo"
@@ -41,7 +41,7 @@ export const info4 = [{
     dataIndex: "DifferenceReason"
 }, {
     title: '入库日期',
-    dataIndex: "ReceiptStatus"
+    dataIndex: "DocDate"
 }, {
     title: '送货日期',
     dataIndex: "DocDate"

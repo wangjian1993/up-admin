@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-08-30 14:01:49
+ * @LastEditTime: 2022-11-11 10:04:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/data/consignee.js
@@ -39,12 +39,6 @@ export const columns = [
         align: "center",
     },
     {
-        title: "收货状态",
-        dataIndex: "ChangeDatetime",
-        scopedSlots: { customRender: "ChangeDatetime" },
-        align: "center",
-    },
-    {
         title: "操作",
         scopedSlots: { customRender: "action" },
         align: "center",
@@ -73,12 +67,6 @@ export const columns1 = [
         title: "入库日期",
         dataIndex: "DocDate",
         scopedSlots: { customRender: "DocDate" },
-        align: "center",
-    },
-    {
-        title: "入库状态",
-        dataIndex: "ChangeDatetime",
-        scopedSlots: { customRender: "ChangeDatetime" },
         align: "center",
     },
     {

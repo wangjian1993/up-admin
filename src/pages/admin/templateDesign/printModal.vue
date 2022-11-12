@@ -45,7 +45,7 @@
     </a-modal>
     <a-drawer :visible="visible" placement="right" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" :closable="false" centered :bodyStyle="{ padding: '5px 10px' }">
       <div style="display:flex;justify-content: flex-end">
-        <a-button style="margin-right:10px;" type="primary" @click="setJson">设置json</a-button>
+        <!-- <a-button style="margin-right:10px;" type="primary" @click="setJson">设置json</a-button> -->
         <a-button type="" @click="close">关闭</a-button>
       </div>
       <!-- <button @click="setJson">设置JSON</button> -->

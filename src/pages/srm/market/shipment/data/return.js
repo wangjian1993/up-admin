@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-08-12 14:10:09
+ * @LastEditTime: 2022-11-11 11:01:41
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/receiving/data/return.js
+ * @FilePath: /up-admin/src/pages/srm/market/shipment/data/return.js
  */
 // import { splitData } from "@/utils/util.js";
 export const columns = [
@@ -15,9 +15,9 @@ export const columns = [
         width: 50,
     },
     {
-        title: "供应商",
-        dataIndex: "SupplierFullName",
-        scopedSlots: { customRender: "SupplierFullName" },
+        title: "客户",
+        dataIndex: "PurchaseEnterprise",
+        scopedSlots: { customRender: "PurchaseEnterprise" },
         align: "center",
     },
     {

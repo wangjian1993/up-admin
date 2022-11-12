@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2022-10-28 09:35:18
+ * @LastEditTime: 2022-11-10 17:47:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/components/batching.vue
@@ -21,7 +21,15 @@
                 </template>
               </a-table></a-col
             >
-            <a-col :span="12"> <a-table :columns="columns1" :data-source="releaseList" :size="size" :pagination="false" :rowKey="(list) => list.ProPlanId" bordered> </a-table></a-col>
+            <a-col :span="12">
+              <a-table :columns="columns1" :data-source="releaseList" :size="size" :pagination="false" :rowKey="(list) => list.ProPlanId" bordered>
+                <template slot="index" slot-scope="text, record, index">
+                  <div>
+                    <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
+                  </div>
+                </template></a-table
+              ></a-col
+            >
           </a-row>
         </a-card>
       </div>
@@ -53,8 +61,8 @@ const columns = [
   },
   {
     title: "所需用量",
-    dataIndex: "StandardQty",
-    scopedSlots: { customRender: "StandardQty" },
+    dataIndex: "ReleaseQty",
+    scopedSlots: { customRender: "ReleaseQty" },
     align: "center",
     width: 120,
   },
@@ -89,14 +97,14 @@ const columns1 = [
   },
   {
     title: "所需用量",
-    dataIndex: "StartedQty",
+    dataIndex: "ReleaseQty",
     scopedSlots: { customRender: "StartedQty" },
     align: "center",
     width: 80,
   },
   {
     title: "投料数量",
-    dataIndex: "ReleaseQty",
+    dataIndex: "ReleasedQty",
     scopedSlots: { customRender: "ReleaseQty" },
     align: "center",
     width: 80,
@@ -160,7 +168,7 @@ export default {
         on: {
           click: () => {
             console.log("点击了我", record);
-            let num = record.StandardQty - record.ReleasedQty;
+            let num = record.ReleaseQty - record.ReleasedQty;
             if (num == 0) {
               console.log("num===", num);
               this.$message.warning("不需要再投料了");
@@ -187,8 +195,8 @@ export default {
       });
     },
     tableRowClassName(record) {
-      let num = record.StandardQty - record.ReleasedQty;
-      if (num == 0) {
+      // let num = record.ReleaseQty < record.ReleasedQty;
+      if (record.ReleaseQty >= record.ReleasedQty) {
         return "blue";
       }
     },

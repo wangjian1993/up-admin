@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-09-15 10:33:04
+ * @LastEditTime: 2022-11-11 10:11:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/consignee.vue
@@ -225,6 +225,7 @@ export default {
       this.isDetail = true;
       this.orderno = record.DocNo;
       this.tabType = this.listType;
+      console.log(" this.tabType===", this.tabType)
     },
     searchBtn(e) {
       this.columnsData = e.target.value == "采购入库单" ? columns1 : columns;

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-29 13:58:17
- * @LastEditTime: 2022-10-28 10:56:03
+ * @LastEditTime: 2022-11-12 14:08:26
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/components/data.js
@@ -198,34 +198,6 @@ export const columns2 = [
         width: 50,
     },
     {
-        title: "扫描条码",
-        dataIndex: "ScanCode",
-        scopedSlots: { customRender: "ScanCode" },
-        align: "center",
-        width: 120
-    },
-    {
-        title: "生产工厂",
-        dataIndex: "PlantName",
-        scopedSlots: { customRender: "PlantName" },
-        align: "center",
-        width: 100,
-    },
-    {
-        title: "返工车间",
-        dataIndex: "ReworkWorkshopName",
-        scopedSlots: { customRender: "WorkshopName" },
-        align: "center",
-        width: 100
-    },
-    {
-        title: "返工产线",
-        dataIndex: "ReworkLineName",
-        scopedSlots: { customRender: "LineName" },
-        align: "center",
-        width: 80
-    },
-    {
         title: "工单号",
         dataIndex: "MoCode",
         scopedSlots: { customRender: "MoCode" },
@@ -233,9 +205,9 @@ export const columns2 = [
         width: 120
     },
     {
-        title: "业务订单号",
-        dataIndex: "SalesOrderNo",
-        scopedSlots: { customRender: "SalesOrderNo" },
+        title: "追溯码",
+        dataIndex: "QrCode",
+        scopedSlots: { customRender: "QrCode" },
         align: "center",
         width: 100
     },
@@ -254,62 +226,103 @@ export const columns2 = [
         width: 250
     },
     {
-        title: "计划生产日期",
-        dataIndex: "PlanDate",
-        scopedSlots: { customRender: "PlanDate" },
-        align: "center",
-        width: 120,
-        customRender: (text) => {
-            return splitData(text);
-        }
-    },
-    {
-        title: "返工数量",
-        dataIndex: "ReworkQty",
-        scopedSlots: { customRender: "ReworkQty" },
+        title: "完工时间",
+        dataIndex: "DatetimeStarted",
+        scopedSlots: { customRender: "DatetimeStarted" },
         align: "center",
         width: 120
     },
     {
-        title: "不良数量",
-        dataIndex: "ScrapedQty",
-        scopedSlots: { customRender: "ScrapedQty" },
+        title: "打印时间",
+        dataIndex: "DateTimePrint",
+        scopedSlots: { customRender: "DateTimePrint" },
         align: "center",
         width: 120
     },
     {
-        title: "计划数量",
-        dataIndex: "PlanQty",
-        scopedSlots: { customRender: "PlanQty" },
+        title: "打印人",
+        dataIndex: "UserReprint",
+        scopedSlots: { customRender: "UserReprint" },
         align: "center",
         width: 120
     },
     {
-        title: "填单人",
-        dataIndex: "UserName",
-        scopedSlots: { customRender: "UserName" },
+        title: "打印次数",
+        dataIndex: "PrintCount",
+        scopedSlots: { customRender: "PrintCount" },
+        align: "center",
+        width: 120
+    }
+];
+
+export const columns3 = [
+    {
+        title: "序号",
+        scopedSlots: { customRender: "index" },
+        align: "center",
+        width: 50,
+    },
+    {
+        title: "追溯码",
+        dataIndex: "QrCode",
+        scopedSlots: { customRender: "QrCode" },
         align: "center",
         width: 120
     },
     {
-        title: "返工提交时间",
-        dataIndex: "DateCreated",
-        scopedSlots: { customRender: "DateCreated" },
+        title: "品号",
+        dataIndex: "MitemCode",
+        scopedSlots: { customRender: "MitemCode" },
         align: "center",
         width: 120
     },
     {
-        title: "状态",
-        dataIndex: "ProcessStatusName",
-        scopedSlots: { customRender: "ProcessStatusName" },
+        title: "投料料号",
+        dataIndex: "MitemName",
+        scopedSlots: { customRender: "ProCode" },
         align: "center",
         width: 120
     },
     {
-        title: "操作",
-        scopedSlots: { customRender: "action" },
+        title: "投料料名",
+        dataIndex: "MitemName",
+        scopedSlots: { customRender: "MitemName" },
         align: "center",
-        fixed: "right",
-        width: 100,
+        width: 250
+    },
+    {
+        title: "投料数量",
+        dataIndex: "ReleasedQty",
+        scopedSlots: { customRender: "ReleasedQty" },
+        align: "center",
+        width: 80
+    },
+    {
+        title: "采购单号",
+        dataIndex: "MoCode",
+        scopedSlots: { customRender: "MoCode" },
+        align: "center",
+        width: 100
+    },
+    {
+        title: "投料工序",
+        dataIndex: "ProcessName",
+        scopedSlots: { customRender: "ProcessName" },
+        align: "center",
+        width: 100
+    },
+    {
+        title: "投料时间",
+        dataIndex: "DateTimeReleased",
+        scopedSlots: { customRender: "DateTimeReleased" },
+        align: "center",
+        width: 120
+    },
+    {
+        title: "投料人",
+        dataIndex: "UserReleased",
+        scopedSlots: { customRender: "UserReleased" },
+        align: "center",
+        width: 120
     }
 ];

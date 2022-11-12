@@ -1,14 +1,15 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:56:46
- * @LastEditTime: 2022-10-28 10:57:12
+ * @LastEditTime: 2022-11-12 14:33:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/components/WorkTable.vue
 -->
 <template>
   <div>
-    <a-table :columns="columnsData" :data-source="orderList" size="small" :scroll="{ y: 500, x: 1100 }" :pagination="false" bordered>
+    <a-button v-if="tableType == 3" type="primary" icon="export" :disabled="orderList.length == 0" @click="exportExcel">导出</a-button>
+    <a-table :columns="columnsData" :data-source="orderList" size="small" :scroll="{ y: 700, x: 1100 }" :pagination="false" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -35,8 +36,9 @@
 </template>
 
 <script>
-import { columns, columns1, columns2 } from "./data.js";
+import { columns, columns1, columns2, columns3 } from "./data.js";
 import { PublicVar } from "@/mixins/publicVar.js";
+import ExportExcel from "@/utils/ExportExcelJS";
 export default {
   mixins: [PublicVar],
   props: ["orderList", "tableType"],
@@ -48,8 +50,10 @@ export default {
   created() {
     if (this.tableType == 1) {
       this.columnsData = columns1;
-    } else if (this.tableType == 3) {
+    } else if (this.tableType == 2) {
       this.columnsData = columns2;
+    } else if (this.tableType == 3) {
+      this.columnsData = columns3;
     } else {
       this.columnsData = columns;
     }
@@ -59,9 +63,38 @@ export default {
       console.log("更新====");
       this.$emit("listUpdate", item);
     },
+    exportExcel() {
+      const dataSource = this.orderList.map((item) => {
+        Object.keys(item).forEach((key) => {
+          // 后端传null node写入会有问题
+          if (item[key] === null) {
+            item[key] = "";
+          }
+          if (Array.isArray(item[key])) {
+            item[key] = item[key].join(",");
+          }
+        });
+        return item;
+      });
+      const header = [];
+      this.columnsData.map((item) => {
+        if (item.dataIndex) {
+          header.push({ key: item.dataIndex, title: item.title });
+        }
+      });
+      var timestamp = Date.parse(new Date());
+      try {
+        ExportExcel(header, dataSource, `产品追溯码_${timestamp}.xlsx`);
+        this.$message.success("导出数据成功!");
+      } catch (error) {
+        console.log(error);
+        this.$message.error("导出数据失败");
+      }
+    },
   },
   components: {},
 };
 </script>
 
-<style></style>
+<style>
+</style>

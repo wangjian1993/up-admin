@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-10-28 14:45:38
+ * @LastEditTime: 2022-11-09 17:59:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/StartWork.vue
@@ -18,7 +18,7 @@
         <a-descriptions-item label="填单人/填单时间"> {{ userLineData.UserName }} / {{ splitData(userLineData.NowDate) }} </a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名" :span="2">{{ orderInfo.ProName }}</a-descriptions-item>
-        <a-descriptions-item label="开工时间">{{ splitData(orderInfo.DateCreated) }}</a-descriptions-item>
+        <a-descriptions-item label="开工时间">{{ orderInfo.DateCreated }}</a-descriptions-item>
         <a-descriptions-item label="工单数量">{{ orderInfo.MoQty }}</a-descriptions-item>
         <a-descriptions-item label="开工数量"><a-input-number @blur="setFocus()" :min="0" v-model="startWorkQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item label="备注"><a-input @blur="setFocus" v-model="remark" style="width:200px"/></a-descriptions-item>

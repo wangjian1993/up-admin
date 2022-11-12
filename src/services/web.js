@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2022-10-29 08:54:46
+ * @LastEditTime: 2022-11-08 16:46:13
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -9,7 +9,8 @@
 import {
     UP_WEB,
     UP_REPORT,
-    UP_WMS
+    UP_WMS,
+    UP_TL
 } from '@/services/api'
 import {
     request,
@@ -303,4 +304,9 @@ export function getInstrument(params, action) {
 }
 export function setInstrument(params, action) {
     return request(`${UP_WEB}/instrument/${action}`, METHOD.POST, params);
+}
+
+//获取打印模板
+export function getTemplate(params) {
+    return request(`${UP_TL}/print/getprinttemp`, METHOD.GET, params);
 }

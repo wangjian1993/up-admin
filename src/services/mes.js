@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-29 16:34:37
- * @LastEditTime: 2022-10-28 17:16:46
+ * @LastEditTime: 2022-11-09 15:00:14
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/mes.js
@@ -68,4 +68,12 @@ export function getProcessAging(params, action) {
 }
 export function getProcessAgingList(params, action) {
     return request(`${UP_WEB}/powersupply/process/ageing/${action}`, METHOD.GET, params);
+}
+
+export function getQrCode(params, action) {
+    return request(`${UP_WEB}/powersupply/process/qr/${action}`, METHOD.POST, params);
+}
+
+export function getQrCodeList(params, action) {
+    return request(`${UP_WEB}/powersupply/process/qr/${action}`, METHOD.GET, params);
 }

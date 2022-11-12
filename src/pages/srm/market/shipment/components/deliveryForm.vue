@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-11-04 10:13:14
+ * @LastEditTime: 2022-11-11 11:25:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/shipment/components/deliveryForm.vue
@@ -77,37 +77,37 @@
               <a-table ref="total-table" class="total-table" :columns="columnKeys" :dataSource="totalData" :showHeader="false" :bordered="false" :pagination="false" size="small" />
             </template>
             <template slot="purchasedetailidTitle">
-              <p>交货日期</p>
-              <p>排定日期</p>
-            </template>
-            <template slot="purchasedetailid" slot-scope="text, record">
-              <p>{{ record.PurchaseDatetime }}</p>
-              <p>{{ record.deliverydatetime }}</p>
-            </template>
-            <template slot="ReceiptWarehouseTitle">
-              <p>交货数量</p>
-              <p>排定数量</p>
-            </template>
-            <template slot="deliveryqty" slot-scope="text, record">
-              <p>{{ record.Qty }}</p>
-              <p>{{ record.PlanDatetime }}</p>
-            </template>
-            <template slot="deliveryqtyTitle">
-              <p>送货数量</p>
-              <p>送货单位</p>
-            </template>
-            <template slot="deliveryqty" slot-scope="text, record">
-              <p>{{ record.Qty }}</p>
-              <p>{{ record.Unit }}</p>
-            </template>
-            <template slot="priceqtyTitle">
-              <p>计价数量</p>
-              <p>计价单位</p>
-            </template>
-            <template slot="priceqty" slot-scope="text, record">
-              <p>{{ record.PriceQty }}</p>
-              <p>{{ record.PriceUnit }}</p>
-            </template>
+                <p>交货日期</p>
+                <p>排定日期</p>
+              </template>
+              <template slot="purchasedetailid" slot-scope="text, record">
+                <p>{{ record.DeliveryDatetime }}</p>
+                <p>{{ record.PurchaseDatetime }}</p>
+              </template>
+              <template slot="deliveryqtyTitle">
+                <p>送货数量</p>
+                <p>送货单位</p>
+              </template>
+              <template slot="deliveryqty" slot-scope="text, record">
+                <p>{{ record.DeliveryQty }}</p>
+                <p>{{ record.DeliveryUnit }}</p>
+              </template>
+              <template slot="receiptQtyTitle">
+                <p>交货数量</p>
+                <p>排定单位</p>
+              </template>
+              <template slot="receiptQty" slot-scope="text, record">
+                <p>{{ record.ReceiptQty }}</p>
+                <p>{{ record.PurchaseQty }}</p>
+              </template>
+              <template slot="priceqtyTitle">
+                <p>计价数量</p>
+                <p>计价单位</p>
+              </template>
+              <template slot="priceqty" slot-scope="text, record">
+                <p>{{ record.PriceQty }}</p>
+                <p>{{ record.PriceUnit }}</p>
+              </template>
             <template slot="receivingTitle">
               <p>收货数量</p>
               <p>入库数量</p>

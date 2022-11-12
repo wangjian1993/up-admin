@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 15:04:20
- * @LastEditTime: 2022-11-02 10:20:04
+ * @LastEditTime: 2022-11-09 09:34:09
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/order/components/response.vue
@@ -15,7 +15,7 @@
             <a-input v-model="form.orderno"  disabled="" allowClear placeholder="请输入采购订单" />
           </a-form-model-item>
           <a-form-model-item has-feedback label="序号" prop="sort">
-            <a-input v-model.trim="form.sort" allowClear placeholder="请输入工序编码" />
+            <a-input v-model.trim="form.sort" disabled allowClear placeholder="请输入项次" />
           </a-form-model-item>
           <a-form-model-item has-feedback label="答交日期" prop="changedatetime">
             <a-date-picker   v-model="form.changedatetime" allowClear placeholder="请输入答交日期"/>
@@ -113,7 +113,8 @@ export default {
   },
   created() {
     this.form.orderno = this.orderData.OrderNo;
-    console.log("editData===",this.editData)
+    this.form.sort = this.orderData.Sort;
+    console.log("editData===",this.orderData)
     if (this.isEdit) {
       this.form.orderno = this.editData.OrderNo;
       this.form.sort = this.editData.Sort;

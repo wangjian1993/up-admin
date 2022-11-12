@@ -2,7 +2,7 @@
   <div>
     <a-modal v-model="visible" title="订单列表" @cancel="close" @ok="handleOk" centered width="90%">
       <a-row>
-        <a-col :span="20">
+        <a-col :span="21">
           <div class="search-box">
             <a-form layout="horizontal" :form="searchForm">
               <a-row>
@@ -56,16 +56,24 @@
                 <p>排定日期</p>
               </template>
               <template slot="purchasedetailid" slot-scope="text, record">
+                <p>{{ record.DeliveryDatetime }}</p>
                 <p>{{ record.PurchaseDatetime }}</p>
-                <p>{{ record.deliverydatetime }}</p>
               </template>
-              <template slot="ReceiptWarehouseTitle">
-                <p>交货数量</p>
-                <p>排定数量</p>
+              <template slot="deliveryqtyTitle">
+                <p>送货数量</p>
+                <p>送货单位</p>
               </template>
               <template slot="deliveryqty" slot-scope="text, record">
-                <p>{{ record.Qty }}</p>
-                <p>{{ record.Unit }}</p>
+                <p>{{ record.DeliveryQty }}</p>
+                <p>{{ record.DeliveryUnit }}</p>
+              </template>
+              <template slot="receiptQtyTitle">
+                <p>交货数量</p>
+                <p>排定单位</p>
+              </template>
+              <template slot="receiptQty" slot-scope="text, record">
+                <p>{{ record.ReceiptQty }}</p>
+                <p>{{ record.PurchaseQty }}</p>
               </template>
               <template slot="priceqtyTitle">
                 <p>计价数量</p>
@@ -78,7 +86,7 @@
             </a-table>
           </div>
         </a-col>
-        <a-col :span="4">
+        <a-col :span="3">
           <div>
             <a-tag style="margin:4px 4px" v-for="item in selectedRows" :key="item.Id" closable @close="() => handleClose(item.Id)">
               {{ item.ItemCode }}
@@ -120,8 +128,14 @@ const columns = [
   },
   {
     title: "客户单号(项次)",
-    dataIndex: "OrderNo",
-    scopedSlots: { customRender: "OrderNo" },
+    dataIndex: "OrderNoDesc",
+    scopedSlots: { customRender: "OrderNoDesc" },
+    align: "center",
+  },
+  {
+    title: "退货单号(项次)",
+    dataIndex: "ReturnOrderNoDesc",
+    scopedSlots: { customRender: "ReturnOrderNoDesc" },
     align: "center",
   },
   {
@@ -143,9 +157,9 @@ const columns = [
     align: "center",
   },
   {
-    dataIndex: "ReceiptWarehouse", //送货数量
-    scopedSlots: { customRender: "ReceiptWarehouse" },
-    slots: { title: "ReceiptWarehouseTitle" },
+    dataIndex: "receiptQty", //交货数量
+    scopedSlots: { customRender: "receiptQty" },
+    slots: { title: "receiptQtyTitle" },
     align: "center",
   },
   {
@@ -280,7 +294,7 @@ export default {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             code: this.plantCode,
-            keyword: values.keyword,
+            keyword: values.searcValue,
           };
           let url = this.orderType === 1 ? "getpurchaseorder" : "getreturnorder";
           getClientDelivery(params, url).then((res) => {

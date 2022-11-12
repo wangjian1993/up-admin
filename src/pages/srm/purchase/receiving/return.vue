@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-30 14:32:19
+ * @LastEditTime: 2022-11-11 11:02:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/return.vue
@@ -14,14 +14,11 @@
           <a-row>
              <a-col :span="6">
               <a-radio-group style="margin-top: 5px;" default-value="全部" v-model="listType" button-style="solid" @change="searchBtn">
-                <a-radio-button value="全部">
-                  全部
+                <a-radio-button value="采购验退">
+                  采购验退
                 </a-radio-button>
-                <a-radio-button value="签收中">
-                  签收中
-                </a-radio-button>
-                <a-radio-button value="待签收">
-                  待签收
+                <a-radio-button value="采购仓退">
+                  采购仓退
                 </a-radio-button>
               </a-radio-group></a-col
             >
@@ -126,14 +123,6 @@
                 <a-icon type="container" />
                 查看
               </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('warn')">
-                <a-icon type="bell" />
-                提醒
-              </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('print')">
-                <a-icon type="printer" />
-                打印
-              </a>
             </div>
           </template>
         </a-table>
@@ -165,7 +154,7 @@ export default {
       isExportLod: false,
       selectedRowKeys: [],
       isImport: false,
-      listType: "全部",
+      listType: "采购验退",
       isDetail: false,
       orderno: "",
     };

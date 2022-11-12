@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-08-11 15:46:43
+ * @LastEditTime: 2022-11-11 09:00:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/order/data/orderDetail.js
@@ -59,8 +59,8 @@ export const columns = [
     },
     {
         title: "采购员编码",
-        dataIndex: "DatetimeCreated",
-        scopedSlots: { customRender: "DatetimeCreated" },
+        dataIndex: "PurchaseUserCode",
+        scopedSlots: { customRender: "PurchaseUserCode" },
         align: "center",
     },
     {

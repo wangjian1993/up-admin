@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-11-04 08:45:58
+ * @LastEditTime: 2022-11-11 09:16:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/shipment/inform.vue
@@ -277,6 +277,8 @@ export default {
     },
     addDelivery(){
       this.isAddDelivery = true;
+      this.isEdit  = false;
+      this.orderId = "";
     },
     //多选
     onSelectChange(selectedRowKeys) {

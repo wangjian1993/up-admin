@@ -21,7 +21,7 @@
           </a-descriptions-item>
         </a-descriptions>
         <a-card title="退货明细" class="card" :bordered="false" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px' }">
-          <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :scroll="{ y: auto, x: true }" :rowKey="(list) => list.ItemCode" bordered>
+          <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :scroll="{  x: true }" :rowKey="(list) => list.ItemCode" bordered>
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>

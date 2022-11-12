@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-08-12 14:10:09
+ * @LastEditTime: 2022-11-11 10:43:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/data/return.js
@@ -40,8 +40,8 @@ export const columns = [
     },
     {
         title: "状态",
-        dataIndex: "ChangeDatetime",
-        scopedSlots: { customRender: "ChangeDatetime" },
+        dataIndex: "Status",
+        scopedSlots: { customRender: "Status" },
         align: "center",
     },
     {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2022-10-28 11:00:08
+ * @LastEditTime: 2022-11-10 16:24:30
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/outbound.vue
@@ -29,7 +29,7 @@
         <a-descriptions-item label="开工时间">{{ splitData(orderInfo.DatetimeStart) }}</a-descriptions-item>
         <a-descriptions-item label="已完工/工单数量">{{ orderInfo.FinishedQty }}/{{ orderInfo.MoQty }}</a-descriptions-item>
         <a-descriptions-item label="不良数量">{{ orderInfo.ScrapedQty }}</a-descriptions-item>
-        <a-descriptions-item label="当前工序">{{ orderInfo.ProcessStep }}</a-descriptions-item>
+        <a-descriptions-item label="当前工序">{{ orderInfo.ProcessName }}</a-descriptions-item>
         <a-descriptions-item label="完工数量"><a-input-number @blur="setFocus" :min="0" v-model="receiveQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item label="不良数量"><a-input-number @blur="setFocus" :min="0" v-model="scrapQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item label="备注"><a-input @blur="setFocus" v-model="remark" style="width:200px"/></a-descriptions-item>

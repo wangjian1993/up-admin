@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-11-02 11:24:41
+ * @LastEditTime: 2022-11-09 09:42:30
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/order/list.vue
@@ -147,7 +147,7 @@
           </template>
         </a-table>
       </a-card>
-      <Detail v-if="isDetail" :docno="docno" @closeModal="closeModal" />
+      <Detail v-if="isDetail" :orderInfo="orderInfo" @closeModal="closeModal" />
     </a-spin>
   </div>
 </template>
@@ -229,7 +229,7 @@ export default {
     },
     detail(record) {
       this.isDetail = true;
-      this.docno = record.OrderNo;
+      this.orderInfo = record;
     },
     searchBtn() {
       this.pagination.current = 1;

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2022-11-01 17:57:30
+ * @LastEditTime: 2022-11-11 15:31:36
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -23,14 +23,15 @@
               <!-- <a-button size="small" @click="expandHandle">{{
               expandAll ? "全部收起" : "全部展开"
             }}</a-button> -->
-              <div v-if="!isShowSupplier" style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
+              <div  style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
+                <a-button v-if="isShowSupplier" type="primary" @click="isSelectSupplier = true">选择供应商</a-button>
                 <a-tree ref="enterTree" :default-selected-keys="enterValue" @select="enterTreeClick" v-if="enterTreeData.length" :tree-data="enterTreeData" :load-data="onLoadData" :replaceFields="replaceFields" default-expand-all></a-tree>
-               
                 <a-empty v-if="enterTreeData.length == 0" />
               </div>
-              <div v-else style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
-                <div>当前供应商:{{supplierData.Name}}<a-button type="primary" @click="isSelectSupplier = true">选择供应商</a-button></div>
-              </div>
+              <!-- <div v-else style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
+                <a-button type="primary" @click="isSelectSupplier = true">选择供应商</a-button>
+                <div>当前供应商:{{supplierData.Name}}</div>
+              </div> -->
             </a-col>
           </a-row>
         </a-card>
@@ -277,8 +278,8 @@ export default {
       this.isSelectSupplier = false;
     },
     setCompanyList(record) {
-      console.log("record=", record[0]);
-      this.supplierData = record[0]
+      console.log("record=", record);
+      this.enterTreeData = record
       this.isNotEnter = false;
       // this.enterValue.push(this.record[0].Id);
       if (record[0].Type == "ORG") {

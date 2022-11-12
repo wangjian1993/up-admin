@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-11-02 17:52:43
+ * @LastEditTime: 2022-11-11 11:26:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/shipment/data/addDelivery.js
@@ -31,18 +31,18 @@ export const columns = [
         dataIndex: "ItemSpecification",
         scopedSlots: { customRender: "ItemSpecification" },
         align: "center",
-        width:350
+        width: 350
     },
     {
         title: "客户单号(项次)",
-        dataIndex: "OrderNo",
-        scopedSlots: { customRender: "OrderNo" },
+        dataIndex: "OrderNoDesc",
+        scopedSlots: { customRender: "OrderNoDesc" },
         align: "center",
     },
     {
         title: "退货单号(项次)",
-        dataIndex: "ReturnOrderNo",
-        scopedSlots: { customRender: "ReturnOrderNo" },
+        dataIndex: "ReturnOrderNoDesc",
+        scopedSlots: { customRender: "ReturnOrderNoDesc" },
         align: "center",
     },
     {

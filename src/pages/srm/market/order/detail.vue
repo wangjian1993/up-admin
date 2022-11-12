@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-11-02 10:23:33
+ * @LastEditTime: 2022-11-11 09:12:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/market/order/detail.vue
@@ -52,11 +52,12 @@
               </a-descriptions-item>
             </a-descriptions>
             <a-card title="产品明细" class="card" :bordered="false" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px' }">
-              <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :rowKey="(list) => list.ItemCode" bordered>
-                <a-table slot="expandedRowRender" slot-scope="text" :columns="innerColumns" :data-source="text.Children" :pagination="false">
+              <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :rowKey="(list) => list.Id" :expandedRowKeys="expandedRowKeys" :expandIconColumnIndex="-1" 
+:expandIconAsCell="false" bordered>
+                <a-table slot="expandedRowRender" slot-scope="text" :columns="innerColumns" :data-source="text.Children" :pagination="false" :rowKey="(list) => list.Id">
                   <template slot="action" slot-scope="text, record">
-                    <div>
-                      <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
+                    <div v-if="record.Type != '变更信息'">
+                      <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit') || orderList.PurchaseStatus == '已同意' || orderList.PurchaseStatus == '已确认'">
                         <a-icon type="edit" />
                         编辑
                       </a>
@@ -68,7 +69,7 @@
                   </template>
                 </a-table>
                 <template slot="footer">
-                  <a-table ref="total-table" class="total-table" :columns="columnKeys" :dataSource="totalData" :showHeader="false" :bordered="false" :pagination="false" size="small" />
+                  <a-table ref="total-table" class="total-table" :columns="columnKeys" :dataSource="totalData" :showHeader="false" :bordered="false" :pagination="false" size="small" :scroll="{ x: 1500 }" />
                 </template>
                 <template slot="index" slot-scope="text, record, index">
                   <div>
@@ -120,7 +121,7 @@
                   <p>{{ record.PriceCode }}</p>
                 </template>
                 <template slot="PriceTitle">
-                  <p>单位</p>
+                  <p>单价</p>
                   <p>税率</p>
                 </template>
                 <template slot="Price" slot-scope="text, record">
@@ -139,7 +140,7 @@
                 </template>
                 <template slot="action" slot-scope="text, record">
                   <div>
-                    <a style="margin-right: 8px" @click="add(record)" :disabled="!hasPerm('add')">
+                    <a style="margin-right: 8px" @click="add(record)" :disabled="!hasPerm('add') || orderList.PurchaseStatus == '已同意' || orderList.PurchaseStatus == '已确认'">
                       <a-icon type="plus" />
                       添加答交
                     </a>
@@ -155,17 +156,17 @@
           <p>Content of Tab Pane 2</p>
         </a-tab-pane>
       </a-tabs>
-      <Response v-if="isResponse" @closeModal="closeModal" :isEdit="isEdit" :editData="editData" :orderData="orderList" @success="getDetailList" />
+      <Response v-if="isResponse" @closeModal="closeModal" :isEdit="isEdit" :editData="editData" :orderData="orderData" @success="getDetailList" />
     </a-drawer>
   </div>
 </template>
 <script>
-import { info1, info2, info3, columns, columnKeys ,innerColumns } from "./data/detail";
-import { getClientOrder ,setClientOrder } from "@/services/srm.js";
+import { info1, info2, info3, columns, columnKeys, innerColumns } from "./data/detail";
+import { getClientOrder, setClientOrder } from "@/services/srm.js";
 import { splitData } from "@/utils/util.js";
 import Response from "./components/response.vue";
 export default {
-  props: ["docno"],
+  props: ["orderInfo"],
   components: { Response },
   data() {
     return {
@@ -206,8 +207,9 @@ export default {
       isCloneBtn: false,
       scrollY: "",
       isResponse: false,
-      editData:[],
-      isEdit:false
+      editData: [],
+      isEdit: false,
+      expandedRowKeys: [],
     };
   },
   created() {
@@ -224,45 +226,52 @@ export default {
       this.isResponse = false;
     },
     add(record) {
+      console.log("record===", record);
       this.orderData = record;
       this.isResponse = true;
-      this.isEdit =false
+      this.isEdit = false;
     },
-    edit(record){
-      this.isEdit =true
+    edit(record) {
+      this.isEdit = true;
+      console.log("record===", record);
       this.editData = record;
       this.isResponse = true;
     },
     getDetailList() {
       this.loading = true;
       let params = {
-        docno: this.docno,
+        docno: this.orderInfo.OrderNo,
       };
       getClientOrder(params, "single").then((res) => {
         if (res.data.success) {
           this.orderList = res.data.data.order;
           this.detailList = res.data.data.detail;
+
           let qty = 0;
           let price = 0;
-          let orderPrice = 0;
+          // let orderPrice = 0;
           this.detailList.forEach((item) => {
             qty += item.PriceQty;
             price += item.MoneyTax;
-            orderPrice += item.Money;
+            item.Id = item.ItemCode + "_" + item.DrawingNo;
+            console.log("item.Children===",item.Children)
+            if (item.Children != null) {
+              this.expandedRowKeys.push(item.Id);
+            }
           });
           this.totalData = [
             {
               totalQty: "订单数量:" + qty,
               totalMoney: "订单金额:" + price,
-              totalOrderMoney: "交货金额:" + orderPrice.toFixed(2),
+              totalOrderMoney: "交货金额:" + this.orderList.DeliveryAmount,
             },
           ];
         }
         this.loading = false;
       });
     },
-     //单个删除
-     onDelete(item) {
+    //单个删除
+    onDelete(item) {
       let params = [];
       params.push(item.Id);
       setClientOrder(params, "delete").then((res) => {

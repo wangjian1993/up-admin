@@ -35,7 +35,6 @@
                 onChange: onSelectChange,
                 onSelect: onSelect,
                 onSelectAll: onSelectAll,
-                type: 'radio'
               }"
               bordered
             >

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2022-10-27 17:26:38
+ * @LastEditTime: 2022-11-08 13:48:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/components/setQty.vue
@@ -18,16 +18,16 @@
           {{ bomData.MitemName }}
         </a-descriptions-item>
         <a-descriptions-item label="需要投料数量">
-          {{ bomData.StandardQty }}
+          {{ bomData.ReleaseQty }}
         </a-descriptions-item>
         <a-descriptions-item label="已投料数量">
           {{ bomData.ReleasedQty }}
         </a-descriptions-item>
         <a-descriptions-item label="剩余可投料数量">
-          {{ inputValue }}
+          {{ bomData.RemainingQty }}
         </a-descriptions-item>
         <a-descriptions-item label="投料数量">
-          <a-input-number id="inputNumber" v-model="ReleaseQty" :min="0" :max="inputValue" />
+          <a-input-number id="inputNumber" v-model="ReleaseQty" :min="0" />
         </a-descriptions-item>
         <a-descriptions-item label="投料扫码">
           <a-input style="width:400px;" allowClear v-model.trim="PurchaseNo" placeholder="" @change="inputChange" @blur="inputBlur()" @pressEnter="handleOk" auto-size />
@@ -46,7 +46,7 @@ export default {
       visible: true,
       ReleaseQty: 0,
       PurchaseNo: "",
-      inputValue:0
+      inputValue: 0,
     };
   },
   created() {
@@ -70,7 +70,9 @@ export default {
         if (res.data.success) {
           console.log(res);
           this.bomData = res.data.data;
-          this.inputValue = this.bomData.StandardQty - this.bomData.ReleasedQty
+          this.inputValue = this.bomData.StandardQty - this.bomData.ReleasedQty;
+          this.ReleaseQty =  this.bomData.RemainingQty;
+          console.log("this.ReleaseQty",this.ReleaseQty);
         }
       });
     },
@@ -85,7 +87,7 @@ export default {
       this.PurchaseNo = "";
     },
     handleOk(e) {
-    //   e.currentTarget.select();
+      //   e.currentTarget.select();
       if (e.keyCode == 13) {
         event.preventDefault(); // 阻止浏览器默认换行操作
       }
@@ -99,7 +101,7 @@ export default {
       }
       let params = {
         PlantId: this.bomData.PlantId,
-        LineId: this.bomData.LineId,
+        LineId: this.orderInfo.LineId,
         MoCode: this.bomData.MoCode,
         MitemCode: this.bomData.MitemCode,
         ReleasedQty: this.bomData.ReleasedQty,
@@ -110,8 +112,8 @@ export default {
         if (res.data.success) {
           console.log(res);
           this.$emit("closeModal");
-          this.$emit('success');
-          this.$message.success("投料成功")
+          this.$emit("success");
+          this.$message.success("投料成功");
         }
       });
     },
