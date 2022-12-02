@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-12-24 09:42:09
- * @LastEditTime: 2022-11-09 15:41:18
+ * @LastEditTime: 2022-11-26 09:41:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/qrcode/list.data.js
@@ -23,14 +23,14 @@ export const columns = [
     },
     {
         title: "当前生产车间",
-        dataIndex: "CurWorkshopName",
+        dataIndex: "WorkshopName",
         scopedSlots: { customRender: "CurWorkshopName" },
         align: "center",
         width: 100,
     },
     {
         title: "当前生产产线",
-        dataIndex: "CurLineName",
+        dataIndex: "LineName",
         scopedSlots: { customRender: "CurLineName" },
         align: "center",
         width: 100,

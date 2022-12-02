@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:56:46
- * @LastEditTime: 2022-12-02 15:42:28
+ * @LastEditTime: 2022-12-02 16:59:31
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/mes/power/components/WorkTable.vue
+ * @FilePath: /up-admin/src/pages/mes/power/qrcode/WorkTable.vue
 -->
 <template>
   <div>
@@ -25,13 +25,14 @@
       </template> -->
       <template slot="Action" slot-scope="text, record">
         <div>
-          <a style="margin-right: 8px" @click="agingSave(record)" :disabled="!hasPerm('save')">
+          <a style="margin-right: 8px" @click="detail(record)">
             <a-icon type="save" />
-            保存
+            关联明细
           </a>
         </div>
       </template>
     </a-table>
+    <LinkDetail v-if="isLinkDetail" :detailInfo="detailInfo" @closeModal="closeModal"/>
   </div>
 </template>
 
@@ -39,12 +40,16 @@
 import { columns, columns1, columns2, columns3 } from "./data.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import ExportExcel from "@/utils/ExportExcelJS";
+import LinkDetail from './linkDetail.vue'
 export default {
   mixins: [PublicVar],
   props: ["orderList", "tableType"],
+  components: {LinkDetail},
   data() {
     return {
       columnsData: [],
+      isLinkDetail:false,
+      detailInfo:[]
     };
   },
   created() {
@@ -59,9 +64,13 @@ export default {
     }
   },
   methods: {
-    agingSave(item) {
+    closeModal(){
+      this.isLinkDetail = false;
+    },
+    detail(item) {
       console.log("更新====");
-      this.$emit("listUpdate", item);
+      this.detailInfo = item;
+      this.isLinkDetail = true;
     },
     exportExcel() {
       const dataSource = this.orderList.map((item) => {
@@ -92,7 +101,6 @@ export default {
       }
     },
   },
-  components: {},
 };
 </script>
 

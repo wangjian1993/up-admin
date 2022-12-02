@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-11-11 16:51:34
+ * @LastEditTime: 2022-11-26 10:45:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/qrcode/codePrint.vue
@@ -14,7 +14,7 @@
         <a-descriptions-item label="工单/工单扫码" :span="2">
           <div style="display:flex"><a-input style="width:400px;" allowClear ref="orderValue1" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur()" @pressEnter="scanCode" auto-size /></div>
         </a-descriptions-item>
-        <a-descriptions-item label="生产工厂/车间/产线" :span="2"> {{ userLineData.PlantName }}/{{ userLineData.WorkshopName }}/ {{ userLineData.LineName }} </a-descriptions-item>
+        <a-descriptions-item label="生产工厂/车间/产线" :span="2"> {{ orderInfo.PlantName }}/{{ orderInfo.WorkshopName }}/ {{ orderInfo.LineName }} </a-descriptions-item>
         <a-descriptions-item label="填单人/填单时间"> {{ userLineData.UserName }} / {{ splitData(userLineData.NowDate) }} </a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
@@ -32,15 +32,10 @@
       <a-button type="primary" icon="printer" :disabled="!isStart" @click="printBtn('')">打印产品追溯码</a-button>
       <a-button type="primary" style="margin-left:10px" icon="printer" :disabled="!isStart" @click="printBtn('Y')">补打产品追溯码</a-button>
     </a-card>
-    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-      <a-row>
-        <a-col :span="18"> <WorkTable :orderList="orderList" :tableType="2"/></a-col>
-        <a-col :span="6">
-          <div>
-            <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" /></div
-        ></a-col>
-      </a-row>
-    </a-card>
+    <div>
+      <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
+    </div>
+    <WorkTable :orderList="orderList" :tableType="2" />
     <!-- 列表 -->
     <PrintList v-if="isPrintList" :IsRePrint="IsRePrint" :orderInfo="orderInfo" @success="setPrint" @closeModal="closeModal" />
     <print v-if="isPrint" :printData="printData" :IsRePrint="IsRePrint" :printList="printList" @closeModal="closeModal" />

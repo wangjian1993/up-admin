@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-11-11 11:02:35
+ * @LastEditTime: 2022-12-01 14:48:05
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/return.vue
@@ -127,7 +127,7 @@
           </template>
         </a-table>
       </a-card>
-      <returnDetail v-if="isDetail" :orderno="orderno" @closeModal="closeModal" />
+      <returnDetail v-if="isDetail" :orderno="orderno" :listType="listType" @closeModal="closeModal" />
     </a-spin>
   </div>
 </template>

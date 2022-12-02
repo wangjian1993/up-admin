@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2022-11-10 17:47:36
+ * @LastEditTime: 2022-11-15 11:20:32
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/components/batching.vue
@@ -196,7 +196,7 @@ export default {
     },
     tableRowClassName(record) {
       // let num = record.ReleaseQty < record.ReleasedQty;
-      if (record.ReleaseQty >= record.ReleasedQty) {
+      if (record.ReleasedQty >= record.ReleaseQty) {
         return "blue";
       }
     },

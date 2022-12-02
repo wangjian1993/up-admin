@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-11-09 17:59:56
+ * @LastEditTime: 2022-11-15 09:49:05
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/StartWork.vue
@@ -32,15 +32,10 @@
         >
       </a-descriptions>
     </a-card>
-    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-      <a-row>
-        <a-col :span="18"> <WorkTable :orderList="orderList" :tableType="0"/></a-col>
-        <a-col :span="6">
-          <div>
-            <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" /></div
-        ></a-col>
-      </a-row>
-    </a-card>
+    <div>
+      <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
+    </div>
+    <WorkTable :orderList="orderList" :tableType="0" />
     <!-- 列表 -->
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
     <Batching v-if="isBatching" :orderInfo="orderInfo" @closeModal="closeModal" />
@@ -126,7 +121,7 @@ export default {
     closeModal() {
       this.isPrint = false;
       this.isOrderSelect = false;
-      this.isBatching = false
+      this.isBatching = false;
     },
     pushKeyword(event) {
       if (event.keyCode === 13) {
@@ -266,7 +261,7 @@ export default {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
             res.data.message.content = res.data.data.Msg;
-            this.orderList =res.data.data.result.Reports;
+            this.orderList = res.data.data.result.Reports;
             this.listData.unshift(res.data.message);
             this.emptyData();
           } else {

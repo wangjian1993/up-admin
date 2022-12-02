@@ -1,5 +1,13 @@
 <template>
   <common-layout>
+    <div class="app-down">
+      <a-popover title="APP下载列表" trigger="click">
+        <p slot="content" class="down-btn" @click="Export('mes')">生产MES</p>
+        <p slot="content" class="down-btn" @click="Export('esop')">民爆ESOP</p>
+        <p slot="content" class="down-btn" @click="Export('power')">电源生产MES</p>
+        <span><a-icon type="appstore" /> APP下载</span>
+      </a-popover>
+    </div>
     <div class="login">
       <div class="top">
         <div class="header">
@@ -172,6 +180,15 @@ export default {
         }
       });
     },
+    //下载app
+    Export(appurl) {
+      let link = document.createElement("a");
+      link.style.display = "none";
+      link.href = "http://192.168.1.245:8080/upload/app/" + appurl + ".apk";
+      link.setAttribute("download", name);
+      document.body.appendChild(link);
+      link.click();
+    },
     timeFix() {
       const time = new Date();
       const hour = time.getHours();
@@ -190,7 +207,7 @@ export default {
       this.logging = false;
       const loginRes = res.data;
       if (loginRes.success) {
-        const { userName, userModules, PhotoUrl ,userId } = loginRes.data;
+        const { userName, userModules, PhotoUrl, userId } = loginRes.data;
         // const { userName, userModules, PhotoUrl } = loginRes.data;
         this.setUser(userName);
         this.setUserHead("./" + PhotoUrl);
@@ -198,7 +215,7 @@ export default {
           console.log(res);
           if (res.data.success) {
             this.setCompanyList(res.data.data);
-            localStorage.setItem('userId',userId)
+            localStorage.setItem("userId", userId);
           }
         });
         var inFifteenMinutes = new Date(new Date().getTime() + 4 * 60 * 60 * 1000);
@@ -312,5 +329,14 @@ export default {
 }
 .ant-form-item {
   margin-bottom: 24px;
+}
+.app-down {
+  position: absolute;
+  top: 60px;
+  right: 40px;
+  font-size: 16px;
+}
+.down-btn {
+  cursor: pointer;
 }
 </style>

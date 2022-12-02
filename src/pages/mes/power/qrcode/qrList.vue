@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-11-12 14:33:49
+ * @LastEditTime: 2022-12-02 15:52:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/qrcode/qrList.vue
@@ -11,20 +11,20 @@
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
-        <a-descriptions-item label="工单/工单扫码" :span="2">
+        <a-descriptions-item label="产品追溯码扫码" :span="2">
           <div style="display:flex"><a-input style="width:400px;" allowClear ref="orderValue1" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur()" @pressEnter="scanCode" auto-size /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂/车间/产线" :span="2"> {{ userLineData.PlantName }}/{{ userLineData.WorkshopName }}/ {{ userLineData.LineName }} </a-descriptions-item>
         <a-descriptions-item label="追溯码"> {{ orderInfo.ScanCode }} </a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
-        <a-descriptions-item label="首次打印时间">{{ orderInfo.DatetimeFinished }}</a-descriptions-item>
+        <a-descriptions-item label="首次打印时间">{{ orderInfo.DatetimePrinted }}</a-descriptions-item>
         <a-descriptions-item label="首次打印人">{{ orderInfo.UserPrinted }}</a-descriptions-item>
         <a-descriptions-item label="工单号">{{ orderInfo.MoCode }}</a-descriptions-item>
         <a-descriptions-item label="追溯码状态">{{ orderInfo.Status }}</a-descriptions-item>
         <a-descriptions-item label="生产单号/批次号">{{ orderInfo.SalesOrderNo }}/{{ orderInfo.BusinessOrderNo}}</a-descriptions-item>
         <a-descriptions-item label="开工时间">{{ orderInfo.DatetimeStart }}</a-descriptions-item>
-        <a-descriptions-item label="完工时间">{{ orderInfo.DateCreated }}</a-descriptions-item>
+        <a-descriptions-item label="完工时间">{{ orderInfo.DatetimeFinished }}</a-descriptions-item>
         <a-descriptions-item label="打印次数">{{ orderInfo.PrintCount }}</a-descriptions-item>
         <!-- <a-descriptions-item> -->
       </a-descriptions>
@@ -37,18 +37,10 @@
       <!-- <a-button type="primary" icon="export" :disabled="!isStart" @click="printBtn('')">导出</a-button> -->
       <!-- <a-button type="primary" style="margin-left:10px" icon="printer" :disabled="!isStart" @click="printBtn('Y')">补打产品追溯码</a-button> -->
     </a-card>
-    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-      <a-row>
-        <a-col :span="18"> <WorkTable :orderList="orderList" :tableType="3"/></a-col>
-        <a-col :span="6">
-          <div>
-            <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" /></div
-        ></a-col>
-      </a-row>
-    </a-card>
-    <!-- 列表 -->
-    <PrintList v-if="isPrintList" :IsRePrint="IsRePrint" :orderInfo="orderInfo" @success="setPrint" @closeModal="closeModal" />
-    <print v-if="isPrint" :printData="printData" :IsRePrint="IsRePrint" :printList="printList" @closeModal="closeModal" />
+    <!-- <div>
+      <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
+    </div> -->
+    <WorkTable :orderList="orderList" :tableType="3" />
   </a-card>
 </template>
 <script>
@@ -56,13 +48,11 @@ import { getQrCode ,getQrCodeList } from "@/services/mes.js";
 import { getTemplate } from "@/services/web.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { getTimeData } from "@/utils/util";
-import MsgList from "../components/MsgList.vue";
-import WorkTable from "../components/WorkTable.vue";
+// import MsgList from "../components/MsgList.vue";
+import WorkTable from "./WorkTable.vue";
 import { splitData } from "@/utils/util.js";
-import PrintList from "./printList.vue";
-import Print from "./print.vue";
 export default {
-  components: { MsgList, WorkTable, PrintList, Print },
+  components: { WorkTable},
   mixins: [PublicVar],
   data() {
     return {

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-11 13:55:08
- * @LastEditTime: 2022-11-02 09:01:37
+ * @LastEditTime: 2022-12-01 14:41:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/order/data/detail.js
@@ -167,4 +167,48 @@ export const columnKeys = [
         align: "center",
         width: 105,
     },
+]
+export const innerColumns = [
+    {
+        title: "变更信息",
+        dataIndex: "Type",
+        scopedSlots: { customRender: "Type" },
+        align: "center",
+    },
+    {
+        title: "交货日期",
+        dataIndex: "ChangeDatetime",
+        scopedSlots: { customRender: "ChangeDatetime" },
+        align: "center",
+    },
+    {
+        title: "采购数量",
+        dataIndex: "ChangeQty",
+        scopedSlots: { customRender: "ChangeQty" },
+        align: "center",
+    },
+    {
+        title: "单价",
+        dataIndex: "ChangePrice",
+        scopedSlots: { customRender: "ChangePrice" },
+        align: "center",
+    },
+    {
+        title: "金额",
+        dataIndex: "ChangeAmount",
+        scopedSlots: { customRender: "ChangeAmount" },
+        align: "center",
+    },
+    {
+        title: "备注",
+        dataIndex: "Remark",
+        scopedSlots: { customRender: "Remark" },
+        align: "center",
+    },
+    // {
+    //     title: "操作",
+    //     scopedSlots: { customRender: "action" },
+    //     align: "center",
+    //     width: 105,
+    // },
 ]

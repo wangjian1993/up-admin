@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2022-11-11 15:31:36
+ * @LastEditTime: 2022-11-29 09:22:11
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -279,7 +279,7 @@ export default {
     },
     setCompanyList(record) {
       console.log("record=", record);
-      this.enterTreeData = record
+      this.enterTreeData = record.list || record
       this.isNotEnter = false;
       // this.enterValue.push(this.record[0].Id);
       if (record[0].Type == "ORG") {

@@ -1,22 +1,33 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2022-11-26 10:07:25
+ * @LastEditTime: 2022-12-02 17:00:51
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/mes/power/qrcode/listDetail.vue
+ * @FilePath: /up-admin/src/pages/mes/power/qrcode/linkDetail.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="投料明细" @cancel="close" :footer="null" centered width="70%">
+    <a-modal v-model="visible" title="关联明细" @cancel="close" :footer="null" centered width="70%">
       <div>
+        <a-descriptions :column="3">
+          <a-descriptions-item label="采购订单">
+            {{ orderInfo.PurchaseNo }}
+          </a-descriptions-item>
+          <a-descriptions-item label="料号">
+            {{ orderInfo.MitemCode }}
+          </a-descriptions-item>
+          <a-descriptions-item label="料名">
+            {{ orderInfo.MitemName }}
+          </a-descriptions-item>
+        </a-descriptions>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-          <a-table :columns="columns" :data-source="data" :pagination="false" :size="size" :rowKey="(orderSelectList) => orderSelectList.Id" :scroll="{y:600}" bordered>
-            <!-- <template slot="index" slot-scope="text, record, index">
+          <a-table :columns="columns" :data-source="data" :pagination="false" :size="size" :rowKey="(orderSelectList) => orderSelectList.Id" :scroll="{ y: 600 }" bordered>
+            <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{index + 1 }}</span>
               </div>
-            </template> -->
+            </template>
             <template slot="ReportQty" slot-scope="text, record">
               <a-input-number v-if="!record.IsWrite" disabled :min="0" v-model="record.ReportQty" />
               <a-input-number v-else :disabled="!record.isInput" :min="0" v-model="record.ReportQty" />
@@ -34,7 +45,7 @@
 const columns = [
   {
     title: "序号",
-    dataIndex:'indexNo',
+    dataIndex: "indexNo",
     scopedSlots: { customRender: "index" },
     align: "center",
     width: 50,
@@ -47,55 +58,6 @@ const columns = [
     width: 120,
   },
   {
-    title: "追溯码",
-    dataIndex: "QrCode",
-    scopedSlots: { customRender: "QrCode" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "品号",
-    dataIndex: "ProCode",
-    scopedSlots: { customRender: "ProCode" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "品名",
-    dataIndex: "ProName",
-    scopedSlots: { customRender: "ProName" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "投料料号",
-    dataIndex: "MitemCode",
-    scopedSlots: { customRender: "MitemCode" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "投料料名",
-    dataIndex: "MitemName",
-    scopedSlots: { customRender: "MitemName" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "投料采购单号",
-    dataIndex: "MoCode",
-    scopedSlots: { customRender: "MoCode" },
-    align: "center",
-    width: 120,
-  },
-  {
-    title: "投料工序",
-    dataIndex: "ProcessName",
-    scopedSlots: { customRender: "ProcessName" },
-    align: "center",
-    width: 120,
-  },
-  {
     title: "投料时间",
     dataIndex: "DateTimeReleased",
     scopedSlots: { customRender: "DateTimeReleased" },
@@ -103,11 +65,25 @@ const columns = [
     width: 120,
   },
   {
-    title: "投料人",
+    title: "投料数量",
+    dataIndex: "ReleasedQty",
+    scopedSlots: { customRender: "ReleasedQty" },
+    align: "center",
+    width: 120,
+  },
+  {
+    title: "供应商编码",
     dataIndex: "UserReleased",
     scopedSlots: { customRender: "UserReleased" },
     align: "center",
-    width: "80px",
+    width: 120,
+  },
+  {
+    title: "供应商名称",
+    dataIndex: "SupplierName",
+    scopedSlots: { customRender: "SupplierName" },
+    align: "center",
+    width: 120,
   },
 ];
 import { splitData } from "@/utils/util.js";
@@ -131,7 +107,7 @@ export default {
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
       isPrint: false,
-      printData: [],
+      orderInfo: [],
     };
   },
   created() {
@@ -147,20 +123,19 @@ export default {
     },
     getList() {
       let params = {
-        qrcode: this.detailInfo.QrCode,
+        purchaseno: this.detailInfo.PurchaseNo,
+        mitemcode: this.detailInfo.MitemCode,
       };
-      getQrCodeList(params, "getdetails").then((res) => {
+      getQrCodeList(params, "getrelation").then((res) => {
         console.log("res----", res);
         if (res.data.success) {
-          this.data = res.data.data;
-          this.data.forEach((item,index)=>{
-            item.indexNo = index + 1
-          })
+          this.data = res.data.data.List;
+          this.orderInfo = res.data.data.Top;
         }
       });
     },
     handleOk() {
-      this.$emit("success",this.data);
+      this.$emit("success", this.data);
     },
   },
 };

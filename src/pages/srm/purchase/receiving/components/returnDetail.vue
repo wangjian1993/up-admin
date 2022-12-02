@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-11-11 10:41:54
+ * @LastEditTime: 2022-12-01 14:49:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/components/returnDetail.vue
@@ -93,7 +93,7 @@ import { info1, info2, columns } from "../data/returnDetail";
 import { getReturn } from "@/services/srm.js";
 import { splitData } from "@/utils/util.js";
 export default {
-  props: ["orderno"],
+  props: ["orderno",'listType'],
   data() {
     return {
       size: "small",
@@ -147,6 +147,7 @@ export default {
       this.loading = true;
       let params = {
         orderno: this.orderno,
+        tag:this.listType
       };
       getReturn(params, "single").then((res) => {
         if (res.data.success) {

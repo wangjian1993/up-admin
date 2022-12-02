@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-09-15 10:22:46
+ * @LastEditTime: 2022-12-01 14:34:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/order/list.vue
@@ -140,7 +140,7 @@
           </template>
         </a-table>
       </a-card>
-      <Detail v-if="isDetail" :docno="docno" @closeModal="closeModal" />
+      <Detail v-if="isDetail" :orderInfo="orderInfo" @closeModal="closeModal" />
     </a-spin>
   </div>
 </template>
@@ -170,7 +170,7 @@ export default {
       isImport: false,
       listType: "全部",
       isDetail: false,
-      docno: "",
+      orderInfo: "",
       tagItem: ["全部", "待发布", "差异待处理", "待答交", "已退回", "待签章","暂停执行"],
       paramsList: ["ORDER_STATE","PROCUREMENT_TYPE","RECEIPT_STATE"],
       paramsItem:[]
@@ -232,7 +232,7 @@ export default {
     },
     detail(record) {
       this.isDetail = true;
-      this.docno = record.OrderNo;
+      this.orderInfo = record;
     },
     searchBtn() {
       this.pagination.current = 1;

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-29 15:04:20
- * @LastEditTime: 2022-10-28 16:48:24
+ * @LastEditTime: 2022-11-15 09:59:38
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/production/people/components/people.vue
@@ -59,7 +59,7 @@ export default {
         UserCode: "",
         PlantId: "",
         WorkshopId: "",
-        Lines: [],
+        Lines:[],
         Enable: "Y",
       },
       rules: {
@@ -108,7 +108,7 @@ export default {
       this.form.Lines = this.editData.LineName;
       this.plantId = this.editData.PlantId;
       this.workshopId = this.editData.WorkshopId;
-      this.form.Lines = this.editData.LineCode;
+      // this.form.Lines = this.editData.LineCode;
       this.getWorkshopList();
       this.getLineList();
     }
@@ -161,13 +161,13 @@ export default {
       this.plantId = e;
       this.getWorkshopList();
       this.form.WorkshopId = "";
-      this.form.Lines = "";
+      this.form.Lines = [];
     },
     //车间选择
     workshopChange(e) {
       this.workshopId = e;
       this.getLineList();
-      this.form.Lines = "";
+      this.form.Lines = [];
     },
     //产线选择
     lineChange(e) {

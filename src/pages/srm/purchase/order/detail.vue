@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-08-25 10:20:27
+ * @LastEditTime: 2022-12-01 14:46:36
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/order/detail.vue
@@ -9,7 +9,31 @@
 <template>
   <div>
     <a-drawer :visible="visible" title="采购订单详情" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :bodyStyle="{ padding: '5px 10px' }">
-      <a-spin tip="loading..." :spinning="loading">
+      <div
+        :style="{
+          position: 'absolute',
+          right: '50px',
+          top: '10px',
+          borderTop: '1px solid #e9e9e9',
+          background: '#fff',
+          textAlign: 'right',
+          zIndex: 1,
+        }"
+      >
+        <a-button type="danger" :disabled="orderList.PurchaseStatus == '已同意' || orderList.PurchaseStatus == '答交退回'" :style="{ marginRight: '8px' }" @click="handleCancel">
+          退回
+        </a-button>
+        <a-button type="primary" :disabled="orderList.PurchaseStatus == '已同意' || orderList.PurchaseStatus == '答交退回'" :style="{ marginRight: '8px' }" @click="handleCancel">
+          同意
+        </a-button>
+        <a-button type="primary" :style="{ marginRight: '8px' }" @click="handleCancel">
+          提醒
+        </a-button>
+        <a-button type="primary" :style="{ marginRight: '8px' }" @click="handleCancel">
+          打印
+        </a-button>
+      </div>
+      <div style="margin-top:10px">
         <a-descriptions :column="5" bordered size="small">
           <a-descriptions-item v-for="(item, index) in info1" :key="index" :label="item.title">
             {{ orderList[item.dataIndex] }}
@@ -26,9 +50,23 @@
           </a-descriptions-item>
         </a-descriptions>
         <a-card title="产品明细" class="card" :bordered="false" :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px' }">
-          <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :rowKey="(list) => list.ItemCode" bordered>
+          <a-table :columns="columns" :data-source="detailList" size="small" :pagination="false" :rowKey="(list) => list.Id" :expandedRowKeys="expandedRowKeys" :expandIconColumnIndex="-1" :expandIconAsCell="false" bordered>
+            <a-table slot="expandedRowRender" slot-scope="text" :columns="innerColumns" :data-source="text.Children" :pagination="false" :rowKey="(list) => list.Id">
+              <!-- <template slot="action" slot-scope="text, record">
+                <div v-if="record.Type != '变更信息'">
+                  <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit') || orderList.PurchaseStatus == '已同意' || orderList.PurchaseStatus == '已确认'">
+                    <a-icon type="edit" />
+                    编辑
+                  </a>
+                  <a style="margin-right: 8px" @click="onDelete(record)" :disabled="!hasPerm('delete')">
+                    <a-icon type="delete" />
+                    删除
+                  </a>
+                </div>
+              </template> -->
+            </a-table>
             <template slot="footer">
-              <a-table ref="total-table" class="total-table" :columns="columnKeys" :dataSource="totalData" :showHeader="false" :bordered="false" :pagination="false" size="small" />
+              <a-table ref="total-table" class="total-table" :columns="columnKeys" :dataSource="totalData" :showHeader="false" :bordered="false" :pagination="false" size="small" :scroll="{ x: 1500 }" />
             </template>
             <template slot="index" slot-scope="text, record, index">
               <div>
@@ -80,7 +118,7 @@
               <p>{{ record.PriceCode }}</p>
             </template>
             <template slot="PriceTitle">
-              <p>单位</p>
+              <p>单价</p>
               <p>税率</p>
             </template>
             <template slot="Price" slot-scope="text, record">
@@ -97,45 +135,29 @@
               <p>{{ record.Money }}</p>
               <p>{{ record.Tax }}</p>
             </template>
+            <template slot="action" slot-scope="text, record">
+              <div>
+                <a style="margin-right: 8px" @click="add(record)" :disabled="!hasPerm('add') || orderList.PurchaseStatus == '已同意' || orderList.PurchaseStatus == '已确认'">
+                  <a-icon type="plus" />
+                  添加答交
+                </a>
+              </div>
+            </template>
           </a-table>
         </a-card>
-      </a-spin>
-      <div
-        :style="{
-          position: 'absolute',
-          right: 0,
-          bottom: 0,
-          width: '100%',
-          borderTop: '1px solid #e9e9e9',
-          padding: '10px 16px',
-          background: '#fff',
-          textAlign: 'right',
-          zIndex: 1,
-        }"
-      >
-        <a-button type="danger" :style="{ marginRight: '8px' }" @click="actionBtn('return')">
-          退回
-        </a-button>
-        <a-button type="primary" :style="{ marginRight: '8px' }" @click="actionBtn('agree')">
-          同意
-        </a-button>
-        <a-button type="primary" :style="{ marginRight: '8px' }" @click="handleCancel">
-          提醒
-        </a-button>
-        <a-button type="primary" :style="{ marginRight: '8px' }" @click="handleCancel">
-          打印
-        </a-button>
       </div>
+      <Response v-if="isResponse" @closeModal="closeModal" :isEdit="isEdit" :editData="editData" :orderData="orderData" @success="getDetailList" />
     </a-drawer>
   </div>
 </template>
-
 <script>
-import { info1, info2, info3, columns, columnKeys } from "./data/detail";
-import { getPurchaseOrders, setPurchaseOrders } from "@/services/srm.js";
+import { info1, info2, info3, columns, columnKeys, innerColumns } from "./data/detail";
+import { getClientOrder, setClientOrder } from "@/services/srm.js";
 import { splitData } from "@/utils/util.js";
+import Response from "./components/response.vue";
 export default {
-  props: ["docno"],
+  props: ["orderInfo"],
+  components: { Response },
   data() {
     return {
       size: "small",
@@ -144,6 +166,7 @@ export default {
       info3,
       columns,
       columnKeys,
+      innerColumns,
       totalData: [
         {
           totalQty: "订单数量:0",
@@ -173,6 +196,10 @@ export default {
       isUnfold: false,
       isCloneBtn: false,
       scrollY: "",
+      isResponse: false,
+      editData: [],
+      isEdit: false,
+      expandedRowKeys: [],
     };
   },
   created() {
@@ -186,49 +213,73 @@ export default {
     closeModal() {
       this.isModelInfo = false;
       this.isUnfold = false;
+      this.isResponse = false;
+    },
+    add(record) {
+      console.log("record===", record);
+      this.orderData = record;
+      this.isResponse = true;
+      this.isEdit = false;
+    },
+    edit(record) {
+      this.isEdit = true;
+      console.log("record===", record);
+      this.editData = record;
+      this.isResponse = true;
     },
     getDetailList() {
       this.loading = true;
+      console.log(" this.orderInfo", this.orderInfo)
       let params = {
-        docno: this.docno,
+        docno: this.orderInfo.OrderNo,
       };
-      getPurchaseOrders(params, "single").then((res) => {
+      getClientOrder(params, "single").then((res) => {
         if (res.data.success) {
           this.orderList = res.data.data.order;
           this.detailList = res.data.data.detail;
+
           let qty = 0;
           let price = 0;
-          let orderPrice = 0;
+          // let orderPrice = 0;
           this.detailList.forEach((item) => {
             qty += item.PriceQty;
             price += item.MoneyTax;
-            orderPrice += item.Money;
+            item.Id = item.ItemCode + "_" + item.DrawingNo;
+            console.log("item.Children===", item.Children);
+            if (item.Children != null) {
+              this.expandedRowKeys.push(item.Id);
+            }
           });
           this.totalData = [
             {
               totalQty: "订单数量:" + qty,
               totalMoney: "订单金额:" + price,
-              totalOrderMoney: "交货金额:" + orderPrice.toFixed(2),
+              totalOrderMoney: "交货金额:" + this.orderList.DeliveryAmount,
             },
           ];
         }
         this.loading = false;
       });
     },
+    //单个删除
+    onDelete(item) {
+      let params = [];
+      params.push(item.Id);
+      setClientOrder(params, "delete").then((res) => {
+        if (res.data.success) {
+          this.$message.success("删除成功!");
+          this.getApiList();
+        }
+      });
+    },
     //查看详情
     onClose() {
       this.isDrawer = false;
     },
-    actionBtn(action) {
-      setPurchaseOrders;
-      let params = [this.docno];
-      setPurchaseOrders(params, action).then((res) => {
-        if (res.data.success) {
-          let content = action == "agree" ? "同意成功" : "退回成功";
-          this.$message.success(content);
-          this.$emit("closeModal");
-        }
-      });
+    handleTableChange(pagination) {
+      this.pagination.current = pagination.current;
+      this.pagination.pageSize = pagination.pageSize;
+      this.getList();
     },
     //关闭对话框
     handleCancel() {

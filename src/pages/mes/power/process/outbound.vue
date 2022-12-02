@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2022-11-10 16:24:30
+ * @LastEditTime: 2022-11-15 09:50:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/outbound.vue
@@ -46,15 +46,10 @@
         </a-descriptions-item>
       </a-descriptions>
     </a-card>
-    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-      <a-row>
-        <a-col :span="18"> <WorkTable :orderList="orderList" :tableType="1"/></a-col>
-        <a-col :span="6">
-          <div>
-            <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" /></div
-        ></a-col>
-      </a-row>
-    </a-card>
+    <div>
+      <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
+    </div>
+    <WorkTable :orderList="orderList" :tableType="1" />
     <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" :selectType="selectType" />
   </a-card>

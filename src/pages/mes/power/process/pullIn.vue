@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-11-09 18:00:10
+ * @LastEditTime: 2022-11-15 09:49:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/pullIn.vue
@@ -32,15 +32,10 @@
         >
       </a-descriptions>
     </a-card>
-    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-      <a-row>
-        <a-col :span="18"> <WorkTable :orderList="orderList" :tableType="0"/></a-col>
-        <a-col :span="6">
-          <div>
-            <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" /></div
-        ></a-col>
-      </a-row>
-    </a-card>
+    <div>
+      <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
+    </div>
+    <WorkTable :orderList="orderList" :tableType="0" />
     <!-- 列表 -->
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
     <Batching v-if="isBatching" :orderInfo="orderInfo" @closeModal="closeModal" />
