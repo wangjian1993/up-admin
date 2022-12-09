@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2022-11-15 09:50:04
+ * @LastEditTime: 2022-12-09 14:39:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/outbound.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="6" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue3" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue3" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur" @pressEnter="scanCode" auto-size /><a-button style="margin-left:10px" shape="circle" icon="profile" @click="orderShow" /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -52,6 +52,7 @@
     <WorkTable :orderList="orderList" :tableType="1" />
     <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" :selectType="selectType" />
+    <OrderList v-if="isOrder" :orderInfo="orderInfo" @success="selectOrder" @closeModal="closeModal" :type="'finish'" />
   </a-card>
 </template>
 <script>
@@ -63,8 +64,9 @@ import WorkTable from "../components/WorkTable.vue";
 import identification from "./identification.vue";
 import orderSelect from "./components/orderSelect.vue";
 import { splitData } from "@/utils/util.js";
+import OrderList from "./components/orderList.vue";
 export default {
-  components: { identification, MsgList, WorkTable, orderSelect },
+  components: { identification, MsgList, WorkTable, orderSelect, OrderList },
   mixins: [PublicVar],
   data() {
     return {
@@ -86,6 +88,7 @@ export default {
       selectType: "",
       multipleList: [],
       isFocus: false,
+      isOrder: false,
     };
   },
   created() {
@@ -96,6 +99,15 @@ export default {
   },
   methods: {
     splitData,
+    orderShow() {
+      console.log("dakai");
+      this.isOrder = true;
+    },
+    selectOrder(item) {
+      this.isOrder = false;
+      this.orderValue = item.MoCode;
+      this.scanCode();
+    },
     inputBlur() {
       if (!this.isFocus) {
         setTimeout(() => {
@@ -151,6 +163,7 @@ export default {
       this.visible = false;
       this.isPrint = false;
       this.isOrderSelect = false;
+      this.isOrder = false;
     },
     getWorkInfo() {
       getProcessReport("", "loaduserline").then((res) => {
@@ -171,9 +184,13 @@ export default {
     },
     //扫码
     scanCode(e) {
-      e.currentTarget.select();
-      if (e.keyCode == 13) {
-        event.preventDefault(); // 阻止浏览器默认换行操作
+      try {
+        e.currentTarget.select();
+        if (e.keyCode == 13) {
+          event.preventDefault(); // 阻止浏览器默认换行操作
+        }
+      } catch (error) {
+        console.log("error===");
       }
       if (!this.orderValue) {
         let message = {
@@ -273,7 +290,7 @@ export default {
         ProcessStatus: "PROCESS_FINISHED",
         ReportQty: this.receiveQty,
         ScrapedQty: this.scrapQty,
-        PerQty:0,
+        PerQty: 0,
         Remarks: this.remark,
       };
       getProcessReport(params, "submit").then((res) => {
@@ -282,7 +299,7 @@ export default {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
             res.data.message.content = res.data.data.Msg;
-            this.orderList =res.data.data.result.Reports;
+            this.orderList = res.data.data.result.Reports;
             this.listData.unshift(res.data.message);
             this.emptyData();
           } else {

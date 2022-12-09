@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-11-15 09:49:05
+ * @LastEditTime: 2022-12-09 14:40:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/StartWork.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-input style="width:400px;" allowClear ref="orderValue1" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur()" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-input style="width:400px;" allowClear ref="orderValue1" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur()" @pressEnter="scanCode" auto-size /><a-button style="margin-left:10px" shape="circle" icon="profile" @click="orderShow"/></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂/车间/产线" :span="2"> {{ userLineData.PlantName }}/{{ userLineData.WorkshopName }}/ {{ userLineData.LineName }} </a-descriptions-item>
         <a-descriptions-item label="填单人/填单时间"> {{ userLineData.UserName }} / {{ splitData(userLineData.NowDate) }} </a-descriptions-item>
@@ -39,6 +39,7 @@
     <!-- 列表 -->
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
     <Batching v-if="isBatching" :orderInfo="orderInfo" @closeModal="closeModal" />
+    <OrderList v-if="isOrder" :orderInfo="orderInfo" @success="selectOrder" @closeModal="closeModal" :type="'start'"/>
   </a-card>
 </template>
 <script>
@@ -50,8 +51,9 @@ import WorkTable from "../components/WorkTable.vue";
 import orderSelect from "./components/orderSelect.vue";
 import { splitData } from "@/utils/util.js";
 import Batching from "./components/batching.vue";
+import OrderList from './components/orderList.vue'
 export default {
-  components: { MsgList, WorkTable, orderSelect, Batching },
+  components: { MsgList, WorkTable, orderSelect, Batching ,OrderList },
   mixins: [PublicVar],
   data() {
     return {
@@ -74,6 +76,7 @@ export default {
       ColorTemperature: "",
       remark: "",
       isBatching: false,
+      isOrder:false
     };
   },
   created() {
@@ -84,6 +87,15 @@ export default {
   },
   methods: {
     splitData,
+    orderShow(){
+      console.log("dakai")
+      this.isOrder = true
+    },
+    selectOrder(item){
+      this.isOrder = false;
+      this.orderValue = item.MoCode
+      this.scanCode()
+    },
     startBatching() {
       this.isBatching = true;
     },
@@ -122,6 +134,7 @@ export default {
       this.isPrint = false;
       this.isOrderSelect = false;
       this.isBatching = false;
+      this.isOrder = false
     },
     pushKeyword(event) {
       if (event.keyCode === 13) {
@@ -149,9 +162,13 @@ export default {
     },
     //扫码
     scanCode(e) {
-      e.currentTarget.select();
-      if (e.keyCode == 13) {
-        event.preventDefault(); // 阻止浏览器默认换行操作
+      try {
+        e.currentTarget.select();
+        if (e.keyCode == 13) {
+          event.preventDefault(); // 阻止浏览器默认换行操作
+        }
+      } catch (error) {
+        console.log("error===");
       }
       if (!this.orderValue) {
         let message = {

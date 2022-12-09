@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2022-12-02 17:00:51
+ * @LastEditTime: 2022-12-06 10:51:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/qrcode/linkDetail.vue
@@ -73,8 +73,8 @@ const columns = [
   },
   {
     title: "供应商编码",
-    dataIndex: "UserReleased",
-    scopedSlots: { customRender: "UserReleased" },
+    dataIndex: "SupplierCode",
+    scopedSlots: { customRender: "SupplierCode" },
     align: "center",
     width: 120,
   },

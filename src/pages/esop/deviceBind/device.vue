@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 14:01:21
- * @LastEditTime: 2022-09-22 17:53:22
+ * @LastEditTime: 2022-12-06 09:25:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/device.vue
@@ -53,20 +53,16 @@
       </a-descriptions>
       <div v-for="item in deviceList" :key="item.LineId">
         <div class="device-lsit" v-if="item.list.length != 0">
-          <div class="device-list-left">
-            <p>{{ item.LineName }}</p>
+          <div>
+            <a-button type="primary" @click="allSend(item)">推送</a-button>
+          </div>
+          <div class="device-list-left" style="margin-left:10px">
+            <span>{{ item.LineName }}</span>
           </div>
           <div class="device-list-box">
             <div class="device-list-content" v-for="(list, index) in item.list" :key="index">
               <div class="device" v-for="(items, indexs) in list" :key="indexs">
                 <div class="device-content" v-for="fileItem in items.Detail" :key="fileItem.Id" @click="selectDocs(items, indexs)">
-                  <!-- <a-popover title="Title" >
-                    <template slot="content">
-                      {{ fileItem.FileName }}
-                    </template>
-                    <span>{{ items.EquipmentCode }}</span>
-                  </a-popover> -->
-
                   <a-popover title="附件">
                     <template slot="content">
                       {{ fileItem.FileName }}
@@ -77,7 +73,6 @@
                   </a-popover>
                   <img v-if="items.Status" src="@/assets/img/lcd.png" alt="" />
                   <img v-else src="@/assets/img/lcd-2.png" alt="" />
-                  <!-- <p><a-icon type="folder" style="'marginLeft':'10px'" />{{ items.Detail.length }}</p> -->
                 </div>
               </div>
             </div>
@@ -91,7 +86,7 @@
 </template>
 
 <script>
-import { getDeviceList, getSopDocument } from "@/services/esop.js";
+import { getDeviceList, getSopDocument, setPushRecord } from "@/services/esop.js";
 import docs from "./docs.vue";
 import docsList from "./docsList.vue";
 export default {
@@ -169,6 +164,7 @@ export default {
     },
     successDocs(record) {
       this.selectDocsList = record;
+      console.log("record===", record);
       this.isDocs = false;
       this.deviceList = [];
       this.plantId = "";
@@ -211,6 +207,25 @@ export default {
       this.deviceList = [];
       this.getDeviceList();
     },
+    allSend(line) {
+      let params = {
+        ids:[this.selectDocsList.DocumentId, null],
+        lineid: line.LineId,
+      };
+      setPushRecord(params, "mqtt/publishdocbyid").then((res) => {
+        if (res.data.success) {
+          console.log("res---", res);
+        }
+      });
+    },
+    setAllSend(params) {
+      console.log("params=", params);
+      setPushRecord(params, "mqtt/publishdocbyid").then((res) => {
+        if (res.data.success) {
+          console.log("res---", res);
+        }
+      });
+    },
     getDeviceList(index) {
       let params = {
         plantid: this.plantId,
@@ -228,14 +243,15 @@ export default {
           }
           if (array.length > 0) {
             // array[array.length - 1][0] = array[array.length - 1][0] == undefined ? array[array.length - 1][1] : array[array.length - 1][0];
-            console.log("array[array.length - 1][0]---",array[array.length - 1][0] == undefined)
+            console.log("array[array.length - 1][0]---", array[array.length - 1][0] == undefined);
             if (array[array.length - 1][0] == undefined) {
-              console.log("删除=====")
-              array[array.length - 1].splice(0,1);
-              console.log("删除=====",array[array.length - 1])
+              console.log("删除=====");
+              array[array.length - 1].splice(0, 1);
+              console.log("删除=====", array[array.length - 1]);
             }
             console.log("去最后一个", array);
             this.deviceList[index].list = array;
+            this.deviceList[index].newList = list;
             console.log("deviceList==", this.deviceList);
           }
         }

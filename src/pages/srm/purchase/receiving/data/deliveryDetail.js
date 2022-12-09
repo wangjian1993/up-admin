@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-11 13:55:08
- * @LastEditTime: 2022-11-11 10:37:32
+ * @LastEditTime: 2022-12-07 10:04:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/receiving/data/deliveryDetail.js
@@ -25,31 +25,31 @@ export const info4 = [{
 }, {
     title: '采购说明',
     dataIndex: "PurchaseDescription"
-},{
+}, {
     title: '预计到厂',
     dataIndex: "PlanDatetime"
-},{
+}, {
     title: '条码版本',
     dataIndex: "CodeVersion"
-},{
+}, {
     title: '收货仓库',
     dataIndex: "ReceiptWarehouse"
-},{
+}, {
     title: '送货状态',
     dataIndex: "DeliveryStatus"
-},{
+}, {
     title: '送检状态',
     dataIndex: "InspectionStatus"
-},{
+}, {
     title: '送货类型',
     dataIndex: "DeliveryType"
-},{
+}, {
     title: '转收货转态',
     dataIndex: "ReceiptStatus"
-},{
+}, {
     title: '采购类型',
     dataIndex: "DocDate"
-},{
+}, {
     title: '制单人',
     dataIndex: "PublishUser"
 }];
@@ -84,22 +84,22 @@ export const info3 = [{
 }, {
     title: '送货备注',
     dataIndex: "DeliveryRemark"
-},{
+}, {
     title: '送货地址',
     dataIndex: "DeliveryAddress"
-},{
+}, {
     title: '联系方式',
     dataIndex: "DeliveryPhone"
-},{
+}, {
     title: '物流状态',
     dataIndex: "ShippingStatus"
 }];
 export const columns = [
     {
-        title: "序号",
-        scopedSlots: { customRender: "index" },
+        title: "项次",
+        dataIndex: "Sort",
+        scopedSlots: { customRender: "Sort" },
         align: "center",
-        width: 50,
     },
     {
         title: "产品编码",
@@ -112,24 +112,24 @@ export const columns = [
         dataIndex: "ItemName",
         scopedSlots: { customRender: "ItemName" },
         align: "center",
+        width: 150,
     },
     {
         title: "产品规格",
         dataIndex: "ItemSpecification",
         scopedSlots: { customRender: "ItemSpecification" },
         align: "center",
-        width:350
     },
     {
         title: "客户单号(项次)",
-        dataIndex: "OrderNo",
-        scopedSlots: { customRender: "OrderNo" },
+        dataIndex: "OrderNoDesc",
+        scopedSlots: { customRender: "OrderNoDesc" },
         align: "center",
     },
     {
         title: "退货单号(项次)",
-        dataIndex: "ReturnOrderNo",
-        scopedSlots: { customRender: "ReturnOrderNo" },
+        dataIndex: "ReturnOrderNoDesc",
+        scopedSlots: { customRender: "ReturnOrderNoDesc" },
         align: "center",
     },
     {
@@ -139,7 +139,7 @@ export const columns = [
         align: "center",
     },
     {
-        dataIndex: "purchasedetailid",  //交货日期
+        dataIndex: "purchasedetailid", //交货日期
         scopedSlots: { customRender: "purchasedetailid" },
         slots: { title: "purchasedetailidTitle" },
         align: "center",
@@ -151,9 +151,9 @@ export const columns = [
         align: "center",
     },
     {
-        dataIndex: "ReceiptWarehouse",  //送货数量
-        scopedSlots: { customRender: "ReceiptWarehouse" },
-        slots: { title: "ReceiptWarehouseTitle" },
+        dataIndex: "receiptQty", //交货数量
+        scopedSlots: { customRender: "receiptQty" },
+        slots: { title: "receiptQtyTitle" },
         align: "center",
     },
     {
@@ -163,15 +163,15 @@ export const columns = [
         align: "center",
     },
     {
-        title: "送货状态",
-        dataIndex: "DeliveryStatus",
-        scopedSlots: { customRender: "DeliveryStatus" },
+        title: "订单备注",
+        dataIndex: "Remark",
+        scopedSlots: { customRender: "Remark" },
         align: "center",
     },
 ];
 export const columnKeys = [
     {
-        title: "收货数量合计",
+        title: "送货总数",
         dataIndex: "totalQty",
         scopedSlots: { customRender: "totalQty" },
         align: "center",

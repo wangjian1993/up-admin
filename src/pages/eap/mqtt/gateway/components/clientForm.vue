@@ -24,7 +24,7 @@
           <a-input v-model="form.clientname" allowClear placeholder="请输入客服端名称" />
         </a-form-model-item>
         <a-form-model-item ref="serverid" has-feedback label="MQTT服务器" prop="serverid">
-          <a-select v-model="form.serverid" :disabled="isEdit" placeholder="请选择MQTT服务器">
+          <a-select v-model="form.serverid" placeholder="请选择MQTT服务器">
             <a-select-option v-for="item in serviceList" :key="item.Id" :value="item.Id">{{ item.ServerName }}</a-select-option>
           </a-select>
         </a-form-model-item>

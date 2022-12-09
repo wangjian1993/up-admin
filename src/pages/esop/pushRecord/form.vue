@@ -124,10 +124,10 @@ export default {
         this.$message.warning("请先选择sop文档")
         return
       }
-      if( this.fileItem == ''){
-         this.$message.warning("请先选择推送文件")
-        return
-      }
+      // if( this.fileItem == ''){
+      //    this.$message.warning("请先选择推送文件")
+      //   return
+      // }
       if( this.deviceItem == ''){
          this.$message.warning("请先选择设备")
         return
