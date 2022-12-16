@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-09-08 14:49:26
+ * @LastEditTime: 2022-12-13 09:32:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/financial/expense.vue
@@ -21,76 +21,14 @@
             >
             <a-col :md="6" :sm="24">
               <a-form-item label="" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 300px" allowClear placeholder="对账单号,采购单号,供应商,采购员,物料" v-decorator="['keyword']" />
+                <a-input style="width: 300px" allowClear placeholder="供应商,费用单号" v-decorator="['keyword']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
               <a-button type="primary" style="margin-top: 5px;" @click="searchBtn">查询</a-button>
-              <a-button style="margin-left: 8px;margin-top: 5px;" @click="toggleAdvanced">高级搜索</a-button>
+              <a-button style="margin-left: 8px;margin-top: 5px;" @click="reset">重置</a-button>
             </a-col>
           </a-row>
-          <div :class="advanced ? null : 'fold'" v-if="advanced">
-            <a-row>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="对账单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入对账单号" v-decorator="['supplier']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="采购单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入采购单号" v-decorator="['orderno']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="供应商" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入供应商" v-decorator="['supplier']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="采购员" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入采购员" v-decorator="['purchaseuser']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="物料" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入物料" v-decorator="['purchaseuser']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="对账周期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-range-picker style="width: 300px" v-decorator="['range-time-picker1']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="入库日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="送货日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-range-picker style="width: 300px" v-decorator="['range-time-picker2']" />
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="开票状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['purchasestatus']" placeholder="请选择订单状态" style="width: 200px">
-                    <a-select-option value="">全部</a-select-option>
-                    <a-select-option value="1">启用</a-select-option>
-                    <a-select-option value="0">禁用</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
-                <a-form-item label="发布人" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" placeholder="请输入发布人" v-decorator="['publishuser']" />
-                </a-form-item>
-              </a-col>
-            </a-row>
-            <span style="float: right; margin-top: 3px;">
-              <a-button type="primary" @click="searchBtn">查询</a-button>
-              <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-            </span>
-          </div>
         </a-form>
         <div class="operator">
           <a-button style="margin-left: 8px" type="primary" @click="add" icon="plus">新建费用单</a-button>
@@ -112,7 +50,7 @@
             selectedRowKeys: selectedRowKeys,
             onChange: onSelectChange,
           }"
-          :rowKey="(dataSource) => dataSource.PlcId"
+          :rowKey="(dataSource) => dataSource.Id"
           bordered
         >
           <template slot="index" slot-scope="text, record, index">
@@ -134,36 +72,38 @@
                 <a-icon type="container" />
                 查看
               </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('warn')">
-                <a-icon type="bell" />
-                提醒
-              </a>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('print')">
-                <a-icon type="printer" />
-                打印
+              <a-popconfirm title="确定删除?" @confirm="() => onDelete(record, 'delete')">
+                <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
+                  <a-icon type="delete" />
+                  删除
+                </a>
+              </a-popconfirm>
+              <a style="margin-right: 8px" @click="onEdit(record)" :disabled="!hasPerm('edit')">
+                <a-icon type="edit" />
+                编辑
               </a>
             </div>
           </template>
         </a-table>
       </a-card>
-      <!-- <Detail v-if="isDetail" :docno="docno" @closeModal="closeModal" /> -->
-      <AddExpense v-if="isAdd" @closeModal="closeModal" @success="searchBtn"/>
+      <Detail v-if="isDetail" :detailId="detailId" @closeModal="closeModal" />
+      <AddExpense v-if="isAdd" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="searchBtn" />
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getExpense } from "@/services/srm.js";
+import { getExpense ,setExpense } from "@/services/srm.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { columns } from "./data/expense";
 import ExportExcel from "@/utils/ExportExcelJS";
-// import Detail from "./detail.vue";
-import AddExpense from './component/addExpense.vue'
+import Detail from "./detail.vue";
+import AddExpense from "./component/addExpense.vue";
 export default {
-  components: {AddExpense },
+  components: { AddExpense,Detail},
   mixins: [PublicVar],
   data() {
     return {
@@ -177,9 +117,11 @@ export default {
       isImport: false,
       listType: "全部",
       isDetail: false,
-      docno: "",
-      isAdd:false,
+      detailId: "",
+      isAdd: false,
       tagItem: ["全部", "待发送", "已确认", "退回"],
+      editData:[],
+      isEdit:false
     };
   },
   updated() {
@@ -225,13 +167,33 @@ export default {
       this.pagination.pageSize = pagination.pageSize;
       this.search();
     },
-    add(){
-      this.isAdd =true
-      console.log("dakai ")
+    add() {
+      this.isAdd = true;
+      this.editData = [];
+      this.isEdit = false;
+    },
+    onEdit(record){
+      getExpense({ id: record.Id }, "single").then((res) => {
+        if (res.data.success) {
+          this.isAdd = true;
+          this.editData = res.data.data;
+          console.log(" this.editDat111111111===", this.editData)
+          this.isEdit = true;
+        }
+      });
+    },
+    onDelete(record) {
+      let params = [record.Id];
+      setExpense(params, 'delete').then((res) => {
+        if (res.data.success) {
+          this.$message.success("操作成功!");
+          this.search();
+        }
+      });
     },
     detail(record) {
       this.isDetail = true;
-      this.docno = record.OrderNo;
+      this.detailId = record.Id;
     },
     searchBtn() {
       this.pagination.current = 1;

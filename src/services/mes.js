@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-29 16:34:37
- * @LastEditTime: 2022-11-09 15:00:14
+ * @LastEditTime: 2022-12-16 09:46:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/mes.js
@@ -53,6 +53,12 @@ export function setPeople(params, action) {
     return request(`${UP_WEB}/powersupply/production/dept/${action}`, METHOD.POST, params);
 }
 
+export function setPrint(params, action) {
+    return request(`${UP_WEB}/powersupply/production/print/${action}`, METHOD.GET, params);
+}
+export function setPrintInfo(params, action) {
+    return request(`${UP_WEB}/powersupply/production/print/${action}`, METHOD.POST, params);
+}
 export function getProcessReport(params, action) {
     return request(`${UP_WEB}/powersupply/process/report/${action}`, METHOD.POST, params);
 }

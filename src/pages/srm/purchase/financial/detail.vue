@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-08-11 15:22:47
+ * @LastEditTime: 2022-12-12 17:06:35
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/order/detail.vue
+ * @FilePath: /up-admin/src/pages/srm/purchase/financial/detail.vue
 -->
 <template>
   <div>
-    <a-drawer :visible="visible" title="采购订单详情" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :bodyStyle="{ padding: '5px 10px' }">
+    <a-drawer :visible="visible" title="供应商费用单明细" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :bodyStyle="{ padding: '5px 10px' }">
       <a-spin tip="loading..." :spinning="loading">
         <a-descriptions :column="5" bordered size="small">
           <a-descriptions-item v-for="(item, index) in info1" :key="index" :label="item.title">
@@ -103,24 +103,17 @@
       <div
         :style="{
           position: 'absolute',
-          right: 0,
-          bottom: 0,
+          right: '50px',
+          top: 0,
           width: '100%',
-          borderTop: '1px solid #e9e9e9',
           padding: '10px 16px',
           background: '#fff',
           textAlign: 'right',
           zIndex: 1,
         }"
       >
-        <a-button type="danger" :style="{ marginRight: '8px' }" @click="handleCancel">
-          退回
-        </a-button>
-         <a-button  type="primary" :style="{ marginRight: '8px' }" @click="handleCancel">
-          同意
-        </a-button>
         <a-button  type="primary" :style="{ marginRight: '8px' }" @click="handleCancel">
-          提醒
+          作废
         </a-button>
         <a-button  type="primary" :style="{ marginRight: '8px' }" @click="handleCancel">
           打印
@@ -132,10 +125,10 @@
 
 <script>
 import { info1, info2, info3, columns, columnKeys } from "./data/detail";
-import { getPurchaseOrders } from "@/services/srm.js";
+import { getExpense } from "@/services/srm.js";
 import { splitData } from "@/utils/util.js";
 export default {
-  props: ["docno"],
+  props: ["detailId"],
   data() {
     return {
       size: "small",
@@ -146,9 +139,7 @@ export default {
       columnKeys,
       totalData: [
         {
-          totalQty: "订单数量:0",
-          totalMoney: "订单金额:0",
-          totalOrderMoney: "交货金额:0",
+          totalMoney: "合计金额:0",
         },
       ],
       visible: true,
@@ -190,25 +181,19 @@ export default {
     getDetailList() {
       this.loading = true;
       let params = {
-        docno: this.docno,
+        id: this.detailId,
       };
-      getPurchaseOrders(params, "single").then((res) => {
+      getExpense(params, "single").then((res) => {
         if (res.data.success) {
           this.orderList = res.data.data.order;
-          this.detailList = res.data.data.detail;
-          let qty = 0;
+          this.detailList = res.data.data.detailList;
           let price = 0;
-          let orderPrice = 0;
           this.detailList.forEach((item) => {
-            qty += item.PriceQty;
-            price += item.MoneyTax;
-            orderPrice += item.Money;
+            price += item.ExpenseMoney;
           });
           this.totalData = [
             {
-              totalQty: "订单数量:" + qty,
-              totalMoney: "订单金额:" + price,
-              totalOrderMoney: "交货金额:" + orderPrice.toFixed(2),
+              totalMoney: "合计金额:" + price,
             },
           ];
         }

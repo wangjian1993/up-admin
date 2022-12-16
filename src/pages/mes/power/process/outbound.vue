@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2022-12-09 14:39:58
+ * @LastEditTime: 2022-12-16 15:59:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/outbound.vue
@@ -49,10 +49,10 @@
     <div>
       <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
     </div>
-    <WorkTable :orderList="orderList" :tableType="1" />
-    <identification v-if="isPrint" :orderList="orderList" :userLineData="userLineData" @closeModal="closeModal"></identification>
-    <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" :selectType="selectType" />
+    <WorkTable ref="workTable"  :orderValue="orderValue" :tableType="1" />
+    <identification v-if="isPrintList" :orderValue="orderValue" :userLineData="userLineData" @closeModal="closeModal" @success="setPrint"></identification>
     <OrderList v-if="isOrder" :orderInfo="orderInfo" @success="selectOrder" @closeModal="closeModal" :type="'finish'" />
+    <print v-if="isPrint" :printData="printData" :printList="printList" @closeModal="closeModal" />
   </a-card>
 </template>
 <script>
@@ -62,11 +62,12 @@ import { getTimeData } from "@/utils/util";
 import MsgList from "../components/MsgList.vue";
 import WorkTable from "../components/WorkTable.vue";
 import identification from "./identification.vue";
-import orderSelect from "./components/orderSelect.vue";
 import { splitData } from "@/utils/util.js";
 import OrderList from "./components/orderList.vue";
+import print from "./components/print.vue";
+import { getTemplate } from "@/services/web.js";
 export default {
-  components: { identification, MsgList, WorkTable, orderSelect, OrderList },
+  components: { identification, MsgList, WorkTable, OrderList ,print },
   mixins: [PublicVar],
   data() {
     return {
@@ -76,7 +77,8 @@ export default {
       orderValue: "",
       orderInfo: [],
       printData: [],
-      isPrint: false,
+      isPrint:false,
+      isPrintList: false,
       IsSuccess: false,
       remark: "",
       receiveQty: 0,
@@ -150,9 +152,26 @@ export default {
         this.listData.unshift(message);
         return;
       }
-      this.isPrint = true;
+      this.isPrintList = true;
     },
-
+    setPrint(list) {
+      this.isPrintList = false;
+      if(list.length == 0) {
+        return
+      }
+      console.log("获取模板")
+      let params = {
+        tempcode: "MITEM_IDENTITY_QR_CODE",
+      };
+      getTemplate(params).then((res) => {
+        if (res.data.success) {
+          this.$emit("closeModal");
+          this.isPrint = true;
+          this.printData = res.data.data;
+          this.printList = list;
+        }
+      });
+    },
     pushKeyword(event) {
       if (event.keyCode === 13) {
         event.preventDefault(); // 阻止浏览器默认换行操作
@@ -162,6 +181,7 @@ export default {
     closeModal() {
       this.visible = false;
       this.isPrint = false;
+      this.isPrintList = false;
       this.isOrderSelect = false;
       this.isOrder = false;
     },
@@ -218,32 +238,9 @@ export default {
             this.isStart = true;
             res.data.message.content = res.data.data.Msg;
             this.orderInfo = res.data.data.result.Scan;
-            this.orderList = res.data.data.result.Reports;
-            console.log("this.orderList==", this.orderList);
-            this.listData.unshift(res.data.message);
-          } else {
-            res.data.message.content = res.data.data.Msg;
-            this.listData.unshift(res.data.message);
-          }
-        }
-      });
-    },
-    getHistoryList() {
-      let params = {
-        ProPlanId: this.orderInfo.ProPlanId,
-        MoCode: this.orderInfo.MoCode,
-        ProcessStatus: "PROCESS_FINISHED",
-      };
-      this.orderList = [];
-      getProcessReport(params, "gethisreports").then((res) => {
-        res.data.message.time = getTimeData();
-        if (res.data.success) {
-          res.data.message.IsSuccess = res.data.data.IsSuccess;
-          if (res.data.data.IsSuccess) {
-            let list = res.data.data.result;
-            list.map((item) => {
-              this.orderList.unshift(item);
-            });
+            // this.orderList = res.data.data.result.Reports;
+            // this.listData.unshift(res.data.message);
+            this.$refs.workTable.getHistoryList();
           } else {
             res.data.message.content = res.data.data.Msg;
             this.listData.unshift(res.data.message);
@@ -299,7 +296,7 @@ export default {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
             res.data.message.content = res.data.data.Msg;
-            this.orderList = res.data.data.result.Reports;
+            this.$refs.workTable.getHistoryList();
             this.listData.unshift(res.data.message);
             this.emptyData();
           } else {
@@ -336,8 +333,8 @@ export default {
   margin-bottom: 5px;
 }
 /deep/.ant-table {
-  min-height: 71vh;
-  max-height: 71vh;
+  min-height: 50vh;
+  max-height: 50vh;
   overflow: auto;
 }
 /deep/ .ant-list-sm .ant-list-item {

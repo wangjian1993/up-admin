@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-12-09 14:40:31
+ * @LastEditTime: 2022-12-14 17:52:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/StartWork.vue
@@ -35,7 +35,7 @@
     <div>
       <MsgList :listData="listData" :IsSuccess="IsSuccess" @closeList="closeListData" />
     </div>
-    <WorkTable :orderList="orderList" :tableType="0" />
+    <WorkTable ref="workTable"  :orderValue="orderValue" :tableType="0" />
     <!-- 列表 -->
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
     <Batching v-if="isBatching" :orderInfo="orderInfo" @closeModal="closeModal" />
@@ -193,7 +193,7 @@ export default {
             this.isStart = true;
             res.data.message.content = res.data.data.Msg;
             this.orderInfo = res.data.data.result.Scan;
-            this.orderList = res.data.data.result.Reports;
+            this.$refs.workTable.getHistoryList();
             console.log("this.orderList==", this.orderList);
             // if (res.data.data.result.selectType == "single") {
             //   this.orderInfo = res.data.data.result.Scan
@@ -278,7 +278,7 @@ export default {
           res.data.message.IsSuccess = res.data.data.IsSuccess;
           if (res.data.data.IsSuccess) {
             res.data.message.content = res.data.data.Msg;
-            this.orderList = res.data.data.result.Reports;
+            this.$refs.workTable.getHistoryList();
             this.listData.unshift(res.data.message);
             this.emptyData();
           } else {
@@ -296,8 +296,8 @@ export default {
   margin-bottom: 5px;
 }
 /deep/.ant-table {
-  min-height: 71vh;
-  max-height: 71vh;
+  min-height: 50vh;
+  max-height: 50vh;
   overflow: auto;
 }
 /deep/ .ant-list-sm .ant-list-item {

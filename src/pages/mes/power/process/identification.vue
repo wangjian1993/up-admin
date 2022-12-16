@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-12-16 13:58:52
- * @LastEditTime: 2022-04-01 13:51:41
+ * @LastEditTime: 2022-12-16 15:58:46
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/production/process/identification.vue
+ * @FilePath: /up-admin/src/pages/mes/power/process/identification.vue
 -->
 <template>
   <div>
@@ -33,6 +33,7 @@
             :data-source="data"
             :size="size"
             :pagination="false"
+            :rowKey="(dataSource, index) => dataSource.Id" 
             :row-selection="{
               selectedRowKeys: selectedRowKeys,
               onChange: onSelectChange,
@@ -51,7 +52,6 @@
         </a-card>
       </div>
     </a-modal>
-    <print v-if="isPrint" :printData="printData" @closeModal="closeModal" />
   </div>
 </template>
 <script>
@@ -125,12 +125,10 @@ const columns = [
     width: "120px",
   },
 ];
-import { setPrintInfo } from "@/services/web.js";
-import print from "./components/print.vue";
+import { setPrintInfo, getReleases } from "@/services/mes.js";
 import { splitData } from "@/utils/util.js";
 export default {
-  props: ["orderList", "userLineData"],
-  components: { print },
+  props: [ "userLineData", "orderValue"],
   data() {
     return {
       data: [],
@@ -150,10 +148,11 @@ export default {
       isPrint: false,
       selectedRowKeys: [],
       printData: [],
+      orderList:[]
     };
   },
   created() {
-    this.getPrintList();
+    this.getList();
   },
   methods: {
     splitData,
@@ -165,6 +164,21 @@ export default {
     },
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
+    },
+    getList() {
+      console.log("this.orderValue===", this.orderValue);
+      let params = {
+        pageindex: this.pagination.current,
+        pagesize: 100,
+        mocode: this.orderValue,
+        status: this.tableType == 0 ? "PROCESS_START" : "PROCESS_FINISHED",
+      };
+      getReleases(params, "getreport").then((res) => {
+        if (res.data.success) {
+          this.orderList = res.data.data.list;
+          this.getPrintList();
+        }
+      });
     },
     getPrintList() {
       let params = [];
@@ -184,9 +198,16 @@ export default {
         this.$message.warning("请先勾选要打印的工单!");
         return;
       }
-      this.selectedRowKeys.map((item) => {
-        this.printData.push(this.data[item]);
+      let list = [];
+      this.data.forEach((row) => {
+        if (this.selectedRowKeys.includes(row.Id)) {
+          list.push(row);
+        }
       });
+      this.$emit("success", list);
+      // this.selectedRowKeys.map((item) => {
+      //   this.printData.push(this.data[item]);
+      // });
       // this.printData.push({
       //   BatchNo: null,
       //   DateCreated: "2022-01-18T17:36:47.48",
@@ -231,7 +252,7 @@ export default {
       //   WorkshopId: "BADD9225C22342C4988B5CB1B40A9935",
       //   WorkshopName: "老化车间01",
       // });
-      this.isPrint = true;
+      // this.isPrint = true;
     },
   },
 };

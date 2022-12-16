@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-09-08 14:46:56
+ * @LastEditTime: 2022-12-13 09:26:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/financial/component/addExpense.vue
@@ -10,26 +10,24 @@
 <template>
   <div>
     <a-drawer :visible="visible" title="新增费用单" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :headerStyle="{ padding: '10px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
-      <a-card class="card" bordered :bodyStyle="{ padding: '5px' }" :headStyle="{ padding: '5px' }">
-        <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+      <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+        <a-card class="card" bordered :bodyStyle="{ padding: '5px' }" :headStyle="{ padding: '5px' }">
           <a-row>
             <a-col :span="6">
-              <a-form-model-item ref="enterpriseId" has-feedback label="供应商名称" prop="enterpriseId">
-                <a-select show-search allowClear :show-arrow="false" :filter-option="false" :not-found-content="null" v-model="form.enterpriseId" placeholder="请选择邀请企业" @search="getSupplier">
-                  <a-select-option :value="item.Id" v-for="item in supplier" :key="item.Id">
+              <a-form-model-item ref="supplierCode" has-feedback label="供应商名称" prop="supplierCode">
+                <a-select show-search allowClear :show-arrow="false" :filter-option="false" :not-found-content="null" :disabled="isEdit"  v-model="form.supplierCode" placeholder="请选择邀请企业" @search="getSupplier">
+                  <a-select-option :value="item.Code" v-for="item in supplier" :key="item.Id">
                     {{ item.Name }}
                   </a-select-option>
                 </a-select>
               </a-form-model-item></a-col
             >
             <a-col :span="6">
-              <a-form-model-item ref="orderNo" has-feedback label="费用单号"> <a-input v-model="form.orderNo" allowClear placeholder="请输入费用单号"/></a-form-model-item
+              <a-form-model-item has-feedback label="费用单号" prop="orderNo"> <a-input :disabled="isEdit" v-model="form.orderNo" allowClear placeholder="请输入费用单号"/></a-form-model-item
             ></a-col>
           </a-row>
-        </a-form-model>
-      </a-card>
-      <a-card class="card" :bordered="true" :bodyStyle="{ padding: '5px' }" :headStyle="{ padding: '5px' }">
-        <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+        </a-card>
+        <a-card class="card" :bordered="true" :bodyStyle="{ padding: '5px' }" :headStyle="{ padding: '5px' }">
           <a-row>
             <a-col :span="6">
               <a-form-model-item ref="bank" has-feedback label="开户行" prop="bank">
@@ -45,10 +43,8 @@
               <a-form-model-item ref="taxpayerIdNumber" has-feedback label="纳税人识别号"> <a-input v-model="form.taxpayerIdNumber" allowClear placeholder="请输入纳税人识别号" /> </a-form-model-item>
             </a-col>
           </a-row>
-        </a-form-model>
-      </a-card>
-      <a-card class="card" :bordered="true" :bodyStyle="{ padding: '5px' }" :headStyle="{ padding: '5px' }">
-        <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+        </a-card>
+        <a-card class="card" :bordered="true" :bodyStyle="{ padding: '5px' }" :headStyle="{ padding: '5px' }">
           <a-row>
             <a-col :span="6">
               <a-form-model-item ref="currency" has-feedback label="币种" prop="currency">
@@ -98,86 +94,75 @@
               </a-form-model-item>
             </a-col>
             <a-col :span="6">
-              <a-form-model-item ref="expenseCycle" has-feedback label="费用周期" prop="expenseCycle"> <a-month-picker v-model="form.expenseCycle" :format="monthFormat" /> </a-form-model-item>
+              <a-form-model-item ref="expenseCycle" has-feedback label="费用周期" prop="expenseCycle"> <a-month-picker v-model="form.expenseCycle" :format="monthFormat" @change="expenseCycleChange" /> </a-form-model-item>
             </a-col>
           </a-row>
-        </a-form-model>
-      </a-card>
-      <a-card class="card" :bordered="true" :bodyStyle="{ padding: '5px' }" :headStyle="{ padding: '5px' }">
-        <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
+        </a-card>
+        <a-card class="card" :bordered="true" :bodyStyle="{ padding: '5px' }" :headStyle="{ padding: '5px' }">
           <a-row>
             <a-col :span="6">
               <a-form-model-item ref="remark" has-feedback label="备注"> <a-textarea v-model="form.remark" allowClear placeholder="备注" /> </a-form-model-item>
             </a-col>
           </a-row>
-        </a-form-model>
-      </a-card>
+        </a-card>
+      </a-form-model>
       <a-button class="editable-add-btn" type="primary" @click="handleAdd">
         添加
       </a-button>
       <a-table bordered size="small" :data-source="dataSource" :pagination="false" :columns="columns">
-        <template slot="expenseTitle" slot-scope="text, record">
+        <template slot="ExpenseTitle" slot-scope="text, record">
           <div>
-            <a-input style="width:150px" v-model="record.expenseTitle" size="small" />
+            <a-input style="width:150px" v-model="record.ExpenseTitle" size="small" />
           </div>
         </template>
-        <template slot="expenseType" slot-scope="text, record">
+        <template slot="ExpenseType" slot-scope="text, record">
           <div>
-            <a-select style="width:80px" size="small" v-model="record.expenseType" has-feedback>
+            <a-select style="width:80px" size="small" v-model="record.ExpenseType" has-feedback>
               <a-select-option value="扣款">扣款</a-select-option>
               <a-select-option value="补款">补款</a-select-option>
             </a-select>
           </div>
         </template>
-        <template slot="expenseReason" slot-scope="text, record">
+        <template slot="ExpenseReason" slot-scope="text, record">
           <div>
-            <a-select style="width:80px" size="small" v-model="record.expenseType" has-feedback>
+            <a-input style="width:150px" v-model="record.ExpenseReason" size="small" />
+          </div>
+        </template>
+        <template slot="ExpenseClass" slot-scope="text, record">
+          <div>
+            <a-select style="width:80px" size="small" v-model="record.ExpenseClass" has-feedback>
               <a-select-option value="扣款">扣款</a-select-option>
               <a-select-option value="补款">补款</a-select-option>
             </a-select>
           </div>
         </template>
-        <template slot="expenseClass" slot-scope="text, record">
+        <template slot="ExpenseMoney" slot-scope="text, record">
           <div>
-            <a-select style="width:80px" size="small" v-model="record.expenseType" has-feedback>
-              <a-select-option value="扣款">扣款</a-select-option>
-              <a-select-option value="补款">补款</a-select-option>
-            </a-select>
+            <a-input-number :min="0" style="width:80px" v-model="record.ExpenseMoney" size="small" />
           </div>
         </template>
-        <template slot="expenseMoney" slot-scope="text, record">
+        <template slot="ExpenseDate" slot-scope="text, record">
           <div>
-            <a-input-number :min="0" style="width:80px" v-model="record.expenseMoney" size="small" />
+            <a-date-picker style="width:150px" v-model="record.ExpenseDate" size="small" />
           </div>
         </template>
-        <template slot="expenseDate" slot-scope="text, record">
+        <template slot="Cost" slot-scope="text, record">
           <div>
-            <a-date-picker style="width:150px" v-model="record.expenseCycle" size="small" />
+            <a-select style="width:80px" size="small" v-model="record.Cost" has-feedback> </a-select>
           </div>
         </template>
-        <template slot="cost" slot-scope="text, record">
+        <template slot="Internal" slot-scope="text, record">
           <div>
-            <a-select style="width:80px" size="small" v-model="record.expenseType" has-feedback>
-              <a-select-option value="扣款">扣款</a-select-option>
-              <a-select-option value="补款">补款</a-select-option>
-            </a-select>
+            <a-input style="width:150px" v-model="record.Internal" size="small" />
           </div>
         </template>
-        <template slot="internal" slot-scope="text, record">
+        <template slot="Remark" slot-scope="text, record">
           <div>
-            <a-select style="width:80px" size="small" v-model="record.expenseType" has-feedback>
-              <a-select-option value="扣款">扣款</a-select-option>
-              <a-select-option value="补款">补款</a-select-option>
-            </a-select>
-          </div>
-        </template>
-        <template slot="remark" slot-scope="text, record">
-          <div>
-            <a-input style="width:150px" v-model="record.remark" size="small" />
+            <a-input style="width:150px" v-model="record.Remark" size="small" />
           </div>
         </template>
         <template slot="action" slot-scope="text, record">
-          <a-popconfirm v-if="dataSource.length" title="Sure to delete?" @confirm="() => onDelete(record.key)">
+          <a-popconfirm v-if="dataSource.length" title="确定要删除行?" @confirm="() => onDelete(record.key)">
             <a href="javascript:;">删除行</a>
           </a-popconfirm>
         </template>
@@ -213,56 +198,56 @@ import moment from "moment";
 import { bankList } from "../data/bank";
 const columns = [
   {
-    title: "费用照耀",
-    dataIndex: "expenseTitle",
-    scopedSlots: { customRender: "expenseTitle" },
+    title: "费用摘要",
+    dataIndex: "ExpenseTitle",
+    scopedSlots: { customRender: "ExpenseTitle" },
     align: "center",
   },
   {
     title: "费用类型",
-    dataIndex: "expenseType",
-    scopedSlots: { customRender: "expenseType" },
+    dataIndex: "ExpenseType",
+    scopedSlots: { customRender: "ExpenseType" },
     align: "center",
   },
   {
     title: "费用原因",
-    dataIndex: "expenseReason",
-    scopedSlots: { customRender: "expenseReason" },
+    dataIndex: "ExpenseReason",
+    scopedSlots: { customRender: "ExpenseReason" },
     align: "center",
   },
   {
     title: "费用类别",
-    dataIndex: "expenseClass",
+    dataIndex: "ExpenseClass",
     scopedSlots: { customRender: "expenseClass" },
     align: "center",
   },
   {
     title: "费用金额",
-    dataIndex: "expenseMoney",
+    dataIndex: "ExpenseMoney",
     scopedSlots: { customRender: "expenseMoney" },
     align: "center",
   },
   {
     title: "费用日期",
-    dataIndex: "expenseDate",
+    dataIndex: "ExpenseDate",
     scopedSlots: { customRender: "expenseDate" },
     align: "center",
   },
   {
     title: "成本中心",
-    dataIndex: "cost",
+    dataIndex: "Cost",
     scopedSlots: { customRender: "cost" },
     align: "center",
   },
   {
     title: "内部订单",
-    dataIndex: "internal",
+    dataIndex: "Internal",
     scopedSlots: { customRender: "internal" },
     align: "center",
   },
   {
     title: "备注说明",
-    dataIndex: "remark",
+    dataIndex: "Remark",
     scopedSlots: { customRender: "remark" },
     align: "center",
   },
@@ -273,7 +258,7 @@ const columns = [
   },
 ];
 export default {
-  props: ["editData", "isEdit", "isClone"],
+  props: ["editData", "isEdit"],
   data() {
     return {
       bankList,
@@ -297,34 +282,42 @@ export default {
         source: "",
         expenseCycle: "",
         remark: "",
+        children: [],
       },
       rules: {
-        enterpriseId: [
+        supplierCode: [
           {
             required: true,
             message: "请选择供应商",
-            trigger: "blur",
+            trigger: "change",
+          },
+        ],
+        orderNo: [
+          {
+            required: true,
+            message: "请输入费用单号",
+            trigger: "change",
           },
         ],
         currency: [
           {
             required: true,
             message: "请选择币种",
-            trigger: "blur",
+            trigger: "change",
           },
         ],
         rate: [
           {
             required: true,
             message: "请选择税率",
-            trigger: "blur",
+            trigger: "change",
           },
         ],
         expenseCycle: [
           {
             required: true,
             message: "请选择费用周期",
-            trigger: "blur",
+            trigger: "change",
           },
         ],
       },
@@ -349,11 +342,38 @@ export default {
   created() {
     this.getSupplier();
     this.getParamData();
+    if (this.isEdit) {
+      console.log(this.editData);
+      let { order, detailList } = this.editData;
+      this.dataSource = detailList;
+      this.form = {
+        id :order.Id,
+        orderNo: order.OrderNo,
+        enterpriseId: "",
+        supplierCode: order.SupplierCode,
+        bank: order.Bank,
+        bankCard: order.BankCard,
+        taxpayerIdNumber: order.TaxpayerIdNumber,
+        currency: order.Currency,
+        rate: order.Rate,
+        isDeduct: order.IsDeduct,
+        isInternal: order.IsInternal,
+        source: order.Source,
+        expenseCycle: order.ExpenseCycle,
+        remark: order.Remark,
+        children: [],
+      };
+    }
   },
   methods: {
     moment,
-    rateChange(e){
-        this.form.rate =e;
+    rateChange(e) {
+      this.form.rate = e;
+    },
+    expenseCycleChange(e, string) {
+      console.log(e);
+      console.log(string);
+      this.form.expenseCycle = string;
     },
     getParamData() {
       this.paramsList.forEach((item) => {
@@ -384,16 +404,15 @@ export default {
       const { count, dataSource } = this;
       this.count = count + 1;
       const newData = {
-        id: "", // 费用单id
-        expenseTitle: "",
-        expenseType: "",
-        expenseReason: "",
-        expenseClass: "",
-        expenseMoney: "",
-        expenseDate: "",
-        cost: "",
-        internal: "",
-        remark: "",
+        ExpenseTitle: "",
+        ExpenseType: "",
+        ExpenseReason: "",
+        ExpenseClass: "",
+        ExpenseMoney: "",
+        ExpenseDate: "",
+        Cost: "",
+        Internal: "",
+        Remark: "",
         key: count,
       };
       this.dataSource = [...dataSource, newData];
@@ -416,18 +435,42 @@ export default {
       this.$refs.ruleForm.validate((valid) => {
         console.log(valid);
         if (valid) {
-            console.log(this.form);
-            let supplier = this.supplier.find((item) => item.Id == this.form.enterpriseId);
-            this.form.supplierCode = supplier.Code
-            setExpense(this.form, "add").then((res) => {
-            if (res.data.success) {
-              this.$message.success("编辑成功!");
-              this.$emit("closeModal");
-              this.$emit("success");
-              this.visible = false;
-            }
-            this.loading = false;
+          console.log("dataSource===", this.dataSource);
+          this.form.children = [];
+          this.dataSource.forEach((item) => {
+            this.form.children.push({
+              expenseTitle: item.ExpenseTitle,
+              expenseType: item.ExpenseType,
+              expenseReason: item.ExpenseReason,
+              expenseClass: item.ExpenseClass,
+              expenseMoney: item.ExpenseMoney,
+              expenseDate: item.ExpenseDate,
+              cost: item.Cost,
+              internal: item.Internal,
+              remark: item.Remark,
+            });
           });
+          if (this.isEdit) {
+            setExpense(this.form, "update").then((res) => {
+              if (res.data.success) {
+                this.$message.success("编辑成功!");
+                this.$emit("closeModal");
+                this.$emit("success");
+                this.visible = false;
+              }
+              this.loading = false;
+            });
+          } else {
+            setExpense(this.form, "add").then((res) => {
+              if (res.data.success) {
+                this.$message.success("添加成功!");
+                this.$emit("closeModal");
+                this.$emit("success");
+                this.visible = false;
+              }
+              this.loading = false;
+            });
+          }
         } else {
           this.loading = false;
         }

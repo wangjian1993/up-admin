@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2022-05-05 11:32:50
- * @LastEditTime: 2022-09-07 15:22:43
+ * @LastEditTime: 2022-12-12 09:57:47
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/financial/data/invoice.js
+ * @FilePath: /up-admin/src/pages/srm/purchase/financial/data/expense.js
  */
 // import { splitData } from "@/utils/util.js";
 export const columns = [
@@ -15,39 +15,15 @@ export const columns = [
         width: 50,
     },
     {
-        title: "供应商名称",
+        title: "供应商",
         dataIndex: "SupplierFullName",
         scopedSlots: { customRender: "SupplierFullName" },
         align: "center",
     },
     {
-        title: "发票通知单手",
-        dataIndex: "InvoiceNo",
-        scopedSlots: { customRender: "InvoiceNo" },
-        align: "center",
-    },
-    {
-        title: "发票信息",
-        dataIndex: "InvoiceNo",
-        scopedSlots: { customRender: "InvoiceNo" },
-        align: "center",
-    },
-    {
-        title: "发票部门",
-        dataIndex: "InvoiceNo",
-        scopedSlots: { customRender: "InvoiceNo" },
-        align: "center",
-    },
-    {
-        title: "发票类型",
-        dataIndex: "InvoiceType",
-        scopedSlots: { customRender: "InvoiceType" },
-        align: "center",
-    },
-    {
-        title: "来源",
-        dataIndex: "InvoiceNo",
-        scopedSlots: { customRender: "InvoiceNo" },
+        title: "费用单号",
+        dataIndex: "OrderNo",
+        scopedSlots: { customRender: "OrderNo" },
         align: "center",
     },
     {
@@ -58,26 +34,8 @@ export const columns = [
     },
     {
         title: "发布时间",
-        dataIndex: "InvoiceDateTime",
-        scopedSlots: { customRender: "InvoiceDateTime" },
-        align: "center",
-    },
-    {
-        title: "对账金额",
-        dataIndex: "InvoiceMoneyTax",
-        scopedSlots: { customRender: "InvoiceMoneyTax" },
-        align: "center",
-    },
-    {
-        title: "状态",
-        dataIndex: "Status",
-        scopedSlots: { customRender: "Status" },
-        align: "center",
-    },
-    {
-        title: "审批状态",
-        dataIndex: "DatetimeCreated",
-        scopedSlots: { customRender: "DatetimeCreated" },
+        dataIndex: "PublishDatetime",
+        scopedSlots: { customRender: "PublishDatetime" },
         align: "center",
     },
     {

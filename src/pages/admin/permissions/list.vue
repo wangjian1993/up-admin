@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2022-11-29 09:22:11
+ * @LastEditTime: 2022-12-16 10:45:19
  * @LastEditors: max
  * @Description: 权限管理
  * @FilePath: /up-admin/src/pages/admin/permissions/list.vue
@@ -23,9 +23,9 @@
               <!-- <a-button size="small" @click="expandHandle">{{
               expandAll ? "全部收起" : "全部展开"
             }}</a-button> -->
-              <div  style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
+              <div style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
                 <a-button v-if="isShowSupplier" type="primary" @click="isSelectSupplier = true">选择供应商</a-button>
-                <a-tree ref="enterTree" :default-selected-keys="enterValue" @select="enterTreeClick" v-if="enterTreeData.length" :tree-data="enterTreeData" :load-data="onLoadData" :replaceFields="replaceFields" default-expand-all></a-tree>
+                <a-tree ref="enterTree" :default-selected-keys="enterValue" @select="enterTreeClick" v-if="enterTreeData.length" :tree-data="enterTreeData" :replaceFields="replaceFields"></a-tree>
                 <a-empty v-if="enterTreeData.length == 0" />
               </div>
               <!-- <div v-else style="padding: 10px 0;max-height:84vh;min-height:84vh;overflow:auto">
@@ -259,8 +259,8 @@ export default {
       enterList: [],
       expandAll: false,
       isSelectSupplier: false,
-      supplierData:[],
-      isShowSupplier:false,
+      supplierData: [],
+      isShowSupplier: false,
     };
   },
   watch: {},
@@ -279,7 +279,7 @@ export default {
     },
     setCompanyList(record) {
       console.log("record=", record);
-      this.enterTreeData = record.list || record
+      this.enterTreeData = record.list || record;
       this.isNotEnter = false;
       // this.enterValue.push(this.record[0].Id);
       if (record[0].Type == "ORG") {
@@ -316,7 +316,7 @@ export default {
           this.enterTypeData = res.data.data;
           this.defaultEnterTypeId = res.data.data[0].TypeId;
           this.defaultEnterType = res.data.data[0].Type;
-          this.isShowSupplier = res.data.data[0].TypeName == "供应商机构"
+          this.isShowSupplier = res.data.data[0].TypeName == "供应商机构";
           if (res.data.data[0].TypeName !== "供应商机构") {
             this.getEnterTree();
           }
@@ -345,8 +345,13 @@ export default {
       getAppTypeList(params).then((res) => {
         if (res.data.success) {
           this.appTypeData = res.data.data.list;
-          this.defaultAppTypeId = res.data.data.list[0].AppTypeId;
-          this.appTypeId = res.data.data.list[0].AppTypeId;
+          this.appTypeData.forEach((item)=>{
+            if(item.AppTypeName == 'BS应用'){
+              this.defaultAppTypeId = item.AppTypeId;
+          this.appTypeId =item.AppTypeId;
+            }
+          })
+          console.log("this.appTypeId==",this.appTypeId)
           this.getAppMdules();
         }
       });
@@ -364,6 +369,20 @@ export default {
         }
       });
     },
+    //删除树形子集
+    deleteChildren(arr) {
+      //console.log("arr---",arr)
+      return arr.map((item) => {
+        if (item.children != null && item.children.length > 0) {
+          //console.log("比哪里===")
+          this.deleteChildren(item.children);
+        } else {
+          //console.log("删除===")
+          delete item.children;
+        }
+        return item;
+      });
+    },
     //获取机构树形结构
     getEnterTree() {
       this.enterTreeData = [];
@@ -375,7 +394,8 @@ export default {
       };
       getEnterOrgTree(params).then((res) => {
         if (res.data.success) {
-          this.enterTreeData = res.data.data.list;
+          //console.log("this.deleteChildren(res.data.data.list)===",this.deleteChildren(res.data.data.list))
+          this.enterTreeData = this.deleteChildren(res.data.data.list);
           //没有机构
           if (this.enterTreeData.length == 0) {
             this.userTreeData = [];
@@ -533,8 +553,8 @@ export default {
       this.appTreeData = [];
       this.treeJ = 0;
       this.expandedKeys = [];
-      this.supplierData = []
-      this.isShowSupplier = data.TypeName == "供应商机构"
+      this.supplierData = [];
+      this.isShowSupplier = data.TypeName == "供应商机构";
       if (data.TypeName !== "供应商机构") {
         this.getEnterTree();
       }
@@ -660,12 +680,15 @@ export default {
           });
         }
       });
+      console.log("this.AppTypeId",this.AppTypeId)
       let params = {
         ModuleList: resArray,
         UserId: this.userId,
         EnterId: this.userId != "" ? "" : this.enterid,
         OrgId: this.userId != "" ? "" : this.orgId,
+        AppTypeId:this.appTypeId
       };
+      console.log("params===",params)
       setPermission(params, "setpermission").then((res) => {
         if (res.data.success) {
           this.$message.success("设置成功!");

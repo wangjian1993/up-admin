@@ -1,169 +1,108 @@
 /*
  * @Author: max
  * @Date: 2022-08-11 13:55:08
- * @LastEditTime: 2022-08-11 15:07:17
+ * @LastEditTime: 2022-12-12 17:05:52
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/order/data/detail.js
+ * @FilePath: /up-admin/src/pages/srm/purchase/financial/data/detail.js
  */
 export const info1 = [{
-    title: '采购方',
-    dataIndex: "PurchaseEnterprise"
-}, {
-    title: '采购单号',
-    dataIndex: "OrderNo"
-}, {
     title: '供应商',
     dataIndex: "SupplierFullName"
 }, {
-    title: '采购类型',
-    dataIndex: "PurchaseType"
-}, {
-    title: '打印状态',
-    dataIndex: "PrintStatus"
-}, {
-    title: '差异原因',
-    dataIndex: "DifferenceReason"
-}, {
-    title: '收货状态',
-    dataIndex: "ReceiptStatus"
-}, {
-    title: '订单状态',
-    dataIndex: "PurchaseStatus"
-}, {
-    title: '订单附件',
-    dataIndex: "FilePath"
+    title: '费用单号',
+    dataIndex: "OrderNo"
 }];
 export const info2 = [{
-    title: '采购日期',
-    dataIndex: "PurchaseDatetime"
+    title: '开户号',
+    dataIndex: "Bank"
 }, {
-    title: '交易税别',
-    dataIndex: "TransactionTax"
+    title: '银行账户',
+    dataIndex: "BankCard"
 }, {
-    title: '币别',
-    dataIndex: "Currency"
-}, {
-    title: '采购员',
-    dataIndex: "PurchaseUser"
-}, {
-    title: '付款条件',
-    dataIndex: "PaymentTerm"
+    title: '纳税人识别号',
+    dataIndex: "TaxpayerIdNumber"
 }];
 export const info3 = [{
-    title: '物流方式',
-    dataIndex: "ShippingMethod"
+    title: '币种',
+    dataIndex: "Currency"
 }, {
-    title: '收货地址',
-    dataIndex: "ShippingAddress"
+    title: '税率',
+    dataIndex: "Rate"
 }, {
-    title: '订单备注',
-    dataIndex: "Remark"
+    title: '抵扣发票',
+    dataIndex: "IsDeduct"
+}, {
+    title: '是否内部',
+    dataIndex: "IsInternal"
+}, {
+    title: '单据来源',
+    dataIndex: "Source"
+}, {
+    title: '费用周期',
+    dataIndex: "ExpenseCycle"
 }];
 export const columns = [
     {
-        title: "项次",
-        scopedSlots: { customRender: "index" },
+        title: "费用摘要",
+        dataIndex: "ExpenseTitle",
+        scopedSlots: { customRender: "expenseTitle" },
         align: "center",
-        width: 50,
     },
     {
-        dataIndex: "product_info",  //产品
-        scopedSlots: { customRender: "product_info" },
-        slots: { title: "productTitle" },
-        align: "left",
-        width: 110,
-    },
-    {
-        dataIndex: "PurchaseWarehouse",   //收货仓位
-        scopedSlots: { customRender: "PurchaseWarehouse" },
-        slots: { title: "PurchaseWarehouseTitle" },
-        align: "left",
-        width: 100,
-    },
-    {
-        dataIndex: "DrawingNo",  //图号
-        scopedSlots: { customRender: "DrawingNo" },
-        slots: { title: "DrawingNoTitle" },
-        align: "left",
-        width: 200,
-    },
-    {
-        title: "交货日期",
-        dataIndex: "DeliveryDatetime",
-        scopedSlots: { customRender: "DeliveryDatetime" },
+        title: "费用类型",
+        dataIndex: "ExpenseType",
+        scopedSlots: { customRender: "expenseType" },
         align: "center",
-        width: 75,
     },
     {
-        dataIndex: "Qty",   //采购数量
-        scopedSlots: { customRender: "Qty" },
-        slots: { title: "QtyTtile" },
+        title: "费用原因",
+        dataIndex: "ExpenseReason",
+        scopedSlots: { customRender: "expenseReason" },
         align: "center",
-        width: 50,
     },
     {
-        dataIndex: "PriceQty",  //计价数量
-        scopedSlots: { customRender: "PriceQty" },
-        slots: { title: "PriceQtyTitle" },
+        title: "费用类别",
+        dataIndex: "ExpenseClass",
+        scopedSlots: { customRender: "expenseClass" },
         align: "center",
-        width: 75,
     },
     {
-        dataIndex: "Price", //单位
-        scopedSlots: { customRender: "Price" },
-        slots: { title: "PriceTitle" },
+        title: "费用金额",
+        dataIndex: "ExpenseMoney",
+        scopedSlots: { customRender: "expenseMoney" },
         align: "center",
-        width: 80,
     },
     {
-        dataIndex: "MoneyTax",  //含税金额
-        scopedSlots: { customRender: "MoneyTax" },
-        slots: { title: "MoneyTaxTitle" },
+        title: "费用日期",
+        dataIndex: "ExpenseDate",
+        scopedSlots: { customRender: "expenseDate" },
         align: "center",
-        width: 50,
     },
     {
-        title: "备注",
+        title: "成本中心",
+        dataIndex: "Cost",
+        scopedSlots: { customRender: "cost" },
+        align: "center",
+    },
+    {
+        title: "内部订单",
+        dataIndex: "Internal",
+        scopedSlots: { customRender: "internal" },
+        align: "center",
+    },
+    {
+        title: "备注说明",
         dataIndex: "Remark",
-        scopedSlots: { customRender: "Remark" },
+        scopedSlots: { customRender: "remark" },
         align: "center",
-        width: 80,
-    },
-    {
-        title: "附件",
-        dataIndex: "FilePath",
-        scopedSlots: { customRender: "FilePath" },
-        align: "center",
-        width: 80,
-    },
-    {
-        title: "请购人",
-        dataIndex: "PurchaseUser",
-        scopedSlots: { customRender: "PurchaseUser" },
-        align: "center",
-        width: 105,
     },
 ];
 export const columnKeys = [
     {
-        title: "订单数量",
-        dataIndex: "totalQty",
-        scopedSlots: { customRender: "totalQty" },
-        align: "center",
-        width: 105,
-    },
-    {
-        title: "订单金额",
+        title: "合计金额",
         dataIndex: "totalMoney",
         scopedSlots: { customRender: "totalMoney" },
-        align: "center",
-        width: 105,
-    },
-    {
-        title: "交货金额",
-        dataIndex: "totalOrderMoney",
-        scopedSlots: { customRender: "totalOrderMoney" },
         align: "center",
         width: 105,
     },
