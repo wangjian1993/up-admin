@@ -44,6 +44,9 @@
         <a-form-model-item ref="parameters" label="参数">
           <a-textarea v-model="form.parameters" placeholder="请输入参数" :auto-size="{ minRows: 3, maxRows: 5 }" />
         </a-form-model-item>
+         <a-form-model-item has-feedback label="表达式">
+          <a-input v-model="form.cron " allowClear placeholder="请输入表达式" />
+        </a-form-model-item>
         <!-- <a-row>
           <a-col :span="24" v-for="(formItem, index) in dynamicValidateForm" :key="index" style="border-bottom:1px #e9e9e9 solid;margin: 5px 0;padding:5px 0">
             <a-form-model-item label="参数">
@@ -85,6 +88,7 @@ export default {
         methodpath: "",
         method: "",
         parameters: "",
+        cron:''
       },
       ids: [],
       rules: {
@@ -141,6 +145,13 @@ export default {
           {
             required: true,
             message: "请选择请求方式",
+            trigger: "blur",
+          },
+        ],
+        cron: [
+          {
+            required: true,
+            message: "请输入表达式",
             trigger: "blur",
           },
         ],
@@ -215,6 +226,7 @@ export default {
               method: this.form.method,
               unit: this.form.unit,
               parameters: this.form.parameters,
+              cron:this.form.cron
             };
             // let obj = {};
             // this.dynamicValidateForm.forEach((item) => {
