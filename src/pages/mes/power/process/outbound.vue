@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2022-12-16 15:59:58
+ * @LastEditTime: 2023-01-06 16:37:27
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/outbound.vue
@@ -333,8 +333,8 @@ export default {
   margin-bottom: 5px;
 }
 /deep/.ant-table {
-  min-height: 50vh;
-  max-height: 50vh;
+  min-height: 40vh;
+  max-height: 40vh;
   overflow: auto;
 }
 /deep/ .ant-list-sm .ant-list-item {

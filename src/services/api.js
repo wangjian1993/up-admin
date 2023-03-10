@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2022-11-08 16:45:27
+ * @LastEditTime: 2023-03-01 14:11:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/api.js
@@ -48,4 +48,5 @@ module.exports = {
   UP_KANBAN:`${BASE_URL_MOCK}/api/kanban`,
   UP_JOB:`${BASE_URL_MOCK}/api/jobscheduler`,
   UP_TL:`${BASE_URL_MOCK}/api/template`,
+  UP_QMS:`${BASE_URL_MOCK}/api/qms`,
 }

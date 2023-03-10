@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-08-20 15:18:06
+ * @LastEditTime: 2023-03-01 08:54:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/report/index.vue
@@ -66,8 +66,8 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="是否签样" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select style="width: 200px" v-decorator="['isqy']" placeholder="请选择状态">
+                <a-form-item label="签样状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select style="width: 200px" disabled v-decorator="['isqy']" placeholder="请选择状态">
                     <a-select-option value="">全部</a-select-option>
                     <a-select-option value="是">是</a-select-option>
                     <a-select-option value="否">否</a-select-option>

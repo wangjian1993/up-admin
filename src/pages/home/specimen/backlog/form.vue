@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-08-12 09:33:37
+ * @LastEditTime: 2023-03-10 09:29:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/form.vue
@@ -74,7 +74,8 @@
               <a-form-model-item ref="SupplierCode" has-feedback label="供应商编码" prop="SupplierCode"> <a-input v-model="form.SupplierCode" disabled allowClear placeholder="请输入供应商编码" /> </a-form-model-item
             ></a-col>
             <a-col :span="6">
-              <a-form-model-item ref="HasApprovalSheet" has-feedback label="是否有承认书" prop="HasApprovalSheet">
+              <a-form-model-item ref="HasApprovalSheet" has-feedback prop="HasApprovalSheet">
+                <div slot="label"><span style="color:red;font-size: 14px;">*</span>是否有承认书</div>
                 <a-select v-model="form.HasApprovalSheet" :disabled="!disabled1" has-feedback placeholder="请选择是否有承认书">
                   <a-select-option value="是">是</a-select-option>
                   <a-select-option value="否">否</a-select-option>
@@ -93,7 +94,15 @@
               <a-form-model-item ref="DatetimePurchaseRetrieve" has-feedback label="采购取回样品日期" prop="DatetimePurchaseRetrieve"> <a-date-picker :disabled="!disabled1" v-model="form.DatetimePurchaseRetrieve" show-time type="date" placeholder="选择采购取回样品日期" style="width: 100%;" /> </a-form-model-item
             ></a-col>
             <a-col :span="6">
-              <a-form-model-item ref="SampleCategory" has-feedback label="样品类别" prop="SampleCategory"> <a-input v-model="form.SampleCategory" allowClear placeholder="请输入样品类别" /> </a-form-model-item
+              <a-form-model-item ref="SampleCategory" has-feedback prop="SampleCategory">
+                <!-- <a-input v-model="form.SampleCategory" allowClear placeholder="请输入样品类别" />  -->
+                <div slot="label"><span style="color:red;font-size: 14px;">*</span>样品类别</div>
+                <a-select v-model="form.SampleCategory" has-feedback placeholder="请选择样品类别">
+                  <a-select-option value="新样品">新样品</a-select-option>
+                  <a-select-option value="版本升级">版本升级</a-select-option>
+                  <a-select-option value="更换供应商">更换供应商</a-select-option>
+                </a-select>
+                </a-form-model-item
             ></a-col>
             <a-col :span="6">
               <a-form-model-item ref="CtrledCompany" has-feedback label="受控公司" prop="CtrledCompany"> <a-input v-model="form.CtrledCompany" :disabled="!disabled1" allowClear placeholder="请输入受控公司" /> </a-form-model-item
@@ -124,10 +133,12 @@
               <a-form-model-item ref="DatetimeSign" has-feedback label="签样时间" prop="DatetimeSign"> <a-date-picker v-model="form.DatetimeSign" :disabled="!disabled2" show-time type="date" placeholder="选择签样时间" style="width: 100%;" /> </a-form-model-item>
             </a-col>
             <a-col :span="6">
-              <a-form-model-item ref="SignResult" has-feedback label="签样结果" prop="SignResult">
+              <a-form-model-item ref="SignResult" has-feedback prop="SignResult">
+                <div slot="label"><span style="color:red;font-size: 14px;">*</span>签样结果</div>
                 <a-select v-model="form.SignResult" has-feedback placeholder="请选择签样结果" :disabled="!disabled2">
                   <a-select-option value="OK">OK</a-select-option>
                   <a-select-option value="NG">NG</a-select-option>
+                  <a-select-option value="试产样/临时样">试产样/临时样</a-select-option>
                   <a-select-option value="其他">其他</a-select-option>
                 </a-select>
               </a-form-model-item>
@@ -223,6 +234,7 @@ export default {
         Supplier: "",
       },
       rules: {
+        HasApprovalSheet:[],
         ItemCode: [
           {
             required: true,
@@ -297,6 +309,7 @@ export default {
       DatetimePurchaseDeliver: (start) => start.specimen.DatetimePurchaseDeliver,
       Purchaser: (start) => start.specimen.Purchaser,
       Supplier: (start) => start.specimen.Supplier,
+      SupplierCode: (start) => start.specimen.SupplierCode,
     }),
   },
   created() {
@@ -314,6 +327,7 @@ export default {
       if (!this.isEditBnt) {
         this.form.Purchaser = this.Purchaser;
         this.form.Supplier = this.Supplier;
+        this.form.SupplierCode = this.SupplierCode;
         this.form.DatetimePurchaseDeliver = this.DatetimePurchaseDeliver != null ? moment(this.DatetimePurchaseDeliver) : "";
       }
     }

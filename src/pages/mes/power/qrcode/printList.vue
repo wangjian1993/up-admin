@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2022-11-11 16:49:09
+ * @LastEditTime: 2023-02-25 13:48:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/qrcode/printList.vue
@@ -10,6 +10,25 @@
   <div>
     <a-modal v-model="visible" :title="IsRePrint == 'Y' ? '补打产品追溯码' : '打印产品追溯码'" @cancel="close" @ok="handleOk" centered width="70%">
       <div>
+        <a-form layout="horizontal" :form="searchForm">
+          <div>
+            <a-row>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="序号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input-number :min="0" allowClear placeholder="请输入序号" v-decorator="['startsortno']" />
+                  <span>-</span>
+                  <a-input-number :min="0" allowClear placeholder="请输入序号" v-decorator="['ensortno']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <span>
+                  <a-button type="primary" @click="searchBtn">查询</a-button>
+                  <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+                </span>
+              </a-col>
+            </a-row>
+          </div>
+        </a-form>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-table
             v-if="IsRePrint == 'Y'"
@@ -30,7 +49,7 @@
               </div>
             </template>
           </a-table>
-          <a-table v-else :columns="columns" :data-source="data" :size="size" :pagination="false" :rowKey="(orderSelectList) => orderSelectList.QrId" bordered>
+          <a-table v-else :columns="columns" :data-source="dataSource" :size="size" :pagination="pagination" :rowKey="(orderSelectList) => orderSelectList.QrId" @change="handleTableChange" :scroll="{ y: 500 }" bordered>
             <template slot="index" slot-scope="text, record, index">
               <div>
                 <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -108,12 +127,12 @@ const columns = [
   },
 ];
 import { splitData } from "@/utils/util.js";
-import { getQrCode } from "@/services/mes.js";
+import { getQrCodeList } from "@/services/mes.js";
 export default {
   props: ["orderInfo", "IsRePrint"],
   data() {
     return {
-      data: [],
+      dataSource: [],
       columns,
       size: "small",
       visible: true,
@@ -130,6 +149,7 @@ export default {
       isPrint: false,
       printData: [],
       selectedRowKeys: [],
+      searchForm: this.$form.createForm(this),
     };
   },
   computed: {
@@ -138,7 +158,7 @@ export default {
     },
   },
   created() {
-    this.getPrintList();
+    this.searchBtn();
   },
   methods: {
     splitData,
@@ -151,18 +171,63 @@ export default {
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
     },
+    searchBtn() {
+      this.pagination.current = 1;
+      this.search();
+    },
+    reset() {
+      this.searchBtn();
+      this.searchForm.resetFields();
+    },
+    search() {
+      this.searchForm.validateFields((err, values) => {
+        if (!err) {
+          this.loading = true;
+          let params = {
+            pageindex: this.pagination.current,
+            pagesize: this.pagination.pageSize,
+            mocode: this.orderInfo.MoCode,
+            isreprint: this.IsRePrint,
+            startsortno: values.startsortno,
+            ensortno: values.ensortno,
+          };
+          getQrCodeList(params, "getprintlist").then((res) => {
+            if (res.data.success) {
+              this.dataSource = res.data.data.list;
+              const pagination = { ...this.pagination };
+              pagination.total = res.data.data.recordsTotal;
+              this.pagination = pagination;
+              this.loading = false;
+              this.isSearch = 2;
+            }
+          });
+          // do something
+        }
+      });
+    },
     getPrintList() {
       let params = {
+        pageindex: this.pagination.current,
+        pagesize: this.pagination.pageSize,
         LineId: this.orderInfo.LineId,
         MoCode: this.orderInfo.MoCode,
         IsRePrint: this.IsRePrint,
       };
-      getQrCode(params, "getprints").then((res) => {
+      getQrCodeList(params, "getprints").then((res) => {
         console.log("res----", res);
         if (res.data.success) {
           this.data = res.data.data;
         }
       });
+    },
+    handleTableChange(pagination) {
+      this.pagination.current = pagination.current;
+      this.pagination.pageSize = pagination.pageSize;
+      if (this.isSearch == 2) {
+        this.search();
+        return;
+      }
+      this.getListAll();
     },
     handleOk() {
       if (this.IsRePrint == "Y" && this.selectedRowKeys.length == 0) {
@@ -171,15 +236,30 @@ export default {
       }
       let list = [];
       if (this.IsRePrint == "Y") {
-        this.data.forEach((row) => {
+        this.dataSource.forEach((row) => {
           if (this.selectedRowKeys.includes(row.QrId)) {
             list.push(row);
           }
         });
+        this.$emit("success", list);
       } else {
-        list = this.data;
+        let values = this.searchForm.getFieldsValue();
+        let params = {
+          pageindex: this.pagination.current,
+          pagesize: this.pagination.total,
+          mocode: this.orderInfo.MoCode,
+          isreprint: this.IsRePrint,
+          startsortno: values.startsortno,
+          ensortno: values.ensortno,
+        };
+        getQrCodeList(params, "getprintlist").then((res) => {
+          if (res.data.success) {
+            list = res.data.data.list;
+            console.log("list====", list);
+            this.$emit("success", list);
+          }
+        });
       }
-      this.$emit("success", list);
     },
   },
 };

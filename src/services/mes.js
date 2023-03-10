@@ -1,14 +1,15 @@
 /*
  * @Author: max
  * @Date: 2022-08-29 16:34:37
- * @LastEditTime: 2022-12-16 09:46:28
+ * @LastEditTime: 2023-01-06 09:43:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/mes.js
  */
 import {
     UP_KANBAN,
-    UP_WEB
+    UP_WEB,
+    UP_WMS
 } from '@/services/api'
 import {
     request,
@@ -82,4 +83,8 @@ export function getQrCode(params, action) {
 
 export function getQrCodeList(params, action) {
     return request(`${UP_WEB}/powersupply/process/qr/${action}`, METHOD.GET, params);
+}
+
+export function getOrderInfo(params) {
+    return request(`${UP_WMS}/material/complement/print`, METHOD.POST, params);
 }

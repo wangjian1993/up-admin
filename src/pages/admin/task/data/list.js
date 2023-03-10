@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-30 14:05:19
- * @LastEditTime: 2022-12-21 10:29:27
+ * @LastEditTime: 2023-01-05 18:02:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/admin/task/data/list.js
@@ -58,7 +58,7 @@ export const columns = [
       align: "center",
     },
     {
-      title: "执行频率(秒)",
+      title: "执行频率(单位/次)",
       dataIndex: "RunTimingNum",
       scopedSlots: { customRender: "RunTimingNum" },
       align: "center",

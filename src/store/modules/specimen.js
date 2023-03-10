@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-27 16:27:23
- * @LastEditTime: 2022-06-23 13:50:00
+ * @LastEditTime: 2023-03-01 09:02:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/store/modules/specimen.js
@@ -12,7 +12,8 @@ const specimen = {
         RegisterId: "",
         DatetimePurchaseDeliver: "",
         Purchaser: "",
-        Supplier: ""
+        Supplier: "",
+        SupplierCode:""
     },
     mutations: {
         setRegisterId(state, data) {
@@ -21,12 +22,14 @@ const specimen = {
             state.DatetimePurchaseDeliver = data.DatetimePurchaseDeliver;
             state.Purchaser = data.Purchaser;
             state.Supplier = data.Supplier;
+            state.SupplierCode = data.SupplierCode;
         },
         deleteId(state) {
             state.RegisterId = "";
             state.DatetimePurchaseDeliver = "";
             state.Purchaser = "";
             state.Supplier = "";
+            state.SupplierCode = "";
             console.log("state.RegisterId====", state.RegisterId)
         },
     },

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-12-14 17:52:34
+ * @LastEditTime: 2023-01-06 16:36:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/StartWork.vue
@@ -14,7 +14,11 @@
         <a-descriptions-item label="工单/工单扫码" :span="2">
           <div style="display:flex"><a-input style="width:400px;" allowClear ref="orderValue1" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur()" @pressEnter="scanCode" auto-size /><a-button style="margin-left:10px" shape="circle" icon="profile" @click="orderShow"/></div>
         </a-descriptions-item>
-        <a-descriptions-item label="生产工厂/车间/产线" :span="2"> {{ userLineData.PlantName }}/{{ userLineData.WorkshopName }}/ {{ userLineData.LineName }} </a-descriptions-item>
+        <a-descriptions-item label="生产工厂/车间/产线" :span="2"> {{ userLineData.PlantName }}/{{ userLineData.WorkshopName }}  当前产线:<a-select v-model="defaultLine" style="width: 150px" @change="handleChange">
+            <a-select-option :value="item.LineId" v-for="item in lineList" :key="item.LineId">
+              {{ item.LineName }}
+            </a-select-option>
+          </a-select> </a-descriptions-item>
         <a-descriptions-item label="填单人/填单时间"> {{ userLineData.UserName }} / {{ splitData(userLineData.NowDate) }} </a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
         <a-descriptions-item label="产品品名" :span="2">{{ orderInfo.ProName }}</a-descriptions-item>
@@ -24,10 +28,13 @@
         <a-descriptions-item label="备注"><a-input @blur="setFocus" v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
-            开工
+            进站
+          </a-button>
+          <a-button style="margin-left:10px" type="primary" icon="check-circle" @click="scanBatching" :disabled="!isStart">
+            投料
           </a-button>
           <a-button style="margin-left:10px" type="primary" icon="check-circle" @click="startBatching" :disabled="!isStart">
-            投料
+            投料列表
           </a-button></a-descriptions-item
         >
       </a-descriptions>
@@ -39,7 +46,8 @@
     <!-- 列表 -->
     <orderSelect v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" />
     <Batching v-if="isBatching" :orderInfo="orderInfo" @closeModal="closeModal" />
-    <OrderList v-if="isOrder" :orderInfo="orderInfo" @success="selectOrder" @closeModal="closeModal" :type="'start'"/>
+    <OrderList v-if="isOrder" :orderInfo="orderInfo" :defaultLine="defaultLine" @success="selectOrder" @closeModal="closeModal" :type="'start'"/>
+    <batching-scan v-if="isScan" :orderInfo="orderInfo" @closeModal="closeModal"></batching-scan>
   </a-card>
 </template>
 <script>
@@ -52,8 +60,9 @@ import orderSelect from "./components/orderSelect.vue";
 import { splitData } from "@/utils/util.js";
 import Batching from "./components/batching.vue";
 import OrderList from './components/orderList.vue'
+import BatchingScan from "./components/batchingScan.vue";
 export default {
-  components: { MsgList, WorkTable, orderSelect, Batching ,OrderList },
+  components: { MsgList, WorkTable, orderSelect, Batching ,OrderList ,BatchingScan },
   mixins: [PublicVar],
   data() {
     return {
@@ -76,11 +85,14 @@ export default {
       ColorTemperature: "",
       remark: "",
       isBatching: false,
-      isOrder:false
+      isOrder:false,
+      lineList: [],
+      defaultLine: "",
+      isScan:false
     };
   },
   created() {
-    this.getWorkInfo();
+    this.getUserLine();
   },
   mounted() {
     this.$refs.orderValue1.focus();
@@ -90,6 +102,9 @@ export default {
     orderShow(){
       console.log("dakai")
       this.isOrder = true
+    },
+    scanBatching(){
+      this.isScan = true
     },
     selectOrder(item){
       this.isOrder = false;
@@ -131,7 +146,7 @@ export default {
       this.remark = "";
     },
     closeModal() {
-      this.isPrint = false;
+      this.isScan = false;
       this.isOrderSelect = false;
       this.isBatching = false;
       this.isOrder = false
@@ -142,8 +157,35 @@ export default {
         return false;
       }
     },
+    handleChange(e) {
+      this.emptyData();
+      this.isStart = false;
+      this.orderInfo = [];
+      this.userLineData = [];
+      this.defaultLine = e;
+      this.orderValue = "";
+      this.$refs.workTable.emptyTable();
+      this.getWorkInfo();
+    },
+    getUserLine() {
+      getProcessReport("", "multiple/loaduserline").then((res) => {
+        if (res.data.success && res.data.data) {
+          let line = res.data.data;
+          if (line.length > 0) {
+            this.defaultLine = line[0].UserLine.LineId;
+            console.log("多产线---", this.defaultLine);
+            line.forEach((line) => {
+              this.lineList.push(line.UserLine);
+            });
+          }
+          this.getWorkInfo();
+        }else {
+          this.getWorkInfo();
+        }
+      });
+    },
     getWorkInfo() {
-      getProcessReport("", "loaduserline").then((res) => {
+      getProcessReport({ LineId: this.defaultLine }, "loaduserline").then((res) => {
         if (res.data.success) {
           res.data.message.time = getTimeData();
           res.data.message.IsSuccess = res.data.data.IsSuccess;
@@ -183,7 +225,7 @@ export default {
         ScanCode: this.orderValue,
         ProcessStatus: "PROCESS_START",
         MoCode: this.orderValue,
-        LineId: this.userLineData.LineId,
+        LineId: this.defaultLine,
       };
       getProcessReport(params, "scan").then((res) => {
         res.data.message.time = getTimeData();
@@ -263,7 +305,7 @@ export default {
         return;
       }
       let params = {
-        LineId: this.orderInfo.LineId,
+        LineId: this.defaultLine,
         ScanCode: this.orderInfo.ScanCode,
         ScanCodeType: this.orderInfo.ScanCodeType,
         MoCode: this.orderInfo.MoCode,
@@ -296,8 +338,8 @@ export default {
   margin-bottom: 5px;
 }
 /deep/.ant-table {
-  min-height: 50vh;
-  max-height: 50vh;
+  min-height: 40vh;
+  max-height: 40vh;
   overflow: auto;
 }
 /deep/ .ant-list-sm .ant-list-item {

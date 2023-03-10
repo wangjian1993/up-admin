@@ -1,19 +1,19 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2022-11-15 11:20:32
+ * @LastEditTime: 2023-01-06 16:23:52
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/components/batching.vue
 -->
 <template>
   <div>
-    <a-drawer :visible="visible" title="投料列表" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :bodyStyle="{ padding: '5px 10px' }">
+    <a-modal v-model="visible" title="扫码投料" @cancel="close" :footer="null" centered width="80%">
       <div>
         <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
           <a-row>
             <a-col :span="12">
-              <a-table :columns="columns" :data-source="bomList" :size="size" :pagination="false" :rowKey="(list) => list.ProPlanId" :customRow="rowClick" :rowClassName="tableRowClassName" bordered>
+              <a-table :columns="columns" :data-source="bomList" :size="size" :pagination="false" :rowKey="(list) => list.ProPlanId" :customRow="rowClick" :scroll="{ y: 700 }" :rowClassName="tableRowClassName" bordered>
                 <template slot="index" slot-scope="text, record, index">
                   <div>
                     <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -22,7 +22,7 @@
               </a-table></a-col
             >
             <a-col :span="12">
-              <a-table :columns="columns1" :data-source="releaseList" :size="size" :pagination="false" :rowKey="(list) => list.ProPlanId" bordered>
+              <a-table :columns="columns1" :data-source="releaseList" :size="size" :pagination="false" :rowKey="(list) => list.ProPlanId" :scroll="{ y: 700 }" bordered>
                 <template slot="index" slot-scope="text, record, index">
                   <div>
                     <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -33,7 +33,7 @@
           </a-row>
         </a-card>
       </div>
-    </a-drawer>
+    </a-modal>
     <SetQty v-if="isSetQty" :orderInfo="orderInfo" :bomInfo="bomInfo" @closeModal="closeModal" @success="getList" />
   </div>
 </template>
@@ -195,6 +195,7 @@ export default {
       });
     },
     tableRowClassName(record) {
+      console.log("====1",record)
       // let num = record.ReleaseQty < record.ReleasedQty;
       if (record.ReleasedQty >= record.ReleaseQty) {
         return "blue";

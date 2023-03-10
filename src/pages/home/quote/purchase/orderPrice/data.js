@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2022-09-06 11:27:01
+ * @LastEditTime: 2023-03-07 09:59:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/orderPrice/data.js
@@ -45,6 +45,13 @@ export const columns = [
     title: "价格",
     dataIndex: "Price",
     scopedSlots: { customRender: "Price" },
+    align: "center",
+    width: 100,
+  },
+  {
+    title: "商品类型",
+    dataIndex: "ItemType",
+    scopedSlots: { customRender: "ItemType" },
     align: "center",
     width: 100,
   },

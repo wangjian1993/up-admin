@@ -117,6 +117,8 @@ export default {
         SortNo: item.SortNo,
         QrCode: item.QrCode,
         MoCode: item.MoCode,
+        ProCode: item.ProCode,
+        ProCodeNo:item.ProCodeNo
       });
     });
     var report = new window.Stimulsoft.Report.StiReport();

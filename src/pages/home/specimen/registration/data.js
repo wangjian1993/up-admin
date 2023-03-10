@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2022-07-23 11:54:13
+ * @LastEditTime: 2023-03-01 10:02:11
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/data.js
@@ -57,6 +57,12 @@ export const columns = [
     title: "图号",
     dataIndex: "DrawingNo",
     scopedSlots: { customRender: "DrawingNo" },
+    align: "center",
+  },
+  {
+    title: "供应商编码",
+    dataIndex: "SupplierCode",
+    scopedSlots: { customRender: "SupplierCode" },
     align: "center",
   },
   {
@@ -209,6 +215,12 @@ export const columns = [
     title: "当期节点",
     dataIndex: "CurrentPoint",
     scopedSlots: { customRender: "CurrentPoint" },
+    align: "center",
+  },
+  {
+    title: "回退原因",
+    dataIndex: "ReturnReason",
+    scopedSlots: { customRender: "ReturnReason" },
     align: "center",
   },
   {

@@ -31,6 +31,7 @@
           </a-table>
         </a-card>
       </div>
+      <Cause v-if="isCause" @closeModal="closeModal" @success="success" />
     </a-drawer>
   </div>
 </template>
@@ -109,15 +110,18 @@ const columns = [
     align: "center",
   },
 ];
-import { getMaterialSampleApi } from "@/services/web.js";
+import { getMaterialSampleApi ,setDepartmentApi } from "@/services/web.js";
+import Cause from "./cause.vue";
 export default {
   props: ["registerid"],
+  components: { Cause },
   data() {
     return {
       dataSource: [],
       columns,
       size: "small",
       visible: true,
+      isCause: false,
       selectedRowKeys: [],
       pagination: {
         current: 1,
@@ -129,6 +133,7 @@ export default {
         pageSizeOptions: ["10", "20", "50", "100"], //每页中显示的数据
         showTotal: (total, range) => `第 ${range[0]}-${range[1]} 条，总计 ${total} 条`,
       },
+      PointId: "",
     };
   },
   created() {
@@ -137,13 +142,18 @@ export default {
   },
   methods: {
     closeModal() {
-      this.isPreview = false;
+      this.isCause = false;
     },
     rollback(record) {
+      this.isCause = true;
+      this.PointId = record.PointId;
+    },
+    success(form) {
       let params = {
-        pointid: record.PointId,
+        PointId: this.PointId,
+        ReturnReason:form.ReturnReason
       };
-      getMaterialSampleApi(params, "returnflowpoint").then((res) => {
+      setDepartmentApi(params, "returnflowpointpost").then((res) => {
         if (res.data.success) {
           this.$emit("closeModal");
           // this.$emit("success");

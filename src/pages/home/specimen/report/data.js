@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2022-08-12 16:37:24
+ * @LastEditTime: 2023-03-01 08:55:28
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/report/data.js
@@ -88,7 +88,7 @@ export const columns = [
     align: "center",
   },
   {
-    title: "是否签样",
+    title: "签样状态",
     dataIndex: "IsQy",
     scopedSlots: { customRender: "IsQy" },
     align: "center",

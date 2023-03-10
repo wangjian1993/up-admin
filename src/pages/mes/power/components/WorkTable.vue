@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:56:46
- * @LastEditTime: 2022-12-14 17:51:42
+ * @LastEditTime: 2023-01-05 17:38:16
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/components/WorkTable.vue
@@ -61,6 +61,10 @@ export default {
     }
   },
   methods: {
+    emptyTable() {
+      this.orderList = [];
+      this.pagination.total = 0;
+    },
     getHistoryList() {
       console.log(" this.orderValue===", this.orderValue);
       let params = {

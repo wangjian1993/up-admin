@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-10 16:38:42
- * @LastEditTime: 2022-11-03 11:30:55
+ * @LastEditTime: 2022-12-29 17:44:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/srm.js
@@ -80,6 +80,14 @@ export function getReturn(params, action) {
 //财务对账管理
 export function getBill(params, action) {
     return request(`${UP_SRM}/bill/${action}`, METHOD.GET, params, {
+        headers: {
+            Enterpriseld: Enterpriseld,
+        }
+    });
+}
+
+export function getClientBill(params, action) {
+    return request(`${UP_SRM}/clientbill/${action}`, METHOD.GET, params, {
         headers: {
             Enterpriseld: Enterpriseld,
         }

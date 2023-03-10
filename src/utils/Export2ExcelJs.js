@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2022-07-23 14:19:07
+ * @LastEditTime: 2023-02-02 18:08:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/Export2ExcelJs.js
@@ -282,7 +282,8 @@ export function exportjsontoexcelMore({
     filename,
     bookType = 'xlsx',
     formula,
-    multi
+    multi,
+    lossInfo
 }, excelStyle) {
     console.log("formula===", formula)
     //判断是否有表名、没有则赋予固定表名
@@ -381,7 +382,9 @@ export function exportjsontoexcelMore({
             wb.Sheets[Sheet]['B7'] = { t: 'n', f: 'ROUND(SUM(M' + startIndex + ':M' + endIndex + '),4)' };
             //总成本
             wb.Sheets[Sheet]['B8'] = { t: 'n', f: 'ROUND(SUM(SUM(D9:P' + formula.process + ')+B7),4)' };
-
+            //损耗
+            console.log("lossInfo---",lossInfo)
+            wb.Sheets[Sheet]['D' + lossInfo.index] = { t: 'n', f: 'ROUND(B7*' + lossInfo.base + ',4)' };
         }
         // wb.Sheets['展开显示']['B7'].s = styleS
         // wb.Sheets['展开显示']['B8'].s = styleS

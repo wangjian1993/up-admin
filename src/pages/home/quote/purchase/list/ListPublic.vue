@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-09-15 13:54:09
+ * @LastEditTime: 2023-02-03 08:32:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListPublic.vue
@@ -73,7 +73,7 @@
                 <a-input placeholder="请输入产品品号" allowClear v-decorator="['itemcode']" />
               </a-form-item>
             </a-col>
-             <a-col :md="6" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
                 <a-input placeholder="请输入产品规格" allowClear v-decorator="['itemspecification']" />
               </a-form-item>
@@ -206,14 +206,14 @@ const columns = [
     width: "5%",
   },
   {
-    title: "最终成本",
-    dataIndex: "FinalCost",
+    title: "加工费",
+    dataIndex: "JgfCost",
     align: "center",
     width: "5%",
   },
   {
-    title: "加工费",
-    dataIndex: "JgfCost",
+    title: "最终成本",
+    dataIndex: "FinalCost",
     align: "center",
     width: "5%",
   },
@@ -455,7 +455,7 @@ export default {
         itemsort: "",
         itemcode: "",
         itemname: "",
-        itemspecification:""
+        itemspecification: "",
       };
       getCostConfig(params, "getquotelistcommon").then((res) => {
         if (res.data.success) {
@@ -471,8 +471,8 @@ export default {
         this.loading = false;
       });
     },
-    searchBtn(){
-      this.pagination.current =1;
+    searchBtn() {
+      this.pagination.current = 1;
       this.search();
     },
     //搜素
@@ -629,15 +629,20 @@ export default {
       return new Promise((resolve) => {
         let excelArray = [];
         let formula = {};
+        let lossInfo = {}
         excelData.forEach((item) => {
           console.log(item);
-          let ItemCode = item.ItemInfo.ItemCode
+          let ItemCode = item.ItemInfo.ItemCode;
           let list = item.ItemInfo.ItemChildList;
           this.exportData = list;
           let info = item.ItemInfo;
           let ConfigList = this.arrayGroup(item.ConfigList);
           let _data = [];
           let mergeTitle = [];
+          lossInfo = {
+            index: 0,
+            base: 0,
+          };
           formula = {
             process: 0,
             totalPrice: 0,
@@ -671,6 +676,15 @@ export default {
               s: { r: 8 + index, c: 3 },
               e: { r: 8 + index, c: 15 },
             });
+            //增加损耗计算公式
+            if (item.CostName == "损耗") {
+              lossInfo.index = index + 9;
+              let array = item.Description.split("*");
+              let str = array[1].replace("%", "");
+              str = str / 100;
+              lossInfo.base = str;
+              console.log("lossInfo---", lossInfo);
+            }
           });
           ConfigList.map((item, index) => {
             let l = item.list.length - 1;
@@ -757,7 +771,7 @@ export default {
             sheetCols,
           });
         });
-        resolve({ excelArray, formula });
+        resolve({ excelArray, formula ,lossInfo});
       });
     },
     getExcelData(id) {
@@ -794,6 +808,7 @@ export default {
                 filename: `BOM清单_${timestamp}`, // 导出标题名
                 formula: r.formula,
                 multi: true,
+                lossInfo:r.lossInfo
               });
               this.$message.success("导出数据成功!");
               this.selectedRowKeys = [];
@@ -864,6 +879,10 @@ export default {
             process: 0,
             totalPrice: 0,
           };
+          let lossInfo = {
+            index: 0,
+            base: 0,
+          };
           for (let i = 0; i < 8; i++) {
             mergeTitle.push({
               s: { r: i, c: 1 },
@@ -882,6 +901,7 @@ export default {
           ConfigList.map((item) => {
             cost = cost.concat(item.list);
           });
+          console.log("cost---", cost);
           cost.map((item, index) => {
             let array = [item.CostSort, item.CostName, null, item.Amount, null, null, null, null, null, null, null, null, null, null, null];
             _data.push(array);
@@ -893,6 +913,15 @@ export default {
               s: { r: 8 + index, c: 3 },
               e: { r: 8 + index, c: 15 },
             });
+            //增加损耗计算公式
+            if (item.CostName == "损耗") {
+              lossInfo.index = index + 9;
+              let array = item.Description.split("*");
+              let str = array[1].replace("%", "");
+              str = str / 100;
+              lossInfo.base = str;
+              console.log("lossInfo---", lossInfo);
+            }
           });
           ConfigList.map((item, index) => {
             let l = item.list.length - 1;
@@ -926,7 +955,7 @@ export default {
           });
           console.log(_data);
           //收缩数据
-          console.log("LastCode===",LastCode);
+          console.log("LastCode===", LastCode);
           let tree = this.initTree(LastCode);
           let treeData = this.calField(tree);
           treeData.map((item) => {
@@ -989,6 +1018,7 @@ export default {
               bookType: "xlsx", // 导出类型
               filename: `${info.ItemCode}_${temp}`, // 导出标题名
               formula,
+              lossInfo
             });
             this.$message.success("导出数据成功!");
           } catch (error) {

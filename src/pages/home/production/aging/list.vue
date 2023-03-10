@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:57
- * @LastEditTime: 2022-07-28 08:42:38
+ * @LastEditTime: 2023-02-27 15:06:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/aging/list.vue
@@ -185,9 +185,18 @@ export default {
     },
     exportExcel() {
       this.isExportLod = true;
+      let values = this.searchForm.getFieldsValue();
+      if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
+        const rangeValue = values["range-time-picker"];
+        var startdate = rangeValue[0].format("YYYY-MM-DD");
+        var enddate = rangeValue[1].format("YYYY-MM-DD");
+      }
       let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
+        mocode: values.mocode,
+        startdate: startdate,
+        enddate: enddate,
       };
       getAgeingApi(params, "getall").then((res) => {
         if (res.data.success) {

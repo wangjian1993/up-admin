@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-07 15:05:20
- * @LastEditTime: 2022-09-15 13:54:23
+ * @LastEditTime: 2023-02-02 18:02:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/ListSearch.vue
@@ -221,14 +221,14 @@ const columns = [
     width: "5%",
   },
   {
-    title: "最终成本",
-    dataIndex: "FinalCost",
+    title: "加工费",
+    dataIndex: "JgfCost",
     align: "center",
     width: "5%",
   },
   {
-    title: "加工费",
-    dataIndex: "JgfCost",
+    title: "最终成本",
+    dataIndex: "FinalCost",
     align: "center",
     width: "5%",
   },
@@ -716,6 +716,10 @@ export default {
             process: 0,
             totalPrice: 0,
           };
+          let lossInfo = {
+            index: 0,
+            base: 0,
+          };
           for (let i = 0; i < 8; i++) {
             mergeTitle.push({
               s: { r: i, c: 1 },
@@ -734,6 +738,7 @@ export default {
           ConfigList.map((item) => {
             cost = cost.concat(item.list);
           });
+          console.log("cost---",cost)
           cost.map((item, index) => {
             let array = [item.CostSort, item.CostName, null, item.Amount, null, null, null, null, null, null, null, null, null, null, null];
             _data.push(array);
@@ -745,6 +750,15 @@ export default {
               s: { r: 8 + index, c: 3 },
               e: { r: 8 + index, c: 15 },
             });
+             //增加损耗计算公式
+             if (item.CostName == "损耗") {
+              lossInfo.index = index + 9;
+              let array = item.Description.split("*");
+              let str = array[1].replace("%", "");
+              str = str / 100;
+              lossInfo.base = str;
+              console.log("lossInfo---", lossInfo);
+            }
           });
           ConfigList.map((item, index) => {
             let l = item.list.length - 1;
@@ -840,6 +854,7 @@ export default {
               bookType: "xlsx", // 导出类型
               filename: `${info.ItemCode}_${temp}`, // 导出标题名
               formula,
+              lossInfo
             });
             this.$message.success("导出数据成功!");
           } catch (error) {

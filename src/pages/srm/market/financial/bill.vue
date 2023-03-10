@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:01:59
- * @LastEditTime: 2022-08-15 13:48:07
+ * @LastEditTime: 2022-12-29 17:59:01
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/srm/purchase/financial/bill.vue
+ * @FilePath: /up-admin/src/pages/srm/market/financial/bill.vue
 -->
 <template>
   <div>
@@ -99,6 +99,7 @@
           </div>
         </a-form>
         <div class="operator">
+          <a-button style="margin-left: 8px" :disabled="!hasPerm('add')" type="primary" @click="add" icon="plus">新建对账单</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
@@ -152,12 +153,13 @@
         </a-table>
       </a-card>
       <Detail v-if="isDetail" :docno="docno" @closeModal="closeModal" />
+      <bill-form v-if="isAdd" :isEdit="isEdit" :editData="editData" @closeModal="closeModal" @success="searchBtn"></bill-form>
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getBill } from "@/services/srm.js";
+import { getClientBill } from "@/services/srm.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
@@ -165,8 +167,9 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { columns } from "./data/bill";
 import ExportExcel from "@/utils/ExportExcelJS";
 import Detail from "./detail.vue";
+import BillForm from './components/billForm.vue'
 export default {
-  components: { Detail },
+  components: { Detail ,BillForm },
   mixins: [PublicVar],
   data() {
     return {
@@ -181,6 +184,9 @@ export default {
       listType: "全部",
       isDetail: false,
       docno: "",
+      isAdd:false,
+      isEdit:false,
+      editData:[]
     };
   },
   updated() {
@@ -214,6 +220,7 @@ export default {
     },
     closeModal() {
       this.isDetail = false;
+      this.isAdd = false
     },
     //多选
     onSelectChange(selectedRowKeys) {
@@ -224,6 +231,9 @@ export default {
       this.pagination.current = pagination.current;
       this.pagination.pageSize = pagination.pageSize;
       this.search();
+    },
+    add(){
+      this.isAdd = true;
     },
     detail(record) {
       this.isDetail = true;
@@ -264,7 +274,7 @@ export default {
             receiptstatus: values.receiptstatus,
             purchasetype: values.purchasetype,
           };
-          getBill(params, "get").then((res) => {
+          getClientBill(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -290,7 +300,7 @@ export default {
         plccode: values.plccode,
         plcname: values.plcname,
       };
-      getBill(params, "get").then((res) => {
+      getClientBill(params, "get").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
           const dataSource = list.map((item) => {

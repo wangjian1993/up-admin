@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2022-03-21 17:01:56
+ * @LastEditTime: 2023-01-06 10:32:24
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/production/process/components/orderSelect.vue
+ * @FilePath: /up-admin/src/pages/mes/power/process/components/orderSelect.vue
 -->
 <template>
   <div>
-    <a-modal v-model="visible" title="出站选择" @cancel="close" @ok="handleOk" centered width="70%">
+    <a-modal v-model="visible" title="工单选择" @cancel="close" @ok="handleOk" centered width="70%">
       <a-descriptions :column="6">
         <a-descriptions-item label="工单">
           {{ orderSelectList[0].MoCode }}

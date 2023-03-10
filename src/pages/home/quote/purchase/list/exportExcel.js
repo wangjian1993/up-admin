@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2022-01-10 13:48:44
+ * @LastEditTime: 2023-02-02 18:12:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/list/exportExcel.js
@@ -255,7 +255,8 @@ export function exportjsontoexcelMore({
     dataList,
     filename,
     bookType = 'xlsx',
-    formula
+    formula,
+    lossInfo
 }, excelStyle) {
     //判断是否有表名、没有则赋予固定表名
     filename = filename || 'excel-list'
@@ -351,6 +352,8 @@ export function exportjsontoexcelMore({
         //总成本
         wb.Sheets[Sheet]['B8'] = { t: 'n', f: 'ROUND(SUM(SUM(D9:P' + formula.process + ')+B7),4)' };
 
+        //损耗
+        wb.Sheets[Sheet]['D' + lossInfo.index] = { t: 'n', f: 'ROUND(B7*' + lossInfo.base + ',4)' };
         // wb.Sheets['展开显示']['B7'].s = styleS
         // wb.Sheets['展开显示']['B8'].s = styleS
         let dataInfo = wb.Sheets[wb.SheetNames[index]];

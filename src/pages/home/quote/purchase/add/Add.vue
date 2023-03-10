@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2022-09-08 08:34:40
+ * @LastEditTime: 2023-02-02 18:05:00
  * @LastEditors: max
  * @Description: 新建采购报价
  * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
@@ -87,7 +87,7 @@
                 </a-col>
                 <a-col :lg="8" :md="12" :sm="24">
                   <a-form-item label="产品规格" :labelCol="{ span: 4 }" :wrapperCol="{ span: 14, offset: 1 }">
-                    <a-textarea :disabled="isSearch" v-model="costInfo.ItemSpecification" autosize/>
+                    <a-textarea :disabled="isSearch" v-model="costInfo.ItemSpecification" autosize />
                   </a-form-item>
                 </a-col>
               </a-row>
@@ -927,6 +927,10 @@ export default {
         process: 0,
         totalPrice: 0,
       };
+      let lossInfo = {
+        index: 0,
+        base: 0,
+      };
       let enterInfo = this.searchForm.getFieldsValue();
       let en = this.enterList.find((item) => item.EnterId === enterInfo.enterpriseid);
       let pl = this.plantList.find((item) => item.EnterId === enterInfo.plantid);
@@ -953,6 +957,14 @@ export default {
           s: { r: 8 + index, c: 3 },
           e: { r: 8 + index, c: 15 },
         });
+        if (item.CostName == "损耗") {
+          lossInfo.index = index + 9;
+          let array = item.Description.split("*");
+          let str = array[1].replace("%", "");
+          str = str / 100;
+          lossInfo.base = str;
+          console.log("lossInfo---", lossInfo);
+        }
       });
       ConfigList.map((item, index) => {
         let l = item.list.length - 1;
@@ -1054,6 +1066,7 @@ export default {
           bookType: "xlsx", // 导出类型
           filename: `${info.ItemCode}_${temp}`, // 导出标题名
           formula,
+          lossInfo,
         });
         this.$message.success("导出数据成功!");
       } catch (error) {

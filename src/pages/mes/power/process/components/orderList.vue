@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 13:38:31
- * @LastEditTime: 2022-12-09 14:43:03
+ * @LastEditTime: 2023-01-05 17:33:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/process/components/orderList.vue
@@ -25,7 +25,7 @@
 <script>
 import { getReleases } from "@/services/mes.js";
 export default {
-  props: ["orderInfo", "type"],
+  props: ["orderInfo", "type",'defaultLine'],
   data() {
     return {
       orderData: [],
@@ -45,12 +45,13 @@ export default {
     },
     getDocsList() {
       let params = {
-        lineid: this.orderInfo.LineId,
+        lineid: this.defaultLine,
         process: this.orderInfo.PROCESS_CODE,
       };
       let url = "process/" + this.type + "/getmos";
+      console.log("params---",params)
       getReleases(params, url).then((res) => {
-        if (res.data.success) {
+        if (res.data.success && res.data.data) {
           this.orderData = res.data.data.list;
         }
       });

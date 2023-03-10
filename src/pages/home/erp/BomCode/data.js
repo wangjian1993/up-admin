@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:48:13
- * @LastEditTime: 2022-03-26 10:54:17
+ * @LastEditTime: 2023-02-23 15:36:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/data.js
@@ -199,6 +199,13 @@ export const columns = [
         title: "生产部门名称",
         dataIndex: "ADMIN_UNIT_NAME",
         scopedSlots: { customRender: "ADMIN_UNIT_NAME" },
+        align: "center",
+        width: 60,
+    },
+    {
+        title: "创建人",
+        dataIndex: "USER_NAME",
+        scopedSlots: { customRender: "USER_NAME" },
         align: "center",
         width: 60,
     },

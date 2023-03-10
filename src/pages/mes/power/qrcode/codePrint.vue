@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2022-11-26 10:45:08
+ * @LastEditTime: 2023-02-25 13:47:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/qrcode/codePrint.vue
@@ -99,6 +99,7 @@ export default {
     },
     setPrint(list) {
       this.isPrintList = false;
+      console.log("list=====",list)
       if(list.length == 0) {
         return
       }

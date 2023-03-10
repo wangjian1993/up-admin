@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-12-13 09:26:04
+ * @LastEditTime: 2022-12-29 17:53:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/srm/purchase/financial/component/addExpense.vue
@@ -9,13 +9,13 @@
 
 <template>
   <div>
-    <a-drawer :visible="visible" title="新增费用单" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :headerStyle="{ padding: '10px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
+    <a-drawer :visible="visible" :title="isEdit ? '编辑费用单' : '新增费用单'" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :headerStyle="{ padding: '10px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
       <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-card class="card" bordered :bodyStyle="{ padding: '5px' }" :headStyle="{ padding: '5px' }">
           <a-row>
             <a-col :span="6">
               <a-form-model-item ref="supplierCode" has-feedback label="供应商名称" prop="supplierCode">
-                <a-select show-search allowClear :show-arrow="false" :filter-option="false" :not-found-content="null" :disabled="isEdit"  v-model="form.supplierCode" placeholder="请选择邀请企业" @search="getSupplier">
+                <a-select show-search allowClear :show-arrow="false" :filter-option="false" :not-found-content="null" :disabled="isEdit" v-model="form.supplierCode" placeholder="请选择邀请企业" @search="getSupplier">
                   <a-select-option :value="item.Code" v-for="item in supplier" :key="item.Id">
                     {{ item.Name }}
                   </a-select-option>
@@ -347,7 +347,7 @@ export default {
       let { order, detailList } = this.editData;
       this.dataSource = detailList;
       this.form = {
-        id :order.Id,
+        id: order.Id,
         orderNo: order.OrderNo,
         enterpriseId: "",
         supplierCode: order.SupplierCode,

@@ -1,14 +1,15 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2023-03-01 09:04:11
+ * @LastEditTime: 2023-03-01 10:36:04
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/specimen/standingBook/data.js
+ * @FilePath: /up-admin/src/pages/home/specimen/document/data.js
  */
-export const columns = [
+export const columnsData = [
   {
     title: "序号",
+    dataIndex: "index",
     scopedSlots: { customRender: "index" },
     align: "center",
     width: 50,
@@ -212,12 +213,33 @@ export const columns = [
     align: "center",
   },
   {
+    title: "文控处理时间",
+    dataIndex: "DatetimeHandlerActualWk",
+    scopedSlots: { customRender: "DatetimeHandlerActualWk" },
+    align: "center",
+  },
+  {
+    title: "自动生成命名",
+    dataIndex: "AutoName",
+    scopedSlots: { customRender: "AutoName" },
+    align: "center",
+    width:200
+  },
+  {
     title: "状态",
     dataIndex: "TableStatus",
     fixed: "right",
     scopedSlots: { customRender: "TableStatus" },
     align: "center",
     width:80
+  },
+  {
+    title: "操作",
+    dataIndex: "action",
+    scopedSlots: { customRender: "action" },
+    fixed: "right",
+    align: "center",
+    width: 100
   },
 ];
 export const innerColumns = [{
