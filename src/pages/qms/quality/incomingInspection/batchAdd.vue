@@ -48,8 +48,8 @@ import { getParamData } from "@/services/admin.js";
 const columns = [
   {
     title: "PO号",
-    dataIndex: "DocNo",
-    scopedSlots: { customRender: "DocNo" },
+    dataIndex: "PuchaseOrderNo",
+    scopedSlots: { customRender: "PuchaseOrderNo" },
     align: "center",
   },
   {

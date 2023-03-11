@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-12-24 09:42:09
- * @LastEditTime: 2022-11-26 09:41:25
+ * @LastEditTime: 2023-03-11 14:08:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/qrcode/list.data.js
@@ -96,33 +96,33 @@ export const columns = [
         dataIndex: "ProName",
         scopedSlots: { customRender: "ProName" },
         align: "center",
-        width: "100px",
+        width: "200px",
     },
     {
         title: "打印时间",
-        dataIndex: "UserPrinted",
-        scopedSlots: { customRender: "UserPrinted" },
-        align: "center",
-        width: "100px",
-    },
-    {
-        title: "打印用户",
-        dataIndex: "UserReprint",
-        scopedSlots: { customRender: "UserReprint" },
-        align: "center",
-        width: "100px",
-    },
-    {
-        title: "补打时间",
         dataIndex: "DateTimePrint",
         scopedSlots: { customRender: "DateTimePrint" },
         align: "center",
         width: "100px",
     },
     {
-        title: "补打用户",
+        title: "打印用户",
+        dataIndex: "UserPrinted",
+        scopedSlots: { customRender: "UserPrinted" },
+        align: "center",
+        width: "100px",
+    },
+    {
+        title: "补打时间",
         dataIndex: "DateTimeReprint",
         scopedSlots: { customRender: "DateTimeReprint" },
+        align: "center",
+        width: "100px",
+    },
+    {
+        title: "补打用户",
+        dataIndex: "UserReprint",
+        scopedSlots: { customRender: "UserReprint" },
         align: "center",
         width: "100px",
     },

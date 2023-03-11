@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2023-03-10 09:29:34
+ * @LastEditTime: 2023-03-11 09:02:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/form.vue
@@ -75,7 +75,7 @@
             ></a-col>
             <a-col :span="6">
               <a-form-model-item ref="HasApprovalSheet" has-feedback prop="HasApprovalSheet">
-                <div slot="label"><span style="color:red;font-size: 14px;">*</span>是否有承认书</div>
+                <span slot="label"><span style="color:red;font-size: 14px;">*</span>是否有承认书</span>
                 <a-select v-model="form.HasApprovalSheet" :disabled="!disabled1" has-feedback placeholder="请选择是否有承认书">
                   <a-select-option value="是">是</a-select-option>
                   <a-select-option value="否">否</a-select-option>
@@ -96,7 +96,7 @@
             <a-col :span="6">
               <a-form-model-item ref="SampleCategory" has-feedback prop="SampleCategory">
                 <!-- <a-input v-model="form.SampleCategory" allowClear placeholder="请输入样品类别" />  -->
-                <div slot="label"><span style="color:red;font-size: 14px;">*</span>样品类别</div>
+                <span slot="label"><span style="color:red;font-size: 14px;">*</span>样品类别</span>
                 <a-select v-model="form.SampleCategory" has-feedback placeholder="请选择样品类别">
                   <a-select-option value="新样品">新样品</a-select-option>
                   <a-select-option value="版本升级">版本升级</a-select-option>
@@ -134,11 +134,11 @@
             </a-col>
             <a-col :span="6">
               <a-form-model-item ref="SignResult" has-feedback prop="SignResult">
-                <div slot="label"><span style="color:red;font-size: 14px;">*</span>签样结果</div>
+                <span slot="label"><span style="color:red;">*</span>签样结果</span>
                 <a-select v-model="form.SignResult" has-feedback placeholder="请选择签样结果" :disabled="!disabled2">
                   <a-select-option value="OK">OK</a-select-option>
                   <a-select-option value="NG">NG</a-select-option>
-                  <a-select-option value="试产样/临时样">试产样/临时样</a-select-option>
+                  <a-select-option value="试产样">试产样</a-select-option>
                   <a-select-option value="其他">其他</a-select-option>
                 </a-select>
               </a-form-model-item>

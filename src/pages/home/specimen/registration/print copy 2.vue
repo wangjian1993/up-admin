@@ -1,26 +1,27 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2023-03-11 17:51:21
+ * @LastEditTime: 2023-03-10 09:54:20
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/specimen/registration/print.vue
 -->
 <template>
-  <a-modal v-model="visible" title="物料样品标签打印" v-if="visible" @cancel="close" :footer="null" centered width="40%" :loading="loading">
+  <a-modal v-model="visible" title="物料样品标签打印" v-if="visible" @cancel="close" :footer="null" centered width="50%" :loading="loading">
     <div style="display: flex;justify-content: flex-end;">
       <a-button type="primary" class="no-print" @click="printBtn">打印</a-button>
     </div>
     <div id="printBox">
       <div v-for="(item, index) in dataSource" :key="index" :id="'div1_' + index">
         <div style="font-size:14px;text-align: center;font-weight: 700;width: 100%;margin:0 auto">
-          <p style="margin:0 auto;">{{ item.EnterpriseFullName }}(物料样品标签)</p>
+          <p style="margin:0 auto;">深圳民爆光电股份有限公司</p>
+          <p style="margin:0 auto;">物料样品标签</p>
         </div>
-        <span style="font-size:10px;font-weight: 700;">流水号: {{ item.FlowCode }}</span>
+        <span style="font-size:12px;font-weight: 700;">流水号: {{ item.FlowCode }}</span>
         <table border="1" cellSpacing="0" cellPadding="1" width="100%" style="border-collapse:collapse" bordercolor="#333333">
           <tr>
-            <td width="52" rowspan="2" style="font-size:10px;">样品类别</td>
-            <td colspan="5" style="font-size:10px;">
+            <td width="53" rowspan="2"  style="font-size:12px;">样品类别</td>
+            <td colspan="3"  style="font-size:10px;">
               <div style="margin:0;padding:0" :id="'checkbox1_' + index">
                 <span style="display: inline-block;float: right;line-height: 20px;font-size:10px;">(采购选)</span>
                 <span @click="setChecked(0)"><input type="checkbox" id="cb1" name="cbClass" value="" />新产品</span>
@@ -30,107 +31,70 @@
             </td>
           </tr>
           <tr style="font-size:10px;">
-            <td colspan="5">
+            <td colspan="3">
               <div style="margin:0;padding:0">
                 <span style="display: inline-block;float: right;line-height: 20px;font-size:10px;">(工程师勾选)</span>
                 <!-- <span style="display: inline-block;float: right;line-height: 20px;font-size:8px;">未选默认深圳民爆,</span> -->
                 <span @click="setChecked(3)"><input type="checkbox" name="cbClass" />深圳民爆</span>
                 <span @click="setChecked(3)"><input type="checkbox" name="cbClass" />惠州民爆</span>
                 <span @click="setChecked(4)"><input type="checkbox" name="cbClass" />惠州分公司</span>
-                <span @click="setChecked(4)"><input type="checkbox" name="cbClass" />其他</span>
+               <span @click="setChecked(4)"><input type="checkbox" name="cbClass" />其他</span>
               </div>
             </td>
           </tr>
-          <tr style="font-size:10px;height:17px;">
+          <tr style="font-size:12px;height:25px;">
             <td>供应商</td>
-            <td  colspan="2">{{ item.Supplier }}</td>
-            <td width="40">数量</td>
-            <td colspan="2">{{ item.Quantity }}</td>
+            <td colspan="3">{{ item.Supplier }}</td>
           </tr>
-          <tr style="font-size:10px;height:17px;">
+          <tr style="font-size:12px;height:25px;">
             <td>品号</td>
-            <td  colspan="2">{{ item.ItemCode }}</td>
-            <td>图号</td>
-            <td  colspan="2">{{ item.DrawingNo }}</td>
+            <td>{{ item.ItemCode }}</td>
+            <td width="40px">图号</td>
+            <td width="110px">{{ item.DrawingNo }}</td>
           </tr>
-          <tr style="font-size:10px;height:17px;">
+          <tr style="font-size:12px;height:25px;">
             <td>品名</td>
-            <td colspan="5">{{ item.ItemName }}</td>
+            <td colspan="3">{{ item.ItemName }}</td>
           </tr>
-          <tr style="font-size:10px;height:40px;max-height: 40px;overflow: hidden;">
+          <tr style="font-size:12px;height:50px;max-height: 50px;overflow: hidden;">
             <td>规格型号</td>
-            <td colspan="5">
+            <td colspan="3">
               <div style="height: 40px; overflow: hidden; word-break:break-all;">
                 {{ item.ItemSpecification }}
               </div>
             </td>
           </tr>
-          <tr style="font-size:10px;height:17px;">
+          <tr style="font-size:12px;">
             <td>签样结果</td>
-            <td colspan="5"></td>
-          </tr>
-
-          <tr style="font-size:10px;">
-            <td>外观</td>
-            <td colspan="2">
-              <p style="font-size:10px;margin:0;padding:0">
-                <span><input type="checkbox" />OK</span>
-                <span><input type="checkbox" />NG</span>
-                <span><input type="checkbox" />试产样</span>
-              </p>
-            </td>
-            <td>颜色</td>
-            <td colspan="2">
-              <p style="font-size:10px;margin:0;padding:0">
-                <span><input type="checkbox" />OK</span>
-                <span><input type="checkbox" />NG</span>
-                <span><input type="checkbox" />试产样</span>
+            <td colspan="3">
+              <p>
+                <span><input type="checkbox" name="cb1" value="" />外观</span>
+                <span><input type="checkbox" name="cb2" value="" />结构</span>
+                <span><input type="checkbox" name="cb3" value="" />电参数</span>
+                <span><input type="checkbox" name="cb4" value="" />OK</span>
+                <span><input type="checkbox" name="cb5" value="" />NG</span>
+                <span><input type="checkbox" name="cb6" value="" />其他</span>
               </p>
             </td>
           </tr>
-
-          <tr style="font-size:10px;">
-            <td>结构</td>
+          <tr style="font-size:12px;">
             <td colspan="2">
-              <p style="font-size:10px;margin:0;padding:0">
-                <span><input type="checkbox" />OK</span>
-                <span><input type="checkbox" />NG</span>
-                <span><input type="checkbox" />试产样</span>
-              </p>
+              <p style="margin-bottom:0px;padding:0;height:14px;">采购员:{{ item.Purchaser }}</p>
+              <p style="margin:0;padding:0;height:14px;">送样时间:{{ item.DatetimePurchaseDeliver }}</p>
             </td>
-            <td>电参数</td>
-            <td colspan="2">
-              <p style="font-size:10px;margin:0;padding:0">
-                <span><input type="checkbox" />OK</span>
-                <span><input type="checkbox" />NG</span>
-                <span><input type="checkbox" />试产样</span>
-              </p>
+            <td rowspan="2" colspan="2" width="130px">
+              <p>备注</p>
+              <p>{{ item.Remark }}</p>
             </td>
           </tr>
-          <tr style="font-size:10px;height:17px;">
-            <td>不良原因</td>
-            <td colspan="5"></td>
-          </tr>
-          <tr style="font-size:10px;">
+          <tr style="font-size:12px;">
             <td colspan="2">
-              <p style="margin-bottom:0px;padding:0;height:20px;">采购员:{{item.Purchaser}}</p>
-              <p style="margin:0;padding:0;font-size:10px;height:15px;">
-                <span style="display: inline-block;float: right;line-height: 15px;font-size:10px;">{{ item.DatetimePurchaseDeliver || "\u2003\u2003\u2003年\u2003月\u2003日" }}</span>
-                <span>送样时间:</span>
+              <p style="margin-bottom:0px;padding:0;height:14px;">
+                工程师:
               </p>
-            </td>
-            <td colspan="2">
-              <p style="margin-bottom:0px;padding:0;height:20px;">品质确认:</p>
-              <p style="margin:0;padding:0;font-size:10px;height:15px;">
-                <span style="display: inline-block;float: right;line-height: 15px;font-size:10px;">{{ item.DatetimeSign ||  "\u2003\u2003\u2003年\u2003月\u2003日"  }}</span>
-                <span>签样时间:</span>
-              </p>
-            </td>
-            <td colspan="2">
-              <p style="margin-bottom:0px;padding:0;height:20px;">工程确认:</p>
-              <p style="margin:0;padding:0;font-size:10px;height:15px;">
-                <span style="display: inline-block;float: right;line-height: 15px;font-size:10px;">{{ item.DatetimeSign ||  "\u2003\u2003\u2003年\u2003月\u2003日" }}</span>
-                <span>签样时间:</span>
+              <p style="margin:0;padding:0;font-size:12px;height:14px;">
+                <span style="display: inline-block;float: right;line-height: 14px;font-size:12px;">{{ item.DatetimeSign || "年\u2003\u2003\u2003\u2003月\u2003\u2003\u2003\u2003日" }}</span>
+                <span>承认时间:</span>
               </p>
             </td>
             <!-- <td>
@@ -321,7 +285,7 @@ export default {
             for (let i = 0; i < this.dataSource.length; i++) {
               LODOP.NewPage();
               console.log("dom===", document.getElementById("div1_" + i));
-              LODOP.ADD_PRINT_HTM(0, 5, "96%", 850, strStyle + document.getElementById("div1_" + i).innerHTML);
+              LODOP.ADD_PRINT_HTM(2, 5, "96%", 850, strStyle + document.getElementById("div1_" + i).innerHTML);
             }
             LODOP.SET_PRINT_MODE("PRINT_PAGE_PERCENT", "Full-Page");
             LODOP.SET_PRINT_MODE("AUTO_CLOSE_PREWINDOW", 1);

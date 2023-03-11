@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:32:20
- * @LastEditTime: 2023-03-10 09:41:40
+ * @LastEditTime: 2023-03-10 15:21:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/qms/quality/incomingInspection/editForm.vue
@@ -14,7 +14,7 @@
           {{ form.CompanyName }}
         </a-form-model-item>
         <a-form-model-item has-feedback label="PO号">
-          {{ form.DocNo }}
+          {{ form.PuchaseOrderNo }}
         </a-form-model-item>
         <a-form-model-item has-feedback label="供应商">
           {{ form.SupplierFullName }}
