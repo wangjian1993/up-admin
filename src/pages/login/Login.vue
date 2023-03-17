@@ -250,6 +250,7 @@ export default {
             newRoutesConfig.push(item);
           }
         });
+        console.log("newRoutesConfig====",newRoutesConfig)
         localStorage.setItem("menu", JSON.stringify(newRoutesConfig));
         let root = [
           {

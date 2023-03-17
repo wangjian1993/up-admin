@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2023-03-11 17:51:21
+ * @LastEditTime: 2023-03-14 17:26:58
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/specimen/registration/print.vue
@@ -22,10 +22,10 @@
             <td width="52" rowspan="2" style="font-size:10px;">样品类别</td>
             <td colspan="5" style="font-size:10px;">
               <div style="margin:0;padding:0" :id="'checkbox1_' + index">
-                <span style="display: inline-block;float: right;line-height: 20px;font-size:10px;">(采购选)</span>
-                <span @click="setChecked(0)"><input type="checkbox" id="cb1" name="cbClass" value="" />新产品</span>
-                <span @click="setChecked(1)"><input type="checkbox" name="cbClass" value="" />版本升级</span>
-                <span @click="setChecked(2)"><input type="checkbox" name="cbClass" value="" />更换供应商</span>
+                <span style="display: inline-block;float: right;line-he1ight: 20px;font-size:10px;">(采购选)</span>
+                <span @click="setChecked(0)"><input v-if="item.SampleCategory == '新样品'" checked="checked" type="checkbox" :id="cb1" name="cbClass" value="" /><input v-else type="checkbox" :id="cb1" name="cbClass" value="" />新样品</span>
+                <span @click="setChecked(1)"><input v-if="item.SampleCategory == '版本升级'" checked="checked" type="checkbox" name="cbClass" value="" /><input v-else type="checkbox" name="cbClass" value="" />版本升级</span>
+                <span @click="setChecked(2)"><input v-if="item.SampleCategory == '更换供应商'" checked="checked" type="checkbox" name="cbClass" value="" /><input v-else type="checkbox" name="cbClass" value="" />更换供应商</span>
               </div>
             </td>
           </tr>
@@ -43,15 +43,15 @@
           </tr>
           <tr style="font-size:10px;height:17px;">
             <td>供应商</td>
-            <td  colspan="2">{{ item.Supplier }}</td>
+            <td colspan="2">{{ item.Supplier }}</td>
             <td width="40">数量</td>
             <td colspan="2">{{ item.Quantity }}</td>
           </tr>
           <tr style="font-size:10px;height:17px;">
             <td>品号</td>
-            <td  colspan="2">{{ item.ItemCode }}</td>
+            <td colspan="2">{{ item.ItemCode }}</td>
             <td>图号</td>
-            <td  colspan="2">{{ item.DrawingNo }}</td>
+            <td colspan="2">{{ item.DrawingNo }}</td>
           </tr>
           <tr style="font-size:10px;height:17px;">
             <td>品名</td>
@@ -113,23 +113,23 @@
           </tr>
           <tr style="font-size:10px;">
             <td colspan="2">
-              <p style="margin-bottom:0px;padding:0;height:20px;">采购员:{{item.Purchaser}}</p>
+              <p style="margin-bottom:0px;padding:0;height:20px;">采购员:{{ item.Purchaser }}</p>
               <p style="margin:0;padding:0;font-size:10px;height:15px;">
-                <span style="display: inline-block;float: right;line-height: 15px;font-size:10px;">{{ item.DatetimePurchaseDeliver || "\u2003\u2003\u2003年\u2003月\u2003日" }}</span>
+                <span style="display: inline-block;float: right;line-height: 15px;font-size:10px;">{{ timeStr(item.DatetimePurchaseDeliver) || "\u2003\u2003\u2003年\u2003月\u2003日" }}</span>
                 <span>送样时间:</span>
               </p>
             </td>
             <td colspan="2">
               <p style="margin-bottom:0px;padding:0;height:20px;">品质确认:</p>
               <p style="margin:0;padding:0;font-size:10px;height:15px;">
-                <span style="display: inline-block;float: right;line-height: 15px;font-size:10px;">{{ item.DatetimeSign ||  "\u2003\u2003\u2003年\u2003月\u2003日"  }}</span>
+                <span style="display: inline-block;float: right;line-height: 15px;font-size:10px;">{{ "\u2003\u2003\u2003年\u2003月\u2003日" }}</span>
                 <span>签样时间:</span>
               </p>
             </td>
             <td colspan="2">
               <p style="margin-bottom:0px;padding:0;height:20px;">工程确认:</p>
               <p style="margin:0;padding:0;font-size:10px;height:15px;">
-                <span style="display: inline-block;float: right;line-height: 15px;font-size:10px;">{{ item.DatetimeSign ||  "\u2003\u2003\u2003年\u2003月\u2003日" }}</span>
+                <span style="display: inline-block;float: right;line-height: 15px;font-size:10px;">{{ "\u2003\u2003\u2003年\u2003月\u2003日" }}</span>
                 <span>签样时间:</span>
               </p>
             </td>
@@ -246,14 +246,13 @@ export default {
   methods: {
     splitData,
     timeStr(text) {
-      console.log(text);
-      console.log(text == undefined);
       if (text == null) {
         return "";
       }
-      let str = text.split("T");
-      let time = str[1].split(".");
-      return str[0] + " " + time[0];
+      let str = text.split(":");
+      console.log("str", str);
+      // let time = str[1].split(".");
+      return str[0] + ":" + str[1];
     },
     close() {
       this.$emit("closeModal");
@@ -276,15 +275,12 @@ export default {
         var inputList = document.getElementById(id).getElementsByTagName("input");
         console.log("inputList===", inputList);
         let checkedFlag = true;
-        // console.log("inputList", inputList);
         for (let i = 0; i < inputList.length; ++i) {
-          console.log("inputList===", inputList[i]);
+          console.log("inputList===", inputList[i].checked);
           if (inputList[i].checked) {
             checkedFlag = false;
           }
         }
-        // this.$message.error("请先勾选采购必填项,样品类别!");
-        // console.log("checkedFlag===", checkedFlag);
         if (checkedFlag) {
           item.checkedFlag = true;
         } else {
@@ -299,6 +295,7 @@ export default {
       }
       // console.log("a===",a)
       // console.log(document.getElementsByClassName("checkbox-content").getElementsByTagName("input"))
+      console.log("dom===", document.getElementById("div1_0"));
       var LODOP;
       LODOP = getLodop();
       if (!LODOP && document.readyState !== "complete") {
@@ -306,7 +303,7 @@ export default {
           title: "提示",
           content: "本机未安装Lodop控件,请先下载安装",
           onOk() {
-            window.open("http://192.168.1.245:8080/static/CLodop_Setup_for_Win32NT.exe");
+            window.open("https://www.lodop.net/download.html");
           },
         });
         return;

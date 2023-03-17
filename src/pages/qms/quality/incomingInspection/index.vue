@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2023-03-06 13:52:09
+ * @LastEditTime: 2023-03-16 17:28:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/qms/quality/incomingInspection/index.vue
@@ -66,7 +66,7 @@
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
           </span>
         </a-form>
-        <div class="operator">
+        <div class="operator">   
           <a-button type="primary" @click="add" :disabled="!hasPerm('add')" icon="plus">新增</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <a-button v-if="hasPerm('edit')" icon="edit" type="primary" :disabled="!hasSelected" :loading="loading" @click="allEdit" style="margin-left: 8px">修改</a-button>

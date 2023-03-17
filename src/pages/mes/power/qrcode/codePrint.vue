@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-11 09:42:18
- * @LastEditTime: 2023-02-25 13:47:18
+ * @LastEditTime: 2023-03-15 16:52:51
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/qrcode/codePrint.vue
@@ -99,9 +99,9 @@ export default {
     },
     setPrint(list) {
       this.isPrintList = false;
-      console.log("list=====",list)
-      if(list.length == 0) {
-        return
+      console.log("list=====", list);
+      if (list.length == 0) {
+        return;
       }
       let params = {
         tempcode: "PS_PRINTER_TEMP",
@@ -181,6 +181,8 @@ export default {
       if (e.keyCode == 13) {
         event.preventDefault(); // 阻止浏览器默认换行操作
       }
+      this.orderInfo = [];
+      this.orderList = [];
       if (!this.orderValue) {
         let message = {
           content: "请先输入工单号，或者扫描工单二维码",
@@ -217,6 +219,7 @@ export default {
           } else {
             res.data.message.content = res.data.data.Msg;
             this.listData.unshift(res.data.message);
+            this.isStart =false;
           }
         }
       });
