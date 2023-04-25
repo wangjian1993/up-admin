@@ -1,10 +1,10 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2023-03-17 10:26:26
+ * @LastEditTime: 2023-03-21 11:48:04
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/administrative/order/address/data.js
+ * @FilePath: /up-admin/src/pages/administrative/order/order/data.js
  */
 export const columns = [
   {
@@ -14,15 +14,15 @@ export const columns = [
     width: 50,
   },
   {
-    title: "点单公司",
-    dataIndex: "CompanyName",
-    scopedSlots: { customRender: "CompanyName" },
+    title: "订单号",
+    dataIndex: "OrderNo",
+    scopedSlots: { customRender: "OrderNo" },
     align: "center",
   },
   {
-    title: "点餐地址类型",
-    dataIndex: "Type",
-    scopedSlots: { customRender: "Type" },
+    title: "公司",
+    dataIndex: "CompanyName",
+    scopedSlots: { customRender: "CompanyName" },
     align: "center",
   },
   {
@@ -32,39 +32,33 @@ export const columns = [
     align: "center",
   },
   {
-    title: "点单地点地址",
-    dataIndex: "Address",
-    scopedSlots: { customRender: "Address" },
-    align: "center",
-  },
-  {
-    title: "可点单人员",
-    dataIndex: "Users",
-    scopedSlots: { customRender: "Users" },
-    align: "center",
-  },
-  {
-    title: "创建人",
+    title: "点单人",
     dataIndex: "CreateUser",
     scopedSlots: { customRender: "CreateUser" },
     align: "center",
   },
   {
-    title: "创建时间",
+    title: "点单时间",
     dataIndex: "CreateDatetime",
     scopedSlots: { customRender: "CreateDatetime" },
     align: "center",
   },
   {
-    title: "二维码",
-    dataIndex: "QCode",
-    scopedSlots: { customRender: "QCode" },
+    title: "订单状态",
+    dataIndex: "Status",
+    scopedSlots: { customRender: "Status" },
     align: "center",
   },
   {
-    title: "状态",
-    dataIndex: "Enable",
-    scopedSlots: { customRender: "Enable" },
+    title: "订单备注",
+    dataIndex: "Remark",
+    scopedSlots: { customRender: "Remark" },
+    align: "center",
+  },
+  {
+    title: "联系人",
+    dataIndex: "MobilePhone",
+    scopedSlots: { customRender: "MobilePhone" },
     align: "center",
   },
   {
@@ -73,19 +67,3 @@ export const columns = [
     align: "center",
   },
 ];
-export const innerColumns = [{
-  title: " 顺序",
-  dataIndex: "index",
-  scopedSlots: { customRender: "index" },
-  align: "center",
-}, {
-  title: "接收部门",
-  dataIndex: "DepartmentName",
-  scopedSlots: { customRender: "DepartmentName" },
-  align: "center",
-}, {
-  title: "接收人",
-  dataIndex: "ReceiverList",
-  scopedSlots: { customRender: "ReceiverList" },
-  align: "center",
-}];

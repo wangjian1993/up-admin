@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-05 11:32:20
- * @LastEditTime: 2023-03-10 15:21:48
+ * @LastEditTime: 2023-04-06 10:40:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/qms/quality/incomingInspection/editForm.vue
@@ -33,7 +33,7 @@
         </a-form-model-item>
         <a-form-model-item has-feedback label="测试项目" prop="TestItem">
           <a-select v-model="form.TestItem" :disabled="isEdit" placeholder="请选择测试项目">
-            <a-select-option v-for="item in paramsItem.IQC_INCOMING_TEST_ITEM" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+            <a-select-option v-for="item in testItemList" :key="item.TestItem" :value="item.TestItem">{{ item.TestItemName }}</a-select-option>
           </a-select>
         </a-form-model-item>
         <a-form-model-item has-feedback label="测试结果" prop="TestResult">
@@ -52,7 +52,7 @@
 <script>
 import { setIncomingTest } from "@/services/qms.js";
 export default {
-  props: ["editData", "isEdit", "paramsItem"],
+  props: ["editData", "isEdit", "paramsItem",'testItemList'],
   data() {
     return {
       size: "small",

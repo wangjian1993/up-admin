@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-29 16:34:37
- * @LastEditTime: 2023-03-17 13:48:09
+ * @LastEditTime: 2023-03-20 13:59:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/ors.js
@@ -33,4 +33,11 @@ export function getGoods(params, action) {
 }
 export function setGoods(params, action) {
     return request(`${UP_ORS}/goods/${action}`, METHOD.POST, params);
+}
+
+export function getOrderList(params, action) {
+    return request(`${UP_ORS}/order/${action}`, METHOD.GET, params);
+}
+export function setOrderList(params, action) {
+    return request(`${UP_ORS}/order/${action}`, METHOD.POST, params);
 }

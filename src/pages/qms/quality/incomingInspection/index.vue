@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2023-03-16 17:28:17
+ * @LastEditTime: 2023-04-06 10:40:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/qms/quality/incomingInspection/index.vue
@@ -23,7 +23,7 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="测试项目" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['item']" style="width: 200px" placeholder="请选择测试项目">
-                    <a-select-option v-for="item in paramsItem.IQC_INCOMING_TEST_ITEM" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                    <a-select-option v-for="item in testItemList" :key="item.TestItem" :value="item.TestItem">{{ item.TestItemName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -66,7 +66,7 @@
             <a-button style="margin-left: 8px" @click="reset">重置</a-button>
           </span>
         </a-form>
-        <div class="operator">   
+        <div class="operator">
           <a-button type="primary" @click="add" :disabled="!hasPerm('add')" icon="plus">新增</a-button>
           <a-button style="margin-left: 8px" :disabled="!hasPerm('export') && dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <a-button v-if="hasPerm('edit')" icon="edit" type="primary" :disabled="!hasSelected" :loading="loading" @click="allEdit" style="margin-left: 8px">修改</a-button>
@@ -107,7 +107,7 @@
                   删除
                 </a>
               </a-popconfirm>
-              <a style="margin-right: 8px"  @click="edit(record)" :disabled="!hasPerm('edit')">
+              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
                 <a-icon type="edit" />
                 编辑
               </a>
@@ -115,14 +115,14 @@
           </template>
         </a-table>
       </a-card>
-      <BatchAdd v-if="isAdd" :isEdit="isEdit" :paramsItem="paramsItem" :editData="editData" @closeModal="closeModal" @success="searchBtn" />
-      <EditForm v-if="isEditForm" :paramsItem="paramsItem" :editData="editData" @closeModal="closeModal" @success="searchBtn" />
+      <BatchAdd v-if="isAdd" :isEdit="isEdit" :paramsItem="paramsItem" :testItemList="testItemList" :editData="editData" @closeModal="closeModal" @success="searchBtn" />
+      <EditForm v-if="isEditForm" :paramsItem="paramsItem" :editData="editData" :testItemList="testItemList"  @closeModal="closeModal" @success="searchBtn" />
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getIncomingTest, setIncomingTest } from "@/services/qms.js";
+import { getIncomingTest, setIncomingTest, setTestItem } from "@/services/qms.js";
 import { getProductionPersonnel } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { renderStripe } from "@/utils/stripe.js";
@@ -153,6 +153,7 @@ export default {
       processList: [],
       paramsList: ["IQC_INCOMING_TEST_ITEM", "IQC_INCOMING_TEST_ITEM_RESULT"],
       paramsItem: [],
+      testItemList:[]
     };
   },
   updated() {
@@ -165,9 +166,17 @@ export default {
     this.search();
     this.getPlant();
     this.getParamsData();
+    this.getTestItem();
   },
   methods: {
     splitData,
+    getTestItem() {
+      setTestItem("", "getlist").then((res) => {
+        if (res.data.success) {
+          this.testItemList = res.data.data;
+        }
+      });
+    },
     getParamsData() {
       this.paramsList.forEach((item) => {
         let params = {

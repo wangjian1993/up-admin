@@ -21,7 +21,7 @@
         <template slot="TestItem" slot-scope="text, record">
           <div>
             <a-select v-model="record.TestItem" :disabled="!record.isInput" style="width: 150px" placeholder="请选择测试结果">
-              <a-select-option v-for="item in paramsItem.IQC_INCOMING_TEST_ITEM" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+              <a-select-option v-for="item in testItemList" :key="item.TestItem" :value="item.TestItem">{{ item.TestItemName }}</a-select-option>
             </a-select>
           </div>
         </template>
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { setDoList, setIncomingTest } from "@/services/qms.js";
+import { setDoList, setIncomingTest,setTestItem } from "@/services/qms.js";
 import { getParamData } from "@/services/admin.js";
 const columns = [
   {
@@ -127,9 +127,11 @@ export default {
       columns,
       count: 2,
       selectedRowKeys: [],
+      testItemList:[]
     };
   },
   created() {
+    this.getTestItem();
     if (this.isEdit) {
       this.dataSource = [...this.editData];
       this.dataSource.forEach((item) => {
@@ -138,6 +140,13 @@ export default {
     }
   },
   methods: {
+    getTestItem() {
+      setTestItem("", "getlist").then((res) => {
+        if (res.data.success) {
+          this.testItemList = res.data.data;
+        }
+      });
+    },
     close() {
       this.$emit("closeModal");
     },

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2023-02-23 18:05:44
+ * @LastEditTime: 2023-04-24 17:46:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/report/overdue.vue
@@ -180,7 +180,7 @@ export default {
         this.primaryKey = primaryKey.dataIndex;
       }
     });
-    this.search();
+    // this.search();
     this.getPlant();
     this.getProcessList();
   },
@@ -233,7 +233,7 @@ export default {
       this.week = "";
       this.isSearch = 0;
       this.searchForm.resetFields();
-      this.search();
+      // this.search();
     },
     plantChange(e) {
       if (e == "") return;

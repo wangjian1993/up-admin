@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2023-03-17 11:28:48
+ * @LastEditTime: 2023-03-22 14:22:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/administrative/order/address/index.vue
@@ -23,7 +23,7 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="点单地点类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['type']" style="width: 200px" placeholder="请选择点单地点类型">
-                    <a-select-option v-for="item in paramsItem.IQC_INCOMING_TEST_ITEM_RESULT" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                    <a-select-option v-for="item in paramsItem" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -91,6 +91,18 @@
               </a-tag>
             </div>
           </template>
+          <template slot="NoticeUsers" slot-scope="record">
+            <div>
+              <a-tag v-for="item in record" :key="item.Id">
+                {{ item.UserName }}
+              </a-tag>
+            </div>
+          </template>
+          <template slot="QCode" slot-scope="text, record">
+            <div>
+              <a @click="qrcode(record)">查看二维码</a>
+            </div>
+          </template>
           <template slot="action" slot-scope="text, record">
             <div>
               <a-popconfirm title="确定删除?" @confirm="() => onDelete(record.Id)">
@@ -103,11 +115,16 @@
                 <a-icon type="edit" />
                 编辑
               </a>
+              <!-- <a style="margin-right: 8px" @click="downQr(record)">
+                <a-icon type="download" />
+                下载二维码
+              </a> -->
             </div>
           </template>
         </a-table>
       </a-card>
       <useForm v-if="isForm" :isEdit="isEdit" :paramsItem="paramsItem" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="searchBtn" />
+      <qr-code v-if="isQrCode" :qrData="qrData" @closeModal="closeModal"></qr-code>
     </a-spin>
   </div>
 </template>
@@ -121,9 +138,10 @@ import { PublicVar } from "@/mixins/publicVar.js";
 import { columns, innerColumns } from "./data";
 import useForm from "./form.vue";
 import { getParamData } from "@/services/admin.js";
+import QrCode from "./qrcode";
 export default {
   mixins: [PublicVar],
-  components: { useForm },
+  components: { useForm, QrCode },
   data() {
     return {
       scrollY: "",
@@ -146,6 +164,8 @@ export default {
       defFlowId: "",
       paramsList: ["ADDRESS_TYPE"],
       paramsItem: [],
+      qrData: [],
+      isQrCode: false,
     };
   },
   updated() {
@@ -162,16 +182,18 @@ export default {
   methods: {
     splitData,
     getParamsData() {
-      this.paramsList.forEach((item) => {
-        let params = {
-          groupcode: item,
-        };
-        getParamData(params).then((res) => {
-          if (res.data.success) {
-            this.paramsItem[item] = res.data.data;
-          }
-        });
+      let params = {
+        groupcode: "ADDRESS_TYPE",
+      };
+      getParamData(params).then((res) => {
+        if (res.data.success) {
+          this.paramsItem = res.data.data;
+        }
       });
+    },
+    qrcode(record) {
+      this.qrData = record;
+      this.isQrCode = true;
     },
     //重置搜索
     reset() {
@@ -196,7 +218,7 @@ export default {
     },
     closeModal() {
       this.isForm = false;
-      this.isImport = false;
+      this.isQrCode = false;
     },
     getEnterList() {
       getOrderAddress("", "getcompany").then((res) => {
@@ -229,7 +251,9 @@ export default {
           let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            enterpriseid: values.enterpriseid,
+            companyid: values.companyid,
+            type: values.type,
+            keyword: values.keyword,
           };
           getOrderAddress(params, "get").then((res) => {
             if (res.data.success) {

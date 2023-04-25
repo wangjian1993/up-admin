@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2023-03-17 15:53:41
+ * @LastEditTime: 2023-04-06 14:51:31
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/administrative/order/goods/goods.vue
@@ -15,21 +15,16 @@
             <a-row>
               <a-col :md="6" :sm="24">
                 <a-form-item label="点单公司" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['companyid']" placeholder="请选择点单公司">
+                  <a-select v-decorator="['companyid']" placeholder="请选择点单公司" @change="companyChange">
                     <a-select-option v-for="item in enterList" :key="item.Id" :value="item.Id">{{ item.CompanyName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="点单地点类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['type']" style="width: 200px" placeholder="请选择点单地点类型">
-                    <a-select-option v-for="item in paramsItem.IQC_INCOMING_TEST_ITEM_RESULT" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-              <a-col :md="6" :sm="24">
                 <a-form-item label="点单地点" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" allowClear placeholder="请输入点单地点" v-decorator="['keyword']" />
+                  <a-select v-decorator="['addressid']" placeholder="请选择点单地点">
+                    <a-select-option v-for="item in addressList" :key="item.Id" :value="item.Id">{{ item.Place }}</a-select-option>
+                  </a-select>
                 </a-form-item>
               </a-col>
               <!-- <a-col :md="6" :sm="24">
@@ -79,7 +74,8 @@
             </div>
           </template>
           <template slot="PictureUrl" slot-scope="text">
-            <a-avatar shape="square" :size="64" :icon="'./' + text" />
+            <a-avatar shape="square" :size="64" :src="hostUrl + text" />
+            <!-- <span>{{hostUrl + text}}</span> -->
           </template>
           <template slot="Addresss" slot-scope="record">
             <div>
@@ -117,7 +113,6 @@ import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { columns, innerColumns } from "./data";
 import useForm from "./form.vue";
-import { getParamData } from "@/services/admin.js";
 export default {
   mixins: [PublicVar],
   components: { useForm },
@@ -137,12 +132,8 @@ export default {
       selectedRowKeys: [],
       enterList: [],
       enterId: "",
-      innerData: [],
-      expandedRowKeys: [],
-      defaultExpandedRowKeys: [],
-      defFlowId: "",
-      paramsList: ["ADDRESS_TYPE"],
-      paramsItem: [],
+      addressList: [],
+      hostUrl: "",
     };
   },
   updated() {
@@ -154,7 +145,8 @@ export default {
     });
     this.getEnterList();
     this.searchBtn();
-    this.getParamsData();
+    this.hostUrl = window.location.host === "113.106.78.83:7003" ? "http://113.106.78.83:7003" : window.location.host === "192.168.0.240:8080" ? "http://192.168.0.240:8080" : "http://192.168.1.245:8080";
+    console.log("hostUrl---", this.hostUrl);
   },
   methods: {
     splitData,
@@ -188,18 +180,6 @@ export default {
       console.log("height", height);
       return height;
     },
-    getParamsData() {
-      this.paramsList.forEach((item) => {
-        let params = {
-          groupcode: item,
-        };
-        getParamData(params).then((res) => {
-          if (res.data.success) {
-            this.paramsItem[item] = res.data.data;
-          }
-        });
-      });
-    },
     //重置搜索
     reset() {
       this.isSearch = 0;
@@ -232,6 +212,18 @@ export default {
         }
       });
     },
+    companyChange(e) {
+      let params = {
+        pageindex: 1,
+        pagesize: 100,
+        companyid: e,
+      };
+      getOrderAddress(params, "get").then((res) => {
+        if (res.data.success) {
+          this.addressList = res.data.data.list;
+        }
+      });
+    },
     //多选
     onSelectChange(selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys;
@@ -256,7 +248,8 @@ export default {
           let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            enterpriseid: values.enterpriseid,
+            companyid: values.companyid,
+            addressid: values.addressid,
           };
           getGoods(params, "get").then((res) => {
             if (res.data.success) {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2023-03-17 11:29:13
+ * @LastEditTime: 2023-03-25 15:22:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/administrative/order/address/form.vue
@@ -18,7 +18,7 @@
         </a-form-model-item>
         <a-form-model-item has-feedback label="点单地址类型" prop="type">
           <a-select v-model="form.type" :disabled="isEdit" has-feedback placeholder="请选择点单地址类型">
-            <a-select-option v-for="item in paramsItem.ADDRESS_TYPE" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+            <a-select-option v-for="item in paramsItem" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
           </a-select>
         </a-form-model-item>
         <a-form-model-item has-feedback label="点单地址" prop="place">
@@ -29,11 +29,19 @@
         </a-form-model-item>
         <a-form-model-item label="点单人">
           <div>
-            <a-tag style="margin:4px 4px" v-for="item in user" :key="item.Id" closable @close="() => handleClose(item.Id)">
+            <a-tag style="margin:4px 4px" v-for="item in user" :key="item.Id" closable @close="() => handleClose(item.Id, 1)">
               {{ item.Name }}
             </a-tag>
           </div>
-          <a-tag style="background: #fff; borderStyle: dashed;" @click="addUser"> <a-icon type="plus" /> 添加 </a-tag>
+          <a-tag style="background: #fff; borderStyle: dashed;" @click="addUser(1)"> <a-icon type="plus" /> 添加 </a-tag>
+        </a-form-model-item>
+        <a-form-model-item label="通知人">
+          <div>
+            <a-tag style="margin:4px 4px" v-for="item in notifier" :key="item.Id" closable @close="() => handleClose(item.Id, 2)">
+              {{ item.Name }}
+            </a-tag>
+          </div>
+          <a-tag style="background: #fff; borderStyle: dashed;" @click="addUser(2)"> <a-icon type="plus" /> 添加 </a-tag>
         </a-form-model-item>
         <a-form-model-item label="是否启用">
           <a-radio-group :value="form.enable" button-style="solid" @change="enableChange">
@@ -42,7 +50,7 @@
           </a-radio-group>
         </a-form-model-item>
       </a-form-model>
-      <userList v-if="isUser" @closeModal="closeModal" :user="user" @success="setUserList" />
+      <userList v-if="isUser" @closeModal="closeModal" :user="userList" @success="setUserList" />
     </a-modal>
   </div>
 </template>
@@ -63,6 +71,7 @@ export default {
         companyid: "", //公司ID
         type: "", //部门名称
         userids: [],
+        noticeuserids: [],
         place: "", //排序
         address: "", //备注
         enable: "Y",
@@ -93,6 +102,9 @@ export default {
       departmentalList: [],
       isUser: false,
       user: [],
+      notifier: [],
+      userList: [],
+      userType: 1,
     };
   },
   created() {
@@ -109,6 +121,13 @@ export default {
           Code: item.UserCode,
         });
       });
+      this.editData.NoticeUsers.forEach((item) => {
+        this.notifier.push({
+          Name: item.UserName,
+          Id: item.Id,
+          Code: item.UserCode,
+        });
+      });
     }
   },
   methods: {
@@ -119,12 +138,22 @@ export default {
       this.isUser = false;
     },
     setUserList(list) {
-      this.user = list;
+      if (this.userType == 1) {
+        this.user = list;
+      } else {
+        this.notifier = list;
+      }
     },
-    handleClose(id) {
-      this.user = this.user.filter((item) => item.Id != id);
+    handleClose(id, type) {
+      if (type == 1) {
+        this.user = this.user.filter((item) => item.Id != id);
+      } else {
+        this.notifier = this.notifier.filter((item) => item.Id != id);
+      }
     },
-    addUser() {
+    addUser(type) {
+      this.userType = type;
+      this.userList = type == 1 ? this.user : this.notifier;
       this.isUser = true;
     },
     enableChange(value) {
@@ -136,23 +165,26 @@ export default {
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
+          if (this.notifier.length == 0) {
+            this.$message.warning("请先添加通知人!");
+          }
           if (this.isEdit) {
-            if (this.user.length == 0) {
-              this.$message.warning("请先添加接收人!");
-            }
-            console.log("this.form===",this.form)
+            console.log("this.form===", this.form);
             let editForm = {
               id: this.editData.Id, //部门ID
               companyid: this.form.companyid, //公司ID
               type: this.form.type, //部门名称
               userids: [],
+              noticeuserids: [],
               place: this.form.place, //排序
               address: this.form.address, //备注
               enable: this.form.enable == "Y" ? true : false,
             };
-            console.log("this.user===", this.user);
             this.user.forEach((item) => {
               editForm.userids.push(item.Id);
+            });
+            this.notifier.forEach((item) => {
+              editForm.noticeuserids.push(item.Id);
             });
             setOrderAddress(editForm, "update").then((res) => {
               if (res.data.success) {
@@ -166,6 +198,9 @@ export default {
             //添加
             this.user.forEach((item) => {
               this.form.userids.push(item.Id);
+            });
+            this.notifier.forEach((item) => {
+              this.form.noticeuserids.push(item.Id);
             });
             this.form.enable = this.form.enable == "Y" ? true : false;
             setOrderAddress(this.form, "add").then((res) => {

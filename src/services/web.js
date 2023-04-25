@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2022-11-08 16:46:13
+ * @LastEditTime: 2023-04-25 14:51:16
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -10,7 +10,9 @@ import {
     UP_WEB,
     UP_REPORT,
     UP_WMS,
-    UP_TL
+    UP_TL,
+    UP_CMS,
+    UP_BORROW
 } from '@/services/api'
 import {
     request,
@@ -214,6 +216,13 @@ export function getModifyAction(params, action) {
 export function setModifyAction(params, action) {
     return request(`${UP_WEB}/production/modify/${action}`, METHOD.POST, params);
 }
+
+export function getEditOutbound(params, action) {
+    return request(`${UP_WEB}/production/finished/modify/${action}`, METHOD.GET, params);
+}
+export function setEditOutbound(params, action) {
+    return request(`${UP_WEB}/production/finished/modify/${action}`, METHOD.POST, params);
+}
 //工序产线配置
 export function getProcessLine(params, action) {
     return request(`${UP_WEB}/process/${action}`, METHOD.GET, params);
@@ -309,4 +318,39 @@ export function setInstrument(params, action) {
 //获取打印模板
 export function getTemplate(params) {
     return request(`${UP_TL}/print/getprinttemp`, METHOD.GET, params);
+}
+
+
+//灯板钢网管理
+
+export function getLampAction(params, action) {
+    return request(`${UP_CMS}/lpsm/${action}`, METHOD.GET, params);
+}
+export function setLampAction(params, action) {
+    return request(`${UP_CMS}/lpsm/${action}`, METHOD.POST, params);
+}
+
+
+
+export function getSpectrumPrice(params, action) {
+    return request(`${UP_CMS}/light/${action}`, METHOD.GET, params);
+}
+export function setSpectrumPrice(params, action) {
+    return request(`${UP_CMS}/light/${action}`, METHOD.POST, params);
+}
+
+export function getQualitySpecimen(params, action) {
+    return request(`${UP_WEB}/qc/${action}`, METHOD.GET, params);
+}
+export function setQualitySpecimen(params, action) {
+    return request(`${UP_WEB}/qc/${action}`, METHOD.POST, params);
+}
+
+
+
+export function getBorrowedSop(params, action) {
+    return request(`${UP_BORROW}/sop/${action}`, METHOD.GET, params);
+}
+export function setBorrowedSop(params, action) {
+    return request(`${UP_BORROW}/sop/${action}`, METHOD.POST, params);
 }

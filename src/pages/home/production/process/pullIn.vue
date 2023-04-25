@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2022-10-08 16:19:17
+ * @LastEditTime: 2023-04-22 11:26:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
@@ -12,7 +12,7 @@
     <a-card :bodyStyle="{ padding: '5px' }" bordered>
       <a-descriptions :column="5" size="small">
         <a-descriptions-item label="工单/工单扫码" :span="2">
-          <div style="display:flex"><a-input style="width:400px" allowClear ref="orderValue2" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur" @pressEnter="scanCode" auto-size /></div>
+          <div style="display:flex"><a-input style="width:400px;" allowClear ref="orderValue1" v-model.trim="orderValue" placeholder="" @change="inputChange" @blur="inputBlur()" @pressEnter="scanCode" auto-size /><a-button style="margin-left:10px" shape="circle" icon="profile" @click="orderShow" /></div>
         </a-descriptions-item>
         <a-descriptions-item label="生产工厂">
           {{ userLineData.PlantName }}
@@ -21,7 +21,12 @@
           {{ userLineData.WorkshopName }}
         </a-descriptions-item>
         <a-descriptions-item label="生产产线">
-          {{ userLineData.LineName }}
+          <!-- {{ userLineData.LineName }} -->
+          <a-select style="width: 120px" v-model="defaultLine" @change="checkLine">
+            <a-select-option v-for="item in lineItems" :key="item.LineId" :value="item.LineId">
+              {{ item.LineName }}
+            </a-select-option>
+          </a-select>
         </a-descriptions-item>
         <a-descriptions-item label="填单人/填单时间"> {{ userLineData.UserName }} / {{ splitData(userLineData.NowDate) }} </a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
@@ -31,7 +36,7 @@
         <a-descriptions-item label="接收数量"><a-input-number @blur="setFocus" :min="0" v-model="receiveQty" :disabled="orderInfo.IsWrite === false" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item label="生产人数"><a-input-number @blur="setFocus()" :min="0" v-model="peopleQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item label="色温"><a-input @blur="setFocus()" v-model="ColorTemperature" style="width:200px"/></a-descriptions-item>
-        <a-descriptions-item  label="备注"><a-input @blur="setFocus" v-model="remark" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="备注"><a-input @blur="setFocus" v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
           <a-button v-if="hasPerm('process_scan')" type="primary" icon="check-circle" @click="startWork" :disabled="!isStart">
             进站
@@ -48,6 +53,7 @@
     <!-- 列表 -->
     <WorkTable :orderList="orderList" :tableType="1" />
     <orderSelectPull v-if="isOrderSelect" :userLineData="userLineData" :orderSelectList="orderSelectList" @closeModal="closeModal" @succeedOrder="succeedOrder" :selectType="selectType" />
+    <OrderList v-if="isOrder" :processData="processData" :defaultLine="userLineData.LineId" @success="selectOrder" @closeModal="closeModal" :type="'start'" />
   </a-card>
 </template>
 <script>
@@ -58,8 +64,9 @@ import MsgList from "../components/MsgList.vue";
 import WorkTable from "../components/WorkTable.vue";
 import orderSelectPull from "./components/orderSelectPull.vue";
 import { splitData } from "@/utils/util.js";
+import OrderList from "./components/orderList.vue";
 export default {
-  components: { MsgList, WorkTable, orderSelectPull },
+  components: { MsgList, WorkTable, orderSelectPull, OrderList },
   mixins: [PublicVar],
   data() {
     return {
@@ -81,10 +88,14 @@ export default {
       isFocus: false,
       peopleQty: 0,
       ColorTemperature: "",
+      isOrder: false,
+      lineList: [],
+      lineItems: [],
+      defaultLine:""
     };
   },
   created() {
-    this.getWorkInfo();
+    this.getLineList();
   },
   mounted() {
     this.$refs.orderValue2.focus();
@@ -93,6 +104,9 @@ export default {
     splitData,
     closeListData() {
       this.listData = [];
+    },
+    orderShow() {
+      this.isOrder = true;
     },
     inputBlur() {
       if (!this.isFocus) {
@@ -150,13 +164,39 @@ export default {
         return false;
       }
     },
+    selectOrder(item) {
+      this.isOrder = false;
+      this.orderValue = item.MoCode;
+      this.scanCode();
+    },
     closeModal() {
       this.visible = false;
       this.isPrint = false;
       this.isOrderSelect = false;
+      this.isOrder = false;
     },
-    getWorkInfo() {
-      setStartWorkApi("", "loaduserline").then((res) => {
+    getLineList() {
+      setStartWorkApi("", "multiple/loaduserline").then((res) => {
+        if (res.data.success) {
+          if (res.data.data && res.data.data.length > 0) {
+            this.lineList = res.data.data;
+            this.defaultLine = res.data.data[0].UserLine.LineId
+            res.data.data.forEach((item) => {
+              this.lineItems.push(item.UserLine);
+            });
+            this.getWorkInfo(res.data.data[0].UserLine.LineId);
+          } else {
+            this.getWorkInfo();
+          }
+        }
+      });
+    },
+    checkLine(e){
+      this.emptyData();
+      this.getWorkInfo(e)
+    },
+    getWorkInfo(LineId) {
+      setStartWorkApi({ LineId: LineId }, "loaduserline").then((res) => {
         if (res.data.success) {
           res.data.message.time = getTimeData();
           res.data.message.IsSuccess = res.data.data.IsSuccess;
@@ -174,9 +214,14 @@ export default {
     },
     //扫码
     scanCode(e) {
-      e.currentTarget.select();
-      if (e.keyCode == 13) {
-        event.preventDefault(); // 阻止浏览器默认换行操作
+      // e.currentTarget.select();
+      try {
+        e.currentTarget.select();
+        if (e.keyCode == 13) {
+          event.preventDefault(); // 阻止浏览器默认换行操作
+        }
+      } catch (error) {
+        console.log("error===");
       }
       if (!this.orderValue) {
         let message = {
@@ -190,6 +235,7 @@ export default {
       let params = {
         ScanCode: this.orderValue.trim(),
         ProcessStatus: "PROCESS_START",
+        LineId: this.userLineData.LineId
       };
       setStartWorkApi(params, "scan").then((res) => {
         res.data.message.time = getTimeData();
@@ -205,8 +251,11 @@ export default {
             if (result.length <= 1) {
               this.orderInfo = res.data.data.result.result[0];
               this.getHistoryList();
-              if (this.orderInfo.IsWrite === false) {
+              if (!this.orderInfo.IsWrite) {
                 this.receiveQty = this.orderInfo.ReportQty;
+                this.peopleQty = this.orderInfo.PerQty;
+                this.ColorTemperature = this.orderInfo.ColorTemperature;
+                // this.startWork();
               }
             } else {
               this.isOrderSelect = true;
@@ -229,6 +278,7 @@ export default {
         ProPlanId: this.orderInfo.ProPlanId,
         MoCode: this.orderInfo.MoCode,
         ProcessStatus: "PROCESS_START",
+        LineId: this.userLineData.LineId
       };
       this.orderList = [];
       setStartWorkApi(params, "gethisreports").then((res) => {
@@ -292,8 +342,8 @@ export default {
         ReportQty: this.receiveQty,
         ScrapedQty: 0,
         PerQty: this.peopleQty,
-        ColorTemperature:this.ColorTemperature,
-        Remarks:this.remark
+        ColorTemperature: this.ColorTemperature,
+        Remarks: this.remark,
       };
       setStartWorkApi(params, "submit").then((res) => {
         res.data.message.time = getTimeData();

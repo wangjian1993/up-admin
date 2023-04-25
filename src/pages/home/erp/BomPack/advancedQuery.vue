@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal :title="queryType == 1 ?'包材高级查询':'线材高级查询'" :visible="visible" @ok="handleOk" @cancel="handleCancel" width="50%">
+    <a-modal :title="queryType == 1 ? '包材高级查询' : '线材高级查询'" :visible="visible" @ok="handleOk" @cancel="handleCancel" width="50%">
       <a-form-model ref="ruleForm" :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
         <a-form-model-item has-feedback label="品号" v-for="(domain, index) in itemcodeForm" :key="'itemcodeForm' + index">
           <a-input style="width: 200px" v-model="domain.value" allowClear placeholder="请输入品号" />
@@ -77,7 +77,7 @@
 
 <script>
 export default {
-  props: ["editData","queryType"],
+  props: ["editData", "queryType"],
   data() {
     return {
       size: "small",
@@ -106,15 +106,18 @@ export default {
     };
   },
   created() {
-    console.log("editData===",this.editData);
-    if (this.editData.length != 0) {
-      console.log("哈哈哈")
-      this.sizeForm = this.editData.sizeForm || [{ widths: 0, lengths: 0, heights: 0 }];
-      // this.sizeForm = this.editData.sizes.lenght != 0 ? [{ key: "", value: "" }] : ;
-      this.itemcodeForm = this.editData.itemcodes.length != 0 ? this.editData.itemcodes : [{ where: "", value: "" }];
-      this.itemnameForm = this.editData.itemnames.length != 0 ? this.editData.itemnames : [{ where: "", value: "" }];
-      this.itemspecificationForm = this.editData.itemspecifications.length != 0 ? this.editData.itemspecifications : [{ where: "", value: "" }];
+    let queryValue = "";
+    if (this.queryType == 1) {
+      queryValue = localStorage.getItem("PACK_QUERY_VALUE");
+    } else {
+      queryValue = localStorage.getItem("WIRE_QUERY_VALUE");
     }
+    let item = JSON.parse(queryValue);
+    console.log("item===", item);
+    this.itemcodeForm = item.itemcodeForm.length === 0 ? [{ value: "", where: "" }] : item.itemcodeForm;
+    this.itemnameForm = item.itemnameForm.length === 0 ? [{ value: "", where: "" }] : item.itemnameForm;
+    this.itemspecificationForm = item.itemspecificationForm.length === 0 ? [{ value: "", where: "" }] : item.itemspecificationForm;
+    this.sizeForm = item.sizeForm.length === 0 ? [{ widths: 0, lengths: 0, heights: 0 }] : item.sizeForm;
   },
   methods: {
     //添加
@@ -162,12 +165,6 @@ export default {
       if (type == "LENGHT") {
         this.sizeForm[index].maxlength = Number(this.sizeForm[index].lengths) + Number(this.sizeForm[index].lenghtLimits);
         this.sizeForm[index].minlength = Number(this.sizeForm[index].lengths) - Number(this.sizeForm[index].lenghtLimits);
-      } else if (type == "WIDHT") {
-        this.sizeForm[index].maxwidth = Number(this.sizeForm[index].widths) + Number(this.sizeForm[index].widthLimits);
-        this.sizeForm[index].minwidth = Number(this.sizeForm[index].widths) - Number(this.sizeForm[index].widthLimits);
-      } else if (type == "HEIGHT") {
-        this.sizeForm[index].maxheight = Number(this.sizeForm[index].heights) + Number(this.sizeForm[index].heightLimits);
-        this.sizeForm[index].minheight = Number(this.sizeForm[index].heights) - Number(this.sizeForm[index].heightLimits);
       }
     },
     handleOk() {
@@ -203,11 +200,21 @@ export default {
             itemnames: itemnameArray,
             itemspecifications: itemspecificationArray,
           };
+          let storage = {
+            sizeForm: this.sizeForm,
+            itemspecificationForm: this.itemspecificationForm,
+            itemnameForm: this.itemnameForm,
+            itemcodeForm: this.itemcodeForm,
+          };
           let editData = {
             ...params,
             sizeForm: this.sizeForm,
           };
-          console.log("params===", params);
+          if (this.queryType == 1) {
+            localStorage.setItem("PACK_QUERY_VALUE", JSON.stringify(storage));
+          } else {
+            localStorage.setItem("WIRE_QUERY_VALUE", JSON.stringify(storage));
+          }
           this.$emit("closeModal");
           this.$emit("success", params, editData);
         }

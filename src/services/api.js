@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-07-08 09:23:52
- * @LastEditTime: 2023-03-17 08:54:56
+ * @LastEditTime: 2023-04-25 14:02:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/api.js
@@ -50,4 +50,6 @@ module.exports = {
   UP_TL:`${BASE_URL_MOCK}/api/template`,
   UP_QMS:`${BASE_URL_MOCK}/api/qms`,
   UP_ORS:`${BASE_URL_MOCK}/api/ors`,
+  UP_QC:`${BASE_URL_MOCK}/api/qc`,
+  UP_BORROW:`${BASE_URL_MOCK}/api/borrow`,
 }

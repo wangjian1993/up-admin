@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2023-03-17 11:28:48
+ * @LastEditTime: 2023-04-24 14:16:32
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/administrative/order/address/index.vue
+ * @FilePath: /up-admin/src/pages/administrative/order/order/index.vue
 -->
 <template>
   <div>
@@ -15,32 +15,40 @@
             <a-row>
               <a-col :md="6" :sm="24">
                 <a-form-item label="点单公司" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['companyid']" placeholder="请选择点单公司">
+                  <a-select v-decorator="['companyid']" placeholder="请选择点单公司" @change="companyChange">
                     <a-select-option v-for="item in enterList" :key="item.Id" :value="item.Id">{{ item.CompanyName }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="点单地点类型" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-select v-decorator="['type']" style="width: 200px" placeholder="请选择点单地点类型">
-                    <a-select-option v-for="item in paramsItem.IQC_INCOMING_TEST_ITEM_RESULT" :key="item.ParamValue" :value="item.ParamValue">{{ item.ParamName }}</a-select-option>
+                <a-form-item label="点单地点" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['addressid']" placeholder="请选择点单地点">
+                    <a-select-option v-for="item in addressList" :key="item.Id" :value="item.Id">{{ item.Place }}</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
-                <a-form-item label="点单地点" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                  <a-input style="width: 200px" allowClear placeholder="请输入点单地点" v-decorator="['keyword']" />
+                <a-form-item label="订单号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入订单号" v-decorator="['keyword']" />
                 </a-form-item>
               </a-col>
-              <!-- <a-col :md="6" :sm="24">
-                  <a-form-item label="设备状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                    <a-select v-decorator="['status']" placeholder="请选择订单状态" style="width: 200px">
-                      <a-select-option value="">全部</a-select-option>
-                      <a-select-option value="1">启用</a-select-option>
-                      <a-select-option value="0">禁用</a-select-option>
-                    </a-select>
-                  </a-form-item>
-                </a-col> -->
+              <a-col :md="6" :sm="24">
+                <a-form-item label="订单时间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="订单状态" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-select v-decorator="['status']" placeholder="请选择订单状态" style="width: 200px">
+                    <a-select-option value="">全部</a-select-option>
+                    <a-select-option value="新订单">新订单</a-select-option>
+                    <a-select-option value="已确认">已确认</a-select-option>
+                    <a-select-option value="已配送">已配送</a-select-option>
+                    <a-select-option value="已完成">已完成</a-select-option>
+                    <a-select-option value="已取消">已取消</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
             </a-row>
           </div>
           <span style="float: right; margin-top: 3px;">
@@ -49,9 +57,10 @@
           </span>
         </a-form>
         <div class="operator">
-          <a-button type="primary" @click="add" icon="plus">新增</a-button>
-          <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
-          <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
+          <a-button type="primary" :disabled="!hasSelected" @click="exportExcel" icon="export">导出</a-button>
+          <a-button type="primary" style="margin-left: 8px" @click="allOrder('confirm')" :disabled="!hasSelected" icon="check-circle">确认订单</a-button>
+          <a-button type="primary" style="margin-left: 8px" @click="allOrder('dispatch')" :disabled="!hasSelected" icon="check-circle">确认配送</a-button>
+          <a-button type="primary" style="margin-left: 8px" @click="allOrder('finish')" :disabled="!hasSelected" icon="check-circle">确认完成</a-button>
           <span style="margin-left: 8px">
             <template v-if="hasSelected">
               {{ `共选中 ${selectedRowKeys.length} 条` }}
@@ -78,52 +87,56 @@
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
-          <template slot="Enable" slot-scope="record">
+          <template slot="Status" slot-scope="text">
             <div>
-              <a-tag color="green" v-if="record">启用</a-tag>
-              <a-tag color="red" v-else>禁用</a-tag>
-            </div>
-          </template>
-          <template slot="Users" slot-scope="record">
-            <div>
-              <a-tag v-for="item in record" :key="item.Id">
-                {{ item.UserName }}
-              </a-tag>
+              <a-tag :color="setTagColor(text)">{{ text }}</a-tag>
             </div>
           </template>
           <template slot="action" slot-scope="text, record">
             <div>
-              <a-popconfirm title="确定删除?" @confirm="() => onDelete(record.Id)">
-                <a style="margin-right: 8px" :disabled="!hasPerm('delete')">
-                  <a-icon type="delete" />
-                  删除
+              <a-popconfirm title="确认订单?" @confirm="() => onOrder(record.Id, record.Status)">
+                <a style="margin-right: 8px" v-if="record.Status !== '已完成' && record.Status !== '已关闭'">
+                  <a-icon type="check-circle" />
+                  {{ orderState(record.Status) }}
                 </a>
               </a-popconfirm>
-              <a style="margin-right: 8px" @click="edit(record)" :disabled="!hasPerm('edit')">
+              <a style="margin-right: 8px" @click="details(record)">
+                <a-icon type="database" />
+                订单明细
+              </a>
+              <a style="margin-right: 8px" @click="editOrder(record)" v-if="record.Status !== '已完成' && record.Status !== '已关闭'"  :disabled="!hasPerm('edit')">
                 <a-icon type="edit" />
-                编辑
+                修改订单
+              </a>
+              <a style="margin-right: 8px" v-if="record.Status !== '已完成' && record.Status !== '已关闭'" @click="cancel(record)">
+                <a-icon type="close-circle" />
+                关闭订单
               </a>
             </div>
           </template>
         </a-table>
       </a-card>
-      <useForm v-if="isForm" :isEdit="isEdit" :paramsItem="paramsItem" :editData="editData" :enterList="enterList" @closeModal="closeModal" @success="searchBtn" />
+      <useForm v-if="isForm"  :editData="detailsData" @closeModal="closeModal" @success="searchBtn" />
+      <edit-form v-if="isEdit" :editData="editData" @closeModal="closeModal" @success="searchBtn"></edit-form>
+      <Cause v-if="isCause" :causeData="causeData" @closeModal="closeModal" @success="success" />
     </a-spin>
   </div>
 </template>
 
 <script>
-import { getOrderAddress, setOrderAddress } from "@/services/ors.js";
+import { getOrderList, setOrderList, getOrderAddress } from "@/services/ors.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { columns, innerColumns } from "./data";
 import useForm from "./form.vue";
-import { getParamData } from "@/services/admin.js";
+import EditForm from "./edit.vue";
+// import ExportExcel from "@/utils/ExportExcelJS";
+import Cause from "./cause.vue";
 export default {
   mixins: [PublicVar],
-  components: { useForm },
+  components: { useForm, Cause, EditForm },
   data() {
     return {
       scrollY: "",
@@ -139,13 +152,10 @@ export default {
       isForm: false,
       selectedRowKeys: [],
       enterList: [],
-      enterId: "",
-      innerData: [],
-      expandedRowKeys: [],
-      defaultExpandedRowKeys: [],
-      defFlowId: "",
-      paramsList: ["ADDRESS_TYPE"],
-      paramsItem: [],
+      addressList: [],
+      isCause: false,
+      causeData: [],
+      detailsData: [],
     };
   },
   updated() {
@@ -155,22 +165,85 @@ export default {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(70);
     });
-    this.getEnterList();
     this.searchBtn();
-    this.getParamsData();
+    this.getEnterList();
   },
   methods: {
     splitData,
-    getParamsData() {
-      this.paramsList.forEach((item) => {
-        let params = {
-          groupcode: item,
-        };
-        getParamData(params).then((res) => {
-          if (res.data.success) {
-            this.paramsItem[item] = res.data.data;
-          }
-        });
+    setTagColor(state) {
+      let color = "";
+      switch (state) {
+        case "新订单":
+          color = "#dceb0a";
+          break;
+        case "已确认":
+          color = "#2db7f5";
+          break;
+        case "已配送":
+          color = "#108ee9";
+          break;
+        case "已完成":
+          color = "#87d068";
+          break;
+        case "已取消":
+          color = "#f50";
+          break;
+        default:
+          break;
+      }
+      return color;
+    },
+    orderState(state) {
+      let stateStr = "";
+      switch (state) {
+        case "新订单":
+          stateStr = "确认订单";
+          break;
+        case "已确认":
+          stateStr = "确认配送";
+          break;
+        case "已配送":
+          stateStr = "确认完成";
+          break;
+        default:
+          break;
+      }
+      return stateStr;
+    },
+    cancel(record) {
+      this.isCause = true;
+      this.causeData = record;
+    },
+    success(form) {
+      console.log(form);
+      let params = {
+        desc: form.desc,
+        ids: [this.causeData.Id, null],
+      };
+      setOrderList(params, "close").then((res) => {
+        if (res.data.success) {
+          this.$message.success("取消成功");
+          this.searchBtn();
+        }
+      });
+    },
+    getEnterList() {
+      getOrderAddress("", "getcompany").then((res) => {
+        if (res.data.success) {
+          this.enterList = res.data.data;
+        }
+      });
+    },
+    companyChange(e) {
+      let params = {
+        pageindex: 1,
+        pagesize: 100,
+        companyid: e,
+      };
+      getOrderAddress(params, "get").then((res) => {
+        if (res.data.success) {
+          this.addressList = res.data.data.list;
+        }
       });
     },
     //重置搜索
@@ -179,31 +252,19 @@ export default {
       this.searchForm.resetFields();
       this.searchBtn();
     },
-    add() {
-      this.isForm = true;
-      this.isEdit = false;
-      this.editData = [];
-    },
-    expandedRowsChange(expandedRows) {
-      // this.expandedRowKeys = [];
-      this.expandedRowKeys = expandedRows;
-    },
-    edit(record) {
-      this.isForm = true;
+    editOrder(record) {
       this.isEdit = true;
       this.editData = record;
-      this.expandedRowKeys = [];
+    },
+    details(record) {
+      this.isForm = true;
+      this.detailsData = record;
     },
     closeModal() {
       this.isForm = false;
       this.isImport = false;
-    },
-    getEnterList() {
-      getOrderAddress("", "getcompany").then((res) => {
-        if (res.data.success) {
-          this.enterList = res.data.data;
-        }
-      });
+      this.isCause = false;
+      this.isEdit = false;
     },
     //多选
     onSelectChange(selectedRowKeys) {
@@ -226,12 +287,22 @@ export default {
       this.searchForm.validateFields((err, values) => {
         if (!err) {
           this.loading = true;
+          if (values["range-time-picker"] != undefined) {
+            var starttime = values["range-time-picker"][0].format("YYYY-MM-DD");
+            var endtime = values["range-time-picker"][1].format("YYYY-MM-DD");
+          }
           let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
+            keyword: values.keyword,
+            companyid: values.companyid,
+            addressid: values.addressid,
+            status: values.status,
+            starttime: starttime,
+            endtime: endtime,
           };
-          getOrderAddress(params, "get").then((res) => {
+          getOrderList(params, "get").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -246,17 +317,19 @@ export default {
       });
     },
     //多选删除
-    allDel() {
+    allOrder(type) {
       let self = this;
       self.$confirm({
-        title: "确定要删除选中内容",
+        title: "确定要提交选中内容",
         onOk() {
           self.selectedRowKeys.push(null);
-          setOrderAddress(self.selectedRowKeys, "delete").then((res) => {
+          setOrderList(self.selectedRowKeys, type).then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
-              self.$message.success("删除成功!");
+              self.$message.success("确认成功!");
               self.searchBtn();
+            } else {
+              self.selectedRowKeys = [];
             }
           });
         },
@@ -264,14 +337,79 @@ export default {
       });
     },
     //单个删除
-    onDelete(id) {
+    onOrder(id, type) {
       let params = [id, null];
-      setOrderAddress(params, "delete").then((res) => {
+      let url = type === "新订单" ? "confirm" : type === "已确认" ? "dispatch" : "finish";
+      let content = type === "新订单" ? "确认订单成功" : type === "已确认" ? "确认配送成功" : "订单已成功";
+      setOrderList(params, url).then((res) => {
         if (res.data.success) {
-          this.$message.success("删除成功!");
+          this.$message.success(content);
           this.searchBtn();
         }
       });
+    },
+    exportExcel() {
+      this.selectedRowKeys.push(null);
+      setOrderList(this.selectedRowKeys, "export").then((res) => {
+        if (res.data.success) {
+          console.log("res.data.path", res.data.data.path);
+          let link = document.createElement("a");
+          link.style.display = "none";
+          link.href = "http://113.106.78.83:7003/" + res.data.data.path;
+          link.setAttribute("download", name);
+          document.body.appendChild(link);
+          link.click();
+          this.selectedRowKeys = [];
+        }
+      });
+      // let values = this.searchForm.getFieldsValue();
+      // if (values["range-time-picker"] != undefined) {
+      //   var starttime = values["range-time-picker"][0].format("YYYY-MM-DD");
+      //   var endtime = values["range-time-picker"][1].format("YYYY-MM-DD");
+      // }
+      // let params = {
+      //   pageindex: this.pagination.current,
+      //   pagesize: this.pagination.total,
+      //   enterpriseid: values.enterpriseid,
+      //   keyword: values.keyword,
+      //   companyid: values.companyid,
+      //   addressid: values.addressid,
+      //   status: values.status,
+      //   starttime: starttime,
+      //   endtime: endtime,
+      // };
+      // getOrderList(params, "get").then((res) => {
+      //   if (res.data.success) {
+      //     let list = res.data.data.list;
+      //     const dataSource = list.map((item) => {
+      //       Object.keys(item).forEach((key) => {
+      //         // 后端传null node写入会有问题
+      //         if (item[key] === null) {
+      //           item[key] = "";
+      //         }
+      //         if (Array.isArray(item[key])) {
+      //           item[key] = item[key].join(",");
+      //         }
+      //       });
+      //       return item;
+      //     });
+      //     const header = [];
+      //     this.columns.map((item) => {
+      //       if (item.dataIndex) {
+      //         header.push({ key: item.dataIndex, title: item.title });
+      //       }
+      //     });
+      //     var timestamp = Date.parse(new Date());
+      //     try {
+      //       ExportExcel(header, dataSource, `订单列表_${timestamp}.xlsx`);
+      //       this.$message.success("导出数据成功!");
+      //     } catch (error) {
+      //       // console.log(error);
+      //       this.$message.error("导出数据失败");
+      //     }
+      //     this.isExportLod = false;
+      //   }
+      // });
     },
   },
 };

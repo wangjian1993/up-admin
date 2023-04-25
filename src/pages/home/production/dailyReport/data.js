@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-01 17:38:43
- * @LastEditTime: 2022-10-07 17:12:31
+ * @LastEditTime: 2023-04-25 15:43:21
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/data.js
@@ -18,7 +18,6 @@ import { splitData } from "@/utils/util.js";
 export const columnsData = [
     {
       title: "序号",
-      dataIndex:"index",
       scopedSlots: { customRender: "index" },
       align: "center",
       width:50,

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-08 08:55:36
- * @LastEditTime: 2022-08-19 11:31:45
+ * @LastEditTime: 2023-04-25 14:56:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/editProcess/index.vue
@@ -12,6 +12,20 @@
       <a-form layout="horizontal" :form="searchForm">
         <div :class="advanced ? null : 'fold'">
           <a-row>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['plantid']" style="width: 200px" placeholder="请选择生产工厂">
+                  <a-select-option v-for="item in plantList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="工序" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select v-decorator="['process']" style="width: 200px" placeholder="请选择工序">
+                  <a-select-option v-for="item in procedure" :key="item.Id" :value="item.Id">{{ item.ProcessName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['proname']" />
@@ -89,7 +103,7 @@
 </template>
 
 <script>
-import { getModifyAction, setModifyAction } from "@/services/web.js";
+import { getModifyAction, setEditOutbound, getProcessLine } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
@@ -110,6 +124,7 @@ export default {
       plantid: "",
       editData: [],
       isEdit: false,
+      procedure:[]
     };
   },
   updated() {
@@ -120,9 +135,32 @@ export default {
       this.scrollY = getTableScroll(70);
     });
     this.search();
+    this.getPlant();
+    this.plantChange();
   },
   methods: {
     splitData,
+    getPlant() {
+      let params1 = {
+        entertypecode: "PLANT",
+      };
+      getProcessLine(params1, "getlistbytypecode").then((res) => {
+        if (res.data.success) {
+          this.plantList = res.data.data;
+        }
+      });
+    },
+    plantChange() {
+      let params = {
+        pageindex: 1,
+        pagesize: 100,
+      };
+      getProcessLine(params, "getall").then((res) => {
+        if (res.data.success) {
+          this.procedure = res.data.data.list;
+        }
+      });
+    },
     //重置搜索
     reset() {
       this.isSearch = 0;
@@ -168,10 +206,12 @@ export default {
           let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            mocode: values.mocode ,
-            procode: values.procode ,
+            mocode: values.mocode,
+            plantid: values.plantid,
+            process: values.process,
+            procode: values.procode,
             proname: values.proname,
-            startdate: startdate ,
+            startdate: startdate,
             enddate: enddate,
           };
           getModifyAction(params, "getall").then((res) => {
@@ -194,7 +234,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          setModifyAction(self.selectedRowKeys, "delete").then((res) => {
+          setEditOutbound(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -209,7 +249,7 @@ export default {
     onDelete(item) {
       let params = [];
       params.push(item.ReportId);
-      setModifyAction(params, "delete").then((res) => {
+      setEditOutbound(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.search();

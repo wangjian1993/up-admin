@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2022-10-07 17:32:21
+ * @LastEditTime: 2023-04-25 15:56:37
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/index.vue
@@ -438,10 +438,9 @@ export default {
             { wch: 8 }, //  产品规格
             { wch: 8 }, // 单位
             { wch: 8 }, // 价格来源
-            { wch: 15 }, // E10单价
-            { wch: 25 }, // 单价
+            { wch: 15 }, // 单价
             { wch: 25 }, // 用量
-            { wch: 8 }, // 金额
+            { wch: 60 }, // 金额
             { wch: 8 }, // 提示
             { wch: 8 }, // 备注
             { wch: 8 }, // 备注
@@ -454,7 +453,7 @@ export default {
             Sheet: `生产日报表`, // 下方tab切换名称
             data: aoa, // 表格数据
             merges, //  合并单元格
-            autoWidth: false, // 自适应宽度
+            autoWidth: true, // 自适应宽度
             formStyle: formStyle, // 特殊行或列样式
             sheetCols,
           });

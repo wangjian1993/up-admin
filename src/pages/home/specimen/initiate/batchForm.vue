@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-08-11 16:49:15
+ * @LastEditTime: 2023-03-29 11:40:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/initiate/batchForm.vue
@@ -51,8 +51,8 @@
             </a-form-model-item></a-col
           >
           <a-col :span="6">
-              <a-form-model-item ref="SupplierCode" has-feedback label="供应商编码" prop="SupplierCode"> <a-input v-model="form.SupplierCode" disabled allowClear placeholder="请输入供应商编码" /> </a-form-model-item
-            ></a-col>
+            <a-form-model-item ref="SupplierCode" has-feedback label="供应商编码" prop="SupplierCode"> <a-input v-model="form.SupplierCode" disabled allowClear placeholder="请输入供应商编码" /> </a-form-model-item
+          ></a-col>
           <a-col :span="8">
             <a-form-model-item ref="DatetimePurchaseDeliver" has-feedback label="采购送样日期" prop="DatetimePurchaseDeliver"> <a-date-picker @change="(e) => DatetimeChange1(e, index)" v-model="form.DatetimePurchaseDeliver" show-time type="date" placeholder="选择采购送样日期" style="width: 100%;" /> </a-form-model-item
           ></a-col>
@@ -71,26 +71,24 @@
           </a-row>
           <a-row>
             <a-col :span="8">
-              <a-form-model-item ref="ItemCode" has-feedback label="物料编码" prop="ItemCode"><a-input-search placeholder="请输入物料编码" style="width: 220px" v-model="formItem.ItemCode" @search="(e) => onSearch(e, index)"/></a-form-model-item
+              <a-form-model-item ref="ItemCode" has-feedback prop="ItemCode">
+                <span slot="label"><span style="color:red;font-size: 14px;">*</span>物料编码</span><a-input-search placeholder="请输入物料编码" style="width: 220px" v-model="formItem.ItemCode" @search="(e) => onSearch(e, index)"/></a-form-model-item
             ></a-col>
             <a-col :span="8">
-              <a-form-model-item ref="ItemName" has-feedback label="物料名称" prop="ItemName"
-                ><a-textarea v-model="formItem.ItemName" disabled allowClear placeholder="请输物料名称" /></a-form-model-item
-              ></a-col
-            >
+              <a-form-model-item ref="ItemName" has-feedback label="物料名称" prop="ItemName"><a-textarea v-model="formItem.ItemName" disabled allowClear placeholder="请输物料名称"/></a-form-model-item
+            ></a-col>
             <a-col :span="8">
-              <a-form-model-item ref="ItemSpecification" has-feedback label="物料型号" prop="ItemSpecification"
-                ><a-textarea :rows="4" v-model="formItem.ItemSpecification" disabled allowClear placeholder="请输入物料型号" /></a-form-model-item
-              ></a-col
-            >
+              <a-form-model-item ref="ItemSpecification" has-feedback label="物料型号" prop="ItemSpecification"><a-textarea :rows="4" v-model="formItem.ItemSpecification" disabled allowClear placeholder="请输入物料型号"/></a-form-model-item
+            ></a-col>
           </a-row>
           <a-row>
             <a-col :span="8">
               <a-form-model-item ref="DrawingNo" has-feedback label="图号"> <a-input v-model="formItem.DrawingNo" allowClear placeholder="请输入图号" /> </a-form-model-item
             ></a-col>
             <a-col :span="8">
-              <a-form-model-item ref="HasApprovalSheet" has-feedback label="是否有承认书" prop="HasApprovalSheet">
-                <a-select style="width: 100px;" v-model="formItem.HasApprovalSheet" has-feedback placeholder="请选择是否有承认书">
+              <a-form-model-item ref="HasApprovalSheet" has-feedback prop="HasApprovalSheet">
+                <span slot="label"><span style="color:red;font-size: 14px;">*</span>是否有承认书</span>
+                <a-select style="width: 100px;" v-model="formItem.HasApprovalSheet" has-feedback placeholder="是否有承认书">
                   <a-select-option value="是">是</a-select-option>
                   <a-select-option value="否">否</a-select-option>
                 </a-select></a-form-model-item
@@ -105,8 +103,15 @@
               <a-form-model-item has-feedback label="采购取回样品日期" prop="DatetimePurchaseRetrieve"> <a-date-picker @change="(e) => DatetimeChange(e, index)" v-model="formItem.DatetimePurchaseRetrieve" show-time type="date" placeholder="选择采购取回样品日期" style="width: 100%;" /> </a-form-model-item
             ></a-col>
             <a-col :span="8">
-              <a-form-model-item has-feedback label="样品类别" prop="SampleCategory"> <a-input v-model="formItem.SampleCategory" allowClear placeholder="请输入样品类别" /> </a-form-model-item
-            ></a-col>
+              <a-form-model-item has-feedback prop="SampleCategory">
+                <span slot="label"><span style="color:red;font-size: 14px;">*</span>样品类别</span
+                ><a-select style="width: 150px;" v-model="formItem.SampleCategory" has-feedback placeholder="请选择样品类别">
+                  <a-select-option value="新样品">新样品</a-select-option>
+                  <a-select-option value="版本升级">版本升级</a-select-option>
+                  <a-select-option value="更换供应商">更换供应商</a-select-option>
+                </a-select></a-form-model-item
+              ></a-col
+            >
             <a-col :span="8">
               <a-form-model-item has-feedback label="受控公司" prop="CtrledCompany"> <a-input v-model="formItem.CtrledCompany" allowClear placeholder="请输入受控公司" /> </a-form-model-item
             ></a-col>
@@ -139,13 +144,20 @@ export default {
         Supplier: "",
         DatetimePurchaseDeliver: "",
         Purchaser: "",
-        SupplierCode:"",
+        SupplierCode: "",
       },
       rules: {
         Supplier: [
           {
             required: true,
             message: "请输入供应商",
+            trigger: "blur",
+          },
+        ],
+        ItemCode: [
+          {
+            required: true,
+            message: "请输入品号",
             trigger: "blur",
           },
         ],
@@ -167,7 +179,7 @@ export default {
       ],
     };
   },
-   computed: {
+  computed: {
     ...mapGetters("account", ["user"]),
   },
   created() {
@@ -280,7 +292,7 @@ export default {
             SubmitSign: type, //提交标识：1,，SAVE-保存 2，SAVEANDSUBMIT-保存并提交到下一节点
             FlowId: this.editData.FlowId, //流程ID
             Supplier: this.form.Supplier, //供应商
-            SupplierCode:this.form.SupplierCode,
+            SupplierCode: this.form.SupplierCode,
             DatetimePurchaseDeliver: this.form.DatetimePurchaseDeliver != "" ? this.form.DatetimePurchaseDeliver : "",
             Purchaser: this.form.Purchaser,
             Item: this.dynamicValidateForm,

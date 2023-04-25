@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-10-21 15:25:55
+ * @LastEditTime: 2023-03-25 09:35:42
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomPack/index.vue
@@ -17,7 +17,7 @@
         </span>
       </a-col>
     </a-row>
-    <a-table ref="tableRef" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: true }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_CODE" bordered>
+    <a-table ref="tableRef" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_CODE" bordered>
       <template slot="index" slot-scope="text, record, index">
         <div>
           <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -31,9 +31,9 @@
           </a>
         </div>
       </template>
-      <template slot="ApproveStatus" slot-scope="text">
-        <a-tag :color="text === 'Y' ? 'green' : text === 'N' ? '#0000ff' : 'red'">{{ text == "Y" ? "生效" : text == "N" ? "未生效" : "失效" }}</a-tag>
-      </template>
+      <span slot="ITEM_NAME" slot-scope="text">
+        <div class="descriptionTxt">{{ text }}</div>
+      </span>
     </a-table>
     <advancedQuery v-if="isAdvancedQuery" :queryType="queryType" @closeModal="closeModal" :editData="editData" @success="searchBtn" />
   </a-card>
@@ -85,7 +85,7 @@ export default {
     searchBtn(values) {
       this.searchValue = values;
       this.pagination.current = 1;
-      this.getListAll()
+      this.getListAll();
     },
     //获取列表数据
     getListAll(values, editValue) {
@@ -146,5 +146,11 @@ export default {
 /deep/.ant-table-row-cell-break-word {
   white-space: nowrap;
   overflow: hidden;
+}
+.descriptionTxt {
+  width: 250px;
+  word-wrap: break-word;
+  padding: 2px !important;
+  white-space: pre-wrap;
 }
 </style>

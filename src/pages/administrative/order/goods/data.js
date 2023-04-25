@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2023-03-17 15:52:01
+ * @LastEditTime: 2023-04-06 16:44:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/administrative/order/goods/data.js
@@ -15,8 +15,8 @@ export const columns = [
   },
   {
     title: "餐品分类",
-    dataIndex: "classify",
-    scopedSlots: { customRender: "classify" },
+    dataIndex: "ClassifyName",
+    scopedSlots: { customRender: "ClassifyName" },
     align: "center",
   },
   {
@@ -26,7 +26,7 @@ export const columns = [
     align: "center",
   },
   {
-    title: "餐盘名称",
+    title: "餐品名称",
     dataIndex: "GoodsName",
     scopedSlots: { customRender: "GoodsName" },
     align: "center",
@@ -42,9 +42,10 @@ export const columns = [
     dataIndex: "Addresss",
     scopedSlots: { customRender: "Addresss" },
     align: "center",
+    width:250,
   },
   {
-    title: "餐盘库存",
+    title: "餐品库存",
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
@@ -57,9 +58,12 @@ export const columns = [
   },
   {
     title: "预订/现货",
-    dataIndex: "isspotgoods",
-    scopedSlots: { customRender: "isspotgoods" },
+    dataIndex: "IsSpotGoods",
+    scopedSlots: { customRender: "IsSpotGoods" },
     align: "center",
+    customRender: (text) => {
+      return text ? '现货' : "预订"
+    }
   },
   {
     title: "餐品图片",
@@ -102,7 +106,7 @@ export const columns = [
     scopedSlots: { customRender: "action" },
     align: "center",
     fixed: "right",
-    width:100
+    width: 100
   },
 ];
 export const innerColumns = [{

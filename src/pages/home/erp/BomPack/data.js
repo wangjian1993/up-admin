@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-18 08:48:13
- * @LastEditTime: 2022-10-21 15:26:11
+ * @LastEditTime: 2023-03-25 09:29:21
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/BomPack/data.js
@@ -18,14 +18,14 @@ export const columns = [
         dataIndex: "ITEM_CODE",
         scopedSlots: { customRender: "ITEM_CODE" },
         align: "left",
-        width:"10%"
+        width:150
     },
     {
         title: "品名",
         dataIndex: "ITEM_NAME",
         scopedSlots: { customRender: "ITEM_NAME" },
         align: "left",
-        width:"15%"
+        width:300
     },
     {
         title: "规格",

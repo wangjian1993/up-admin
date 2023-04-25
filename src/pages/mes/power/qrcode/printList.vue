@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-22 16:01:33
- * @LastEditTime: 2023-02-25 13:48:04
+ * @LastEditTime: 2023-03-21 14:05:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/qrcode/printList.vue
@@ -33,15 +33,13 @@
           <a-table
             v-if="IsRePrint == 'Y'"
             :columns="columns"
-            :data-source="data"
+            :data-source="dataSource"
             :size="size"
-            :pagination="false"
+            :pagination="pagination"
             :rowKey="(orderSelectList) => orderSelectList.QrId"
-            :row-selection="{
-              selectedRowKeys: selectedRowKeys,
-              onChange: onSelectChange,
-            }"
+            :scroll="{ y: 500 }"
             bordered
+            @change="handleTableChange" 
           >
             <template slot="index" slot-scope="text, record, index">
               <div>
@@ -230,19 +228,19 @@ export default {
       this.getListAll();
     },
     handleOk() {
-      if (this.IsRePrint == "Y" && this.selectedRowKeys.length == 0) {
-        this.$message.warn("请先选择要补打的工单");
-        return;
-      }
+      // if (this.IsRePrint == "Y" && this.selectedRowKeys.length == 0) {
+      //   this.$message.warn("请先选择要补打的工单");
+      //   return;
+      // }
       let list = [];
-      if (this.IsRePrint == "Y") {
-        this.dataSource.forEach((row) => {
-          if (this.selectedRowKeys.includes(row.QrId)) {
-            list.push(row);
-          }
-        });
-        this.$emit("success", list);
-      } else {
+      // if (this.IsRePrint == "Y") {
+      //   this.dataSource.forEach((row) => {
+      //     if (this.selectedRowKeys.includes(row.QrId)) {
+      //       list.push(row);
+      //     }
+      //   });
+      //   this.$emit("success", list);
+      // } else {
         let values = this.searchForm.getFieldsValue();
         let params = {
           pageindex: this.pagination.current,
@@ -259,7 +257,7 @@ export default {
             this.$emit("success", list);
           }
         });
-      }
+      // }
     },
   },
 };

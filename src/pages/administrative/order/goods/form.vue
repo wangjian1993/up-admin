@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2023-03-17 16:12:45
+ * @LastEditTime: 2023-04-04 10:38:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/administrative/order/goods/form.vue
@@ -30,7 +30,7 @@
         <a-row>
           <a-col :span="12">
             <a-form-model-item ref="addressids" has-feedback label="招待地点" prop="addressids">
-              <a-select v-model="form.addressids" mode="multiple" :disabled="isEdit" has-feedback placeholder="请选择设招待地点">
+              <a-select v-model="form.addressids" mode="multiple" has-feedback placeholder="请选择设招待地点">
                 <a-select-option v-for="item in addressList" :key="item.Id" :value="item.Id">{{ item.Place }}</a-select-option>
               </a-select>
             </a-form-model-item></a-col
@@ -49,12 +49,12 @@
             </a-form-model-item></a-col
           >
           <a-col :span="12">
-            <a-form-model-item has-feedback label="餐盘名称" prop="goodsname"> <a-input v-model="form.goodsname" has-feedback placeholder="请输入餐品编码"></a-input> </a-form-model-item
+            <a-form-model-item has-feedback label="餐品名称" prop="goodsname"> <a-input v-model="form.goodsname" has-feedback placeholder="请输入餐品编码"></a-input> </a-form-model-item
           ></a-col>
         </a-row>
         <a-row>
           <a-col :span="12">
-            <a-form-model-item has-feedback label="餐盘单价"> <a-input-number :min="0" v-model="form.price" has-feedback placeholder="请输入餐盘单价"></a-input-number> </a-form-model-item
+            <a-form-model-item has-feedback label="餐品单价"> <a-input-number :min="0" v-model="form.price" has-feedback placeholder="请输入餐品单价"></a-input-number> </a-form-model-item
           ></a-col>
           <a-col :span="12">
             <a-form-model-item has-feedback label="餐品单位"> <a-input v-model="form.unit" has-feedback placeholder="请输入餐品单位"></a-input> </a-form-model-item
@@ -65,17 +65,17 @@
             <a-form-model-item has-feedback label="排序"> <a-input-number :min="0" v-model="form.sort" has-feedback placeholder="请输入排序"></a-input-number> </a-form-model-item
           ></a-col>
           <a-col :span="12">
-            <a-form-model-item has-feedback label="餐盘库存" prop="qty"> <a-input-number :min="0" v-model="form.qty" has-feedback placeholder="请输入餐盘库存"></a-input-number> </a-form-model-item
+            <a-form-model-item has-feedback label="餐品库存" prop="qty"> <a-input-number :min="0" v-model="form.qty" has-feedback placeholder="请输入餐品库存"></a-input-number> </a-form-model-item
           ></a-col>
         </a-row>
         <a-row>
           <a-col :span="12">
-            <a-form-model-item has-feedback label="餐盘图片" prop="type">
+            <a-form-model-item has-feedback label="餐品图片" prop="type">
               <a-upload name="avatar" list-type="picture-card" class="avatar-uploader" :show-upload-list="false" :before-upload="beforeUpload" action="https://www.mocky.io/v2/5cc8019d300000980a055e76" :custom-request="uploadImg" accept="image/png, image/jpeg">
                 <img v-if="imageUrl" :src="imageUrl" alt="avatar" class="head" />
                 <div v-else>
                   <a-icon :type="loading ? 'loading' : 'plus'" />
-                  <div class="ant-upload-text">Upload</div>
+                  <div class="ant-upload-text">上传图片</div>
                 </div>
               </a-upload>
             </a-form-model-item></a-col
@@ -122,26 +122,26 @@ export default {
         pictureid: "", // 图片ID
         isrecommend: true, // 是否推荐
         unit: "",
-        qty: 0,
+        qty: 999,
         price: 0,
         sort: 1,
-        status: "",
+        status: "上架",
         isspotgoods: "Y", // 是否现货
         goodsdesc: "", // 餐品说明
         addressids: [],
       },
       rules: {
+        companyid: [
+          {
+            required: true,
+            message: "请选择公司",
+            trigger: "blur",
+          },
+        ],
         classifyid: [
           {
             required: true,
             message: "请选择分类",
-            trigger: "blur",
-          },
-        ],
-        goodscode: [
-          {
-            required: true,
-            message: "请输入编码",
             trigger: "blur",
           },
         ],
@@ -179,10 +179,12 @@ export default {
       imageUrl: "",
       fileData: [],
       loading: false,
+      hostUrl:""
     };
   },
   created() {
-    this.getGoodsClass();
+    // this.getGoodsClass();
+    this.hostUrl = window.location.host === "113.106.78.83:7003" ? "http://113.106.78.83:7003" : window.location.host === "192.168.0.240:8080" ? "http://192.168.0.240:8080" : "http://192.168.1.245:8080";
     if (this.isEdit) {
       this.form.addressids = [];
       this.form.classifyid = this.editData.ClassifyId;
@@ -198,7 +200,7 @@ export default {
       this.form.status = this.editData.Status;
       this.form.isspotgoods = this.editData.IsSpotGoods ? "Y" : "N"; // 是否现货
       this.form.goodsdesc = this.editData.GoodsDesc;
-      this.form.imageUrl = "./" + this.editData.PictureUrl;
+      this.imageUrl = this.hostUrl + this.editData.PictureUrl;
       this.editData.Addresss.forEach((item) => {
         this.form.addressids.push(item.Id);
       });
@@ -210,7 +212,7 @@ export default {
       this.$emit("closeModal");
     },
     enableChange(value) {
-      this.form.Enable = value.target.value;
+      this.form.isspotgoods = value.target.value;
     },
     handleCancel() {
       this.$emit("closeModal");
@@ -259,12 +261,6 @@ export default {
           this.addressList = res.data.data.list;
         }
       });
-    },
-    getGoodsClass() {
-      let params = {
-        pageindex: 1,
-        pagesize: 100,
-      };
       getGoodsClassify(params, "get").then((res) => {
         if (res.data.success) {
           this.classifyList = res.data.data.list;
@@ -274,6 +270,10 @@ export default {
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
+          if(!this.fileData.ResourceId){
+            this.$message.warning("请上传图片!");
+            return   
+          }
           if (this.isEdit) {
             this.form.isspotgoods = this.form.isspotgoods === "Y" ? true : false;
             let editForm = {
@@ -290,7 +290,6 @@ export default {
             });
           } else {
             //添加
-            console.log(this.form);
             this.form.pictureid = this.fileData.ResourceId;
             this.form.isspotgoods = this.form.enable === "Y" ? true : false;
             setGoods(this.form, "add").then((res) => {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-09-24 16:59:30
+ * @LastEditTime: 2023-03-29 09:06:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/complaint/inspection.vue
@@ -47,6 +47,11 @@
             <a-col :md="6" :sm="24">
               <a-form-item label="后续执行标准" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                 <a-input style="width: 200px" allowClear placeholder="请输入后续执行标准" v-decorator="['executivestandard']" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="关键字" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入关键字" v-decorator="['keyword']" />
               </a-form-item>
             </a-col>
           </a-row>
@@ -208,6 +213,7 @@ export default {
             itemno: values.itemno,
             unpleasantsight: values.unpleasantsight,
             executivestandard: values.executivestandard,
+            keyword:values.keyword
           };
           getInspection(params, "get").then((res) => {
             if (res.data.success) {

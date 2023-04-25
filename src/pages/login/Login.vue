@@ -184,7 +184,7 @@ export default {
     Export(appurl) {
       let link = document.createElement("a");
       link.style.display = "none";
-      link.href = "http://192.168.1.245:8080/upload/app/" + appurl + ".apk";
+      link.href = "http://113.106.78.83:7003/upload/app/" + appurl + ".apk";
       link.setAttribute("download", name);
       document.body.appendChild(link);
       link.click();

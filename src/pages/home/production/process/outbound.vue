@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2022-10-08 16:19:32
+ * @LastEditTime: 2023-04-22 11:31:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/outbound.vue
@@ -21,7 +21,12 @@
           {{ userLineData.WorkshopName }}
         </a-descriptions-item>
         <a-descriptions-item label="生产产线">
-          {{ userLineData.LineName }}
+          <!-- {{ userLineData.LineName }} -->
+          <a-select style="width: 120px" v-model="defaultLine" @change="checkLine">
+            <a-select-option v-for="item in lineItems" :key="item.LineId" :value="item.LineId">
+              {{ item.LineName }}
+            </a-select-option>
+          </a-select>
         </a-descriptions-item>
         <a-descriptions-item label="填单人/填单时间"> {{ userLineData.UserName }} / {{ splitData(userLineData.NowDate) }} </a-descriptions-item>
         <a-descriptions-item label="产品品号">{{ orderInfo.ProCode }}</a-descriptions-item>
@@ -85,10 +90,13 @@ export default {
       selectType: "",
       multipleList: [],
       isFocus: false,
+      lineList: [],
+      lineItems: [],
+      defaultLine:""
     };
   },
   created() {
-    this.getWorkInfo();
+    this.getLineList();
   },
   mounted() {
     this.$refs.orderValue3.focus();
@@ -155,8 +163,28 @@ export default {
       this.isPrint = false;
       this.isOrderSelect = false;
     },
-    getWorkInfo() {
-      setStartWorkApi("", "loaduserline").then((res) => {
+    getLineList() {
+      setStartWorkApi("", "multiple/loaduserline").then((res) => {
+        if (res.data.success) {
+          if (res.data.data && res.data.data.length > 0) {
+            this.lineList = res.data.data;
+            this.defaultLine = res.data.data[0].UserLine.LineId
+            res.data.data.forEach((item) => {
+              this.lineItems.push(item.UserLine);
+            });
+            this.getWorkInfo(res.data.data[0].UserLine.LineId);
+          } else {
+            this.getWorkInfo();
+          }
+        }
+      });
+    },
+    checkLine(e){
+      this.emptyData();
+      this.getWorkInfo(e)
+    },
+    getWorkInfo(LineId) {
+      setStartWorkApi({ LineId: LineId }, "loaduserline").then((res) => {
         if (res.data.success) {
           res.data.message.time = getTimeData();
           res.data.message.IsSuccess = res.data.data.IsSuccess;
@@ -190,6 +218,7 @@ export default {
       let params = {
         ScanCode: this.orderValue.trim(),
         ProcessStatus: "PROCESS_FINISHED",
+        LineId: this.userLineData.LineId
       };
       setStartWorkApi(params, "scan").then((res) => {
         res.data.message.time = getTimeData();
@@ -239,6 +268,7 @@ export default {
         ProPlanId: this.orderInfo.ProPlanId,
         MoCode: this.orderInfo.MoCode,
         ProcessStatus: "PROCESS_FINISHED",
+        LineId: this.userLineData.LineId
       };
       this.orderList = [];
       setStartWorkApi(params, "gethisreports").then((res) => {

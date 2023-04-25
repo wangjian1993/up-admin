@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-13 10:30:21
- * @LastEditTime: 2022-08-19 11:28:32
+ * @LastEditTime: 2023-04-25 14:54:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/editProcess/useForm.vue
@@ -33,7 +33,7 @@
               ></a-col
             >
             <a-col :span="24"
-              ><a-form-model-item has-feedback label="进站扣减数量" prop="EditQty"> <a-input-number v-model="form.EditQty" allowClear style="width: 300px" :min="0" placeholder="请输入工时"/></a-form-model-item
+              ><a-form-model-item has-feedback label="进站扣减数量" prop="EditQty"> <a-input-number v-model="form.EditQty" allowClear style="width: 300px" :min="0" placeholder="请输入进站扣减数量"/></a-form-model-item
             ></a-col>
           </a-row>
         </a-form-model>

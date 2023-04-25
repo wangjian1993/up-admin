@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-16 13:58:52
- * @LastEditTime: 2022-04-01 13:51:41
+ * @LastEditTime: 2023-04-12 11:15:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/identification.vue
@@ -114,6 +114,20 @@ const columns = [
     title: "数量",
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
+    align: "center",
+    width: "80px",
+  },
+  {
+    title: "打印次数",
+    dataIndex: "PrintCount",
+    scopedSlots: { customRender: "PrintCount" },
+    align: "center",
+    width: "80px",
+  },
+  {
+    title: "打印状态",
+    dataIndex: "PrintStatus",
+    scopedSlots: { customRender: "PrintStatus" },
     align: "center",
     width: "80px",
   },

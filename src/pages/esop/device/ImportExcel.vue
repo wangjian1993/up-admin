@@ -121,7 +121,7 @@ export default {
       if (fileExt === "xlsx" || fileExt === "xls") {
         this.file = file;
       } else {
-        this.$Notice.warning({
+        this.$message.warning({
           title: "文件类型错误",
           desc: "文件：" + file.name + "不是EXCEL文件，请选择后缀为.xlsx或者.xls的EXCEL文件。",
         });

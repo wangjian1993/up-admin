@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2023-03-17 10:26:26
+ * @LastEditTime: 2023-03-22 09:29:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/administrative/order/address/data.js
@@ -41,6 +41,12 @@ export const columns = [
     title: "可点单人员",
     dataIndex: "Users",
     scopedSlots: { customRender: "Users" },
+    align: "center",
+  },
+  {
+    title: "通知人",
+    dataIndex: "NoticeUsers",
+    scopedSlots: { customRender: "NoticeUsers" },
     align: "center",
   },
   {

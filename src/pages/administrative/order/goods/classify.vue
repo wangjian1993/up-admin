@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2023-03-17 15:44:11
+ * @LastEditTime: 2023-03-22 14:19:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/administrative/order/goods/classify.vue
@@ -176,7 +176,7 @@ export default {
           let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            enterpriseid: values.enterpriseid,
+            keyword: values.keyword,
           };
           getGoodsClassify(params, "get").then((res) => {
             if (res.data.success) {
