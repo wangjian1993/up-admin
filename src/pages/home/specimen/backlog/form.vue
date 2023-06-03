@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2023-03-11 09:02:41
+ * @LastEditTime: 2023-05-29 18:14:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/form.vue
@@ -63,7 +63,7 @@
             <a-col :span="6">
               <a-form-model-item ref="Supplier" has-feedback label="供应商" prop="Supplier">
                 <!-- <a-input v-model="form.Supplier"  allowClear placeholder="请输入供应商" /> -->
-                <a-select show-search v-model="form.Supplier" placeholder="请输入供应商" :default-active-first-option="false" :show-arrow="false" :filter-option="false" :not-found-content="null" @search="handleSearch" @change="changeSearch">
+                <a-select show-search v-model="form.Supplier" :disabled="!disabled1" placeholder="请输入供应商" :default-active-first-option="false" :show-arrow="false" :filter-option="false" :not-found-content="null" @search="handleSearch" @change="changeSearch">
                   <a-select-option v-for="item in supplierList" :value="item.SupplierName" :key="item.RowNumber">
                     {{ item.SupplierName }}
                   </a-select-option>
@@ -97,19 +97,35 @@
               <a-form-model-item ref="SampleCategory" has-feedback prop="SampleCategory">
                 <!-- <a-input v-model="form.SampleCategory" allowClear placeholder="请输入样品类别" />  -->
                 <span slot="label"><span style="color:red;font-size: 14px;">*</span>样品类别</span>
-                <a-select v-model="form.SampleCategory" has-feedback placeholder="请选择样品类别">
+                <a-select v-model="form.SampleCategory" :disabled="!disabled1" has-feedback placeholder="请选择样品类别">
                   <a-select-option value="新样品">新样品</a-select-option>
                   <a-select-option value="版本升级">版本升级</a-select-option>
                   <a-select-option value="更换供应商">更换供应商</a-select-option>
                 </a-select>
-                </a-form-model-item
+              </a-form-model-item></a-col
+            >
+            <a-col :span="6">
+              <a-form-model-item ref="CtrledCompany"  has-feedback label="受控公司" prop="CtrledCompany"> <a-input v-model="form.CtrledCompany" :disabled="!disabled1" allowClear placeholder="请输入受控公司" /> </a-form-model-item
             ></a-col>
             <a-col :span="6">
-              <a-form-model-item ref="CtrledCompany" has-feedback label="受控公司" prop="CtrledCompany"> <a-input v-model="form.CtrledCompany" :disabled="!disabled1" allowClear placeholder="请输入受控公司" /> </a-form-model-item
+              <a-form-model-item ref="Remark1"  has-feedback label="采购备注" prop="Remark1"> <a-input v-model="form.Remark1" :disabled="!disabled1" allowClear placeholder="请输入采购备注" /> </a-form-model-item
             ></a-col>
             <a-col :span="6">
-              <a-form-model-item ref="Remark1" :disabled="!disabled1" has-feedback label="采购备注" prop="Remark1"> <a-input v-model="form.Remark1" allowClear placeholder="请输入采购备注" /> </a-form-model-item
-            ></a-col>
+              <a-form-model-item ref="HasRohsReport" has-feedback label="是否有RoHS报告">
+                <a-select v-model="form.HasRohsReport" allowClear :disabled="!disabled1" has-feedback placeholder="是否有RoHS报告">
+                  <a-select-option value="是">是</a-select-option>
+                  <a-select-option value="否">否</a-select-option>
+                </a-select></a-form-model-item
+              >
+            </a-col>
+            <a-col :span="6">
+              <a-form-model-item ref="HasReachReport" has-feedback label="是否有REACH报告">
+                <a-select v-model="form.HasReachReport" allowClear :disabled="!disabled1" has-feedback placeholder="是否有REACH报告">
+                  <a-select-option value="是">是</a-select-option>
+                  <a-select-option value="否">否</a-select-option>
+                </a-select></a-form-model-item
+              >
+            </a-col>
           </a-row>
         </a-form-model>
       </a-card>
@@ -145,6 +161,14 @@
             </a-col>
             <a-col :span="6">
               <a-form-model-item ref="Remark2" has-feedback label="研发备注" prop="Remark2"> <a-input v-model="form.Remark2" :disabled="!disabled2" allowClear placeholder="请输入研发备注" /> </a-form-model-item>
+            </a-col>
+            <a-col :span="6">
+              <a-form-model-item ref="NeedConfirmColor" has-feedback label="需要品质确认颜色">
+                <a-select v-model="form.NeedConfirmColor" allowClear :disabled="!disabled2" has-feedback placeholder="是需要品质确认颜色">
+                  <a-select-option value="是">是</a-select-option>
+                  <a-select-option value="否">否</a-select-option>
+                </a-select></a-form-model-item
+              >
             </a-col>
           </a-row>
         </a-form-model>
@@ -186,6 +210,14 @@
             </a-col>
             <a-col :span="6">
               <a-form-model-item ref="Remark4" has-feedback label="IQC备注" prop="Remark4"> <a-input v-model="form.Remark4" :disabled="!disabled4" allowClear placeholder="请输入IQC备注" /> </a-form-model-item>
+            </a-col>
+            <a-col :span="6">
+              <a-form-model-item ref="ColorSignResult" has-feedback label="颜色签样结果">
+                <a-select v-model="form.ColorSignResult" allowClear :disabled="!disabled4" has-feedback placeholder="颜色签样结果">
+                  <a-select-option value="OK">OK</a-select-option>
+                  <a-select-option value="NG">NG</a-select-option>
+                </a-select></a-form-model-item
+              >
             </a-col>
           </a-row>
         </a-form-model>
@@ -234,7 +266,7 @@ export default {
         Supplier: "",
       },
       rules: {
-        HasApprovalSheet:[],
+        HasApprovalSheet: [],
         ItemCode: [
           {
             required: true,
@@ -260,6 +292,13 @@ export default {
           {
             required: true,
             message: "请输入供应商",
+            trigger: "blur",
+          },
+        ],
+        CtrledCompany: [
+          {
+            required: true,
+            message: "请选择受控公司",
             trigger: "blur",
           },
         ],
@@ -467,7 +506,7 @@ export default {
             ItemSpecification: this.form.ItemSpecification, //规格型号
             DrawingNo: this.form.DrawingNo, //图号
             Supplier: this.form.Supplier, //供应商
-            SupplierCode:this.form.SupplierCode,
+            SupplierCode: this.form.SupplierCode,
             HasApprovalSheet: this.form.HasApprovalSheet, //是否有承认书
             Quantity: this.form.Quantity, //数量
             Purchaser: this.form.Purchaser, //送样采购员
@@ -488,6 +527,10 @@ export default {
             Remark3: this.form.Remark3, //文控备注
             DatetimeQicCollect: this.form.DatetimeQicCollect != null && this.form.DatetimeQicCollect != "" ? this.form.DatetimeQicCollect.format("YYYY-MM-DD HH:mm:ss") : "", //IQC收样日期
             Remark4: this.form.Remark4, //IQC备注
+            HasRohsReport: this.form.HasRohsReport, //是否有RoHS报告：Y是/N否
+            HasReachReport: this.form.HasReachReport, //是否有REACH报告：Y是/N否
+            NeedConfirmColor: this.form.NeedConfirmColor, //需要品质确认颜色：Y是/N否
+            ColorSignResult: this.form.ColorSignResult, //颜色签样结果：NG/OK
           };
           console.log("params===", params);
           setDepartmentApi(params, "editregister").then((res) => {

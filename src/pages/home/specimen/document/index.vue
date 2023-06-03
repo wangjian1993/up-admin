@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2023-03-01 15:02:03
+ * @LastEditTime: 2023-04-28 13:41:25
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/document/index.vue
@@ -55,6 +55,16 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-input style="width: 200px" allowClear placeholder="请输入规格" v-decorator="['itemspecification']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="图号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入图号" v-decorator="['drawingno']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="供应商编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入供应商编码" v-decorator="['suppliercode']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
@@ -403,6 +413,8 @@ export default {
             purchaser: values.purchaser || "",
             dthandlerwkstart: dthandlerwkstart || "",
             dthandlerwkend: dthandlerwkend || "",
+            suppliercode: values.suppliercode || "",
+            drawingno: values.drawingno || "",
           };
           getDepartmentApi(params, "getallregisterlistwk").then((res) => {
             if (res.data.success) {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-05-17 16:28:04
+ * @LastEditTime: 2023-05-03 18:15:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/device/form.vue
@@ -77,6 +77,16 @@
             </a-form-model-item>
           </a-col>
         </a-row>
+        <a-row>
+          <a-col :span="12">
+            <a-form-model-item ref="Enable" label="拉头对应位置" :labelCol="{ span: 6 }"  prop="position" >
+              <a-radio-group v-model="form.position" button-style="solid">
+                <a-radio-button value="左">左</a-radio-button>
+                <a-radio-button value="右">右</a-radio-button>
+              </a-radio-group>
+            </a-form-model-item>
+          </a-col>
+        </a-row>
       </a-form-model>
     </a-modal>
   </div>
@@ -107,6 +117,7 @@ export default {
         description: "",
         enable: "true",
         sort: 1,
+        position:""
       },
       rules: {
         equipmentcode: [
@@ -144,6 +155,13 @@ export default {
             trigger: "blur",
           },
         ],
+        position:[
+          {
+            required: true,
+            message: "请选择设置位置",
+            trigger: "blur",
+          },
+        ],
       },
     };
   },
@@ -161,6 +179,7 @@ export default {
         description: this.editData.Description,
         enable: this.editData.Enable.toString(),
         sort: this.editData.Sort,
+        position:this.editData.Position
       };
       this.plantid = this.editData.PlantId;
       this.getWorkshopList();

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2023-04-25 14:01:27
+ * @LastEditTime: 2023-05-24 14:29:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/borrowed/testJig/history.vue
@@ -12,37 +12,41 @@
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-descriptions :column="3">
-            <a-descriptions-item label="位号">
-              {{ editData.PlaceCode }}
+            <a-descriptions-item label="编号">
+              {{ editData.No }}
             </a-descriptions-item>
-            <a-descriptions-item label="规格/型号/版本">
-              {{ editData.ItemSpecification }}
+            <a-descriptions-item label="机型">
+              {{ editData.Type }}
             </a-descriptions-item>
-            <a-descriptions-item label="物料编码">
-              {{ editData.ItemCode }}
+            <a-descriptions-item label="PCB料号">
+              {{ editData.PcbNo }}
             </a-descriptions-item>
-            <a-descriptions-item label="尺寸">
-              {{ editData.Size }}
+            <a-descriptions-item label="PCB型号">
+              {{ editData.PcbTypeNo }}
             </a-descriptions-item>
-            <a-descriptions-item label="备注/拼版">
-              {{ editData.Remark }}
+            <a-descriptions-item label="同源编号">
+              {{ editData.Other }}
+            </a-descriptions-item>
+            <a-descriptions-item label="类型">
+              {{ editData.Type2 }}
+            </a-descriptions-item>
+            <a-descriptions-item label="数量">
+              {{ editData.Count }}
+            </a-descriptions-item>
+            <a-descriptions-item label="货架">
+              {{ editData.StorageRack }}
+            </a-descriptions-item>
+            <a-descriptions-item label="位置">
+              {{ editData.Position }}
             </a-descriptions-item>
           </a-descriptions>
         </div>
         <div>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="dataSource" :size="size" :scroll="{ y: 600 }" :pagination="pagination" :rowKey="(dataSource) => dataSource.Id" bordered>
+            <a-table :columns="columns" :data-source="dataSource" :size="size" :scroll="{ y: 600 }" :pagination="false" :rowKey="(dataSource) => dataSource.Id" bordered>
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
-                </div>
-              </template>
-              <template slot="action" slot-scope="text, record">
-                <div>
-                  <a style="margin-right: 8px" v-if="record.Status === '已借出'" @click="returnBtn(record)">
-                    <a-icon type="import" />
-                    归还
-                  </a>
                 </div>
               </template>
               <template slot="Status" slot-scope="record">
@@ -69,24 +73,36 @@ const columns = [
   },
   {
     title: "借出时间",
-    dataIndex: "DatetimeLend",
-    scopedSlots: { customRender: "DatetimeReturn" },
+    dataIndex: "BorrowTime",
+    scopedSlots: { customRender: "BorrowTime" },
     align: "center",
   },
   {
     title: "借出人",
-    dataIndex: "UserLend",
+    dataIndex: "BorrowUser",
     align: "center",
     width: 100,
   },
   {
+    title: "借出页数",
+    dataIndex: "BorrowPageCount",
+    scopedSlots: { customRender: "BorrowPageCount" },
+    align: "center",
+  },
+  {
     title: "归还时间",
-    dataIndex: "DatetimeReturn",
+    dataIndex: "ReturnTime",
     align: "center",
   },
   {
     title: "归还人",
-    dataIndex: "UserReturn",
+    dataIndex: "ReturnUser",
+    align: "center",
+  },
+  {
+    title: "归还页数",
+    dataIndex: "ReturnPageCount",
+    scopedSlots: { customRender: "ReturnPageCount" },
     align: "center",
   },
   {
@@ -96,22 +112,17 @@ const columns = [
     align: "center",
   },
   {
-    title: "用了多久",
-    dataIndex: "HowLongLended",
+    title: "借出备注",
+    dataIndex: "BorrowRemark",
     align: "center",
   },
   {
-    title: "备注",
-    dataIndex: "Remark",
+    title: "归还备注",
+    dataIndex: "ReturnRemark",
     align: "center",
-  },
-  {
-    title: "操作",
-    align: "center",
-    scopedSlots: { customRender: "action" },
   },
 ];
-import { getLampAction } from "@/services/web.js";
+import { getTestJig } from "@/services/web.js";
 export default {
   props: ["editData"],
   data() {
@@ -157,12 +168,9 @@ export default {
         pagesize: this.pagination.pageSize,
         id: this.editData.Id,
       };
-      getLampAction(params, "getrecordlist").then((res) => {
+      getTestJig(params, "single").then((res) => {
         if (res.data.success) {
-          this.dataSource = res.data.data.list;
-          const pagination = { ...this.pagination };
-          pagination.total = res.data.data.recordsTotal;
-          this.pagination = pagination;
+          this.dataSource = res.data.data.Children;
         }
         this.loading = false;
       });

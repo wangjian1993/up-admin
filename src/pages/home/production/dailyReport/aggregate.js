@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-01 17:38:43
- * @LastEditTime: 2022-10-12 14:30:38
+ * @LastEditTime: 2023-04-25 17:57:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/aggregate.js
@@ -18,10 +18,11 @@ import { splitData } from "@/utils/util.js";
 export const columnsData = [
     {
       title: "序号",
-      dataIndex:"index",
+      dataIndex: "index",
       scopedSlots: { customRender: "index" },
       align: "center",
       width:50,
+      wch:10
     },
     {
       title: "生产工厂",
@@ -29,6 +30,7 @@ export const columnsData = [
       scopedSlots: { customRender: "PlantName" },
       align: "center",
       width:100,
+      wch:10
     },
     {
       title: "车间-产线",
@@ -36,6 +38,7 @@ export const columnsData = [
       scopedSlots: { customRender: "LineName" },
       align: "center",
       width:100,
+      wch:10
     },
     {
       title: "生产工序",
@@ -43,6 +46,7 @@ export const columnsData = [
       scopedSlots: { customRender: "ProcessName" },
       align: "center",
       width:100,
+      wch:10
     },
     {
       title: "生产日期",
@@ -50,6 +54,7 @@ export const columnsData = [
       scopedSlots: { customRender: "ProDate" },
       align: "center",
       width:100,
+      wch:10,
       customRender: (text) => {
         return splitData(text);
       }
@@ -60,6 +65,7 @@ export const columnsData = [
       scopedSlots: { customRender: "OrderNo" },
       align: "center",
       width:100,
+      wch:10
     },
     {
       title: "工单号",
@@ -67,6 +73,7 @@ export const columnsData = [
       scopedSlots: { customRender: "MoCode" },
       align: "center",
       width:100,
+      wch:10
     },
     {
       title: "成品编码",
@@ -74,6 +81,7 @@ export const columnsData = [
       scopedSlots: { customRender: "ProCode" },
       align: "center",
       width:100,
+      wch:10
     },
     {
       title: "品名",
@@ -81,6 +89,7 @@ export const columnsData = [
       scopedSlots: { customRender: "ProName" },
       align: "center",
       width: "200px",
+      wch:30
     },
     {
       title: "规格",
@@ -88,6 +97,7 @@ export const columnsData = [
       scopedSlots: { customRender: "ProSpec" },
       align: "center",
       width: "300px",
+      wch:50
     },
     {
       title: "工单数量",
@@ -95,6 +105,7 @@ export const columnsData = [
       scopedSlots: { customRender: "MoQty" },
       align: "center",
       width:80,
+      wch:10
     },
     {
       title: "订单数量",
@@ -102,6 +113,7 @@ export const columnsData = [
       scopedSlots: { customRender: "OrderQty" },
       align: "center",
       width:80,
+      wch:10
     },
     {
       title: "色温(K)",
@@ -109,6 +121,7 @@ export const columnsData = [
       scopedSlots: { customRender: "ColorTemperature" },
       align: "center",
       width:100,
+      wch:10
     },
     {
       title: "产出数量(PCS)",
@@ -116,6 +129,7 @@ export const columnsData = [
       scopedSlots: { customRender: "ProQty" },
       align: "center",
       width:100,
+      wch:10
     },
     {
       title: "累计数量(PCS)",
@@ -123,6 +137,7 @@ export const columnsData = [
       scopedSlots: { customRender: "CumulativeQty" },
       align: "center",
       width:100,
+      wch:10
     },
     {
       title: "尚欠数量(PCS)",
@@ -130,6 +145,7 @@ export const columnsData = [
       scopedSlots: { customRender: "DeficiencyQty" },
       align: "center",
       width:100,
+      wch:10
     },
     {
       title: "备注",
@@ -137,5 +153,6 @@ export const columnsData = [
       scopedSlots: { customRender: "Remarks" },
       align: "center",
       width:100,
+      wch:10
     },
   ];

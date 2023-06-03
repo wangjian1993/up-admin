@@ -1,15 +1,15 @@
 <!--
  * @Author: max
  * @Date: 2022-05-17 15:33:10
- * @LastEditTime: 2023-04-25 10:37:23
+ * @LastEditTime: 2023-04-26 15:30:29
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/arrival/testData/ImportExcel.vue
+ * @FilePath: /up-admin/src/pages/home/borrowed/testJig/ImportExcel.vue
 -->
 
 <template>
   <div>
-    <a-modal v-model="visible" title="导入到货单测试数据" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="400">
+    <a-modal v-model="visible" title="导入电源测试架" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="400">
       <a-spin tip="导入中..." :spinning="isUpload">
         <div>
           <a-form layout="horizontal">
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { setTestData } from "@/services/wms.js";
+import { setTestJig } from "@/services/web.js";
 function getBase64(img, callback) {
   const reader = new FileReader();
   reader.addEventListener("load", () => callback(reader.result));
@@ -97,7 +97,7 @@ export default {
           filename: this.file.name,
           content: baseUrl,
         };
-        setTestData(params, "import").then((res) => {
+        setTestJig(params, "import").then((res) => {
           if (res.data.success) {
             this.$message.success("导入成功!");
             this.$emit("closeModal");

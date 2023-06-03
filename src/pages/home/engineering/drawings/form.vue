@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2023-04-11 15:49:51
+ * @LastEditTime: 2023-05-12 10:14:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/engineering/drawings/form.vue
@@ -27,6 +27,9 @@
           <a-input placeholder="请选择设计者" disabled allowClear style="width: 150px" v-model="form.UserNameDesigner" />
           <a-button @click="userSearch" style="margin-left: 8px" shape="circle" icon="search" />
         </a-form-model-item>
+        <a-form-model-item has-feedback label="发行时间">
+          <a-date-picker show-time v-model="form.DatetimeIssued" has-feedback placeholder="请选择发行时间"></a-date-picker>
+        </a-form-model-item>
         <a-form-model-item has-feedback label="创建人">
           <span>{{ editData.UserNameCreatedErp }}</span>
         </a-form-model-item>
@@ -34,10 +37,10 @@
           <span>{{ editData.DatetimeCreatedErp }}</span>
         </a-form-model-item>
         <a-form-model-item has-feedback label="修改人">
-          <span>{{ editData.DatetimeModifiedErp }}</span>
+          <span>{{ editData.UserNameModifiedErp }}</span>
         </a-form-model-item>
         <a-form-model-item has-feedback label="修改时间">
-          <span>{{ editData.UserNameModifiedErp }}</span>
+          <span>{{ editData.DatetimeModifiedErp }}</span>
         </a-form-model-item>
       </a-form-model>
       <user-list v-if="isUserList" @closeModal="closeModal" @okModal="okUserModal"></user-list>
@@ -62,6 +65,7 @@ export default {
       userName: "",
       form: {
         UserNameDesigner: "", //公司ID
+        DatetimeIssued:"",
       },
       rules: {
         UserNameDesigner: [
@@ -110,6 +114,7 @@ export default {
             Id: this.editData.Id,
             UserDesigner: this.userItem.Id,
             UserNameDesigner: this.userItem.Name,
+            DatetimeIssued:this.form.DatetimeIssued
           };
           setEngineering(params, "update").then((res) => {
             if (res.data.success) {

@@ -230,6 +230,7 @@ export default {
             this.sOpenKeys = val
           },
           click: (obj) => {
+            console.log("obj====",obj)
             obj.selectedKeys = [obj.key]
             this.$emit('select', obj)
           }

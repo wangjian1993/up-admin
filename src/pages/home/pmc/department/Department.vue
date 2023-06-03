@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 14:39:13
- * @LastEditTime: 2021-11-16 13:52:54
+ * @LastEditTime: 2023-04-26 10:58:41
  * @LastEditors: max
  * @Description: 生成部门配置
  * @FilePath: /up-admin/src/pages/home/pmc/department/Department.vue
@@ -195,15 +195,33 @@ const columns = [
     align: "center",
   },
   {
+    title: "工厂编码",
+    dataIndex: "PlantCode",
+    scopedSlots: { customRender: "PlantCode" },
+    align: "center",
+  },
+  {
     title: "车间",
     dataIndex: "WorkShopName",
     scopedSlots: { customRender: "WorkShopName" },
     align: "center",
   },
   {
+    title: "车间编码",
+    dataIndex: "WorkShopCode",
+    scopedSlots: { customRender: "WorkShopCode" },
+    align: "center",
+  },
+  {
     title: "产线",
     dataIndex: "LineName",
     scopedSlots: { customRender: "LineName" },
+    align: "center",
+  },
+  {
+    title: "产线编码",
+    dataIndex: "LineCode",
+    scopedSlots: { customRender: "LineCode" },
     align: "center",
   },
   {

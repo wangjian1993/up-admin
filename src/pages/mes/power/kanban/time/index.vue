@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-12-17 09:09:57
- * @LastEditTime: 2023-04-21 15:32:21
+ * @LastEditTime: 2023-05-08 10:22:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/kanban/time/index.vue
 -->
 <template>
-  <div>
-    <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
+  <div >
+    <a-card class="card power-conter" :bordered="false" :bodyStyle="{ padding: '5px' }">
       <div class="content-head"><p>深圳民爆光电股份有限公司</p></div>
       <a-row>
         <a-col :span="12">
@@ -294,5 +294,8 @@ export default {
     font-size: 30px;
     font-weight: 700;
   }
+}
+.power-conter{
+  background: url('../../../../../assets/img/pageBg.png');
 }
 </style>

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-03-29 16:11:22
+ * @LastEditTime: 2023-05-29 17:21:13
  * @LastEditors: max
  * @Description: BOM多级反查
  * @FilePath: /up-admin/src/pages/home/erp/BomReverseQuery/List.vue
@@ -330,5 +330,9 @@ export default {
 /deep/.ant-table-row-cell-break-word {
   white-space: nowrap;
   overflow: hidden;
+}
+
+/deep/.ant-table {
+  min-height: 77vh;
 }
 </style>

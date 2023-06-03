@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 16:15:42
- * @LastEditTime: 2022-07-07 14:04:49
+ * @LastEditTime: 2023-05-29 17:35:43
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/ErpDosage.vue
 -->
 <template>
   <div>
-    <a-drawer :visible="visible" title="BOM信息" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
+    <a-drawer :visible="visible" title="BOM信息" placement="right" @close="close" :get-container="false"  width="100%" :footer="null" :wrap-style="{ position: 'absolute',height:'100%' }" centered :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
       <a-spin tip="loading..." :spinning="loading">
         <div class="clone-btn" v-if="isCloneBtn" @click="close">
           <img src="@/assets/img/guanbi.png" alt="" />
@@ -171,6 +171,13 @@ const columns = [
     width: 75,
   },
   {
+    title: "单位",
+    dataIndex: "UNIT_NAME",
+    scopedSlots: { customRender: "UNIT_NAME" },
+    align: "center",
+    width: 50,
+  },
+  {
     title: "图号",
     dataIndex: "DRAWING_NO",
     scopedSlots: { customRender: "DRAWING_NO" },
@@ -178,11 +185,26 @@ const columns = [
     width: 80,
   },
   {
-    title: "单位",
-    dataIndex: "UNIT_NAME",
-    scopedSlots: { customRender: "UNIT_NAME" },
+    title: "备注",
+    dataIndex: "REMARK",
+    scopedSlots: { customRender: "REMARK" },
     align: "center",
-    width: 50,
+    width: 80,
+  },
+ 
+  {
+    title: "ECN变更",
+    dataIndex: "ECNSTATUS",
+    scopedSlots: { customRender: "ECNSTATUS" },
+    align: "center",
+    width: 80,
+  },
+  {
+    title: "ECN变更日期",
+    dataIndex: "APPROVEDATE_ECN",
+    scopedSlots: { customRender: "APPROVEDATE_ECN" },
+    align: "center",
+    width: 105,
   },
   {
     title: "品号类型",
@@ -197,20 +219,6 @@ const columns = [
     scopedSlots: { customRender: "ITEM_TYPE" },
     align: "center",
     width: 80,
-  },
-  {
-    title: "ECN变更",
-    dataIndex: "ECNSTATUS",
-    scopedSlots: { customRender: "ECNSTATUS" },
-    align: "center",
-    width: 80,
-  },
-  {
-    title: "ECN变更日期",
-    dataIndex: "APPROVEDATE_ECN",
-    scopedSlots: { customRender: "APPROVEDATE_ECN" },
-    align: "center",
-    width: 105,
   },
   {
     title: "固定损耗量",
@@ -282,13 +290,6 @@ const columns = [
     align: "left",
     width: 80,
   },
-  {
-    title: "备注",
-    dataIndex: "REMARK",
-    scopedSlots: { customRender: "REMARK" },
-    align: "center",
-    width: 80,
-  },
 ];
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData } from "@/utils/util.js";
@@ -338,7 +339,7 @@ export default {
       console.log("啊哈哈哈哈====", tHeader.getBoundingClientRect());
       let tHeaderBottom = tHeader.getBoundingClientRect().bottom;
       console.log("tHeaderBottom---", tHeaderBottom);
-      let height = `calc(100vh - 400px)`;
+      let height = `calc(100vh - 200px)`;
       this.scrollY = height;
     });
     this.getList();
@@ -502,5 +503,8 @@ export default {
     width: 26px;
     height: 26px;
   }
+}
+/deep/.ant-table {
+  min-height: 60vh;
 }
 </style>

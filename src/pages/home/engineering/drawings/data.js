@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2023-04-11 15:43:46
+ * @LastEditTime: 2023-05-15 10:16:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/engineering/drawings/data.js
@@ -45,12 +45,6 @@ export const columns = [
     align: "center",
   },
   {
-    title: "设计者",
-    dataIndex: "UserNameDesigner",
-    scopedSlots: { customRender: "UserNameDesigner" },
-    align: "center",
-  },
-  {
     title: "品号创建时间",
     dataIndex: "DatetimeCreatedErp",
     scopedSlots: { customRender: "DatetimeCreatedErp" },
@@ -72,6 +66,18 @@ export const columns = [
     title: "品号修改人",
     dataIndex: "UserNameModifiedErp",
     scopedSlots: { customRender: "UserNameModifiedErp" },
+    align: "center",
+  },
+  {
+    title: "设计者",
+    dataIndex: "UserNameDesigner",
+    scopedSlots: { customRender: "UserNameDesigner" },
+    align: "center",
+  },
+  {
+    title: "发行时间",
+    dataIndex: "DatetimeIssued",
+    scopedSlots: { customRender: "DatetimeIssued" },
     align: "center",
   },
   {

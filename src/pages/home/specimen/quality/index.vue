@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2023-03-28 09:05:53
+ * @LastEditTime: 2023-04-28 13:43:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/quality/index.vue
@@ -38,6 +38,16 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-input style="width: 200px" allowClear placeholder="请输入规格" v-decorator="['itemSpecification']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="图号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入图号" v-decorator="['drawingno']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="供应商编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入供应商编码" v-decorator="['suppliercode']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
@@ -102,7 +112,7 @@
 </template>
 
 <script>
-import { getQualitySpecimen, setQualitySpecimen ,getMaterialSampleApi } from "@/services/web.js";
+import { getQualitySpecimen, setQualitySpecimen, getMaterialSampleApi } from "@/services/web.js";
 import ExportExcel from "@/utils/ExportExcelJS";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
@@ -169,7 +179,7 @@ export default {
       this.week = "";
       this.isSearch = 0;
       this.searchForm.resetFields();
-      this.getPlant();
+      this.getEnterList();
     },
     getEnterList() {
       let params = {
@@ -179,7 +189,7 @@ export default {
         if (res.data.success) {
           this.enterList = res.data.data;
           this.searchForm.setFieldsValue({
-            enterpriseId:  this.enterList[0].EnterId,
+            enterpriseId: this.enterList[0].EnterId,
           });
           this.searchBtn();
         }
@@ -222,6 +232,8 @@ export default {
             itemSpecification: values.itemSpecification || "",
             supplier: values.supplier || "",
             tableStatus: values.tableStatus || "",
+            suppliercode: values.suppliercode || "",
+            drawingno: values.drawingno || "",
           };
           getQualitySpecimen(params, "getregisterlist").then((res) => {
             if (res.data.success) {
@@ -251,6 +263,8 @@ export default {
         itemSpecification: values.itemSpecification || "",
         supplier: values.supplier || "",
         tableStatus: values.tableStatus || "",
+        suppliercode: values.suppliercode || "",
+        drawingno: values.drawingno || "",
       };
       getQualitySpecimen(params, "getregisterlist").then((res) => {
         if (res.data.success) {

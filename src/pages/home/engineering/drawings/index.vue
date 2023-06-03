@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2023-04-12 11:25:15
+ * @LastEditTime: 2023-05-12 10:28:58
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/engineering/drawings/index.vue
 -->
 <template>
   <div>
-    <a-spin tip="导出中..." :spinning="isExportLod">
+    <a-spin :tip="tipText" :spinning="isExportLod">
       <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
         <a-form layout="horizontal" :form="searchForm">
           <div :class="advanced ? null : 'fold'">
@@ -31,6 +31,11 @@
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
+                <a-form-item label="创建人" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入创建人" v-decorator="['createduser']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
                 <a-form-item label="创建日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
                 </a-form-item>
@@ -44,6 +49,7 @@
         </a-form>
         <div class="operator">
           <a-button :disabled="!hasPerm('export')" type="primary" @click="exportExcel" icon="export">导出</a-button>
+          <a-button style="margin-left:10px" :disabled="!hasPerm('export')" type="primary" @click="synchronous" icon="cloud-sync">手动同步</a-button>
           <!-- <a-button type="primary" @click="add" icon="plus">新增</a-button> -->
           <!-- <a-button v-if="hasPerm('delete')" icon="delete" type="primary" :disabled="!hasSelected" :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
             <a-button v-else icon="delete" type="primary" disabled :loading="loading" @click="allDel" style="margin-left: 8px">删除</a-button>
@@ -53,17 +59,7 @@
               </template>
             </span> -->
         </div>
-        <a-table
-          :columns="columns"
-          :data-source="dataSource"
-          size="small"
-          :scroll="{ y: scrollY }"
-          :loading="loading"
-          :pagination="pagination"
-          @change="handleTableChange"
-          :rowKey="(dataSource) => dataSource.Id"
-          bordered
-        >
+        <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource) => dataSource.Id" bordered>
           <template slot="index" slot-scope="text, record, index">
             <div>
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -104,8 +100,8 @@
 </template>
 
 <script>
-import { getEngineering } from "@/services/erp.js";
-import {getMaterialSampleApi} from '@/services/web.js'
+import { getEngineering ,setEngineering } from "@/services/erp.js";
+import { getMaterialSampleApi } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
@@ -132,6 +128,7 @@ export default {
       selectedRowKeys: [],
       enterList: [],
       enterId: "",
+      tipText:""
     };
   },
   updated() {
@@ -200,11 +197,12 @@ export default {
           let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            enterid:values.enterid,
+            enterid: values.enterid,
             mitem: values.mitem,
             drawing: values.drawing,
             startdate: starttime,
             enddate: endtime,
+            createduser:values.createduser
           };
           getEngineering(params, "getall").then((res) => {
             if (res.data.success) {
@@ -220,8 +218,20 @@ export default {
         }
       });
     },
+    synchronous() {
+      this.isExportLod = true;
+      this.tipText ="同步中...."
+      setEngineering(["01"], "syncdata").then((res) => {
+        if (res.data.success) {
+          this.$message.success("同步成功!");
+          this.searchBtn();
+          this.isExportLod = false;
+        }
+      });
+    },
     exportExcel() {
       this.isExportLod = true;
+      this.tipText ="导出中...."
       let values = this.searchForm.getFieldsValue();
       if (values["range-time-picker"] && values["range-time-picker"].length == 2) {
         const rangeValue = values["range-time-picker"];
@@ -231,11 +241,12 @@ export default {
       let params = {
         pageindex: this.pagination.current,
         pagesize: this.pagination.total,
-        enterid:values.enterid,
+        enterid: values.enterid,
         mitem: values.mitem,
         drawing: values.drawing,
         startdate: starttime,
         enddate: endtime,
+        createduser:values.createduser
       };
       getEngineering(params, "getall").then((res) => {
         if (res.data.success) {

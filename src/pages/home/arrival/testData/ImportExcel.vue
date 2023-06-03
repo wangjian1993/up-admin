@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-17 15:33:10
- * @LastEditTime: 2023-04-25 10:37:23
+ * @LastEditTime: 2023-05-09 08:30:41
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/arrival/testData/ImportExcel.vue
@@ -9,16 +9,16 @@
 
 <template>
   <div>
-    <a-modal v-model="visible" title="导入到货单测试数据" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="400">
+    <a-modal v-model="visible" title="导入灯珠来料检测" @cancel="close" @ok="handleOk" :maskClosable="false" centered :width="400">
       <a-spin tip="导入中..." :spinning="isUpload">
         <div>
           <a-form layout="horizontal">
             <div>
               <a-row>
-                <a-col :md="8" :sm="24">
+                <a-col :md="24" :sm="24">
                   <a-form-item :wrapperCol="{ span: 18, offset: 1 }">
                     <div style="display:flex;">
-                      <a-upload name="file" :custom-request="uploadFile" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" :beforeUpload="beforeUpload" :remove="removeFile" :fileList="fileList">
+                      <a-upload name="file" :custom-request="uploadFile" :beforeUpload="beforeUpload" :remove="removeFile" :fileList="fileList">
                         <a-button> <a-icon type="upload" />添加execl文件 </a-button>
                       </a-upload>
                     </div>
@@ -112,21 +112,13 @@ export default {
     //导入execl
     beforeUpload(file) {
       console.log(file);
-      const fileExt = file.name
-        .split(".")
-        .pop()
-        .toLocaleLowerCase();
+      // const fileExt = file.name
+      //   .split(".")
+      //   .pop()
+      //   .toLocaleLowerCase();
       let fileList = [...this.fileList, file];
       this.fileList = fileList.slice(-1);
-      if (fileExt === "xlsx" || fileExt === "xls" || fileExt === "csv") {
-        this.file = file;
-      } else {
-        this.$message.warning({
-          title: "文件类型错误",
-          desc: "文件：" + file.name + "不是EXCEL文件，请选择后缀为.xlsx或者.xls的EXCEL文件。",
-        });
-      }
-      return false;
+      this.file = file;
     },
   },
   components: {},

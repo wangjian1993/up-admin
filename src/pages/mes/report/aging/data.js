@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2023-04-13 08:37:57
- * @LastEditTime: 2023-04-21 10:11:18
+ * @LastEditTime: 2023-05-03 10:15:48
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/report/aging/data.js
@@ -14,6 +14,7 @@ export const columnsData = [
     scopedSlots: { customRender: "index" },
     align: "center",
     width: 50,
+    wch:8
   },
   {
     title: "生产工厂",
@@ -21,6 +22,7 @@ export const columnsData = [
     scopedSlots: { customRender: "PlantName" },
     align: "center",
     width: 150,
+    wch:10
   },
   {
     title: "生产车间",
@@ -28,6 +30,7 @@ export const columnsData = [
     scopedSlots: { customRender: "WorkShopName" },
     align: "center",
     width: 150,
+    wch:10
   },
   {
     title: "生产产线",
@@ -35,6 +38,7 @@ export const columnsData = [
     scopedSlots: { customRender: "LineName" },
     align: "center",
     width: 150,
+    wch:10
   },
   {
     title: "生产日期",
@@ -44,7 +48,8 @@ export const columnsData = [
     width: 100,
     customRender: (text) => {
       return splitData(text);
-    }
+    },
+    wch:10
   },
   {
     title: "订单号",
@@ -52,6 +57,7 @@ export const columnsData = [
     scopedSlots: { customRender: "OrderNo" },
     align: "center",
     width: 80,
+    wch:10
   },
   {
     title: "订单数量",
@@ -59,6 +65,7 @@ export const columnsData = [
     scopedSlots: { customRender: "OrderQty" },
     align: "center",
     width: 90,
+    wch:8
   },
   {
     title: "订单项",
@@ -66,6 +73,7 @@ export const columnsData = [
     scopedSlots: { customRender: "OrderItem" },
     align: "center",
     width: 80,
+    wch:8
   },
   {
     title: "工单号",
@@ -73,6 +81,7 @@ export const columnsData = [
     scopedSlots: { customRender: "MoCode" },
     align: "center",
     width: 100,
+    wch:10
   },
   {
     title: "工单数量",
@@ -80,6 +89,7 @@ export const columnsData = [
     scopedSlots: { customRender: "MoQty" },
     align: "center",
     width: 100,
+    wch:8
   },
   {
     title: "成品编码",
@@ -87,6 +97,7 @@ export const columnsData = [
     scopedSlots: { customRender: "ProCode" },
     align: "center",
     width: 100,
+    wch:10
   },
   {
     title: "品名",
@@ -94,6 +105,7 @@ export const columnsData = [
     scopedSlots: { customRender: "ProName" },
     align: "center",
     width: 200,
+    wch:20
   },
   {
     title: "规格",
@@ -101,6 +113,7 @@ export const columnsData = [
     scopedSlots: { customRender: "ProSpec" },
     align: "center",
     width: 300,
+    wch:50
   },
   {
     title: "色温(K)",
@@ -108,6 +121,7 @@ export const columnsData = [
     scopedSlots: { customRender: "ColorTemperature" },
     align: "center",
     width: 100,
+    wch:14
   },
   {
     title: "开始老化数量(PCS)",
@@ -115,6 +129,7 @@ export const columnsData = [
     scopedSlots: { customRender: "StartQty" },
     align: "center",
     width: 150,
+    wch:14
   },
   {
     title: "老化出站数量(PCS)",
@@ -122,6 +137,7 @@ export const columnsData = [
     scopedSlots: { customRender: "FinishedQty" },
     align: "center",
     width: 150,
+    wch:14
   },
   {
     title: "累计老化数量(PCS)",
@@ -129,6 +145,7 @@ export const columnsData = [
     scopedSlots: { customRender: "CumulativeQty" },
     align: "center",
     width: 150,
+    wch:14
   },
   {
     title: "未老化数量(PCS)",
@@ -136,6 +153,7 @@ export const columnsData = [
     scopedSlots: { customRender: "DeficiencyQty" },
     align: "center",
     width: 150,
+    wch:14
   },
   {
     title: "开始老化时间",
@@ -147,7 +165,8 @@ export const columnsData = [
       let str = text.split('T');
       let time = str[1].split('.')
       return str[0] + " " + time[0];
-    }
+    },
+    wch:10
   },
   {
     title: "完成老化时间",
@@ -159,7 +178,8 @@ export const columnsData = [
       let str = text.split('T');
       let time = str[1].split('.')
       return str[0] + " " + time[0];
-    }
+    },
+    wch:10
   },
   {
     title: "老化用时(H)",
@@ -167,6 +187,7 @@ export const columnsData = [
     scopedSlots: { customRender: "WorkHour" },
     align: "center",
     width: 100,
+    wch:8
   },
   {
     title: "达成率(%)",
@@ -174,5 +195,6 @@ export const columnsData = [
     scopedSlots: { customRender: "CompletionRate" },
     align: "center",
     width: 100,
+    wch:8
   },
 ];

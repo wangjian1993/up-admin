@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2023-04-25 14:51:16
+ * @LastEditTime: 2023-05-24 14:13:11
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -346,7 +346,12 @@ export function setQualitySpecimen(params, action) {
     return request(`${UP_WEB}/qc/${action}`, METHOD.POST, params);
 }
 
-
+export function getTestJig(params, action) {
+    return request(`${UP_BORROW}/test/${action}`, METHOD.GET, params);
+}
+export function setTestJig(params, action) {
+    return request(`${UP_BORROW}/test/${action}`, METHOD.POST, params);
+}
 
 export function getBorrowedSop(params, action) {
     return request(`${UP_BORROW}/sop/${action}`, METHOD.GET, params);

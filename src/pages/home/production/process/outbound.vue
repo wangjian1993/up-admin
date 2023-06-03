@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:31
- * @LastEditTime: 2023-04-22 11:31:40
+ * @LastEditTime: 2023-04-26 09:43:55
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/outbound.vue
@@ -33,7 +33,7 @@
         <a-descriptions-item label="产品品名">{{ orderInfo.ProName }}</a-descriptions-item>
         <a-descriptions-item label="计划生产时间">{{ splitData(orderInfo.PlanDate) }}</a-descriptions-item>
         <a-descriptions-item label="计划生产数量">{{ orderInfo.PlanQty }}</a-descriptions-item>
-        <a-descriptions-item label="出站数量"><a-input-number @blur="setFocus" :min="0" v-model="receiveQty" style="width:200px"/></a-descriptions-item>
+        <a-descriptions-item label="出站数量"><a-input-number @blur="setFocus" :min="0" :disabled="orderInfo.IsWrite === false"  v-model="receiveQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item label="不良数量"><a-input-number @blur="setFocus" :min="0" v-model="scrapQty" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item label="备注"><a-input @blur="setFocus" v-model="remark" style="width:200px"/></a-descriptions-item>
         <a-descriptions-item>
@@ -235,6 +235,7 @@ export default {
             if (result.length <= 1) {
               this.orderInfo = res.data.data.result.result[0];
               this.getHistoryList();
+              this.receiveQty = this.orderInfo.ReportQty;
             } else {
               this.isOrderSelect = true;
               result.map((item) => {

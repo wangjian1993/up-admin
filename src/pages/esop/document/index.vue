@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 10:24:01
- * @LastEditTime: 2022-07-28 09:40:33
+ * @LastEditTime: 2023-05-18 11:09:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/document/index.vue
@@ -45,14 +45,14 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item label="产品大类" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入产品大类" v-decorator="['documentname']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入产品大类" v-decorator="['protype']" />
               </a-form-item>
             </a-col>
           </a-row>
           <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="产品系列" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['documentname']" />
+                <a-input style="width: 200px" allowClear placeholder="请输入产品系列" v-decorator="['protypedetail']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">

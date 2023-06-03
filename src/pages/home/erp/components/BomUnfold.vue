@@ -1,14 +1,14 @@
 <!--
  * @Author: max
  * @Date: 2021-12-02 17:34:40
- * @LastEditTime: 2022-04-21 15:52:11
+ * @LastEditTime: 2023-05-09 11:29:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/erp/components/BomUnfold.vue
 -->
 <template>
   <div>
-    <a-drawer :visible="visible" title="BOM展开" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute' }" width="100%" :footer="null" centered :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
+    <a-drawer :visible="visible" title="BOM展开" placement="right" @close="close" :get-container="false" :wrap-style="{ position: 'absolute',height:'100%' }" width="100%" :footer="null"  centered :headerStyle="{ padding: '5px 20px' }" :bodyStyle="{ padding: '5px 10px' }">
       <a-spin tip="loading..." :spinning="loading">
         <div>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">

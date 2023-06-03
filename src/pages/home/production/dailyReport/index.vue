@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2023-04-25 15:56:37
+ * @LastEditTime: 2023-04-26 09:25:12
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/index.vue
@@ -407,17 +407,26 @@ export default {
           let excelArray = [];
           let list = res.data.data.list;
           const header = [];
+          const sheetCols = [];
           this.columns.map((item) => {
             if (item.dataIndex) {
               header.push(item.title);
+              sheetCols.push({
+                wch: item.wch,
+              });
             }
           });
           _data.push(header);
-          list.map((item) => {
+          list.map((item, index) => {
             let array = [];
             this.columns.map((items) => {
               if (items.dataIndex) {
-                array.push(item[items.dataIndex] || "");
+                if (items.dataIndex === "index") {
+                  array.push(index + 1);
+                } else {
+                  let data = item[items.dataIndex] !== null ? item[items.dataIndex] : "";
+                  array.push(data);
+                }
               }
             });
             console.log("array===", array);
@@ -425,36 +434,28 @@ export default {
           });
           let sumProQty = list.reduce((prev, curr) => prev + parseInt(curr.ProQty), 0);
           console.log(sumProQty);
-          // let collect = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "合计", sumProQty, "", "", "", "", "", "", "", "", ""];
           // _data.push(collect);
-          const sheetCols = [
-            { wch: 8 }, // 序号
-            { wch: 8 }, // 阶次
-            { wch: 8 }, // 类型
-            { wch: 8 }, // 上阶BOM号
-            { wch: 8 }, // 品号
-            { wch: 8 }, // 品号
-            { wch: 8 }, // 料名
-            { wch: 8 }, //  产品规格
-            { wch: 8 }, // 单位
-            { wch: 8 }, // 价格来源
-            { wch: 15 }, // 单价
-            { wch: 25 }, // 用量
-            { wch: 60 }, // 金额
-            { wch: 8 }, // 提示
-            { wch: 8 }, // 备注
-            { wch: 8 }, // 备注
-          ];
           let contentList = [];
           let aoa = [..._data, ...contentList]; // 导出的数据
           let merges = []; // 合并单元格
-          let formStyle = {};
+          let formStyle = {
+            font: {
+              name: "宋体",
+              sz: 10,
+            },
+            alignment: {
+              wrapText: 1,
+              horizontal: "center",
+              vertical: "center",
+              indent: 0,
+            }
+          };
           excelArray.push({
             Sheet: `生产日报表`, // 下方tab切换名称
             data: aoa, // 表格数据
             merges, //  合并单元格
-            autoWidth: true, // 自适应宽度
-            formStyle: formStyle, // 特殊行或列样式
+            autoWidth: false, // 自适应宽度
+            formStyle: {}, // 特殊行或列样式
             sheetCols,
           });
           try {
@@ -463,7 +464,7 @@ export default {
               dataList: excelArray,
               bookType: "xlsx", // 导出类型
               filename: `生产日报表_` + timestamp, // 导出标题名
-            });
+            },formStyle);
             this.$message.success("导出数据成功!");
           } catch (error) {
             this.$message.error("导出数据失败");

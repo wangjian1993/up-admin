@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2023-03-01 10:02:11
+ * @LastEditTime: 2023-04-28 14:43:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/data.js
@@ -222,6 +222,7 @@ export const columns = [
     dataIndex: "ReturnReason",
     scopedSlots: { customRender: "ReturnReason" },
     align: "center",
+    width:200
   },
   {
     title: "未处理人",

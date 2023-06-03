@@ -1,48 +1,46 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2023-03-23 09:35:47
+ * @LastEditTime: 2023-05-26 14:28:18
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/lamp/register/form.vue
+ * @FilePath: /up-admin/src/pages/home/borrowed/testJig/form.vue
 -->
 
 <template>
   <div>
-    <a-modal title="编辑灯板钢网" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
+    <a-modal :title="!isOut ? '借出' : '归还'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel">
       <a-form-model ref="ruleForm" :model="form" :rules="rules" :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-form-model-item has-feedback label="位号" prop="PlaceCode">
-          <a-input v-model="form.PlaceCode" has-feedback placeholder="请输入位号"></a-input>
+        <a-form-model-item v-if="!isOut" has-feedback label="借出人" prop="BorrowUser">
+          <a-input-search @click="showUser" v-model="form.BorrowUser" has-feedback placeholder="请选择借出人"></a-input-search>
         </a-form-model-item>
-        <a-form-model-item has-feedback label="规格/型号/版本" prop="ItemSpecification">
-          <a-input v-model="form.ItemSpecification" has-feedback placeholder="请输入规格/型号/版本"></a-input>
+        <a-form-model-item v-else has-feedback label="归还人" prop="BorrowUser">
+          <a-input-search  @click="showUser" v-model="form.BorrowUser" has-feedback placeholder="请选择归还人"></a-input-search>
         </a-form-model-item>
-        <a-form-model-item has-feedback label="物料编码" prop="ItemCode">
-          <a-input v-model="form.ItemCode" has-feedback placeholder="请输入物料编码"></a-input>
+        <a-form-model-item v-if="!isOut" has-feedback label="借出时间" prop="Time">
+          <a-date-picker show-time v-model="form.Time" has-feedback placeholder="请选择借出时间"></a-date-picker>
         </a-form-model-item>
-        <a-form-model-item has-feedback label="尺寸" prop="Size">
-          <a-input v-model="form.Size" has-feedback placeholder="请输入尺寸"></a-input>
+        <a-form-model-item v-else has-feedback label="归还时间" prop="Time">
+          <a-date-picker show-time v-model="form.Time" has-feedback placeholder="请选择归还时间"></a-date-picker>
         </a-form-model-item>
-        <a-form-model-item has-feedback label="状态" prop="Status">
-          <a-select style="width: 200px" allowClear placeholder="请选择状态" v-model="form.Status">
-            <a-select-option value="已借出">已借出</a-select-option>
-            <a-select-option value="已归还">已归还</a-select-option>
-            <a-select-option value="钢网异常">钢网异常</a-select-option>
-            <a-select-option value="未使用">未使用</a-select-option>
-          </a-select>
+        <a-form-model-item has-feedback label="数量" prop="Pagination">
+          <a-input-number :min="0" style="width:150px" v-model="form.Pagination" has-feedback placeholder="请输入页数"></a-input-number>
         </a-form-model-item>
         <a-form-model-item has-feedback label="备注" prop="Remark">
           <a-input v-model="form.Remark" has-feedback placeholder="请输入备注"></a-input>
         </a-form-model-item>
       </a-form-model>
     </a-modal>
+    <UserList v-if="isUser" @closeModal="closeModal" :user="user" @okModal="setUserList" />
   </div>
 </template>
 
 <script>
-import { setLampAction } from "@/services/web.js";
+import { setTestJig } from "@/services/web.js";
+import UserList from "@/components/app-user/UserList.vue";
 export default {
-  props: ["editData", "isEdit", "enterList"],
+  props: ["editData", "isOut", "enterList"],
+  components: { UserList },
   data() {
     return {
       size: "small",
@@ -50,93 +48,55 @@ export default {
       labelCol: { span: 7 },
       wrapperCol: { span: 14 },
       form: {
-        PlaceCode: "", //位号
-        ItemCode: "", //物料编码
-        ItemSpecification: "", //规格型号
-        Size: "", //尺寸
+        Time: "",
+        Pagination: "",
         Remark: "", //备注
-        Status: "",
+        BorrowUser: "",
       },
       rules: {
-        PlaceCode: [
+        Time: [
           {
             required: true,
-            message: "请输入位号",
-            trigger: "blur",
-          },
-        ],
-        ItemCode: [
-          {
-            required: true,
-            message: "请输入物料编码",
-            trigger: "blur",
-          },
-        ],
-        ItemSpecification: [
-          {
-            required: true,
-            message: "请输入规格型号",
-            trigger: "blur",
-          },
-        ],
-        Size: [
-          {
-            required: true,
-            message: "请输入尺寸",
-            trigger: "blur",
-          },
-        ],
-        Remark: [
-          {
-            required: true,
-            message: "请输入备注",
-            trigger: "blur",
-          },
-        ],
-        Status: [
-          {
-            required: true,
-            message: "请选择状态",
+            message: "请选择时间",
             trigger: "change",
           },
         ],
+        BorrowUser: [
+          {
+            required: true,
+            message: "请选择人员",
+            trigger: "change",
+          },
+        ],
+        Pagination: [
+          {
+            required: true,
+            message: "请输入数量",
+            trigger: "blur",
+          },
+        ],
       },
+      userList: [],
+      isUser: false,
+      user: [],
     };
   },
   created() {
-    if (this.isEdit) {
-      console.log("editData===", this.editData);
+    if (!this.isOut) {
       this.form = { ...this.editData };
     }
   },
   methods: {
-    close() {
-      this.$emit("closeModal");
+    showUser() {
+      this.isUser = true;
+    },
+    setUserList(list) {
+      this.user = list;
+      this.form.BorrowUser = list.Name;
+      this.isUser = false;
     },
     closeModal() {
       this.isUser = false;
-    },
-    setUserList(list) {
-      if (this.userType == 1) {
-        this.user = list;
-      } else {
-        this.notifier = list;
-      }
-    },
-    handleClose(id, type) {
-      if (type == 1) {
-        this.user = this.user.filter((item) => item.Id != id);
-      } else {
-        this.notifier = this.notifier.filter((item) => item.Id != id);
-      }
-    },
-    addUser(type) {
-      this.userType = type;
-      this.userList = type == 1 ? this.user : this.notifier;
-      this.isUser = true;
-    },
-    enableChange(value) {
-      this.form.Enable = value.target.value;
     },
     handleCancel() {
       this.$emit("closeModal");
@@ -144,20 +104,32 @@ export default {
     handleOk() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
-          if (this.isEdit) {
-            let editForm = {
-              Id: this.editData.Id, //灯板钢网ID
-              ...this.form,
+          let params = {};
+          if (!this.isOut) {
+            params = {
+              borrowid: this.editData.Id,
+              borrowtime: this.form.Time,
+              borrowcount: this.form.Pagination,
+              borrowremark: this.form.Remark,
+              borrowuser: this.user.Code,
             };
-            setLampAction(editForm, "editlpsm").then((res) => {
-              if (res.data.success) {
-                this.$message.success("编辑成功!");
-                this.$emit("closeModal");
-                this.$emit("success");
-                this.visible = false;
-              }
-            });
+          } else {
+            params = {
+              borrowid: this.editData.Id,
+              returntime: this.form.Time,
+              returncount: this.form.Pagination,
+              returnremark: this.form.Remark,
+              returnuser: this.user.Code,
+            };
           }
+          setTestJig(params, this.isOut ? "return" : "borrow").then((res) => {
+            if (res.data.success) {
+              this.$message.success(this.isOut ? "归还成功!" : "借出成功!");
+              this.$emit("closeModal");
+              this.$emit("success");
+              this.visible = false;
+            }
+          });
         }
       });
     },

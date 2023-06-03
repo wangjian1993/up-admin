@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-04 17:03:33
- * @LastEditTime: 2022-07-08 15:31:01
+ * @LastEditTime: 2023-05-04 17:27:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/record/device.vue
@@ -26,27 +26,35 @@
             <p>{{ item.LineName }}</p>
           </div> -->
           <div class="device-list-box">
-            <div class="device-list-content" v-for="(list, index) in deviceList" :key="index">
-              <div class="device" v-for="(items, indexs) in list" :key="indexs">
-                <div class="device-content" v-for="fileItem in items.Detail" :key="fileItem.Id" @click="selectDocs(items, indexs)">
-                  <!-- <a-popover title="Title" >
-                    <template slot="content">
-                      {{ fileItem.FileName }}
-                    </template>
-                    <span>{{ items.EquipmentCode }}</span>
-                  </a-popover> -->
-
+            <div class="box-top">
+              <div class="device-list-content" v-for="(list, index) in deviceList.top" :key="index">
+                <div class="device-content" v-for="fileItem in list.Detail" :key="fileItem.Id" @click="selectDocs(list, indexs)">
                   <a-popover title="附件">
                     <template slot="content">
                       {{ fileItem.FileName }}
                     </template>
                     <span>
-                      {{ items.EquipmentCode }}
+                      {{ list.EquipmentCode }}
                     </span>
                   </a-popover>
-                  <img v-if="items.Status" src="@/assets/img/lcd.png" alt="" />
-                  <img v-else src="@/assets/img/lcd-2.png" alt="" />
-                  <!-- <p><a-icon type="folder" style="'marginLeft':'10px'" />{{ items.Detail.length }}</p> -->
+                  <img v-if="list.Status" src="../../../assets/img/lcd.png" alt="" />
+                  <img v-else src="../../../assets/img/lcd-2.png" alt="" />
+                </div>
+              </div>
+            </div>
+            <div class="box-bon">
+              <div class="device-list-content" v-for="(list, index) in deviceList.bon" :key="index">
+                <div class="device-content" v-for="fileItem in list.Detail" :key="fileItem.Id" @click="selectDocs(list, indexs)">
+                  <a-popover title="附件">
+                    <template slot="content">
+                      {{ fileItem.FileName }}
+                    </template>
+                    <span>
+                      {{ list.EquipmentCode }}
+                    </span>
+                  </a-popover>
+                  <img v-if="list.Status" src="../../../assets/img/lcd.png" alt="" />
+                  <img v-else src="../../../assets/img/lcd-2.png" alt="" />
                 </div>
               </div>
             </div>
@@ -66,7 +74,10 @@ export default {
   data() {
     return {
       visible: true,
-      deviceList: [],
+      deviceList: {
+        bon: [],
+        top: [],
+      },
       isDocsList: false,
       deviceItem: [],
       isDocs: false,
@@ -98,17 +109,15 @@ export default {
       getSopDocument(params, "record/getequipment").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
-          let array = [];
-          for (let i = 0; i < list.length; i += 2) {
-            let rowArray = list.slice(i, i + 2);
-            if (rowArray[0] != undefined && rowArray[1] != undefined) {
-              array.push(([rowArray[0], rowArray[1]] = [rowArray[1], rowArray[0]]));
+          list.forEach((item) => {
+            if (item.Position === "右") {
+              // console.log("item==", this.deviceList[index].bon);
+              this.deviceList.bon.push(item);
             } else {
-              array.push(rowArray);
+              this.deviceList.top.push(item);
             }
-          }
-          this.deviceList = array;
-          console.log(this.deviceList);
+          });
+          console.log("this.deviceList===", this.deviceList);
         }
       });
     },
@@ -138,6 +147,7 @@ export default {
     display: flex;
     align-items: center;
     flex-direction: column;
+    padding: 4px;
     .process {
       width: 50px;
       height: 50px;
@@ -194,5 +204,19 @@ export default {
       }
     }
   }
+}
+.device-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  img {
+    width: 30px;
+    height: 30px;
+  }
+}
+.box-top,
+.box-bon {
+  display: flex;
 }
 </style>

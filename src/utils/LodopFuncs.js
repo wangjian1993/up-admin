@@ -1,12 +1,12 @@
 ﻿//==本JS是加载Lodop插件或Web打印服务CLodop/Lodop7的综合示例，可直接使用，建议理解后融入自己程序==
 
 //用双端口加载主JS文件Lodop.js(或CLodopfuncs.js兼容老版本)以防其中某端口被占:
-var MainJS ="CLodopfuncs.js",
-    URL_WS1   = "ws://localhost:8000/"+MainJS,                //ws用8000/18000
-    URL_WS2   = "ws://localhost:18000/"+MainJS,
-    URL_HTTP1 = "http://localhost:8000/"+MainJS,              //http用8000/18000
-    URL_HTTP2 = "http://localhost:18000/"+MainJS,
-    URL_HTTP3 = "https://localhost.lodop.net:8443/"+MainJS;   //https用8000/8443
+var MainJS = "CLodopfuncs.js",
+    URL_WS1 = "ws://localhost:8000/" + MainJS,                //ws用8000/18000
+    URL_WS2 = "ws://localhost:18000/" + MainJS,
+    URL_HTTP1 = "http://localhost:8000/" + MainJS,              //http用8000/18000
+    URL_HTTP2 = "http://localhost:18000/" + MainJS,
+    URL_HTTP3 = "https://localhost.lodop.net:8443/" + MainJS;   //https用8000/8443
 
 var CreatedOKLodopObject, CLodopIsLocal, LoadJsState;
 
@@ -47,48 +47,48 @@ function needCLodop() {
 //==检查加载成功与否，如没成功则用http(s)再试==
 //==低版本CLODOP6.561/Lodop7.043及前)用本方法==
 function checkOrTryHttp() {
-  if (window.CLODOP2015_7028) {
-     LoadJsState = "complete";
-     return true;
-  }
-  if (LoadJsState == "loadingB" || LoadJsState == "complete") return;
-  LoadJsState = "loadingB";
-  var head = document.head || document.getElementsByTagName("head")[0] || document.documentElement;
-  var JS1 = document.createElement("script")
-     ,JS2 = document.createElement("script")
-     ,JS3 = document.createElement("script");
-  JS1.src = URL_HTTP1;
-  JS2.src = URL_HTTP2;
-  JS3.src = URL_HTTP3;
-  JS1.onload = JS2.onload = JS3.onload = JS2.onerror = JS3.onerror=function(){LoadJsState = "complete";}
-  JS1.onerror = function(e) {
-      if (window.location.protocol !== 'https:')
-          head.insertBefore(JS2, head.firstChild); else
-          head.insertBefore(JS3, head.firstChild);
-  }
-  head.insertBefore(JS1,head.firstChild);
+    if (window.CLODOP2015_7028) {
+        LoadJsState = "complete";
+        return true;
+    }
+    if (LoadJsState == "loadingB" || LoadJsState == "complete") return;
+    LoadJsState = "loadingB";
+    var head = document.head || document.getElementsByTagName("head")[0] || document.documentElement;
+    var JS1 = document.createElement("script")
+        , JS2 = document.createElement("script")
+        , JS3 = document.createElement("script");
+    JS1.src = URL_HTTP1;
+    JS2.src = URL_HTTP2;
+    JS3.src = URL_HTTP3;
+    JS1.onload = JS2.onload = JS3.onload = JS2.onerror = JS3.onerror = function () { LoadJsState = "complete"; }
+    JS1.onerror = function (e) {
+        if (window.location.protocol !== 'https:')
+            head.insertBefore(JS2, head.firstChild); else
+            head.insertBefore(JS3, head.firstChild);
+    }
+    head.insertBefore(JS1, head.firstChild);
 }
 
 //==加载Lodop对象的主过程:==
-(function loadCLodop(){
-  if (!needCLodop()) return;
-  CLodopIsLocal = !!((URL_WS1 + URL_WS2).match(/\/\/localho|\/\/127.0.0./i));
-  LoadJsState = "loadingA";
-  if (!window.WebSocket && window.MozWebSocket) window.WebSocket=window.MozWebSocket;
-  //ws方式速度快(小于200ms)且可避免CORS错误,但要求Lodop版本足够新:
-  try {
-    var WSK1=new WebSocket(URL_WS1);
-    WSK1.onopen = function(e) { setTimeout("checkOrTryHttp();",200); }
-    WSK1.onmessage = function(e) {if (!window.CLODOP2015_7028) eval(e.data);}
-    WSK1.onerror = function(e) {
-         var WSK2=new WebSocket(URL_WS2);
-         WSK2.onopen = function(e) {setTimeout("checkOrTryHttp();",200);}
-         WSK2.onmessage = function(e) {if (!window.CLODOP2015_7028) eval(e.data);}
-         WSK2.onerror= function(e) {checkOrTryHttp();}
+(function loadCLodop() {
+    if (!needCLodop()) return;
+    CLodopIsLocal = !!((URL_WS1 + URL_WS2).match(/\/\/localho|\/\/127.0.0./i));
+    LoadJsState = "loadingA";
+    if (!window.WebSocket && window.MozWebSocket) window.WebSocket = window.MozWebSocket;
+    //ws方式速度快(小于200ms)且可避免CORS错误,但要求Lodop版本足够新:
+    try {
+        var WSK1 = new WebSocket(URL_WS1);
+        WSK1.onopen = function (e) { setTimeout("checkOrTryHttp();", 200); }
+        WSK1.onmessage = function (e) { if (!window.CLODOP2015_7028) eval(e.data); }
+        WSK1.onerror = function (e) {
+            var WSK2 = new WebSocket(URL_WS2);
+            WSK2.onopen = function (e) { setTimeout("checkOrTryHttp();", 200); }
+            WSK2.onmessage = function (e) { if (!window.CLODOP2015_7028) eval(e.data); }
+            WSK2.onerror = function (e) { checkOrTryHttp(); }
+        }
+    } catch (e) {
+        checkOrTryHttp();
     }
-  } catch(e){
-    checkOrTryHttp();
-  }
 })();
 
 //==获取LODOP对象主过程,判断是否安装、需否升级:==
@@ -119,7 +119,7 @@ function getLodop(oOBJECT, oEMBED) {
         if (needCLodop() || isLinuxX86 || isLinuxARM) {
             try {
                 LODOP = window.CLODOP2015_7028;
-            } catch (err) {}
+            } catch (err) { }
             if (!LODOP && LoadJsState !== "complete") {
                 if (!LoadJsState)
                     alert("未曾加载Lodop主JS文件，请先调用loadCLodop过程."); else

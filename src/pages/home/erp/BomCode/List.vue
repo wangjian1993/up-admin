@@ -1,12 +1,13 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-05-19 16:45:59
+ * @LastEditTime: 2023-05-04 10:52:50
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomCode/List.vue
 -->
 <template>
+   <a-spin tip="导出中..." :spinning="isExportLod">
   <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
     <!-- <a-form layout="horizontal" :form="searchForm">
       <div>
@@ -68,16 +69,10 @@
         </a-row>
       </div>
     </a-form> -->
-    <a-row>
-      <a-col :md="24" :sm="24">
-        <span>
-          <!-- <a-button type="primary" @click="search">查询</a-button> -->
-          <a-button style="margin-left: 8px" @click="reset">重置</a-button>
-          <!-- <a-button type="primary" style="margin-right: 8px" @click="advancedQuery">高级查询</a-button> -->
-          <a style="margin-left: 8px" @click="helpClick('http://192.168.1.245:8080/docs/#/erp/info')"><a-icon type="question-circle" /> 帮助</a>
-        </span>
-      </a-col>
-    </a-row>
+    <div class="operator">
+      <a-button icon="export" type="primary" :disabled="data.length == 0" :loading="loading" @click="handleExcel" style="margin-left: 8px">导出Excel</a-button>
+      <a-button style="margin-left: 8px" @click="reset">重置</a-button>
+    </div>
     <a-table ref="tableRef" :columns="columns" :data-source="data" size="small" :scroll="{ y: scrollY, x: 1500 }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(data) => data.ITEM_BUSINESS_ID" bordered :customRow="handleClickRow" :rowClassName="rowClassName" :components="components">
       <template slot="index" slot-scope="text, record, index">
         <div>
@@ -230,17 +225,19 @@
     <model-info v-if="isModelInfo" :modelData="mitemcodeData" @closeModal="closeModal"></model-info>
     <advancedQuery v-if="isAdvancedQuery" />
   </a-card>
+</a-spin>
 </template>
 <script>
 import getTableScroll from "@/utils/setTableHeight";
 import { getERPReportAction } from "@/services/erp.js";
 import { splitData, modelType } from "@/utils/util.js";
 import ModelInfo from "../components/ModelInfo.vue";
-import { columns } from "./data";
+import { columns ,excelColumns } from "./data";
 import { PublicVarErp } from "@/mixins/publicVarErp.js";
 import { bomSort } from "@/mixins/bomSort.js";
 import { resizeableTitle } from "@/utils/resizeableTitle.js";
 import advancedQuery from "./advancedQuery.vue";
+import ExportExcel from "@/utils/ExportExcelJS";
 export default {
   components: { ModelInfo, advancedQuery },
   mixins: [PublicVarErp, bomSort],
@@ -253,6 +250,7 @@ export default {
     return {
       data: [],
       columns,
+      excelColumns,
       isModelInfo: false,
       selectedRows: [],
       isExecl: false,
@@ -276,6 +274,7 @@ export default {
         approvestatus: "",
         shortcut: "",
       },
+      isExportLod:false
     };
   },
   activated() {
@@ -463,6 +462,54 @@ export default {
     //设置行数据背景
     rowClassName(record) {
       return record.ApproveStatus == "V" ? "color2" : record.ApproveStatus == "N" ? "color1" : "";
+    },
+    async handleExcel() {
+      this.isExportLod = true;
+      let params = {
+        pageindex: this.pagination.current,
+        pagesize: 500,
+        plantid: this.searchValue.plantId,
+        itemcode: this.searchValue.itemcode.trim(),
+        itemname: this.searchValue.itemname.trim(),
+        drawingno: this.searchValue.drawingno.trim(),
+        shortcut: this.searchValue.shortcut.trim(),
+        approvestatus: this.searchValue.approvestatus,
+        itemspecification: this.searchValue.itemspecification.trim(),
+        itemcodesign: this.itemcodesign,
+        itemspecificationsign: this.itemspecificationsign,
+        itemnamesign: this.itemnamesign,
+        drawingnosign: this.drawingnosign,
+        shortcutsign: this.shortcutsign,
+      };
+      getERPReportAction(params, "getbominfo").then((res) => {
+        if (res.data.success) {
+          let list = res.data.data.list;
+          const dataSource = list.map((item) => {
+            Object.keys(item).forEach((key) => {
+              // 后端传null node写入会有问题
+              if (item[key] === null) {
+                item[key] = "";
+              }
+            });
+            return item;
+          });
+          const header = [];
+          this.excelColumns.map((item) => {
+            if (item.dataIndex) {
+              header.push({ key: item.dataIndex, title: item.title });
+            }
+          });
+          var timestamp = Date.parse(new Date());
+          try {
+            ExportExcel(header, dataSource, `品号信息_${timestamp}.xlsx`);
+            this.$message.success("导出数据成功!");
+          } catch (error) {
+            // console.log(error);
+            this.$message.error("导出数据失败");
+          }
+          this.isExportLod = false;
+        }
+      });
     },
   },
 };

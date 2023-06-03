@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-12-15 15:36:17
- * @LastEditTime: 2023-04-22 11:26:39
+ * @LastEditTime: 2023-04-26 09:43:20
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/process/pullIn.vue
@@ -91,7 +91,7 @@ export default {
       isOrder: false,
       lineList: [],
       lineItems: [],
-      defaultLine:""
+      defaultLine: "",
     };
   },
   created() {
@@ -180,7 +180,7 @@ export default {
         if (res.data.success) {
           if (res.data.data && res.data.data.length > 0) {
             this.lineList = res.data.data;
-            this.defaultLine = res.data.data[0].UserLine.LineId
+            this.defaultLine = res.data.data[0].UserLine.LineId;
             res.data.data.forEach((item) => {
               this.lineItems.push(item.UserLine);
             });
@@ -191,9 +191,9 @@ export default {
         }
       });
     },
-    checkLine(e){
+    checkLine(e) {
       this.emptyData();
-      this.getWorkInfo(e)
+      this.getWorkInfo(e);
     },
     getWorkInfo(LineId) {
       setStartWorkApi({ LineId: LineId }, "loaduserline").then((res) => {
@@ -235,7 +235,7 @@ export default {
       let params = {
         ScanCode: this.orderValue.trim(),
         ProcessStatus: "PROCESS_START",
-        LineId: this.userLineData.LineId
+        LineId: this.userLineData.LineId,
       };
       setStartWorkApi(params, "scan").then((res) => {
         res.data.message.time = getTimeData();
@@ -251,12 +251,9 @@ export default {
             if (result.length <= 1) {
               this.orderInfo = res.data.data.result.result[0];
               this.getHistoryList();
-              if (!this.orderInfo.IsWrite) {
-                this.receiveQty = this.orderInfo.ReportQty;
-                this.peopleQty = this.orderInfo.PerQty;
-                this.ColorTemperature = this.orderInfo.ColorTemperature;
-                // this.startWork();
-              }
+              this.receiveQty = this.orderInfo.ReportQty;
+              this.peopleQty = this.orderInfo.PerQty;
+              this.ColorTemperature = this.orderInfo.ColorTemperature;
             } else {
               this.isOrderSelect = true;
               result.map((item) => {
@@ -278,7 +275,7 @@ export default {
         ProPlanId: this.orderInfo.ProPlanId,
         MoCode: this.orderInfo.MoCode,
         ProcessStatus: "PROCESS_START",
-        LineId: this.userLineData.LineId
+        LineId: this.userLineData.LineId,
       };
       this.orderList = [];
       setStartWorkApi(params, "gethisreports").then((res) => {

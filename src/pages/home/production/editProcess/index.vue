@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-08 08:55:36
- * @LastEditTime: 2023-04-25 14:56:34
+ * @LastEditTime: 2023-05-03 16:00:01
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/editProcess/index.vue
@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import { getModifyAction, setEditOutbound, getProcessLine } from "@/services/web.js";
+import { getModifyAction, setModifyAction, getProcessLine } from "@/services/web.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
@@ -234,7 +234,7 @@ export default {
       self.$confirm({
         title: "确定要删除选中内容",
         onOk() {
-          setEditOutbound(self.selectedRowKeys, "delete").then((res) => {
+          setModifyAction(self.selectedRowKeys, "delete").then((res) => {
             if (res.data.success) {
               self.selectedRowKeys = [];
               self.$message.success("删除成功!");
@@ -249,7 +249,7 @@ export default {
     onDelete(item) {
       let params = [];
       params.push(item.ReportId);
-      setEditOutbound(params, "delete").then((res) => {
+      setModifyAction(params, "delete").then((res) => {
         if (res.data.success) {
           this.$message.success("删除成功!");
           this.search();

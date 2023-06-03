@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-07-28 09:35:28
+ * @LastEditTime: 2023-06-02 14:06:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/standingBook/index.vue
@@ -17,6 +17,7 @@
                 <a-form-item label="公司名称" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-select v-decorator="['enterpriseid']" placeholder="请选择公司名称">
                     <a-select-option v-for="item in enterList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
+                    <a-select-option value="ALL">全部</a-select-option>
                   </a-select>
                 </a-form-item>
               </a-col>
@@ -55,6 +56,16 @@
               <a-col :md="6" :sm="24">
                 <a-form-item label="规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-input style="width: 200px" allowClear placeholder="请输入规格" v-decorator="['itemspecification']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="图号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入图号" v-decorator="['drawingno']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="供应商编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入供应商编码" v-decorator="['suppliercode']" />
                 </a-form-item>
               </a-col>
               <a-col :md="6" :sm="24">
@@ -308,6 +319,8 @@ export default {
             itemspecification: values.itemspecification || "",
             supplier: values.supplier || "",
             purchaser: values.purchaser || "",
+            suppliercode: values.suppliercode || "",
+            drawingno: values.drawingno || "",
           };
           getDepartmentApi(params, "getallregisterlist").then((res) => {
             if (res.data.success) {

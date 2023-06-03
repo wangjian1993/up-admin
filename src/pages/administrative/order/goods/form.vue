@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2023-04-04 10:38:54
+ * @LastEditTime: 2023-05-04 18:11:13
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/administrative/order/goods/form.vue
@@ -204,6 +204,7 @@ export default {
       this.editData.Addresss.forEach((item) => {
         this.form.addressids.push(item.Id);
       });
+      this.fileData.ResourceId = this.editData.PictureId
       this.companyChange(this.form.companyid);
     }
   },
@@ -243,6 +244,7 @@ export default {
           if (res.data.success) {
             this.$message.success("上传成功!");
             this.fileData = res.data.data;
+            this.form.pictureid = this.fileData.ResourceId
           } else {
             this.$message.error(`上传失败`);
           }
@@ -290,7 +292,7 @@ export default {
             });
           } else {
             //添加
-            this.form.pictureid = this.fileData.ResourceId;
+            // this.form.pictureid = this.fileData.ResourceId;
             this.form.isspotgoods = this.form.enable === "Y" ? true : false;
             setGoods(this.form, "add").then((res) => {
               if (res.data.success) {

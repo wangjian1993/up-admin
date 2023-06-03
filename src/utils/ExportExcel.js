@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-11-03 10:00:48
- * @LastEditTime: 2022-02-24 11:24:35
+ * @LastEditTime: 2023-05-03 09:46:40
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/ExportExcel.js
@@ -409,6 +409,7 @@ export function exportjsontoexcelMore({
             if (i == '!ref' || i == '!merges' || i == '!cols') {
 
             } else {
+    
                 if (excelStyle) {
                     dataInfo[i + ''].s = {
                         //居中属性

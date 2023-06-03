@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2023-04-24 15:12:40
+ * @LastEditTime: 2023-05-05 14:36:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/spectrum/calculate/index.vue
@@ -327,8 +327,14 @@ export default {
     getItemName(code, index) {
       getSpectrumPrice({ itemcode: code }, "singlebyitemcode").then((res) => {
         if (res.data.success) {
-          this.dataSource[index].ItemName = res.data.data.ItemName;
-          this.dataSource[index].Price = res.data.data.ItemPrice;
+          console.log("es.data.data.ItemPrice",res.data.data)
+          if (res.data.data) {
+            this.dataSource[index].ItemName = res.data.data.ItemName;
+            this.dataSource[index].Price = res.data.data.ItemPrice;
+          } else {
+            this.dataSource[index].ItemName = "";
+            this.dataSource[index].Price = 0;
+          }
         }
       });
     },
@@ -426,7 +432,7 @@ export default {
         this.$message.warning("请先输入电源效率");
         return;
       }
-      // console.log("this.newDataSource1===", this.newDataSource);
+      console.log("this.dataSource===", this.dataSource);
       //1.合并
       this.dataSource.forEach((res) => {
         // console.log("res.Files===", res.Files);
@@ -436,8 +442,8 @@ export default {
         this.totalPrice += Number(res.Price * res.Qty);
       });
 
-      this.totalPower =  this.totalPower.toFixed(4)
-      this.totalPrice =  this.totalPrice.toFixed(4)
+      this.totalPower = this.totalPower.toFixed(4);
+      this.totalPrice = this.totalPrice.toFixed(4);
       // console.log("this.newDataSource2===", this.newDataSource);
       //2.合并数据
       this.newDataSource = this.handelData(this.newDataSource, "WL(nm)", "Spectrum(W)");
@@ -448,6 +454,7 @@ export default {
       this.newDataSource.forEach((res) => {
         //y坐标
         res.coordinateY = Number(res["Spectrum(W)"] / this.tableMax);
+        // console.log("res.coordinateY===",res.coordinateY)
         //光子通量
         res.photonFlux = Number((res["Spectrum(W)"] * res["WL(nm)"] * 0.000000001) / 6.626e-34 / 300000000 / 602000000000000000);
         // console.log(" res.photonFlux===", res.photonFlux.toFixed(4));
@@ -464,9 +471,9 @@ export default {
         this.eChartsDataY.push(res.coordinateY);
       });
       //格式化数据
-      this.total380 =  this.total380.toFixed(4)
-      this.total400 =  this.total400.toFixed(4)
-      this.coordinateTotalY =  this.coordinateTotalY.toFixed(4)
+      this.total380 = this.total380.toFixed(4);
+      this.total400 = this.total400.toFixed(4);
+      this.coordinateTotalY = this.coordinateTotalY.toFixed(4);
       // console.log("res.eChartsDataY", this.eChartsDataY);
       //计算总光子通量380-780
       //计算总光子通量400-780
@@ -506,14 +513,14 @@ export default {
       //光子通量效率
       this.totalRatio380 = Number(this.total380 / this.totalPower);
       this.totalRatio400 = Number(this.total400 / this.totalPower);
-        //格式化数据
-      this.totalRatio380 =  this.totalRatio380.toFixed(4)
-      this.totalRatio400 =  this.totalRatio400.toFixed(4)
+      //格式化数据
+      this.totalRatio380 = this.totalRatio380.toFixed(4);
+      this.totalRatio400 = this.totalRatio400.toFixed(4);
       //整灯光子通量效率
       this.totalWhole380 = Number(this.totalRatio380 * this.wastage * this.DeviceEfficiency * this.powerSupply);
       this.totalWhole400 = Number(this.totalRatio400 * this.wastage * this.DeviceEfficiency * this.powerSupply);
-      this.totalWhole380 =  this.totalWhole380.toFixed(4)
-      this.totalWhole400 =  this.totalWhole400.toFixed(4)
+      this.totalWhole380 = this.totalWhole380.toFixed(4);
+      this.totalWhole400 = this.totalWhole400.toFixed(4);
 
       //计算光谱颜色
       for (var i = 380.0; i <= 780.0; i += 1) {
@@ -534,9 +541,10 @@ export default {
     //计算光效率x数量
     efficiencyNum(arr, qty) {
       arr.forEach((res) => {
-        res["Spectrum(W)"] = res["Spectrum(W)"] * qty;
+        // console.log("res====", res);
+        res["Spectrum(W)"] = res["Spectrum(W)"] ? res["Spectrum(W)"] * qty : 0;
       });
-      // console.log("arr====", arr);
+      console.log("arr====", arr);
       return arr;
     },
     getInterval(minScore, maxScore) {
@@ -925,12 +933,12 @@ export default {
   margin-bottom: 5px;
 }
 /deep/.ant-table {
-    font-size: 14px;
+  font-size: 14px;
 }
-/deep/.ant-descriptions-bordered .ant-descriptions-item-label{
-  background: #C5D9F1;
+/deep/.ant-descriptions-bordered .ant-descriptions-item-label {
+  background: #c5d9f1;
 }
-/deep/.ant-table-thead{
-  background: #C5D9F1;
+/deep/.ant-table-thead {
+  background: #c5d9f1;
 }
 </style>

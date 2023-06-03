@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2022-08-31 10:30:51
+ * @LastEditTime: 2023-05-09 11:22:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/router/async/router.map.js
@@ -47,6 +47,11 @@ const routerMap = {
     name: '工作台',
     path: 'workplace',
     component: () => import('@/pages/dashboard/workplace')
+  },
+  bomDetail: {
+    name: 'BOM信息',
+    path: 'bom-detail',
+    component: () => import('@/pages/home/erp/detail/index.vue')
   },
   exception: {
     name: '异常页',

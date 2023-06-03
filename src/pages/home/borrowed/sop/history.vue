@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-08 09:21:40
- * @LastEditTime: 2023-04-25 15:24:58
+ * @LastEditTime: 2023-05-24 14:29:07
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/borrowed/sop/history.vue
@@ -34,7 +34,7 @@
         </div>
         <div>
           <a-card class="card" :bordered="false" :bodyStyle="{ padding: '5px' }">
-            <a-table :columns="columns" :data-source="dataSource" :size="size" :scroll="{ y: 600 }" :pagination="pagination" :rowKey="(dataSource) => dataSource.Id" bordered>
+            <a-table :columns="columns" :data-source="dataSource" :size="size" :scroll="{ y: 600 }" :pagination="false" :rowKey="(dataSource) => dataSource.Id" bordered>
               <template slot="index" slot-scope="text, record, index">
                 <div>
                   <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -64,36 +64,36 @@ const columns = [
   },
   {
     title: "借出时间",
-    dataIndex: "DatetimeLend",
-    scopedSlots: { customRender: "DatetimeReturn" },
+    dataIndex: "BorrowTime",
+    scopedSlots: { customRender: "BorrowTime" },
     align: "center",
   },
   {
     title: "借出人",
-    dataIndex: "UserLend",
+    dataIndex: "BorrowUser",
     align: "center",
     width: 100,
   },
   {
     title: "借出页数",
-    dataIndex: "DatetimeLend",
-    scopedSlots: { customRender: "DatetimeReturn" },
+    dataIndex: "BorrowPageCount",
+    scopedSlots: { customRender: "BorrowPageCount" },
     align: "center",
   },
   {
     title: "归还时间",
-    dataIndex: "DatetimeReturn",
+    dataIndex: "ReturnTime",
     align: "center",
   },
   {
     title: "归还人",
-    dataIndex: "UserReturn",
+    dataIndex: "ReturnUser",
     align: "center",
   },
   {
     title: "归还页数",
-    dataIndex: "DatetimeLend",
-    scopedSlots: { customRender: "DatetimeReturn" },
+    dataIndex: "ReturnPageCount",
+    scopedSlots: { customRender: "ReturnPageCount" },
     align: "center",
   },
   {
@@ -103,18 +103,13 @@ const columns = [
     align: "center",
   },
   {
-    title: "借出备注",
-    dataIndex: "HowLongLended",
+    title: "归还备注",
+    dataIndex: "BorrowRemark",
     align: "center",
   },
   {
     title: "归还备注",
-    dataIndex: "Remark",
-    align: "center",
-  },
-  {
-    title: "归还备注",
-    dataIndex: "Remark",
+    dataIndex: "ReturnRemark",
     align: "center",
   },
 ];
@@ -166,10 +161,7 @@ export default {
       };
       getBorrowedSop(params, "single").then((res) => {
         if (res.data.success) {
-          this.dataSource = res.data.data.list;
-          const pagination = { ...this.pagination };
-          pagination.total = res.data.data.recordsTotal;
-          this.pagination = pagination;
+          this.dataSource = res.data.data.Children;
         }
         this.loading = false;
       });

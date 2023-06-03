@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2023-04-25 09:59:41
+ * @LastEditTime: 2023-05-03 18:10:35
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/arrival/testData/index.vue
@@ -62,6 +62,7 @@
         </a-form>
         <div class="operator">
           <a-button v-if="hasPerm('import')" icon="import" type="primary" :loading="loading" @click="isImportExcel = true" style="margin-left: 8px">导入数据</a-button>
+          <a-button type="primary" @click="exportExcel" icon="export" style="margin-left: 8px">导出</a-button>
         </div>
         <a-table
           :columns="columns"
@@ -105,14 +106,13 @@
 </template>
 
 <script>
-import { getTestData } from "@/services/wms.js";
+import { getTestData ,setTestData } from "@/services/wms.js";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
 import { PublicVar } from "@/mixins/publicVar.js";
 import { columns, innerColumns } from "./data";
 import ImportExcel from "./ImportExcel.vue";
-import ExportExcel from "@/utils/ExportExcelJS";
 export default {
   mixins: [PublicVar],
   components: { ImportExcel },
@@ -222,51 +222,21 @@ export default {
       });
     },
     exportExcel() {
-      let values = this.searchForm.getFieldsValue();
-      let params = {
-        pageindex: this.pagination.current,
-        pagesize: this.pagination.total,
-        enterpriseid: values.enterpriseid,
-        brand: values.brand,
-        itemcode: values.itemcode,
-        itemname: values.itemname,
-        itemspecification: values.itemspecification,
-        lightspecification: values.lightspecification,
-        description: values.description,
-      };
-      getTestData(params, "list").then((res) => {
+      this.isExportLod = true;
+      if( this.selectedRowKeys.length> 0){
+        this.selectedRowKeys.push(null)
+      }
+      setTestData(this.selectedRowKeys, "export").then((res) => {
         if (res.data.success) {
-          let list = res.data.data.list;
-          const dataSource = list.map((item) => {
-            Object.keys(item).forEach((key) => {
-              // 后端传null node写入会有问题
-              if (item[key] === null) {
-                item[key] = "";
-              }
-              if (Array.isArray(item[key])) {
-                item[key] = item[key].join(",");
-              }
-            });
-            return item;
-          });
-          console.log("dataSource===", dataSource);
-          const header = [];
-          this.columns.map((item) => {
-            if (item.dataIndex) {
-              header.push({ key: item.dataIndex, title: item.title });
-            }
-          });
-          header.push({ key: "Id", title: "ID" });
-          console.log("header===", header);
-          var timestamp = Date.parse(new Date());
-          try {
-            ExportExcel(header, dataSource, `光谱价格_${timestamp}.xlsx`);
-            this.$message.success("导出数据成功!");
-          } catch (error) {
-            // console.log(error);
-            this.$message.error("导出数据失败");
-          }
+          this.$message.success("导入成功!");
           this.isExportLod = false;
+          let link = document.createElement("a");
+          link.style.display = "none";
+          link.href = "http://192.168.1.245:8080/" + res.data.data;
+          link.setAttribute("download", name);
+          document.body.appendChild(link);
+          link.click();
+          this.selectedRowKeys = [];
         }
       });
     },

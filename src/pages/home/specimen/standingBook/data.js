@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2023-03-01 09:04:11
+ * @LastEditTime: 2023-04-28 14:43:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/standingBook/data.js
@@ -210,6 +210,13 @@ export const columns = [
     dataIndex: "DatetimeCreated",
     scopedSlots: { customRender: "DatetimeCreated" },
     align: "center",
+  },
+  {
+    title: "回退原因",
+    dataIndex: "ReturnReason",
+    scopedSlots: { customRender: "ReturnReason" },
+    align: "center",
+    width:200
   },
   {
     title: "状态",

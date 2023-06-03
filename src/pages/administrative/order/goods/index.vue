@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2023-04-24 13:49:07
+ * @LastEditTime: 2023-05-05 11:44:06
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/administrative/order/goods/index.vue
@@ -25,6 +25,11 @@
                   <a-select v-decorator="['addressid']" placeholder="请选择点单地点">
                     <a-select-option v-for="item in addressList" :key="item.Id" :value="item.Id">{{ item.Place }}</a-select-option>
                   </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="餐盘名称/编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="餐盘名称/编码" v-decorator="['keyword']" />
                 </a-form-item>
               </a-col>
               <!-- <a-col :md="6" :sm="24">
@@ -220,6 +225,7 @@ export default {
             pagesize: this.pagination.pageSize,
             companyid: values.companyid,
             addressid: values.addressid,
+            keyword: values.keyword,
           };
           getGoods(params, "get").then((res) => {
             if (res.data.success) {

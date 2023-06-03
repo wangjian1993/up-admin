@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2023-03-11 18:04:27
+ * @LastEditTime: 2023-05-29 18:15:46
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/form.vue
@@ -96,6 +96,22 @@
             <a-col :span="6">
               <a-form-model-item ref="Remark1" has-feedback label="采购备注" prop="Remark1"> <a-input v-model="form.Remark1" allowClear placeholder="请输入采购备注" /> </a-form-model-item
             ></a-col>
+            <a-col :span="6">
+              <a-form-model-item ref="HasRohsReport" has-feedback label="是否有RoHS报告">
+                <a-select v-model="form.HasRohsReport" allowClear  has-feedback placeholder="是否有RoHS报告">
+                  <a-select-option value="是">是</a-select-option>
+                  <a-select-option value="否">否</a-select-option>
+                </a-select></a-form-model-item
+              >
+            </a-col>
+            <a-col :span="6">
+              <a-form-model-item ref="HasReachReport" has-feedback label="是否有REACH报告">
+                <a-select v-model="form.HasReachReport" allowClear  has-feedback placeholder="是否有REACH报告">
+                  <a-select-option value="是">是</a-select-option>
+                  <a-select-option value="否">否</a-select-option>
+                </a-select></a-form-model-item
+              >
+            </a-col>
           </a-row>
         </a-form-model>
       </a-card>
@@ -131,6 +147,14 @@
             </a-col>
             <a-col :span="6">
               <a-form-model-item ref="Remark2" has-feedback label="研发备注" prop="Remark2"> <a-input v-model="form.Remark2" allowClear placeholder="请输入研发备注" /> </a-form-model-item>
+            </a-col>
+            <a-col :span="6">
+              <a-form-model-item ref="NeedConfirmColor" has-feedback label="需要品质确认颜色">
+                <a-select v-model="form.NeedConfirmColor" allowClear has-feedback placeholder="是需要品质确认颜色">
+                  <a-select-option value="是">是</a-select-option>
+                  <a-select-option value="否">否</a-select-option>
+                </a-select></a-form-model-item
+              >
             </a-col>
           </a-row>
         </a-form-model>
@@ -172,6 +196,14 @@
             </a-col>
             <a-col :span="6">
               <a-form-model-item ref="Remark4" has-feedback label="IQC备注" prop="Remark4"> <a-input v-model="form.Remark4" allowClear placeholder="请输入IQC备注" /> </a-form-model-item>
+            </a-col>
+            <a-col :span="6">
+              <a-form-model-item ref="ColorSignResult" has-feedback label="颜色签样结果">
+                <a-select v-model="form.ColorSignResult" allowClear :disabled="!disabled4" has-feedback placeholder="颜色签样结果">
+                  <a-select-option value="OK">OK</a-select-option>
+                  <a-select-option value="NG">NG</a-select-option>
+                </a-select></a-form-model-item
+              >
             </a-col>
           </a-row>
         </a-form-model>
@@ -449,6 +481,10 @@ export default {
             Remark3: this.form.Remark3, //文控备注
             DatetimeQicCollect: this.form.DatetimeQicCollect != "" && this.form.DatetimeQicCollect != null ? this.form.DatetimeQicCollect.format("YYYY-MM-DD HH:mm:ss") : "", //IQC收样日期
             Remark4: this.form.Remark4, //IQC备注
+            HasRohsReport: this.form.HasRohsReport, //是否有RoHS报告：Y是/N否
+            HasReachReport: this.form.HasReachReport, //是否有REACH报告：Y是/N否
+            NeedConfirmColor: this.form.NeedConfirmColor, //需要品质确认颜色：Y是/N否
+            ColorSignResult: this.form.ColorSignResult, //颜色签样结果：NG/OK
           };
           console.log("params===", params);
           setDepartmentApi(params, "editregister").then((res) => {

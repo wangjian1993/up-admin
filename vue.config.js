@@ -77,6 +77,9 @@ module.exports = {
         minRatio: 0.8
       }))
     }
+    // externals: {
+    //   './cptable': 'var cptable'
+    // }
     // if prod, add externals
     // externals: isProd ? assetsCDN.externals : {}
   },

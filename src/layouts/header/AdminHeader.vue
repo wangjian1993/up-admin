@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 08:52:31
- * @LastEditTime: 2022-12-09 14:53:15
+ * @LastEditTime: 2023-05-17 13:39:50
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/layouts/header/AdminHeader.vue
@@ -94,6 +94,7 @@ export default {
       this.$emit("toggleCollapse");
     },
     onSelect(obj) {
+      console.log("obj111",obj)
       this.$emit("menuSelect", obj);
     },
     ...mapMutations("setting", ["setLang"]),

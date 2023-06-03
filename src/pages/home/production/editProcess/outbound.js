@@ -1,12 +1,12 @@
 /*
  * @Author: max
  * @Date: 2022-04-08 08:55:56
- * @LastEditTime: 2023-04-25 14:53:42
+ * @LastEditTime: 2023-04-27 15:49:00
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/editProcess/outbound.js
  */
-import { splitData } from "@/utils/util.js";
+import { splitDataTime } from "@/utils/util.js";
 export const columns = [
     {
         title: "序号",
@@ -45,16 +45,25 @@ export const columns = [
         align: "center",
     },
     {
+        title: "扫描的条码",
+        dataIndex: "QrCode",
+        scopedSlots: { customRender: "QrCode" },
+        align: "center",
+        width:200
+    },
+    {
         title: "品号",
         dataIndex: "ProCode",
         scopedSlots: { customRender: "ProCode" },
         align: "center",
+        width:120
     },
     {
         title: "品名",
         dataIndex: "ProName",
         scopedSlots: { customRender: "ProName" },
         align: "center",
+        width:200
     },
     {
         title: "出站报工数量",
@@ -68,7 +77,7 @@ export const columns = [
         scopedSlots: { customRender: "DatetimeCreated" },
         align: "center",
         customRender: (text) => {
-            return splitData(text);
+            return splitDataTime(text);
         }
     },
     {
@@ -83,7 +92,7 @@ export const columns = [
         scopedSlots: { customRender: "DatetimeModified" },
         align: "center",
         customRender: (text) => {
-            return splitData(text);
+            return splitDataTime(text);
         }
     },
     {

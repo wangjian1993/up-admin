@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2023-03-01 10:36:04
+ * @LastEditTime: 2023-05-23 16:13:34
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/document/data.js
@@ -219,9 +219,28 @@ export const columnsData = [
     align: "center",
   },
   {
+    title: "是否有RoHS报告",
+    dataIndex: "HasRohsReport",
+    scopedSlots: { customRender: "HasRohsReport" },
+    align: "center",
+  },
+  {
+    title: "是否有REACH报告",
+    dataIndex: "HasReachReport",
+    scopedSlots: { customRender: "HasReachReport" },
+    align: "center",
+  },
+  {
     title: "自动生成命名",
     dataIndex: "AutoName",
     scopedSlots: { customRender: "AutoName" },
+    align: "center",
+    width:200
+  },
+  {
+    title: "回退原因",
+    dataIndex: "ReturnReason",
+    scopedSlots: { customRender: "ReturnReason" },
     align: "center",
     width:200
   },

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-03-26 11:12:12
+ * @LastEditTime: 2023-05-06 10:35:49
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomInventory/List.vue
@@ -14,7 +14,7 @@
           <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="需求工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-select v-decorator="['plantid', { rules: [{ required: true, message: '请选择需求工厂' }] }]" style="width: 200px" placeholder="请选择需求工厂">
+                <a-select mode="multiple" v-decorator="['plantid', { rules: [{ required: true, message: '请选择需求工厂' }] }]" style="width: 300px" placeholder="请选择需求工厂">
                   <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -207,21 +207,21 @@
           <span>{{ splitData(text) }}</span>
         </template>
         <template slot="ITEM_NAME" slot-scope="text">
-        <a-tooltip placement="topLeft">
-          <template slot="title" >
+          <a-tooltip placement="topLeft">
+            <template slot="title">
+              {{ text }}
+            </template>
             {{ text }}
-          </template>
-          {{ text }}
-        </a-tooltip>
-      </template>
-      <template slot="ITEM_SPECIFICATION" slot-scope="text">
-        <a-tooltip placement="topLeft">
-          <template slot="title" >
+          </a-tooltip>
+        </template>
+        <template slot="ITEM_SPECIFICATION" slot-scope="text">
+          <a-tooltip placement="topLeft">
+            <template slot="title">
+              {{ text }}
+            </template>
             {{ text }}
-          </template>
-          {{ text }}
-        </a-tooltip>
-      </template>
+          </a-tooltip>
+        </template>
       </a-table>
       <a-empty v-else description="暂无权限" />
       <dosage v-if="isDosage" :info="mitemcodeData" @closeModal="closeModal"></dosage>
@@ -269,7 +269,7 @@ export default {
       originialreceiptdatesign: "",
       lastissuedatesign: "",
       lastreceiptdatesign: "",
-      shortcutsign:"",
+      shortcutsign: "",
       ScrollPosition: 0,
     };
   },
@@ -325,7 +325,7 @@ export default {
           break;
         case "shortcut":
           this.shortcutsign = text;
-          break;  
+          break;
       }
       this.pagination.current = 1;
       this.search();
@@ -353,10 +353,14 @@ export default {
       getERPReportAction(params, "getenterlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
-          this.plantId = this.plantList[0].PlantId;
+          console.log(localStorage.getItem("BOM_INVENTORY"))
           this.searchForm.setFieldsValue({
-            plantid: this.plantList[0].PlantId,
+            plantid: JSON.parse(localStorage.getItem("BOM_INVENTORY")) || []
           });
+          // this.plantId = this.plantList[0].PlantId;
+          // this.searchForm.setFieldsValue({
+          //   plantid: this.plantList[0].PlantId,
+          // });
           // this.getListAll();
         }
       });
@@ -402,7 +406,7 @@ export default {
       this.lastreceiptdatesign = "";
       this.drawingnosign = "";
       this.inventoryqtysign = "";
-      this.shortcutsign =''
+      this.shortcutsign = "";
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
@@ -428,10 +432,11 @@ export default {
             var lastissuedate = values["lastissuedate"].format("YYYY-MM-DD");
           }
           this.loading = true;
+          localStorage.setItem("BOM_INVENTORY", JSON.stringify(values.plantid));
           let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            plantid: values.plantid,
+            plantid: values.plantid.join(","),
             itemcode: values.itemcode || "",
             itemname: values.itemname || "",
             drawingno: values.drawingno || "",
@@ -439,7 +444,7 @@ export default {
             originialreceiptdate: originialreceiptdate || "",
             lastreceiptdate: lastreceiptdate || "",
             lastissuedate: lastissuedate || "",
-            shortcut:values.shortcut || "",
+            shortcut: values.shortcut || "",
             itemspecification: values.itemspecification || "",
             itemcodesign: this.itemcodesign,
             itemspecificationsign: this.itemspecificationsign,
@@ -449,7 +454,7 @@ export default {
             lastreceiptdatesign: this.lastreceiptdatesign,
             drawingnosign: this.drawingnosign,
             inventoryqtysign: this.inventoryqtysign,
-             shortcutsign: this.shortcutsign,
+            shortcutsign: this.shortcutsign,
           };
           console.log("111111", params);
           getERPReportAction(params, "getwarehousestockinfo").then((res) => {

@@ -1,85 +1,101 @@
 <!--
  * @Author: max
  * @Date: 2022-03-30 14:01:21
- * @LastEditTime: 2022-12-06 09:25:45
+ * @LastEditTime: 2023-05-04 17:26:51
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/deviceBind/device.vue
 -->
 <template>
   <div>
-    <a-modal title="选择设备" :visible="visible" v-if="visible" destoryOnClose :ok-button-props="{ props: { disabled: deviceList.length == 0 } }" @ok="handleOk" @cancel="handleCancel" width="70%">
-      <div>
-        <a-row>
-          <a-col :md="6" :sm="24" v-if="!isDetail">
-            <a-button type="primary" @click="docsList">选择SOP文档</a-button>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select :disabled="isDetail" v-model="plantId" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
-                <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-              <a-select :disabled="isDetail" v-model="workshopId" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
-                <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <!-- <a-col :md="6" :sm="24">
+    <a-spin tip="loading..." :spinning="loading">
+      <a-modal title="选择设备" :visible="visible" v-if="visible" destoryOnClose :ok-button-props="{ props: { disabled: deviceList.length == 0 } }" @ok="handleOk" @cancel="handleCancel" width="80%">
+        <div>
+          <a-row>
+            <a-col :md="6" :sm="24" v-if="!isDetail">
+              <a-button type="primary" @click="docsList">选择SOP文档</a-button>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select :disabled="isDetail" v-model="plantId" style="width: 200px" placeholder="请选择生产工厂" @change="plantChange">
+                  <a-select-option v-for="item in plantList" :key="item.PlantId" :value="item.PlantId">{{ item.PlantName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="生产车间" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-select :disabled="isDetail" v-model="workshopId" style="width: 200px" placeholder="请选择生产车间" @change="workShopChange">
+                  <a-select-option v-for="item in workshopList" :key="item.WorkShopId" :value="item.WorkShopId">{{ item.WorkShopName }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <!-- <a-col :md="6" :sm="24">
             <a-form-item label="生产产线" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
               <a-select :disabled="isDetail" v-model="lineId" style="width: 200px" placeholder="请选择生产产线" @change="lineChange">
                 <a-select-option v-for="item in lineList" :key="item.LineId" :value="item.LineId">{{ item.LineName }}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col> -->
-        </a-row>
-      </div>
-      <a-descriptions v-if="selectDocsList.length != 0" :column="4" size="small">
-        <a-descriptions-item label="文件名称">
-          {{ selectDocsList.DocumentName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="生产工厂">
-          {{ selectDocsList.PlantName }}
-        </a-descriptions-item>
-        <a-descriptions-item label="产品大类">
-          {{ selectDocsList.ProType }}
-        </a-descriptions-item>
-        <a-descriptions-item label="产品系列">
-          {{ selectDocsList.ProTypeDetail }}
-        </a-descriptions-item>
-      </a-descriptions>
-      <div v-for="item in deviceList" :key="item.LineId">
-        <div class="device-lsit" v-if="item.list.length != 0">
-          <div>
-            <a-button type="primary" @click="allSend(item)">推送</a-button>
-          </div>
-          <div class="device-list-left" style="margin-left:10px">
-            <span>{{ item.LineName }}</span>
-          </div>
-          <div class="device-list-box">
-            <div class="device-list-content" v-for="(list, index) in item.list" :key="index">
-              <div class="device" v-for="(items, indexs) in list" :key="indexs">
-                <div class="device-content" v-for="fileItem in items.Detail" :key="fileItem.Id" @click="selectDocs(items, indexs)">
-                  <a-popover title="附件">
-                    <template slot="content">
-                      {{ fileItem.FileName }}
-                    </template>
-                    <span>
-                      {{ items.EquipmentCode }}
-                    </span>
-                  </a-popover>
-                  <img v-if="items.Status" src="@/assets/img/lcd.png" alt="" />
-                  <img v-else src="@/assets/img/lcd-2.png" alt="" />
+          </a-row>
+        </div>
+        <a-descriptions v-if="selectDocsList.length != 0" :column="4" size="small">
+          <a-descriptions-item label="文件名称">
+            {{ selectDocsList.DocumentName }}
+          </a-descriptions-item>
+          <a-descriptions-item label="生产工厂">
+            {{ selectDocsList.PlantName }}
+          </a-descriptions-item>
+          <a-descriptions-item label="产品大类">
+            {{ selectDocsList.ProType }}
+          </a-descriptions-item>
+          <a-descriptions-item label="产品系列">
+            {{ selectDocsList.ProTypeDetail }}
+          </a-descriptions-item>
+        </a-descriptions>
+        <div v-for="item in deviceList" :key="item.LineId">
+          <div class="device-lsit" v-if="item.bon.length !== 0 || item.top.length !== 0">
+            <div><a-button type="primary" @click="allSend(item)">推送</a-button></div>
+            <div class="device-list-left" style="margin-left:10px">
+              <span>{{ item.LineName }}</span>
+            </div>
+            <div class="device-list-box">
+              <div class="box-top">
+                <div class="device-list-content" v-for="(list, index) in item.top" :key="index">
+                  <div class="device-content" v-for="fileItem in list.Detail" :key="fileItem.Id" @click="selectDocs(list, indexs)">
+                    <a-popover title="附件">
+                      <template slot="content">
+                        {{ fileItem.FileName }}
+                      </template>
+                      <span>
+                        {{ list.EquipmentCode }}
+                      </span>
+                    </a-popover>
+                    <img v-if="list.Status" src="../../../assets/img/lcd.png" alt="" />
+                    <img v-else src="../../../assets/img/lcd-2.png" alt="" />
+                  </div>
+                </div>
+              </div>
+              <div class="box-bon">
+                <div class="device-list-content" v-for="(list, index) in item.bon" :key="index">
+                  <div class="device-content" v-for="fileItem in list.Detail" :key="fileItem.Id" @click="selectDocs(list, indexs)">
+                    <a-popover title="附件">
+                      <template slot="content">
+                        {{ fileItem.FileName }}
+                      </template>
+                      <span>
+                        {{ list.EquipmentCode }}
+                      </span>
+                    </a-popover>
+                    <img v-if="list.Status" src="@/assets/img/lcd.png" alt="" />
+                    <img v-else src="@/assets/img/lcd-2.png" alt="" />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </a-modal>
+      </a-modal>
+    </a-spin>
     <docs v-if="isDocsList" :deviceItem="deviceItem" :plantId="plantId" :documentItem="documentRecord" @closeModal="closeModal" @success="success" />
     <docsList v-if="isDocs" @closeModal="closeModal" @success="successDocs" />
   </div>
@@ -109,6 +125,7 @@ export default {
       isDocs: false,
       selectDocsList: [],
       documentRecord: [],
+      loading: false,
     };
   },
   mounted() {
@@ -141,7 +158,8 @@ export default {
       this.deviceList.push({
         LineName: this.editData.LineName,
         LineId: this.editData.LineId,
-        list: [],
+        bon: [],
+        top: [],
       });
       this.getDeviceList(0);
       // this.getLineList("single");
@@ -209,7 +227,7 @@ export default {
     },
     allSend(line) {
       let params = {
-        ids:[this.selectDocsList.DocumentId, null],
+        ids: [this.selectDocsList.DocumentId, null],
         lineid: line.LineId,
       };
       setPushRecord(params, "mqtt/publishdocbyid").then((res) => {
@@ -236,24 +254,32 @@ export default {
       getDeviceList(params, "getequipment").then((res) => {
         if (res.data.success) {
           let list = res.data.data.list;
-          let array = [];
-          for (let i = 0; i < list.length; i += 2) {
-            let rowArray = list.slice(i, i + 2);
-            array.push(([rowArray[0], rowArray[1]] = [rowArray[1], rowArray[0]]));
-          }
-          if (array.length > 0) {
-            // array[array.length - 1][0] = array[array.length - 1][0] == undefined ? array[array.length - 1][1] : array[array.length - 1][0];
-            console.log("array[array.length - 1][0]---", array[array.length - 1][0] == undefined);
-            if (array[array.length - 1][0] == undefined) {
-              console.log("删除=====");
-              array[array.length - 1].splice(0, 1);
-              console.log("删除=====", array[array.length - 1]);
+          list.forEach((item) => {
+            if (item.Position === '右') {
+              // console.log("item==", this.deviceList[index].bon);
+              this.deviceList[index].bon.push(item);
+            } else {
+              this.deviceList[index].top.push(item);
             }
-            console.log("去最后一个", array);
-            this.deviceList[index].list = array;
-            this.deviceList[index].newList = list;
-            console.log("deviceList==", this.deviceList);
-          }
+          });
+          console.log(" this.deviceList[---", this.deviceList);
+          // for (let i = 0; i < list.length; i += 2) {
+          //   let rowArray = list.slice(i, i + 2);
+          //   array.push(([rowArray[0], rowArray[1]] = [rowArray[1], rowArray[0]]));
+          // }
+          // if (array.length > 0) {
+          //   // array[array.length - 1][0] = array[array.length - 1][0] == undefined ? array[array.length - 1][1] : array[array.length - 1][0];
+          //   console.log("array[array.length - 1][0]---", array[array.length - 1][0] == undefined);
+          //   if (array[array.length - 1][0] === undefined) {
+          //     console.log("删除=====");
+          //     array[array.length - 1].splice(0, 1);
+          //     console.log("删除=====", array[array.length - 1]);
+          //   }
+          //   console.log("去最后一个", array);
+          //   this.deviceList[index].list = array;
+          //   this.deviceList[index].newList = list;
+          //   console.log("deviceList==", this.deviceList);
+          // }
         }
       });
     },
@@ -276,6 +302,7 @@ export default {
       });
     },
     getLineList() {
+      this.loading = true;
       let params = {
         plantid: this.plantId,
         workshopid: this.workshopId,
@@ -287,10 +314,12 @@ export default {
             this.lineId = line.LineId;
             this.deviceList.push({
               ...line,
-              list: [],
+              bon: [],
+              top: [],
             });
             this.getDeviceList(index);
           });
+          this.loading = false;
         }
       });
     },
@@ -314,12 +343,14 @@ export default {
     // border-right: 1px solid #b4b3b3;
   }
   .device-list-box {
-    display: flex;
+    // display: flex;
   }
   .device-list-content {
     display: flex;
     align-items: center;
     flex-direction: column;
+    cursor: pointer;
+    padding: 4px;
     .process {
       width: 50px;
       height: 50px;
@@ -348,20 +379,6 @@ export default {
       p {
         margin: 0;
       }
-      .device-content {
-        // width: 100px;
-        // height: 50px;
-        // border: 1px #000 solid;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin: 0 10px;
-        img {
-          width: 30px;
-          height: 30px;
-        }
-      }
       .span-f {
         width: 10px;
         height: 10px;
@@ -376,5 +393,23 @@ export default {
       }
     }
   }
+}
+.device-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  img {
+    width: 30px;
+    height: 30px;
+  }
+}
+.box-top,
+.box-bon {
+  display: flex;
+}
+/deep/.ant-modal-body {
+  height: 600px;
+  min-height: 600px;
 }
 </style>

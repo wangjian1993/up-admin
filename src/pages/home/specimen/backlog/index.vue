@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-07-28 09:37:19
+ * @LastEditTime: 2023-04-28 11:58:08
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/index.vue
@@ -18,6 +18,41 @@
                   <a-select v-decorator="['enterpriseid']" placeholder="请选择公司名称">
                     <a-select-option v-for="item in enterList" :key="item.EnterId" :value="item.EnterId">{{ item.EnterName }}</a-select-option>
                   </a-select>
+                </a-form-item>
+              </a-col>
+               <a-col :md="6" :sm="24">
+                <a-form-item label="品号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入品号" v-decorator="['itemcode']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="品名" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入品名" v-decorator="['itemname']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="规格" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入规格" v-decorator="['itemspecification']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="图号" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入图号" v-decorator="['drawingno']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="供应商编码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入供应商编码" v-decorator="['suppliercode']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="供应商" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入供应商" v-decorator="['supplier']" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="采购员" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                  <a-input style="width: 200px" allowClear placeholder="请输入采购员" v-decorator="['purchaser']" />
                 </a-form-item>
               </a-col>
             </a-row>
@@ -315,6 +350,13 @@ export default {
             pagesize: this.pagination.pageSize,
             enterpriseid: values.enterpriseid,
             usercode: localStorage.getItem("account"),
+            "itemcode": values.itemcode,
+	"itemname":  values.itemname,
+	"itemspecification":  values.itemspecification,
+	"drawingno": values.drawingno,
+	"suppliercode":  values.suppliercode,
+	"supplier":  values.supplier,
+	"purchaser":  values.purchaser,
           };
           getDepartmentApi(params, "getregisterpersonallist").then((res) => {
             if (res.data.success) {

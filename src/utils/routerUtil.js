@@ -57,7 +57,7 @@ function parseRoutes(routesConfig, routerMap) {
 			if (item.component == 'BlankView' || item.component == "") {
 				//空白页
 				item.component = view.blank;
-			} else if (item.component === 'OpenView' || item.component === 'IframeView') {
+			} else if (item.component === 'OpenView' || item.component === 'IframeView' || item.component === 'ExternalLinks') {
 				item.meta.link = item.path;
 				item.path = item.component;
 				delete item.component;

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-29 16:34:37
- * @LastEditTime: 2023-04-06 09:34:57
+ * @LastEditTime: 2023-05-11 11:13:57
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/qms.js
@@ -29,4 +29,11 @@ export function setTestItem(params, action) {
 }
 export function setDoList(params) {
     return request(`${UP_WMS}/purchasereceive/single`, METHOD.POST, params);
+}
+
+export function getProductAssembly(params, action) {
+    return request(`${UP_QMS}/inspect/first/${action}`, METHOD.GET, params);
+}
+export function setProductAssembly(params, action) {
+    return request(`${UP_QMS}/inspect/first/${action}`, METHOD.POST, params);
 }

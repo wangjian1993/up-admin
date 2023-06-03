@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-07-07 10:19:01
- * @LastEditTime: 2022-02-21 14:15:51
+ * @LastEditTime: 2023-05-17 11:55:02
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/components/menu/Contextmenu.vue
@@ -72,6 +72,7 @@ export default {
       this.meta = e.meta
     },
     handleClick ({ key }) {
+      console.log("key-====",key)
       this.$emit('select', key, this.target, this.meta)
       this.closeMenu()
     }

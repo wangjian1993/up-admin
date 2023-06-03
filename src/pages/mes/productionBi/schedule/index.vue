@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-07-07 14:31:51
- * @LastEditTime: 2022-08-24 14:09:50
+ * @LastEditTime: 2023-04-26 15:05:54
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/productionBi/schedule/index.vue
@@ -108,7 +108,7 @@ export default {
       gantt.config.date_format = "%Y-%m-%d %H:%i"; //设置数据中的时间格式，对应start_date格式
       gantt.config.columns = [
         //设置列
-        { name: "text", label: "产线", width: "60", align: "center" },
+        { name: "text", label: "产线", width: "80", align: "center" },
         { name: "mocode", label: "工单", width: "120", align: "center" },
         { name: "ProName", label: "产品名称", width: "220", align: "left" },
       ];

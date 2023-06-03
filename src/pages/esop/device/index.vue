@@ -38,8 +38,8 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="ip地址" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
-                <a-input style="width: 200px" allowClear placeholder="请输入ip" v-decorator="['ipaddress']" />
+              <a-form-item label="mac地址" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
+                <a-input style="width: 200px" allowClear placeholder="请输入mac地址" v-decorator="['macaddress']" />
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
@@ -213,6 +213,18 @@ const columns = [
     title: "排序",
     dataIndex: "Sort",
     scopedSlots: { customRender: "Sort" },
+    align: "center",
+  },
+  {
+    title: "位置",
+    dataIndex: "Position",
+    scopedSlots: { customRender: "Position" },
+    align: "center",
+  },
+   {
+    title: "服务地址",
+    dataIndex: "Server",
+    scopedSlots: { customRender: "Server" },
     align: "center",
   },
   {
@@ -412,7 +424,7 @@ export default {
             plantid: values.plantid,
             workcenterid: values.workcenterid,
             lineid: values.lineid,
-            ipaddress: values.ipaddress,
+            macaddress: values.macaddress,
             enable: values.enable,
             status: values.status,
           };

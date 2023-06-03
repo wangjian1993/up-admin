@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2023-04-24 16:46:48
+ * @LastEditTime: 2023-05-20 14:44:53
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/report/aging/index.vue
@@ -84,7 +84,7 @@
 
 <script>
 import { getReportList } from "@/services/mes.js";
-import ExportExcel from "@/utils/ExportExcelJS";
+import { exportjsontoexcelMore } from "@/utils/ExportExcel";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
@@ -292,40 +292,73 @@ export default {
       };
       getReportList(params, "ageing/getreports").then((res) => {
         if (res.data.success) {
+          let _data = [];
+          let excelArray = [];
           let list = res.data.data.list;
-          const dataSource = list.map((item, index) => {
-            Object.keys(item).forEach((key) => {
-              // 后端传null node写入会有问题
-              if (item[key] === null) {
-                item[key] = "";
-              }
-
-              if (key === "FinishedDateTime") {
-                item[key] = this.strTime(item.FinishedDateTime);
-              }
-              if (key === "StartDateTime") {
-                item[key] = this.strTime(item.StartDateTime);
-              }
-              // console.log("item====", item[key]);
-              item.ProDate = splitData(item.ProDate);
-              // item.FinishedDateTime = this.strTime(item.FinishedDateTime);
-              // item.StartDateTime = this.strTime(item.StartDateTime);
-              item.index = index + 1;
-            });
-            return item;
-          });
           const header = [];
+          const sheetCols = [];
           this.columns.map((item) => {
             if (item.dataIndex) {
-              header.push({ key: item.dataIndex, title: item.title });
+              header.push(item.title);
+              sheetCols.push({
+                wch: item.wch,
+              });
             }
           });
-          var timestamp = Date.parse(new Date());
+          _data.push(header);
+          list.map((item, index) => {
+            let array = [];
+            item.StartDateTime = this.strTime(item.StartDateTime);
+            item.FinishedDateTime = this.strTime(item.FinishedDateTime);
+            this.columns.map((items) => {
+              if (items.dataIndex) {
+                if (items.dataIndex === "index") {
+                  array.push(index + 1);
+                } else {
+                  let data = item[items.dataIndex] !== null ? item[items.dataIndex] : "";
+                  array.push(data);
+                }
+              }
+            });
+            console.log("array===", array);
+            _data.push(array);
+          });
+          // _data.push(collect);
+          let contentList = [];
+          let aoa = [..._data, ...contentList]; // 导出的数据
+          let merges = []; // 合并单元格
+          let formStyle = {
+            font: {
+              name: "宋体",
+              sz: 10,
+            },
+            alignment: {
+              wrapText: 1,
+              horizontal: "center",
+              vertical: "center",
+              indent: 0,
+            },
+          };
+          excelArray.push({
+            Sheet: `老化明细报表`, // 下方tab切换名称
+            data: aoa, // 表格数据
+            merges, //  合并单元格
+            autoWidth: false, // 自适应宽度
+            formStyle: {}, // 特殊行或列样式
+            sheetCols,
+          });
           try {
-            ExportExcel(header, dataSource, `老化明细报表_${timestamp}.xlsx`);
+            var timestamp = Date.parse(new Date());
+            exportjsontoexcelMore(
+              {
+                dataList: excelArray,
+                bookType: "xlsx", // 导出类型
+                filename: `老化明细报表_` + timestamp, // 导出标题名
+              },
+              formStyle
+            );
             this.$message.success("导出数据成功!");
           } catch (error) {
-            // console.log(error);
             this.$message.error("导出数据失败");
           }
           this.isExportLod = false;

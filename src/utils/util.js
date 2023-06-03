@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-06-23 09:27:52
- * @LastEditTime: 2022-09-13 11:17:17
+ * @LastEditTime: 2023-04-27 15:46:29
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/utils/util.js
@@ -32,6 +32,15 @@ export function splitData(data) {
   if (data !== null && data !== "" && data !== undefined) {
     let str = data.split('T');
     return str[0];
+  }
+  return;
+}
+
+export function splitDataTime(data) {
+  if (data !== null && data !== "" && data !== undefined) {
+    let str = data.split('T');
+    let time = str[1].split('.')
+    return str[0] + " " + time[0];
   }
   return;
 }

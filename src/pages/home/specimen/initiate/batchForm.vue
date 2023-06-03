@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2023-03-29 11:40:47
+ * @LastEditTime: 2023-06-02 11:42:10
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/initiate/batchForm.vue
@@ -120,6 +120,22 @@
             <a-col :span="8">
               <a-form-model-item ref="Remark1" has-feedback label="采购备注" prop="Remark1"> <a-input v-model="formItem.Remark1" allowClear placeholder="请输入采购备注" /> </a-form-model-item
             ></a-col>
+            <a-col :span="8">
+              <a-form-model-item ref="HasRohsReport" has-feedback label="是否有RoHS报告">
+                <a-select v-model="formItem.HasRohsReport" style="width: 150px;" allowClear has-feedback placeholder="是否有RoHS报告">
+                  <a-select-option value="是">是</a-select-option>
+                  <a-select-option value="否">否</a-select-option>
+                </a-select></a-form-model-item
+              >
+            </a-col>
+            <a-col :span="8">
+              <a-form-model-item ref="HasReachReport" has-feedback label="是否有REACH报告">
+                <a-select v-model="formItem.HasReachReport" style="width: 150px;" allowClear has-feedback placeholder="是否有REACH报告">
+                  <a-select-option value="是">是</a-select-option>
+                  <a-select-option value="否">否</a-select-option>
+                </a-select></a-form-model-item
+              >
+            </a-col>
           </a-row>
         </a-form-model>
       </a-card>
@@ -145,6 +161,8 @@ export default {
         DatetimePurchaseDeliver: "",
         Purchaser: "",
         SupplierCode: "",
+        HasRohsReport: "",
+        HasReachReport: "",
       },
       rules: {
         Supplier: [
@@ -175,6 +193,8 @@ export default {
           SampleCategory: "", //样品类别
           CtrledCompany: "", //受控公司
           Remark1: "", //采购备注
+          HasRohsReport: "",
+          HasReachReport: "",
         },
       ],
     };
@@ -206,6 +226,8 @@ export default {
         SampleCategory: "", //样品类别
         CtrledCompany: "", //受控公司
         Remark1: "", //采购备注
+        HasRohsReport: "",
+        HasReachReport: "",
       });
     },
     removeDomain(item) {
@@ -296,6 +318,8 @@ export default {
             DatetimePurchaseDeliver: this.form.DatetimePurchaseDeliver != "" ? this.form.DatetimePurchaseDeliver : "",
             Purchaser: this.form.Purchaser,
             Item: this.dynamicValidateForm,
+            HasRohsReport: this.form.HasRohsReport,
+            HasReachReport: this.form.HasReachReport,
           };
           setDepartmentApi(params, "addregistermulti").then((res) => {
             if (res.data.success) {

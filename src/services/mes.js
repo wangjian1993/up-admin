@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-08-29 16:34:37
- * @LastEditTime: 2023-04-13 08:53:49
+ * @LastEditTime: 2023-05-03 10:47:27
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/services/mes.js
@@ -90,8 +90,27 @@ export function getOrderInfo(params) {
     return request(`${UP_WMS}/material/complement/print`, METHOD.POST, params);
 }
 
-
-
 export function getReportList(params, action) {
     return request(`${UP_REPORT}/production/${action}`, METHOD.GET, params);
+}
+
+export function getKanBanConfig(params, action) {
+    return request(`${UP_KANBAN}/setting/${action}`, METHOD.GET, params);
+}
+export function setKanBanConfig(params, action) {
+    return request(`${UP_KANBAN}/setting/${action}`, METHOD.POST, params);
+}
+
+export function getKanBanDevice(params, action) {
+    return request(`${UP_KANBAN}/equipment/${action}`, METHOD.GET, params);
+}
+export function setKanBanDevice(params, action) {
+    return request(`${UP_KANBAN}/equipment/${action}`, METHOD.POST, params);
+}
+
+export function getKanBanRecord(params, action) {
+    return request(`${UP_KANBAN}/publishrecord/${action}`, METHOD.GET, params);
+}
+export function setKanBanRecord(params, action) {
+    return request(`${UP_KANBAN}/publishrecord/${action}`, METHOD.POST, params);
 }

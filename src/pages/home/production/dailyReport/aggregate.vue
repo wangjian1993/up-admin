@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2022-10-07 17:34:13
+ * @LastEditTime: 2023-05-03 10:07:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/aggregate.vue
@@ -96,7 +96,7 @@
           <a-button v-if="hasPerm('export')" :disabled="dataSource.length == 0" type="primary" @click="exportExcel" icon="export">导出</a-button>
           <a-button v-else type="primary" @click="exportExcel" icon="export">导出</a-button>
         </div>
-        <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x:true }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.OrderNo + '_' + index" bordered>
+        <a-table :columns="columns" :data-source="dataSource" size="small" :scroll="{ y: scrollY, x: true }" :loading="loading" :pagination="pagination" @change="handleTableChange" :rowKey="(dataSource, index) => dataSource.OrderNo + '_' + index" bordered>
           <template slot="index" slot-scope="text, record, index">
             <div>
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
@@ -113,7 +113,7 @@
 
 <script>
 import { getDailyReport } from "@/services/web.js";
-import ExportExcel from "@/utils/ExportExcelJS";
+import { exportjsontoexcelMore } from "@/utils/ExportExcel";
 import { renderStripe } from "@/utils/stripe.js";
 import getTableScroll from "@/utils/setTableHeight";
 import { splitData } from "@/utils/util.js";
@@ -405,38 +405,105 @@ export default {
       };
       getDailyReport(params, "daily/gettotal").then((res) => {
         if (res.data.success) {
+          let _data = [];
+          let excelArray = [];
           let list = res.data.data.list;
-          const dataSource = list.map((item) => {
-            Object.keys(item).forEach((key) => {
-              console.log(key);
-              // 后端传null node写入会有问题
-              if (item[key] === null) {
-                item[key] = "";
-              }
-              if (Array.isArray(item[key])) {
-                item[key] = item[key].join(",");
-              }
-              if (key == "ProDate") {
-                console.log("1111");
-                item[key] = splitData(item[key]);
-              }
-            });
-            return item;
-          });
           const header = [];
+          const sheetCols = [];
           this.columns.map((item) => {
             if (item.dataIndex) {
-              header.push({ key: item.dataIndex, title: item.title });
+              header.push(item.title);
+              sheetCols.push({
+                wch: item.wch,
+              });
             }
           });
-          var timestamp = Date.parse(new Date());
+          _data.push(header);
+          list.map((item, index) => {
+            let array = [];
+            this.columns.map((items) => {
+              if (items.dataIndex) {
+                if (items.dataIndex === "index") {
+                  array.push(index + 1);
+                } else {
+                  let data = item[items.dataIndex] !== null ? item[items.dataIndex] : "";
+                  array.push(data);
+                }
+              }
+            });
+            _data.push(array);
+          });
+          //工单数量
+          let sumMoQty = list.reduce((prev, curr) => prev + parseInt(curr.MoQty), 0);
+          //订单数量
+          let sumOrderQty = list.reduce((prev, curr) => prev + parseInt(curr.OrderQty), 0);
+          //产出数量
+          let sumProQty = list.reduce((prev, curr) => prev + parseInt(curr.ProQty), 0);
+          //累计数量
+          let sumCumulativeQty = list.reduce((prev, curr) => prev + parseInt(curr.CumulativeQty), 0);
+          //尚欠数量
+          let sumDeficiencyQty = list.reduce((prev, curr) => prev + parseInt(curr.DeficiencyQty), 0);
+          let sumArray = [];
+          this.columns.map((items,index) => {
+            sumArray.push("");
+            if(items.title === '工单数量'){
+              sumArray[index] = '工单数量:' +sumMoQty
+            }
+            if(items.title === '订单数量'){
+              sumArray[index] = '订单数量:' +sumOrderQty
+            }
+            if(items.title === '产出数量(PCS)'){
+              sumArray[index] = '产出数量:' +sumProQty
+            }
+            if(items.title === '累计数量(PCS)'){
+              sumArray[index] = '累计数量:' +sumCumulativeQty
+            }
+            if(items.title === '尚欠数量(PCS)'){
+              sumArray[index] = '尚欠数量:' +sumDeficiencyQty
+            }
+          });
+          sumArray[0] = '汇总'
+          console.log("_data====",_data)
+          console.log("sumArray====",sumArray)
+          _data.push(sumArray);
+          let contentList = [];
+          let aoa = [..._data, ...contentList]; // 导出的数据
+          let merges = []; // 合并单元格
+          let formStyle = {
+            font: {
+              name: "宋体",
+              sz: 10,
+            },
+            alignment: {
+              wrapText: 1,
+              horizontal: "center",
+              vertical: "center",
+              indent: 0,
+            },
+          };
+          excelArray.push({
+            Sheet: `生产日报表`, // 下方tab切换名称
+            data: aoa, // 表格数据
+            merges, //  合并单元格
+            autoWidth: false, // 自适应宽度
+            formStyle: {}, // 特殊行或列样式
+            sheetCols,
+          });
           try {
-            ExportExcel(header, dataSource, `生产日报表汇总_${timestamp}.xlsx`);
+            var timestamp = Date.parse(new Date());
+            exportjsontoexcelMore(
+              {
+                dataList: excelArray,
+                bookType: "xlsx", // 导出类型
+                filename: `生产日报表汇总_` + timestamp, // 导出标题名
+              },
+              formStyle
+            );
             this.$message.success("导出数据成功!");
           } catch (error) {
-            // console.log(error);
             this.$message.error("导出数据失败");
           }
+          this.isExportLod = false;
           this.isExportLod = false;
         }
       });

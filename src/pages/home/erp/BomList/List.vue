@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2022-06-21 17:03:49
+ * @LastEditTime: 2023-05-09 11:59:49
  * @LastEditors: max
  * @Description: BOM查询
  * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
@@ -792,20 +792,15 @@ export default {
 .ant-form-item {
   margin-bottom: 5px;
 }
-/deep/.color2 {
+.color2 {
   color: red;
 }
-/deep/.color1 {
+.color1 {
   color: #0000ff;
 }
-/deep/html {
+html {
   background-color: #ffffff;
   margin: 0; /* this affects the margin on the html before sending to printer */
-}
-
-/deep/body {
-  border: solid 1px blue;
-  margin: 10mm 15mm 10mm 15mm; /* margin you want for the content */
 }
 /*去除页眉页脚*/
 .content-print {
@@ -856,5 +851,8 @@ export default {
 /deep/.print-list .ant-table-row-cell-break-word {
   white-space: nowrap;
   overflow: hidden;
+}
+/deep/.ant-table {
+  min-height: 77vh;
 }
 </style>

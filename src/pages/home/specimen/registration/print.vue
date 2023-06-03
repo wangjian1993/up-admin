@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-09-02 18:16:28
- * @LastEditTime: 2023-03-14 17:26:58
+ * @LastEditTime: 2023-05-24 09:43:54
  * @LastEditors: max
  * @Description: 导入生产日计划
  * @FilePath: /up-admin/src/pages/home/specimen/registration/print.vue
@@ -31,13 +31,17 @@
           </tr>
           <tr style="font-size:10px;">
             <td colspan="5">
-              <div style="margin:0;padding:0">
-                <span style="display: inline-block;float: right;line-height: 20px;font-size:10px;">(工程师勾选)</span>
+              <div style="margin:0;padding:0" :id="'checkbox2_' + index">
+                <span style="display: inline-block;float: right;line-height: 20px;font-size:10px;">(采购选)</span>
                 <!-- <span style="display: inline-block;float: right;line-height: 20px;font-size:8px;">未选默认深圳民爆,</span> -->
-                <span @click="setChecked(3)"><input type="checkbox" name="cbClass" />深圳民爆</span>
+                <!-- <span @click="setChecked(3)"><input type="checkbox" name="cbClass" />深圳民爆</span>
                 <span @click="setChecked(3)"><input type="checkbox" name="cbClass" />惠州民爆</span>
                 <span @click="setChecked(4)"><input type="checkbox" name="cbClass" />惠州分公司</span>
-                <span @click="setChecked(4)"><input type="checkbox" name="cbClass" />其他</span>
+                <span @click="setChecked(4)"><input type="checkbox" name="cbClass" />其他</span> -->
+                <span @click="setChecked(3)"><input type="checkbox" :id="cb1" name="cbClass" value="" />深圳民爆</span>
+                <span @click="setChecked(4)"><input type="checkbox" name="cbClass" value="" />惠州民爆</span>
+                <span @click="setChecked(5)"><input type="checkbox" name="cbClass" value="" />惠州分公司</span>
+                <span @click="setChecked(6)"><input type="checkbox" name="cbClass" value="" />其他</span>
               </div>
             </td>
           </tr>
@@ -272,13 +276,22 @@ export default {
     printBtn() {
       this.dataSource.forEach((item, index) => {
         let id = "checkbox1_" + index;
+        let id2 = "checkbox2_" + index;
         var inputList = document.getElementById(id).getElementsByTagName("input");
-        console.log("inputList===", inputList);
+        var inputList2 = document.getElementById(id2).getElementsByTagName("input");
+        console.log("inputList2===",inputList2)
         let checkedFlag = true;
+        let checkedFlag2 = true;
         for (let i = 0; i < inputList.length; ++i) {
           console.log("inputList===", inputList[i].checked);
           if (inputList[i].checked) {
             checkedFlag = false;
+          }
+        }
+        for (let i = 0; i < inputList2.length; ++i) {
+          console.log("inputList===", inputList2[i].checked);
+          if (inputList2[i].checked) {
+            checkedFlag2 = false;
           }
         }
         if (checkedFlag) {
@@ -286,9 +299,19 @@ export default {
         } else {
           item.checkedFlag = false;
         }
+        if (checkedFlag2) {
+          item.checkedFlag2 = true;
+        } else {
+          item.checkedFlag2 = false;
+        }
       });
+      console.log(" this.dataSource===", this.dataSource);
       for (let i = 0; i < this.dataSource.length; ++i) {
         if (this.dataSource[i].checkedFlag) {
+          this.$message.error(this.dataSource[i].FlowCode + ",请先勾选采购必填项,样品类别!");
+          return;
+        }
+        if (this.dataSource[i].checkedFlag2) {
           this.$message.error(this.dataSource[i].FlowCode + ",请先勾选采购必填项,样品类别!");
           return;
         }
