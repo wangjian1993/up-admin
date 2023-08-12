@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2023-05-29 18:15:46
+ * @LastEditTime: 2023-08-12 14:03:18
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/form.vue
@@ -39,10 +39,10 @@
               <a-form-model-item ref="ItemCode" has-feedback label="物料编码" prop="ItemCode"><a-input-search placeholder="请输入物料编码" style="width: 220px" v-model="form.ItemCode" @search="onSearch"/></a-form-model-item
             ></a-col>
             <a-col :span="6">
-              <a-form-model-item ref="ItemName" has-feedback label="物料名称" prop="ItemName"> <a-textarea v-model="form.ItemName" disabled allowClear placeholder="请输物料名称" /> </a-form-model-item
+              <a-form-model-item ref="ItemName" has-feedback label="物料名称" prop="ItemName"> <a-textarea v-model="form.ItemName" :disabled="!isInputCode" allowClear placeholder="请输物料名称" /> </a-form-model-item
             ></a-col>
             <a-col :span="6">
-              <a-form-model-item ref="ItemSpecification" has-feedback label="物料型号" prop="ItemSpecification"> <a-textarea :rows="4" v-model="form.ItemSpecification" disabled allowClear placeholder="请输入物料型号" /> </a-form-model-item
+              <a-form-model-item ref="ItemSpecification" has-feedback label="物料型号" prop="ItemSpecification"> <a-textarea :rows="4" v-model="form.ItemSpecification" :disabled="!isInputCode" allowClear placeholder="请输入物料型号" /> </a-form-model-item
             ></a-col>
           </a-row>
           <a-row>
@@ -53,7 +53,7 @@
               <a-form-model-item ref="Supplier" has-feedback label="供应商" prop="Supplier">
                 <!-- <a-input v-model="form.Supplier"  allowClear placeholder="请输入供应商" /> -->
                 <a-select show-search v-model="form.Supplier" placeholder="请输入供应商" :default-active-first-option="false" :show-arrow="false" :filter-option="false" :not-found-content="null" @search="handleSearch" @change="changeSearch">
-                  <a-select-option v-for="item in supplierList" :value="item.SupplierName" :key="item.RowNumber">
+                  <a-select-option v-for="item in supplierList" :value="item.SupplierCode" :key="item.RowNumber">
                     {{ item.SupplierName }}
                   </a-select-option>
                 </a-select>
@@ -316,6 +316,7 @@ export default {
         },
       ],
       supplierList: [],
+      isInputCode:false
     };
   },
   created() {
@@ -328,6 +329,7 @@ export default {
       this.form.DatetimeCtrled = this.editData.DatetimeCtrled != null ? moment(this.form.DatetimeCtrled) : "";
       this.form.DatetimeCtrledAbnormalHandle = this.editData.DatetimeCtrledAbnormalHandle != null ? moment(this.form.DatetimeCtrledAbnormalHandle) : "";
       this.form.DatetimeQicCollect = this.editData.DatetimeQicCollect != null ? moment(this.form.DatetimeQicCollect) : "";
+      this.isInputCode = this.form.ItemCode === "材质样承认" ? true : false;
     }
   },
   methods: {
@@ -346,8 +348,9 @@ export default {
     },
     changeSearch(e) {
       this.supplierList.forEach((item) => {
-        if (item.SupplierName == e) {
+        if (item.SupplierCode == e) {
           this.form.SupplierCode = item.SupplierCode;
+          this.form.Supplier = item.SupplierName;
         }
       });
     },
@@ -404,6 +407,11 @@ export default {
       });
     },
     onSearch(e) {
+      if (e === "材质样承认") {
+        this.isInputCode = true;
+        return;
+      }
+      this.isInputCode = false;
       let params = {
         itemcode: e,
         usercode: localStorage.getItem("account"),

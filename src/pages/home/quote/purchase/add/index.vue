@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-08-17 10:58:13
- * @LastEditTime: 2023-02-02 18:05:00
+ * @LastEditTime: 2023-06-30 17:47:12
  * @LastEditors: max
  * @Description: 新建采购报价
- * @FilePath: /up-admin/src/pages/home/quote/purchase/add/Add.vue
+ * @FilePath: /up-admin/src/pages/home/quote/purchase/add/index.vue
 -->
 <template>
   <div>
@@ -197,7 +197,7 @@
           }"
         >
           <div slot="Price" slot-scope="text, record, index">
-            <a-input-number :disabled="record.Property !== '采购件' && record.Property !== '内部采购件' && record.Property !== '委外加工件'" :id="record.key" v-model="record.Price" :min="0" @change="priceNumber(record, index)" />
+            <a-input-number :id="record.key" v-model="record.Price" :min="0" @change="priceNumber(record, index)" />
             <!-- <a-input-number :disabled="record.Property === '自制件' || record.Property === '虚设件'" :id="record.key" v-model="record.Price" :min="0" @change="priceNumber(record, index)" /> -->
           </div>
           <div slot="Property" slot-scope="text">
@@ -371,9 +371,25 @@ export default {
         {
           title: "E10单价",
           dataIndex: "PriceErp",
-          scopedSlots: { customRender: "e10" },
           width: "5%",
           align: "center",
+          scopedSlots: {
+            customRender: "e10",
+            filterDropdown: 'filterDropdown',
+            filterIcon: 'filterIcon',
+          },
+          onFilter: (value, record) =>
+            record.name
+              .toString()
+              .toLowerCase()
+              .includes(value.toLowerCase()),
+          onFilterDropdownVisibleChange: visible => {
+            if (visible) {
+              setTimeout(() => {
+                this.searchInput.focus();
+              }, 0);
+            }
+          },
         },
         {
           title: "单价",

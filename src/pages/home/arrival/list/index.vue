@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:40:06
- * @LastEditTime: 2022-09-02 15:48:56
+ * @LastEditTime: 2023-08-02 08:59:45
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/arrival/list/index.vue
@@ -214,7 +214,7 @@ export default {
     },
     print(record) {
       this.printData = [];
-      this.printData.push(record);
+      this.printData.push(record.DocNo);
       this.isPrint = true;
     },
     printBatch() {
@@ -222,7 +222,7 @@ export default {
       this.isPrint = true;
       this.dataSource.forEach((item, index) => {
         if (this.selectedRowKeys.includes(item.DocNo + "_" + index)) {
-          this.printData.push(item);
+          this.printData.push(item.DocNo);
         }
       });
     },

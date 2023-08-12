@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-02-14 16:45:41
- * @LastEditTime: 2022-02-14 17:09:06
+ * @LastEditTime: 2023-06-23 10:13:03
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/quote/purchase/materialPrice/index.vue
@@ -17,6 +17,7 @@
                 <a-form-item label="生产工厂" :labelCol="{ span: 5 }" :wrapperCol="{ span: 14, offset: 1 }">
                   <a-select
                     placeholder="请选择生产工厂"
+                    mode="multiple"
                     v-decorator="[
                       'plantid',
                       {
@@ -217,7 +218,7 @@ export default {
           this.plantList = res.data.data;
           this.plantid = this.plantList[0].EnterId;
           this.searchForm.setFieldsValue({
-            plantid: this.plantList[0].EnterId,
+            plantid: [this.plantList[0].EnterId],
           });
         }
       });
@@ -231,7 +232,7 @@ export default {
           let params = {
             pageindex: this.pagination.current,
             pagesize: this.pagination.pageSize,
-            plantid: values.plantid,
+            plantid: values.plantid.join(","),
             itemcode: values.itemcode || "",
           };
           getCostConfig(params, "getmaterialpricedetail").then((res) => {

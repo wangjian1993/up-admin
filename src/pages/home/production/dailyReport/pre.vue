@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2023-06-28 09:45:14
+ * @LastEditTime: 2023-07-11 11:19:08
  * @LastEditors: max
  * @Description: 
- * @FilePath: /up-admin/src/pages/home/production/dailyReport/index.vue
+ * @FilePath: /up-admin/src/pages/home/production/dailyReport/pre.vue
 -->
 <template>
   <div>
@@ -156,7 +156,7 @@ export default {
   created() {
     this.$nextTick(() => {
       this.scrollY = getTableScroll(100);
-      let local = JSON.parse(localStorage.getItem("REPORT_COLUMN"));
+      let local = JSON.parse(localStorage.getItem("PRE_COLUMN"));
       this.columnList.forEach((col) => {
         col.value = col.dataIndex; //设置value值，用于checkedgroup
       });
@@ -214,7 +214,7 @@ export default {
         }
       });
       this.poped = false;
-      localStorage.setItem("REPORT_COLUMN", JSON.stringify(this.columns));
+      localStorage.setItem("PRE_COLUMN", JSON.stringify(this.columns));
     },
     //查看详情
     details(item) {
@@ -306,7 +306,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getDailyReport(params, "realtime/getall").then((res) => {
+      getDailyReport(params, "pre/realtime/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           this.addListparams();
@@ -368,7 +368,7 @@ export default {
             proname: values.proname,
             process: values.process,
           };
-          getDailyReport(params, "realtime/getall").then((res) => {
+          getDailyReport(params, "pre/realtime/getall").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -405,7 +405,7 @@ export default {
         proname: values.proname,
         process: values.process,
       };
-      getDailyReport(params, "realtime/getall").then((res) => {
+      getDailyReport(params, "pre/realtime/getall").then((res) => {
         if (res.data.success) {
           let _data = [];
           let excelArray = [];
@@ -455,7 +455,7 @@ export default {
             },
           };
           excelArray.push({
-            Sheet: `生产日报表`, // 下方tab切换名称
+            Sheet: `生产前加工日报表`, // 下方tab切换名称
             data: aoa, // 表格数据
             merges, //  合并单元格
             autoWidth: false, // 自适应宽度
@@ -468,7 +468,7 @@ export default {
               {
                 dataList: excelArray,
                 bookType: "xlsx", // 导出类型
-                filename: `生产日报表_` + timestamp, // 导出标题名
+                filename: `生产前加工日报表` + timestamp, // 导出标题名
               },
               formStyle
             );

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2023-04-24 17:46:17
+ * @LastEditTime: 2023-06-26 16:01:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/report/overdue.vue
@@ -61,11 +61,11 @@
                   <a-input style="width: 200px" allowClear placeholder="请输入投料料名/料号" v-decorator="['mitemcode']" />
                 </a-form-item>
               </a-col>
-              <a-col :md="6" :sm="24">
+              <!-- <a-col :md="6" :sm="24">
                 <a-form-item label="追溯码" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-input style="width: 200px" allowClear placeholder="请输入追溯码" v-decorator="['qrcode']" />
                 </a-form-item>
-              </a-col>
+              </a-col> -->
               <a-col :md="6" :sm="24">
                 <a-form-item label="投料日期" :labelCol="{ span: 5 }" :wrapperCol="{ span: 18, offset: 1 }">
                   <a-range-picker style="width: 300px" v-decorator="['range-time-picker']" />
@@ -367,7 +367,6 @@ export default {
             stratdate: begindate,
             enddate: enddate,
             mitemcode: values.mitemcode,
-            qrcode: values.qrcode,
             process: values.process,
           };
           getDailyReport(params, "ps/gettraces").then((res) => {

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2023-04-06 10:40:18
+ * @LastEditTime: 2023-07-13 16:04:19
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/qms/quality/incomingInspection/index.vue
@@ -99,6 +99,11 @@
               <span>{{ (pagination.current - 1) * pagination.pageSize + (index + 1) }}</span>
             </div>
           </template>
+          <template slot="TestImgList" slot-scope="text">
+            <viewer class="images clearfix">
+              <img v-for="item in text" style="width:100;height: 80px;" :key="item.ImgId" :src="hostUrl + item.ImgUrl" class="image" />
+            </viewer>
+          </template>
           <template slot="action" slot-scope="text, record">
             <div>
               <a-popconfirm title="确定删除?" @confirm="() => onDelete(record)">
@@ -116,7 +121,7 @@
         </a-table>
       </a-card>
       <BatchAdd v-if="isAdd" :isEdit="isEdit" :paramsItem="paramsItem" :testItemList="testItemList" :editData="editData" @closeModal="closeModal" @success="searchBtn" />
-      <EditForm v-if="isEditForm" :paramsItem="paramsItem" :editData="editData" :testItemList="testItemList"  @closeModal="closeModal" @success="searchBtn" />
+      <EditForm v-if="isEditForm" :paramsItem="paramsItem" :editData="editData" :testItemList="testItemList" @closeModal="closeModal" @success="searchBtn" />
     </a-spin>
   </div>
 </template>
@@ -153,7 +158,8 @@ export default {
       processList: [],
       paramsList: ["IQC_INCOMING_TEST_ITEM", "IQC_INCOMING_TEST_ITEM_RESULT"],
       paramsItem: [],
-      testItemList:[]
+      testItemList: [],
+      hostUrl: window.location.host === "113.106.78.83:7003" ? "http://113.106.78.83:7003" : window.location.host === "192.168.0.240:8080" ? "http://192.168.0.240:8080" : "http://192.168.1.245:8080",
     };
   },
   updated() {
@@ -320,6 +326,9 @@ export default {
         TestResult: record.TestResult,
         id: record.id,
         Remarks: record.Remarks,
+        DatetimeTestEnd: record.DatetimeTestEnd,
+        DatetimeTestStart: record.DatetimeTestStart,
+        TestImgList: record.TestImgList,
       };
       this.isEditForm = true;
     },
@@ -343,6 +352,9 @@ export default {
             TestResult: item.TestResult,
             id: item.id,
             Remarks: item.Remarks,
+            DatetimeTestEnd: item.DatetimeTestEnd,
+            DatetimeTestStart: item.DatetimeTestStart,
+            TestImgList: item.TestImgList,
           });
         }
       });
@@ -361,7 +373,7 @@ export default {
       }
       let params = {
         pageindex: this.pagination.current,
-        pagesize: this.pagination.pageSize,
+        pagesize: this.pagination.total,
         enterid: values.enterid,
         item: values.item,
         line: values.lineid,

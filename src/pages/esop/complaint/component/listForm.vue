@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-03-28 11:25:07
- * @LastEditTime: 2022-09-24 10:00:29
+ * @LastEditTime: 2023-08-02 08:53:49
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/esop/complaint/component/listForm.vue
@@ -99,7 +99,6 @@
             <a-col :span="12">
               <a-form-model-item label="备注" prop="remark" :labelCol="{ span: 6 }">
                 <a-textarea v-model="form.remark" placeholder="请输备注" />
-               
               </a-form-model-item>
             </a-col>
           </a-row>
@@ -272,7 +271,7 @@ export default {
       department: [],
       isUserList: false,
       departName: [],
-      BASE_URL_MOCK:""
+      BASE_URL_MOCK: "",
     };
   },
   created() {
@@ -281,21 +280,21 @@ export default {
       this.form = lowerJSONKey(this.editData);
       this.fileList = this.form.files;
       if (process.env.NODE_ENV == "production") {
-      //正式服
-      this.BASE_URL_MOCK = window.location.origin;
-    } else {
-      //测试
-      this.BASE_URL_MOCK ="http://192.168.1.245:8080";
-    }
+        //正式服
+        this.BASE_URL_MOCK = window.location.origin;
+      } else {
+        //测试
+        this.BASE_URL_MOCK = "http://192.168.1.245:8080";
+      }
       this.$nextTick(() => {
         this.departName = [this.form.department];
-        console.log("this.departName==",this.departName)
+        console.log("this.departName==", this.departName);
         this.form.files.forEach((item) => {
           let obj = {
             ...item,
             name: item.FileName,
             status: "done",
-            url: this.BASE_URL_MOCK +item.FilePath,
+            url: this.BASE_URL_MOCK + item.FilePath,
             uid: item.Id,
           };
           if (item.Sort == 1) {
@@ -343,11 +342,10 @@ export default {
     //不良率计算
     rateChange() {
       let rate = (this.form.ngqty / this.form.qty) * 100;
-      console.log("rat======", rate);
       this.form.ngrate = rate.toFixed(2);
     },
     removeFile(record) {
-      console.log("this.filesList===",this.filesList)
+      console.log("this.filesList===", this.filesList);
       let paramsData = this.filesList.find((item) => item.uid == record.uid);
       console.log("paramsData===", paramsData);
       let params = {
@@ -442,8 +440,7 @@ export default {
           let result = this.uploadRequest(params);
           requestArray.push(result);
         });
-        Promise.all(requestArray).then((res) => {
-          console.log("res===", res);
+        Promise.all(requestArray).then(() => {
           params.filechunk = {
             identifier: fileMd5,
             totalChunks: str.length,

@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-04-01 17:38:43
- * @LastEditTime: 2023-02-23 18:11:35
+ * @LastEditTime: 2023-06-26 16:01:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/mes/power/report/overdue.js
@@ -77,14 +77,6 @@ export const columnsData = [
       scopedSlots: { customRender: "UserRelease" },
       align: "center",
       width:100,
-    },
-   
-    {
-      title: "产品追溯条码",
-      dataIndex: "QrCode",
-      scopedSlots: { customRender: "QrCode" },
-      align: "center",
-      width:120,
     },
     {
       title: "投料数量",

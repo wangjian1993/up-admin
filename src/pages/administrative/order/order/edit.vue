@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2023-04-24 14:45:52
+ * @LastEditTime: 2023-06-08 10:44:56
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/administrative/order/order/edit.vue
@@ -30,7 +30,7 @@
           <a-input-number :min="0" v-model="editData.Count" placeholder="请输入手机号" />
         </a-descriptions-item>
         <a-descriptions-item label="配送时间">
-          <a-date-picker show-time v-model="editData.DispatchTime"> </a-date-picker>
+          <a-date-picker :show-time="{ format: 'HH:mm' }" valueFormat="YYYY-MM-DD HH:mm:ss" v-model="editData.DispatchTime"> </a-date-picker>
         </a-descriptions-item>
         <a-descriptions-item label="备注">
           <a-input v-model="editData.Remark" placeholder="请输入备注" />
@@ -202,7 +202,7 @@ export default {
   padding: 8px 24px;
   height: 300px;
 }
-/deep/.ant-modal-body{
+/deep/.ant-modal-body {
   height: 650px;
   overflow: auto;
 }

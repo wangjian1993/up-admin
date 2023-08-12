@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-modal :title="isEdit ? '修改品质判定' : '添加品质判定'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel" width="80%">
+    <a-modal :title="isEdit ? '修改品质判定' : '添加品质判定'" v-if="visible" :visible="visible" @ok="handleOk" destoryOnClose @cancel="handleCancel" width="95%">
       <a-form layout="horizontal" :form="searchForm" v-if="!isEdit">
         <div>
           <a-row>
@@ -37,14 +37,37 @@
             <a-input style="width:100px" :disabled="!record.isInput" v-model="record.Remarks" size="small" />
           </div>
         </template>
+        <template slot="DatetimeTestStart" slot-scope="text, record">
+          <div>
+            <a-date-picker  valueFormat="YYYY-MM-DD HH:mm:ss" style="minWidth:80px" size="small" format="YYYY-MM-DD HH:mm:ss" show-time :disabled="!record.isInput" v-model="record.DatetimeTestStart" />
+          </div>
+        </template>
+        <template slot="DatetimeTestEnd" slot-scope="text, record">
+          <div>
+            <a-date-picker  valueFormat="YYYY-MM-DD HH:mm:ss" style="minWidth:80px" size="small" format="YYYY-MM-DD HH:mm:ss" show-time :disabled="!record.isInput" v-model="record.DatetimeTestEnd" />
+          </div>
+        </template>
+        <template slot="TestImg" slot-scope="text, record, index">
+          <div>
+            <a-upload accept="image/jpg,image/jpeg,image/png" :custom-request="uploadImg" :before-upload="beforeUpload" :file-list="record.FileList" :data="{ index: index }" :remove="removeFile" class="upload-list-inline">
+              <a-button> <a-icon type="upload" /> 上传图片 </a-button>
+            </a-upload>
+          </div>
+        </template>
       </a-table>
     </a-modal>
   </div>
 </template>
 
 <script>
-import { setDoList, setIncomingTest,setTestItem } from "@/services/qms.js";
+import { setDoList, setIncomingTest, setTestItem } from "@/services/qms.js";
 import { getParamData } from "@/services/admin.js";
+import { uploadFile } from "@/services/admin.js";
+function getBase64(img, callback) {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result));
+  reader.readAsDataURL(img);
+}
 const columns = [
   {
     title: "PO号",
@@ -89,7 +112,28 @@ const columns = [
     dataIndex: "Qty",
     scopedSlots: { customRender: "Qty" },
     align: "center",
-    width: 90,
+    width: 80,
+  },
+  {
+    title: "测试开始时间",
+    dataIndex: "DatetimeTestStart",
+    scopedSlots: { customRender: "DatetimeTestStart" },
+    align: "center",
+    width: 190,
+  },
+  {
+    title: "测试结束时间",
+    dataIndex: "DatetimeTestEnd",
+    scopedSlots: { customRender: "DatetimeTestEnd" },
+    align: "center",
+    width: 190,
+  },
+  {
+    title: "测试图片",
+    dataIndex: "TestImg",
+    scopedSlots: { customRender: "TestImg" },
+    align: "center",
+    width: 150,
   },
   {
     title: "测试项目",
@@ -127,19 +171,78 @@ export default {
       columns,
       count: 2,
       selectedRowKeys: [],
-      testItemList:[]
+      testItemList: [],
     };
   },
   created() {
     this.getTestItem();
     if (this.isEdit) {
       this.dataSource = [...this.editData];
-      this.dataSource.forEach((item) => {
+      this.dataSource.forEach((item, index) => {
         item.isInput = true;
+        item.FileList = [];
+        item.TestImgList.forEach((img) => {
+          item.FileList.push({
+            uid: img.ImgId,
+            name: img.ImgId,
+            status: "done",
+            url: img.ImgUrl,
+            imgIndex: index,
+          });
+        });
       });
+      console.log(" this.dataSource===", this.dataSource);
     }
   },
   methods: {
+    removeFile(file) {
+      this.dataSource[file.imgIndex].FileList.forEach((item, index) => {
+        if (item.uid == file.uid) {
+          this.dataSource[file.imgIndex].FileList.splice(index, 1);
+        }
+      });
+    },
+    beforeUpload(file) {
+      const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
+      if (!isJpgOrPng) {
+        this.$message.error("请选择jpg或者png格式图片");
+      }
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isLt2M) {
+        this.$message.error("图片太大了.请上传小于2M图片");
+      }
+      return isJpgOrPng && isLt2M;
+    },
+    uploadImg(info) {
+      getBase64(info.file, (imageUrl) => {
+        console.log("info====", info);
+        this.imageUrl = imageUrl;
+        let typeArray = info.file.type.split("/");
+        let fileType = typeArray[1].toUpperCase();
+        let params = {
+          FileName: info.file.name,
+          FileContent: imageUrl,
+          FileSuffix: "." + fileType,
+        };
+        uploadFile(params).then((res) => {
+          if (res.data.success) {
+            this.$message.success("上传成功!");
+            console.log(this.dataSource[info.data.index].FileList);
+            this.dataSource[info.data.index].FileList.push({
+              uid: res.data.data.ResourceId,
+              name: res.data.data.FileName,
+              status: "done",
+              url: res.data.data.ImgUrl,
+              imgIndex: info.data.index,
+            });
+            console.log("上传", this.dataSource);
+          } else {
+            this.$message.error(`上传失败`);
+          }
+        });
+        // this.loading = false;
+      });
+    },
     getTestItem() {
       setTestItem("", "getlist").then((res) => {
         if (res.data.success) {
@@ -173,6 +276,7 @@ export default {
               this.dataSource = res.data.data.list;
               this.dataSource.forEach((item, index) => {
                 item.Id = item.ItemCode + "_" + index;
+                item.FileList = [];
               });
             }
           });
@@ -207,11 +311,18 @@ export default {
       if (this.isEdit) {
         let params = [];
         this.dataSource.forEach((item) => {
+          let imgList = [];
+          item.FileList.forEach((img) => {
+            imgList.push(img.uid);
+          });
           params.push({
             Id: item.id,
             TestItem: item.TestItem,
             TestResult: item.TestResult,
             Remarks: item.Remarks || "",
+            DatetimeTestStart: item.DatetimeTestStart,
+            DatetimeTestEnd: item.DatetimeTestEnd,
+            TestImgIds: imgList.join(","),
           });
         });
         setIncomingTest(params, "multiple/update").then((res) => {
@@ -223,8 +334,13 @@ export default {
         });
       } else {
         let params = [];
+
         this.dataSource.forEach((item) => {
           if (this.selectedRowKeys.includes(item.Id)) {
+            let imgList = [];
+            item.FileList.forEach((img) => {
+              imgList.push(img.uid);
+            });
             params.push({
               EnterId: item.CompanyCode,
               ArrivalOrderNo: item.DocNo,
@@ -239,9 +355,13 @@ export default {
               TestItem: item.TestItem,
               TestResult: item.TestResult,
               Remarks: item.Remarks,
+              DatetimeTestStart: item.DatetimeTestStart,
+              DatetimeTestEnd: item.DatetimeTestEnd,
+              TestImgIds: imgList.join(","),
             });
           }
         });
+        console.log("params===", params);
         setIncomingTest(params, "multiple/add").then((res) => {
           if (res.data.success) {
             this.$message.success("添加成功!");
@@ -266,5 +386,8 @@ export default {
 }
 /deep/.ant-form-item {
   margin-bottom: 5px;
+}
+/deep/.ant-table-tbody > tr > td {
+  padding: 5px;
 }
 </style>

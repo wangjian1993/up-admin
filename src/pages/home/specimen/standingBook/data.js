@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2023-04-28 14:43:03
+ * @LastEditTime: 2023-07-03 13:50:39
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/standingBook/data.js
@@ -225,7 +225,7 @@ export const columns = [
     scopedSlots: { customRender: "TableStatus" },
     align: "center",
     width:80
-  },
+  }
 ];
 export const innerColumns = [{
   title: " 顺序",

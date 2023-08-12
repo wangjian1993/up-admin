@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-04-01 17:32:54
- * @LastEditTime: 2023-05-03 10:07:03
+ * @LastEditTime: 2023-06-28 09:45:04
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/production/dailyReport/aggregate.vue
@@ -134,7 +134,7 @@ export default {
       dataSource: [],
       isDrawer: false,
       plantList: [],
-      plantid: "",
+      plantId: "",
       drawerItem: [],
       isSearch: 0,
       statistic: [],
@@ -177,7 +177,7 @@ export default {
         this.primaryKey = primaryKey.dataIndex;
       }
     });
-    this.search();
+    // this.search();
     this.getPlant();
     this.getProcessList();
   },
@@ -230,7 +230,7 @@ export default {
       this.week = "";
       this.isSearch = 0;
       this.searchForm.resetFields();
-      this.search();
+      this.getPlant();
     },
     plantChange(e) {
       if (e == "") return;
@@ -257,7 +257,12 @@ export default {
       getDailyReport(params1, "getplantlist").then((res) => {
         if (res.data.success) {
           this.plantList = res.data.data;
-          this.plantid = this.plantList[0].EnterId;
+          this.plantId = this.plantList[0].EnterId;
+          this.searchForm.setFieldsValue({
+            plantid: this.plantList[0].EnterId,
+          });
+          this.search();
+          // this.getWorkshopList()
         }
       });
     },
@@ -304,7 +309,7 @@ export default {
         pageindex: this.pagination.current,
         pagesize: this.pagination.pageSize,
       };
-      getDailyReport(params, "daily/getall").then((res) => {
+      getDailyReport(params, "realtime/getall").then((res) => {
         if (res.data.success) {
           this.dataSource = res.data.data.list;
           this.addListparams();
@@ -366,7 +371,7 @@ export default {
             proname: values.proname,
             process: values.process,
           };
-          getDailyReport(params, "daily/gettotal").then((res) => {
+          getDailyReport(params, "realtime/gettotal").then((res) => {
             if (res.data.success) {
               this.dataSource = res.data.data.list;
               const pagination = { ...this.pagination };
@@ -403,7 +408,7 @@ export default {
         proname: values.proname,
         process: values.process,
       };
-      getDailyReport(params, "daily/gettotal").then((res) => {
+      getDailyReport(params, "realtime/gettotal").then((res) => {
         if (res.data.success) {
           let _data = [];
           let excelArray = [];

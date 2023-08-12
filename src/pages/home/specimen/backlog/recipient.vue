@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2022-05-11 11:49:26
- * @LastEditTime: 2022-07-20 09:04:54
+ * @LastEditTime: 2023-07-20 09:26:47
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/backlog/recipient.vue
@@ -66,18 +66,18 @@ export default {
   },
   created() {
     this.getPointList();
-    // if (this.isEdit) {
-    //   this.form = JSON.parse(JSON.stringify(this.editData));
-    //   this.form.MaterialPrefix = this.editData.MaterialPrefix.split(",");
-    //   this.enterChange(this.form.EnterpriseId);
-    //   this.editData.PermissionUserList.forEach((item) => {
-    //     this.user.push({
-    //       Name: item.UserName,
-    //       Id: item.UserId,
-    //       Code: item.UserCode,
-    //     });
-    //   });
-    // }
+    if (this.isEdit) {
+      this.form = JSON.parse(JSON.stringify(this.editData));
+      this.form.MaterialPrefix = this.editData.MaterialPrefix.split(",");
+      this.enterChange(this.form.EnterpriseId);
+      this.editData.PermissionUserList.forEach((item) => {
+        this.user.push({
+          Name: item.UserName,
+          Id: item.UserId,
+          Code: item.UserCode,
+        });
+      });
+    }
   },
   methods: {
     getPointList() {

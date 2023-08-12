@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-10-14 11:30:23
- * @LastEditTime: 2023-05-09 11:59:49
+ * @LastEditTime: 2023-08-12 14:03:26
  * @LastEditors: max
  * @Description: BOM查询
- * @FilePath: /up-admin/src/pages/home/erp/BomList/List.vue
+ * @FilePath: /up-admin/src/pages/home/erp/BomList/index.vue
 -->
 <template>
   <div>
@@ -564,7 +564,6 @@ export default {
       return new Promise((resolve) => {
         //   /* 你的逻辑代码 */
         let excelData = [];
-        console.log("selectedRowKeys===", this.selectedRowKeys);
         this.printArray.forEach((item) => {
           let params = {
             plantid: this.searchValue.plantId,
@@ -726,13 +725,11 @@ export default {
       this.isExportLod = true;
       let arr = [];
       let promiseList = [];
-      console.log("selectedRowKeys===", this.selectedRowKeys);
       this.printArray.map((item) => {
         this.treeArray = [];
         this.excelList = [];
         promiseList.push(item);
         arr.push(this.waitData(item.ITEM_CODE));
-        console.log("arr===", arr);
       });
       Promise.all(arr)
         .then((res) => {

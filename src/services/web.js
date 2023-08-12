@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2021-09-04 08:45:48
- * @LastEditTime: 2023-05-24 14:13:11
+ * @LastEditTime: 2023-08-02 08:53:24
  * @LastEditors: max
  * @Description: 前端业务接口
  * @FilePath: /up-admin/src/services/web.js
@@ -183,6 +183,9 @@ export function setMitemPlanAction(params, action) {
  * @param {*} action
  * @return {*}
  */
+export function getDailyPlanList(params, action) {
+    return request(`${UP_WEB}/production/realtime/${action}`, METHOD.GET, params);
+}
 export function getDailyPlanAction(params, action) {
     return request(`${UP_WEB}/production/dailyplan/${action}`, METHOD.GET, params);
 }
@@ -304,6 +307,16 @@ export function getMaterialSampleApi(params, action) {
 
 export function getArrivalList(params, action) {
     return request(`${UP_WMS}/purchasereceive/${action}`, METHOD.GET, params);
+}
+export function getArrivalPrint(params, action) {
+    return request(`${UP_WMS}/purchasereceive/${action}`, METHOD.POST, params);
+}
+//样品定位
+export function getSpecimenLocation(params, action) {
+    return request(`${UP_WEB}/location/${action}`, METHOD.GET, params);
+}
+export function setSpecimenLocation(params, action) {
+    return request(`${UP_WEB}/location/${action}`, METHOD.POST, params);
 }
 
 

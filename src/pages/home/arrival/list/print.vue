@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { getArrivalList } from "@/services/web.js";
+import { getArrivalPrint } from "@/services/web.js";
 export default {
   name: "app",
   props: ["printData"],
@@ -87,7 +87,7 @@ export default {
           docno: DocNo,
           count: 100,
         };
-        getArrivalList(params, "print").then((res) => {
+        getArrivalPrint(params, "print").then((res) => {
           if (res.data.success) {
             let dataJson = res.data.data.list;
             this.temp = res.data.data.template.TemplateDesign;
@@ -98,35 +98,59 @@ export default {
     },
   },
   mounted: function() {
-    let fnArr = [];
-    console.log("===", this.printData);
-    this.printData.forEach((item) => {
-      fnArr.push(this.getPrintData(item.DocNo));
-    });
+    // let fnArr = [];
+    // this.printData.forEach((item) => {
+    //   fnArr.push(this.getPrintData(item.DocNo));
+    // });
     let list = {
       list: [],
     };
-    Promise.all(fnArr).then((res) => {
-      console.log("res===", res);
-      res.forEach((item) => {
-        list.list.push(item);
-      });
-      var report = new window.Stimulsoft.Report.StiReport();
-      let jsonFile = JSON.parse(this.temp);
-      report.load(jsonFile);
-      var dataSet = new window.Stimulsoft.System.Data.DataSet("JSON");
-      dataSet.readJson(list);
-      report.dictionary.databases.clear();
-      report.regData("JSON", "JSON", dataSet);
-      console.log("dataJson==", list);
-      var options = new window.Stimulsoft.Viewer.StiViewerOptions();
-      options.appearance.scrollbarsMode = true;
-      options.appearance.pageBorderColor = window.Stimulsoft.System.Drawing.Color.navy;
-      options.toolbar.borderColor = window.Stimulsoft.System.Drawing.Color.navy;
-      options.height = "750px";
-      var viewer = new window.Stimulsoft.Viewer.StiViewer(options, "StiViewer", false);
-      viewer.report = report;
-      viewer.renderHtml("designer");
+    // Promise.all(fnArr).then((res) => {
+    //   console.log("res===", res);
+    //   res.forEach((item) => {
+    //     list.list.push(item);
+    //   });
+    //   var report = new window.Stimulsoft.Report.StiReport();
+    //   let jsonFile = JSON.parse(this.temp);
+    //   report.load(jsonFile);
+    //   var dataSet = new window.Stimulsoft.System.Data.DataSet("JSON");
+    //   dataSet.readJson(list);
+    //   report.dictionary.databases.clear();
+    //   report.regData("JSON", "JSON", dataSet);
+    //   console.log("dataJson==", list);
+    //   var options = new window.Stimulsoft.Viewer.StiViewerOptions();
+    //   options.appearance.scrollbarsMode = true;
+    //   options.appearance.pageBorderColor = window.Stimulsoft.System.Drawing.Color.navy;
+    //   options.toolbar.borderColor = window.Stimulsoft.System.Drawing.Color.navy;
+    //   options.height = "750px";
+    //   var viewer = new window.Stimulsoft.Viewer.StiViewer(options, "StiViewer", false);
+    //   viewer.report = report;
+    //   viewer.renderHtml("designer");
+    // });
+    this.printData.push(null);
+    getArrivalPrint(this.printData, "print").then((res) => {
+      if (res.data.success) {
+        res.data.data.forEach((item) => {
+          list.list.push(item.list);
+        });
+        this.temp = res.data.data[0].template.TemplateDesign;
+        var report = new window.Stimulsoft.Report.StiReport();
+        let jsonFile = JSON.parse(this.temp);
+        report.load(jsonFile);
+        var dataSet = new window.Stimulsoft.System.Data.DataSet("JSON");
+        dataSet.readJson(list);
+        report.dictionary.databases.clear();
+        report.regData("JSON", "JSON", dataSet);
+        console.log("dataJson==", list);
+        var options = new window.Stimulsoft.Viewer.StiViewerOptions();
+        options.appearance.scrollbarsMode = true;
+        options.appearance.pageBorderColor = window.Stimulsoft.System.Drawing.Color.navy;
+        options.toolbar.borderColor = window.Stimulsoft.System.Drawing.Color.navy;
+        options.height = "750px";
+        var viewer = new window.Stimulsoft.Viewer.StiViewer(options, "StiViewer", false);
+        viewer.report = report;
+        viewer.renderHtml("designer");
+      }
     });
   },
 };

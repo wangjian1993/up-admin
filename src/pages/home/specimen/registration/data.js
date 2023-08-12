@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2023-04-28 14:43:13
+ * @LastEditTime: 2023-06-14 14:36:42
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/registration/data.js
@@ -54,15 +54,9 @@ export const columns = [
     width: 350
   },
   {
-    title: "图号",
-    dataIndex: "DrawingNo",
-    scopedSlots: { customRender: "DrawingNo" },
-    align: "center",
-  },
-  {
-    title: "供应商编码",
-    dataIndex: "SupplierCode",
-    scopedSlots: { customRender: "SupplierCode" },
+    title: "签样工程师",
+    dataIndex: "SignEngineer",
+    scopedSlots: { customRender: "SignEngineer" },
     align: "center",
   },
   {
@@ -114,9 +108,15 @@ export const columns = [
     align: "center",
   },
   {
-    title: "签样工程师",
-    dataIndex: "SignEngineer",
-    scopedSlots: { customRender: "SignEngineer" },
+    title: "图号",
+    dataIndex: "DrawingNo",
+    scopedSlots: { customRender: "DrawingNo" },
+    align: "center",
+  },
+  {
+    title: "供应商编码",
+    dataIndex: "SupplierCode",
+    scopedSlots: { customRender: "SupplierCode" },
     align: "center",
   },
   {
@@ -229,7 +229,8 @@ export const columns = [
     dataIndex: "Receiver",
     scopedSlots: { customRender: "Receiver" },
     align: "center",
-    width: 300,
+    width: 80,
+    fixed: "right",
   },
   {
     title: "状态",

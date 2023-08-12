@@ -1,10 +1,10 @@
 <!--
  * @Author: max
  * @Date: 2021-08-06 15:34:43
- * @LastEditTime: 2022-05-10 10:12:35
+ * @LastEditTime: 2023-06-26 14:38:15
  * @LastEditors: max
  * @Description: 权限
- * @FilePath: /up-admin/src/pages/home/quote/config/authority/Authority.vue
+ * @FilePath: /up-admin/src/pages/home/quote/config/authority/index.vue
 -->
 <template>
   <!-- 搜索 -->
@@ -493,17 +493,17 @@ export default {
         if (res.data.success) {
           this.form = res.data.data;
           //获取名称,大类编辑id
-          console.log(res.data.data)
+          console.log(res.data.data);
           if (this.form.ProNameScreens != null && this.form.ProNameScreens.length > 0) {
             this.form.ProNameScreens = this.form.ProNameScreens.split(",");
           } else {
             this.form.ProNameScreens = [];
           }
-          if ( this.form.SpecNameScreens != null && this.form.SpecNameScreens.length > 0) {
-            console.log("111")
+          if (this.form.SpecNameScreens != null && this.form.SpecNameScreens.length > 0) {
+            console.log("111");
             this.form.SpecNameScreens = this.form.SpecNameScreens.split(",");
           } else {
-            console.log("222")
+            console.log("222");
             this.form.SpecNameScreens = [];
           }
           console.log(this.form.ProNameScreens);

@@ -1,7 +1,7 @@
 <!--
  * @Author: max
  * @Date: 2021-11-25 15:02:21
- * @LastEditTime: 2022-08-01 09:27:38
+ * @LastEditTime: 2023-06-26 13:38:22
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/oms/orderTracking/index.vue
@@ -39,9 +39,6 @@ export default {
       this.batchid = id;
       this.activeKey = "2";
       console.log("1111");
-      // this.$nextTick(() => {
-      //   this.$refs.myDeatils.getListAll();
-      // });
     },
     callback(key) {
       this.activeKey = key;

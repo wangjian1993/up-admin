@@ -1,7 +1,7 @@
 /*
  * @Author: max
  * @Date: 2022-05-11 11:49:33
- * @LastEditTime: 2023-05-23 16:13:34
+ * @LastEditTime: 2023-07-05 11:18:17
  * @LastEditors: max
  * @Description: 
  * @FilePath: /up-admin/src/pages/home/specimen/document/data.js
@@ -243,6 +243,20 @@ export const columnsData = [
     scopedSlots: { customRender: "ReturnReason" },
     align: "center",
     width:200
+  },
+  {
+    title: "存放公司",
+    dataIndex: "StoredCompany",
+    scopedSlots: { customRender: "StoredCompany" },
+    align: "center",
+    width:80
+  },
+  {
+    title: "储存位置",
+    dataIndex: "StoredLocation",
+    scopedSlots: { customRender: "StoredLocation" },
+    align: "center",
+    width:80
   },
   {
     title: "状态",
